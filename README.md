@@ -21,39 +21,44 @@ It is up to the application to process the notifications in a useful manner. Asy
 endpoint are also supported. A control notification does not have data about the updated descriptor values embedded
 in it. Instead the AVDECC application should query the control class to obtain the updated values.
 
-Directory layout::
+Directory layout
+---------------
 
-  lib\
-    bin\
-    doc\
-    binding\
-      python\
-    build\
-      linux\
-      msvc\
+ ::
+
+    lib\
+      bin\
+      doc\
       binding\
-    include\ (contains public header files)
-    src\ (contains private header files and c++ source code)
-  app\
-    bin\
-    doc\
-    build\
-      linux\
-      msvc\
-    cmdline\
-      src\
-    test\
-      strings\
-      adp\
-      logging\ 
-      notify\
+        python\
+      build\
+        linux\
+        msvc\
+      binding\
+      include\ (contains public header files)
+      src\ (contains private header files and c++ source code)
+    app\
+      bin\
+      doc\
+      build\
+        linux\
+        msvc\
+      cmdline\
+        src\
+      test\
+        strings\
+        adp\
+        logging\ 
+        notify\
 
-End of directory listing.
-  
-Object heirachy::
 
-  AVDECC Sytem
-    Endpoint[1..N]
+Object heirachy
+---------------
+ 
+  ::
+
+    AVDECC Sytem
+      Endpoint[1..N]
         Entity[1..N]
             Configuration[1..N]
                 Audio Unit[1..N]
@@ -65,48 +70,47 @@ Object heirachy::
                 Jack Output[1..N]
                 Clock Domain[1..N]
 
-End of object heirachy
+
 
 Building
 --------
 
 For a Windows build the following environment variables must be defined:
-
 * WPCAP_DIR the directory where Win PCAP is installed
-
 * JDKAVDECC_DIR the directory where JeffK?'s 1722.1 C library is installed 
 
 Operations
-----------
+==========
 
 AVDECC Endpoint Discovery
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 When the AVDECC system receives a AVDECC advertise message from an endpoint, it proceeds to
 enumerate the endpoint's complete object model, if it hasn't done so already. Upon completion
 of the enumeration process, a notification message is sent to the application.
 
 AVDECC descriptor reads
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 A descriptor read by referencing the object the object of interest. Since the AVDECC system has
 already read all descriptors, the read operation is completed without producing any network traffic.
 
 To read the name of the first input jack, one would go::
 
- avdeccsys->endpoint(0)->entity(0)->configuration(0)->input_stream(0)->get_name(name) 
+    avdeccsys->endpoint(0)->entity(0)->configuration(0)->input_stream(0)->get_name(name) 
 
 AVDECC commands
-~~~~~~~~~~~~~~~
+---------------
 
 An AVDECC command is sent to the target object, ie::
 
- istream = avdeccsys->endpoint(0)->entity(0)->configuration(0)->input_stream(0); istream->set_format(unsigned int *id,format,...);
+    istream = avdeccsys->endpoint(0)->entity(0)->configuration(0)->input_stream(0);
+    istream->set_format(unsigned int *id,format,...);
 
 Completion results in a notification message of success or failure via the callback mechanism.
 
 Callbacks
-~~~~~~~~~
+---------
 
 The following callback functions should be supplied.
 
