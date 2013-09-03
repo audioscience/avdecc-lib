@@ -51,13 +51,15 @@ Directory layout
      logging\ 
      notify\
 
+
+End of directory listing.
   
 Object heirachy
 ---------------
 
 ::
 
-AVDECC Sytem
+ AVDECC Sytem
     Endpoint[1..N]
         Entity[1..N]
             Configuration[1..N]
@@ -70,6 +72,7 @@ AVDECC Sytem
                 Jack Output[1..N]
                 Clock Domain[1..N]
 
+End of object heirachy
 
 Building
 --------
@@ -77,7 +80,7 @@ Building
 For a Windows build the following environment variables must be defined:
 
 * WPCAP_DIR the directory where Win PCAP is installed
-* 
+
 * JDKAVDECC_DIR the directory where JeffK?'s 1722.1 C library is installed 
 
 Operations
