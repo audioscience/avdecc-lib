@@ -25,37 +25,37 @@ Directory layout
 ----------------
 
 ::
-lib\
-  bin\
-  doc\
-  binding\
-    python\
-  build\
-    linux\
-    msvc\
-    binding\
-  include\ (contains public header files)
-  src\ (contains private header files and c++ source code)
-app\
-  bin\
-  doc\
-  build\
-    linux\
-    msvc\
-  cmdline\
-    src\
-  test\
-    strings\
-    adp\
-    logging\
-    notify\
-    
-    
+ lib\
+   bin\
+   doc\
+   binding\
+     python\
+   build\
+     linux\
+     msvc\
+     binding\
+   include\ (contains public header files)
+   src\ (contains private header files and c++ source code)
+ app\
+   bin\
+   doc\
+   build\
+     linux\
+     msvc\
+   cmdline\
+     src\
+   test\
+     strings\
+     adp\
+     logging\ 
+     notify\
+
+  
 Object heirachy
 ---------------
 
 ::
-AVDECC Sytem
+ AVDECC Sytem
     Endpoint[1..N]
         Entity[1..N]
             Configuration[1..N]
@@ -82,14 +82,14 @@ Operations
 ----------
 
 AVDECC Endpoint Discovery
-.........................
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When the AVDECC system receives a AVDECC advertise message from an endpoint, it proceeds to
 enumerate the endpoint's complete object model, if it hasn't done so already. Upon completion
 of the enumeration process, a notification message is sent to the application.
 
 AVDECC descriptor reads
-.......................
+~~~~~~~~~~~~~~~~~~~~~~~
 
 A descriptor read by referencing the object the object of interest. Since the AVDECC system has
 already read all descriptors, the read operation is completed without producing any network traffic.
@@ -98,7 +98,7 @@ To read the name of the first input jack, one would go::
 avdeccsys->endpoint(0)->entity(0)->configuration(0)->input_stream(0)->get_name(name) 
 
 AVDECC commands
-...............
+~~~~~~~~~~~~~~~
 
 An AVDECC command is sent to the target object, ie::
 istream = avdeccsys->endpoint(0)->entity(0)->configuration(0)->input_stream(0); istream->set_format(unsigned int *id,format,...);
@@ -106,7 +106,7 @@ istream = avdeccsys->endpoint(0)->entity(0)->configuration(0)->input_stream(0); 
 Completion results in a notification message of success or failure via the callback mechanism.
 
 Callbacks
-.........
+~~~~~~~~~
 
 The following callback functions should be supplied.
 
