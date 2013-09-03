@@ -21,10 +21,7 @@ It is up to the application to process the notifications in a useful manner. Asy
 endpoint are also supported. A control notification does not have data about the updated descriptor values embedded
 in it. Instead the AVDECC application should query the control class to obtain the updated values.
 
-Directory layout
-----------------
-
-::
+Directory layout::
 
  lib\
    bin\
@@ -51,13 +48,9 @@ Directory layout
      logging\ 
      notify\
 
-
 End of directory listing.
   
-Object heirachy
----------------
-
-::
+Object heirachy::
 
  AVDECC Sytem
     Endpoint[1..N]
