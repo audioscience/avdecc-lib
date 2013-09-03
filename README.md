@@ -25,6 +25,7 @@ Directory layout
 ----------------
 
 ::
+
  lib\
    bin\
    doc\
@@ -55,7 +56,8 @@ Object heirachy
 ---------------
 
 ::
- AVDECC Sytem
+
+AVDECC Sytem
     Endpoint[1..N]
         Entity[1..N]
             Configuration[1..N]
@@ -95,13 +97,15 @@ A descriptor read by referencing the object the object of interest. Since the AV
 already read all descriptors, the read operation is completed without producing any network traffic.
 
 To read the name of the first input jack, one would go::
-avdeccsys->endpoint(0)->entity(0)->configuration(0)->input_stream(0)->get_name(name) 
+
+ avdeccsys->endpoint(0)->entity(0)->configuration(0)->input_stream(0)->get_name(name) 
 
 AVDECC commands
 ~~~~~~~~~~~~~~~
 
 An AVDECC command is sent to the target object, ie::
-istream = avdeccsys->endpoint(0)->entity(0)->configuration(0)->input_stream(0); istream->set_format(unsigned int *id,format,...);
+
+ istream = avdeccsys->endpoint(0)->entity(0)->configuration(0)->input_stream(0); istream->set_format(unsigned int *id,format,...);
 
 Completion results in a notification message of success or failure via the callback mechanism.
 
