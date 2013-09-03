@@ -23,36 +23,36 @@ in it. Instead the AVDECC application should query the control class to obtain t
 
 Directory layout::
 
- lib\
-   bin\
-   doc\
-   binding\
-     python\
-   build\
-     linux\
-     msvc\
-     binding\
-   include\ (contains public header files)
-   src\ (contains private header files and c++ source code)
- app\
-   bin\
-   doc\
-   build\
-     linux\
-     msvc\
-   cmdline\
-     src\
-   test\
-     strings\
-     adp\
-     logging\ 
-     notify\
+  lib\
+    bin\
+    doc\
+    binding\
+      python\
+    build\
+      linux\
+      msvc\
+      binding\
+    include\ (contains public header files)
+    src\ (contains private header files and c++ source code)
+  app\
+    bin\
+    doc\
+    build\
+      linux\
+      msvc\
+    cmdline\
+      src\
+    test\
+      strings\
+      adp\
+      logging\ 
+      notify\
 
 End of directory listing.
   
 Object heirachy::
 
- AVDECC Sytem
+  AVDECC Sytem
     Endpoint[1..N]
         Entity[1..N]
             Configuration[1..N]
