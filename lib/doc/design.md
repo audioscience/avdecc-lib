@@ -72,8 +72,8 @@ Object hierarchy
 **association_id**
 
 If ASSOCIATION_ID_SUPPORTED and ASSOCIATION_ID_VALID flags are set in the ADP entity_capabilities field, then multiple entites will be represented as a single logical entity in the hierarchy.
-
 *AL: How closely do we want to stick to 1722.1 terminology here e.g. The term for endpoint in the standard is 'end station'. Should this be reflected here?*
+*AGE: will change to use endstation terminology*
 
 Building
 --------
@@ -107,9 +107,11 @@ enumerate the endpoint's complete object model if it hasn't done so already and 
 * The GENERAL_CONTROLLER_IGNORE flag in the ADP entity_capabilities field is not set
 * The ENTITY_NOT_READY flag in the ADP entity_capabilities field is not set
 
-Upon completion of the enumeration process, a notification message is sent to the application.
+When an end station is discovered, a notification message is sent to the application. Additionally,
+upon completion of the enumeration process, a second notification message is sent to the application.
 
 *AL: Is there a case for separating the discovery and enumeration notifications? The user may want to connect entities that do not support AEM*
+*AGE: changed - see above*
 
 AVDECC descriptor reads
 -----------------------
@@ -125,6 +127,8 @@ To read the name of the first input jack, one would go::
 I'd expect the above to issue an AECP GET_NAME command rather than just read the string from the descriptor.
 I presume the fields in the descriptor could just be accessed like:*
 
+*AGE: agreed - I'll change it*
+
     avdeccsys->endpoint(0)->entity(0)->configuration(0)->stream_input(0)->object_name
     
 *However, should the following return the actual contents of the descriptor, or return the correct string from the STRING descriptor?*
@@ -134,6 +138,12 @@ I presume the fields in the descriptor could just be accessed like:*
 A thought:
 
     avdeccsys->get_entity(0x0022970102030000)->configuration(0)->stream_input(0)->localized_description
+
+
+*AGE we are having internal discussions about "flattening" the API.*
+*The controller would have a method something like*
+*root->in_stream_set_format(end station GUID, entity index, config index, in_stream_index, parameters)*
+
 
 AVDECC commands
 ---------------
