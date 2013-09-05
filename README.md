@@ -14,8 +14,9 @@ as a background procoess.
 The repository contains source to build a Windows DLL or a Linux library and a command line application for
 exercising the library.
 
-The overall philosophy of AVDECC LIB is to implement a simple set of commands that allow an application to
-discover and and control AVDECC capable endpoints. The internals of the library are designed to be single threaded.
+The overall philosophy of AVDECC LIB is to implement a thin layer of commands that allow an application to
+discover and and control AVDECC capable endpoints. The internal operations of the library are designed to be single threaded,
+although multiple threads are used to queue operations to be performed by the single threaded "engine" portion of the library.
 The library supports notification events (callbacks) that are triggered on the success (or failure) of a command. 
 It is up to the application to process the notifications in a useful manner. Asynchronously control updates from an
 endpoint are also supported. A control notification does not have data about the updated descriptor values embedded
@@ -34,9 +35,10 @@ Directory layout
       build\
         linux\
         msvc\
-      binding\
       include\ (contains public header files)
       src\ (contains private header files and c++ source code)
+	    linux\ (linux specific files)
+		msvc\ (Microsoft Visual Studio specific files)
     app\
       bin\
       doc\
@@ -57,7 +59,7 @@ Object heirachy
  
   ::
 
-    AVDECC Sytem
+    AVDECC System
       Endpoint[1..N]
         Entity[1..N]
             Configuration[1..N]
@@ -75,9 +77,21 @@ Object heirachy
 Building
 --------
 
-For a Windows build the following environment variables must be defined:
-* WPCAP_DIR the directory where Win PCAP is installed
-* JDKAVDECC_DIR the directory where JeffK?'s 1722.1 C library is installed 
+* Windows *
+
+Prerequisites
+
+1. MSVC 2010 or later
+1. jdksavdecc-c git repository from <https://github.com/jdkoftinoff/jdksavdecc-c>
+1. winpcap from <http://www.winpcap.org/>
+
+The following environment variables must be defined:
+* WINPCAP_DIR the directory where WinPcap is installed
+* JDKAVDECC_DIR the directory where JDKSAVDECC-C git 1722.1 C library is installed
+
+* Linux *
+
+ToDo
 
 Operations
 ==========
@@ -114,9 +128,9 @@ Callbacks
 
 The following callback functions should be supplied.
 
-void avdecc_log_fn(void *user_obj, int32_t log_level, char msg[256], uint32_t time_stamp_ms);
-
-void avdecc_notify(void *user_obj, int32_t notification, int32_t endpoint_index, int32_t obj, int32_t index, int32_t cmd, int32_t id); 
+ ::
+    void avdecc_log_fn(void *user_obj, int32_t log_level, char msg[256], uint32_t time_stamp_ms);
+    void avdecc_notify(void *user_obj, int32_t notification, int32_t endpoint_index, int32_t obj, int32_t index, int32_t cmd, int32_t id); 
 
 With notifications of:
 * No Match Found
