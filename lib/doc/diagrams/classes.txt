@@ -1,0 +1,334 @@
+# use plantUML from http://plantuml.sourceforge.net/ to process this file
+@startuml
+title AVDECC-LIB Controller Class Diagram
+AVDECC_Controller <|-- AVDECC_System_Imp : extension
+AVDECC_End_Station <|-- AVDECC_End_Station_Imp : extension
+ADP_Discovery_State_Machine .. AVDECC_System_Imp
+ACMP_Controller_State_Machine .. AVDECC_System_Imp
+AVDECC_System_Imp .. AVDECC_String
+AVDECC_System_Imp "1" *-- "1 to many" AVDECC_End_Station_Imp : contains
+AEM_Controller_State_Machine .. AVDECC_End_Station_Imp
+AVDECC_End_Station_Imp .. AVDECC_String
+AVDECC_String .. AVDECC_Enum
+AVDECC_End_Station_Imp "1" *-- "1 to many" Entity_Descriptor_Imp : contains
+
+Entity_Descriptor <|-- Entity_Descriptor_Imp : extension
+Configuration_Descriptor <|-- Configuration_Descriptor_Imp : extension
+Audio_Unit_Descriptor <|-- Audio_Unit_Descriptor_Imp : extension
+Stream_Input_Descriptor <|-- Stream_Input_Descriptor_Imp : extension
+Stream_Output_Descriptor <|-- Stream_Output_Descriptor_Imp : extension
+Jack_Input_Descriptor <|-- Jack_Input_Descriptor_Imp : extension
+Jack_Output_Descriptor <|-- Jack_Output_Descriptor_Imp : extension
+AVB_Interface_Descriptor <|-- AVB_Interface_Descriptor_Imp : extension
+Clock_Source_Descriptor <|-- Clock_Source_Descriptor_Imp : extension
+Locale_Descriptor <|-- Locale_Descriptor_Imp : extension
+Clock_Domain_Descriptor <|-- Clock_Domain_Descriptor_Imp : extension
+
+Entity_Descriptor_Imp "1" *-- "1 to many" Configuration_Descriptor_Imp : contains
+Configuration_Descriptor_Imp "1" *-- "1 to many" Audio_Unit_Descriptor_Imp : contains
+Configuration_Descriptor_Imp "1" *-- "1 to many" Stream_Input_Descriptor_Imp : contains
+Configuration_Descriptor_Imp "1" *-- "1 to many" Stream_Output_Descriptor_Imp : contains
+Configuration_Descriptor_Imp "1" *-- "1 to many" Jack_Input_Descriptor_Imp : contains
+Configuration_Descriptor_Imp "1" *-- "1 to many" Jack_Output_Descriptor_Imp : contains
+Configuration_Descriptor_Imp "1" *-- "1 to many" AVB_Interface_Descriptor_Imp : contains
+Configuration_Descriptor_Imp "1" *-- "1 to many" Clock_Source_Descriptor_Imp : contains	
+Configuration_Descriptor_Imp "1" *-- "1" Locale_Descriptor_Imp : contains
+Configuration_Descriptor_Imp "1" *-- "1 to many" Clock_Domain_Descriptor_Imp : contains
+
+AVDECC_End_Station_Imp <.. AVDECC_LIB_entity_base
+AVDECC_LIB_entity_base <|-- Entity_Descriptor_Imp : extension
+AVDECC_LIB_entity_base <|-- Configuration_Descriptor_Imp : extension
+AVDECC_LIB_entity_base <|-- Audio_Unit_Descriptor_Imp : extension
+AVDECC_LIB_entity_base <|-- Stream_Input_Descriptor_Imp : extension
+AVDECC_LIB_entity_base <|-- Stream_Output_Descriptor_Imp : extension
+AVDECC_LIB_entity_base <|-- Jack_Input_Descriptor_Imp : extension
+AVDECC_LIB_entity_base <|-- Jack_Output_Descriptor_Imp : extension
+AVDECC_LIB_entity_base <|-- AVB_Interface_Descriptor_Imp : extension
+AVDECC_LIB_entity_base <|-- Clock_Source_Descriptor_Imp : extension
+AVDECC_LIB_entity_base <|-- Locale_Descriptor_Imp : extension
+AVDECC_LIB_entity_base <|-- Clock_Domain_Descriptor_Imp	 : extension			
+				
+interface AVDECC_Controller {
+	+virtual void STDCALL destroy() = 0
+	+virtual unsigned int STDCALL get_end_station_count() = 0
+	+virtual avdecc_end_station * STDCALL get_end_station_by_index(end_station_index) = 0
+	+virtual int STDCALL avdecc_controller_process_start() = 0
+	+virtual int STDCALL avdecc_controller_process_close() = 0
+	extern "C" avdecc_controller * STDCALL create_avdecc_controller()
+}
+				
+interface AVDECC_End_Station {
+'	extern "C" avdecc_endpoint * STDCALL create_avdecc_endpoint()
+	+virtual entity_descriptor * STDCALL get_entity_desc_by_index(unsigned int entity_desc_index) = 0
+}			
+				
+interface Entity_Descriptor {
+	+virtual configuration_descriptor * STDCALL get_config_desc_by_index(config_desc_index) = 0
+	
+	+virtual int STDCALL send_set_config_cmd(...) = 0
+	+virtual int STDCALL send_get_config_cmd(...) = 0
+}
+
+interface Configuration_Descriptor {
+	+virtual audio_unit_descriptor * STDCALL get_audio_unit_desc_by_index(audio_unit_desc_index) = 0
+	+virtual stream_descriptor * STDCALL get_stream_input_desc_by_index(stream_input_desc_index) = 0
+	+virtual stream_descriptor * STDCALL get_stream_output_desc_by_index(stream_output_desc_index) = 0
+	+virtual jack_descriptor * STDCALL get_jack_input_desc_by_index(jack_input_desc_index) = 0
+	+virtual jack_descriptor * STDCALL get_jack_output_desc_by_index(jack_output_desc_index) = 0
+	+virtual avb_interface_descriptor * STDCALL get_avb_interface_desc_by_index(avb_interface_desc_index) = 0
+	+virtual clock_source_descriptor * STDCALL get_clock_source_desc_by_index(clock_source_desc_index) = 0
+	+virtual locale_descriptor * STDCALL get_locale_desc_by_index(locale_desc_index) = 0
+	+virtual strings_descriptor * STDCALL get_strings_desc_by_index(strings_desc_index) = 0
+	+virtual clock_domain_descriptor * STDCALL get_clock_domain_desc_by_index(clock_domain_desc_index) = 0
+}
+
+interface Audio_Unit_Descriptor {
+
+}
+
+interface Stream_Input_Descriptor {
+	+virtual int STDCALL send_set_stream_info_cmd(...) = 0
+	+virtual int STDCALL send_get_stream_info_cmd(...) = 0
+	+virtual int STDCALL send_set_stream_format_cmd(...) = 0
+	+virtual int STDCALL send_get_stream_format_cmd(...) = 0
+}
+
+interface Stream_Output_Descriptor {
+	+virtual int STDCALL send_set_stream_info_cmd(...) = 0
+	+virtual int STDCALL send_get_stream_info_cmd(...) = 0
+	+virtual int STDCALL send_set_stream_format_cmd(...) = 0
+	+virtual int STDCALL send_get_stream_format_cmd(...) = 0
+}
+
+interface Jack_Input_Descriptor {
+
+}
+
+interface Jack_Output_Descriptor {
+
+}
+
+interface AVB_Interface_Descriptor {
+
+}
+
+interface Clock_Source_Descriptor {
+	+virtual int STDCALL send_set_clock_source_cmd(...) = 0
+	+virtual int STDCALL send_get_clock_source_cmd(...) = 0
+}
+
+interface Locale_Descriptor {
+
+}
+
+interface Clock_Domain_Descriptor {
+
+}
+
+class AVDECC_String {
+	+static AVDECC_LIB_API const char * STDCALL aem_cmd_value_to_name(uint16_t cmd_value)
+	+static AVDECC_LIB_API uint16_t STDCALL aem_cmd_name_to_value(const char *cmd_name)
+	+static AVDECC_LIB_API const char * STDCALL aem_desc_value_to_name(uint16_t desc_value)
+	+static AVDECC_LIB_API uint16_t STDCALL aem_desc_name_to_value(const char *desc_name)
+	+static AVDECC_LIB_API const char * STDCALL avdecc_lib_notification_value_to_name(int int_value)
+}
+
+class AVDECC_Enum {
+	+enum aem_cmds
+	+enum aem_descs
+	+enum notifications
+}
+	
+class AVDECC_System_Imp {
+	-vector<avdecc_endpoint_imp *> endpoint_vec
+	
+	-static DWORD WINAPI process_wpcap_thread(LPVOID lpParam)
+	-static DWORD WINAPI process_cmd_thread(LPVOID lpParam)
+	-poll_thread()
+	
+'	-cmd_help()
+'	-cmd_list()
+'	-cmd_view_all()
+'	-cmd_view_descriptor(desc_name, desc_index)
+'	-cmd_set_stream_info(desc_name, desc_index)
+'	-cmd_get_stream_info(desc_name, desc_index)
+'	-cmd_set_name(desc_type, desc_index, name_index, new_name)
+'	-cmd_get_name(desc_type, desc_index, name_index)
+}
+
+class ADP_Discovery_State_Machine {
+	+adp_discovery_state_machine()
+	
+	+adp_discovery_state_waiting()
+	+adp_discovery_state_discover()
+	+adp_discovery_state_available()
+	+adp_discovery_state_departing()
+	+adp_discovery_state_timeout()
+}
+
+class ACMP_Controller_State_Machine {
+	+acmp_controller_state_machine()
+	
+	+acmp_controller_state_waiting()
+	+acmp_controller_state_command()
+	+acmp_controller_state_timeout()
+	+acmp_controller_state_response()
+}
+
+class AEM_Controller_State_Machine {
+	+aem_controller_state_machine()
+	
+	+aem_controller_state_waiting()
+	+aem_controller_state_send_command()
+	+aem_controller_state_received_unsolicited()
+	+aem_controller_state_received_response()
+	+aem_controller_state_timeout()
+}
+
+class AVDECC_End_Station_Imp {
+	-vector<entity_descriptor_imp *> entity_desc_vec
+	
+	+entity_descriptor * STDCALL get_entity_desc_by_index(entity_desc_index)
+}
+
+class AVDECC_LIB_entity_base {
+	#AVDECC_EndStation_Imp parent
+	#desc_type
+	#desc_index
+	AVDECC_LIB_entity_base(parent_endstation, desc_type, desc_index)
+	
+	+virtual get_descriptor_type()
+	+virtual get_descriptor_index()
+	
+	+send_acquire_entity_cmd(...)
+	+send_lock_entity_cmd(...)
+	+send_entity_avail_cmd(...)
+	+send_set_name_cmd()
+	+send_get_name_cmd()
+}
+
+class Entity_Descriptor_Imp {
+	-vector<configuration_descriptor_imp *> config_desc_vec
+	
+	+get_descriptor_type()
+	+get_descriptor_index()
+	+configuration_descriptor * STDCALL get_config_desc_by_index(config_desc_index)
+	
+	+send_set_config_cmd(...)
+	+process_set_config_resp(...)
+	+send_get_config_cmd(...)
+	+process_get_config_resp(...)
+}
+
+class Configuration_Descriptor_Imp {
+	-vector<audio_unit_descriptor_imp *> audio_unit_desc_vec
+	-vector<stream_input_descriptor_imp *> stream_input_desc_vec
+	-vector<stream_output_descriptor_imp *> stream_output_desc_vec
+	-vector<jack_descriptor_imp *> jack_input_desc_vec
+	-vector<jack_descriptor_imp*> jack_output_desc_vec
+	-vector<avb_interface_descriptor_imp *> avb_interface_desc_vec
+	-vector<clock_source_descriptor_imp *> clock_source_desc_vec
+	-vector<locale_descriptor_imp *> locale_desc_vec
+	-vector<strings_descriptor_imp *> strings_desc_vec
+	-vector<clock_domain_descriptor_imp *> clock_domain_desc_vec
+
+	+get_descriptor_type()
+	+get_descriptor_index()
+	+get_descriptor_counts_count()
+	+get_desc_type_from_config()
+	+get_desc_count_from_config()
+	+audio_unit_descriptor * STDCALL get_audio_unit_desc_by_index(audio_unit_desc_index)
+	+stream_descriptor * STDCALL get_stream_input_desc_by_index(stream_input_desc_index)
+	+stream_descriptor * STDCALL get_stream_output_desc_by_index(stream_output_desc_index)
+	+jack_descriptor * STDCALL get_jack_input_desc_by_index(jack_input_desc_index)
+	+jack_descriptor * STDCALL get_jack_output_desc_by_index(jack_output_desc_index)
+	+avb_interface_descriptor * STDCALL get_avb_interface_desc_by_index(avb_interface_desc_index)
+	+clock_source_descriptor * STDCALL get_clock_source_desc_by_index(clock_source_desc_index)
+	+locale_descriptor * STDCALL get_locale_desc_by_index(locale_desc_index)
+	+strings_descriptor * STDCALL get_strings_desc_by_index(strings_desc_index)
+	+clock_domain_descriptor * STDCALL get_clock_domain_desc_by_index(clock_domain_desc_index)
+}
+
+class Audio_Unit_Descriptor_Imp {
+	+get_descriptor_type()
+	+get_descriptor_index()
+}
+
+class Stream_Input_Descriptor_Imp {
+	+get_descriptor_type()
+	+get_descriptor_index()
+
+	+send_set_stream_info_cmd(...)
+	+process_set_stream_info_resp(...)
+	+send_get_stream_info_cmd(...)
+	+process_get_stream_info_resp(...)
+	+send_set_stream_format_cmd(...)
+	+process_set_stream_format_resp(...)
+	+send_get_stream_format_cmd(...)
+	+process_get_stream_format_resp(...)
+	
+	+get_aem_stream_info_flags()
+	+get_stream_format()
+	+get_stream_id()
+	+get_msrp_accumulated_latency()
+	+get_stream_dest_mac()
+	+get_msrp_failure_code()
+	+get_msrp_failure_bridge_id()
+}
+
+class Stream_Output_Descriptor_Imp {
+	+get_descriptor_type()
+	+get_descriptor_index()
+	
+	+send_set_stream_info_cmd(...)
+	+process_set_stream_info_resp(...)
+	+send_get_stream_info_cmd(...)
+	+process_get_stream_info_resp(...)
+	+send_set_stream_format_cmd(...)
+	+process_set_stream_format_resp(...)
+	+send_get_stream_format_cmd(...)
+	+process_get_stream_format_resp(...)
+	
+	+get_aem_stream_info_flags()
+	+get_stream_format()
+	+get_stream_id()
+	+get_msrp_accumulated_latency()
+	+get_stream_dest_mac()
+	+get_msrp_failure_code()
+	+get_msrp_failure_bridge_id()
+}
+
+class Jack_Input_Descriptor_Imp {
+	+get_descriptor_type()
+	+get_descriptor_index()
+}
+
+class Jack_Output_Descriptor_Imp {
+	+get_descriptor_type()
+	+get_descriptor_index()
+}
+
+class AVB_Interface_Descriptor_Imp {
+	+get_descriptor_type()
+	+get_descriptor_index()
+}
+
+class Clock_Source_Descriptor_Imp {
+	+get_descriptor_type()
+	+get_descriptor_index()
+	
+	+virtual int STDCALL send_set_clock_source_cmd(...) = 0
+	+virtual int STDCALL send_get_clock_source_cmd(...) = 0
+}
+
+class Locale_Descriptor_Imp {
+	+get_descriptor_type()
+	+get_descriptor_index()
+}
+
+class Clock_Domain_Descriptor_Imp {
+	+get_descriptor_type()
+	+get_descriptor_index()
+}
+
+@enduml

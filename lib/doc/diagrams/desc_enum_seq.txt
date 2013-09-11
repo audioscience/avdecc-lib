@@ -1,0 +1,41 @@
+# use plantUML from http://plantuml.sourceforge.net/ to process this file
+@startuml
+title AVDECC-LIB READ DESCRIPTOR Command and Response Sequence Diagram
+"Network Interface" -> "AVDECC System" : Receive ADP packet
+"AVDECC System" -> "AVDECC System" :  check for a new endstation
+note over "AVDECC System" : New endstation found
+"AVDECC System" -> "Notify" : trigger ENDPOINT_DISCOVERED notification
+"AVDECC System" -> "AVDECC endstation" : Create a new endstation object
+note over "AVDECC endstation" : Call Read Entity Descriptor command \nfunction and fill frame with \ncommand specific data
+"AVDECC endstation" -> "AEM Controller State Machine" : sendCommand
+"AEM Controller State Machine" -> "AEM Controller State Machine" : add command to\n inflight list
+"AEM Controller State Machine" -> "Network Interface" : Send the command
+"Network Interface" -> "AVDECC System" : Receive AECP packet
+"AVDECC System" -> "AVDECC System" : check for Read Entity \nDescriptor response
+"AVDECC System" -> "AVDECC System" : Lookup endstation
+"AVDECC System" -> "AVDECC endstation" : read descriptor response
+"AVDECC endstation" -> "AEM Controller State Machine" : inflight update
+"AEM Controller State Machine" -> "AEM Controller State Machine" : remove the inflight \ncommand from list
+"AEM Controller State Machine" -> "AVDECC endstation"
+note over "AVDECC endstation" : generate Read Configuration \nDecriptor command
+"AVDECC endstation" -> "AEM Controller State Machine" : Send the command
+"AEM Controller State Machine" -> "AEM Controller State Machine" : add command to\n inflight list
+"AEM Controller State Machine" -> "Network Interface" : Send the command
+
+==Iterate over top level descriptors present in the Configuration Descriptor==
+loop until all read or quit
+    "Network Interface" -> "AVDECC System" : Receive AECP packet that \nis a Read Descriptor response
+	"AVDECC System" -> "AVDECC System" : Lookup endstation
+    "AVDECC System" -> "AVDECC endstation" : process response
+    note over "AVDECC endstation" : Process Read Descriptor command response
+    "AVDECC endstation" -> "AEM Controller State Machine" : Request inflight update
+    "AEM Controller State Machine" -> "AEM Controller State Machine" : Remove the inflight command
+	"AEM Controller State Machine" -> "AVDECC endstation"
+    "AVDECC endstation" -> "AEM Controller State Machine" : Read next descriptor
+    "AEM Controller State Machine" -> "AEM Controller State Machine" : add command to\n inflight list
+    "AEM Controller State Machine" -> "Network Interface" : Send the command
+end
+
+"AVDECC endstation" -> "Notify" : trigger ENDPOINT_ENUMERATED \nnotification
+
+@enduml

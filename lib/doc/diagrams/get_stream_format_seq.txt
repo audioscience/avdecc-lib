@@ -1,0 +1,23 @@
+# use plantUML from http://plantuml.sourceforge.net/ to process this file
+@startuml
+title AVDECC-LIB GET STREAM FORMAT Command and Response Sequence Diagram
+"GUI Application" -> "Stream" :  send_get_format_cmd()
+note over "Stream" : fill frame with command \nspecific data
+"Stream" -> "TX Message Queue" : Queue the frame \nto be transmitted
+"Stream" --> "GUI Application" : Return sequence ID
+"TX Message Queue" -> "Poll Thread" : Dequeue the frame
+"Poll Thread" -> "AEM Controller State Machine" : sendCommand
+"AEM Controller State Machine" -> "AEM Controller State Machine" : queue to \ninflight list
+"AEM Controller State Machine" -> "Network Interface" : Tx packet
+"Network Interface" -> "RX Message Queue" : Queue the \nreceived packet
+"RX Message Queue" -> "Poll Thread" : Dequeue packet
+"Poll Thread" -> "AEM Controller State Machine" : rxPacket
+"AEM Controller State Machine" -> "AEM Controller State Machine" : remove from \ninflight list
+"AEM Controller State Machine" -> "Poll Thread"
+"Poll Thread" -> "Stream" : process response
+"Stream" -> "Stream" : Store stream \nformat fields
+"Stream" -> "Poll Thread"
+"Poll Thread" --> "GUI Application" : Notification for the sequence ID
+"GUI Application" -> "Stream" : Read stream format field
+"Stream" --> "GUI Application" : Return the field
+@enduml
