@@ -145,7 +145,7 @@ namespace avdecc_lib
                 uint16_t STDCALL get_base_internal_input_port();
 
                 /**
-                 * Get the number of internal output_ports of the Audio Unit descriptor object.
+                 * Get the number of internal output ports of the Audio Unit descriptor object.
                  */
                 uint16_t STDCALL get_number_of_internal_output_ports();
 
@@ -165,7 +165,7 @@ namespace avdecc_lib
                 uint16_t STDCALL get_base_control();
 
                 /**
-                 * Get the number of signal_selectors of the Audio Unit descriptor object.
+                 * Get the number of signal selectors of the Audio Unit descriptor object.
                  */
                 uint16_t STDCALL get_number_of_signal_selectors();
 

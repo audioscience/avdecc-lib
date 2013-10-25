@@ -133,7 +133,7 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_configurations_count() = 0;
 
                 /**
-                 * Get the current configuration of the Entity descriptor object.
+                 * Get the current Configuration of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_current_configuration() = 0;
 
@@ -143,7 +143,7 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_config_desc_count() = 0;
 
                 /**
-                 * Get the corresponding CONFIGURATION descriptor object by index.
+                 * Get the corresponding Configuration descriptor object by index.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index) = 0;
 

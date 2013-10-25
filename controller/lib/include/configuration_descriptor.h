@@ -82,57 +82,57 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_desc_count_from_config_by_index(int desc_index) = 0;
 
                 /**
-                 * Check if the descriptor type and descriptor count index are valid and present in the Configuration.
+                 * Check if the descriptor type and descriptor count index are valid and present in the current Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL are_desc_type_and_index_in_config(int desc_type, int desc_count_index) = 0;
 
                 /**
-                 * Get the number of Audio Unit descriptors.
+                 * Get the number of Audio Unit descriptors present in the current Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_audio_unit_desc_count() = 0;
 
                 /**
-                 * Get the number of Stream Input descriptors.
+                 * Get the number of Stream Input descriptors present in the current Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_input_desc_count() = 0;
 
                 /**
-                 * Get the number of Stream Output descriptors.
+                 * Get the number of Stream Output descriptors present in the current Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_output_desc_count() = 0;
 
                 /**
-                 * Get the number of Jack Input descriptors.
+                 * Get the number of Jack Input descriptors present in the current Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_jack_input_desc_count() = 0;
 
                 /**
-                 * Get the number of Jack Output descriptors.
+                 * Get the number of Jack Output descriptors present in the current Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_jack_output_desc_count() = 0;
 
                 /**
-                 * Get the number of AVB Interface descriptors.
+                 * Get the number of AVB Interface descriptors present in the current Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_avb_interface_desc_count() = 0;
 
                 /**
-                 * Get the number of Clock Source descriptors.
+                 * Get the number of Clock Source descriptors present in the current Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_clock_source_desc_count() = 0;
 
                 /**
-                 * Get the number of Locale descriptors.
+                 * Get the number of Locale descriptors present in the current Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_locale_desc_count() = 0;
 
                 /**
-                 * Get the number of Strings descriptors.
+                 * Get the number of Strings descriptors present in the current Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_strings_desc_count() = 0;
 
                 /**
-                 * Get the number of Clock Domain descriptors.
+                 * Get the number of Clock Domain descriptors present in the current Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_clock_domain_desc_count() = 0;
 

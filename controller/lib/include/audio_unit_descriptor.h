@@ -106,7 +106,7 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_internal_input_port() = 0;
 
                 /**
-                 * Get the number of internal output_ports of the Audio Unit descriptor object.
+                 * Get the number of internal output ports of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_internal_output_ports() = 0;
 
@@ -206,7 +206,7 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_transcoder() = 0;
 
                 /**
-                 * Get the number of control_blocks of the Audio Unit descriptor object.
+                 * Get the number of control blocks of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_control_blocks() = 0;
 

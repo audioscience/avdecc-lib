@@ -162,7 +162,7 @@ namespace avdecc_lib
                 uint16_t STDCALL get_configurations_count();
 
                 /**
-                 * Get the current configuration of the Entity descriptor object.
+                 * Get the current Configuration of the Entity descriptor object.
                  */
                 uint16_t STDCALL get_current_configuration();
 
@@ -177,7 +177,7 @@ namespace avdecc_lib
                 uint32_t STDCALL get_config_desc_count();
 
                 /**
-                 * Get the corresponding CONFIGURATION descriptor object by index.
+                 * Get the corresponding Configuration descriptor object by index.
                  */
                 configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index);
 

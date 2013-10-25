@@ -114,12 +114,12 @@ namespace avdecc_lib
                 uint16_t STDCALL get_descriptor_counts_offset();
 
                 /**
-                 * Initialize the descriptor type vector with descriptor types present in the Configuration.
+                 * Initialize the descriptor type vector with descriptor types present in the current Configuration.
                  */
                 void desc_type_vector_init(uint8_t *frame, size_t pos);
 
                 /**
-                 * Initialize the descriptor count vector with descriptor counts present in the Configuration.
+                 * Initialize the descriptor count vector with descriptor counts present in the current Configuration.
                  */
                 void desc_count_vector_init(uint8_t *frame, size_t pos);
 
@@ -174,52 +174,52 @@ namespace avdecc_lib
                 void store_clock_domain_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
 
                 /**
-                 * Get the number of Audio Unit descriptors.
+                 * Get the number of Audio Unit descriptors present in the current Configuration.
                  */
                 uint32_t STDCALL get_audio_unit_desc_count();
 
                 /**
-                 * Get the number of Stream Input descriptors.
+                 * Get the number of Stream Input descriptors present in the current Configuration.
                  */
                 uint32_t STDCALL get_stream_input_desc_count();
 
                 /**
-                 * Get the number of Stream Output descriptors.
+                 * Get the number of Stream Output descriptors present in the current Configuration.
                  */
                 uint32_t STDCALL get_stream_output_desc_count();
 
                 /**
-                 * Get the number of Jack Input descriptors.
+                 * Get the number of Jack Input descriptors present in the current Configuration.
                  */
                 uint32_t STDCALL get_jack_input_desc_count();
 
                 /**
-                 * Get the number of Jack Output descriptors.
+                 * Get the number of Jack Output descriptors present in the current Configuration.
                  */
                 uint32_t STDCALL get_jack_output_desc_count();
 
                 /**
-                 * Get the number of AVB Interface descriptors.
+                 * Get the number of AVB Interface descriptors present in the current Configuration.
                  */
                 uint32_t STDCALL get_avb_interface_desc_count();
 
                 /**
-                 * Get the number of Clock Source descriptors.
+                 * Get the number of Clock Source descriptors present in the current Configuration.
                  */
                 uint32_t STDCALL get_clock_source_desc_count();
 
                 /**
-                 * Get the number of Locale descriptors.
+                 * Get the number of Locale descriptors present in the current Configuration.
                  */
                 uint32_t STDCALL get_locale_desc_count();
 
                 /**
-                 * Get the number of Strings descriptors.
+                 * Get the number of Strings descriptors present in the current Configuration.
                  */
                 uint32_t STDCALL get_strings_desc_count();
 
                 /**
-                 * Get the number of Clock Domain descriptors.
+                 * Get the number of Clock Domain descriptors present in the current Configuration.
                  */
                 uint32_t STDCALL get_clock_domain_desc_count();
 
@@ -234,7 +234,7 @@ namespace avdecc_lib
                 uint16_t STDCALL get_desc_count_from_config_by_index(int desc_index);
 
                 /**
-                 * Check if the descriptor type and descriptor count index are valid and present in the Configuration.
+                 * Check if the descriptor type and descriptor count index are valid and present in the current Configuration.
                  */
                 bool STDCALL are_desc_type_and_index_in_config(int desc_type, int desc_count_index);
 
