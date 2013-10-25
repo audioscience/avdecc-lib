@@ -73,25 +73,7 @@ namespace avdecc_lib
                 return 0;
         }
 
-        //int aecp::ether_frame_init(struct jdksavdecc_eui48 src_mac_addr, struct jdksavdecc_eui48 dest_mac_addr, struct jdksavdecc_frame *ether_frame)
-        //{
-        //	/*** Offset to write the field to ***/
-        //	size_t ether_frame_pos = 0x0;
-        //	jdksavdecc_frame_init(ether_frame);
-
-        //	/********************** Ethernet Frame ***********************/
-        //	ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        //	ether_frame->src_address = src_mac_addr;
-        //	ether_frame->dest_address = dest_mac_addr;
-        //	ether_frame->length = 64; // Length of AECP packet is 64 bytes
-
-        //	/*********************** Fill frame payload with Ethernet frame information ********************/
-        //	jdksavdecc_frame_write(ether_frame, ether_frame->payload, ether_frame_pos, adp::ETHER_HDR_SIZE);
-
-        //	return 0;
-        //}
-
-        void aecp::common_hdr_init(struct jdksavdecc_frame *ether_frame, struct jdksavdecc_eui64 target_guid)
+        void aecp::common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid)
         {
                 struct jdksavdecc_aecpdu_common_control_header aecpdu_common_ctrl_hdr;
                 int aecpdu_common_ctrl_hdr_returned;
@@ -100,7 +82,7 @@ namespace avdecc_lib
                 /***** Offset to write the field to ****/
                 aecpdu_common_pos = adp::ETHER_HDR_SIZE;
 
-                /************************** 1722 Protocol Header ******************************/
+                /************************************** 1722 Protocol Header **************************************/
                 aecpdu_common_ctrl_hdr.cd = 1;
                 aecpdu_common_ctrl_hdr.subtype = JDKSAVDECC_SUBTYPE_AECP;
                 aecpdu_common_ctrl_hdr.sv = 0;
@@ -108,7 +90,7 @@ namespace avdecc_lib
                 aecpdu_common_ctrl_hdr.message_type = JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND;
                 aecpdu_common_ctrl_hdr.status = JDKSAVDECC_AEM_STATUS_SUCCESS;
                 aecpdu_common_ctrl_hdr.control_data_length = 20;
-                aecpdu_common_ctrl_hdr.target_entity_id = target_guid; // jdksavdecc_eui64_get(&target_guid, 0);
+                jdksavdecc_uint64_write(target_guid, &aecpdu_common_ctrl_hdr.target_entity_id, 0, sizeof(uint64_t));
 
                 /*********************** Fill frame payload with AECP Common Control Header information **********************/
                 aecpdu_common_ctrl_hdr_returned = jdksavdecc_aecpdu_common_control_header_write(&aecpdu_common_ctrl_hdr,
@@ -123,16 +105,19 @@ namespace avdecc_lib
                 }
         }
 
-        //void aecp::print_aecpdu_information()
-        //{
-        //	std::cout << "\nAECPDU";
-        //	std::cout << "\naecpdu_header status = 0x" << std::hex << get_aecpdu_header().header.status;
-        //	std::cout << "\naecpdu_header message_type = 0x" << std::hex << get_aecpdu_header().header.message_type;
-        //	std::cout << "\naecpdu_header subtype = 0x" << std::hex << get_aecpdu_header().header.subtype;
-        //	std::cout << "\naecpdu_header version = 0x" << std::hex << get_aecpdu_header().header.version;
-        //	std::cout << "\naecpdu_header control_data_length = 0x" << std::hex << get_aecpdu_header().header.control_data_length;
-        //	std::cout << "\ncontroller_entity_id = 0x" << std::hex << get_controller_entity_id();
-        //	std::cout << "\nsequence_id = 0x" << std::hex << get_sequence_id();
-        //	std::cout << "\ncommand_type = 0x" << std::hex << get_command_type();
-        //}
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
+        void aecp::print_aecpdu_information()
+        {
+                std::cout << "\nAECPDU";
+                std::cout << "\naecpdu_header status = 0x" << std::hex << get_aecpdu_header().header.status;
+                std::cout << "\naecpdu_header message_type = 0x" << std::hex << get_aecpdu_header().header.message_type;
+                std::cout << "\naecpdu_header subtype = 0x" << std::hex << get_aecpdu_header().header.subtype;
+                std::cout << "\naecpdu_header version = 0x" << std::hex << get_aecpdu_header().header.version;
+                std::cout << "\naecpdu_header control_data_length = 0x" << std::hex << get_aecpdu_header().header.control_data_length;
+                std::cout << "\ncontroller_entity_id = 0x" << std::hex << get_controller_entity_id();
+                std::cout << "\nsequence_id = 0x" << std::hex << get_sequence_id();
+                std::cout << "\ncommand_type = 0x" << std::hex << get_command_type();
+        }
+#endif
+
 }

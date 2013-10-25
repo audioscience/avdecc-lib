@@ -67,17 +67,17 @@ namespace avdecc_lib
                 adp();
 
                 /**
-                 * Constructor for adp used for constructing an object with a base pointer and memory buffer length.
+                 * Constructor for ADP used for constructing an object with a base pointer and memory buffer length.
                  */
                 adp(uint8_t *frame, size_t mem_buf_len);
 
                 /**
-                 * Destructor for adp used for destroying objects
+                 * Destructor for ADP used for destroying objects
                  */
                 ~adp();
 
                 /**
-                 * Get the ethernet_type of the ADP packet.
+                 * Get the Ethernet type of the ADP packet.
                  */
                 inline uint16_t get_ethernet_type()
                 {
@@ -85,7 +85,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the src_addr of the ADP packet.
+                 * Get the source address of the ADP packet.
                  */
                 inline struct jdksavdecc_eui48 get_src_addr()
                 {
@@ -93,7 +93,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the dest_addr of the ADP packet.
+                 * Get the destination of the ADP packet.
                  */
                 inline struct jdksavdecc_eui48 get_dest_addr()
                 {
@@ -101,12 +101,12 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the controller_guid of the ADP packet.
+                 * Get the Controller GUID of the ADP packet.
                  */
                 struct jdksavdecc_eui64 get_controller_guid();
 
                 /**
-                 * Get the src_mac_addr of the ADP packet.
+                 * Get the Source MAC address of the ADP packet.
                  */
                 static inline struct jdksavdecc_eui48 get_src_mac_addr()
                 {
@@ -132,7 +132,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the entity_entity_id field of the ADP object.
+                 * Get the Entity GUID field of the ADP object.
                  */
                 inline uint64_t get_entity_entity_id()
                 {
@@ -140,7 +140,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the entity_model_id field of the ADP object.
+                 * Get the Entity model id field of the ADP object.
                  */
                 inline uint64_t get_entity_model_id()
                 {
@@ -148,7 +148,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the entity_capabilities field of the ADP object.
+                 * Get the Entity capabilities field of the ADP object.
                  */
                 inline uint32_t get_entity_capabilities()
                 {
@@ -156,7 +156,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the talker_stream_sources field of the ADP object.
+                 * Get the Talker stream sources field of the ADP object.
                  */
                 inline uint16_t get_talker_stream_sources()
                 {
@@ -164,7 +164,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the talker_capabilities field of the ADP object.
+                 * Get the Talker capabilities field of the ADP object.
                  */
                 inline uint16_t get_talker_capabilities()
                 {
@@ -172,7 +172,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the listener_stream_sinks field of the ADP object.
+                 * Get the Listener stream sinks field of the ADP object.
                  */
                 inline uint16_t get_listener_stream_sinks()
                 {
@@ -180,7 +180,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the listener_capabilities field of the ADP object.
+                 * Get the Listener capabilities field of the ADP object.
                  */
                 inline uint16_t get_listener_capabilities()
                 {
@@ -188,7 +188,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the controller_capabilities field of the ADP object.
+                 * Get the Controller capabilities field of the ADP object.
                  */
                 inline uint32_t get_controller_capabilities()
                 {
@@ -196,7 +196,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the available_index field of the ADP object.
+                 * Get the available index field of the ADP object.
                  */
                 inline uint32_t get_available_index()
                 {
@@ -204,7 +204,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the gptp_grandmaster_id field of the ADP object.
+                 * Get the GPTP grandmaster id field of the ADP object.
                  */
                 inline uint64_t get_gptp_grandmaster_id()
                 {
@@ -212,7 +212,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the gptp_domain_number field of the ADP object.
+                 * Get the GPTP domain number field of the ADP object.
                  */
                 inline uint8_t get_gptp_domain_number()
                 {
@@ -228,7 +228,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the identify_control_index field of the ADP object.
+                 * Get the identify control index field of the ADP object.
                  */
                 inline uint16_t get_identify_control_index()
                 {
@@ -236,7 +236,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the interface_index field of the ADP object.
+                 * Get the interface index field of the ADP object.
                  */
                 inline uint16_t get_interface_index()
                 {
@@ -244,7 +244,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the association_id field of the ADP object.
+                 * Get the association id field of the ADP object.
                  */
                 inline uint64_t get_association_id()
                 {
@@ -259,10 +259,13 @@ namespace avdecc_lib
                         return adpdu.reserved1;
                 }
 
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
                 /**
                  * Print out ADPDU fields.
                  */
-                //		void print_adpdu_information();
+                void print_adpdu_information();
+#endif
+
         };
 }
 

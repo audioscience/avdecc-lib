@@ -41,17 +41,17 @@ namespace avdecc_lib
         {
         public:
                 /**
-                 * Get the locale_identifier of the locale_descriptor object.
+                 * Get the Locale identifier of the Locale descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_locale_identifier() = 0;
 
                 /**
-                 * Get the locale_identifier of the locale_descriptor object.
+                 * Get the number of strings of the Locale descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_strings() = 0;
 
                 /**
-                 * Get the locale_identifier of the locale_descriptor object.
+                 * Get the base strings of the Locale descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_strings() = 0;
         };

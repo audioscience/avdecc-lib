@@ -81,137 +81,137 @@ namespace avdecc_lib
                 virtual ~stream_output_descriptor_imp();
 
                 /**
-                 * Get the descriptor_type of the stream_output_descriptor object.
+                 * Get the descriptor type of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_type();
 
                 /**
-                 * Get the descriptor_index of the stream_output_descriptor object.
+                 * Get the descriptor index of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_index();
 
                 /**
-                 * Get the object_name of the stream_output_descriptor object.
+                 * Get the name of the Stream Output descriptor object.
                  */
                 uint8_t * STDCALL get_object_name();
 
                 /**
-                 * Get the localized_description of the stream_output_descriptor object.
+                 * Get the localized description of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_localized_description();
 
                 /**
-                 * Get the clock_domain_index of the stream_output_descriptor object.
+                 * Get the Clock Domain index of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_clock_domain_index();
 
                 /**
-                 * Get the stream_flags of the stream_output_descriptor object.
+                 * Get the stream flags of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_stream_flags();
 
                 /**
-                * Get the current_format of the stream_output_descriptor object.
+                * Get the current format of the Stream Output descriptor object.
                 */
                 char * STDCALL get_current_format();
 
                 /**
-                 * Get the formats_offset of the stream_output_descriptor object.
+                 * Get the formats offset of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_formats_offset();
 
                 /**
-                 * Get the number_of_formats of the stream_output_descriptor object.
+                 * Get the number of formats of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_number_of_formats();
 
                 /**
-                 * Get the backup_talker_entity_id_0 of the stream_output_descriptor object.
+                 * Get the backup talker entity id 0 of the Stream Output descriptor object.
                  */
                 uint64_t STDCALL get_backup_talker_entity_id_0();
 
                 /**
-                 * Get the backup_talker_unique_0 of the stream_output_descriptor object.
+                 * Get the backup talker unique_0 of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_backup_talker_unique_0();
 
                 /**
-                 * Get the backup_talker_entity_id_1 of the stream_output_descriptor object.
+                 * Get the backup talker entity id 1 of the Stream Output descriptor object.
                  */
                 uint64_t STDCALL get_backup_talker_entity_id_1();
 
                 /**
-                 * Get the backup_talker_unique_1 of the stream_output_descriptor object.
+                 * Get the backup talker unique_1 of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_backup_talker_unique_1();
 
                 /**
-                 * Get the backup_talker_entity_id_2 of the stream_output_descriptor object.
+                 * Get the backup talker entity id 2 of the Stream Output descriptor object.
                  */
                 uint64_t STDCALL get_backup_talker_entity_id_2();
 
                 /**
-                 * Get the backup_talker_unique_2 of the stream_output_descriptor object.
+                 * Get the backup talker unique 2 of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_backup_talker_unique_2();
 
                 /**
-                 * Get the backedup_talker_entity_id of the stream_output_descriptor object.
+                 * Get the backedup talker entity id of the Stream Output descriptor object.
                  */
                 uint64_t STDCALL get_backedup_talker_entity_id();
 
                 /**
-                 * Get the backedup_talker_unique of the stream_output_descriptor object.
+                 * Get the backedup talker unique of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_backedup_talker_unique();
 
                 /**
-                 * Get the avb_interface_index of the stream_output_descriptor object.
+                 * Get the AVB Interface index of the Stream Output descriptor object.
                  */
                 uint16_t STDCALL get_avb_interface_index();
 
                 /**
-                 * Get the buffer_length of the stream_output_descriptor object.
+                 * Get the buffer length of the Stream Output descriptor object.
                  */
                 uint32_t STDCALL get_buffer_length();
 
                 /**
-                 * Get the stream_format of a stream.
+                 * Get the stream format of a stream.
                  */
                 uint64_t STDCALL get_stream_format_stream_format();
 
                 /**
-                 * Get the stream_info_flags of a stream.
+                 * Get the stream info flags of a stream.
                  */
                 uint32_t STDCALL get_stream_info_flags();
 
                 /**
-                 * Get the stream_format of a stream.
+                 * Get the stream info stream format of a stream.
                  */
                 uint64_t STDCALL get_stream_info_stream_format();
 
                 /**
-                 * Get the stream_id of a stream.
+                 * Get the stream info stream id of a stream.
                  */
                 uint64_t STDCALL get_stream_info_stream_id();
 
                 /**
-                 * Get the msrp_accumulated_latency of a stream.
+                 * Get the stream info MSRP accumulated latency of a stream.
                  */
                 uint32_t STDCALL get_stream_info_msrp_accumulated_latency();
 
                 /**
-                 * Get the stream_dest_mac of a stream.
+                 * Get the stream info stream destination MAC of a stream.
                  */
                 uint8_t * STDCALL get_stream_info_stream_dest_mac();
 
                 /**
-                 * Get the msrp_failure_code of a stream.
+                 * Get the stream info MSRP failure code of a stream.
                  */
                 uint8_t STDCALL get_stream_info_msrp_failure_code();
 
                 /**
-                 * Get the msrp_failure_bridge_id of a stream.
+                 * Get the stream info MSRP failure bridge id of a stream.
                  */
                 uint64_t STDCALL get_stream_info_msrp_failure_bridge_id();
 

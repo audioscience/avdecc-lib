@@ -34,8 +34,6 @@
 #include "util.h"
 #include "adp.h"
 #include "aecp.h"
-//#include "adp_discovery_state_machine.h"
-//#include "acmp_controller_state_machine.h"
 #include "aem_controller_state_machine.h"
 #include "system_tx_queue.h"
 #include "end_station_imp.h"
@@ -46,17 +44,16 @@ namespace avdecc_lib
 
         end_station_imp::end_station_imp(uint8_t *frame, size_t mem_buf_len)
         {
-                jdksavdecc_eui64_init(&end_station_guid);
                 end_station_connection_status = ' ';
-		current_entity_desc = 0;
-		current_config_desc = 0;
+                current_entity_desc = 0;
+                current_config_desc = 0;
                 desc_type_from_config = 0;
                 desc_type_index_from_config = 0;
                 desc_count_from_config = 0;
                 desc_count_index_from_config = 0;
                 read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_IDLE;
                 adp_ref = new adp(frame, mem_buf_len);
-                end_station_guid = adp_ref->get_hdr().entity_entity_id;
+                end_station_guid = adp_ref->get_entity_entity_id();
                 convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
                 end_station_init();
         }
@@ -101,14 +98,9 @@ namespace avdecc_lib
                 end_station_connection_status = 'D';
         }
 
-        struct jdksavdecc_eui64 end_station_imp::get_end_station_guid()
+        uint64_t STDCALL end_station_imp::get_end_station_guid()
         {
                 return end_station_guid;
-        }
-
-        uint64_t STDCALL end_station_imp::get_end_station_entity_guid()
-        {
-                return jdksavdecc_uint64_get(&end_station_guid, 0);
         }
 
         uint64_t STDCALL end_station_imp::get_end_station_mac()
@@ -216,7 +208,7 @@ namespace avdecc_lib
                                 if(entity_desc_vec.size() == 0)
                                 {
                                         entity_desc_vec.push_back(new entity_descriptor_imp(this, frame, aecp::READ_DESC_POS, mem_buf_len));
-					current_config_desc = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_current_configuration();
+                                        current_config_desc = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_current_configuration();
                                         uint16_t desc_type = JDKSAVDECC_DESCRIPTOR_CONFIGURATION;
                                         uint16_t desc_index = 0x0;
                                         read_desc_init(desc_type, desc_index);
@@ -327,52 +319,52 @@ namespace avdecc_lib
                                 break;
 
                         case READ_TOP_LEVEL_DESC_IN_CONFIG_STARTING:
-				{
-					uint16_t desc_count = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_desc_count_from_config_by_index(desc_type_index_from_config);
-					desc_type_from_config = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_desc_type_from_config_by_index(desc_type_index_from_config);
+                                {
+                                        uint16_t desc_count = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_desc_count_from_config_by_index(desc_type_index_from_config);
+                                        desc_type_from_config = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_desc_type_from_config_by_index(desc_type_index_from_config);
 
-					if(desc_count_index_from_config < desc_count)
-					{
-						read_desc_init(desc_type_from_config, desc_count_index_from_config);
-						read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING;
-					}
-				}
+                                        if(desc_count_index_from_config < desc_count)
+                                        {
+                                                read_desc_init(desc_type_from_config, desc_count_index_from_config);
+                                                read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING;
+                                        }
+                                }
 
                                 break;
 
                         case READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING:
-				{
-					uint16_t desc_count = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_desc_count_from_config_by_index(desc_type_index_from_config);
-					desc_count_index_from_config++;
+                                {
+                                        uint16_t desc_count = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_desc_count_from_config_by_index(desc_type_index_from_config);
+                                        desc_count_index_from_config++;
 
-					if (desc_count_index_from_config >= desc_count)
-					{
-						uint16_t total_num_of_desc = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_descriptor_counts_count();
-						desc_type_index_from_config++;
-						desc_count_index_from_config = 0;
+                                        if (desc_count_index_from_config >= desc_count)
+                                        {
+                                                uint16_t total_num_of_desc = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_descriptor_counts_count();
+                                                desc_type_index_from_config++;
+                                                desc_count_index_from_config = 0;
 
-						if (desc_type_index_from_config >= total_num_of_desc)
-						{
-							read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_DONE;
-						}
+                                                if (desc_type_index_from_config >= total_num_of_desc)
+                                                {
+                                                        read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_DONE;
+                                                }
 
-						else
-						{
-							desc_count = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_desc_count_from_config_by_index(desc_type_index_from_config);
+                                                else
+                                                {
+                                                        desc_count = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_desc_count_from_config_by_index(desc_type_index_from_config);
 
-							if(desc_count_index_from_config < desc_count)
-							{
-								desc_type_from_config = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_desc_type_from_config_by_index(desc_type_index_from_config);
-								read_desc_init(desc_type_from_config, desc_count_index_from_config);
-							}
-						}
-					}
+                                                        if(desc_count_index_from_config < desc_count)
+                                                        {
+                                                                desc_type_from_config = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_desc_type_from_config_by_index(desc_type_index_from_config);
+                                                                read_desc_init(desc_type_from_config, desc_count_index_from_config);
+                                                        }
+                                                }
+                                        }
 
-					else
-					{
-						read_desc_init(desc_type_from_config, desc_count_index_from_config);
-					}
-				}
+                                        else
+                                        {
+                                                read_desc_init(desc_type_from_config, desc_count_index_from_config);
+                                        }
+                                }
 
                                 break;
 

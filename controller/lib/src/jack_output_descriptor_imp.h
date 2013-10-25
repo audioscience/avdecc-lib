@@ -60,49 +60,52 @@ namespace avdecc_lib
                 virtual ~jack_output_descriptor_imp();
 
                 /**
-                 * Get the descriptor_type of the jack_descriptor object.
+                 * Get the descriptor type of the Jack Output descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_type();
 
                 /**
-                 * Get the descriptor_index of the jack_descriptor object.
+                 * Get the descriptor index of the Jack Output descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_index();
 
                 /**
-                 * Get the object_name of the jack_descriptor object.
+                 * Get the name of the Jack Output descriptor object.
                  */
                 uint8_t * STDCALL get_object_name();
 
                 /**
-                 * Get the localized_description of the jack_descriptor object.
+                 * Get the localized description of the Jack Output descriptor object.
                  */
                 uint16_t STDCALL get_localized_description();
 
                 /**
-                 * Get the jack_flags of the jack_descriptor object.
+                 * Get the flags of the Jack Output descriptor object.
                  */
                 uint16_t STDCALL get_jack_flags();
 
                 /**
-                * Get the jack_type of the jack_descriptor object.
+                * Get the type of the Jack Output descriptor object.
                 */
                 uint16_t STDCALL get_jack_type();
 
                 /**
-                 * Get the number_of_controls of the jack_descriptor object.
+                 * Get the number of controls of the Jack Output descriptor object.
                  */
                 uint16_t STDCALL get_number_of_controls();
 
                 /**
-                * Get the base_control of the jack_descriptor object.
-                */
+                 * Get the base control of the Jack Output descriptor object.
+                 */
                 uint16_t STDCALL get_base_control();
 
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
                 /**
                  * Print out Jack Descriptor fields.
                  */
-                //	void print_jack_desc_info();
+                void print_jack_desc_info();
+#endif
+
         };
 }
 

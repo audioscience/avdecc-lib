@@ -25,8 +25,6 @@
  * system_message_queue.cpp
  *
  * System message queue implementation, which is called by System modules to queue packets.
- *
- * (c) AudioScience, Inc. 2013
  */
 
 #include <Windows.h>
@@ -53,11 +51,6 @@ system_message_queue::~system_message_queue()
                 free(buf);
         }
 }
-
-//system_message_queue * system_message_queue::queue_new(int entry_count, int entry_size)
-//{
-//	return (new system_message_queue(entry_count, entry_size));
-//}
 
 void system_message_queue::queue_push(void *thread_data)
 {

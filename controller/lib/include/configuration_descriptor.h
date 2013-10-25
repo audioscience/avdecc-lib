@@ -52,32 +52,32 @@ namespace avdecc_lib
         {
         public:
                 /**
-                 * Get the object_name of the configuration_descriptor object.
+                 * Get the name of the Configuration descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
 
                 /**
-                 * Get the localized_description of the configuration_descriptor object.
+                 * Get the localized description of the Configuration descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
                 /**
-                 * Get the descriptor_counts_count of the configuration_descriptor object.
+                 * Get the descriptor counts count of the Configuration descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_counts_count() = 0;
 
                 /**
-                 * Get the descriptor_counts_offset of the configuration_descriptor object.
+                 * Get the descriptor counts offset of the Configuration descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_counts_offset() = 0;
 
-		/**
-                 * Get the top level descriptor present in the configuration_descriptor object.
+                /**
+                 * Get the top level descriptor present in the Configuration descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_desc_type_from_config_by_index(int desc_index) = 0;
 
                 /**
-                 * Get the count of the top level descriptor present in the configuration_descriptor object.
+                 * Get the count of the top level descriptor present in the Configuration descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_desc_count_from_config_by_index(int desc_index) = 0;
 
@@ -137,37 +137,37 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_clock_domain_desc_count() = 0;
 
                 /**
-                 * Get the corresponding AUDIO_UNIT descriptor object by index.
+                 * Get the corresponding AUDIO UNIT descriptor object by index.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual audio_unit_descriptor * STDCALL get_audio_unit_desc_by_index(uint32_t audio_unit_desc_index) = 0;
 
                 /**
-                 * Get the corresponding STREAM_INPUT descriptor object by index.
+                 * Get the corresponding STREAM INPUT descriptor object by index.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual stream_input_descriptor * STDCALL get_stream_input_desc_by_index(uint32_t stream_input_desc_index) = 0;
 
                 /**
-                 * Get the corresponding STREAM_OUTPUT descriptor object by index.
+                 * Get the corresponding STREAM OUTPUT descriptor object by index.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual stream_output_descriptor * STDCALL get_stream_output_desc_by_index(uint32_t stream_output_desc_index) = 0;
 
                 /**
-                 * Get the corresponding JACK_INPUT descriptor object by index.
+                 * Get the corresponding JACK INPUT descriptor object by index.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual jack_input_descriptor * STDCALL get_jack_input_desc_by_index(uint32_t jack_input_desc_index) = 0;
 
                 /**
-                 * Get the corresponding JACK_OUTPUT descriptor object by index.
+                 * Get the corresponding JACK OUTPUT descriptor object by index.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual jack_output_descriptor * STDCALL get_jack_output_desc_by_index(uint32_t jack_output_desc_index) = 0;
 
                 /**
-                 * Get the corresponding AVB_INTERFACE descriptor object by index.
+                 * Get the corresponding AVB INTERFACE descriptor object by index.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual avb_interface_descriptor * STDCALL get_avb_interface_desc_by_index(uint32_t avb_interface_desc_index) = 0;
 
                 /**
-                 * Get the corresponding CLOCK_SOURCE descriptor object by index.
+                 * Get the corresponding CLOCK SOURCE descriptor object by index.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual clock_source_descriptor * STDCALL get_clock_source_desc_by_index(uint32_t clock_source_desc_index) = 0;
 
@@ -182,7 +182,7 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual strings_descriptor * STDCALL get_strings_desc_by_index(uint32_t strings_desc_index) = 0;
 
                 /**
-                 * Get the corresponding CLOCK_DOMAIN descriptor object by index.
+                 * Get the corresponding CLOCK DOMAIN descriptor object by index.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual clock_domain_descriptor * STDCALL get_clock_domain_desc_by_index(uint32_t clock_domain_desc_index) = 0;
         };

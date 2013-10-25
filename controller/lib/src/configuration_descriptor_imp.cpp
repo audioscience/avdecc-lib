@@ -339,37 +339,41 @@ namespace avdecc_lib
                 return clock_domain_desc_vec.at(clock_domain_desc_index);
         }
 
-        //void configuration_descriptor_imp::print_top_level_descs_in_config()
-        //{
-        //	uint16_t desc_counts_count;
-        //	uint16_t desc_type;
-        //	uint16_t desc_count;
-        //	desc_counts_count = get_descriptor_counts_count();
-        //	uint16_t offset = 0x0;
-        //
-        //	if(desc_counts_count > 0)
-        //	{
-        //		std::cout << "\nTop level descriptors" << std::endl;
-        //		for(uint32_t index_i = 0; index_i < desc_counts_count; index_i++)
-        //		{
-        //			desc_type = jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + position_offset + offset);
-        //			desc_count = jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + position_offset  + offset + 0x2);
-        //			std::cout << "\tdesc_type = 0x" << std::hex << desc_type << " (" << avdecc_lib::aem_string::desc_value_to_name(desc_type) << ")" << std::endl;
-        //			std::cout << "\tdesc_count = " << std::dec << desc_count << std::endl;
-        //			offset += 0x4;
-        //		}
-        //	}
-        //}
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
+        void configuration_descriptor_imp::print_top_level_descs_in_config()
+        {
+                uint16_t desc_counts_count;
+                uint16_t desc_type;
+                uint16_t desc_count;
+                desc_counts_count = get_descriptor_counts_count();
+                uint16_t offset = 0x0;
 
-        //void configuration_descriptor_imp::print_config_desc_info()
-        //{
-        //	std::cout << "\nConfiguration Descriptor";
-        //	std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-        //	std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-        //	std::cout << "\nobject_name = " << std::dec << get_object_name().value;
-        //	std::cout << "\nlocalized_description = " << std::dec << get_localized_description();
-        //	std::cout << "\ndescriptor_counts_count = " << std::dec << get_descriptor_counts_count();
-        //	std::cout << "\ndescriptor_counts_offset = " << std::dec << get_descriptor_counts_offset();
-        //	print_top_level_descs_in_config();
-        //}
+                if(desc_counts_count > 0)
+                {
+                        std::cout << "\nTop level descriptors" << std::endl;
+
+                        for(uint32_t index_i = 0; index_i < desc_counts_count; index_i++)
+                        {
+                                desc_type = jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + position_offset + offset);
+                                desc_count = jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + position_offset  + offset + 0x2);
+                                std::cout << "\tdesc_type = 0x" << std::hex << desc_type << " (" << avdecc_lib::aem_string::desc_value_to_name(desc_type) << ")" << std::endl;
+                                std::cout << "\tdesc_count = " << std::dec << desc_count << std::endl;
+                                offset += 0x4;
+                        }
+                }
+        }
+
+        void configuration_descriptor_imp::print_config_desc_info()
+        {
+                std::cout << "\nConfiguration Descriptor";
+                std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
+                std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
+                std::cout << "\nobject_name = " << std::dec << get_object_name().value;
+                std::cout << "\nlocalized_description = " << std::dec << get_localized_description();
+                std::cout << "\ndescriptor_counts_count = " << std::dec << get_descriptor_counts_count();
+                std::cout << "\ndescriptor_counts_offset = " << std::dec << get_descriptor_counts_offset();
+                print_top_level_descs_in_config();
+        }
+#endif
+
 }

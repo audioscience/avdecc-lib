@@ -110,7 +110,7 @@ namespace avdecc_lib
 
                 for(uint32_t index_i = 0; index_i < end_station_vec.size(); index_i++)
                 {
-                        end_station_guid = jdksavdecc_uint64_get(&end_station_vec.at(index_i)->get_end_station_guid(), 0);
+                        end_station_guid = end_station_vec.at(index_i)->get_end_station_guid();
 
                         if(end_station_guid == entity_guid)
                         {

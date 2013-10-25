@@ -84,42 +84,42 @@ namespace avdecc_lib
                 virtual ~configuration_descriptor_imp();
 
                 /**
-                 * Get the descriptor_type of the configuration_descriptor object.
+                 * Get the descriptor type of the Configuration descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_type();
 
                 /**
-                 * Get the descriptor_index of the configuration_descriptor object.
+                 * Get the descriptor index of the Configuration descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_index();
 
                 /**
-                 * Get the object_name of the configuration_descriptor object.
+                 * Get the name of the Configuration descriptor object.
                  */
                 uint8_t * STDCALL get_object_name();
 
                 /**
-                 * Get the localized_description of the configuration_descriptor object.
+                 * Get the localized description of the Configuration descriptor object.
                  */
                 uint16_t STDCALL get_localized_description();
 
                 /**
-                 * Get the descriptor_counts_count of the configuration_descriptor object.
+                 * Get the descriptor counts count of the Configuration descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_counts_count();
 
                 /**
-                 * Get the descriptor_counts_offset of the configuration_descriptor object.
+                 * Get the descriptor counts offset of the Configuration descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_counts_offset();
 
                 /**
-                 * Initialize the desc_type_vector with descriptor types present in the Configuration.
+                 * Initialize the descriptor type vector with descriptor types present in the Configuration.
                  */
                 void desc_type_vector_init(uint8_t *frame, size_t pos);
 
                 /**
-                 * Initialize the desc_count_vector with descriptor counts present in the Configuration.
+                 * Initialize the descriptor count vector with descriptor counts present in the Configuration.
                  */
                 void desc_count_vector_init(uint8_t *frame, size_t pos);
 
@@ -224,12 +224,12 @@ namespace avdecc_lib
                 uint32_t STDCALL get_clock_domain_desc_count();
 
                 /**
-                 * Get the top level descriptor present in the configuration_descriptor object.
+                 * Get the top level descriptor present in the Configuration descriptor object.
                  */
                 uint16_t STDCALL get_desc_type_from_config_by_index(int desc_index);
 
                 /**
-                 * Get the count of the top level descriptor present in the configuration_descriptor object.
+                 * Get the count of the top level descriptor present in the Configuration descriptor object.
                  */
                 uint16_t STDCALL get_desc_count_from_config_by_index(int desc_index);
 
@@ -239,37 +239,37 @@ namespace avdecc_lib
                 bool STDCALL are_desc_type_and_index_in_config(int desc_type, int desc_count_index);
 
                 /**
-                 * Get the corresponding AUDIO_UNIT descriptor object by index.
+                 * Get the corresponding AUDIO UNIT descriptor object by index.
                  */
                 audio_unit_descriptor * STDCALL get_audio_unit_desc_by_index(uint32_t audio_unit_desc_index);
 
                 /**
-                 * Get the corresponding STREAM_INPUT descriptor object by index.
+                 * Get the corresponding STREAM INPUT descriptor object by index.
                  */
                 stream_input_descriptor * STDCALL get_stream_input_desc_by_index(uint32_t stream_input_desc_index);
 
                 /**
-                 * Get the corresponding STREAM_OUTPUT descriptor object by index.
+                 * Get the corresponding STREAM OUTPUT descriptor object by index.
                  */
                 stream_output_descriptor * STDCALL get_stream_output_desc_by_index(uint32_t stream_output_desc_index);
 
                 /**
-                 * Get the corresponding JACK_INPUT descriptor object by index.
+                 * Get the corresponding JACK INPUT descriptor object by index.
                  */
                 jack_input_descriptor * STDCALL get_jack_input_desc_by_index(uint32_t jack_input_desc_index);
 
                 /**
-                 * Get the corresponding JACK_OUTPUT descriptor object by index.
+                 * Get the corresponding JACK OUTPUT descriptor object by index.
                  */
                 jack_output_descriptor * STDCALL get_jack_output_desc_by_index(uint32_t jack_output_desc_index);
 
                 /**
-                 * Get the corresponding AVB_INTERFACE descriptor object by index.
+                 * Get the corresponding AVB INTERFACE descriptor object by index.
                  */
                 avb_interface_descriptor * STDCALL get_avb_interface_desc_by_index(uint32_t avb_interface_desc_index);
 
                 /**
-                 * Get the corresponding CLOCK_SOURCE descriptor object by index.
+                 * Get the corresponding CLOCK SOURCE descriptor object by index.
                  */
                 clock_source_descriptor * STDCALL get_clock_source_desc_by_index(uint32_t clock_source_desc_index);
 
@@ -284,19 +284,22 @@ namespace avdecc_lib
                 strings_descriptor * STDCALL get_strings_desc_by_index(uint32_t strings_desc_index);
 
                 /**
-                 * Get the corresponding CLOCK_DOMAIN descriptor object by index.
+                 * Get the corresponding CLOCK DOMAIN descriptor object by index.
                  */
                 clock_domain_descriptor * STDCALL get_clock_domain_desc_by_index(uint32_t clock_domain_desc_index);
 
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
                 /**
-                 * Print the top level descriptors of the configuration_descriptor object.
+                 * Print the top level descriptors of the Configuration descriptor object.
                  */
-                //	void print_top_level_descs_in_config();
+                void print_top_level_descs_in_config();
 
                 /**
                  * Print out CONFIGURATION descriptor fields.
                  */
-                //	void print_config_desc_info();
+                void print_config_desc_info();
+#endif
+
         };
 }
 

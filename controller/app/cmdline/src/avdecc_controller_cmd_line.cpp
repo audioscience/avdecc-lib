@@ -282,7 +282,7 @@ int avdecc_cmd_line::cmd_list()
         for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
         {
                 end_station = index_i;
-                end_station_guid = controller_ref->get_end_station_by_index(index_i)->get_end_station_entity_guid();
+                end_station_guid = controller_ref->get_end_station_by_index(index_i)->get_end_station_guid();
                 end_station_name = controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_entity_name();
                 end_station_mac = controller_ref->get_end_station_by_index(index_i)->get_end_station_mac();
                 std::cout << controller_ref->get_end_station_by_index(index_i)->get_end_station_connection_status()
@@ -293,7 +293,6 @@ int avdecc_cmd_line::cmd_list()
         }
 
         std::cout << "\nC - End Station Connected." << std::endl;
-        //	std::cout << "R - End Station Reconnected." << std::endl;
         std::cout << "D - End Station Disconnected." << std::endl;
 
         return 0;

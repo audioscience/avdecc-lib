@@ -60,54 +60,56 @@ namespace avdecc_lib
                 virtual ~clock_source_descriptor_imp();
 
                 /**
-                 * Get the descriptor_type of the clock_source_descriptor object.
+                 * Get the descriptor type of the Clock Source descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_type();
 
                 /**
-                 * Get the descriptor_index of the clock_source_descriptor object.
+                 * Get the descriptor index of the Clock Source descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_index();
 
                 /**
-                 * Get the object_name of the clock_source_descriptor object.
+                 * Get the name of the Clock Source descriptor object.
                  */
                 uint8_t * STDCALL get_object_name();
 
                 /**
-                 * Get the localized_description of the clock_source_descriptor object.
+                 * Get the localized description of the Clock Source descriptor object.
                  */
                 uint16_t STDCALL get_localized_description();
 
                 /**
-                 * Get the clock_source_flags of the clock_source_descriptor object.
+                 * Get the flags of the Clock Source descriptor object.
                  */
                 uint16_t STDCALL get_clock_source_flags();
 
                 /**
-                * Get the clock_source_type of the clock_source_descriptor object.
+                * Get the type of the Clock Source descriptor object.
                 */
                 uint16_t STDCALL get_clock_source_type();
 
                 /**
-                * Get the clock_source_identifier of the clock_source_descriptor object.
+                * Get the identifier of the Clock Source descriptor object.
                 */
                 uint64_t STDCALL get_clock_source_identifier();
 
                 /**
-                 * Get the clock_source_location_type of the clock_source_descriptor object.
+                 * Get the location type of the Clock Source descriptor object.
                  */
                 uint16_t STDCALL get_clock_source_location_type();
 
                 /**
-                 * Get the clock_source_location_index of the clock_source_descriptor object.
+                 * Get the location index of the Clock Source descriptor object.
                  */
                 uint16_t STDCALL get_clock_source_location_index();
 
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
                 /**
                  * Print out Clock Source Descriptor fields.
                  */
-                //	void print_clock_source_desc_info();
+                void print_clock_source_desc_info();
+#endif
         };
 }
 

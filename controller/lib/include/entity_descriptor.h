@@ -43,97 +43,97 @@ namespace avdecc_lib
         {
         public:
                 /**
-                 * Get the entity_entity_id of the entity_descriptor object.
+                 * Get the id of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_entity_id() = 0;
 
                 /**
-                 * Get the vendor_id of the entity_descriptor object.
+                 * Get the vendor id of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_vendor_id() = 0;
 
                 /**
-                 * Get the entity_model_id of the entity_descriptor object.
+                 * Get the model id of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_entity_model_id() = 0;
 
                 /**
-                 * Get the entity_capabilities of the entity_descriptor object.
+                 * Get the capabilities of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_entity_capabilities() = 0;
 
                 /**
-                 * Get the talker_stream_sources of the entity_descriptor object.
+                 * Get the Talker Stream Sources of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_talker_stream_sources() = 0;
 
                 /**
-                 * Get the talker_capabilities of the entity_descriptor object.
+                 * Get the Talker capabilities of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_talker_capabilities() = 0;
 
                 /**
-                 * Get the listener_stream_sinks of the entity_descriptor object.
+                 * Get the Listener Stream Sinks of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_listener_stream_sinks() = 0;
 
                 /**
-                 * Get the listener_capabilities of the entity_descriptor object.
+                 * Get the Listener capabilities of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_listener_capabilities() = 0;
 
                 /**
-                 * Get the controller_capabilities of the entity_descriptor object.
+                 * Get the Controller capabilities of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_controller_capabilities() = 0;
 
                 /**
-                 * Get the available_index of the entity_descriptor object.
+                 * Get the available index of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_available_index() = 0;
 
                 /**
-                 * Get the association_id of the entity_descriptor object.
+                 * Get the association id of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_association_id() = 0;
 
                 /**
-                 * Get the entity_name of the entity_descriptor object.
+                 * Get the name of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_entity_name() = 0;
 
                 /**
-                 * Get the vendor_name_string of the entity_descriptor object.
+                 * Get the vendor name string of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_vendor_name_string() = 0;
 
                 /**
-                 * Get the model_name_string of the entity_descriptor object.
+                 * Get the model name string of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_model_name_string() = 0;
 
                 /**
-                 * Get the firmware_version of the entity_descriptor object.
+                 * Get the firmware version of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_firmware_version() = 0;
 
                 /**
-                 * Get the group_name of the entity_descriptor object.
+                 * Get the group name of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_group_name() = 0;
 
                 /**
-                 * Get the serial_number of the entity_descriptor object.
+                 * Get the serial number of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_serial_number() = 0;
 
                 /**
-                 * Get the configurations_count of the entity_descriptor object.
+                 * Get the configurations count of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_configurations_count() = 0;
 
                 /**
-                 * Get the current_configuration of the entity_descriptor object.
+                 * Get the current configuration of the Entity descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_current_configuration() = 0;
 

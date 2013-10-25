@@ -25,8 +25,6 @@
  * timer.cpp
  *
  * Timer implementation, which calculates start, end, and timeout times for network packets.
- *
- * (c) AudioScience, Inc. 2013
  */
 
 #include "timer.h"

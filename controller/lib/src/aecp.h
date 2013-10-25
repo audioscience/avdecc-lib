@@ -76,17 +76,12 @@ namespace avdecc_lib
                 static int ether_frame_init(adp *adp_ref, struct jdksavdecc_frame *ether_frame);
 
                 /**
-                 * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
-                 */
-                //		static int ether_frame_init(struct jdksavdecc_eui48 src_mac_addr, struct jdksavdecc_eui48 dest_mac_addr, struct jdksavdecc_frame *ether_frame);
-
-                /**
                  * Initialize and fill Ethernet frame payload with 1722 AECP Header information.
                  */
-                static void common_hdr_init(struct jdksavdecc_frame *ether_frame, struct jdksavdecc_eui64 target_guid);
+                static void common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid);
 
                 /**
-                 * Get the aecpdu_header field of the AECP object.
+                 * Get the header field of the AECP object.
                  */
                 inline struct jdksavdecc_aecpdu_common get_aecpdu_header()
                 {
@@ -94,7 +89,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the controller_entity_id field of the AECP object.
+                 * Get the Controller GUID field of the AECP object.
                  */
                 inline uint64_t get_controller_entity_id()
                 {
@@ -102,7 +97,7 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the sequence_id field of the AECP object.
+                 * Get the sequence id field of the AECP object.
                  */
                 inline uint16_t get_sequence_id()
                 {
@@ -110,17 +105,20 @@ namespace avdecc_lib
                 }
 
                 /**
-                 * Get the command_type field of the AECP object.
+                 * Get the command type field of the AECP object.
                  */
                 inline uint16_t get_command_type()
                 {
                         return aecpdu.command_type;
                 }
 
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
                 /**
                  * Print out AECPDU fields.
                  */
-                //	void print_aecpdu_information();
+                void print_aecpdu_information();
+#endif
+
         };
 }
 

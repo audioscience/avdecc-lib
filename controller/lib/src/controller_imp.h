@@ -71,12 +71,12 @@ namespace avdecc_lib
                 const char * STDCALL get_version();
 
                 /**
-                 * Get the controller_guid of the AVDECC Entity sending the command.
+                 * Get the Controller GUID of the AVDECC Entity sending the command.
                  */
                 uint64_t STDCALL get_controller_guid();
 
                 /**
-                 * Get the number of end stations in the end_station_vec.
+                 * Get the number of End Stations connected
                  */
                 uint32_t STDCALL get_end_station_count();
 

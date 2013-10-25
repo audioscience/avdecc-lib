@@ -47,9 +47,9 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual char STDCALL get_end_station_connection_status() = 0;
 
                 /**
-                 * Get the entity guid of the End Station.
+                 * Get the GUID of the End Station.
                  */
-                AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_end_station_entity_guid() = 0;
+                AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_end_station_guid() = 0;
 
                 /**
                  * Get the source MAC address of the End Station.
@@ -57,8 +57,7 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_end_station_mac() = 0;
 
                 /**
-                 * Send a READ_DESCRIPTOR command with or without a notifying id based on the notifying flag
-                 * to read a descriptor from an AVDECC Entity.
+                 * Send a READ_DESCRIPTOR command with notification id to read a descriptor from an AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_read_desc_cmd(void *notification_id, uint16_t desc_type, uint16_t desc_index) = 0;
 

@@ -61,49 +61,52 @@ namespace avdecc_lib
                 virtual ~clock_domain_descriptor_imp();
 
                 /**
-                 * Get the descriptor_type of the clock_domain_descriptor object.
+                 * Get the descriptor type of the clock_domain_descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_type();
 
                 /**
-                 * Get the descriptor_index of the clock_domain_descriptor object.
+                 * Get the descriptor index of the clock_domain_descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_index();
 
                 /**
-                 * Get the object_name of the clock_domain_descriptor object.
+                 * Get the name of the clock_domain_descriptor object.
                  */
                 uint8_t * STDCALL get_object_name();
 
                 /**
-                 * Get the localized_description of the clock_domain_descriptor object.
+                 * Get the localized description of the clock_domain_descriptor object.
                  */
                 uint16_t STDCALL get_localized_description();
 
                 /**
-                 * Get the clock_source_index of the clock_domain_descriptor object.
+                 * Get the Clock Source index of the clock_domain_descriptor object.
                  */
                 uint16_t STDCALL get_clock_source_index();
 
                 /**
-                * Get the clock_sources_offset of the clock_domain_descriptor object.
+                * Get the Clock Sources offset of the clock_domain_descriptor object.
                 */
                 uint16_t STDCALL get_clock_sources_offset();
 
                 /**
-                 * Get the clock_sources_count of the clock_domain_descriptor object.
+                 * Get the Clock Sources count of the clock_domain_descriptor object.
                  */
                 uint16_t STDCALL get_clock_sources_count();
 
                 /**
-                * Store the clock_sources of the clock_domain_descriptor object.
+                * Store the Clock Sources of the clock_domain_descriptor object.
                 */
                 void store_clock_sources(uint8_t *frame, size_t pos);
 
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
                 /**
                  * Print out Clock Domain Descriptor fields.
                  */
-                //	void print_clock_domain_desc_info();
+                void print_clock_domain_desc_info();
+#endif
+
         };
 }
 
