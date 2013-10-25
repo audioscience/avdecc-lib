@@ -31,6 +31,7 @@
 #include <iphlpapi.h>
 #include "enumeration.h"
 #include "log.h"
+#include "jdksavdecc_util.h"
 #include "util.h"
 #include "net_interface_imp.h"
 
@@ -126,7 +127,7 @@ namespace avdecc_lib
 
                 for(dev = all_devs, index = 0; index < interface_num - 1; dev = dev->next, index++); // Jump to the selected adapter
 
-                /******************************************************** Open the device ********************************************************/
+                /************************************************************** Open the device ****************************************************************/
                 if((pcap_interface = pcap_open_live(dev->name,		       // Name of the device
                                                     65536,		       // Portion of the packet to capture
                                                     // 65536 guarantees that the whole packet will be captured on all the link layers

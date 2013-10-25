@@ -37,19 +37,23 @@
 #include "aem_string.h"
 #include "enumeration.h"
 
+#define DEBUG_SEND_GET_STREAM_FORMAT_CMD
+#define DEBUG_SEND_GET_STREAM_INFO_CMD
+
 class avdecc_cmd_line
 {
 private:
-        static std::string log_path;
         avdecc_lib::net_interface *netif_ref;
         avdecc_lib::system *system_ref;
         avdecc_lib::controller *controller_ref;
-        static uint32_t end_station;
-        static uint16_t entity;
-        static uint16_t config;
-        static uint32_t notification_id;
 
 public:
+        static std::string log_path;
+	static uint32_t current_end_station;
+        static uint16_t current_entity;
+        static uint16_t current_config;
+        static uint32_t notification_id;
+
         /**
          * An empty constructor for avdecc_cmd_line
          */
@@ -150,11 +154,6 @@ public:
                                 uint64_t new_stream_info_field_value);
 
         /**
-         * Display the GET_STREAM_INFO Stream ID, MSRP Accumulated Latency, or Stream Dest MAC field.
-         */
-        int cmd_get_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field);
-
-        /**
          * Send a GET_STREAM_INFO command to fetch the current information of a stream.
          */
         int cmd_get_stream_info(std::string desc_name, uint16_t desc_index);
@@ -182,7 +181,7 @@ public:
         /**
          * Check if end station and configuration setting is in range and valid.
          */
-        bool is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config);
+        bool is_setting_valid();
 };
 
 #endif

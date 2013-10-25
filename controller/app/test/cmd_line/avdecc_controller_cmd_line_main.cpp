@@ -73,6 +73,7 @@ extern "C" void log_callback(void *user_obj, int32_t log_level, const char *log_
 int main()
 {
         avdecc_cmd_line *avdecc_cmd_line_ref = new avdecc_cmd_line(notification_callback, log_callback);
+	avdecc_cmd_line_ref->is_setting_valid();
 
         std::vector<std::string> cmd_input_vector;
         std::string cmd_input;
@@ -127,7 +128,6 @@ int main()
                                                 avdecc_cmd_line_ref->cmd_version();
                                                 std::cout.rdbuf(ofstream_ref.rdbuf());
                                         }
-
                                         else
                                         {
                                                 avdecc_cmd_line_ref->cmd_version();
@@ -139,34 +139,28 @@ int main()
                                 {
                                         avdecc_cmd_line_ref->cmd_list();
                                 }
-
                                 else if(cmd_input_vector.at(0).compare("select") == 0)
                                 {
                                         avdecc_cmd_line_ref->cmd_select();
                                 }
-
                                 else if(cmd_input_vector.at(0).compare("path") == 0)
                                 {
                                         avdecc_cmd_line_ref->cmd_path();
                                 }
-
                                 else if(cmd_input_vector.at(0).compare("unlog") == 0)
                                 {
                                         std::cout.rdbuf(cout_buf);
                                         ofstream_ref.close();
                                         is_output_redirected = false;
                                 }
-
                                 else if(cmd_input_vector.at(0).compare("clr") == 0)
                                 {
                                         std::system("cls");
                                 }
-
                                 else if(cmd_input_vector.at(0).compare("q") == 0 || cmd_input_vector.at(0).compare("quit") == 0)
                                 {
                                         while_loop = false;
                                 }
-
                                 else
                                 {
                                         std::cout << "Invalid Command" << std::endl;
@@ -187,14 +181,13 @@ int main()
                                                 std::cerr << "Out Of Range Exception " << e.what() << std::endl;
                                         }
                                 }
-
                                 else if(cmd_input_vector.at(0).compare("list") == 0 && cmd_input_vector.at(1).compare("clock_sync_source") == 0)
                                 {
-                                        //cmd_list_clock_sync_source();
+                                        avdecc_cmd_line_ref->cmd_list_clock_sync_source();
                                 }
                                 else if(cmd_input_vector.at(0).compare("entity") == 0 && cmd_input_vector.at(1).compare("available") == 0)
                                 {
-                                        //cmd_entity_avail();
+                                        avdecc_cmd_line_ref->cmd_entity_avail();
                                 }
                                 else if(cmd_input_vector.at(0).compare("path") == 0)
                                 {
@@ -203,7 +196,7 @@ int main()
 
                                 else if(cmd_input_vector.at(0).compare("log") == 0)
                                 {
-                                        /*std::string file = log_path + cmd_input_vector.at(1) + ".txt";
+                                        std::string file = avdecc_cmd_line::log_path + cmd_input_vector.at(1) + ".txt";
                                         try
                                         {
                                         	ofstream_ref.open(file);
@@ -215,7 +208,7 @@ int main()
                                         {
                                         	std::cerr << "\nofstream exception";
                                         	exit(EXIT_FAILURE);
-                                        }*/
+                                        }
                                 }
                                 else
                                 {
@@ -241,11 +234,10 @@ int main()
                                                 new_config = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
                                         }
 
-                                        if(is_input_valid && avdecc_cmd_line_ref->is_setting_valid(new_end_station, new_entity, new_config))
+                                        if(is_input_valid)
                                         {
                                                 avdecc_cmd_line_ref->cmd_select(new_end_station, new_entity, new_config);
                                         }
-
                                         else
                                         {
                                                 std::cout << "Invalid Command" << std::endl;
@@ -254,7 +246,7 @@ int main()
 
                                 else if(cmd_input_vector.at(0).compare("view") == 0 && cmd_input_vector.at(1).compare("descriptor") == 0)
                                 {
-                                        /*uint16_t desc_index = 0x0;
+                                        uint16_t desc_index = 0x0;
 
                                         if((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0))
                                         {
@@ -262,11 +254,11 @@ int main()
                                         	desc_index = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
                                         }
 
-                                        if(is_input_valid && is_setting_valid(endpoint, config))
+                                        if(is_input_valid)
                                         {
                                         	try
                                         	{
-                                        		cmd_view_descriptor(cmd_input_vector.at(2), desc_index);
+                                        		avdecc_cmd_line_ref->cmd_view_descriptor(cmd_input_vector.at(2), desc_index);
                                         	}
                                         	catch(std::out_of_range &e)
                                         	{
@@ -277,11 +269,11 @@ int main()
                                         else
                                         {
                                         	std::cout << "Invalid Command" << std::endl;
-                                        }*/
+                                        }
                                 }
                                 else if(cmd_input_vector.at(0).compare("read") == 0 && cmd_input_vector.at(1).compare("descriptor") == 0)
                                 {
-                                        /*uint16_t desc_index = 0x0;
+                                        uint16_t desc_index = 0x0;
 
                                         if((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0))
                                         {
@@ -289,14 +281,14 @@ int main()
                                         	desc_index = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
                                         }
 
-                                        if(is_input_valid && is_setting_valid(endpoint, config))
+                                        if(is_input_valid)
                                         {
-                                        	cmd_read_descriptor(cmd_input_vector.at(2), desc_index);
+                                        	avdecc_cmd_line_ref->cmd_read_descriptor(cmd_input_vector.at(2), desc_index);
                                         }
                                         else
                                         {
                                         	std::cout << "Invalid Command" << std::endl;
-                                        }*/
+                                        }
                                 }
                                 else if(cmd_input_vector.at(0).compare("get") == 0 && cmd_input_vector.at(1).compare("stream_format") == 0)
                                 {
@@ -366,7 +358,7 @@ int main()
                         case 5:
                                 if(cmd_input_vector.at(0).compare("acquire") == 0 && cmd_input_vector.at(1).compare("entity") == 0)
                                 {
-                                        /*uint16_t desc_index = 0x0;
+                                        uint16_t desc_index = 0x0;
 
                                         if((cmd_input_vector.at(4).compare("0") == 0) || (atoi(cmd_input_vector.at(4).c_str()) != 0))
                                         {
@@ -374,18 +366,18 @@ int main()
                                         	desc_index = (uint16_t)atoi(cmd_input_vector.at(4).c_str());
                                         }
 
-                                        if(is_input_valid && is_setting_valid(endpoint, config))
+                                        if(is_input_valid)
                                         {
-                                        	cmd_acquire_entity(cmd_input_vector.at(2), cmd_input_vector.at(3), desc_index);
+                                        	avdecc_cmd_line_ref->cmd_acquire_entity(cmd_input_vector.at(2), cmd_input_vector.at(3), desc_index);
                                         }
                                         else
                                         {
                                         	std::cout << "Invalid Command" << std::endl;
-                                        }*/
+                                        }
                                 }
                                 else if(cmd_input_vector.at(0).compare("lock") == 0 && cmd_input_vector.at(1).compare("entity") == 0)
                                 {
-                                        /*uint16_t desc_index = 0x0;
+                                        uint16_t desc_index = 0x0;
 
                                         if((cmd_input_vector.at(4).compare("0") == 0) || (atoi(cmd_input_vector.at(4).c_str()) != 0))
                                         {
@@ -393,18 +385,18 @@ int main()
                                         	desc_index = (uint16_t)atoi(cmd_input_vector.at(4).c_str());
                                         }
 
-                                        if(is_input_valid && is_setting_valid(endpoint, config))
+                                        if(is_input_valid)
                                         {
-                                        	cmd_lock_entity(cmd_input_vector.at(2), cmd_input_vector.at(3), desc_index);
+                                        	avdecc_cmd_line_ref->cmd_lock_entity(cmd_input_vector.at(2), cmd_input_vector.at(3), desc_index);
                                         }
                                         else
                                         {
                                         	std::cout << "Invalid Command" << std::endl;
-                                        }*/
+                                        }
                                 }
                                 else if(cmd_input_vector.at(0).compare("set") == 0 && cmd_input_vector.at(1).compare("stream_format") == 0)
                                 {
-                                        /*uint16_t desc_index = 0x0;
+                                        uint16_t desc_index = 0x0;
                                         uint64_t stream_format;
 
                                         if(((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0)) &&
@@ -415,18 +407,18 @@ int main()
                                         	stream_format = (uint64_t)atoi(cmd_input_vector.at(4).c_str());
                                         }
 
-                                        if(is_input_valid && is_setting_valid(endpoint, config))
+                                        if(is_input_valid)
                                         {
-                                        	cmd_set_stream_format(cmd_input_vector.at(2), desc_index, stream_format);
+                                        	avdecc_cmd_line_ref->cmd_set_stream_format(cmd_input_vector.at(2), desc_index, stream_format);
                                         }
                                         else
                                         {
                                         	std::cout << "Invalid Command" << std::endl;
-                                        }*/
+                                        }
                                 }
                                 else if(cmd_input_vector.at(0).compare("get") == 0 && cmd_input_vector.at(1).compare("name") == 0)
                                 {
-                                        /*uint16_t desc_index = 0x0;
+                                        uint16_t desc_index = 0x0;
                                         uint16_t name_index = 0x0;
 
                                         if(((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0)) &&
@@ -437,14 +429,14 @@ int main()
                                         	name_index = (uint16_t)atoi(cmd_input_vector.at(4).c_str());
                                         }
 
-                                        if(is_input_valid && is_setting_valid(endpoint, config))
+                                        if(is_input_valid)
                                         {
-                                        	cmd_get_name(cmd_input_vector.at(2), desc_index, name_index);
+                                        	avdecc_cmd_line_ref->cmd_get_name(cmd_input_vector.at(2), desc_index, name_index);
                                         }
                                         else
                                         {
                                         	std::cout << "Invalid Command" << std::endl;
-                                        }*/
+                                        }
                                 }
                                 else
                                 {
@@ -456,7 +448,7 @@ int main()
                         case 6:
                                 if(cmd_input_vector.at(0).compare("set") == 0 && cmd_input_vector.at(1).compare("stream_info") == 0)
                                 {
-                                        /*uint16_t desc_index = 0;
+                                        uint16_t desc_index = 0;
                                         uint64_t stream_info_field_value = 0x0;
 
                                         if(((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0)) &&
@@ -467,18 +459,18 @@ int main()
                                         	stream_info_field_value = (uint16_t)atoi(cmd_input_vector.at(5).c_str());
                                         }
 
-                                        if(is_input_valid && is_setting_valid(endpoint, config))
+                                        if(is_input_valid)
                                         {
-                                        	cmd_set_stream_info(cmd_input_vector.at(2), desc_index, cmd_input_vector.at(4), stream_info_field_value);
+                                        	avdecc_cmd_line_ref->cmd_set_stream_info(cmd_input_vector.at(2), desc_index, cmd_input_vector.at(4), stream_info_field_value);
                                         }
                                         else
                                         {
-                                        	//std::cout << "Invalid Command" << std::endl;
-                                        }*/
+                                        	std::cout << "Invalid Command" << std::endl;
+                                        }
                                 }
                                 else if(cmd_input_vector.at(0).compare("set") == 0 && cmd_input_vector.at(1).compare("name") == 0)
                                 {
-                                        /*uint16_t desc_index = 0x0;
+                                        uint16_t desc_index = 0x0;
                                         uint16_t name_index = 0x0;
 
                                         if(((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0)) &&
@@ -489,14 +481,14 @@ int main()
                                         	name_index = (uint16_t)atoi(cmd_input_vector.at(4).c_str());
                                         }
 
-                                        if(is_input_valid && is_setting_valid(endpoint, config))
+                                        if(is_input_valid)
                                         {
-                                        	cmd_set_name(cmd_input_vector.at(2), desc_index, name_index, cmd_input_vector.at(5));
+                                        	avdecc_cmd_line_ref->cmd_set_name(cmd_input_vector.at(2), desc_index, name_index, cmd_input_vector.at(5));
                                         }
                                         else
                                         {
-                                        	//std::cout << "Invalid Command" << std::endl;
-                                        }*/
+                                        	std::cout << "Invalid Command" << std::endl;
+                                        }
                                 }
                                 else
                                 {

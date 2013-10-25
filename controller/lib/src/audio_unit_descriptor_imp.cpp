@@ -61,182 +61,182 @@ namespace avdecc_lib
                 return audio_unit_desc.descriptor_index;
         }
 
-        uint8_t * audio_unit_descriptor_imp::get_object_name()
+        uint8_t * STDCALL audio_unit_descriptor_imp::get_object_name()
         {
                 return audio_unit_desc.object_name.value;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_localized_description()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_localized_description()
         {
                 return audio_unit_desc.localized_description;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_clock_domain_index()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_clock_domain_index()
         {
                 return audio_unit_desc.clock_domain_index;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_stream_input_ports()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_stream_input_ports()
         {
                 return audio_unit_desc.number_of_stream_input_ports;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_stream_input_port()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_stream_input_port()
         {
                 return audio_unit_desc.base_stream_input_port;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_stream_output_ports()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_stream_output_ports()
         {
                 return audio_unit_desc.number_of_stream_output_ports;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_stream_output_port()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_stream_output_port()
         {
                 return audio_unit_desc.base_stream_output_port;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_external_input_ports()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_external_input_ports()
         {
                 return audio_unit_desc.number_of_external_input_ports;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_external_input_port()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_external_input_port()
         {
                 return audio_unit_desc.base_external_input_port;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_external_output_ports()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_external_output_ports()
         {
                 return audio_unit_desc.number_of_external_output_ports;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_external_output_port()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_external_output_port()
         {
                 return audio_unit_desc.base_external_output_port;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_internal_input_ports()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_internal_input_ports()
         {
                 return audio_unit_desc.number_of_internal_input_ports;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_internal_input_port()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_internal_input_port()
         {
                 return audio_unit_desc.base_internal_input_port;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_internal_output_ports()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_internal_output_ports()
         {
                 return audio_unit_desc.number_of_internal_output_ports;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_internal_output_port()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_internal_output_port()
         {
                 return audio_unit_desc.base_internal_output_port;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_controls()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_controls()
         {
                 return audio_unit_desc.number_of_controls;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_control()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_control()
         {
                 return audio_unit_desc.base_control;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_signal_selectors()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_signal_selectors()
         {
                 return audio_unit_desc.number_of_signal_selectors;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_signal_selector()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_signal_selector()
         {
                 return audio_unit_desc.base_signal_selector;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_mixers()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_mixers()
         {
                 return audio_unit_desc.number_of_mixers;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_mixer()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_mixer()
         {
                 return audio_unit_desc.base_mixer;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_matrices()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_matrices()
         {
                 return audio_unit_desc.number_of_matrices;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_matrix()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_matrix()
         {
                 return audio_unit_desc.base_matrix;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_splitters()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_splitters()
         {
                 return audio_unit_desc.number_of_splitters;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_splitter()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_splitter()
         {
                 return audio_unit_desc.base_splitter;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_combiners()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_combiners()
         {
                 return audio_unit_desc.number_of_combiners;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_combiner()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_combiner()
         {
                 return audio_unit_desc.base_combiner;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_demultiplexers()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_demultiplexers()
         {
                 return audio_unit_desc.number_of_demultiplexers;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_demultiplexer()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_demultiplexer()
         {
                 return audio_unit_desc.base_demultiplexer;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_multiplexers()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_multiplexers()
         {
                 return audio_unit_desc.number_of_multiplexers;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_multiplexer()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_multiplexer()
         {
                 return audio_unit_desc.base_multiplexer;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_transcoders()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_transcoders()
         {
                 return audio_unit_desc.number_of_transcoders;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_transcoder()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_transcoder()
         {
                 return audio_unit_desc.base_transcoder;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_number_of_control_blocks()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_control_blocks()
         {
                 return audio_unit_desc.number_of_control_blocks;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_base_control_block()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_base_control_block()
         {
                 return audio_unit_desc.base_control_block;
         }
 
-        uint32_t audio_unit_descriptor_imp::get_current_sampling_rate()
+        uint32_t STDCALL audio_unit_descriptor_imp::get_current_sampling_rate()
         {
                 uint16_t offset = 0x0;
 
@@ -251,17 +251,17 @@ namespace avdecc_lib
                 return audio_unit_desc.current_sampling_rate;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_sampling_rates_offset()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_sampling_rates_offset()
         {
                 return audio_unit_desc.sampling_rates_offset;
         }
 
-        uint16_t audio_unit_descriptor_imp::get_sampling_rates_count()
+        uint16_t STDCALL audio_unit_descriptor_imp::get_sampling_rates_count()
         {
                 return audio_unit_desc.sampling_rates_count;
         }
 
-        uint8_t audio_unit_descriptor_imp::get_pull_field_multiplier(uint8_t pull_field_value)
+        uint8_t STDCALL audio_unit_descriptor_imp::get_pull_field_multiplier(uint8_t pull_field_value)
         {
                 switch(pull_field_value)
                 {
@@ -293,48 +293,51 @@ namespace avdecc_lib
                 return 0;
         }
 
-        //void audio_unit_descriptor_imp::print_audio_unit_desc_info()
-        //{
-        //	std::cout << "\nAudio Unit Descriptor";
-        //	std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-        //	std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-        //	std::cout << "\nobject_name = " << std::hex << get_object_name().value;
-        //	std::cout << "\nlocalized_description = 0x" << std::hex << get_localized_description();
-        //	std::cout << "\nclock_domain_index = " << std::dec << get_clock_domain_index();
-        //	std::cout << "\nnumber_of_stream_input_ports = " << std::dec << get_number_of_stream_input_ports();
-        //	std::cout << "\nbase_stream_input_port = " << std::dec << get_base_stream_input_port();
-        //	std::cout << "\nnumber_of_stream_output_ports = " << std::dec << get_number_of_stream_output_ports();
-        //	std::cout << "\nbase_stream_output_port = " << std::dec << get_base_stream_output_port();
-        //	std::cout << "\nnumber_of_external_input_ports = " << std::dec << get_number_of_external_input_ports();
-        //	std::cout << "\nbase_external_input_port = " << std::dec << get_base_external_input_port();
-        //	std::cout << "\nnumber_of_external_output_ports = " << std::dec << get_number_of_external_output_ports();
-        //	std::cout << "\nbase_external_output_port = " << std::dec << get_base_external_output_port();
-        //	std::cout << "\nnumber_of_internal_input_ports = " << std::dec << get_number_of_internal_input_ports();
-        //	std::cout << "\nbase_internal_input_port = " << std::dec << get_base_internal_input_port();
-        //	std::cout << "\nnumber_of_internal_output_ports = " << std::dec << get_number_of_internal_output_ports();
-        //	std::cout << "\nbase_internal_output_port = " << std::dec << get_base_internal_output_port();
-        //	std::cout << "\nnumber_of_controls = " << std::dec << get_number_of_controls();
-        //	std::cout << "\nbase_control = " << std::dec << get_base_control();
-        //	std::cout << "\nnumber_of_signal_selectors = " << std::dec << get_number_of_signal_selectors();
-        //	std::cout << "\nbase_signal_selector = " << std::dec << get_base_signal_selector();
-        //	std::cout << "\nnumber_of_mixers = " << std::dec << get_number_of_mixers();
-        //	std::cout << "\nbase_mixer = " << std::dec << get_base_mixer();
-        //	std::cout << "\nnumber_of_matrices = " << std::dec << get_number_of_matrices();
-        //	std::cout << "\nbase_matrix = " << std::dec << get_base_matrix();
-        //	std::cout << "\nnumber_of_splitters = " << std::dec << get_number_of_splitters();
-        //	std::cout << "\nbase_splitter = " << std::dec << get_base_splitter();
-        //	std::cout << "\nnumber_of_combiners = " << std::dec << get_number_of_combiners();
-        //	std::cout << "\nbase_combiner = " << std::dec << get_base_combiner();
-        //	std::cout << "\nnumber_of_demultiplexers = " << std::dec << get_number_of_demultiplexers();
-        //	std::cout << "\nbase_demultiplexer = " << std::dec << get_base_demultiplexer();
-        //	std::cout << "\nnumber_of_multiplexers = " << std::dec << get_number_of_multiplexers();
-        //	std::cout << "\nbase_multiplexer = " << std::dec << get_base_multiplexer();
-        //	std::cout << "\nnumber_of_transcoders = " << std::dec << get_number_of_transcoders();
-        //	std::cout << "\nbase_transcoder = " << std::dec << get_base_transcoder();
-        //	std::cout << "\nnumber_of_control_blocks = " << std::dec << get_number_of_control_blocks();
-        //	std::cout << "\nbase_control_block = " << std::dec << get_base_control_block();
-        //	std::cout << "\ncurrent_sampling_rate = " << std::dec << get_current_sampling_rate();
-        //	std::cout << "\nsampling_rates_offset = " << std::dec << get_sampling_rates_offset();
-        //	std::cout << "\nsampling_rates_count = " << std::dec << get_sampling_rates_count();
-        //}
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
+        void audio_unit_descriptor_imp::print_audio_unit_desc_info()
+        {
+                std::cout << "\nAudio Unit Descriptor";
+                std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
+                std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
+                std::cout << "\nobject_name = " << std::hex << get_object_name().value;
+                std::cout << "\nlocalized_description = 0x" << std::hex << get_localized_description();
+                std::cout << "\nclock_domain_index = " << std::dec << get_clock_domain_index();
+                std::cout << "\nnumber_of_stream_input_ports = " << std::dec << get_number_of_stream_input_ports();
+                std::cout << "\nbase_stream_input_port = " << std::dec << get_base_stream_input_port();
+                std::cout << "\nnumber_of_stream_output_ports = " << std::dec << get_number_of_stream_output_ports();
+                std::cout << "\nbase_stream_output_port = " << std::dec << get_base_stream_output_port();
+                std::cout << "\nnumber_of_external_input_ports = " << std::dec << get_number_of_external_input_ports();
+                std::cout << "\nbase_external_input_port = " << std::dec << get_base_external_input_port();
+                std::cout << "\nnumber_of_external_output_ports = " << std::dec << get_number_of_external_output_ports();
+                std::cout << "\nbase_external_output_port = " << std::dec << get_base_external_output_port();
+                std::cout << "\nnumber_of_internal_input_ports = " << std::dec << get_number_of_internal_input_ports();
+                std::cout << "\nbase_internal_input_port = " << std::dec << get_base_internal_input_port();
+                std::cout << "\nnumber_of_internal_output_ports = " << std::dec << get_number_of_internal_output_ports();
+                std::cout << "\nbase_internal_output_port = " << std::dec << get_base_internal_output_port();
+                std::cout << "\nnumber_of_controls = " << std::dec << get_number_of_controls();
+                std::cout << "\nbase_control = " << std::dec << get_base_control();
+                std::cout << "\nnumber_of_signal_selectors = " << std::dec << get_number_of_signal_selectors();
+                std::cout << "\nbase_signal_selector = " << std::dec << get_base_signal_selector();
+                std::cout << "\nnumber_of_mixers = " << std::dec << get_number_of_mixers();
+                std::cout << "\nbase_mixer = " << std::dec << get_base_mixer();
+                std::cout << "\nnumber_of_matrices = " << std::dec << get_number_of_matrices();
+                std::cout << "\nbase_matrix = " << std::dec << get_base_matrix();
+                std::cout << "\nnumber_of_splitters = " << std::dec << get_number_of_splitters();
+                std::cout << "\nbase_splitter = " << std::dec << get_base_splitter();
+                std::cout << "\nnumber_of_combiners = " << std::dec << get_number_of_combiners();
+                std::cout << "\nbase_combiner = " << std::dec << get_base_combiner();
+                std::cout << "\nnumber_of_demultiplexers = " << std::dec << get_number_of_demultiplexers();
+                std::cout << "\nbase_demultiplexer = " << std::dec << get_base_demultiplexer();
+                std::cout << "\nnumber_of_multiplexers = " << std::dec << get_number_of_multiplexers();
+                std::cout << "\nbase_multiplexer = " << std::dec << get_base_multiplexer();
+                std::cout << "\nnumber_of_transcoders = " << std::dec << get_number_of_transcoders();
+                std::cout << "\nbase_transcoder = " << std::dec << get_base_transcoder();
+                std::cout << "\nnumber_of_control_blocks = " << std::dec << get_number_of_control_blocks();
+                std::cout << "\nbase_control_block = " << std::dec << get_base_control_block();
+                std::cout << "\ncurrent_sampling_rate = " << std::dec << get_current_sampling_rate();
+                std::cout << "\nsampling_rates_offset = " << std::dec << get_sampling_rates_offset();
+                std::cout << "\nsampling_rates_count = " << std::dec << get_sampling_rates_count();
+        }
+#endif
+
 }

@@ -43,13 +43,13 @@ namespace avdecc_lib
         uint16_t STDCALL descriptor_base_imp::get_descriptor_type()
         {
 
-        	return 0;
+                return 0;
         }
 
         uint16_t STDCALL descriptor_base_imp::get_descriptor_index()
         {
-	
-        	return 0;
+
+                return 0;
         }
 
         int STDCALL descriptor_base_imp::send_acquire_entity_cmd(uint16_t desc_index, uint32_t acquire_entity_flags)

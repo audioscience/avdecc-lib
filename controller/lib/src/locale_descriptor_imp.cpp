@@ -74,13 +74,16 @@ namespace avdecc_lib
                 return locale_desc.base_strings;
         }
 
-        //void locale_descriptor_imp::print_locale_desc_info()
-        //{
-        //	std::cout << "\nLocale Descriptor";
-        //	std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-        //	std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-        //	std::cout << "\nlocale_identifier = " << std::hex << get_locale_identifier().value;
-        //	std::cout << "\nnumber_of_strings = " << std::hex << get_number_of_strings();
-        //	std::cout << "\nbase_strings = " << std::hex << get_base_strings();
-        //}
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
+        void locale_descriptor_imp::print_locale_desc_info()
+        {
+                std::cout << "\nLocale Descriptor";
+                std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
+                std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
+                std::cout << "\nlocale_identifier = " << std::hex << get_locale_identifier().value;
+                std::cout << "\nnumber_of_strings = " << std::hex << get_number_of_strings();
+                std::cout << "\nbase_strings = " << std::hex << get_base_strings();
+        }
+#endif
+
 }

@@ -62,107 +62,107 @@ namespace avdecc_lib
                 virtual ~entity_descriptor_imp();
 
                 /**
-                 * Get the descriptor_type of the entity_descriptor object.
+                 * Get the descriptor type of the Entity descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_type();
 
                 /**
-                 * Get the descriptor_index of the entity_descriptor object.
+                 * Get the descriptor index of the Entity descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_index();
 
                 /**
-                 * Get the entity_entity_id of the entity_descriptor object.
+                 * Get the id of the Entity descriptor object.
                  */
                 uint64_t STDCALL get_entity_id();
 
                 /**
-                 * Get the vendor_id of the entity_descriptor object.
+                 * Get the vendor id of the Entity descriptor object.
                  */
                 uint32_t STDCALL get_vendor_id();
 
                 /**
-                 * Get the entity_model_id of the entity_descriptor object.
+                 * Get the model id of the Entity descriptor object.
                  */
                 uint32_t STDCALL get_entity_model_id();
 
                 /**
-                 * Get the entity_capabilities of the entity_descriptor object.
+                 * Get the capabilities of the Entity descriptor object.
                  */
                 uint32_t STDCALL get_entity_capabilities();
 
                 /**
-                 * Get the talker_stream_sources of the entity_descriptor object.
+                 * Get the Talker Stream Sources of the Entity descriptor object.
                  */
                 uint16_t STDCALL get_talker_stream_sources();
 
                 /**
-                 * Get the talker_capabilities of the entity_descriptor object.
+                 * Get the Talker capabilities of the Entity descriptor object.
                  */
                 uint16_t STDCALL get_talker_capabilities();
 
                 /**
-                 * Get the listener_stream_sinks of the entity_descriptor object.
+                 * Get the Listener Stream Sinks of the Entity descriptor object.
                  */
                 uint16_t STDCALL get_listener_stream_sinks();
 
                 /**
-                 * Get the listener_capabilities of the entity_descriptor object.
+                 * Get the Listener capabilities of the Entity descriptor object.
                  */
                 uint16_t STDCALL get_listener_capabilities();
 
                 /**
-                 * Get the controller_capabilities of the entity_descriptor object.
+                 * Get the Controller capabilities of the Entity descriptor object.
                  */
                 uint32_t STDCALL get_controller_capabilities();
 
                 /**
-                 * Get the available_index of the entity_descriptor object.
+                 * Get the available index of the Entity descriptor object.
                  */
                 uint32_t STDCALL get_available_index();
 
                 /**
-                 * Get the association_id of the entity_descriptor object.
+                 * Get the association id of the Entity descriptor object.
                  */
                 uint64_t STDCALL get_association_id();
 
                 /**
-                 * Get the entity_name of the entity_descriptor object.
+                 * Get the name of the Entity descriptor object.
                  */
                 uint8_t * STDCALL get_entity_name();
 
                 /**
-                 * Get the vendor_name_string of the entity_descriptor object.
+                 * Get the vendor name string of the Entity descriptor object.
                  */
                 uint16_t STDCALL get_vendor_name_string();
 
                 /**
-                 * Get the model_name_string of the entity_descriptor object.
+                 * Get the model name string of the Entity descriptor object.
                  */
                 uint16_t STDCALL get_model_name_string();
 
                 /**
-                 * Get the firmware_version of the entity_descriptor object.
+                 * Get the firmware version of the Entity descriptor object.
                  */
                 uint8_t * STDCALL get_firmware_version();
 
                 /**
-                 * Get the group_name of the entity_descriptor object.
+                 * Get the group name of the Entity descriptor object.
                  */
                 uint8_t * STDCALL get_group_name();
 
                 /**
-                 * Get the serial_number of the entity_descriptor object.
+                 * Get the serial number of the Entity descriptor object.
                  */
                 uint8_t * STDCALL get_serial_number();
 
                 /**
-                 * Get the configurations_count of the entity_descriptor object.
+                 * Get the configurations count of the Entity descriptor object.
                  */
                 uint16_t STDCALL get_configurations_count();
 
                 /**
-                 * Get the current_configuration of the entity_descriptor object.
+                 * Get the current Configuration of the Entity descriptor object.
                  */
                 uint16_t STDCALL get_current_configuration();
 
@@ -177,7 +177,7 @@ namespace avdecc_lib
                 uint32_t STDCALL get_config_desc_count();
 
                 /**
-                 * Get the corresponding CONFIGURATION descriptor object by index.
+                 * Get the corresponding Configuration descriptor object by index.
                  */
                 configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index);
 
@@ -201,10 +201,12 @@ namespace avdecc_lib
                  */
                 int proc_get_config_resp();
 
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
                 /**
                  * Print out ENTITY descriptor fields.
                  */
-                //		void print_entity_desc_info();
+                void print_entity_desc_info();
+#endif
         };
 }
 

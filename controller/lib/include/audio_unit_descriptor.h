@@ -41,197 +41,197 @@ namespace avdecc_lib
         {
         public:
                 /**
-                 * Get the object_name of the audio_unit_descriptor object.
+                 * Get the  name of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
 
                 /**
-                 * Get the localized_description of the audio_unit_descriptor object.
+                 * Get the localized description of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
                 /**
-                 * Get the clock_domain_index of the audio_unit_descriptor object.
+                 * Get the clock domain index of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_domain_index() = 0;
 
                 /**
-                 * Get the number_of_stream_input_ports of the audio_unit_descriptor object.
+                 * Get the number of stream input ports of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_stream_input_ports() = 0;
 
                 /**
-                 * Get the base_stream_input_port of the audio_unit_descriptor object.
+                 * Get the base stream input port of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_stream_input_port() = 0;
 
                 /**
-                 * Get the number_of_stream_output_ports of the audio_unit_descriptor object.
+                 * Get the number of stream output ports of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_stream_output_ports() = 0;
 
                 /**
-                 * Get the base_stream_output_port of the audio_unit_descriptor object.
+                 * Get the base stream output port of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_stream_output_port() = 0;
 
                 /**
-                 * Get the number_of_external_input_ports of the audio_unit_descriptor object.
+                 * Get the number of external input ports of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_external_input_ports() = 0;
 
                 /**
-                 * Get the base_external_input_port of the audio_unit_descriptor object.
+                 * Get the base external input port of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_external_input_port() = 0;
 
                 /**
-                 * Get the number_of_external_output_ports of the audio_unit_descriptor object.
+                 * Get the number of external output_ports of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_external_output_ports() = 0;
 
                 /**
-                 * Get the base_external_output_port of the audio_unit_descriptor object.
+                 * Get the base external output port of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_external_output_port() = 0;
 
                 /**
-                 * Get the number_of_internal_input_ports of the audio_unit_descriptor object.
+                 * Get the number of internal input ports of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_internal_input_ports() = 0;
 
                 /**
-                 * Get the base_internal_input_port of the audio_unit_descriptor object.
+                 * Get the base internal input port of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_internal_input_port() = 0;
 
                 /**
-                 * Get the number_of_internal_output_ports of the audio_unit_descriptor object.
+                 * Get the number of internal output ports of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_internal_output_ports() = 0;
 
                 /**
-                 * Get the base_internal_output_port of the audio_unit_descriptor object.
+                 * Get the base internal output port of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_internal_output_port() = 0;
 
                 /**
-                 * Get the number_of_controls of the audio_unit_descriptor object.
+                 * Get the number of controls of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_controls() = 0;
 
                 /**
-                 * Get the base_control of the audio_unit_descriptor object.
+                 * Get the base control of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_control() = 0;
 
                 /**
-                 * Get the number_of_signal_selectors of the audio_unit_descriptor object.
+                 * Get the number of signal selectors of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_signal_selectors() = 0;
 
                 /**
-                 * Get the base_signal_selector of the audio_unit_descriptor object.
+                 * Get the base signal selector of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_signal_selector() = 0;
 
                 /**
-                 * Get the number_of_mixers of the audio_unit_descriptor object.
+                 * Get the number of mixers of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_mixers() = 0;
 
                 /**
-                 * Get the base_mixer of the audio_unit_descriptor object.
+                 * Get the base mixer of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_mixer() = 0;
 
                 /**
-                 * Get the number_of_matrices of the audio_unit_descriptor object.
+                 * Get the number of matrices of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_matrices() = 0;
 
                 /**
-                 * Get the base_matrix of the audio_unit_descriptor object.
+                 * Get the base matrix of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_matrix() = 0;
 
                 /**
-                 * Get the number_of_splitters of the audio_unit_descriptor object.
+                 * Get the number of splitters of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_splitters() = 0;
 
                 /**
-                 * Get the base_splitter of the audio_unit_descriptor object.
+                 * Get the base splitter of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_splitter() = 0;
 
                 /**
-                 * Get the number_of_combiners of the audio_unit_descriptor object.
+                 * Get the number of combiners of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_combiners() = 0;
 
                 /**
-                 * Get the base_combiner of the audio_unit_descriptor object.
+                 * Get the base combiner of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_combiner() = 0;
 
                 /**
-                 * Get the number_of_demultiplexers of the audio_unit_descriptor object.
+                 * Get the number of demultiplexers of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_demultiplexers() = 0;
 
                 /**
-                 * Get the base_demultiplexer of the audio_unit_descriptor object.
+                 * Get the base demultiplexer of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_demultiplexer() = 0;
 
                 /**
-                 * Get the number_of_multiplexers of the audio_unit_descriptor object.
+                 * Get the number of multiplexers of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_multiplexers() = 0;
 
                 /**
-                 * Get the base_multiplexer of the audio_unit_descriptor object.
+                 * Get the base multiplexer of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_multiplexer() = 0;
 
                 /**
-                 * Get the number_of_transcoders of the audio_unit_descriptor object.
+                 * Get the number of transcoders of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_transcoders() = 0;
 
                 /**
-                 * Get the base_transcoder of the audio_unit_descriptor object.
+                 * Get the base transcoder of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_transcoder() = 0;
 
                 /**
-                 * Get the number_of_control_blocks of the audio_unit_descriptor object.
+                 * Get the number of control blocks of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_control_blocks() = 0;
 
                 /**
-                 * Get the base_control_block of the audio_unit_descriptor object.
+                 * Get the base control block of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_control_block() = 0;
 
                 /**
-                 * Get the current_sampling_rate of the audio_unit_descriptor object.
+                 * Get the current sampling rate of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_current_sampling_rate() = 0;
 
                 /**
-                 * Get the sampling_rates_offset of the audio_unit_descriptor object.
+                 * Get the sampling rates offset of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_sampling_rates_offset() = 0;
 
                 /**
-                 * Get the sampling_rates_count of the audio_unit_descriptor object.
+                 * Get the sampling rates count of the Audio Unit descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_sampling_rates_count() = 0;
 
                 /**
-                 * Get the corresponding pull_field_multiplier for the pull_field_value.
+                 * Get the corresponding pull field multiplier for the pull field value.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_pull_field_multiplier(uint8_t pull_field_value) = 0;
         };

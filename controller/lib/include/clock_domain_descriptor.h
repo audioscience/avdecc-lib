@@ -41,27 +41,27 @@ namespace avdecc_lib
         {
         public:
                 /**
-                 * Get the object_name of the clock_domain_descriptor object.
+                 * Get the name of the clock_domain_descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
 
                 /**
-                 * Get the localized_description of the clock_domain_descriptor object.
+                 * Get the localized description of the clock_domain_descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
                 /**
-                 * Get the clock_source_index of the clock_domain_descriptor object.
+                 * Get the Clock Source index of the clock_domain_descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_index() = 0;
 
                 /**
-                * Get the clock_sources_offset of the clock_domain_descriptor object.
+                * Get the Clock Sources offset of the clock_domain_descriptor object.
                 */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_sources_offset() = 0;
 
                 /**
-                 * Get the clock_sources_count of the clock_domain_descriptor object.
+                 * Get the Clock Sources count of the clock_domain_descriptor object.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_sources_count() = 0;
         };

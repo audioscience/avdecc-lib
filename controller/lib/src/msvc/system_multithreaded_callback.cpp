@@ -84,7 +84,7 @@ namespace avdecc_lib
                 delete poll_rx.rx_queue;
                 delete poll_tx.tx_queue;
                 delete netif_obj_in_system;
-		delete controller_obj_in_system;
+                delete controller_obj_in_system;
                 delete local_system;
         }
 
@@ -269,10 +269,10 @@ namespace avdecc_lib
 
                                         bool is_notification_id_valid = false;
                                         controller_obj_in_system->rx_packet_event(thread_data.notification_id,
-										  is_notification_id_valid,
-										  thread_data.notification_flag,
-										  thread_data.frame,
-										  thread_data.mem_buf_len);
+                                                                                  is_notification_id_valid,
+                                                                                  thread_data.notification_flag,
+                                                                                  thread_data.frame,
+                                                                                  thread_data.mem_buf_len);
 
                                         if(is_waiting && (!controller_obj_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
                                            is_notification_id_valid && (waiting_notification_id == thread_data.notification_id))

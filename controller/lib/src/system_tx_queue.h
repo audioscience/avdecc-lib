@@ -26,8 +26,6 @@
  *
  * System transmit queue class, which is implemented in system_multithreaded_callback class
  * to store commands in a queue to be transmitted.
- *
- * (c) AudioScience, Inc. 2013
  */
 
 #pragma once

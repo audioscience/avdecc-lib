@@ -53,12 +53,12 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_version() = 0;
 
                 /**
-                 * Get the controller_guid of the AVDECC Entity sending the command.
+                 * Get the AVDECC Controller GUID of the AVDECC Entity sending the command.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_controller_guid() = 0;
 
                 /**
-                 * Get the number of end stations.
+                 * Get the number of End Stations connected.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_end_station_count() = 0;
 
@@ -102,8 +102,8 @@ namespace avdecc_lib
          * Create a public AVDECC Controller object with notification and logging callback functions used for accessing from outside the library.
          */
         extern "C" AVDECC_CONTROLLER_LIB32_API controller * STDCALL create_controller(net_interface *netif,
-										      void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
-										      void (*log_callback) (void *, int32_t, const char *, int32_t));
+                                                                                      void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
+                                                                                      void (*log_callback) (void *, int32_t, const char *, int32_t));
 }
 
 #endif

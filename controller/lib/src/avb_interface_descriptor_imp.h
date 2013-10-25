@@ -60,79 +60,82 @@ namespace avdecc_lib
                 virtual ~avb_interface_descriptor_imp();
 
                 /**
-                 * Get the descriptor_type of the avb_interface_descriptor object.
+                 * Get the descriptor type of the AVB Interface descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_type();
 
                 /**
-                 * Get the descriptor_index of the avb_interface_descriptor object.
+                 * Get the descriptor index of the AVB Interface descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_index();
 
                 /**
-                 * Get the object_name of the avb_interface_descriptor object.
+                 * Get the name of the AVB Interface descriptor object.
                  */
                 uint8_t * STDCALL get_object_name();
 
                 /**
-                 * Get the localized_description of the avb_interface_descriptor object.
+                 * Get the localized description of the AVB Interface descriptor object.
                  */
                 uint16_t STDCALL get_localized_description();
 
                 /**
-                 * Get the mac_address of the avb_interface_descriptor object.
+                 * Get the MAC address of the AVB Interface descriptor object.
                  */
                 struct jdksavdecc_eui48 STDCALL get_mac_address();
 
                 /**
-                 * Get the interface_flags of the avb_interface_descriptor object.
+                 * Get the interface flags of the AVB Interface descriptor object.
                  */
                 uint16_t STDCALL get_interface_flags();
 
                 /**
-                 * Get the clock_identity of the avb_interface_descriptor object.
+                 * Get the clock identity of the AVB Interface descriptor object.
                  */
                 uint64_t STDCALL get_clock_identity();
 
                 /**
-                 * Get the priority1 of the avb_interface_descriptor object.
+                 * Get the priority1 of the AVB Interface descriptor object.
                  */
                 uint32_t STDCALL get_priority1();
 
                 /**
-                 * Get the clock_class of the avb_interface_descriptor object.
+                 * Get the clock class of the AVB Interface descriptor object.
                  */
                 uint32_t STDCALL get_clock_class();
 
                 /**
-                 * Get the offset_scaled_log_variance of the avb_interface_descriptor object.
+                 * Get the offset scaled log variance of the AVB Interface descriptor object.
                  */
                 uint16_t STDCALL get_offset_scaled_log_variance();
 
                 /**
-                 * Get the clock_accuracy of the avb_interface_descriptor object.
+                 * Get the clock accuracy of the AVB Interface descriptor object.
                  */
                 uint32_t STDCALL get_clock_accuracy();
 
                 /**
-                 * Get the priority2 of the avb_interface_descriptor object.
+                 * Get the priority2 of the AVB Interface descriptor object.
                  */
                 uint32_t STDCALL get_priority2();
 
                 /**
-                 * Get the domain_number of the avb_interface_descriptor object.
+                 * Get the domain number of the AVB Interface descriptor object.
                  */
                 uint32_t STDCALL get_domain_number();
 
                 /**
-                 * Get the log_sync_interval of the avb_interface_descriptor object.
+                 * Get the log sync interval of the AVB Interface descriptor object.
                  */
                 uint32_t STDCALL get_log_sync_interval();
 
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
                 /**
                  * Print out AVB Interface Descriptor fields.
                  */
-                //	void print_avb_interface_desc_info();
+                void print_avb_interface_desc_info();
+#endif
+
         };
 }
 

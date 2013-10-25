@@ -60,34 +60,37 @@ namespace avdecc_lib
                 virtual ~locale_descriptor_imp();
 
                 /**
-                 * Get the descriptor_type of the locale_descriptor object.
+                 * Get the descriptor type of the Locale descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_type();
 
                 /**
-                 * Get the descriptor_index of the locale_descriptor object.
+                 * Get the descriptor index of the Locale descriptor object.
                  */
                 uint16_t STDCALL get_descriptor_index();
 
                 /**
-                 * Get the locale_identifier of the locale_descriptor object.
+                 * Get the locale identifier of the Locale descriptor object.
                  */
                 uint8_t * STDCALL get_locale_identifier();
 
                 /**
-                 * Get the locale_identifier of the locale_descriptor object.
+                 * Get the number of strings of the Locale descriptor object.
                  */
                 uint16_t STDCALL get_number_of_strings();
 
                 /**
-                 * Get the locale_identifier of the locale_descriptor object.
+                 * Get the base strings of the Locale descriptor object.
                  */
                 uint16_t STDCALL get_base_strings();
 
+#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
                 /**
                  * Print out Locale Descriptor fields.
                  */
-                //	void print_locale_desc_info();
+                void print_locale_desc_info();
+#endif
+
         };
 }
 

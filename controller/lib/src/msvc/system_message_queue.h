@@ -43,7 +43,7 @@ private:
 
 public:
         /**
-         * An empty constructor for system_multithreaded_callback
+         * An empty constructor for system_message_queue
          */
         system_message_queue();
 
@@ -56,8 +56,6 @@ public:
          * Destructor for system_message_queue used for destroying objects
          */
         ~system_message_queue();
-
-        //	system_message_queue * queue_new(int entry_count, int entry_size);
 
         void queue_push(void *thread_data);
 

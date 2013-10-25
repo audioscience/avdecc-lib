@@ -45,9 +45,9 @@
 #include "clock_domain_descriptor.h"
 #include "avdecc_controller_cmd_line.h"
 
-uint32_t avdecc_cmd_line::end_station = 0;
-uint16_t avdecc_cmd_line::entity = 0;
-uint16_t avdecc_cmd_line::config = 0;
+uint32_t avdecc_cmd_line::current_end_station = 0;
+uint16_t avdecc_cmd_line::current_entity = 0;
+uint16_t avdecc_cmd_line::current_config = 0;
 uint32_t avdecc_cmd_line::notification_id = 0;
 std::string avdecc_cmd_line::log_path = "C:\\asi\\sw\\apps\\avb\\test\\avdecc_controller\\Debug\\";
 
@@ -282,7 +282,7 @@ int avdecc_cmd_line::cmd_list()
         for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
         {
                 end_station = index_i;
-                end_station_guid = controller_ref->get_end_station_by_index(index_i)->get_end_station_entity_guid();
+                end_station_guid = controller_ref->get_end_station_by_index(index_i)->get_end_station_guid();
                 end_station_name = controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_entity_name();
                 end_station_mac = controller_ref->get_end_station_by_index(index_i)->get_end_station_mac();
                 std::cout << controller_ref->get_end_station_by_index(index_i)->get_end_station_connection_status()
@@ -293,80 +293,88 @@ int avdecc_cmd_line::cmd_list()
         }
 
         std::cout << "\nC - End Station Connected." << std::endl;
-        //	std::cout << "R - End Station Reconnected." << std::endl;
         std::cout << "D - End Station Disconnected." << std::endl;
 
         return 0;
 }
 
-//int avdecc_cmd_line::cmd_list_clock_sync_source()
-//{
-//	uint16_t desc_type_value;
-//	uint16_t desc_index;
-//
-//	std::cout << "\n" << std::setw(8) << "Endpoint" << "   " << "Descriptor Name" << std::setw(8) << "" <<
-//		  std::setw(20) << "Descriptor Type" << "   " << std::setw(16) << "Descriptor Index" << std::endl;
-//	          std::cout << "------------------------------------------------------------------------------" << std::endl;
-//
-//	for(uint32_t index_i = 0; index_i < endpoint_vec.size(); index_i++)
-//	{
-//		for(uint32_t index_j = 0; index_j < endpoint_vec.at(index_i)->get_stream_input_desc_count(); index_j++)
-//		{
-//			if(endpoint_vec.at(index_i)->get_stream_input_desc_by_index(index_j)->is_clock_sync_source_set())
-//			{
-//			     desc_type_value = endpoint_vec.at(index_i)->get_stream_input_desc_by_index(index_j)->get_descriptor_type();
-//			     desc_index = endpoint_vec.at(index_i)->get_stream_input_desc_by_index(index_j)->get_descriptor_index();
-//			     std::cout << std::setw(8) << index_i << "   " << std::setw(20) << endpoint_vec.at(index_i)->get_stream_input_desc_by_index(index_j)->get_object_name().value <<
-//				          "   " << std::setw(20) << std::hex << avdecc_string_ref->convert_desc_value_to_name(desc_type_value) <<
-//				          "   " << std::setw(16) << std::hex << desc_index << std::endl;
-//			}
-//		}
-//
-//		for(uint32_t index_k = 0; index_k < endpoint_vec.at(index_i)->get_stream_output_desc_count(); index_k++)
-//		{
-//			if(endpoint_vec.at(index_i)->get_stream_output_desc_by_index(index_k)->is_clock_sync_source_set())
-//			{
-//			     desc_type_value = endpoint_vec.at(index_i)->get_stream_output_desc_by_index(index_k)->get_descriptor_type();
-//			     desc_index = endpoint_vec.at(index_i)->get_stream_output_desc_by_index(index_k)->get_descriptor_index();
-//
-//			     std::cout << std::setw(8) << index_i << "   "  << std::setw(20) << endpoint_vec.at(index_i)->get_stream_output_desc_by_index(index_k)->get_object_name().value <<
-//				          "   " << std::setw(20) << std::hex << avdecc_string_ref->convert_desc_value_to_name(desc_type_value) <<
-//				          "   " << std::setw(16) << std::hex << desc_index << std::endl;
-//			}
-//		}
-//	}
-//
-//	return 0;
-//}
+#ifdef IMPLEMENT_LIST_CLOCK_SYNC_SOURCE
+int avdecc_cmd_line::cmd_list_clock_sync_source()
+{
+	uint16_t desc_type_value;
+	uint16_t desc_index;
+
+	std::cout << "\n" << std::setw(8) << "Endpoint" << "   " << "Descriptor Name" << std::setw(8) << "" <<
+		  std::setw(20) << "Descriptor Type" << "   " << std::setw(16) << "Descriptor Index" << std::endl;
+	          std::cout << "------------------------------------------------------------------------------" << std::endl;
+
+	for(uint32_t index_i = 0; index_i < endpoint_vec.size(); index_i++)
+	{
+		for(uint32_t index_j = 0; index_j < endpoint_vec.at(index_i)->get_stream_input_desc_count(); index_j++)
+		{
+			if(endpoint_vec.at(index_i)->get_stream_input_desc_by_index(index_j)->is_clock_sync_source_set())
+			{
+			     desc_type_value = endpoint_vec.at(index_i)->get_stream_input_desc_by_index(index_j)->get_descriptor_type();
+			     desc_index = endpoint_vec.at(index_i)->get_stream_input_desc_by_index(index_j)->get_descriptor_index();
+			     std::cout << std::setw(8) << index_i << "   " << std::setw(20) << endpoint_vec.at(index_i)->get_stream_input_desc_by_index(index_j)->get_object_name().value <<
+				          "   " << std::setw(20) << std::hex << avdecc_string_ref->convert_desc_value_to_name(desc_type_value) <<
+				          "   " << std::setw(16) << std::hex << desc_index << std::endl;
+			}
+		}
+
+		for(uint32_t index_k = 0; index_k < endpoint_vec.at(index_i)->get_stream_output_desc_count(); index_k++)
+		{
+			if(endpoint_vec.at(index_i)->get_stream_output_desc_by_index(index_k)->is_clock_sync_source_set())
+			{
+			     desc_type_value = endpoint_vec.at(index_i)->get_stream_output_desc_by_index(index_k)->get_descriptor_type();
+			     desc_index = endpoint_vec.at(index_i)->get_stream_output_desc_by_index(index_k)->get_descriptor_index();
+
+			     std::cout << std::setw(8) << index_i << "   "  << std::setw(20) << endpoint_vec.at(index_i)->get_stream_output_desc_by_index(index_k)->get_object_name().value <<
+				          "   " << std::setw(20) << std::hex << avdecc_string_ref->convert_desc_value_to_name(desc_type_value) <<
+				          "   " << std::setw(16) << std::hex << desc_index << std::endl;
+			}
+		}
+	}
+
+	return 0;
+}
+#else
+int avdecc_cmd_line::cmd_list_clock_sync_source()
+{
+	return 0;
+}
+#endif
 
 void avdecc_cmd_line::cmd_select()
 {
         std::cout << "Current setting" << std::endl;
-        std::cout << "\tEnd Station: " << std::dec << end_station << " (" << controller_ref->get_end_station_by_index(end_station)->get_entity_desc_by_index(0)->get_entity_name() << ")" << std::endl;
-        std::cout << "\tEntity: " << std::dec << entity << std::endl;
-        std::cout << "\tConfiguration: " << std::dec << config << std::endl;
+        std::cout << "\tEnd Station: " << std::dec << current_end_station << " (" << controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_by_index(0)->get_entity_name() << ")" << std::endl;
+        std::cout << "\tEntity: " << std::dec << current_entity << std::endl;
+        std::cout << "\tConfiguration: " << std::dec << current_config << std::endl;
 }
 
 int avdecc_cmd_line::cmd_select(uint32_t new_end_station, uint16_t new_entity, uint16_t new_config)
 {
-        if((end_station == new_end_station) && (entity == new_entity) && (config == new_config))
+        if((current_end_station == new_end_station) && (current_entity == new_entity) && (current_config == new_config))
         {
                 std::cout << "Same setting" << std::endl;
-                std::cout << "\tEnd Station: " << std::dec << end_station << " (" << controller_ref->get_end_station_by_index(end_station)->get_entity_desc_by_index(0)->get_entity_name() << ")" << std::endl;
-                std::cout << "\tEntity: " << std::dec << entity << std::endl;
-                std::cout << "\tConfiguration: " << std::dec << config << std::endl;
+                std::cout << "\tEnd Station: " << std::dec << current_end_station << " (" << controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_by_index(0)->get_entity_name() << ")" << std::endl;
+                std::cout << "\tEntity: " << std::dec << current_entity << std::endl;
+                std::cout << "\tConfiguration: " << std::dec << current_config << std::endl;
         }
 
         else
         {
-                end_station = new_end_station;
-                entity = new_entity;
-                config = new_config;
+                current_end_station = new_end_station;
+                current_entity = new_entity;
+                current_config = new_config;
                 std::cout << "New setting" << std::endl;
-                std::cout << "\tEnd Station: " << std::dec << end_station << " (" << controller_ref->get_end_station_by_index(end_station)->get_entity_desc_by_index(0)->get_entity_name() << ")" << std::endl;
-                std::cout << "\tEntity: " << std::dec << entity << std::endl;
-                std::cout << "\tConfiguration: " << std::dec << config << std::endl;
+                std::cout << "\tEnd Station: " << std::dec << current_end_station << " (" << controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_by_index(0)->get_entity_name() << ")" << std::endl;
+                std::cout << "\tEntity: " << std::dec << current_entity << std::endl;
+                std::cout << "\tConfiguration: " << std::dec << current_config << std::endl;
         }
+
+	is_setting_valid(); // Check if the new setting is valid
 
         return 0;
 }
@@ -387,9 +395,9 @@ int avdecc_cmd_line::cmd_view_all()
                                 std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_entity_name() << std::endl;
 
                         case avdecc_lib::AEM_DESC_CONFIGURATION:
-                                std::cout << std::setw(20) << avdecc_lib::aem_string::desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(config)->get_descriptor_type());
-                                std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(config)->get_descriptor_index();
-                                std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(config)->get_object_name() << std::endl;
+                                std::cout << std::setw(20) << avdecc_lib::aem_string::desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(current_config)->get_descriptor_type());
+                                std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(current_config)->get_descriptor_index();
+                                std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(current_config)->get_object_name() << std::endl;
                                 std::cout << "\nTop Level Descriptors" << std::endl;
 
                         case avdecc_lib::AEM_DESC_AUDIO_UNIT:
@@ -404,8 +412,8 @@ int avdecc_cmd_line::cmd_view_all()
                                 for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(0)->get_stream_input_desc_count(); index_j++)
                                 {
                                         std::cout << std::setw(20) << avdecc_lib::aem_string::desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(0)->get_stream_input_desc_by_index(index_j)->get_descriptor_type());
-                                        std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(config)->get_stream_input_desc_by_index(index_j)->get_descriptor_index();
-                                        std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(config)->get_stream_input_desc_by_index(index_j)->get_object_name() << std::endl;
+                                        std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(current_config)->get_stream_input_desc_by_index(index_j)->get_descriptor_index();
+                                        std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(0)->get_config_desc_by_index(current_config)->get_stream_input_desc_by_index(index_j)->get_object_name() << std::endl;
                                 }
 
                         case avdecc_lib::AEM_DESC_STREAM_OUTPUT:
@@ -481,122 +489,157 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
         return 0;
 }
 
-//int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_index)
-//{
-//	uint16_t desc_type_value;
-//
-//	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-//	if(desc_type_value == JDKSAVDECC_DESCRIPTOR_STRINGS && desc_index == 0)
-//	{
-//		endpoint_vec.at(endpoint)->send_read_desc_cmd(net_if, 0, desc_type_value, desc_index);
-//	}
-//	else
-//	{
-//		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//		return -1;
-//	}
-//
-//	return 0;
-//}
-//
-//int avdecc_cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
-//{
-//	uint32_t flag_id;
-//	uint16_t desc_type_value;
-//
-//	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-//
-//	if(flag_name.compare("0") == 0)
-//	{
-//		flag_id = 0x0;
-//	}
-//	else if(flag_name.compare("persistent") == 0)
-//	{
-//		flag_id = 0x1;
-//	}
-//	else if(flag_name.compare("release") == 0)
-//	{
-//		flag_id = 0x80000000;
-//	}
-//	else
-//	{
-//		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//		return -1;
-//	}
-//
-//	if(((desc_type_value == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type_value == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) && desc_index == 0) ||
-//	  (endpoint_vec.at(endpoint)->get_config_desc_by_index(config)->are_desc_type_and_index_in_config(desc_type_value, desc_index)))
-//	{
-//		endpoint_vec.at(endpoint)->send_acquire_entity_cmd(net_if, flag_id, desc_type_value, desc_index);
-//		return 1;
-//	}
-//	else
-//	{
-//		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//		return -1;
-//	}
-//}
-//
-//int avdecc_cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
-//{
-//	uint32_t flag_id;
-//	uint16_t desc_type_value;
-//
-//	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-//
-//	if(flag_name.compare("0") == 0)
-//	{
-//		flag_id = 0x0;
-//	}
-//	else if(flag_name.compare("unlock") == 0)
-//	{
-//		flag_id = 0x1;
-//	}
-//	else
-//	{
-//		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//		return -1;
-//	}
-//
-//	if(((desc_type_value == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type_value == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) && desc_index == 0) ||
-//	  (endpoint_vec.at(endpoint)->get_config_desc_by_index(config)->are_desc_type_and_index_in_config(desc_type_value, desc_index)))
-//	{
-//		endpoint_vec.at(endpoint)->send_lock_entity_cmd(net_if, flag_id, desc_type_value, desc_index);
-//		return 1;
-//	}
-//	else
-//	{
-//		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//		return -1;
-//	}
-//}
-//
-//int avdecc_cmd_line::cmd_entity_avail()
-//{
-//	endpoint_vec.at(endpoint)->send_entity_avail_cmd(net_if);
-//	return 0;
-//}
-//
-//int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, uint64_t new_stream_format)
-//{
-//	uint16_t desc_type_value;
-//
-//	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-//
-//	if((desc_type_value == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT || desc_type_value == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT) &&
-//	  (endpoint_vec.at(endpoint)->get_config_desc_by_index(config)->are_desc_type_and_index_in_config(desc_type_value, desc_index)))
-//	{
-//		endpoint_vec.at(endpoint)->send_set_stream_format_cmd(net_if, desc_type_value, desc_index, new_stream_format);
-//		return 1;
-//	}
-//	else
-//	{
-//		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//		return -1;
-//	}
-//}
+#ifdef IMPLEMENT_SEND_READ_DESCRIPTOR_CMD
+int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_index)
+{
+	uint16_t desc_type_value;
 
+	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
+	if(desc_type_value == JDKSAVDECC_DESCRIPTOR_STRINGS && desc_index == 0)
+	{
+		endpoint_vec.at(endpoint)->send_read_desc_cmd(net_if, 0, desc_type_value, desc_index);
+	}
+	else
+	{
+		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
+		return -1;
+	}
 
+	return 0;
+}
+#else
+int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_index)
+{
+	return 0;	
+}
+#endif
+
+#ifdef IMPLEMENT_SEND_ACQUIRE_ENTITY_CMD
+int avdecc_cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
+{
+	uint32_t flag_id;
+	uint16_t desc_type_value;
+
+	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
+
+	if(flag_name.compare("0") == 0)
+	{
+		flag_id = 0x0;
+	}
+	else if(flag_name.compare("persistent") == 0)
+	{
+		flag_id = 0x1;
+	}
+	else if(flag_name.compare("release") == 0)
+	{
+		flag_id = 0x80000000;
+	}
+	else
+	{
+		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
+		return -1;
+	}
+
+	if(((desc_type_value == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type_value == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) && desc_index == 0) ||
+	  (endpoint_vec.at(endpoint)->get_config_desc_by_index(current_config)->are_desc_type_and_index_in_config(desc_type_value, desc_index)))
+	{
+		endpoint_vec.at(endpoint)->send_acquire_entity_cmd(net_if, flag_id, desc_type_value, desc_index);
+		return 1;
+	}
+	else
+	{
+		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
+		return -1;
+	}
+}
+#else
+int avdecc_cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
+{
+	return 0;
+}
+#endif
+
+#ifdef IMPLEMENT_SEND_LOCK_ENTITY_CMD
+int avdecc_cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
+{
+	uint32_t flag_id;
+	uint16_t desc_type_value;
+
+	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
+
+	if(flag_name.compare("0") == 0)
+	{
+		flag_id = 0x0;
+	}
+	else if(flag_name.compare("unlock") == 0)
+	{
+		flag_id = 0x1;
+	}
+	else
+	{
+		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
+		return -1;
+	}
+
+	if(((desc_type_value == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type_value == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) && desc_index == 0) ||
+	  (endpoint_vec.at(endpoint)->get_config_desc_by_index(current_config)->are_desc_type_and_index_in_config(desc_type_value, desc_index)))
+	{
+		endpoint_vec.at(endpoint)->send_lock_entity_cmd(net_if, flag_id, desc_type_value, desc_index);
+		return 1;
+	}
+	else
+	{
+		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
+		return -1;
+	}
+}
+#else
+int avdecc_cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
+{
+	return 0;
+}
+#endif
+
+#ifdef IMPLEMENT_SEND_ENTITY_AVAILABLE_CMD
+int avdecc_cmd_line::cmd_entity_avail()
+{
+	endpoint_vec.at(endpoint)->send_entity_avail_cmd(net_if);
+	return 0;
+}
+#else
+int avdecc_cmd_line::cmd_entity_avail()
+{
+	return 0;
+}
+#endif
+
+#ifdef IMPLEMENT_SEND_SET_STREAM_FORMAT_CMD
+int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, uint64_t new_stream_format)
+{
+	uint16_t desc_type_value;
+
+	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
+
+	if((desc_type_value == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT || desc_type_value == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT) &&
+	  (endpoint_vec.at(endpoint)->get_config_desc_by_index(current_config)->are_desc_type_and_index_in_config(desc_type_value, desc_index)))
+	{
+		endpoint_vec.at(endpoint)->send_set_stream_format_cmd(net_if, desc_type_value, desc_index, new_stream_format);
+		return 1;
+	}
+	else
+	{
+		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
+		return -1;
+	}
+}
+#else
+int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, uint64_t new_stream_format)
+{
+	return 0;
+}
+#endif
+
+#ifdef DEBUG_SEND_GET_STREAM_FORMAT_CMD
 int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_index)
 {
         uint16_t desc_type_value;
@@ -606,7 +649,7 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
         if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
         {
                 notification_id++;
-                controller_ref->get_config_by_index(end_station, entity, config)->get_stream_input_desc_by_index(desc_index)->send_get_stream_format_cmd((void *)notification_id, desc_index);
+                controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index)->send_get_stream_format_cmd((void *)notification_id, desc_index);
 
                 return 1;
         }
@@ -614,7 +657,7 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
         else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
         {
                 notification_id++;
-                controller_ref->get_config_by_index(end_station, entity, config)->get_stream_output_desc_by_index(desc_index)->send_get_stream_format_cmd((void *)notification_id, desc_index);
+                controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index)->send_get_stream_format_cmd((void *)notification_id, desc_index);
                 return 1;
         }
 
@@ -624,158 +667,41 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
                 return -1;
         }
 }
+#endif
 
-//int avdecc_cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
-//					   uint64_t new_stream_info_field_value)
-//{
-//	uint16_t desc_type_value;
-//
-//	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-//
-//	if(stream_info_field.compare("msrp_accumulated_latency") == 0)
-//	{
-//		endpoint_vec.at(endpoint)->send_set_stream_info_cmd(net_if, desc_type_value, desc_index, (uint32_t)new_stream_info_field_value, 0xffffffffffffffff);
-//		return 1;
-//	}
-//	else if(stream_info_field.compare("stream_dest_mac") == 0)
-//	{
-//		endpoint_vec.at(endpoint)->send_set_stream_info_cmd(net_if, desc_type_value, desc_index, 0xffffffff, new_stream_info_field_value);
-//		return 1;
-//	}
-//	else
-//	{
-//		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//		return -1;
-//	}
-//}
-//
-//int avdecc_cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field)
-//{
-//	uint16_t desc_type_value;
-//	uint64_t stream_id = 0;
-//	uint32_t msrp_accumulated_latency = 0;
-//	uint64_t stream_dest_mac = 0;
-//
-//	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-//
-//	switch(desc_type_value)
-//	{
-//	case JDKSAVDECC_DESCRIPTOR_STREAM_INPUT:
-//		if(stream_info_field.compare("stream_id") == 0)
-//		{
-//			stream_id = jdksavdecc_uint64_get(&endpoint_vec.at(endpoint)->get_stream_input_desc_by_index(desc_index)->get_stream_id(), 0);
-//			if(stream_id != 0xffffffffffffffff)
-//			{
-//				std::cout << "Stream ID: " << std::dec << stream_id << std::endl;
-//				return 1;
-//			}
-//			else
-//			{
-//				asios_Log_print(ASIOS_LOGGING_LEVEL_ERROR, "get_stream_id error\n");
-//				assert(stream_id != 0xffffffffffffffff);
-//				return -1;
-//			}
-//		}
-//		else if(stream_info_field.compare("msrp_accumulated_latency") == 0)
-//		{
-//			msrp_accumulated_latency = endpoint_vec.at(endpoint)->get_stream_input_desc_by_index(desc_index)->get_msrp_accumulated_latency();
-//
-//			if(msrp_accumulated_latency != 0xffffffff)
-//			{
-//				std::cout << "MSRP Accumulated Latency: " << std::dec << msrp_accumulated_latency << std::endl;
-//				return 1;
-//			}
-//			else
-//			{
-//				asios_Log_print(ASIOS_LOGGING_LEVEL_ERROR, "get_msrp_accumulated_latency error\n");
-//				assert(msrp_accumulated_latency != 0xffffffff);
-//				return -1;
-//			}
-//		}
-//		else if(stream_info_field.compare("stream_dest_mac") == 0)
-//		{
-//			stream_dest_mac = jdksavdecc_uint64_get(&endpoint_vec.at(endpoint)->get_stream_input_desc_by_index(desc_index)->get_stream_dest_mac(), 0);
-//			if(stream_dest_mac != 0xffffffffffffffff)
-//			{
-//				std::cout << "Stream Destination MAC: " << std::dec << stream_dest_mac << std::endl;
-//				return 1;
-//			}
-//			else
-//			{
-//				asios_Log_print(ASIOS_LOGGING_LEVEL_ERROR, "get_stream_dest_mac error\n");
-//				assert(stream_dest_mac != 0xffffffffffffffff);
-//				return -1;
-//			}
-//		}
-//		else
-//		{
-//			avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//			return -1;
-//		}
-//		break;
-//
-//	case JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT:
-//		if(stream_info_field.compare("stream_id") == 0)
-//		{
-//			stream_id = jdksavdecc_uint64_get(&endpoint_vec.at(endpoint)->get_stream_output_desc_by_index(desc_index)->get_stream_id(), 0);
-//				//get_stream_info_stream_id(desc_type_value, desc_index);
-//			if(stream_id != 0xffffffffffffffff)
-//			{
-//				std::cout << "Stream ID: " << std::dec << stream_id << std::endl;
-//				return 1;
-//			}
-//			else
-//			{
-//				asios_Log_print(ASIOS_LOGGING_LEVEL_ERROR, "get_stream_id error\n");
-//				assert(stream_id != 0xffffffffffffffff);
-//				return -1;
-//			}
-//		}
-//		else if(stream_info_field.compare("msrp_accumulated_latency") == 0)
-//		{
-//			msrp_accumulated_latency = endpoint_vec.at(endpoint)->get_stream_output_desc_by_index(desc_index)->get_msrp_accumulated_latency();
-//
-//			if(msrp_accumulated_latency != 0xffffffff)
-//			{
-//				std::cout << "MSRP Accumulated Latency: " << std::dec << msrp_accumulated_latency << std::endl;
-//				return 1;
-//			}
-//			else
-//			{
-//				asios_Log_print(ASIOS_LOGGING_LEVEL_ERROR, "get_msrp_accumulated_latency error\n");
-//				assert(msrp_accumulated_latency != 0xffffffff);
-//				return -1;
-//			}
-//		}
-//		else if(stream_info_field.compare("stream_dest_mac") == 0)
-//		{
-//			stream_dest_mac = jdksavdecc_uint64_get(&endpoint_vec.at(endpoint)->get_stream_output_desc_by_index(desc_index)->get_stream_dest_mac(), 0);
-//			if(stream_dest_mac != 0xffffffffffffffff)
-//			{
-//				std::cout << "Stream Destination MAC: " << std::dec << stream_dest_mac << std::endl;
-//				return 1;
-//			}
-//			else
-//			{
-//				asios_Log_print(ASIOS_LOGGING_LEVEL_ERROR, "get_stream_dest_mac error\n");
-//				assert(stream_dest_mac != 0xffffffffffffffff);
-//				return -1;
-//			}
-//		}
-//		else
-//		{
-//			avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//			return -1;
-//		}
-//		break;
-//
-//	default:
-//		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//		return -1;
-//	}
-//
-//}
+#ifdef IMPLEMENT_SEND_SET_STREAM_INFO_CMD
+int avdecc_cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
+					 uint64_t new_stream_info_field_value)
+{
+	uint16_t desc_type_value;
 
+	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
+
+	if(stream_info_field.compare("msrp_accumulated_latency") == 0)
+	{
+		endpoint_vec.at(endpoint)->send_set_stream_info_cmd(net_if, desc_type_value, desc_index, (uint32_t)new_stream_info_field_value, 0xffffffffffffffff);
+		return 1;
+	}
+	else if(stream_info_field.compare("stream_dest_mac") == 0)
+	{
+		endpoint_vec.at(endpoint)->send_set_stream_info_cmd(net_if, desc_type_value, desc_index, 0xffffffff, new_stream_info_field_value);
+		return 1;
+	}
+	else
+	{
+		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
+		return -1;
+	}
+}
+#else
+int avdecc_cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
+					 uint64_t new_stream_info_field_value)
+{
+	return 0;
+}
+#endif
+
+#ifdef DEBUG_SEND_GET_STREAM_INFO_CMD
 int avdecc_cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
 {
         uint16_t desc_type_value;
@@ -784,14 +710,14 @@ int avdecc_cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_in
         if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
         {
                 notification_id++;
-                controller_ref->get_config_by_index(end_station, entity, config)->get_stream_input_desc_by_index(desc_index)->send_get_stream_info_cmd((void *)notification_id, desc_index);
+                controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index)->send_get_stream_info_cmd((void *)notification_id, desc_index);
                 return 1;
         }
 
         else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
         {
                 notification_id++;
-                controller_ref->get_config_by_index(end_station, entity, config)->get_stream_output_desc_by_index(desc_index)->send_get_stream_info_cmd((void *)notification_id, desc_index);
+                controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index)->send_get_stream_info_cmd((void *)notification_id, desc_index);
                 return 1;
         }
 
@@ -801,44 +727,59 @@ int avdecc_cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_in
                 return -1;
         }
 }
+#endif
 
-//int avdecc_cmd_line::cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name)
-//{
-//	uint16_t desc_type_value;
-//
-//	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-//
-//	if(((desc_type_value == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type_value == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) && desc_index == 0) ||
-//	   (endpoint_vec.at(endpoint)->get_config_desc_by_index(config)->are_desc_type_and_index_in_config(desc_type_value, desc_index)))
-//	{
-//		endpoint_vec.at(endpoint)->send_set_name_cmd(net_if, desc_type_value, desc_index, name_index, 0, jdksavdecc_string_get(new_name.c_str(), 0));
-//		return 1;
-//	}
-//	else
-//	{
-//		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//		return -1;
-//	}
-//}
-//
-//int avdecc_cmd_line::cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index)
-//{
-//	uint16_t desc_type_value;
-//
-//	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-//
-//	if(((desc_type_value == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type_value == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) && desc_index == 0) ||
-//	   (endpoint_vec.at(endpoint)->get_config_desc_by_index(config)->are_desc_type_and_index_in_config(desc_type_value, desc_index)))
-//	{
-//		endpoint_vec.at(endpoint)->send_get_name_cmd(net_if, desc_type_value, desc_index, name_index, 0);
-//		return 1;
-//	}
-//	else
-//	{
-//		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-//		return -1;
-//	}
-//}
+#ifdef IMPLEMENT_SEND_SET_NAME_CMD
+int avdecc_cmd_line::cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name)
+{
+	uint16_t desc_type_value;
+
+	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
+
+	if(((desc_type_value == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type_value == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) && desc_index == 0) ||
+	   (endpoint_vec.at(endpoint)->get_config_desc_by_index(current_config)->are_desc_type_and_index_in_config(desc_type_value, desc_index)))
+	{
+		endpoint_vec.at(endpoint)->send_set_name_cmd(net_if, desc_type_value, desc_index, name_index, 0, jdksavdecc_string_get(new_name.c_str(), 0));
+		return 1;
+	}
+	else
+	{
+		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
+		return -1;
+	}
+}
+#else
+int avdecc_cmd_line::cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name)
+{
+	return 0;
+}
+#endif
+
+#ifdef IMPLEMENT_SEND_GET_NAME_CMD
+int avdecc_cmd_line::cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index)
+{
+	uint16_t desc_type_value;
+
+	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
+
+	if(((desc_type_value == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type_value == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) && desc_index == 0) ||
+	   (endpoint_vec.at(endpoint)->get_config_desc_by_index(current_config)->are_desc_type_and_index_in_config(desc_type_value, desc_index)))
+	{
+		endpoint_vec.at(endpoint)->send_get_name_cmd(net_if, desc_type_value, desc_index, name_index, 0);
+		return 1;
+	}
+	else
+	{
+		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
+		return -1;
+	}
+}
+#else
+int avdecc_cmd_line::cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index)
+{
+	return 0;
+}
+#endif
 
 void avdecc_cmd_line::cmd_path()
 {
@@ -851,11 +792,13 @@ int avdecc_cmd_line::cmd_path(std::string new_log_path)
         return 0;
 }
 
-bool avdecc_cmd_line::is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config)
+bool avdecc_cmd_line::is_setting_valid()
 {
-        return (end_station < controller_ref->get_end_station_count() &&
-                entity < controller_ref->get_end_station_by_index(end_station)->get_entity_desc_count() &&
-                config < controller_ref->get_end_station_by_index(end_station)->get_entity_desc_by_index(entity)->get_configurations_count());
+	bool is_setting_valid = (current_end_station < controller_ref->get_end_station_count()) &&
+				(current_entity < controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_count()) &&
+				(current_config == controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_by_index(current_entity)->get_current_configuration());
+
+        return is_setting_valid;
 }
 
 int avdecc_cmd_line::display_desc_info(uint16_t desc_type, uint16_t desc_index)
