@@ -26,33 +26,33 @@ Directory layout
 ---------------
 
  ::
-		
-	lib\
-		bin\
-		doc\
-		binding\
-			python\
-		build\
-			linux\
-			msvc\
-		include\ (contains public header files)
-		src\ (contains private header files and c++ source code)
-			linux\ (linux specific files)
-			msvc\ (Microsoft Visual Studio specific files
-			
-	app\
-		bin\
-		doc\
-		build\
-			linux\
-			msvc\
-		cmdline\
-			src\
-		test\
-			strings\
-			adp\
-			logging\ 
-			notify\		
+	controller\	
+		lib\
+			bin\
+			doc\
+			binding\
+				python\
+			build\
+				linux\
+				msvc\
+			include\ (contains public header files)
+			src\ (contains private header files and c++ source code)
+				linux\ (linux specific files)
+				msvc\ (Microsoft Visual Studio specific files
+				
+		app\
+			bin\
+			doc\
+			build\
+				linux\
+				msvc\
+			cmdline\
+				src\
+			test\
+				strings\
+				adp\
+				logging\ 
+				notify\		
 
 Object hierarchy
 ---------------
@@ -154,4 +154,4 @@ With notifications of:
 Source code style
 -----------------
 
-Use astyle_code_format file.			
+Use astyle_code_format option file.			
