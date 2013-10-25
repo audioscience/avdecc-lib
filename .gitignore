@@ -14,3 +14,4 @@ bin
 *.ipch
 *.cache
 *.idb
+*.orig
