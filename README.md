@@ -1,7 +1,7 @@
 avdecc-lib
 ==========
 
-Simple C++ library for implementing IEEE1722.1 (AVB Device Enumeration, Discovery and Control)
+Simple C++ library for implementing IEEE1722.1 (AVB Device Enumeration, Discovery and Control).
 
 
 Introduction
@@ -15,12 +15,25 @@ The repository contains source to build a Windows DLL or a Linux library and a c
 exercising the library.
 
 The overall philosophy of AVDECC LIB is to implement a thin layer of commands that allow an application to
-discover and and control AVDECC capable endpoints. The internal operations of the library are designed to be single threaded,
+discover and control AVDECC capable endpoints. The internal operations of the library are designed to be single threaded,
 although multiple threads are used to queue operations to be performed by the single threaded "engine" portion of the library.
 The library supports notification events (callbacks) that are triggered on the success (or failure) of a command. 
-It is up to the application to process the notifications in a useful manner. Asynchronously control updates from an
-end station are also supported. A control notification does not have data about the updated descriptor values embedded
-in it. Instead the AVDECC application should query the control class to obtain the updated values.
+It is up to the application to process the notifications in a useful manner. Asynchronous descriptor updates from an
+end station are also supported. A descriptor notification does not have data about the updated descriptor values embedded
+in it. Instead the AVDECC application should query the desriptor class to obtain the updated values. 
+
+Users developing 1722.1 end stations and controllers are encouraged to add new descriptors to this library as required.
+The library provides an easy entry point for adding and a testing a completely new 1722.1 descriptor without having
+to develop a complete controller side 1722.1 software stack.
+
+
+Acknowledgements
+----------------
+
+Special thanks are owed to Jeff Koftinoff for creating and releasing public source for 1722.1 packet processing in
+the jdksavdecc-c library and for comments and advice freely given during the development of this library. This c++
+library is a rather thin wrapper around functions already present in the jdksavdecc-c library.
+
 
 Directory layout
 ---------------
@@ -119,21 +132,37 @@ AVDECC AEM commands
 An AVDECC command is sent to the target object, ie::
 
     istream = controller->end_station(0)->entity(0)->configuration(0)->input_stream(0);
-    istream->set_format(unsigned int *id,format,...);
+	id = (void *)notify_id;
+	// put the notify_id value in a list somewhere
+    istream->set_format(id, format,...);
+	notify_id++;
 
-Completion results in a notification message of success or failure via the callback mechanism.
+Completion results in a notification message of success or failure via the callback mechanism. An alternative calling
+sequence is to wait for the callback to complete in-line, ie::
+
+	id = (void *)notify_id;
+    istream = controller->end_station(0)->entity(0)->configuration(0)->input_stream(0);
+    istream->set_format(id, format,...);
+    avdecc_system->wait_for_cmd_completion(id);
+	notify_id++;
+
+The above examples place an uint32_t notify_id in a "void *" container. If the application writer is careful about
+object creation and destruction, they may choose to place a c++ (or other language) object in the notify_id field.
 
 Callbacks
 ---------
 
-The following callback functions should be supplied.
+The following callback functions should be supplied. If NULL is passed in for the callback function, not callbacks will be invoked.
 
  ::
  
-	void log_callback(void *user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms);
-	void notification_callback(void *user_obj, int32_t notification, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id);
+	void log_callback(void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms);
+	void notification_callback(void *notify_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id);
 
-With logging levels of:
+When a controller internal thread calls the log_callback function that was invoked at controller create time,
+the log_user_obj pointer that was passed in at that time is returned in the callback. The calling application
+code use this void pointer to store a c++ class if that was helpful to the structure of the calling application.
+The log_callback is called with log_level values of:
 * ERROR
 * WARNING
 * NOTICE
@@ -141,7 +170,8 @@ With logging levels of:
 * DEBUG
 * VERBOSE
 	
-With notifications of:
+Like the log_callback function the notification callback returns a void "user" pointers as the first field in the callback.
+The notification_callback is called with notification_type values of:
 * NO MATCH FOUND
 * END STATION DISCOVERED
 * END STATION CONNECTED
@@ -155,4 +185,109 @@ With notifications of:
 Source code style
 -----------------
 
-Use astyle_code_format option file.			
+Source code is auto-formatted using the astyle formatting tool. All submitted pull requests should be passed through astyle
+before the pull request is issued. The format to use is specified in the astyle_code_format option file in this
+directory. asytle is run from the command line using the following command sequence:
+
+XXXXXX
+
+Roadmap
+=======
+
+Working towards release version 1.0.0.
+
+Release 1.0.0 supports:
+* all of the P1 Command/responses listed below.
+* Windows, linux and OSX builds.
+
+Future features include:
+* security key passing
+* Layer 3 (IP)  interface
+* other descriptors as required
+
+
+Status
+======
+
+Command/Response | Priority | Implemented | Tested |
+-----------------|----------|-------------|--------|
+ACQUIRE_ENTITY | P1 | | |
+LOCK_ENTITY | P1 | | |
+ENTITY_AVAILABLE | P1 | | |
+CONTROLLER_AVAILABLE | P1 | | |
+READ_DESCRIPTOR | P1 | | |
+SET_CONFIGURATION | P2 | | |
+GET_CONFIGURATION | P2 | | |
+SET_STREAM_FORMAT | P1 | | |
+GET_STREAM_FORMAT | P1 | | |
+SET_STREAM_INFO | P1 | | |
+GET_STREAM_INFO | P1 | | |
+SET_SAMPLING_RATE | P1 | | |
+GET_SAMPLING_RATE | P1 | | |
+SET_CLOCK_SOURCE | P1 | | |
+GET_CLOCK_SOURCE | P1 | | |
+START_STREAMING | P1 | | |
+STOP_STREAMING | P1 | | |
+SET_CONTROL | P2 | | |
+GET_CONTROL | P2 | | |
+SET_NAME | P2 | | |
+GET_NAME | P2 | | |
+SET_MIXER | P2 | | |
+GET_MIXER | P2 | | |
+REGISTER_UNSOLICITED_NOTIFICATION | P2 | | |
+DEREGISTER_UNSOLICITED_NOTIFICATION | P2 | | |
+IDENTIFY_NOTIFICATION | P2 | | |
+GET_AVB_INFO | P2 | | |
+GET_AS_PATH | P2 | | |
+REBOOT | P2 | | |
+WRITE_DESCRIPTOR | P3 | | |
+SET_ASSOCIATION_ID | P3 | | |
+GET_ASSOCIATION_ID | P3 | | |
+INCREMENT_CONTROL | P3 | | |
+DECREMENT_CONTROL | P3 | | |
+SET_SIGNAL_SELECTOR | P3 | | |
+GET_SIGNAL_SELECTOR | P3 | | |
+SET_MATRIX | P3 | | |
+GET_MATRIX | P3 | | |
+GET_COUNTERS | P3 | | |
+GET_AUDIO_MAP | P3 | | |
+ADD_AUDIO_MAPPINGS | P3 | | |
+REMOVE_AUDIO_MAPPINGS | P3 | | |
+START_OPERATION | P3 | | |
+ABORT_OPERATION | P3 | | |
+OPERATION_STATUS | P3 | | |
+SET_VIDEO_FORMAT | P4 | | |
+GET_VIDEO_FORMAT | P4 | | |
+SET_SENSOR_FORMAT | P4 | | |
+GET_SENSOR_FORMAT | P4 | | |
+GET_VIDEO_MAP | P4 | | |
+ADD_VIDEO_MAPPINGS | P4 | | |
+REMOVE_VIDEO_MAPPINGS | P4 | | |
+GET_SENSOR_MAP | P4 | | |
+ADD_SENSOR_MAPPINGS | P4 | | |
+REMOVE_SENSOR_MAPPINGS | P4 | | |
+
+ToDo
+....
+
+* add astyle cmdline sequence
+* cmd line help needs to be split up into it's own txt file, or a simple .h file.
+* fix wait_for_cmd_completion() (it needs to go in the public interface) - put example in cmd_line application
+* system_multithreaded callback.cpp needs to be renamed to system_l2multithreaded_callback.cpp to distinguish for layer3 IP implementations.
+* extern "C" AVDECC_CONTROLLER_LIB32_API system * STDCALL create_system(net_interface *netif, controller *controller_ref); needs to take an input parameter of the system type to create.
+* need a call that lets the application set the log level
+* add documentation on writing polled notify and log operations
+* add counter and API for missed log and notify events
+* need to work through P1 priorities above
+* add linux and OSX builds
+* add format helper functions
+* get ACMP working
+
+Done
+....
+
+
+Release Notes
+=============
+
+None so far.
