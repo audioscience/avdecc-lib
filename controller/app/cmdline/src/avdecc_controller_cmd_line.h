@@ -34,6 +34,7 @@
 #include "net_interface.h"
 #include "system.h"
 #include "controller.h"
+#include "descriptor_base.h"
 #include "aem_string.h"
 #include "enumeration.h"
 
@@ -177,6 +178,11 @@ public:
          * Change the path of the redirected output file.
          */
         int cmd_path(std::string new_log_path);
+
+	/**
+	 * Get the descriptor object corresponding to the descriptor type and descriptor index.
+	 */
+	avdecc_lib::descriptor_base * get_descriptor_obj(uint16_t desc_type, uint16_t desc_index);
 
         /**
          * Check if end station and configuration setting is in range and valid.

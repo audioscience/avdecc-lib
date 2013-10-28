@@ -519,6 +519,7 @@ int avdecc_cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_
 {
 	uint32_t flag_id;
 	uint16_t desc_type_value;
+	descriptor_base *descriptor_base_ref = 
 
 	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
 
@@ -799,6 +800,68 @@ bool avdecc_cmd_line::is_setting_valid()
 				(current_config == controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_by_index(current_entity)->get_current_configuration());
 
         return is_setting_valid;
+}
+
+avdecc_lib::descriptor_base * avdecc_cmd_line::get_descriptor_obj(uint16_t desc_type, uint16_t desc_index)
+{
+	 switch(desc_type)
+        {
+                case avdecc_lib::AEM_DESC_ENTITY:
+
+                        break;
+
+                case avdecc_lib::AEM_DESC_CONFIGURATION:
+
+                        break;
+
+                case avdecc_lib::AEM_DESC_AUDIO_UNIT:
+
+                        break;
+
+                case avdecc_lib::AEM_DESC_STREAM_INPUT:
+			return controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
+
+                        break;
+
+                case avdecc_lib::AEM_DESC_STREAM_OUTPUT:
+
+                        break;
+
+                case avdecc_lib::AEM_DESC_JACK_INPUT:
+
+                        break;
+
+                case avdecc_lib::AEM_DESC_JACK_OUTPUT:
+
+                        break;
+
+                case avdecc_lib::AEM_DESC_AVB_INTERFACE:
+
+                        break;
+
+                case avdecc_lib::AEM_DESC_CLOCK_SOURCE:
+
+                        break;
+
+                case avdecc_lib::AEM_DESC_LOCALE:
+
+                        break;
+
+                case avdecc_lib::AEM_DESC_STRINGS:
+
+                        break;
+
+                case avdecc_lib::AEM_DESC_CLOCK_DOMAIN:
+
+                        break;
+
+                default:
+                        std::cout << "Descriptor type is not found." << std::endl;
+                        break;
+        }
+
+
+
 }
 
 int avdecc_cmd_line::display_desc_info(uint16_t desc_type, uint16_t desc_index)
