@@ -141,9 +141,10 @@ Completion results in a notification message of success or failure via the callb
 sequence is to wait for the callback to complete in-line, ie::
 
 	id = (void *)notify_id;
+	avdecc_system->set_wait_for_next_cmd(id);
     istream = controller->end_station(0)->entity(0)->configuration(0)->input_stream(0);
     istream->set_format(id, format,...);
-    avdecc_system->wait_for_cmd_completion(id);
+    status = avdecc_system->get_last_resp_status();
 	notify_id++;
 
 The above examples place an uint32_t notify_id in a "void *" container. If the application writer is careful about
@@ -157,7 +158,7 @@ The following callback functions should be supplied. If NULL is passed in for th
  ::
  
 	void log_callback(void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms);
-	void notification_callback(void *notify_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id);
+	void notification_callback(void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id);
 
 When a controller internal thread calls the log_callback function that was invoked at controller create time,
 the log_user_obj pointer that was passed in at that time is returned in the callback. The calling application
@@ -189,7 +190,11 @@ Source code is auto-formatted using the astyle formatting tool. All submitted pu
 before the pull request is issued. The format to use is specified in the astyle_code_format option file in this
 directory. asytle is run from the command line using the following command sequence:
 
-XXXXXX
+::
+
+	AStyle --options=..\avdecc-lib\astyle_code_style.txt ..\avdecc-lib\controller\lib\include\*.h 
+		   ..\avdecc-lib\controller\lib\src\*.h ..\avdecc-lib\controller\lib\src\*.cpp
+		   ..\avdecc-lib\controller\lib\src\msvc\*.h ..\avdecc-lib\controller\lib\src\msvc\*.cpp
 
 Roadmap
 =======
@@ -216,18 +221,18 @@ LOCK_ENTITY | P1 | | |
 ENTITY_AVAILABLE | P1 | | |
 CONTROLLER_AVAILABLE | P1 | | |
 READ_DESCRIPTOR | P1 | | |
-SET_CONFIGURATION | P2 | | |
-GET_CONFIGURATION | P2 | | |
 SET_STREAM_FORMAT | P1 | | |
-GET_STREAM_FORMAT | P1 | | |
+GET_STREAM_FORMAT | P1 | Y | Y |
 SET_STREAM_INFO | P1 | | |
-GET_STREAM_INFO | P1 | | |
+GET_STREAM_INFO | P1 | Y | Y |
 SET_SAMPLING_RATE | P1 | | |
-GET_SAMPLING_RATE | P1 | | |
+GET_SAMPLING_RATE | P1 | Y | Y |
 SET_CLOCK_SOURCE | P1 | | |
 GET_CLOCK_SOURCE | P1 | | |
 START_STREAMING | P1 | | |
 STOP_STREAMING | P1 | | |
+SET_CONFIGURATION | P2 | | |
+GET_CONFIGURATION | P2 | | |
 SET_CONTROL | P2 | | |
 GET_CONTROL | P2 | | |
 SET_NAME | P2 | | |
@@ -269,15 +274,7 @@ REMOVE_SENSOR_MAPPINGS | P4 | | |
 
 ToDo
 ....
-
-* add astyle cmdline sequence
 * cmd line help needs to be split up into it's own txt file, or a simple .h file.
-* fix wait_for_cmd_completion() (it needs to go in the public interface) - put example in cmd_line application
-* system_multithreaded callback.cpp needs to be renamed to system_l2multithreaded_callback.cpp to distinguish for layer3 IP implementations.
-* extern "C" AVDECC_CONTROLLER_LIB32_API system * STDCALL create_system(net_interface *netif, controller *controller_ref); needs to take an input parameter of the system type to create.
-* need a call that lets the application set the log level
-* add documentation on writing polled notify and log operations
-* add counter and API for missed log and notify events
 * need to work through P1 priorities above
 * add linux and OSX builds
 * add format helper functions
@@ -285,6 +282,14 @@ ToDo
 
 Done
 ....
+* add astyle cmdline sequence
+* add documentation on parameters of notification and log callback function
+* fix wait_for_cmd_completion() (it needs to go in the public interface) - put example in cmd_line application
+* system_multithreaded callback.cpp needs to be renamed to system_layer2_multithreaded_callback.cpp to distinguish for layer3 IP implementations.
+* extern "C" AVDECC_CONTROLLER_LIB32_API system * STDCALL create_system(enum system_type, net_interface *netif, controller *controller_ref); needs to take an input parameter of the system type to create.
+* need a call that lets the application set the log level
+* add counter and API for missed log and notify events
+
 
 
 Release Notes

@@ -41,89 +41,89 @@
 
 namespace avdecc_lib
 {
-        class end_station_imp;
+	class end_station_imp;
 
-        class descriptor_base_imp : public virtual descriptor_base
-        {
-        protected:
-                end_station_imp *base_end_station_imp_ref;
+	class descriptor_base_imp : public virtual descriptor_base
+	{
+	protected:
+		end_station_imp *base_end_station_imp_ref;
 
-        public:
-                /**
-                 * An empty constructor for descriptor_base_imp
-                 */
-                descriptor_base_imp();
+	public:
+		/**
+		 * An empty constructor for descriptor_base_imp
+		 */
+		descriptor_base_imp();
 
-                /**
-                 * Constructor for descriptor_base_imp used for constructing an object with a base End Station.
-                 */
-                descriptor_base_imp(end_station_imp *base);
+		/**
+		 * Constructor for descriptor_base_imp used for constructing an object with a base End Station.
+		 */
+		descriptor_base_imp(end_station_imp *base);
 
-                /**
-                 * Destructor for descriptor_base_imp used for destroying objects
-                 */
-                ~descriptor_base_imp();
+		/**
+		 * Destructor for descriptor_base_imp used for destroying objects
+		 */
+		~descriptor_base_imp();
 
-                /**
-                 * Get the descriptor type of a descriptor object.
-                 */
-                virtual uint16_t STDCALL get_descriptor_type();
+		/**
+		 * Get the descriptor type of a descriptor object.
+		 */
+		virtual uint16_t STDCALL get_descriptor_type();
 
-                /**
-                 * Get the descriptor index of a descriptor object.
-                 */
-                virtual uint16_t STDCALL get_descriptor_index();
+		/**
+		 * Get the descriptor index of a descriptor object.
+		 */
+		virtual uint16_t STDCALL get_descriptor_index();
 
-                /**
-                 * Send a ACQURE ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
-                 */
-                virtual int STDCALL send_acquire_entity_cmd(uint16_t desc_index, uint32_t acquire_entity_flags);
+		/**
+		 * Send a ACQURE ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
+		 */
+		virtual int STDCALL send_acquire_entity_cmd(uint16_t desc_index, uint32_t acquire_entity_flags);
 
-                /**
-                 * Process a ACQURE ENTITY response for the ACQURE ENTITY command.
-                 */
-                virtual int proc_acquire_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
+		/**
+		 * Process a ACQURE ENTITY response for the ACQURE ENTITY command.
+		 */
+		virtual int proc_acquire_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
 
-                /**
-                 * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
-                 */
-                virtual int STDCALL send_lock_entity_cmd(uint16_t desc_index, uint32_t lock_entity_flags);
+		/**
+		 * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
+		 */
+		virtual int STDCALL send_lock_entity_cmd(uint16_t desc_index, uint32_t lock_entity_flags);
 
-                /**
-                 * Process a LOCK ENTITY response for the LOCK ENTITY command.
-                 */
-                virtual int proc_lock_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
+		/**
+		 * Process a LOCK ENTITY response for the LOCK ENTITY command.
+		 */
+		virtual int proc_lock_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
 
-                /**
-                 * Send a ENTITY AVAILABLE command to determine if another AVDECC Entity is still alive and responding to commands.
-                 */
-                virtual int STDCALL send_entity_avail_cmd();
+		/**
+		 * Send a ENTITY AVAILABLE command to determine if another AVDECC Entity is still alive and responding to commands.
+		 */
+		virtual int STDCALL send_entity_avail_cmd();
 
-                /**
-                 * Process a ENTITY AVAILABLE response for the ENTITY AVAILABLE command.
-                 */
-                virtual int proc_entity_avail_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
+		/**
+		 * Process a ENTITY AVAILABLE response for the ENTITY AVAILABLE command.
+		 */
+		virtual int proc_entity_avail_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
 
-                /**
-                 * Send a SET_NAME command to change the value of a name field within a descriptor.
-                 */
-                virtual int STDCALL send_set_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index, char * new_name);
+		/**
+		 * Send a SET_NAME command to change the value of a name field within a descriptor.
+		 */
+		virtual int STDCALL send_set_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index, char * new_name);
 
-                /**
-                 * Process a SET_NAME response for the SET_NAME command.
-                 */
-                virtual int proc_set_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
+		/**
+		 * Process a SET_NAME response for the SET_NAME command.
+		 */
+		virtual int proc_set_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
 
-                /**
-                 * Send a GET_NAME command to get the value of a name field within a descriptor.
-                 */
-                virtual int STDCALL send_get_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index);
+		/**
+		 * Send a GET_NAME command to get the value of a name field within a descriptor.
+		 */
+		virtual int STDCALL send_get_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index);
 
-                /**
-                 * Process a GET_NAME response for the GET_NAME command.
-                 */
-                virtual int proc_get_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
-        };
+		/**
+		 * Process a GET_NAME response for the GET_NAME command.
+		 */
+		virtual int proc_get_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
+	};
 }
 
 #endif

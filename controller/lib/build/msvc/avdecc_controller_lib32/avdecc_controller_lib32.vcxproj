@@ -123,8 +123,8 @@
     <ClInclude Include="..\..\..\src\msvc\log.h" />
     <ClInclude Include="..\..\..\src\msvc\net_interface_imp.h" />
     <ClInclude Include="..\..\..\src\msvc\notification.h" />
+    <ClInclude Include="..\..\..\src\msvc\system_layer2_multithreaded_callback.h" />
     <ClInclude Include="..\..\..\src\msvc\system_message_queue.h" />
-    <ClInclude Include="..\..\..\src\msvc\system_multithreaded_callback.h" />
     <ClInclude Include="..\..\..\src\stream_input_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\stream_output_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\strings_descriptor_imp.h" />
@@ -155,8 +155,8 @@
     <ClCompile Include="..\..\..\src\msvc\log.cpp" />
     <ClCompile Include="..\..\..\src\msvc\net_interface_imp.cpp" />
     <ClCompile Include="..\..\..\src\msvc\notification.cpp" />
+    <ClCompile Include="..\..\..\src\msvc\system_layer2_multithreaded_callback.cpp" />
     <ClCompile Include="..\..\..\src\msvc\system_message_queue.cpp" />
-    <ClCompile Include="..\..\..\src\msvc\system_multithreaded_callback.cpp" />
     <ClCompile Include="..\..\..\src\stream_input_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\stream_output_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\strings_descriptor_imp.cpp" />

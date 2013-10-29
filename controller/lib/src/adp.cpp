@@ -35,121 +35,121 @@
 
 namespace avdecc_lib
 {
-        struct jdksavdecc_eui48 adp::src_mac_addr;
-        struct jdksavdecc_eui48 adp::dest_mac_addr;
+	struct jdksavdecc_eui48 adp::src_mac_addr;
+	struct jdksavdecc_eui48 adp::dest_mac_addr;
 
-        adp::adp() {}
+	adp::adp() {}
 
-        adp::adp(uint8_t *frame, size_t mem_buf_len)
-        {
-                adp_frame = (uint8_t *)malloc(mem_buf_len * sizeof(uint8_t));
-                memcpy(adp_frame, frame, mem_buf_len);
+	adp::adp(uint8_t *frame, size_t mem_buf_len)
+	{
+		adp_frame = (uint8_t *)malloc(mem_buf_len * sizeof(uint8_t));
+		memcpy(adp_frame, frame, mem_buf_len);
 
-                frame_read_returned = jdksavdecc_frame_read(&ether_frame, adp_frame, 0x0, mem_buf_len);
+		frame_read_returned = jdksavdecc_frame_read(&ether_frame, adp_frame, 0x0, mem_buf_len);
 
-                if(frame_read_returned < 0)
-                {
-                        avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "frame_read error");
-                        assert(frame_read_returned >= 0);
-                }
+		if(frame_read_returned < 0)
+		{
+			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "frame_read error");
+			assert(frame_read_returned >= 0);
+		}
 
-                adpdu_read_returned = jdksavdecc_adpdu_read(&adpdu, adp_frame, ETHER_HDR_SIZE, mem_buf_len);
+		adpdu_read_returned = jdksavdecc_adpdu_read(&adpdu, adp_frame, ETHER_HDR_SIZE, mem_buf_len);
 
-                if(adpdu_read_returned < 0)
-                {
-                        avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "adpdu_read error");
-                        assert(adpdu_read_returned >= 0);
-                }
+		if(adpdu_read_returned < 0)
+		{
+			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "adpdu_read error");
+			assert(adpdu_read_returned >= 0);
+		}
 
-                convert_uint64_to_eui48(net_interface_ref->get_mac(), src_mac_addr.value);
-                convert_uint64_to_eui48(net_interface_ref->get_mac(), dest_mac_addr.value);
-        }
+		convert_uint64_to_eui48(net_interface_ref->get_mac(), src_mac_addr.value);
+		convert_uint64_to_eui48(net_interface_ref->get_mac(), dest_mac_addr.value);
+	}
 
-        adp::~adp()
-        {
-                free(adp_frame); // Free allocated memory for frame from the heap
-        }
+	adp::~adp()
+	{
+		free(adp_frame); // Free allocated memory for frame from the heap
+	}
 
-        struct jdksavdecc_eui64 adp::get_controller_guid()
-        {
-                uint64_t mac_guid;
-                mac_guid = ((net_interface_ref->get_mac() & UINT64_C(0xFFFFFF000000)) << 16) | UINT64_C(0x000000FFFF000000) | (net_interface_ref->get_mac() & UINT64_C(0xFFFFFF));
+	struct jdksavdecc_eui64 adp::get_controller_guid()
+	{
+		uint64_t mac_guid;
+		mac_guid = ((net_interface_ref->get_mac() & UINT64_C(0xFFFFFF000000)) << 16) | UINT64_C(0x000000FFFF000000) | (net_interface_ref->get_mac() & UINT64_C(0xFFFFFF));
 
-                return jdksavdecc_eui64_get(&mac_guid, 0);
-        }
+		return jdksavdecc_eui64_get(&mac_guid, 0);
+	}
 
-        int adp::ether_frame_init(struct jdksavdecc_frame *ether_frame)
-        {
-                /*** Offset to write the field to ***/
-                size_t ether_frame_pos = 0x0;
-                jdksavdecc_frame_init(ether_frame);
+	int adp::ether_frame_init(struct jdksavdecc_frame *ether_frame)
+	{
+		/*** Offset to write the field to ***/
+		size_t ether_frame_pos = 0x0;
+		jdksavdecc_frame_init(ether_frame);
 
-                /********************** Ethernet Frame ***********************/
-                ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-                ether_frame->src_address = src_mac_addr;
-                //ether_frame->dest_address = get_dest_addr();
-                ether_frame->length = ADP_FRAME_LEN; // Length of ADP packet is 82 bytes
+		/********************** Ethernet Frame ***********************/
+		ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
+		ether_frame->src_address = src_mac_addr;
+		//ether_frame->dest_address = get_dest_addr();
+		ether_frame->length = ADP_FRAME_LEN; // Length of ADP packet is 82 bytes
 
-                /*********************** Fill frame payload with Ethernet frame information ********************/
-                jdksavdecc_frame_write(ether_frame, ether_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
+		/*********************** Fill frame payload with Ethernet frame information ********************/
+		jdksavdecc_frame_write(ether_frame, ether_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
 
-                return 0;
-        }
+		return 0;
+	}
 
-        void adp::common_hdr_init(struct jdksavdecc_frame *ether_frame)
-        {
-                struct jdksavdecc_adpdu_common_control_header adpdu_common_ctrl_hdr;
-                int adpdu_common_ctrl_hdr_returned;
+	void adp::common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid)
+	{
+		struct jdksavdecc_adpdu_common_control_header adpdu_common_ctrl_hdr;
+		int adpdu_common_ctrl_hdr_returned;
 
-                /****************** 1722 Protocol Header **********************/
-                adpdu_common_ctrl_hdr.cd = 1;
-                adpdu_common_ctrl_hdr.subtype = JDKSAVDECC_SUBTYPE_ADP;
-                adpdu_common_ctrl_hdr.sv = 0;
-                adpdu_common_ctrl_hdr.version = 0;
-                adpdu_common_ctrl_hdr.message_type = 2;
-                adpdu_common_ctrl_hdr.valid_time = 0;
-                adpdu_common_ctrl_hdr.control_data_length = 56;
-                jdksavdecc_eui64_init(&adpdu_common_ctrl_hdr.entity_entity_id);
+		/****************** 1722 Protocol Header **********************/
+		adpdu_common_ctrl_hdr.cd = 1;
+		adpdu_common_ctrl_hdr.subtype = JDKSAVDECC_SUBTYPE_ADP;
+		adpdu_common_ctrl_hdr.sv = 0;
+		adpdu_common_ctrl_hdr.version = 0;
+		adpdu_common_ctrl_hdr.message_type = 2;
+		adpdu_common_ctrl_hdr.valid_time = 0;
+		adpdu_common_ctrl_hdr.control_data_length = 56;
+		jdksavdecc_uint64_write(target_guid, &adpdu_common_ctrl_hdr.entity_entity_id, 0, sizeof(uint64_t));
 
-                /********************* Fill frame payload with AECP Common Control Header information **********************/
-                adpdu_common_ctrl_hdr_returned = jdksavdecc_adpdu_common_control_header_write(&adpdu_common_ctrl_hdr,
-                                                                                              ether_frame->payload,
-                                                                                              ETHER_HDR_SIZE,
-                                                                                              sizeof(ether_frame->payload));
+		/********************* Fill frame payload with AECP Common Control Header information **********************/
+		adpdu_common_ctrl_hdr_returned = jdksavdecc_adpdu_common_control_header_write(&adpdu_common_ctrl_hdr,
+		                                                                              ether_frame->payload,
+		                                                                              ETHER_HDR_SIZE,
+		                                                                              sizeof(ether_frame->payload));
 
-                if(adpdu_common_ctrl_hdr_returned < 0)
-                {
-                        avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
-                        assert(adpdu_common_ctrl_hdr_returned >= 0);
-                }
-        }
+		if(adpdu_common_ctrl_hdr_returned < 0)
+		{
+			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
+			assert(adpdu_common_ctrl_hdr_returned >= 0);
+		}
+	}
 
 #ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-        void adp::print_adpdu_information()
-        {
-                uint64_t source_addr = avb_pdu_get_field_mac(ether_frame.src_address.value);
-                uint64_t dest_addr = avb_pdu_get_field_mac(ether_frame.dest_address.value);
-                std::cout << "\nADPDU";
-                std::cout << "\nethernet_type = 0x" << std::hex << ether_frame.ethertype;
-                std::cout << "\nsource_address = 0x" << std::hex << source_addr;
-                std::cout << "\ndestination_address = 0x" << std::hex << dest_addr;
-                std::cout << "\nentity_entity_id = 0x" << std::hex << get_entity_entity_id();
-                std::cout << "\nentity_model_id = 0x" << std::hex << get_entity_model_id();
-                std::cout << "\nentity_capabilities = 0x" << std::hex << get_entity_capabilities();
-                std::cout << "\ntalker_stream_sources = 0x" << std::hex <<get_talker_stream_sources();
-                std::cout << "\ntalker_capabilities = 0x" << std::hex << get_talker_capabilities();
-                std::cout << "\nlistener_stream_sinks = 0x" << std::hex << get_listener_stream_sinks();
-                std::cout << "\nlistener_capabilities = 0x" << std::hex << get_listener_capabilities();
-                std::cout << "\ncontroller_capabilities = 0x" << std::hex << get_controller_capabilities();
-                std::cout << "\navailable_index = 0x" << std::hex << get_available_index();
-                std::cout << "\ngptp_grandmaster_id = 0x" << std::hex << get_gptp_grandmaster_id();
-                std::cout << "\ngptp_domain_number = " << std::dec << get_gptp_domain_number();
-                std::cout << "\nreserved0 = 0x" << std::hex << get_reserved0();
-                std::cout << "\nidentify_control_index = 0x" << std::hex << get_identify_control_index();
-                std::cout << "\ninterface_index = 0x" << std::hex << get_interface_index();
-                std::cout << "\nassociation_id = 0x" << std::hex << get_association_id();
-                std::cout << "\nreserved1 = 0x" << std::hex << get_reserved1();
-        }
+	void adp::print_adpdu_information()
+	{
+		uint64_t source_addr = avb_pdu_get_field_mac(ether_frame.src_address.value);
+		uint64_t dest_addr = avb_pdu_get_field_mac(ether_frame.dest_address.value);
+		std::cout << "\nADPDU";
+		std::cout << "\nethernet_type = 0x" << std::hex << ether_frame.ethertype;
+		std::cout << "\nsource_address = 0x" << std::hex << source_addr;
+		std::cout << "\ndestination_address = 0x" << std::hex << dest_addr;
+		std::cout << "\nentity_entity_id = 0x" << std::hex << get_entity_entity_id();
+		std::cout << "\nentity_model_id = 0x" << std::hex << get_entity_model_id();
+		std::cout << "\nentity_capabilities = 0x" << std::hex << get_entity_capabilities();
+		std::cout << "\ntalker_stream_sources = 0x" << std::hex <<get_talker_stream_sources();
+		std::cout << "\ntalker_capabilities = 0x" << std::hex << get_talker_capabilities();
+		std::cout << "\nlistener_stream_sinks = 0x" << std::hex << get_listener_stream_sinks();
+		std::cout << "\nlistener_capabilities = 0x" << std::hex << get_listener_capabilities();
+		std::cout << "\ncontroller_capabilities = 0x" << std::hex << get_controller_capabilities();
+		std::cout << "\navailable_index = 0x" << std::hex << get_available_index();
+		std::cout << "\ngptp_grandmaster_id = 0x" << std::hex << get_gptp_grandmaster_id();
+		std::cout << "\ngptp_domain_number = " << std::dec << get_gptp_domain_number();
+		std::cout << "\nreserved0 = 0x" << std::hex << get_reserved0();
+		std::cout << "\nidentify_control_index = 0x" << std::hex << get_identify_control_index();
+		std::cout << "\ninterface_index = 0x" << std::hex << get_interface_index();
+		std::cout << "\nassociation_id = 0x" << std::hex << get_association_id();
+		std::cout << "\nreserved1 = 0x" << std::hex << get_reserved1();
+	}
 #endif
 
 }

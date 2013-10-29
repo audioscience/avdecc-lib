@@ -36,81 +36,81 @@
 
 namespace avdecc_lib
 {
-        class clock_source_descriptor_imp : public virtual clock_source_descriptor, public virtual descriptor_base_imp
-        {
-        private:
-                struct jdksavdecc_descriptor_clock_source clock_source_desc; // Structure containing the clock_source_desc fields
-                int desc_clock_source_read_returned; // Status of extracting Clock Source descriptor information from a network buffer
+	class clock_source_descriptor_imp : public virtual clock_source_descriptor, public virtual descriptor_base_imp
+	{
+	private:
+		struct jdksavdecc_descriptor_clock_source clock_source_desc; // Structure containing the clock_source_desc fields
+		int desc_clock_source_read_returned; // Status of extracting Clock Source descriptor information from a network buffer
 
-        public:
-                /**
-                 * An empty constructor for clock_source_descriptor_imp
-                 */
-                clock_source_descriptor_imp();
+	public:
+		/**
+		 * An empty constructor for clock_source_descriptor_imp
+		 */
+		clock_source_descriptor_imp();
 
-                /**
-                 * Constructor for clock_source_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
-                 * and memory buffer length.
-                 */
-                clock_source_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		/**
+		 * Constructor for clock_source_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
+		 * and memory buffer length.
+		 */
+		clock_source_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
 
-                /**
-                 * Destructor for clock_source_descriptor_imp used for destroying objects
-                 */
-                virtual ~clock_source_descriptor_imp();
+		/**
+		 * Destructor for clock_source_descriptor_imp used for destroying objects
+		 */
+		virtual ~clock_source_descriptor_imp();
 
-                /**
-                 * Get the descriptor type of the Clock Source descriptor object.
-                 */
-                uint16_t STDCALL get_descriptor_type();
+		/**
+		 * Get the descriptor type of the Clock Source descriptor object.
+		 */
+		uint16_t STDCALL get_descriptor_type();
 
-                /**
-                 * Get the descriptor index of the Clock Source descriptor object.
-                 */
-                uint16_t STDCALL get_descriptor_index();
+		/**
+		 * Get the descriptor index of the Clock Source descriptor object.
+		 */
+		uint16_t STDCALL get_descriptor_index();
 
-                /**
-                 * Get the name of the Clock Source descriptor object.
-                 */
-                uint8_t * STDCALL get_object_name();
+		/**
+		 * Get the name of the Clock Source descriptor object.
+		 */
+		uint8_t * STDCALL get_object_name();
 
-                /**
-                 * Get the localized description of the Clock Source descriptor object.
-                 */
-                uint16_t STDCALL get_localized_description();
+		/**
+		 * Get the localized description of the Clock Source descriptor object.
+		 */
+		uint16_t STDCALL get_localized_description();
 
-                /**
-                 * Get the flags of the Clock Source descriptor object.
-                 */
-                uint16_t STDCALL get_clock_source_flags();
+		/**
+		 * Get the flags of the Clock Source descriptor object.
+		 */
+		uint16_t STDCALL get_clock_source_flags();
 
-                /**
-                * Get the type of the Clock Source descriptor object.
-                */
-                uint16_t STDCALL get_clock_source_type();
+		/**
+		* Get the type of the Clock Source descriptor object.
+		*/
+		uint16_t STDCALL get_clock_source_type();
 
-                /**
-                * Get the identifier of the Clock Source descriptor object.
-                */
-                uint64_t STDCALL get_clock_source_identifier();
+		/**
+		* Get the identifier of the Clock Source descriptor object.
+		*/
+		uint64_t STDCALL get_clock_source_identifier();
 
-                /**
-                 * Get the location type of the Clock Source descriptor object.
-                 */
-                uint16_t STDCALL get_clock_source_location_type();
+		/**
+		 * Get the location type of the Clock Source descriptor object.
+		 */
+		uint16_t STDCALL get_clock_source_location_type();
 
-                /**
-                 * Get the location index of the Clock Source descriptor object.
-                 */
-                uint16_t STDCALL get_clock_source_location_index();
+		/**
+		 * Get the location index of the Clock Source descriptor object.
+		 */
+		uint16_t STDCALL get_clock_source_location_index();
 
 #ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-                /**
-                 * Print out Clock Source Descriptor fields.
-                 */
-                void print_clock_source_desc_info();
+		/**
+		 * Print out Clock Source Descriptor fields.
+		 */
+		void print_clock_source_desc_info();
 #endif
-        };
+	};
 }
 
 #endif

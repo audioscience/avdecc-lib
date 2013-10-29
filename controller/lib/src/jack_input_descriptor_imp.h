@@ -36,77 +36,77 @@
 
 namespace avdecc_lib
 {
-        class jack_input_descriptor_imp : public virtual jack_input_descriptor, public virtual descriptor_base_imp
-        {
-        private:
-                struct jdksavdecc_descriptor_jack jack_input_desc; // Structure containing the jack_input_desc fields
-                int desc_jack_input_read_returned; // Status of extracting Jack Input descriptor information from a network buffer
+	class jack_input_descriptor_imp : public virtual jack_input_descriptor, public virtual descriptor_base_imp
+	{
+	private:
+		struct jdksavdecc_descriptor_jack jack_input_desc; // Structure containing the jack_input_desc fields
+		int desc_jack_input_read_returned; // Status of extracting Jack Input descriptor information from a network buffer
 
-        public:
-                /**
-                 * An empty constructor for jack_input_descriptor_imp
-                 */
-                jack_input_descriptor_imp();
+	public:
+		/**
+		 * An empty constructor for jack_input_descriptor_imp
+		 */
+		jack_input_descriptor_imp();
 
-                /**
-                 * Constructor for jack_input_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
-                 * and memory buffer length.
-                 */
-                jack_input_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		/**
+		 * Constructor for jack_input_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
+		 * and memory buffer length.
+		 */
+		jack_input_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
 
-                /**
-                 * Destructor for jack_input_descriptor_imp used for destroying objects
-                 */
-                virtual ~jack_input_descriptor_imp();
+		/**
+		 * Destructor for jack_input_descriptor_imp used for destroying objects
+		 */
+		virtual ~jack_input_descriptor_imp();
 
-                /**
-                 * Get the descriptor type of the Jack Input descriptor object.
-                 */
-                uint16_t STDCALL get_descriptor_type();
+		/**
+		 * Get the descriptor type of the Jack Input descriptor object.
+		 */
+		uint16_t STDCALL get_descriptor_type();
 
-                /**
-                 * Get the descriptor index of the Jack Input descriptor object.
-                 */
-                uint16_t STDCALL get_descriptor_index();
+		/**
+		 * Get the descriptor index of the Jack Input descriptor object.
+		 */
+		uint16_t STDCALL get_descriptor_index();
 
-                /**
-                 * Get the name of the Jack Input descriptor object.
-                 */
-                uint8_t * STDCALL get_object_name();
+		/**
+		 * Get the name of the Jack Input descriptor object.
+		 */
+		uint8_t * STDCALL get_object_name();
 
-                /**
-                 * Get the localized description of the Jack Input descriptor object.
-                 */
-                uint16_t STDCALL get_localized_description();
+		/**
+		 * Get the localized description of the Jack Input descriptor object.
+		 */
+		uint16_t STDCALL get_localized_description();
 
-                /**
-                 * Get the flags of the Jack Input descriptor object.
-                 */
-                uint16_t STDCALL get_jack_flags();
+		/**
+		 * Get the flags of the Jack Input descriptor object.
+		 */
+		uint16_t STDCALL get_jack_flags();
 
-                /**
-                * Get the type of the Jack Input descriptor object.
-                */
-                uint16_t STDCALL get_jack_type();
+		/**
+		* Get the type of the Jack Input descriptor object.
+		*/
+		uint16_t STDCALL get_jack_type();
 
-                /**
-                 * Get the number of controls of the Jack Input descriptor object.
-                 */
-                uint16_t STDCALL get_number_of_controls();
+		/**
+		 * Get the number of controls of the Jack Input descriptor object.
+		 */
+		uint16_t STDCALL get_number_of_controls();
 
-                /**
-                 * Get the base control of the Jack Input descriptor object.
-                 */
-                uint16_t STDCALL get_base_control();
+		/**
+		 * Get the base control of the Jack Input descriptor object.
+		 */
+		uint16_t STDCALL get_base_control();
 
 #ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-                /**
-                 * Print out Jack Descriptor fields.
-                 */
-                void print_jack_desc_info();
+		/**
+		 * Print out Jack Descriptor fields.
+		 */
+		void print_jack_desc_info();
 #endif
 
-        };
+	};
 }
 
 #endif

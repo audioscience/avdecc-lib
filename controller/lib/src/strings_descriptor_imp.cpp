@@ -33,86 +33,86 @@
 
 namespace avdecc_lib
 {
-        strings_descriptor_imp::strings_descriptor_imp() {}
+	strings_descriptor_imp::strings_descriptor_imp() {}
 
-        strings_descriptor_imp::strings_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
-        {
-                desc_strings_read_returned = jdksavdecc_descriptor_strings_read(&strings_desc, frame, pos, mem_buf_len);
+	strings_descriptor_imp::strings_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
+	{
+		desc_strings_read_returned = jdksavdecc_descriptor_strings_read(&strings_desc, frame, pos, mem_buf_len);
 
-                if(desc_strings_read_returned < 0)
-                {
-                        avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "desc_strings_read error");
-                        assert(desc_strings_read_returned >= 0);
-                }
-        }
+		if(desc_strings_read_returned < 0)
+		{
+			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "desc_strings_read error");
+			assert(desc_strings_read_returned >= 0);
+		}
+	}
 
-        strings_descriptor_imp::~strings_descriptor_imp() {}
+	strings_descriptor_imp::~strings_descriptor_imp() {}
 
-        uint16_t STDCALL strings_descriptor_imp::get_descriptor_type()
-        {
-                assert(strings_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_STRINGS);
-                return strings_desc.descriptor_type;
-        }
+	uint16_t STDCALL strings_descriptor_imp::get_descriptor_type()
+	{
+		assert(strings_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_STRINGS);
+		return strings_desc.descriptor_type;
+	}
 
-        uint16_t STDCALL strings_descriptor_imp::get_descriptor_index()
-        {
-                return strings_desc.descriptor_index;
-        }
+	uint16_t STDCALL strings_descriptor_imp::get_descriptor_index()
+	{
+		return strings_desc.descriptor_index;
+	}
 
-        uint8_t * STDCALL strings_descriptor_imp::get_string_by_index(uint32_t string_index)
-        {
-                switch(string_index)
-                {
-                        case 0:
-                                return strings_desc.string_0.value;
-                                break;
+	uint8_t * STDCALL strings_descriptor_imp::get_string_by_index(uint32_t string_index)
+	{
+		switch(string_index)
+		{
+			case 0:
+				return strings_desc.string_0.value;
+				break;
 
-                        case 1:
-                                return strings_desc.string_1.value;
-                                break;
+			case 1:
+				return strings_desc.string_1.value;
+				break;
 
-                        case 2:
-                                return strings_desc.string_1.value;
-                                break;
+			case 2:
+				return strings_desc.string_1.value;
+				break;
 
-                        case 3:
-                                return strings_desc.string_1.value;
-                                break;
+			case 3:
+				return strings_desc.string_1.value;
+				break;
 
-                        case 4:
-                                return strings_desc.string_1.value;
-                                break;
+			case 4:
+				return strings_desc.string_1.value;
+				break;
 
-                        case 5:
-                                return strings_desc.string_1.value;
-                                break;
+			case 5:
+				return strings_desc.string_1.value;
+				break;
 
-                        case 6:
-                                return strings_desc.string_1.value;
-                                break;
+			case 6:
+				return strings_desc.string_1.value;
+				break;
 
-                        default:
-                                avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "get_string_by_index error");
-                                break;
-                }
+			default:
+				avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "get_string_by_index error");
+				break;
+		}
 
-                return 0;
-        }
+		return 0;
+	}
 
 #ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-        void strings_descriptor_imp::print_strings_desc_info()
-        {
-                std::cout << "\nStrings Descriptor";
-                std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-                std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-                std::cout << "\nget_string_0 = " << std::hex << get_string_0().value;
-                std::cout << "\nget_string_1 = " << std::hex << get_string_1().value;
-                std::cout << "\nget_string_2 = " << std::hex << get_string_2().value;
-                std::cout << "\nget_string_3 = " << std::hex << get_string_3().value;
-                std::cout << "\nget_string_4 = " << std::hex << get_string_4().value;
-                std::cout << "\nget_string_5 = " << std::hex << get_string_5().value;
-                std::cout << "\nget_string_6 = " << std::hex << get_string_6().value;
-        }
+	void strings_descriptor_imp::print_strings_desc_info()
+	{
+		std::cout << "\nStrings Descriptor";
+		std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
+		std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
+		std::cout << "\nget_string_0 = " << std::hex << get_string_0().value;
+		std::cout << "\nget_string_1 = " << std::hex << get_string_1().value;
+		std::cout << "\nget_string_2 = " << std::hex << get_string_2().value;
+		std::cout << "\nget_string_3 = " << std::hex << get_string_3().value;
+		std::cout << "\nget_string_4 = " << std::hex << get_string_4().value;
+		std::cout << "\nget_string_5 = " << std::hex << get_string_5().value;
+		std::cout << "\nget_string_6 = " << std::hex << get_string_6().value;
+	}
 #endif
 
 }

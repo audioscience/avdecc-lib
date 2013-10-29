@@ -36,34 +36,34 @@
 
 namespace avdecc_lib
 {
-        class net_interface
-        {
-        public:
-                /**
-                 * Count the number of devices.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL devs_count() = 0;
+	class net_interface
+	{
+	public:
+		/**
+		 * Count the number of devices.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL devs_count() = 0;
 
-                /**
-                 * Get the corresponding device description by index.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_desc_by_index(uint32_t dev_index) = 0;
+		/**
+		 * Get the corresponding device description by index.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_desc_by_index(uint32_t dev_index) = 0;
 
-                /**
-                 * Select the corresponding interface by number.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual int STDCALL select_interface_by_num(uint32_t interface_num) = 0;
+		/**
+		 * Select the corresponding interface by number.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL select_interface_by_num(uint32_t interface_num) = 0;
 
-                /**
-                 * Capture a network packet.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual int STDCALL capture_frame(const uint8_t **frame, uint16_t *mem_buf_len) = 0;
-        };
+		/**
+		 * Capture a network packet.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL capture_frame(const uint8_t **frame, uint16_t *mem_buf_len) = 0;
+	};
 
-        /**
-         * Create a public network interface object used for accessing from outside the library.
-         */
-        extern "C" AVDECC_CONTROLLER_LIB32_API net_interface * STDCALL create_net_interface();
+	/**
+	 * Create a public network interface object used for accessing from outside the library.
+	 */
+	extern "C" AVDECC_CONTROLLER_LIB32_API net_interface * STDCALL create_net_interface();
 }
 
 #endif

@@ -36,77 +36,83 @@
 
 namespace avdecc_lib
 {
-        class notification
-        {
-        private:
-                int32_t notifications;
-                static uint32_t read_index;
-                static uint32_t write_index;
-                static void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *);
-                static void *user_obj;
+	class notification
+	{
+	private:
+		int32_t notifications;
+		static uint32_t read_index;
+		static uint32_t write_index;
+		static void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *);
+		static void *user_obj;
+		static uint32_t missed_notification_event_cnt;
 
-                enum
-                {
-                        NOTIFICATION_BUF_COUNT = 32
-                };
+		enum
+		{
+		        NOTIFICATION_BUF_COUNT = 32
+		};
 
-                enum notification_events
-                {
-                        NOTIFICATION_EVENT,
-                        KILL_EVENT
-                };
+		enum notification_events
+		{
+		        NOTIFICATION_EVENT,
+		        KILL_EVENT
+		};
 
-                LPTHREAD_START_ROUTINE thread;
-                HANDLE h_thread;
-                DWORD thread_id;
+		LPTHREAD_START_ROUTINE thread;
+		HANDLE h_thread;
+		DWORD thread_id;
 
-                static HANDLE poll_events[2];
+		static HANDLE poll_events[2];
 
-                struct notification_data
-                {
-                        int32_t notifying;
-                        uint64_t guid;
-                        uint16_t cmd_type;
-                        uint16_t desc_type;
-                        uint16_t desc_index;
-                        void *notification_id;
-                };
+		struct notification_data
+		{
+			int32_t notification_type;
+			uint64_t guid;
+			uint16_t cmd_type;
+			uint16_t desc_type;
+			uint16_t desc_index;
+			void *notification_id;
+		};
 
-                struct notification_data notification_buf[NOTIFICATION_BUF_COUNT];
+		struct notification_data notification_buf[NOTIFICATION_BUF_COUNT];
 
-        public:
-                /**
-                 * An empty constructor for notification
-                 */
-                notification();
+	public:
+		/**
+		 * An empty constructor for notification
+		 */
+		notification();
 
-                /**
-                 * Destructor for notification used for destroying objects
-                 */
-                virtual ~notification();
+		/**
+		 * Destructor for notification used for destroying objects
+		 */
+		virtual ~notification();
 
-                /**
-                 * Create and initialize notification thread, event, and semaphore.
-                 */
-                int notification_thread_init();
+		/**
+		 * Create and initialize notification thread, event, and semaphore.
+		 */
+		int notification_thread_init();
 
-                /**
-                 * Start of the notifying thread used for generating notification messages.
-                 */
-                static DWORD WINAPI process_notification_thread(LPVOID lpParam);
+		/**
+		 * Start of the notifying thread used for generating notification messages.
+		 */
+		static DWORD WINAPI process_notification_thread(LPVOID lpParam);
 
-                /**
-                 * AVDECC LIB modules call this function to generate a notification message.
-                 */
-                void notifying(int32_t notification, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id);
+		/**
+		 * AVDECC LIB modules call this function to generate a notification message.
+		 */
+		void notifying(int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id);
 
-                /**
-                 * Change the notification callback function to a new notifying callback function.
-                 */
-                void set_notification_callback(void (*new_notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *), void *);
-        };
+		/**
+		 * Change the notification callback function to a new notifying callback function.
+		 */
+		void set_notification_callback(void (*new_notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *), void *);
 
-        extern notification *notification_ref;
+		/**
+		 * Get the number of missed notification that exceeds the notification buffer count.
+		 */
+		uint32_t get_missed_notification_event_count();
+	};
+
+	extern notification *notification_ref;
 }
 
 #endif

@@ -31,118 +31,126 @@
 #include "enumeration.h"
 #include "notification.h"
 
-extern "C" void default_notification(void *user_obj, int32_t notification, uint64_t guid, uint16_t cmd_type,
+extern "C" void default_notification(void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
                                      uint16_t desc_type, uint16_t desc_index, void *notification_id)
 {
-        printf("default_notification (%d, %llx, %d, %d, %d, %d)\n", notification, guid, cmd_type, desc_type, desc_index, notification_id);
+	printf("default_notification (%d, %llx, %d, %d, %d, %d)\n", notification_type, guid, cmd_type, desc_type, desc_index, notification_id);
 }
 
 namespace avdecc_lib
 {
-        uint32_t notification::read_index = 0;
-        uint32_t notification::write_index = 0;
-        void (*notification::notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *);
-        void *notification::user_obj;
-        HANDLE notification::poll_events[2];
+	uint32_t notification::read_index = 0;
+	uint32_t notification::write_index = 0;
+	void (*notification::notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *);
+	void *notification::user_obj;
+	uint32_t notification::missed_notification_event_cnt = 0;
+	HANDLE notification::poll_events[2];
 
-        notification *notification_ref = new notification();
+	notification *notification_ref = new notification();
 
-        notification::notification()
-        {
-                notifications = avdecc_lib::NO_MATCH_FOUND;
-                notification_callback = default_notification;
-                user_obj = NULL;
+	notification::notification()
+	{
+		notifications = avdecc_lib::NO_MATCH_FOUND;
+		notification_callback = default_notification;
+		user_obj = NULL;
+		missed_notification_event_cnt = 0;
 
-                notification_thread_init(); // Start notifying thread
-        }
+		notification_thread_init(); // Start notification thread
+	}
 
-        notification::~notification() {}
+	notification::~notification() {}
 
-        int notification::notification_thread_init()
-        {
-                poll_events[NOTIFICATION_EVENT] = CreateSemaphore(NULL, 0, 32767, NULL);
-                poll_events[KILL_EVENT] = CreateEvent(NULL, FALSE, FALSE, NULL);
+	int notification::notification_thread_init()
+	{
+		poll_events[NOTIFICATION_EVENT] = CreateSemaphore(NULL, 0, 32767, NULL);
+		poll_events[KILL_EVENT] = CreateEvent(NULL, FALSE, FALSE, NULL);
 
-                h_thread = CreateThread(NULL, // Default security descriptor
-                                        0, // Default stack size
-                                        process_notification_thread, // Point to the start address of the thread
-                                        &notification_buf, // Data to be passed to the thread
-                                        0, // Flag controlling the creation of the thread
-                                        &thread_id // Thread identifier
-                                       );
+		h_thread = CreateThread(NULL, // Default security descriptor
+		                        0, // Default stack size
+		                        process_notification_thread, // Point to the start address of the thread
+		                        &notification_buf, // Data to be passed to the thread
+		                        0, // Flag controlling the creation of the thread
+		                        &thread_id // Thread identifier
+		                       );
 
-                if (h_thread == NULL)
-                {
-                        exit(EXIT_FAILURE);
-                }
+		if (h_thread == NULL)
+		{
+			exit(EXIT_FAILURE);
+		}
 
-                return 0;
-        }
+		return 0;
+	}
 
-        DWORD WINAPI notification::process_notification_thread(LPVOID lpParam)
-        {
-                DWORD dwEvent;
-                struct notification_data *data = (struct notification_data *)lpParam;
+	DWORD WINAPI notification::process_notification_thread(LPVOID lpParam)
+	{
+		DWORD dwEvent;
+		struct notification_data *data = (struct notification_data *)lpParam;
 
-                while (true)
-                {
-                        dwEvent = WaitForMultipleObjects(2, poll_events, FALSE, INFINITE);
+		while (true)
+		{
+			dwEvent = WaitForMultipleObjects(2, poll_events, FALSE, INFINITE);
 
-                        if(dwEvent == (WAIT_OBJECT_0 + NOTIFICATION_EVENT))
-                        {
-                                if((write_index - read_index) > 0)
-                                {
-                                        notification_callback(user_obj,
-                                                              data[read_index % NOTIFICATION_BUF_COUNT].notifying,
-                                                              data[read_index % NOTIFICATION_BUF_COUNT].guid,
-                                                              data[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
-                                                              data[read_index % NOTIFICATION_BUF_COUNT].desc_type,
-                                                              data[read_index % NOTIFICATION_BUF_COUNT].desc_index,
-                                                              data[read_index % NOTIFICATION_BUF_COUNT].notification_id
-                                                             ); // Call callback function
-                                        read_index++;
-                                }
-                        }
+			if(dwEvent == (WAIT_OBJECT_0 + NOTIFICATION_EVENT))
+			{
+				if((write_index - read_index) > 0)
+				{
+					notification_callback(user_obj,
+					                      data[read_index % NOTIFICATION_BUF_COUNT].notification_type,
+					                      data[read_index % NOTIFICATION_BUF_COUNT].guid,
+					                      data[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
+					                      data[read_index % NOTIFICATION_BUF_COUNT].desc_type,
+					                      data[read_index % NOTIFICATION_BUF_COUNT].desc_index,
+					                      data[read_index % NOTIFICATION_BUF_COUNT].notification_id
+					                     ); // Call callback function
+					read_index++;
+				}
+			}
 
-                        else
-                        {
-                                SetEvent(poll_events[KILL_EVENT]);
-                                break;
-                        }
-                }
+			else
+			{
+				SetEvent(poll_events[KILL_EVENT]);
+				break;
+			}
+		}
 
-                return 0;
-        }
+		return 0;
+	}
 
-        void notification::notifying(int32_t notifying, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id)
-        {
-                if((write_index - read_index) > NOTIFICATION_BUF_COUNT)
-                {
-                        return;
-                }
+	void notification::notifying(int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id)
+	{
+		if((write_index - read_index) > NOTIFICATION_BUF_COUNT)
+		{
+			missed_notification_event_cnt++;
+			return;
+		}
 
-                if(notifying == avdecc_lib::NO_MATCH_FOUND || notifying == avdecc_lib::END_STATION_DISCOVERED ||
-                   notifying == avdecc_lib::END_STATION_CONNECTED || notifying == avdecc_lib::END_STATION_RECONNECTED ||
-                   notifying == avdecc_lib::END_STATION_DISCONNECTED || notifying == avdecc_lib::COMMAND_SENT ||
-                   notifying == avdecc_lib::COMMAND_TIMEOUT || notifying == avdecc_lib::COMMAND_RESENT ||
-                   notifying == avdecc_lib::RESPONSE_RECEIVED || notifying == avdecc_lib::COMMAND_SUCCESS)
-                {
-                        notification_buf[write_index % NOTIFICATION_BUF_COUNT].notifying = notifying;
-                        notification_buf[write_index % NOTIFICATION_BUF_COUNT].guid = guid;
-                        notification_buf[write_index % NOTIFICATION_BUF_COUNT].cmd_type = cmd_type;
-                        notification_buf[write_index % NOTIFICATION_BUF_COUNT].desc_type = desc_type;
-                        notification_buf[write_index % NOTIFICATION_BUF_COUNT].desc_index = desc_index;
-                        notification_buf[write_index % NOTIFICATION_BUF_COUNT].notification_id = notification_id;
+		if(notification_type == avdecc_lib::NO_MATCH_FOUND || notification_type == avdecc_lib::END_STATION_DISCOVERED ||
+		   notification_type == avdecc_lib::END_STATION_CONNECTED || notification_type == avdecc_lib::END_STATION_RECONNECTED ||
+		   notification_type == avdecc_lib::END_STATION_DISCONNECTED || notification_type == avdecc_lib::COMMAND_SENT ||
+		   notification_type == avdecc_lib::COMMAND_TIMEOUT || notification_type == avdecc_lib::COMMAND_RESENT ||
+		   notification_type == avdecc_lib::RESPONSE_RECEIVED || notification_type == avdecc_lib::COMMAND_SUCCESS)
+		{
+			notification_buf[write_index % NOTIFICATION_BUF_COUNT].notification_type = notification_type;
+			notification_buf[write_index % NOTIFICATION_BUF_COUNT].guid = guid;
+			notification_buf[write_index % NOTIFICATION_BUF_COUNT].cmd_type = cmd_type;
+			notification_buf[write_index % NOTIFICATION_BUF_COUNT].desc_type = desc_type;
+			notification_buf[write_index % NOTIFICATION_BUF_COUNT].desc_index = desc_index;
+			notification_buf[write_index % NOTIFICATION_BUF_COUNT].notification_id = notification_id;
 
-                        write_index++;
-                        ReleaseSemaphore(poll_events[NOTIFICATION_EVENT], 1, NULL);
-                }
-        }
+			write_index++;
+			ReleaseSemaphore(poll_events[NOTIFICATION_EVENT], 1, NULL);
+		}
+	}
 
-        void notification::set_notification_callback(void (*new_notification_callback) (void *, int32_t, uint64_t, uint16_t,
-                                                                                        uint16_t, uint16_t, void *), void *p)
-        {
-                notification_callback = new_notification_callback;
-                user_obj = p;
-        }
+	void notification::set_notification_callback(void (*new_notification_callback) (void *, int32_t, uint64_t, uint16_t,
+	                                                                                uint16_t, uint16_t, void *), void *p)
+	{
+		notification_callback = new_notification_callback;
+		user_obj = p;
+	}
+
+	uint32_t notification::get_missed_notification_event_count()
+	{
+		return missed_notification_event_cnt;
+	}
 }

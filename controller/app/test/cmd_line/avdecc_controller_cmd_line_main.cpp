@@ -37,15 +37,15 @@
 
 using namespace std;
 
-extern "C" void notification_callback(void *user_obj, int32_t notification, uint64_t guid, uint16_t cmd_type,
+extern "C" void notification_callback(void *user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
                                       uint16_t desc_type, uint16_t desc_index, void *notification_id)
 {
-        if(notification == avdecc_lib::COMMAND_SENT || notification == avdecc_lib::COMMAND_TIMEOUT ||
-           notification == avdecc_lib::COMMAND_RESENT || notification == avdecc_lib::COMMAND_SUCCESS ||
-           notification == avdecc_lib::RESPONSE_RECEIVED)
+        if(notification_type == avdecc_lib::COMMAND_SENT || notification_type == avdecc_lib::COMMAND_TIMEOUT ||
+           notification_type == avdecc_lib::COMMAND_RESENT || notification_type == avdecc_lib::COMMAND_SUCCESS ||
+           notification_type == avdecc_lib::RESPONSE_RECEIVED)
         {
                 printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %d)\n",
-                       avdecc_lib::aem_string::notification_value_to_name(notification),
+                       avdecc_lib::aem_string::notification_value_to_name(notification_type),
                        guid,
                        avdecc_lib::aem_string::cmd_value_to_name(cmd_type),
                        avdecc_lib::aem_string::desc_value_to_name(desc_type),
@@ -56,7 +56,7 @@ extern "C" void notification_callback(void *user_obj, int32_t notification, uint
         else
         {
                 printf("\n[NOTIFICATION] (%s, 0x%llx, %d, %d, %d, %d)\n",
-                       avdecc_lib::aem_string::notification_value_to_name(notification),
+                       avdecc_lib::aem_string::notification_value_to_name(notification_type),
                        guid,
                        cmd_type,
                        desc_type,
@@ -306,19 +306,16 @@ int main()
                                                 {
                                                         avdecc_cmd_line_ref->cmd_get_stream_format(cmd_input_vector.at(2), desc_index);
                                                 }
-
                                                 catch(std::out_of_range &e)
                                                 {
                                                         std::cerr << "Out Of Range Exception " << e.what() << std::endl;
                                                 }
                                         }
-
                                         else
                                         {
                                                 std::cout << "Invalid Command" << std::endl;
                                         }
                                 }
-
                                 else if(cmd_input_vector.at(0).compare("get") == 0 && cmd_input_vector.at(1).compare("stream_info") == 0)
                                 {
                                         uint16_t desc_index = 0x0;
@@ -335,19 +332,42 @@ int main()
                                                 {
                                                         avdecc_cmd_line_ref->cmd_get_stream_info(cmd_input_vector.at(2), desc_index);
                                                 }
-
                                                 catch(std::out_of_range &e)
                                                 {
                                                         std::cerr << "Out Of Range Exception " << e.what() << std::endl;
                                                 }
                                         }
-
                                         else
                                         {
                                                 std::cout << "Invalid Command" << std::endl;
                                         }
                                 }
+                               else if(cmd_input_vector.at(0).compare("get") == 0 && cmd_input_vector.at(1).compare("sampling_rate") == 0)
+                                {
+                                        uint16_t desc_index = 0x0;
 
+                                        if((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0))
+                                        {
+                                                is_input_valid = true;
+                                                desc_index = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
+                                        }
+
+                                        if(is_input_valid)
+                                        {
+                                                try
+                                                {
+							avdecc_cmd_line_ref->cmd_get_sampling_rate(cmd_input_vector.at(2), desc_index);
+                                                }
+                                                catch(std::out_of_range &e)
+                                                {
+                                                        std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+                                                }
+                                        }
+                                        else
+                                        {
+                                                std::cout << "Invalid Command" << std::endl;
+                                        }
+                                }
                                 else
                                 {
                                         std::cout << "Invalid Command" << std::endl;

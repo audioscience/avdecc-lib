@@ -36,131 +36,131 @@
 
 namespace avdecc_lib
 {
-        class adp;
+	class adp;
 
-        class end_station_imp : public virtual avdecc_lib::end_station
-        {
-        private:
-                uint64_t end_station_guid; // The unique identifier of the AVDECC Entity the command is targeted to
-                uint64_t end_station_mac; // The source MAC address of the End Station
-                char end_station_connection_status; // The connection status of an End Station
-                uint16_t current_entity_desc; // The Entity descriptor associated with the End Station
-                uint16_t current_config_desc; // The Configuration descriptor associated with the Entity descriptor in the same End Station
+	class end_station_imp : public virtual avdecc_lib::end_station
+	{
+	private:
+		uint64_t end_station_guid; // The unique identifier of the AVDECC Entity the command is targeted to
+		uint64_t end_station_mac; // The source MAC address of the End Station
+		char end_station_connection_status; // The connection status of an End Station
+		uint16_t current_entity_desc; // The Entity descriptor associated with the End Station
+		uint16_t current_config_desc; // The Configuration descriptor associated with the Entity descriptor in the same End Station
 
-                enum read_top_level_desc_in_config_states
-                {
-                        READ_TOP_LEVEL_DESC_IN_CONFIG_IDLE,
-                        READ_TOP_LEVEL_DESC_IN_CONFIG_STARTING,
-                        READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING,
-                        READ_TOP_LEVEL_DESC_IN_CONFIG_DONE
-                };
+		enum read_top_level_desc_in_config_states
+		{
+		        READ_TOP_LEVEL_DESC_IN_CONFIG_IDLE,
+		        READ_TOP_LEVEL_DESC_IN_CONFIG_STARTING,
+		        READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING,
+		        READ_TOP_LEVEL_DESC_IN_CONFIG_DONE
+		};
 
-                enum read_top_level_desc_in_config_states read_top_level_desc_in_config_state; // States used for processing the top level descriptors present in the Configuration descriptor.
+		enum read_top_level_desc_in_config_states read_top_level_desc_in_config_state; // States used for processing the top level descriptors present in the Configuration descriptor.
 
-                uint16_t desc_type_from_config; // The top level descriptor type  present in the Configuration Descriptor
-                uint16_t desc_type_index_from_config; // The top level descriptor type index present in the Configuration Descriptor
-                uint16_t desc_count_from_config; // The top level descriptor count present in the Configuration Descriptor
-                uint16_t desc_count_index_from_config; // The top level descriptor count index present in the Configuration Descriptor
+		uint16_t desc_type_from_config; // The top level descriptor type  present in the Configuration Descriptor
+		uint16_t desc_type_index_from_config; // The top level descriptor type index present in the Configuration Descriptor
+		uint16_t desc_count_from_config; // The top level descriptor count present in the Configuration Descriptor
+		uint16_t desc_count_index_from_config; // The top level descriptor count index present in the Configuration Descriptor
 
-                adp *adp_ref; // ADP associated with the End Station
-                std::vector<entity_descriptor_imp *> entity_desc_vec; // Store a list of Entity descriptor class objects
+		adp *adp_ref; // ADP associated with the End Station
+		std::vector<entity_descriptor_imp *> entity_desc_vec; // Store a list of Entity descriptor class objects
 
-        public:
-                /**
-                 * An empty constructor for end_station_imp
-                 */
-                end_station_imp();
+	public:
+		/**
+		 * An empty constructor for end_station_imp
+		 */
+		end_station_imp();
 
-                /**
-                 * Constructor for end_station_imp used for constructing an object with network interface , Ethernet frame
-                 * and memory buffer length information.
-                 */
-                end_station_imp(uint8_t *frame, size_t mem_buf_len);
+		/**
+		 * Constructor for end_station_imp used for constructing an object with network interface , Ethernet frame
+		 * and memory buffer length information.
+		 */
+		end_station_imp(uint8_t *frame, size_t mem_buf_len);
 
-                /**
-                 * Destructor for end_station_imp used for destroying objects
-                 */
-                virtual ~end_station_imp();
+		/**
+		 * Destructor for end_station_imp used for destroying objects
+		 */
+		virtual ~end_station_imp();
 
-        private:
-                /**
-                 * Initialize End Station with Entity and Configuration descriptors information.
-                 */
-                int end_station_init();
+	private:
+		/**
+		 * Initialize End Station with Entity and Configuration descriptors information.
+		 */
+		int end_station_init();
 
-                /**
-                 * Initialize End Station by sending non blocking Read Descriptor commands to read
-                 * all the descriptors for the End Station.
-                 */
-                int read_desc_init(uint16_t desc_type, uint16_t desc_index);
+		/**
+		 * Initialize End Station by sending non blocking Read Descriptor commands to read
+		 * all the descriptors for the End Station.
+		 */
+		int read_desc_init(uint16_t desc_type, uint16_t desc_index);
 
-                /**
-                 * Send a READ_DESCRIPTOR command with or without a notifying id based on the notifying flag
-                 * to read a descriptor from an AVDECC Entity.
-                 */
-                int send_read_desc_cmd_with_flag(void *notification_id, uint32_t notification_flag, uint16_t desc_type, uint16_t desc_index);
+		/**
+		 * Send a READ_DESCRIPTOR command with or without a notifying id based on the notifying flag
+		 * to read a descriptor from an AVDECC Entity.
+		 */
+		int send_read_desc_cmd_with_flag(void *notification_id, uint32_t notification_flag, uint16_t desc_type, uint16_t desc_index);
 
-        public:
-                /**
-                 * Get the status of the End Station connection.
-                 */
-                char STDCALL get_end_station_connection_status();
+	public:
+		/**
+		 * Get the status of the End Station connection.
+		 */
+		char STDCALL get_end_station_connection_status();
 
-                /**
-                 * Change the End Station connection status to connected.
-                 */
-                void set_end_station_connected();
+		/**
+		 * Change the End Station connection status to connected.
+		 */
+		void set_end_station_connected();
 
-                /**
-                 * Change the End Station connection status to reconnected.
-                 */
-                void set_end_station_reconnected();
+		/**
+		 * Change the End Station connection status to reconnected.
+		 */
+		void set_end_station_reconnected();
 
-                /**
-                 * Change the End Station connection status to disconnected.
-                 */
-                void set_end_station_disconnected();
+		/**
+		 * Change the End Station connection status to disconnected.
+		 */
+		void set_end_station_disconnected();
 
-                /**
-                 * Get the GUID of the End Station.
-                 */
-                uint64_t STDCALL get_end_station_guid();
+		/**
+		 * Get the GUID of the End Station.
+		 */
+		uint64_t STDCALL get_end_station_guid();
 
-                /**
-                 * Get the source MAC address of the End Station.
-                 */
-                uint64_t STDCALL get_end_station_mac();
+		/**
+		 * Get the source MAC address of the End Station.
+		 */
+		uint64_t STDCALL get_end_station_mac();
 
-                /**
-                 * Send a READ_DESCRIPTOR command with notification id to read a descriptor from an AVDECC Entity.
-                 */
-                int STDCALL send_read_desc_cmd(void *notification_id, uint16_t desc_type, uint16_t desc_index);
+		/**
+		 * Send a READ_DESCRIPTOR command with notification id to read a descriptor from an AVDECC Entity.
+		 */
+		int STDCALL send_read_desc_cmd(void *notification_id, uint16_t desc_type, uint16_t desc_index);
 
-                /**
-                 * Process a READ_DESCRIPTOR response for the READ_DESCRIPTOR command.
-                 */
-                int proc_read_desc_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len);
+		/**
+		 * Process a READ_DESCRIPTOR response for the READ_DESCRIPTOR command.
+		 */
+		int proc_read_desc_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
-                /**
-                 * Process response received for the corresponding command.
-                 */
-                int proc_rcvd_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len);
+		/**
+		 * Process response received for the corresponding command.
+		 */
+		int proc_rcvd_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
-                /**
-                 * Get the ADP associated with the End Station.
-                 */
-                adp * get_adp();
+		/**
+		 * Get the ADP associated with the End Station.
+		 */
+		adp * get_adp();
 
-                /**
-                 * Get the number of Entity descriptors for this End Station.
-                 */
-                uint32_t STDCALL get_entity_desc_count();
+		/**
+		 * Get the number of Entity descriptors for this End Station.
+		 */
+		uint32_t STDCALL get_entity_desc_count();
 
-                /**
-                 * Get the corresponding Entity descriptor by index.
-                 */
-                entity_descriptor * STDCALL get_entity_desc_by_index(uint32_t entity_desc_index);
-        };
+		/**
+		 * Get the corresponding Entity descriptor by index.
+		 */
+		entity_descriptor * STDCALL get_entity_desc_by_index(uint32_t entity_desc_index);
+	};
 }
 
 #endif

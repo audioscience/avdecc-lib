@@ -42,35 +42,35 @@ typedef int64_t time_type;
 
 namespace avdecc_lib
 {
-        class timer
-        {
-        private:
-                int running;
-                int elapsed;
-                uint32_t count;
-                time_type start_time;
+	class timer
+	{
+	private:
+		int running;
+		int elapsed;
+		uint32_t count;
+		time_type start_time;
 
-        public:
-                /**
-                 * An empty constructor for timer
-                 */
-                timer();
+	public:
+		/**
+		 * An empty constructor for timer
+		 */
+		timer();
 
-                /**
-                 * Destructor for timer used for destroying objects
-                 */
-                ~timer();
+		/**
+		 * Destructor for timer used for destroying objects
+		 */
+		~timer();
 
-                time_type clk_monotonic(void);
+		time_type clk_monotonic(void);
 
-                uint32_t clk_convert_to_ms(time_type time_ms);
+		uint32_t clk_convert_to_ms(time_type time_ms);
 
-                void start(int duration_ms);
+		void start(int duration_ms);
 
-                void stop();
+		void stop();
 
-                int timeout();
-        };
+		int timeout();
+	};
 }
 
 #endif

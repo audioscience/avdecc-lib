@@ -31,6 +31,7 @@
 #ifndef _AVDECC_CMD_LINE_H_
 #define _AVDECC_CMD_LINE_H_
 
+#include <windows.h>
 #include "net_interface.h"
 #include "system.h"
 #include "controller.h"
@@ -168,6 +169,11 @@ public:
          * Send a GET_NAME command to fetch the value of a name field within a descriptor.
          */
         int cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index);
+
+        /**
+	 * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
+	 */
+	int cmd_get_sampling_rate(std::string desc_name, uint16_t desc_index);
 
         /**
          * Display the location of the redirected output file.
