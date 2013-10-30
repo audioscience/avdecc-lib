@@ -73,14 +73,6 @@ namespace avdecc_lib
 		 * Get the corresponding string of the Strings descriptor object.
 		 */
 		uint8_t * STDCALL get_string_by_index(uint32_t string_index);
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out Strings Descriptor fields.
-		 */
-		void print_strings_desc_info();
-#endif
-
 	};
 }
 

@@ -43,39 +43,34 @@ namespace avdecc_lib
 	{
 	public:
 		/**
-		 * Get the status of the End Station connection.
+		 * \return The status of the End Station connection.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual char STDCALL get_end_station_connection_status() = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual char STDCALL get_connection_status() = 0;
 
 		/**
-		 * Get the GUID of the End Station.
+		 * \return The GUID of the End Station.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_end_station_guid() = 0;
 
 		/**
-		 * Get the source MAC address of the End Station.
+		 * \return The source MAC address of the End Station.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_end_station_mac() = 0;
+
+		/**
+		 * \return The number of Entity descriptors for this End Station.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_entity_desc_count() = 0;
+
+		/**
+		 * \return The corresponding Entity descriptor by index.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor * STDCALL get_entity_desc_by_index(uint32_t entity_desc_index) = 0;
 
 		/**
 		 * Send a READ_DESCRIPTOR command with notification id to read a descriptor from an AVDECC Entity.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_read_desc_cmd(void *notification_id, uint16_t desc_type, uint16_t desc_index) = 0;
-
-		/**
-		 * Get the number of Entity descriptors for this End Station.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_entity_desc_count() = 0;
-
-		/**
-		 * Get the corresponding Entity descriptor by index.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor * STDCALL get_entity_desc_by_index(uint32_t entity_desc_index) = 0;
-
-		/**
-		 * Get the corresponding descriptor object by type and index.
-		 */
-		//AVDECC_CONTROLLER_LIB32_API virtual template<class T> * STDCALL get_desc_by_type_and_index(uint32_t desc_type, uint32_t desc_index) = 0;
 	};
 }
 

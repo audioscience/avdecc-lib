@@ -78,22 +78,22 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	char STDCALL end_station_imp::get_end_station_connection_status()
+	char STDCALL end_station_imp::get_connection_status()
 	{
 		return end_station_connection_status;
 	}
 
-	void end_station_imp::set_end_station_connected()
+	void end_station_imp::set_connected()
 	{
 		end_station_connection_status = 'C';
 	}
 
-	void end_station_imp::set_end_station_reconnected()
+	void end_station_imp::set_reconnected()
 	{
 		end_station_connection_status = 'R';
 	}
 
-	void end_station_imp::set_end_station_disconnected()
+	void end_station_imp::set_disconnected()
 	{
 		end_station_connection_status = 'D';
 	}
@@ -106,6 +106,21 @@ namespace avdecc_lib
 	uint64_t STDCALL end_station_imp::get_end_station_mac()
 	{
 		return end_station_mac;
+	}
+
+	adp * end_station_imp::get_adp()
+	{
+		return adp_ref;
+	}
+
+	uint32_t STDCALL end_station_imp::get_entity_desc_count()
+	{
+		return entity_desc_vec.size();
+	}
+
+	entity_descriptor * STDCALL end_station_imp::get_entity_desc_by_index(uint32_t entity_desc_index)
+	{
+		return entity_desc_vec.at(entity_desc_index);
 	}
 
 	int end_station_imp::read_desc_init(uint16_t desc_type, uint16_t desc_index)
@@ -382,25 +397,59 @@ namespace avdecc_lib
 
 		switch(cmd_type)
 		{
+			case JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY:
+			
+				/**
+				 * TODO - P1
+				 *
+				 * Add implementation for ACQUIRE_ENTITY command.
+				 */
+
+				break;
+
+			case JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY:
+
+				/**
+				 * TODO - P1
+				 *
+				 * Add implementation for LOCK_ENTITY command.
+				 */
+
+				break;
+
+			case JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE:
+
+				/**
+				 * TODO - P1
+				 *
+				 * Add implementation for ENTITY_AVAILABLE command.
+				 */
+
+				break;
+
+			case JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE:
+
+				/**
+				 * TODO - P1
+				 *
+				 * Add implementation for CONTROLLER_AVAILABLE command.
+				 */
+
+				break;
+
 			case JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR:
 				proc_read_desc_resp(notification_id, notification_flag, frame, mem_buf_len, status);
 				break;
 
-				//case JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY:
-				//	end_station_vec.at(found_end_station_index)->process_acquire_entity_resp(thread_data.frame, thread_data.length);
-				//	break;
+			case JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT:
 
-				//case JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY:
-				//	end_station_vec.at(found_end_station_index)->process_lock_entity_resp(thread_data.frame, thread_data.length);
-				//	break;
+				/**
+				 * TODO - P1
+				 *
+				 * Add implementation for SET_STREAM_FORMAT command.
+				 */
 
-				//case JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE:
-				//	end_station_vec.at(found_end_station_index)->process_entity_avail_resp(thread_data.frame, thread_data.length);
-				//	break;
-
-				//case JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT:
-				//	end_station_vec.at(found_end_station_index)->process_set_stream_format_resp(thread_data.frame, thread_data.length);
-				//	break;
+				break;
 
 			case JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT:
 				desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
@@ -419,7 +468,6 @@ namespace avdecc_lib
 					{
 						avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_input_descriptor to derived stream_input_descriptor_imp error");
 					}
-
 				}
 				else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
 				{
@@ -438,9 +486,15 @@ namespace avdecc_lib
 
 				break;
 
-				//case JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO:
-				//	end_station_vec.at(found_end_station_index)->process_set_stream_info_resp(thread_data.frame, thread_data.length);
-				//	break;
+			case JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO:
+
+				/**
+				 * TODO - P1
+				 *
+				 * Add implementation for SET_STREAM_INFO command.
+				 */
+
+				break;
 
 			case JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO:
 				desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
@@ -477,18 +531,53 @@ namespace avdecc_lib
 
 				break;
 
-				//case JDKSAVDECC_AEM_COMMAND_SET_NAME:
-				//	end_station_vec.at(found_end_station_index)->process_set_name_resp(thread_data.frame, thread_data.length);
-				//	break;
+			case JDKSAVDECC_AEM_COMMAND_SET_NAME:
 
-				//case JDKSAVDECC_AEM_COMMAND_GET_NAME:
-				//	end_station_vec.at(found_end_station_index)->process_get_name_resp(thread_data.frame, thread_data.length);
-				//	break;
+				/**
+				 * TODO - P2
+				 *
+				 * Add implementation for SET_NAME command.
+				 */
 
-			case JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE:
+				break;
+
+			case JDKSAVDECC_AEM_COMMAND_GET_NAME:
+
+				/**
+				 * TODO - P2
+				 *
+				 * Add implementation for GET_NAME command.
+				 */
+
+				break;
+
+			case JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE:
 				{
 					desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
 					desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+
+					if(desc_type == JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT)
+					{
+						audio_unit_descriptor_imp *audio_unit_desc_imp_ref;
+						audio_unit_desc_imp_ref = dynamic_cast<audio_unit_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_audio_unit_desc_by_index(desc_index));
+
+						if(audio_unit_desc_imp_ref)
+						{
+							audio_unit_desc_imp_ref->proc_set_sampling_rate_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						}
+						else
+						{
+							avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base audio_unit_descriptor to derived audio_unit_descriptor_imp error");
+						}
+
+					}
+				}
+				break;
+
+			case JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE:
+				{
+					desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
+					desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
 
 					if(desc_type == JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT)
 					{
@@ -508,26 +597,49 @@ namespace avdecc_lib
 				}
 				break;
 
+			case JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE:
+				{
+					desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
+					desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+
+					clock_domain_descriptor_imp *clock_domain_desc_imp_ref;
+					clock_domain_desc_imp_ref = dynamic_cast<clock_domain_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_clock_domain_desc_by_index(desc_index));
+
+					if(clock_domain_desc_imp_ref)
+					{
+						clock_domain_desc_imp_ref->proc_set_clock_source_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+					}
+					else
+					{
+						avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base clock_domain_descriptor to derived clock_domain_descriptor_imp error");
+					}
+				}
+				break;
+
+			case JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE:
+				{
+					desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
+					desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+
+					clock_domain_descriptor_imp *clock_domain_desc_imp_ref;
+					clock_domain_desc_imp_ref = dynamic_cast<clock_domain_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_clock_domain_desc_by_index(desc_index));
+
+					if(clock_domain_desc_imp_ref)
+					{
+						clock_domain_desc_imp_ref->proc_get_clock_source_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+					}
+					else
+					{
+						avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base clock_domain_descriptor to derived clock_domain_descriptor_imp error");
+					}
+				}
+				break;
+
 			default:
 				avdecc_lib::notification_ref->notifying(avdecc_lib::NO_MATCH_FOUND, 0, cmd_type, 0, 0, 0);
 				break;
 		}
 
 		return 0;
-	}
-
-	adp * end_station_imp::get_adp()
-	{
-		return adp_ref;
-	}
-
-	uint32_t STDCALL end_station_imp::get_entity_desc_count()
-	{
-		return entity_desc_vec.size();
-	}
-
-	entity_descriptor * STDCALL end_station_imp::get_entity_desc_by_index(uint32_t entity_desc_index)
-	{
-		return entity_desc_vec.at(entity_desc_index);
 	}
 }

@@ -98,6 +98,56 @@ namespace avdecc_lib
 		return stream_output_desc.stream_flags;
 	}
 
+	bool STDCALL stream_output_descriptor_imp::get_stream_flags_clock_sync_source()
+	{
+		return stream_flags.clock_sync_source;
+	}
+
+	bool STDCALL stream_output_descriptor_imp::get_stream_flags_class_a()
+	{
+		return stream_flags.class_a;
+	}
+
+	bool STDCALL stream_output_descriptor_imp::get_stream_flags_class_b()
+	{
+		return stream_flags.class_b;
+	}
+
+	bool STDCALL stream_output_descriptor_imp::get_stream_flags_supports_encrypted()
+	{
+		return stream_flags.supports_encrypted;
+	}
+
+	bool STDCALL stream_output_descriptor_imp::get_stream_flags_primary_backup_supported()
+	{
+		return stream_flags.primary_backup_supported;
+	}
+
+	bool STDCALL stream_output_descriptor_imp::get_stream_flags_primary_backup_valid()
+	{
+		return stream_flags.primary_backup_valid;
+	}
+
+	bool STDCALL stream_output_descriptor_imp::get_stream_flags_secondary_backup_supported()
+	{
+		return stream_flags.secondary_backup_supported;
+	}
+
+	bool STDCALL stream_output_descriptor_imp::get_stream_flags_secondary_backup_valid()
+	{
+		return stream_flags.secondary_backup_valid;
+	}
+
+	bool STDCALL stream_output_descriptor_imp::get_stream_flags_tertiary_backup_supported()
+	{
+		return stream_flags.tertiary_backup_supported;
+	}
+
+	bool STDCALL stream_output_descriptor_imp::get_stream_flags_tertiary_back_up_valid()
+	{
+		return stream_flags.tertiary_back_up_valid;
+	}
+
 	char * stream_output_descriptor_imp::get_current_format()
 	{
 		uint64_t current_format = jdksavdecc_uint64_get(&stream_output_desc.current_format, 0);
@@ -307,7 +357,6 @@ namespace avdecc_lib
 		/***************************************** AECP Common Data ********************************************/
 		aem_cmd_get_stream_format.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
 		// Fill aem_cmd_get_stream_format.sequence_id in AEM Controller State Machine
-		aem_cmd_get_stream_format.sequence_id = aem_controller_state_machine::aecp_seq_id;
 		aem_cmd_get_stream_format.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
 
 		/************************** AECP Message Specific Data ************************/
@@ -335,7 +384,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int stream_output_descriptor_imp::proc_get_stream_format_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int stream_output_descriptor_imp::proc_get_stream_format_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_get_stream_format_resp_returned;

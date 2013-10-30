@@ -123,33 +123,4 @@ namespace avdecc_lib
 			assert(adpdu_common_ctrl_hdr_returned >= 0);
 		}
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void adp::print_adpdu_information()
-	{
-		uint64_t source_addr = avb_pdu_get_field_mac(ether_frame.src_address.value);
-		uint64_t dest_addr = avb_pdu_get_field_mac(ether_frame.dest_address.value);
-		std::cout << "\nADPDU";
-		std::cout << "\nethernet_type = 0x" << std::hex << ether_frame.ethertype;
-		std::cout << "\nsource_address = 0x" << std::hex << source_addr;
-		std::cout << "\ndestination_address = 0x" << std::hex << dest_addr;
-		std::cout << "\nentity_entity_id = 0x" << std::hex << get_entity_entity_id();
-		std::cout << "\nentity_model_id = 0x" << std::hex << get_entity_model_id();
-		std::cout << "\nentity_capabilities = 0x" << std::hex << get_entity_capabilities();
-		std::cout << "\ntalker_stream_sources = 0x" << std::hex <<get_talker_stream_sources();
-		std::cout << "\ntalker_capabilities = 0x" << std::hex << get_talker_capabilities();
-		std::cout << "\nlistener_stream_sinks = 0x" << std::hex << get_listener_stream_sinks();
-		std::cout << "\nlistener_capabilities = 0x" << std::hex << get_listener_capabilities();
-		std::cout << "\ncontroller_capabilities = 0x" << std::hex << get_controller_capabilities();
-		std::cout << "\navailable_index = 0x" << std::hex << get_available_index();
-		std::cout << "\ngptp_grandmaster_id = 0x" << std::hex << get_gptp_grandmaster_id();
-		std::cout << "\ngptp_domain_number = " << std::dec << get_gptp_domain_number();
-		std::cout << "\nreserved0 = 0x" << std::hex << get_reserved0();
-		std::cout << "\nidentify_control_index = 0x" << std::hex << get_identify_control_index();
-		std::cout << "\ninterface_index = 0x" << std::hex << get_interface_index();
-		std::cout << "\nassociation_id = 0x" << std::hex << get_association_id();
-		std::cout << "\nreserved1 = 0x" << std::hex << get_reserved1();
-	}
-#endif
-
 }

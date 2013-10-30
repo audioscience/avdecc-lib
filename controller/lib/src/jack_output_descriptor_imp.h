@@ -98,14 +98,6 @@ namespace avdecc_lib
 		 * Get the base control of the Jack Output descriptor object.
 		 */
 		uint16_t STDCALL get_base_control();
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out Jack Descriptor fields.
-		 */
-		void print_jack_desc_info();
-#endif
-
 	};
 }
 

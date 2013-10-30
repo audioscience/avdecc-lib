@@ -39,9 +39,12 @@ namespace avdecc_lib
 	class clock_domain_descriptor_imp : public virtual clock_domain_descriptor, public virtual descriptor_base_imp
 	{
 	private:
-		struct jdksavdecc_descriptor_clock_domain clock_domain_desc; // Structure containing the clock_domain_desc fields
+		struct jdksavdecc_descriptor_clock_domain clock_domain_desc; // Store the Clock Domain Descriptor fields
 		int desc_clock_domain_read_returned; // Status of extracting Clock Domain descriptor information from a network buffer
-		std::vector<uint16_t> clock_src_vec; // Store clock sources in a vector
+		std::vector<uint16_t> clk_src_vec; // Store clock sources in a vector
+
+		struct jdksavdecc_aem_command_get_clock_source_response aem_cmd_set_clk_src_resp; // Store the response received after sending a SET_CLOCK_SOURCE command
+		struct jdksavdecc_aem_command_get_clock_source_response aem_cmd_get_clk_src_resp; // Store the response received after sending a GET_CLOCK_SOURCE command
 
 	public:
 		/**
@@ -61,52 +64,81 @@ namespace avdecc_lib
 		virtual ~clock_domain_descriptor_imp();
 
 		/**
-		 * Get the descriptor type of the clock_domain_descriptor object.
+		 * Get the descriptor type of the Clock Domain descriptor object.
 		 */
 		uint16_t STDCALL get_descriptor_type();
 
 		/**
-		 * Get the descriptor index of the clock_domain_descriptor object.
+		 * Get the descriptor index of the Clock Domain descriptor object.
 		 */
 		uint16_t STDCALL get_descriptor_index();
 
 		/**
-		 * Get the name of the clock_domain_descriptor object.
+		 * Get the name of the Clock Domain descriptor object.
 		 */
 		uint8_t * STDCALL get_object_name();
 
 		/**
-		 * Get the localized description of the clock_domain_descriptor object.
+		 * Get the localized description of the Clock Domain descriptor object.
 		 */
 		uint16_t STDCALL get_localized_description();
 
 		/**
-		 * Get the Clock Source index of the clock_domain_descriptor object.
+		 * Get the Clock Source index of the Clock Domain descriptor object.
 		 */
 		uint16_t STDCALL get_clock_source_index();
 
 		/**
-		* Get the Clock Sources offset of the clock_domain_descriptor object.
+		* Get the Clock Sources offset of the Clock Domain descriptor object.
 		*/
 		uint16_t STDCALL get_clock_sources_offset();
 
 		/**
-		 * Get the Clock Sources count of the clock_domain_descriptor object.
+		 * Get the Clock Sources count of the Clock Domain descriptor object.
 		 */
 		uint16_t STDCALL get_clock_sources_count();
 
 		/**
-		* Store the Clock Sources of the clock_domain_descriptor object.
+		 * Get the corresponding Clock Sources by index present in the Clock Domain descriptor object.
+		 */
+		uint16_t STDCALL get_clock_source_by_index(uint32_t clk_src_index);
+
+		/**
+		* Store the Clock Sources of the Clock Domain descriptor object.
 		*/
 		void store_clock_sources(uint8_t *frame, size_t pos);
 
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
 		/**
-		 * Print out Clock Domain Descriptor fields.
+		 * Get the clock source index of the requested Clock Domain descriptor after sending a
+		 * SET_CLOCK_SOURCE command and receiving a response back for the command.
 		 */
-		void print_clock_domain_desc_info();
-#endif
+		uint16_t STDCALL set_clock_source_clock_source_index();
 
+		/**
+		 * Get the clock source index of the requested Clock Domain descriptor after sending a
+		 * GET_CLOCK_SOURCE command and receiving a response back for the command.
+		 */
+		uint16_t STDCALL get_clock_source_clock_source_index();
+
+		/**
+		 * Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.
+		 */
+		int STDCALL send_set_clock_source_cmd(void *notification_id, uint16_t desc_index, uint16_t new_clk_src_index);
+
+		/**
+		 * Process a SET_CLOCK_SOURCE response for the SET_CLOCK_SOURCE command.
+		 */
+		int proc_set_clock_source_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+
+		/**
+		 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
+		 */
+		int STDCALL send_get_clock_source_cmd(void *notification_id, uint16_t desc_index);
+
+		/**
+		 * Process a GET_CLOCK_SOURCE response for the GET_CLOCK_SOURCE command.
+		 */
+		int proc_get_clock_source_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 }
 

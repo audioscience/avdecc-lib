@@ -87,7 +87,7 @@ namespace avdecc_lib
 
 	uint16_t stream_input_descriptor_imp::get_stream_flags()
 	{
-		stream_flags.clock_sync_source = stream_input_desc.stream_flags >> 0 & 0x01;
+		
 		stream_flags.class_a = stream_input_desc.stream_flags >> 1 & 0x01;
 		stream_flags.class_b = stream_input_desc.stream_flags >> 2 & 0x01;
 		stream_flags.supports_encrypted = stream_input_desc.stream_flags >> 3 & 0x01;
@@ -99,6 +99,56 @@ namespace avdecc_lib
 		stream_flags.tertiary_back_up_valid = stream_input_desc.stream_flags >> 9 & 0x01;
 
 		return stream_input_desc.stream_flags;
+	}
+
+	bool STDCALL stream_input_descriptor_imp::get_stream_flags_clock_sync_source()
+	{
+		return stream_flags.clock_sync_source;
+	}
+
+	bool STDCALL stream_input_descriptor_imp::get_stream_flags_class_a()
+	{
+		return stream_flags.class_a;
+	}
+
+	bool STDCALL stream_input_descriptor_imp::get_stream_flags_class_b()
+	{
+		return stream_flags.class_b;
+	}
+
+	bool STDCALL stream_input_descriptor_imp::get_stream_flags_supports_encrypted()
+	{
+		return stream_flags.supports_encrypted;
+	}
+
+	bool STDCALL stream_input_descriptor_imp::get_stream_flags_primary_backup_supported()
+	{
+		return stream_flags.primary_backup_supported;
+	}
+
+	bool STDCALL stream_input_descriptor_imp::get_stream_flags_primary_backup_valid()
+	{
+		return stream_flags.primary_backup_valid;
+	}
+
+	bool STDCALL stream_input_descriptor_imp::get_stream_flags_secondary_backup_supported()
+	{
+		return stream_flags.secondary_backup_supported;
+	}
+
+	bool STDCALL stream_input_descriptor_imp::get_stream_flags_secondary_backup_valid()
+	{
+		return stream_flags.secondary_backup_valid;
+	}
+
+	bool STDCALL stream_input_descriptor_imp::get_stream_flags_tertiary_backup_supported()
+	{
+		return stream_flags.tertiary_backup_supported;
+	}
+
+	bool STDCALL stream_input_descriptor_imp::get_stream_flags_tertiary_back_up_valid()
+	{
+		return stream_flags.tertiary_back_up_valid;
 	}
 
 	char * stream_input_descriptor_imp::get_current_format()
@@ -311,7 +361,6 @@ namespace avdecc_lib
 		/***************************************** AECP Common Data ********************************************/
 		aem_cmd_get_stream_format.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
 		// Fill aem_cmd_get_stream_format.sequence_id in AEM Controller State Machine
-		aem_cmd_get_stream_format.sequence_id = aem_controller_state_machine::aecp_seq_id;
 		aem_cmd_get_stream_format.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
 
 		/************************** AECP Message Specific Data ************************/

@@ -81,155 +81,211 @@ namespace avdecc_lib
 		virtual ~stream_output_descriptor_imp();
 
 		/**
-		 * Get the descriptor type of the Stream Output descriptor object.
+		 * \return The descriptor type of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_descriptor_type();
 
 		/**
-		 * Get the descriptor index of the Stream Output descriptor object.
+		 * \return The descriptor index of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_descriptor_index();
 
 		/**
-		 * Get the name of the Stream Output descriptor object.
+		 * \return The name of the Stream Input descriptor object.
 		 */
 		uint8_t * STDCALL get_object_name();
 
 		/**
-		 * Get the localized description of the Stream Output descriptor object.
+		 * \return The localized description of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_localized_description();
 
 		/**
-		 * Get the Clock Domain index of the Stream Output descriptor object.
+		 * \return The Clock Domain index of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_clock_domain_index();
 
 		/**
-		 * Get the stream flags of the Stream Output descriptor object.
+		 * \return The stream flags of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_stream_flags();
 
 		/**
-		* Get the current format of the Stream Output descriptor object.
+		 * \return True if the stream can be used as a clock synchronization source.
+		 */
+		bool STDCALL get_stream_flags_clock_sync_source();
+
+		/**
+		 * \return True if the stream supports streaming at Class A.
+		 */
+		bool STDCALL get_stream_flags_class_a();
+
+		/**
+		 * \return True if the stream supports streaming at Class B.
+		 */
+		bool STDCALL get_stream_flags_class_b();
+
+		/**
+		 * \return True if the stream supports streaming with encrypted PDUs.
+		 */
+		bool STDCALL get_stream_flags_supports_encrypted();
+
+		/**
+		 * \return True if the backup_talker_entity_id_0 and backup_talker_unique_id_0 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		bool STDCALL get_stream_flags_primary_backup_supported();
+
+		/**
+		 * \return True if the backup_talker_entity_id_0 and backup_talker_unique_id_0 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		bool STDCALL get_stream_flags_primary_backup_valid();
+
+		/**
+		 * \return True if the backup_talker_entity_id_1 and backup_talker_unique_id_1 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		bool STDCALL get_stream_flags_secondary_backup_supported();
+
+		/**
+		 * \return True if the backup_talker_entity_id_1 and backup_talker_unique_id_1 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		bool STDCALL get_stream_flags_secondary_backup_valid();
+
+		/**
+		 * \return True if the backup_talker_entity_id_2 and backup_talker_unique_id_2 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		bool STDCALL get_stream_flags_tertiary_backup_supported();
+
+		/**
+		 * \return True if the backup_talker_entity_id_2 and backup_talker_unique_id_2 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		bool STDCALL get_stream_flags_tertiary_back_up_valid();
+
+		/**
+		* \return The current format of the Stream Input descriptor object.
 		*/
 		char * STDCALL get_current_format();
 
 		/**
-		 * Get the formats offset of the Stream Output descriptor object.
+		 * \return The formats offset of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_formats_offset();
 
 		/**
-		 * Get the number of formats of the Stream Output descriptor object.
+		 * \return The number of formats of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_number_of_formats();
 
 		/**
-		 * Get the backup talker entity id 0 of the Stream Output descriptor object.
+		 * \return The backup talker entity id 0 of the Stream Input descriptor object.
 		 */
 		uint64_t STDCALL get_backup_talker_entity_id_0();
 
 		/**
-		 * Get the backup talker unique_0 of the Stream Output descriptor object.
+		 * \return The backup talker unique 0 of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_backup_talker_unique_0();
 
 		/**
-		 * Get the backup talker entity id 1 of the Stream Output descriptor object.
+		 * \return The backup talker entity id 1 of the Stream Input descriptor object.
 		 */
 		uint64_t STDCALL get_backup_talker_entity_id_1();
 
 		/**
-		 * Get the backup talker unique_1 of the Stream Output descriptor object.
+		 * \return The backup talker unique 1 of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_backup_talker_unique_1();
 
 		/**
-		 * Get the backup talker entity id 2 of the Stream Output descriptor object.
+		 * \return The backup talker entity id 2 of the Stream Input descriptor object.
 		 */
 		uint64_t STDCALL get_backup_talker_entity_id_2();
 
 		/**
-		 * Get the backup talker unique 2 of the Stream Output descriptor object.
+		 * \return The backup talker unique 2 of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_backup_talker_unique_2();
 
 		/**
-		 * Get the backedup talker entity id of the Stream Output descriptor object.
+		 * \return The backedup talker entity id of the Stream Input descriptor object.
 		 */
 		uint64_t STDCALL get_backedup_talker_entity_id();
 
 		/**
-		 * Get the backedup talker unique of the Stream Output descriptor object.
+		 * \return The backedup talker unique of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_backedup_talker_unique();
 
 		/**
-		 * Get the AVB Interface index of the Stream Output descriptor object.
+		 * \return The AVB Interface index of the Stream Input descriptor object.
 		 */
 		uint16_t STDCALL get_avb_interface_index();
 
 		/**
-		 * Get the buffer length of the Stream Output descriptor object.
+		 * \return The buffer length of the Stream Input descriptor object.
 		 */
 		uint32_t STDCALL get_buffer_length();
 
 		/**
-		 * Get the stream format of a stream after sending a GET_STREAM_FORMAT command and
+		 * \return The stream format of a stream after sending a GET_STREAM_FORMAT command and
 		 * receiving a response back for the command.
 		 */
 		uint64_t STDCALL get_stream_format_stream_format();
 
 		/**
-		 * Get the stream info flags of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info flags of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		uint32_t STDCALL get_stream_info_flags();
 
 		/**
-		 * Get the stream info stream format of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info stream format of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		uint64_t STDCALL get_stream_info_stream_format();
 
 		/**
-		 * Get the stream info stream id of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info stream id of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		uint64_t STDCALL get_stream_info_stream_id();
 
 		/**
-		 * Get the stream info MSRP accumulated latency of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info MSRP accumulated latency of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		uint32_t STDCALL get_stream_info_msrp_accumulated_latency();
 
 		/**
-		 * Get the stream dest mac of a stream after sending a GET_STREAM_info command and
+		 * \return The stream dest mac of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		uint8_t * STDCALL get_stream_info_stream_dest_mac();
 
 		/**
-		 * Get the stream info MSRP failure code of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info MSRP failure code of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		uint8_t STDCALL get_stream_info_msrp_failure_code();
 
 		/**
-		 * Get the stream info MSRP failure bridge id of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info MSRP failure bridge id of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		uint64_t STDCALL get_stream_info_msrp_failure_bridge_id();
 
 		/**
-		 * Check if the Clock Sync Source flag is set.
+		 * \return True if the Clock Sync Source flag is set.
 		 */
 		bool is_clock_sync_source_set();
 
 		/**
-		 * Send a SET_STREAM_FORMAT command with or without a notifying id based on the notifying flag to change the format of a stream.
+		 * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
 		 */
 		int STDCALL send_set_stream_format_cmd(void *notification_id, uint16_t desc_index, uint64_t new_stream_format);
 
@@ -239,18 +295,17 @@ namespace avdecc_lib
 		int proc_set_stream_format_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len);
 
 		/**
-		 * Send a GET_STREAM_FORMAT command with or without a notifying id based on the notifying flag to fetch the current format of a stream.
+		 * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
 		 */
 		int STDCALL send_get_stream_format_cmd(void *notification_id, uint16_t desc_index);
 
 		/**
 		 * Process a GET_STREAM_FORMAT response for the GET_STREAM_FORMAT command.
 		 */
-		int proc_get_stream_format_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_get_stream_format_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
-		 * Send a SET_STREAM_INFO command with or without a notifying id based on the notifying flag to change the current values
-		 * of the dynamic information of the stream.
+		 * Send a SET_STREAM_INFO command with a notification id to change the current values of the dynamic information of the stream.
 		 */
 		int STDCALL send_set_stream_info_cmd(void *notification_id, uint16_t desc_index, void *new_stream_info_field);
 
@@ -260,7 +315,7 @@ namespace avdecc_lib
 		int proc_set_stream_info_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len);
 
 		/**
-		 * Send a GET_STREAM_INFO command with or without a notifying id based on the notifying flag to fetch the current information for a stream.
+		 * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
 		 */
 		int STDCALL send_get_stream_info_cmd(void *notification_id, uint16_t desc_index);
 

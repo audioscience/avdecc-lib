@@ -236,10 +236,21 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_pull_field_multiplier(uint8_t pull_field_value) = 0;
 
 		/**
-		 * Get the sampling rate of a port or uint after sending a GET_SAMPLING_RATE command and
+		 * Get the sampling rate of a port or unit after sending a SET_SAMPLING_RATE command and
+		 * receiving a response back for the command.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL set_sampling_rate_sampling_rates() = 0;
+
+		/**
+		 * Get the sampling rate of a port or unit after sending a GET_SAMPLING_RATE command and
 		 * receiving a response back for the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_sampling_rate_sampling_rates() = 0;
+
+		/**
+		 * Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_sampling_rate_cmd(void *notification_id, uint16_t desc_index, uint32_t new_sampling_rate) = 0;
 
 		/**
 		 * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.

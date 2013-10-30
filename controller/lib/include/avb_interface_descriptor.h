@@ -53,7 +53,7 @@ namespace avdecc_lib
 		/**
 		 * Get the MAC address of the AVB Interface descriptor object.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual struct jdksavdecc_eui48 STDCALL get_mac_address() = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_mac_addr() = 0;
 
 		/**
 		 * Get the interface flags of the AVB Interface descriptor object.

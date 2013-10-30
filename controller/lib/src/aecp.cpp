@@ -105,20 +105,4 @@ namespace avdecc_lib
 			assert(aecpdu_common_ctrl_hdr_returned >= 0);
 		}
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void aecp::print_aecpdu_information()
-	{
-		std::cout << "\nAECPDU";
-		std::cout << "\naecpdu_header status = 0x" << std::hex << get_aecpdu_header().header.status;
-		std::cout << "\naecpdu_header message_type = 0x" << std::hex << get_aecpdu_header().header.message_type;
-		std::cout << "\naecpdu_header subtype = 0x" << std::hex << get_aecpdu_header().header.subtype;
-		std::cout << "\naecpdu_header version = 0x" << std::hex << get_aecpdu_header().header.version;
-		std::cout << "\naecpdu_header control_data_length = 0x" << std::hex << get_aecpdu_header().header.control_data_length;
-		std::cout << "\ncontroller_entity_id = 0x" << std::hex << get_controller_entity_id();
-		std::cout << "\nsequence_id = 0x" << std::hex << get_sequence_id();
-		std::cout << "\ncommand_type = 0x" << std::hex << get_command_type();
-	}
-#endif
-
 }

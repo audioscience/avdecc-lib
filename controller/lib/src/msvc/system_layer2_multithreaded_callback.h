@@ -113,7 +113,7 @@ namespace avdecc_lib
 		int STDCALL set_wait_for_next_cmd(void *notification_id);
 
 		/**
-		 * Wait for the response packet with the corrsponding notifying id to be received.
+		 * Wait for the response packet with the corrsponding notification id to be received.
 		 */
 		int STDCALL get_last_resp_status();
 

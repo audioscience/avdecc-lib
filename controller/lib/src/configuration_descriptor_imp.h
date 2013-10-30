@@ -287,19 +287,6 @@ namespace avdecc_lib
 		 * Get the corresponding CLOCK DOMAIN descriptor object by index.
 		 */
 		clock_domain_descriptor * STDCALL get_clock_domain_desc_by_index(uint32_t clock_domain_desc_index);
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print the top level descriptors of the Configuration descriptor object.
-		 */
-		void print_top_level_descs_in_config();
-
-		/**
-		 * Print out CONFIGURATION descriptor fields.
-		 */
-		void print_config_desc_info();
-#endif
-
 	};
 }
 

@@ -40,6 +40,8 @@
 #include "aem_controller_state_machine.h"
 #include "controller_imp.h"
 
+#define DEBUG_ONLY_NEED_TO_REMOVE
+
 namespace avdecc_lib
 {
 	net_interface_imp *net_interface_ref;
@@ -176,7 +178,7 @@ namespace avdecc_lib
 		if(adp_discovery_state_machine_ref->adp_discovery_tick(end_station_guid) &&
 		   find_end_station_by_guid(end_station_guid, disconnected_end_station_index))
 		{
-			end_station_vec.at(disconnected_end_station_index)->set_end_station_disconnected();
+			end_station_vec.at(disconnected_end_station_index)->set_disconnected();
 		}
 	}
 
@@ -221,13 +223,13 @@ namespace avdecc_lib
 								adp_discovery_state_machine_ref->set_rcvd_avail(true);
 								adp_discovery_state_machine_ref->adp_discovery_state_waiting(frame);
 								end_station_vec.push_back(new end_station_imp(frame, mem_buf_len));
-								end_station_vec.at(end_station_vec.size() - 1)->set_end_station_connected();
+								end_station_vec.at(end_station_vec.size() - 1)->set_connected();
 							}
 							else
 							{
-								if(end_station_vec.at(found_end_station_index)->get_end_station_connection_status() == 'D')
+								if(end_station_vec.at(found_end_station_index)->get_connection_status() == 'D')
 								{
-									end_station_vec.at(found_end_station_index)->set_end_station_connected();
+									end_station_vec.at(found_end_station_index)->set_connected();
 									adp_discovery_state_machine_ref->set_rcvd_avail(true);
 									adp_discovery_state_machine_ref->adp_discovery_state_waiting(frame);
 								}
@@ -276,6 +278,10 @@ namespace avdecc_lib
 						{
 							end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, notification_flag, frame, mem_buf_len, status);
 							is_notification_id_valid = true;
+
+#ifndef DEBUG_ONLY_NEED_TO_REMOVE
+		avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "Called controller_imp::rx_packet_event (notification_id = %d, status = %d)", (uint32_t)notification_id, status);
+#endif
 						}
 						else
 						{

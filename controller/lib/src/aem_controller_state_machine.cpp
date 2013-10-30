@@ -38,6 +38,8 @@
 #include "aecp.h"
 #include "aem_controller_state_machine.h"
 
+#define DEBUG_ONLY_NEED_TO_REMOVE
+
 namespace avdecc_lib
 {
 	aem_controller_state_machine *aem_controller_state_machine_ref = new aem_controller_state_machine(); // To have one Controller State Machine for all end stations
@@ -71,6 +73,10 @@ namespace avdecc_lib
 		inflight_cmd.avdecc_lib_timer_ref->start(AVDECC_MSG_TIMEOUT); // Start the timer
 
 		send_frame_returned = net_interface_ref->send_frame(ether_frame->payload, ether_frame->length);
+
+#ifndef DEBUG_ONLY_NEED_TO_REMOVE
+		avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "aem_controller_state_machine::tx_cmd");
+#endif
 
 		if(send_frame_returned < 0)
 		{

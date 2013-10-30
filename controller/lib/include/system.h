@@ -59,7 +59,7 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL set_wait_for_next_cmd(void *notification_id) = 0;
 
 		/**
-		 * Wait for the response packet with the corrsponding notifying id to be received.
+		 * Wait for the response packet with the corrsponding notification id to be received.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL get_last_resp_status() = 0;
 

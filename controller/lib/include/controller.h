@@ -48,32 +48,32 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL destroy() = 0;
 
 		/**
-		 * Get the current build release version.
+		 * \return The current build release version.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_version() = 0;
 
 		/**
-		 * Get the AVDECC Controller GUID of the AVDECC Entity sending the command.
+		 * \return The AVDECC Controller GUID of the AVDECC Entity sending the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_controller_guid() = 0;
 
 		/**
-		 * Get the number of End Stations connected.
+		 * \return The number of End Stations connected.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_end_station_count() = 0;
 
 		/**
-		 * Get the corresponding End Station by index.
+		 * \return The corresponding End Station by index.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual end_station * STDCALL get_end_station_by_index(uint32_t end_station_index) = 0;
 
 		/**
-		 * Get the corresponding Configuration descriptor by index.
+		 * \return The corresponding Configuration descriptor by index.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index) = 0;
 
 		/**
-		 * Get the corresponding Configuration descriptor by GUID.
+		 * \return The corresponding Configuration descriptor by GUID.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_by_guid(uint64_t end_station_guid, uint16_t entity_index, uint16_t config_index) = 0;
 
@@ -88,12 +88,12 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL update_log_level(int32_t new_log_level) = 0;
 
 		/**
-		 * Get the missed notification events count.
+		 * \return The missed notification events count.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL missed_notification_count() = 0;
 
 		/**
-		 * Get the missed log events count.
+		 * \return The missed log events count.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL missed_log_count() = 0;
 
