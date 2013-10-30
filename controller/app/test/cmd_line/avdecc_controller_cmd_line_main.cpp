@@ -363,6 +363,28 @@ int main()
                                                         std::cerr << "Out Of Range Exception " << e.what() << std::endl;
                                                 }
                                         }
+				}
+                               else if(cmd_input_vector.at(0).compare("get") == 0 && cmd_input_vector.at(1).compare("clock_source") == 0)
+                                {
+                                        uint16_t desc_index = 0x0;
+
+                                        if((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0))
+                                        {
+                                                is_input_valid = true;
+                                                desc_index = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
+                                        }
+
+                                        if(is_input_valid)
+                                        {
+                                                try
+                                                {
+							avdecc_cmd_line_ref->cmd_get_clock_source(cmd_input_vector.at(2), desc_index);
+                                                }
+                                                catch(std::out_of_range &e)
+                                                {
+                                                        std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+                                                }
+                                        }
                                         else
                                         {
                                                 std::cout << "Invalid Command" << std::endl;

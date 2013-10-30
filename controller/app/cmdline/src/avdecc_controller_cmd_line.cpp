@@ -285,7 +285,7 @@ int avdecc_cmd_line::cmd_list()
                 end_station_guid = controller_ref->get_end_station_by_index(index_i)->get_end_station_guid();
                 end_station_name = controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_entity_name();
                 end_station_mac = controller_ref->get_end_station_by_index(index_i)->get_end_station_mac();
-                std::cout << controller_ref->get_end_station_by_index(index_i)->get_end_station_connection_status()
+                std::cout << controller_ref->get_end_station_by_index(index_i)->get_connection_status()
                           << std::setw(10) << std::dec << end_station << "  |  "
                           << std::setw(20) << std::hex << end_station_name << "  |  0x"
                           << std::setw(14) << std::hex << end_station_guid << "  |  0x"
@@ -482,10 +482,270 @@ int avdecc_cmd_line::cmd_view_all()
 
 int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
 {
-        uint16_t desc_type_value;
+        uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
 
-        desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
-        display_desc_info(desc_type_value, desc_index);
+	std::cout << "\nDescriptor Type: " << avdecc_lib::aem_string::desc_value_to_name(desc_type_value);
+	std::cout << "\nDescriptor Index: 0x" << std::hex << desc_index;
+
+        switch(desc_type_value)
+        {
+                case avdecc_lib::AEM_DESC_ENTITY:
+			{
+				avdecc_lib::entity_descriptor *entity_desc_ref = controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_by_index(current_entity);
+				std::cout << "\nentity_id = 0x" << std::hex << entity_desc_ref->get_entity_id();
+				std::cout << "\nvendor_id = " << std::dec << entity_desc_ref->get_vendor_id();
+				std::cout << "\nentity_model_id = 0x" << std::hex << entity_desc_ref->get_entity_model_id();
+				std::cout << "\nentity_capabilities = 0x" << std::hex << entity_desc_ref->get_entity_capabilities();
+				std::cout << "\ntalker_stream_sources = 0x" << std::hex << entity_desc_ref->get_talker_stream_sources();
+				std::cout << "\ntalker_capabilities = 0x" << std::hex << entity_desc_ref->get_talker_capabilities();
+				std::cout << "\nlistener_stream_sinks = 0x" << std::hex << entity_desc_ref->get_listener_stream_sinks();
+				std::cout << "\nlistener_capabilities = 0x" << std::hex << entity_desc_ref->get_listener_capabilities();
+				std::cout << "\ncontroller_capabilities = 0x" << std::hex << entity_desc_ref->get_controller_capabilities();
+				std::cout << "\navailable_index = 0x" << std::hex << entity_desc_ref->get_available_index();
+				std::cout << "\nassociation_id = 0x" << std::hex << entity_desc_ref->get_association_id();
+				std::cout << "\nentity_name = " << std::dec << entity_desc_ref->get_entity_name();
+				std::cout << "\nvendor_name_string = " << std::dec << entity_desc_ref->get_vendor_name_string();
+				std::cout << "\nmodel_name_string = " << std::dec << entity_desc_ref->get_model_name_string();
+				std::cout << "\nfirmware_version = " << std::dec << entity_desc_ref->get_firmware_version();
+				std::cout << "\ngroup_name = " << std::dec << entity_desc_ref->get_group_name();
+				std::cout << "\nserial_number = " << std::dec << entity_desc_ref->get_serial_number();
+				std::cout << "\nconfigurations_count = " << std::dec << entity_desc_ref->get_configurations_count();
+				std::cout << "\ncurrent_configuration = " << std::dec << entity_desc_ref->get_current_configuration();
+			}
+                        break;
+
+                case avdecc_lib::AEM_DESC_CONFIGURATION:
+			{
+				avdecc_lib::configuration_descriptor *config_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config);
+				std::cout << "\nobject_name = " << std::dec << config_desc_ref->get_object_name();
+				std::cout << "\nlocalized_description = " << std::dec << config_desc_ref->get_localized_description();
+				std::cout << "\ndescriptor_counts_count = " << std::dec << config_desc_ref->get_descriptor_counts_count();
+				std::cout << "\ndescriptor_counts_offset = " << std::dec << config_desc_ref->get_descriptor_counts_offset();
+
+				uint16_t desc_counts_count = config_desc_ref->get_descriptor_counts_count();
+				uint16_t desc_type_from_config = 0;
+				uint16_t desc_count_from_config = 0;
+				uint16_t offset = 0x0;
+
+				if(desc_counts_count > 0)
+				{
+					std::cout << "\nTop level descriptors" << std::endl;
+
+					for(uint32_t index_i = 0; index_i < desc_counts_count; index_i++)
+					{
+						desc_type_from_config = config_desc_ref->get_desc_type_from_config_by_index(index_i);
+						desc_count_from_config = config_desc_ref->get_desc_count_from_config_by_index(index_i);
+
+						std::cout << "\tdesc_type = 0x" << std::hex << desc_type_from_config << " (" <<
+							     avdecc_lib::aem_string::desc_value_to_name(desc_type_from_config) << ")" << std::endl;
+						std::cout << "\tdesc_count = " << std::dec << desc_count_from_config << std::endl;
+					}
+				}
+			}
+                        break;
+
+                case avdecc_lib::AEM_DESC_AUDIO_UNIT:
+			{
+				avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_audio_unit_desc_by_index(desc_index);	
+				std::cout << "\nobject_name = " << std::hex << audio_unit_desc_ref->get_object_name();
+				std::cout << "\nlocalized_description = 0x" << std::hex << audio_unit_desc_ref->get_localized_description();
+				std::cout << "\nclock_domain_index = " << std::dec << audio_unit_desc_ref->get_clock_domain_index();
+				std::cout << "\nnumber_of_stream_input_ports = " << std::dec << audio_unit_desc_ref->get_number_of_stream_input_ports();
+				std::cout << "\nbase_stream_input_port = " << std::dec << audio_unit_desc_ref->get_base_stream_input_port();
+				std::cout << "\nnumber_of_stream_output_ports = " << std::dec << audio_unit_desc_ref->get_number_of_stream_output_ports();
+				std::cout << "\nbase_stream_output_port = " << std::dec << audio_unit_desc_ref->get_base_stream_output_port();
+				std::cout << "\nnumber_of_external_input_ports = " << std::dec << audio_unit_desc_ref->get_number_of_external_input_ports();
+				std::cout << "\nbase_external_input_port = " << std::dec << audio_unit_desc_ref->get_base_external_input_port();
+				std::cout << "\nnumber_of_external_output_ports = " << std::dec << audio_unit_desc_ref->get_number_of_external_output_ports();
+				std::cout << "\nbase_external_output_port = " << std::dec << audio_unit_desc_ref->get_base_external_output_port();
+				std::cout << "\nnumber_of_internal_input_ports = " << std::dec << audio_unit_desc_ref->get_number_of_internal_input_ports();
+				std::cout << "\nbase_internal_input_port = " << std::dec << audio_unit_desc_ref->get_base_internal_input_port();
+				std::cout << "\nnumber_of_internal_output_ports = " << std::dec << audio_unit_desc_ref->get_number_of_internal_output_ports();
+				std::cout << "\nbase_internal_output_port = " << std::dec << audio_unit_desc_ref->get_base_internal_output_port();
+				std::cout << "\nnumber_of_controls = " << std::dec << audio_unit_desc_ref->get_number_of_controls();
+				std::cout << "\nbase_control = " << std::dec << audio_unit_desc_ref->get_base_control();
+				std::cout << "\nnumber_of_signal_selectors = " << std::dec << audio_unit_desc_ref->get_number_of_signal_selectors();
+				std::cout << "\nbase_signal_selector = " << std::dec << audio_unit_desc_ref->get_base_signal_selector();
+				std::cout << "\nnumber_of_mixers = " << std::dec << audio_unit_desc_ref->get_number_of_mixers();
+				std::cout << "\nbase_mixer = " << std::dec << audio_unit_desc_ref->get_base_mixer();
+				std::cout << "\nnumber_of_matrices = " << std::dec << audio_unit_desc_ref->get_number_of_matrices();
+				std::cout << "\nbase_matrix = " << std::dec << audio_unit_desc_ref->get_base_matrix();
+				std::cout << "\nnumber_of_splitters = " << std::dec << audio_unit_desc_ref->get_number_of_splitters();
+				std::cout << "\nbase_splitter = " << std::dec << audio_unit_desc_ref->get_base_splitter();
+				std::cout << "\nnumber_of_combiners = " << std::dec << audio_unit_desc_ref->get_number_of_combiners();
+				std::cout << "\nbase_combiner = " << std::dec << audio_unit_desc_ref->get_base_combiner();
+				std::cout << "\nnumber_of_demultiplexers = " << std::dec << audio_unit_desc_ref->get_number_of_demultiplexers();
+				std::cout << "\nbase_demultiplexer = " << std::dec << audio_unit_desc_ref->get_base_demultiplexer();
+				std::cout << "\nnumber_of_multiplexers = " << std::dec << audio_unit_desc_ref->get_number_of_multiplexers();
+				std::cout << "\nbase_multiplexer = " << std::dec << audio_unit_desc_ref->get_base_multiplexer();
+				std::cout << "\nnumber_of_transcoders = " << std::dec << audio_unit_desc_ref->get_number_of_transcoders();
+				std::cout << "\nbase_transcoder = " << std::dec << audio_unit_desc_ref->get_base_transcoder();
+				std::cout << "\nnumber_of_control_blocks = " << std::dec << audio_unit_desc_ref->get_number_of_control_blocks();
+				std::cout << "\nbase_control_block = " << std::dec << audio_unit_desc_ref->get_base_control_block();
+				std::cout << "\ncurrent_sampling_rate = " << std::dec << audio_unit_desc_ref->get_current_sampling_rate();
+				std::cout << "\nsampling_rates_offset = " << std::dec << audio_unit_desc_ref->get_sampling_rates_offset();
+				std::cout << "\nsampling_rates_count = " << std::dec << audio_unit_desc_ref->get_sampling_rates_count();
+			}
+                        break;
+
+                case avdecc_lib::AEM_DESC_STREAM_INPUT:
+			{
+				avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
+				std::cout << "\nobject_name = " << std::hex << stream_input_desc_ref->get_object_name();
+				std::cout << "\nlocalized_description = " << std::dec << stream_input_desc_ref->get_localized_description();
+				std::cout << "\nclock_domain_index = 0x" << std::hex << stream_input_desc_ref->get_clock_domain_index();
+				std::cout << "\nstream_flags = 0x" << std::hex << stream_input_desc_ref->get_stream_flags();
+				std::cout << "\n\tstream_flags.clock_sync_source = " << std::dec << stream_input_desc_ref->get_stream_flags_clock_sync_source();
+				std::cout << "\n\tstream_flags.class_a = " << std::dec << stream_input_desc_ref->get_stream_flags_class_a();
+				std::cout << "\n\tstream_flags.class_b = " << std::dec << stream_input_desc_ref->get_stream_flags_class_b();
+				std::cout << "\n\tstream_flags.supports_encrypted = " << std::dec << stream_input_desc_ref->get_stream_flags_supports_encrypted();
+				std::cout << "\n\tstream_flags.primary_backup_valid = " << std::dec << stream_input_desc_ref->get_stream_flags_primary_backup_valid();
+				std::cout << "\n\tstream_flags.primary_backup_valid = " << std::dec << stream_input_desc_ref->get_stream_flags_primary_backup_valid();
+				std::cout << "\n\tstream_flags.secondary_backup_supported = " << std::dec << stream_input_desc_ref->get_stream_flags_secondary_backup_supported();
+				std::cout << "\n\tstream_flags.secondary_backup_valid = " << std::dec << stream_input_desc_ref->get_stream_flags_secondary_backup_valid();
+				std::cout << "\n\tstream_flags.tertiary_backup_supported = " << std::dec << stream_input_desc_ref->get_stream_flags_tertiary_backup_supported();
+				std::cout << "\n\tstream_flags.tertiary_back_up_valid = " << std::dec << stream_input_desc_ref->get_stream_flags_tertiary_back_up_valid();
+				std::cout << "\ncurrent_format = " << std::hex << stream_input_desc_ref->get_current_format();
+				std::cout << "\nformats_offset = " << std::dec << stream_input_desc_ref->get_formats_offset();
+				std::cout << "\nnumber_of_formats = " << std::dec << stream_input_desc_ref->get_number_of_formats();
+				std::cout << "\nbackup_talker_entity_id_0 = 0x" << std::hex << stream_input_desc_ref->get_backup_talker_entity_id_0();
+				std::cout << "\nbackup_talker_unique_0 = 0x" << std::hex << stream_input_desc_ref->get_backup_talker_unique_0();
+				std::cout << "\nbackup_talker_entity_id_1 = 0x" << std::hex << stream_input_desc_ref->get_backup_talker_entity_id_1();
+				std::cout << "\nbackup_talker_unique_1 = 0x" << std::hex << stream_input_desc_ref->get_backup_talker_unique_1();
+				std::cout << "\nbackup_talker_entity_id_2 = 0x" << std::hex << stream_input_desc_ref->get_backup_talker_entity_id_2();
+				std::cout << "\nbackup_talker_unique_2 = 0x" << std::hex << stream_input_desc_ref->get_backup_talker_unique_2();
+				std::cout << "\nbackedup_talker_entity_id = 0x" << std::hex << stream_input_desc_ref->get_backedup_talker_entity_id();
+				std::cout << "\nbackedup_talker_unique = 0x" << std::hex << stream_input_desc_ref->get_backedup_talker_unique();
+				std::cout << "\navb_interface_index = 0x" << std::hex << stream_input_desc_ref->get_avb_interface_index();
+				std::cout << "\nbuffer_length = " << std::dec << stream_input_desc_ref->get_buffer_length();
+			}
+                        break;
+
+                case avdecc_lib::AEM_DESC_STREAM_OUTPUT:
+			{
+				avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
+				std::cout << "\nobject_name = " << std::hex << stream_output_desc_ref->get_object_name();
+				std::cout << "\nlocalized_description = " << std::dec << stream_output_desc_ref->get_localized_description();
+				std::cout << "\nclock_domain_index = 0x" << std::hex << stream_output_desc_ref->get_clock_domain_index();
+				std::cout << "\nstream_flags = 0x" << std::hex << stream_output_desc_ref->get_stream_flags();
+				std::cout << "\n\tstream_flags.clock_sync_source = " << std::dec << stream_output_desc_ref->get_stream_flags_clock_sync_source();
+				std::cout << "\n\tstream_flags.class_a = " << std::dec << stream_output_desc_ref->get_stream_flags_class_a();
+				std::cout << "\n\tstream_flags.class_b = " << std::dec << stream_output_desc_ref->get_stream_flags_class_b();
+				std::cout << "\n\tstream_flags.supports_encrypted = " << std::dec << stream_output_desc_ref->get_stream_flags_supports_encrypted();
+				std::cout << "\n\tstream_flags.primary_backup_valid = " << std::dec << stream_output_desc_ref->get_stream_flags_primary_backup_valid();
+				std::cout << "\n\tstream_flags.primary_backup_valid = " << std::dec << stream_output_desc_ref->get_stream_flags_primary_backup_valid();
+				std::cout << "\n\tstream_flags.secondary_backup_supported = " << std::dec << stream_output_desc_ref->get_stream_flags_secondary_backup_supported();
+				std::cout << "\n\tstream_flags.secondary_backup_valid = " << std::dec << stream_output_desc_ref->get_stream_flags_secondary_backup_valid();
+				std::cout << "\n\tstream_flags.tertiary_backup_supported = " << std::dec << stream_output_desc_ref->get_stream_flags_tertiary_backup_supported();
+				std::cout << "\n\tstream_flags.tertiary_back_up_valid = " << std::dec << stream_output_desc_ref->get_stream_flags_tertiary_back_up_valid();
+				std::cout << "\ncurrent_format = " << std::hex << stream_output_desc_ref->get_current_format();
+				std::cout << "\nformats_offset = " << std::dec << stream_output_desc_ref->get_formats_offset();
+				std::cout << "\nnumber_of_formats = " << std::dec << stream_output_desc_ref->get_number_of_formats();
+				std::cout << "\nbackup_talker_entity_id_0 = 0x" << std::hex << stream_output_desc_ref->get_backup_talker_entity_id_0();
+				std::cout << "\nbackup_talker_unique_0 = 0x" << std::hex << stream_output_desc_ref->get_backup_talker_unique_0();
+				std::cout << "\nbackup_talker_entity_id_1 = 0x" << std::hex << stream_output_desc_ref->get_backup_talker_entity_id_1();
+				std::cout << "\nbackup_talker_unique_1 = 0x" << std::hex << stream_output_desc_ref->get_backup_talker_unique_1();
+				std::cout << "\nbackup_talker_entity_id_2 = 0x" << std::hex << stream_output_desc_ref->get_backup_talker_entity_id_2();
+				std::cout << "\nbackup_talker_unique_2 = 0x" << std::hex << stream_output_desc_ref->get_backup_talker_unique_2();
+				std::cout << "\nbackedup_talker_entity_id = 0x" << std::hex << stream_output_desc_ref->get_backedup_talker_entity_id();
+				std::cout << "\nbackedup_talker_unique = 0x" << std::hex << stream_output_desc_ref->get_backedup_talker_unique();
+				std::cout << "\navb_interface_index = 0x" << std::hex << stream_output_desc_ref->get_avb_interface_index();
+				std::cout << "\nbuffer_length = " << std::dec << stream_output_desc_ref->get_buffer_length();
+			}
+                        break;
+
+                case avdecc_lib::AEM_DESC_JACK_INPUT:
+			{
+				avdecc_lib::jack_input_descriptor *jack_input_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_jack_input_desc_by_index(desc_index);
+				std::cout << "\nobject_name = " << std::hex << jack_input_desc_ref->get_object_name();
+				std::cout << "\nlocalized_description = 0x" << std::hex << jack_input_desc_ref->get_localized_description();
+				std::cout << "\njack_flags = 0x" << std::hex << jack_input_desc_ref->get_jack_flags();
+				std::cout << "\njack_type = 0x" << std::hex << jack_input_desc_ref->get_jack_type();
+				std::cout << "\nnumber_of_controls = " << std::dec << jack_input_desc_ref->get_number_of_controls();
+				std::cout << "\nbase_control = " << std::dec << jack_input_desc_ref->get_base_control();
+			}
+                        break;
+
+                case avdecc_lib::AEM_DESC_JACK_OUTPUT:
+			{
+				avdecc_lib::jack_output_descriptor *jack_output_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_jack_output_desc_by_index(desc_index);
+				std::cout << "\nobject_name = " << std::hex << jack_output_desc_ref->get_object_name();
+				std::cout << "\nlocalized_description = 0x" << std::hex << jack_output_desc_ref->get_localized_description();
+				std::cout << "\njack_flags = 0x" << std::hex << jack_output_desc_ref->get_jack_flags();
+				std::cout << "\njack_type = 0x" << std::hex << jack_output_desc_ref->get_jack_type();
+				std::cout << "\nnumber_of_controls = " << std::dec << jack_output_desc_ref->get_number_of_controls();
+				std::cout << "\nbase_control = " << std::dec << jack_output_desc_ref->get_base_control();
+			}
+                        break;
+
+                case avdecc_lib::AEM_DESC_AVB_INTERFACE:
+			{
+				avdecc_lib::avb_interface_descriptor *avb_interface_desc = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_avb_interface_desc_by_index(desc_index);
+				std::cout << "\nobject_name = " << std::hex << avb_interface_desc->get_object_name();
+				std::cout << "\nlocalized_description = 0x" << std::hex << avb_interface_desc->get_localized_description();
+				std::cout << "\nmac_address = 0x" << std::hex << avb_interface_desc->get_mac_addr();
+				std::cout << "\ninterface_flags = 0x" << std::hex << avb_interface_desc->get_interface_flags();
+				std::cout << "\nclock_identity = 0x" << std::hex << avb_interface_desc->get_clock_identity();
+				std::cout << "\npriority1 = " << std::dec << avb_interface_desc->get_priority1();
+				std::cout << "\nclock_class = " << std::dec << avb_interface_desc->get_clock_class();
+				std::cout << "\noffset_scaled_log_variance = " << std::dec << avb_interface_desc->get_offset_scaled_log_variance();
+				std::cout << "\nclock_accuracy = " << std::dec << avb_interface_desc->get_clock_accuracy();
+				std::cout << "\npriority2 = " << std::dec << avb_interface_desc->get_priority2();
+				std::cout << "\ndomain_number = " << std::dec << avb_interface_desc->get_domain_number();
+				std::cout << "\nlog_sync_interval = " << std::dec << avb_interface_desc->get_log_sync_interval();
+			}
+                        break;
+
+                case avdecc_lib::AEM_DESC_CLOCK_SOURCE:
+			{
+				avdecc_lib::clock_source_descriptor *clk_src_desc = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_clock_source_desc_by_index(desc_index);
+				std::cout << "\nobject_name = " << std::hex << clk_src_desc->get_object_name();
+				std::cout << "\nlocalized_description = 0x" << std::hex << clk_src_desc->get_localized_description();
+				std::cout << "\nclock_source_flags = 0x" << std::hex << clk_src_desc->get_clock_source_flags();
+				std::cout << "\nclock_source_type = 0x" << std::hex << clk_src_desc->get_clock_source_type();
+				std::cout << "\nclock_source_identifier = 0x" << std::hex << clk_src_desc->get_clock_source_identifier();
+				std::cout << "\nclock_source_location_type = 0x" << std::hex << clk_src_desc->get_clock_source_location_type();
+				std::cout << "\nclock_source_location_index = 0x" << std::hex << clk_src_desc->get_clock_source_location_index();
+			}
+                        break;
+
+                case avdecc_lib::AEM_DESC_LOCALE:
+			{
+				avdecc_lib::locale_descriptor *locale_desc = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_locale_desc_by_index(desc_index);				
+				std::cout << "\nlocale_identifier = " << std::hex << locale_desc->get_locale_identifier();
+				std::cout << "\nnumber_of_strings = " << std::hex << locale_desc->get_number_of_strings();
+				std::cout << "\nbase_strings = " << std::hex << locale_desc->get_base_strings();
+			}
+                        break;
+
+                case avdecc_lib::AEM_DESC_STRINGS:
+			{
+				avdecc_lib::strings_descriptor *strings_desc = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_strings_desc_by_index(desc_index);				
+				std::cout << "\nget_string_0 = " << std::hex << strings_desc->get_string_by_index(0);
+				std::cout << "\nget_string_1 = " << std::hex << strings_desc->get_string_by_index(1);
+				std::cout << "\nget_string_2 = " << std::hex << strings_desc->get_string_by_index(2);
+				std::cout << "\nget_string_3 = " << std::hex << strings_desc->get_string_by_index(3);
+				std::cout << "\nget_string_4 = " << std::hex << strings_desc->get_string_by_index(4);
+				std::cout << "\nget_string_5 = " << std::hex << strings_desc->get_string_by_index(5);
+				std::cout << "\nget_string_6 = " << std::hex << strings_desc->get_string_by_index(6);
+			}
+                        break;
+
+                case avdecc_lib::AEM_DESC_CLOCK_DOMAIN:
+			{
+				avdecc_lib::clock_domain_descriptor *clk_domain_desc = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_clock_domain_desc_by_index(desc_index);				
+				std::cout << "\nobject_name = " << std::hex << clk_domain_desc->get_object_name();
+				std::cout << "\nlocalized_description = 0x" << std::hex << clk_domain_desc->get_localized_description();
+				std::cout << "\nclock_source_index = 0x" << std::hex << clk_domain_desc->get_clock_source_index();
+				std::cout << "\nclock_sources_offset = " << std::dec << clk_domain_desc->get_clock_sources_offset();
+				std::cout << "\nclock_sources_count = " << std::dec << clk_domain_desc->get_clock_sources_count();
+			}
+                        break;
+
+                default:
+                        std::cout << "Descriptor type is not found." << std::endl;
+                        break;
+        }
 
         return 0;
 }
@@ -834,6 +1094,22 @@ int avdecc_cmd_line::cmd_get_sampling_rate(std::string desc_name, uint16_t desc_
 	return 0;
 }
 
+int avdecc_cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_index)
+{
+	uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
+	int status = -1;
+
+	system_ref->set_wait_for_next_cmd((void *)notification_id);
+	avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_clock_domain_desc_by_index(desc_index);
+	clk_domain_desc_ref->send_get_clock_source_cmd((void *)notification_id, desc_index);
+	status = system_ref->get_last_resp_status();
+	std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
+	std::cout << "\nSampling rate: 0x" << std::dec << clk_domain_desc_ref->get_clock_source_clock_source_index();
+
+	notification_id++;
+	return 0;
+
+}
 
 void avdecc_cmd_line::cmd_path()
 {
@@ -853,84 +1129,4 @@ bool avdecc_cmd_line::is_setting_valid()
 				(current_config == controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_by_index(current_entity)->get_current_configuration());
 
         return is_setting_valid;
-}
-
-int avdecc_cmd_line::display_desc_info(uint16_t desc_type, uint16_t desc_index)
-{
-        switch(desc_type)
-        {
-                case avdecc_lib::AEM_DESC_ENTITY:
-			//std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-			//std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-			//std::cout << "\nentity_id = 0x" << std::hex << get_entity_id();
-			//std::cout << "\nvendor_id = " << std::dec << get_vendor_id();
-			//std::cout << "\nentity_model_id = 0x" << std::hex << get_entity_model_id();
-			//std::cout << "\nentity_capabilities = 0x" << std::hex << get_entity_capabilities();
-			//std::cout << "\ntalker_stream_sources = 0x" << std::hex << get_talker_stream_sources();
-			//std::cout << "\ntalker_capabilities = 0x" << std::hex << get_talker_capabilities();
-			//std::cout << "\nlistener_stream_sinks = 0x" << std::hex << get_listener_stream_sinks();
-			//std::cout << "\nlistener_capabilities = 0x" << std::hex << get_listener_capabilities();
-			//std::cout << "\ncontroller_capabilities = 0x" << std::hex << get_controller_capabilities();
-			//std::cout << "\navailable_index = 0x" << std::hex << get_available_index();
-			//std::cout << "\nassociation_id = 0x" << std::hex << get_association_id();
-			//std::cout << "\nentity_name = " << std::dec << get_entity_name().value;
-			//std::cout << "\nvendor_name_string = " << std::dec << get_vendor_name_string();
-			//std::cout << "\nmodel_name_string = " << std::dec << get_model_name_string();
-			//std::cout << "\nfirmware_version = " << std::dec << get_firmware_version().value;
-			//std::cout << "\ngroup_name = " << std::dec << get_group_name().value;
-			//std::cout << "\nserial_number = " << std::dec << get_serial_number().value;
-			//std::cout << "\nconfigurations_count = " << std::dec << get_configurations_count();
-			//std::cout << "\ncurrent_configuration = " << std::dec << get_current_configuration();
-                        break;
-
-                case avdecc_lib::AEM_DESC_CONFIGURATION:
-
-                        break;
-
-                case avdecc_lib::AEM_DESC_AUDIO_UNIT:
-
-                        break;
-
-                case avdecc_lib::AEM_DESC_STREAM_INPUT:
-
-                        break;
-
-                case avdecc_lib::AEM_DESC_STREAM_OUTPUT:
-
-                        break;
-
-                case avdecc_lib::AEM_DESC_JACK_INPUT:
-
-                        break;
-
-                case avdecc_lib::AEM_DESC_JACK_OUTPUT:
-
-                        break;
-
-                case avdecc_lib::AEM_DESC_AVB_INTERFACE:
-
-                        break;
-
-                case avdecc_lib::AEM_DESC_CLOCK_SOURCE:
-
-                        break;
-
-                case avdecc_lib::AEM_DESC_LOCALE:
-
-                        break;
-
-                case avdecc_lib::AEM_DESC_STRINGS:
-
-                        break;
-
-                case avdecc_lib::AEM_DESC_CLOCK_DOMAIN:
-
-                        break;
-
-                default:
-                        std::cout << "Descriptor type is not found." << std::endl;
-                        break;
-        }
-
-        return 0;
 }

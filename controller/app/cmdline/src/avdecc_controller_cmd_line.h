@@ -75,8 +75,6 @@ public:
 private:
         int print_interfaces_and_select();
 
-        int display_desc_info(uint16_t desc_type, uint16_t desc_index);
-
 public:
 
         /**
@@ -105,7 +103,7 @@ public:
         void cmd_select();
 
         /**
-         * Change the setting of end station and configuration.
+         * Change the setting of end station, entity, and configuration.
          */
         int cmd_select(uint32_t new_end_station, uint16_t new_entity, uint16_t new_config);
 
@@ -115,7 +113,7 @@ public:
         int cmd_view_all();
 
         /**
-         * Display information for the specified descriptor using the current end station and configuration setting.
+         * Display information for the specified descriptor using the current end station, entity, and configuration setting.
          */
         int cmd_view_descriptor(std::string desc_name, uint16_t desc_index);
 
@@ -174,6 +172,11 @@ public:
 	 * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
 	 */
 	int cmd_get_sampling_rate(std::string desc_name, uint16_t desc_index);
+
+	/**
+	 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
+	 */
+	int cmd_get_clock_source(std::string desc_name, uint16_t desc_index);
 
         /**
          * Display the location of the redirected output file.
