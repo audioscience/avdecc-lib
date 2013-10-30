@@ -72,23 +72,23 @@ namespace avdecc_lib
 				break;
 
 			case 2:
-				return strings_desc.string_1.value;
+				return strings_desc.string_2.value;
 				break;
 
 			case 3:
-				return strings_desc.string_1.value;
+				return strings_desc.string_3.value;
 				break;
 
 			case 4:
-				return strings_desc.string_1.value;
+				return strings_desc.string_4.value;
 				break;
 
 			case 5:
-				return strings_desc.string_1.value;
+				return strings_desc.string_5.value;
 				break;
 
 			case 6:
-				return strings_desc.string_1.value;
+				return strings_desc.string_6.value;
 				break;
 
 			default:
