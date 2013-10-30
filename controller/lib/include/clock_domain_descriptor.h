@@ -37,34 +37,34 @@
 
 namespace avdecc_lib
 {
-        class clock_domain_descriptor : public virtual descriptor_base
-        {
-        public:
-                /**
-                 * Get the name of the clock_domain_descriptor object.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
+	class clock_domain_descriptor : public virtual descriptor_base
+	{
+	public:
+		/**
+		 * Get the name of the clock_domain_descriptor object.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
 
-                /**
-                 * Get the localized description of the clock_domain_descriptor object.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
+		/**
+		 * Get the localized description of the clock_domain_descriptor object.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
-                /**
-                 * Get the Clock Source index of the clock_domain_descriptor object.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_index() = 0;
+		/**
+		 * Get the Clock Source index of the clock_domain_descriptor object.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_index() = 0;
 
-                /**
-                * Get the Clock Sources offset of the clock_domain_descriptor object.
-                */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_sources_offset() = 0;
+		/**
+		* Get the Clock Sources offset of the clock_domain_descriptor object.
+		*/
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_sources_offset() = 0;
 
-                /**
-                 * Get the Clock Sources count of the clock_domain_descriptor object.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_sources_count() = 0;
-        };
+		/**
+		 * Get the Clock Sources count of the clock_domain_descriptor object.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_sources_count() = 0;
+	};
 }
 
 #endif

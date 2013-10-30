@@ -36,62 +36,62 @@
 
 namespace avdecc_lib
 {
-        class locale_descriptor_imp : public virtual locale_descriptor, public virtual descriptor_base_imp
-        {
-        private:
-                struct jdksavdecc_descriptor_locale locale_desc; // Structure containing the locale_desc fields
-                int desc_locale_read_returned; // Status of extracting Locale descriptor information from a network buffer
+	class locale_descriptor_imp : public virtual locale_descriptor, public virtual descriptor_base_imp
+	{
+	private:
+		struct jdksavdecc_descriptor_locale locale_desc; // Structure containing the locale_desc fields
+		int desc_locale_read_returned; // Status of extracting Locale descriptor information from a network buffer
 
-        public:
-                /**
-                 * An empty constructor for locale_descriptor_imp
-                 */
-                locale_descriptor_imp();
+	public:
+		/**
+		 * An empty constructor for locale_descriptor_imp
+		 */
+		locale_descriptor_imp();
 
-                /**
-                 * Constructor for locale_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
-                 * and memory buffer length.
-                 */
-                locale_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		/**
+		 * Constructor for locale_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
+		 * and memory buffer length.
+		 */
+		locale_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
 
-                /**
-                 * Destructor for locale_descriptor_imp used for destroying objects
-                 */
-                virtual ~locale_descriptor_imp();
+		/**
+		 * Destructor for locale_descriptor_imp used for destroying objects
+		 */
+		virtual ~locale_descriptor_imp();
 
-                /**
-                 * Get the descriptor type of the Locale descriptor object.
-                 */
-                uint16_t STDCALL get_descriptor_type();
+		/**
+		 * Get the descriptor type of the Locale descriptor object.
+		 */
+		uint16_t STDCALL get_descriptor_type();
 
-                /**
-                 * Get the descriptor index of the Locale descriptor object.
-                 */
-                uint16_t STDCALL get_descriptor_index();
+		/**
+		 * Get the descriptor index of the Locale descriptor object.
+		 */
+		uint16_t STDCALL get_descriptor_index();
 
-                /**
-                 * Get the locale identifier of the Locale descriptor object.
-                 */
-                uint8_t * STDCALL get_locale_identifier();
+		/**
+		 * Get the locale identifier of the Locale descriptor object.
+		 */
+		uint8_t * STDCALL get_locale_identifier();
 
-                /**
-                 * Get the number of strings of the Locale descriptor object.
-                 */
-                uint16_t STDCALL get_number_of_strings();
+		/**
+		 * Get the number of strings of the Locale descriptor object.
+		 */
+		uint16_t STDCALL get_number_of_strings();
 
-                /**
-                 * Get the base strings of the Locale descriptor object.
-                 */
-                uint16_t STDCALL get_base_strings();
+		/**
+		 * Get the base strings of the Locale descriptor object.
+		 */
+		uint16_t STDCALL get_base_strings();
 
 #ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-                /**
-                 * Print out Locale Descriptor fields.
-                 */
-                void print_locale_desc_info();
+		/**
+		 * Print out Locale Descriptor fields.
+		 */
+		void print_locale_desc_info();
 #endif
 
-        };
+	};
 }
 
 #endif

@@ -36,78 +36,78 @@
 
 namespace avdecc_lib
 {
-        class clock_domain_descriptor_imp : public virtual clock_domain_descriptor, public virtual descriptor_base_imp
-        {
-        private:
-                struct jdksavdecc_descriptor_clock_domain clock_domain_desc; // Structure containing the clock_domain_desc fields
-                int desc_clock_domain_read_returned; // Status of extracting Clock Domain descriptor information from a network buffer
-                std::vector<uint16_t> clock_src_vec; // Store clock sources in a vector
+	class clock_domain_descriptor_imp : public virtual clock_domain_descriptor, public virtual descriptor_base_imp
+	{
+	private:
+		struct jdksavdecc_descriptor_clock_domain clock_domain_desc; // Structure containing the clock_domain_desc fields
+		int desc_clock_domain_read_returned; // Status of extracting Clock Domain descriptor information from a network buffer
+		std::vector<uint16_t> clock_src_vec; // Store clock sources in a vector
 
-        public:
-                /**
-                 * An empty constructor for clock_domain_descriptor_imp
-                 */
-                clock_domain_descriptor_imp();
+	public:
+		/**
+		 * An empty constructor for clock_domain_descriptor_imp
+		 */
+		clock_domain_descriptor_imp();
 
-                /**
-                 * Constructor for clock_domain_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
-                 * and memory buffer length.
-                 */
-                clock_domain_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		/**
+		 * Constructor for clock_domain_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
+		 * and memory buffer length.
+		 */
+		clock_domain_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
 
-                /**
-                 * Destructor for clock_domain_descriptor_imp used for destroying objects
-                 */
-                virtual ~clock_domain_descriptor_imp();
+		/**
+		 * Destructor for clock_domain_descriptor_imp used for destroying objects
+		 */
+		virtual ~clock_domain_descriptor_imp();
 
-                /**
-                 * Get the descriptor type of the clock_domain_descriptor object.
-                 */
-                uint16_t STDCALL get_descriptor_type();
+		/**
+		 * Get the descriptor type of the clock_domain_descriptor object.
+		 */
+		uint16_t STDCALL get_descriptor_type();
 
-                /**
-                 * Get the descriptor index of the clock_domain_descriptor object.
-                 */
-                uint16_t STDCALL get_descriptor_index();
+		/**
+		 * Get the descriptor index of the clock_domain_descriptor object.
+		 */
+		uint16_t STDCALL get_descriptor_index();
 
-                /**
-                 * Get the name of the clock_domain_descriptor object.
-                 */
-                uint8_t * STDCALL get_object_name();
+		/**
+		 * Get the name of the clock_domain_descriptor object.
+		 */
+		uint8_t * STDCALL get_object_name();
 
-                /**
-                 * Get the localized description of the clock_domain_descriptor object.
-                 */
-                uint16_t STDCALL get_localized_description();
+		/**
+		 * Get the localized description of the clock_domain_descriptor object.
+		 */
+		uint16_t STDCALL get_localized_description();
 
-                /**
-                 * Get the Clock Source index of the clock_domain_descriptor object.
-                 */
-                uint16_t STDCALL get_clock_source_index();
+		/**
+		 * Get the Clock Source index of the clock_domain_descriptor object.
+		 */
+		uint16_t STDCALL get_clock_source_index();
 
-                /**
-                * Get the Clock Sources offset of the clock_domain_descriptor object.
-                */
-                uint16_t STDCALL get_clock_sources_offset();
+		/**
+		* Get the Clock Sources offset of the clock_domain_descriptor object.
+		*/
+		uint16_t STDCALL get_clock_sources_offset();
 
-                /**
-                 * Get the Clock Sources count of the clock_domain_descriptor object.
-                 */
-                uint16_t STDCALL get_clock_sources_count();
+		/**
+		 * Get the Clock Sources count of the clock_domain_descriptor object.
+		 */
+		uint16_t STDCALL get_clock_sources_count();
 
-                /**
-                * Store the Clock Sources of the clock_domain_descriptor object.
-                */
-                void store_clock_sources(uint8_t *frame, size_t pos);
+		/**
+		* Store the Clock Sources of the clock_domain_descriptor object.
+		*/
+		void store_clock_sources(uint8_t *frame, size_t pos);
 
 #ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-                /**
-                 * Print out Clock Domain Descriptor fields.
-                 */
-                void print_clock_domain_desc_info();
+		/**
+		 * Print out Clock Domain Descriptor fields.
+		 */
+		void print_clock_domain_desc_info();
 #endif
 
-        };
+	};
 }
 
 #endif

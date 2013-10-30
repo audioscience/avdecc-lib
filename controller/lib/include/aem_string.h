@@ -36,44 +36,44 @@
 
 namespace avdecc_lib
 {
-        class aem_string
-        {
-        public:
-                /**
-                 * Convert command value to its corresponding command name.
-                 */
-                static AVDECC_CONTROLLER_LIB32_API const char * STDCALL cmd_value_to_name(uint16_t cmd_value);
+	class aem_string
+	{
+	public:
+		/**
+		 * Convert command value to its corresponding command name.
+		 */
+		static AVDECC_CONTROLLER_LIB32_API const char * STDCALL cmd_value_to_name(uint16_t cmd_value);
 
-                /**
-                 * Convert command name to its corresponding command value.
-                 */
-                static AVDECC_CONTROLLER_LIB32_API uint16_t STDCALL cmd_name_to_value(const char *cmd_name);
+		/**
+		 * Convert command name to its corresponding command value.
+		 */
+		static AVDECC_CONTROLLER_LIB32_API uint16_t STDCALL cmd_name_to_value(const char *cmd_name);
 
-                /**
-                 * Convert descriptor value to its corresponding descriptor name.
-                 */
-                static AVDECC_CONTROLLER_LIB32_API const char * STDCALL desc_value_to_name(uint16_t desc_value);
+		/**
+		 * Convert descriptor value to its corresponding descriptor name.
+		 */
+		static AVDECC_CONTROLLER_LIB32_API const char * STDCALL desc_value_to_name(uint16_t desc_value);
 
-                /**
-                 * Convert descriptor name to its corresponding descriptor value.
-                 */
-                static AVDECC_CONTROLLER_LIB32_API uint16_t STDCALL desc_name_to_value(const char *desc_name);
+		/**
+		 * Convert descriptor name to its corresponding descriptor value.
+		 */
+		static AVDECC_CONTROLLER_LIB32_API uint16_t STDCALL desc_name_to_value(const char *desc_name);
 
-                /**
-                 * Convert command status value to its corresponding command status name.
-                 */
-                static AVDECC_CONTROLLER_LIB32_API const char * STDCALL cmd_status_value_to_name(uint16_t cmd_status_value);
+		/**
+		 * Convert command status value to its corresponding command status name.
+		 */
+		static AVDECC_CONTROLLER_LIB32_API const char * STDCALL cmd_status_value_to_name(uint16_t cmd_status_value);
 
-                /**
-                 * Convert notifying value to its corresponding notifying name.
-                 */
-                static AVDECC_CONTROLLER_LIB32_API const char * STDCALL notification_value_to_name(uint16_t notification_value);
+		/**
+		 * Convert notifying value to its corresponding notifying name.
+		 */
+		static AVDECC_CONTROLLER_LIB32_API const char * STDCALL notification_value_to_name(uint16_t notification_value);
 
-                /**
-                 * Convert logging value to its corresponding logging name.
-                 */
-                static AVDECC_CONTROLLER_LIB32_API const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value);
-        };
+		/**
+		 * Convert logging value to its corresponding logging name.
+		 */
+		static AVDECC_CONTROLLER_LIB32_API const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value);
+	};
 }
 
 #endif

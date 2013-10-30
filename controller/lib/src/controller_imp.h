@@ -33,95 +33,110 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.0.5"
+#define AVDECC_CONTROLLER_VERSION "v0.0.6"
 
 namespace avdecc_lib
 {
-        class controller_imp : public virtual controller
-        {
-        private:
-                uint64_t controller_guid; // The unique identifier of the AVDECC Entity sending the command
-                std::vector<end_station_imp *> end_station_vec; // Store a list of End Station class objects
+	class controller_imp : public virtual controller
+	{
+	private:
+		uint64_t controller_guid; // The unique identifier of the AVDECC Entity sending the command
+		std::vector<end_station_imp *> end_station_vec; // Store a list of End Station class objects
 
-        public:
-                /**
-                 * An empty constructor for controller_imp
-                 */
-                controller_imp();
+	public:
+		/**
+		 * An empty constructor for controller_imp
+		 */
+		controller_imp();
 
-                /**
-                 * A constructor for controller_imp used for constructing an object with network interface, notification, and logging callback functions.
-                 */
-                controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
-                               void (*log_callback) (void *, int32_t, const char *, int32_t));
+		/**
+		 * A constructor for controller_imp used for constructing an object with network interface, notification, and logging callback functions.
+		 */
+		controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
+		               void (*log_callback) (void *, int32_t, const char *, int32_t));
 
-                /**
-                 * Destructor for controller_imp used for destroying objects
-                 */
-                virtual ~controller_imp();
+		/**
+		 * Destructor for controller_imp used for destroying objects
+		 */
+		virtual ~controller_imp();
 
-                /**
-                 * Deallocate memory
-                 */
-                void STDCALL destroy();
+		/**
+		 * Deallocate memory
+		 */
+		void STDCALL destroy();
 
-                /**
-                 * Get the current build release version.
-                 */
-                const char * STDCALL get_version();
+		/**
+		 * Get the current build release version.
+		 */
+		const char * STDCALL get_version();
 
-                /**
-                 * Get the Controller GUID of the AVDECC Entity sending the command.
-                 */
-                uint64_t STDCALL get_controller_guid();
+		/**
+		 * Get the Controller GUID of the AVDECC Entity sending the command.
+		 */
+		uint64_t STDCALL get_controller_guid();
 
-                /**
-                 * Get the number of End Stations connected
-                 */
-                uint32_t STDCALL get_end_station_count();
+		/**
+		 * Get the number of End Stations connected
+		 */
+		uint32_t STDCALL get_end_station_count();
 
-                /**
-                 * Get the corresponding End Station by index.
-                 */
-                avdecc_lib::end_station * STDCALL get_end_station_by_index(uint32_t end_station_index);
+		/**
+		 * Get the corresponding End Station by index.
+		 */
+		avdecc_lib::end_station * STDCALL get_end_station_by_index(uint32_t end_station_index);
 
-                /**
-                 * Get the corresponding End Station by GUID.
-                 */
-                bool find_end_station_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
+		/**
+		 * Get the corresponding End Station by GUID.
+		 */
+		bool find_end_station_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
 
-                /**
-                 * Get the corresponding Configuration descriptor by index.
-                 */
-                configuration_descriptor * STDCALL get_config_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index);
+		/**
+		 * Get the corresponding Configuration descriptor by index.
+		 */
+		configuration_descriptor * STDCALL get_config_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index);
 
-                /**
-                 * Get the corresponding Configuration descriptor by GUID.
-                 */
-                configuration_descriptor * STDCALL get_config_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index);
+		/**
+		 * Get the corresponding Configuration descriptor by GUID.
+		 */
+		configuration_descriptor * STDCALL get_config_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index);
 
-                /**
-                 * Check if the command with the corresponding notification id is in the inflight list.
-                 */
-                bool STDCALL is_inflight_cmd_with_notification_id(void *notification_id);
+		/**
+		 * Check if the command with the corresponding notification id is in the inflight list.
+		 */
+		bool STDCALL is_inflight_cmd_with_notification_id(void *notification_id);
 
-                /**
-                 * Check for End Station connection, command packet, and response packet timeouts.
-                 */
-                void STDCALL time_tick_event();
+		/**
+		 * Update the log level.
+		 */
+		void STDCALL update_log_level(int32_t new_log_level);
 
-                /**
-                 * Lookup and process packet received.
-                 */
-                void STDCALL rx_packet_event(void *notification_id, bool &notification_id_flag, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len);
+		/**
+		 * Get the missed notification event count.
+		 */
+		uint32_t STDCALL missed_notification_count();
 
-                /**
-                 * Send queued packet to the AEM Controller State Machine.
-                 */
-                void STDCALL tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len);
-        };
+		/**
+		 * Get the missed log event count.
+		 */
+		uint32_t STDCALL missed_log_count();
 
-        extern controller_imp *controller_imp_ref;
+		/**
+		 * Check for End Station connection, command packet, and response packet timeouts.
+		 */
+		void STDCALL time_tick_event();
+
+		/**
+		 * Lookup and process packet received.
+		 */
+		void STDCALL rx_packet_event(void *&notification_id, bool &notification_id_flag, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+
+		/**
+		 * Send queued packet to the AEM Controller State Machine.
+		 */
+		void STDCALL tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len);
+	};
+
+	extern controller_imp *controller_imp_ref;
 }
 
 #endif

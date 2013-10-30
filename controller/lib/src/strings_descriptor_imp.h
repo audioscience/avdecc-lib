@@ -36,52 +36,52 @@
 
 namespace avdecc_lib
 {
-        class strings_descriptor_imp : public virtual strings_descriptor, public virtual descriptor_base_imp
-        {
-        private:
-                struct jdksavdecc_descriptor_strings strings_desc; // Structure containing the strings_desc fields
-                int desc_strings_read_returned; // Status of extracting Strings descriptor information from a network buffer
+	class strings_descriptor_imp : public virtual strings_descriptor, public virtual descriptor_base_imp
+	{
+	private:
+		struct jdksavdecc_descriptor_strings strings_desc; // Structure containing the strings_desc fields
+		int desc_strings_read_returned; // Status of extracting Strings descriptor information from a network buffer
 
-        public:
-                /**
-                 * An empty constructor for strings_descriptor_imp
-                 */
-                strings_descriptor_imp();
+	public:
+		/**
+		 * An empty constructor for strings_descriptor_imp
+		 */
+		strings_descriptor_imp();
 
-                /**
-                 * Constructor for strings_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
-                 * and memory buffer length.
-                 */
-                strings_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		/**
+		 * Constructor for strings_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
+		 * and memory buffer length.
+		 */
+		strings_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
 
-                /**
-                 * Destructor for strings_descriptor_imp used for destroying objects
-                 */
-                virtual ~strings_descriptor_imp();
+		/**
+		 * Destructor for strings_descriptor_imp used for destroying objects
+		 */
+		virtual ~strings_descriptor_imp();
 
-                /**
-                 * Get the descriptor type of the Strings descriptor object.
-                 */
-                uint16_t STDCALL get_descriptor_type();
+		/**
+		 * Get the descriptor type of the Strings descriptor object.
+		 */
+		uint16_t STDCALL get_descriptor_type();
 
-                /**
-                 * Get the descriptor index of the Strings descriptor object.
-                 */
-                uint16_t STDCALL get_descriptor_index();
+		/**
+		 * Get the descriptor index of the Strings descriptor object.
+		 */
+		uint16_t STDCALL get_descriptor_index();
 
-                /**
-                 * Get the corresponding string of the Strings descriptor object.
-                 */
-                uint8_t * STDCALL get_string_by_index(uint32_t string_index);
+		/**
+		 * Get the corresponding string of the Strings descriptor object.
+		 */
+		uint8_t * STDCALL get_string_by_index(uint32_t string_index);
 
 #ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-                /**
-                 * Print out Strings Descriptor fields.
-                 */
-                void print_strings_desc_info();
+		/**
+		 * Print out Strings Descriptor fields.
+		 */
+		void print_strings_desc_info();
 #endif
 
-        };
+	};
 }
 
 #endif

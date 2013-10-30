@@ -35,23 +35,23 @@
 
 namespace avdecc_lib
 {
-        inline void convert_uint64_to_eui48(const uint64_t value, uint8_t new_value[6])
-        {
-                for(uint32_t index_i = 0; index_i < 6; index_i++)
-                {
-                        new_value[index_i] = (uint8_t) (value >> ((5 - index_i) * 8));
-                }
-        }
+	inline void convert_uint64_to_eui48(const uint64_t value, uint8_t new_value[6])
+	{
+		for(uint32_t index_i = 0; index_i < 6; index_i++)
+		{
+			new_value[index_i] = (uint8_t) (value >> ((5 - index_i) * 8));
+		}
+	}
 
-        inline void convert_eui48_to_uint64(const uint8_t value[6], uint64_t &new_value)
-        {
-                new_value = 0;
+	inline void convert_eui48_to_uint64(const uint8_t value[6], uint64_t &new_value)
+	{
+		new_value = 0;
 
-                for (uint32_t index_i = 0; index_i < 6; index_i++)
-                {
-                        new_value |= (uint64_t) value[index_i] << ((5 - index_i) * 8);
-                }
-        }
+		for (uint32_t index_i = 0; index_i < 6; index_i++)
+		{
+			new_value |= (uint64_t) value[index_i] << ((5 - index_i) * 8);
+		}
+	}
 }
 
 #endif

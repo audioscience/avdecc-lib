@@ -31,84 +31,84 @@
 
 namespace avdecc_lib
 {
-        descriptor_base_imp::descriptor_base_imp() {}
+	descriptor_base_imp::descriptor_base_imp() {}
 
-        descriptor_base_imp::descriptor_base_imp(end_station_imp *base)
-        {
-                base_end_station_imp_ref = base;
-        }
+	descriptor_base_imp::descriptor_base_imp(end_station_imp *base)
+	{
+		base_end_station_imp_ref = base;
+	}
 
-        descriptor_base_imp::~descriptor_base_imp() {}
+	descriptor_base_imp::~descriptor_base_imp() {}
 
-        uint16_t STDCALL descriptor_base_imp::get_descriptor_type()
-        {
+	uint16_t STDCALL descriptor_base_imp::get_descriptor_type()
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 
-        uint16_t STDCALL descriptor_base_imp::get_descriptor_index()
-        {
+	uint16_t STDCALL descriptor_base_imp::get_descriptor_index()
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 
-        int STDCALL descriptor_base_imp::send_acquire_entity_cmd(uint16_t desc_index, uint32_t acquire_entity_flags)
-        {
+	int STDCALL descriptor_base_imp::send_acquire_entity_cmd(uint16_t desc_index, uint32_t acquire_entity_flags)
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 
-        int descriptor_base_imp::proc_acquire_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
-        {
+	int descriptor_base_imp::proc_acquire_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 
-        int STDCALL descriptor_base_imp::send_lock_entity_cmd(uint16_t desc_index, uint32_t lock_entity_flags)
-        {
+	int STDCALL descriptor_base_imp::send_lock_entity_cmd(uint16_t desc_index, uint32_t lock_entity_flags)
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 
-        int descriptor_base_imp::proc_lock_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
-        {
+	int descriptor_base_imp::proc_lock_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 
-        int STDCALL descriptor_base_imp::send_entity_avail_cmd()
-        {
+	int STDCALL descriptor_base_imp::send_entity_avail_cmd()
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 
-        int descriptor_base_imp::proc_entity_avail_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
-        {
+	int descriptor_base_imp::proc_entity_avail_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 
-        int STDCALL descriptor_base_imp::send_set_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index, char * name)
-        {
+	int STDCALL descriptor_base_imp::send_set_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index, char * name)
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 
-        int descriptor_base_imp::proc_set_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
-        {
+	int descriptor_base_imp::proc_set_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 
-        int STDCALL descriptor_base_imp::send_get_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index)
-        {
+	int STDCALL descriptor_base_imp::send_get_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index)
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 
-        int descriptor_base_imp::proc_get_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
-        {
+	int descriptor_base_imp::proc_get_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
+	{
 
-                return 0;
-        }
+		return 0;
+	}
 }

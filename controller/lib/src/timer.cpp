@@ -31,68 +31,68 @@
 
 namespace avdecc_lib
 {
-        timer::timer()
-        {
-                running = 0;
-                elapsed = 0;
-                count = 0;
-                start_time = 0;
-        }
+	timer::timer()
+	{
+		running = 0;
+		elapsed = 0;
+		count = 0;
+		start_time = 0;
+	}
 
-        timer::~timer() {}
+	timer::~timer() {}
 
-        time_type timer::clk_monotonic(void)
-        {
+	time_type timer::clk_monotonic(void)
+	{
 #ifdef WIN32
-                LARGE_INTEGER count;
-                QueryPerformanceCounter(&count);
+		LARGE_INTEGER count;
+		QueryPerformanceCounter(&count);
 
-                return count.QuadPart;
+		return count.QuadPart;
 #elif defined __linux__
 #endif
-        }
+	}
 
-        uint32_t timer::clk_convert_to_ms(time_type time_ms)
-        {
+	uint32_t timer::clk_convert_to_ms(time_type time_ms)
+	{
 #ifdef WIN32
-                LARGE_INTEGER freq;
-                QueryPerformanceFrequency(&freq);
+		LARGE_INTEGER freq;
+		QueryPerformanceFrequency(&freq);
 
-                return (uint32_t)((time_ms * 1000/freq.QuadPart) & 0xfffffff);
+		return (uint32_t)((time_ms * 1000/freq.QuadPart) & 0xfffffff);
 #elif defined __linux__
 #endif
-        }
+	}
 
-        void timer::start(int duration_ms)
-        {
-                running = true;
-                elapsed = false;
-                count = duration_ms;
-                start_time = clk_monotonic();
-        }
+	void timer::start(int duration_ms)
+	{
+		running = true;
+		elapsed = false;
+		count = duration_ms;
+		start_time = clk_monotonic();
+	}
 
-        void timer::stop()
-        {
-                running = false;
-                elapsed = false;
-        }
+	void timer::stop()
+	{
+		running = false;
+		elapsed = false;
+	}
 
-        int timer::timeout()
-        {
-                if(running && !elapsed)
-                {
-                        uint32_t elapsed_ms;
-                        time_type current_time = clk_monotonic();
-                        elapsed_ms = (uint32_t)clk_convert_to_ms(current_time - start_time);
+	int timer::timeout()
+	{
+		if(running && !elapsed)
+		{
+			uint32_t elapsed_ms;
+			time_type current_time = clk_monotonic();
+			elapsed_ms = (uint32_t)clk_convert_to_ms(current_time - start_time);
 
-                        if(elapsed_ms > count)
-                        {
-                                elapsed = TRUE;
-                        }
-                }
+			if(elapsed_ms > count)
+			{
+				elapsed = TRUE;
+			}
+		}
 
-                return elapsed;
-        }
+		return elapsed;
+	}
 }
 
 

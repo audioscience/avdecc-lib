@@ -36,74 +36,85 @@
 
 namespace avdecc_lib
 {
-        class log
-        {
-        private:
-                int32_t log_level;
-                static uint32_t read_index;
-                static uint32_t write_index;
-                static void (*callback_func)(void *, int32_t, const char *, int32_t);
-                static void *user_obj;
+	class log
+	{
+	private:
+		int32_t log_level;
+		static uint32_t read_index;
+		static uint32_t write_index;
+		static void (*callback_func)(void *, int32_t, const char *, int32_t);
+		static void *user_obj;
+		static uint32_t missed_log_event_cnt;
 
-                enum
-                {
-                        LOG_BUF_COUNT = 32
-                };
+		enum
+		{
+		        LOG_BUF_COUNT = 32
+		};
 
-                enum events
-                {
-                        LOG_EVENT,
-                        KILL_EVENT
-                };
+		enum events
+		{
+		        LOG_EVENT,
+		        KILL_EVENT
+		};
 
-                LPTHREAD_START_ROUTINE thread;
-                HANDLE h_thread;
-                DWORD thread_id;
+		LPTHREAD_START_ROUTINE thread;
+		HANDLE h_thread;
+		DWORD thread_id;
 
-                static HANDLE poll_events[2];
+		static HANDLE poll_events[2];
 
-                struct log_data
-                {
-                        int32_t level;
-                        char msg[256];
-                        int32_t time_stamp_ms;
-                };
+		struct log_data
+		{
+			int32_t level;
+			char msg[256];
+			int32_t time_stamp_ms;
+		};
 
-                struct log_data log_buf[LOG_BUF_COUNT];
+		struct log_data log_buf[LOG_BUF_COUNT];
 
-        public:
-                /**
-                 * An empty constructor for log
-                 */
-                log();
+	public:
+		/**
+		 * An empty constructor for log
+		 */
+		log();
 
-                /**
-                 * Destructor for log used for destroying objects
-                 */
-                virtual ~log();
+		/**
+		 * Destructor for log used for destroying objects
+		 */
+		virtual ~log();
 
-                /**
-                 * Create and initialize logging thread, event, and semaphore.
-                 */
-                int logging_thread_init();
+		/**
+		 * Update to a new log level.
+		 */
+		void set_log_level(int32_t new_log_level);
 
-                /**
-                 * Start of the logging thread used for logging purposes.
-                 */
-                static DWORD WINAPI process_logging_thread(LPVOID lpParam);
+		/**
+		 * Create and initialize logging thread, event, and semaphore.
+		 */
+		int logging_thread_init();
 
-                /**
-                 * AVDECC LIB modules call this function for logging purposes.
-                 */
-                void logging(int32_t log_level, const char *fmt,...);
+		/**
+		 * Start of the logging thread used for logging purposes.
+		 */
+		static DWORD WINAPI process_logging_thread(LPVOID lpParam);
 
-                /**
-                 * Change the logging callback function to a new logging callback function.
-                 */
-                void set_logging_callback(void (*new_log_callback) (void *, int32_t, const char *, int32_t), void *);
-        };
+		/**
+		 * AVDECC LIB modules call this function for logging purposes.
+		 */
+		void logging(int32_t log_level, const char *fmt,...);
 
-        extern log *log_ref;
+		/**
+		 * Change the logging callback function to a new logging callback function.
+		 */
+		void set_logging_callback(void (*new_log_callback) (void *, int32_t, const char *, int32_t), void *);
+
+		/**
+		 * Get the number of missed log that exceeds the log buffer count.
+		 */
+		uint32_t get_missed_log_event_count();
+	};
+
+	extern log *log_ref;
 }
 
 #endif

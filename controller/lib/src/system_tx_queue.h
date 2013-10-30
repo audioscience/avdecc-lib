@@ -24,7 +24,7 @@
 /**
  * system_tx_queue.h
  *
- * System transmit queue class, which is implemented in system_multithreaded_callback class
+ * System transmit queue class, which is implemented in system_layer2_multithreaded_callback class
  * to store commands in a queue to be transmitted.
  */
 
@@ -34,8 +34,8 @@
 
 namespace avdecc_lib
 {
-        /**
-         * Store command in a queue to be transmitted.
-         */
-        size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len);
+	/**
+	 * Store command in a queue to be transmitted.
+	 */
+	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len);
 }
