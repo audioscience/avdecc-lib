@@ -41,32 +41,32 @@ namespace avdecc_lib
 	{
 	public:
 		/**
-		 * Get the name of the Jack Output descriptor object.
+		 * \return The name of the Jack Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
 
 		/**
-		 * Get the localized description of the Jack Output descriptor object.
+		 * \return The localized description of the Jack Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
 		/**
-		 * Get the flags of the Jack Output descriptor object.
+		 * \return The flags of the Jack Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_jack_flags() = 0;
 
 		/**
-		* Get the type of the Jack Output descriptor object.
+		* \return The type of the Jack Output descriptor object.
 		*/
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_jack_type() = 0;
 
 		/**
-		 * Get the number of controls of the Jack Output descriptor object.
+		 * \return The number of controls of the Jack Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_controls() = 0;
 
 		/**
-		 * Get the base control of the Jack Output descriptor object.
+		 * \return The base control of the Jack Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_control() = 0;
 	};

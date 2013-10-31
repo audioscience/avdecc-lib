@@ -40,7 +40,7 @@ namespace avdecc_lib
 	private:
 		struct aem_controller_state_machine_inflight_cmd
 		{
-			//		uint64_t timeout;
+	//		uint64_t timeout;
 			bool retried;
 			struct jdksavdecc_frame inflight_cmd_frame;
 			uint16_t seq_id;
@@ -189,7 +189,7 @@ namespace avdecc_lib
 		int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t &notification_flag, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame);
 
 		/**
-		 * Call notifying or logging callback function for the command sent or response received.
+		 * Call notification or logging callback function for the command sent or response received.
 		 */
 		int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
 

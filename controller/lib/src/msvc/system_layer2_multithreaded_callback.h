@@ -78,6 +78,7 @@ namespace avdecc_lib
 		static HANDLE waiting_sem;
 
 		static bool is_waiting;
+		static bool queue_is_waiting;
 		static void *waiting_notification_id;
 		static int resp_status_for_cmd;
 

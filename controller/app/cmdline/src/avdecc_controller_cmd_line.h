@@ -31,16 +31,11 @@
 #ifndef _AVDECC_CMD_LINE_H_
 #define _AVDECC_CMD_LINE_H_
 
-#include <windows.h>
 #include "net_interface.h"
 #include "system.h"
 #include "controller.h"
-#include "descriptor_base.h"
 #include "aem_string.h"
 #include "enumeration.h"
-
-#define DEBUG_SEND_GET_STREAM_FORMAT_CMD
-#define DEBUG_SEND_GET_STREAM_INFO_CMD
 
 class avdecc_cmd_line
 {
@@ -169,14 +164,35 @@ public:
         int cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index);
 
         /**
+	 * Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.
+	 */
+	int cmd_set_sampling_rate(std::string desc_name, uint16_t desc_index, uint32_t new_sampling_rate);
+
+        /**
 	 * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
 	 */
 	int cmd_get_sampling_rate(std::string desc_name, uint16_t desc_index);
 
 	/**
+	 * Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.
+	 */
+	int cmd_set_clock_source(std::string desc_name, uint16_t desc_index, uint16_t new_clk_src_index);
+
+	/**
 	 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
 	 */
 	int cmd_get_clock_source(std::string desc_name, uint16_t desc_index);
+
+	/**
+	 * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
+	 * via ACMP or has previously been stopped with the STOP_STREAMING command.
+	 */
+	int cmd_start_streaming(std::string desc_name, uint16_t desc_index);
+
+	/**
+	 * Send a STOP_STREAMING command with a notification id to stop a connected stream for streaming media.
+	 */
+	int cmd_stop_streaming(std::string desc_name, uint16_t desc_index);
 
         /**
          * Display the location of the redirected output file.
@@ -189,14 +205,14 @@ public:
         int cmd_path(std::string new_log_path);
 
 	/**
-	 * Get the descriptor object corresponding to the descriptor type and descriptor index.
+	 * Get the next unique notification id.
 	 */
-	avdecc_lib::descriptor_base * get_descriptor_obj(uint16_t desc_type, uint16_t desc_index);
+	uint32_t get_next_notification_id();
 
         /**
-         * Check if end station and configuration setting is in range and valid.
+         * Check if end station, entity, and configuration setting is in range and valid.
          */
-        bool is_setting_valid();
+        bool is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config);
 };
 
 #endif

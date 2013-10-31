@@ -73,7 +73,6 @@ extern "C" void log_callback(void *user_obj, int32_t log_level, const char *log_
 int main()
 {
         avdecc_cmd_line *avdecc_cmd_line_ref = new avdecc_cmd_line(notification_callback, log_callback);
-	avdecc_cmd_line_ref->is_setting_valid();
 
         std::vector<std::string> cmd_input_vector;
         std::string cmd_input;
@@ -113,13 +112,11 @@ int main()
                                                 avdecc_cmd_line_ref->cmd_help();
                                                 std::cout.rdbuf(ofstream_ref.rdbuf());
                                         }
-
                                         else
                                         {
                                                 avdecc_cmd_line_ref->cmd_help();
                                         }
                                 }
-
                                 else if(cmd_input_vector.at(0).compare("version") == 0)
                                 {
                                         if(is_output_redirected)
@@ -134,7 +131,6 @@ int main()
                                         }
 
                                 }
-
                                 else if(cmd_input_vector.at(0).compare("list") == 0)
                                 {
                                         avdecc_cmd_line_ref->cmd_list();
@@ -175,7 +171,6 @@ int main()
                                         {
                                                 avdecc_cmd_line_ref->cmd_view_all();
                                         }
-
                                         catch(std::out_of_range &e)
                                         {
                                                 std::cerr << "Out Of Range Exception " << e.what() << std::endl;
@@ -243,7 +238,6 @@ int main()
                                                 std::cout << "Invalid Command" << std::endl;
                                         }
                                 }
-
                                 else if(cmd_input_vector.at(0).compare("view") == 0 && cmd_input_vector.at(1).compare("descriptor") == 0)
                                 {
                                         uint16_t desc_index = 0x0;
@@ -390,6 +384,58 @@ int main()
                                                 std::cout << "Invalid Command" << std::endl;
                                         }
                                 }
+				else if(cmd_input_vector.at(0).compare("start") == 0 && cmd_input_vector.at(1).compare("streaming") == 0)
+                                {
+                                        uint16_t desc_index = 0x0;
+
+                                        if((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0))
+                                        {
+                                                is_input_valid = true;
+                                                desc_index = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
+                                        }
+
+                                        if(is_input_valid)
+                                        {
+                                                try
+                                                {
+							avdecc_cmd_line_ref->cmd_start_streaming(cmd_input_vector.at(2), desc_index);
+                                                }
+                                                catch(std::out_of_range &e)
+                                                {
+                                                        std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+                                                }
+                                        }
+                                        else
+                                        {
+                                                std::cout << "Invalid Command" << std::endl;
+                                        }
+                                }
+				else if(cmd_input_vector.at(0).compare("stop") == 0 && cmd_input_vector.at(1).compare("streaming") == 0)
+                                {
+                                        uint16_t desc_index = 0x0;
+
+                                        if((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0))
+                                        {
+                                                is_input_valid = true;
+                                                desc_index = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
+                                        }
+
+                                        if(is_input_valid)
+                                        {
+                                                try
+                                                {
+							avdecc_cmd_line_ref->cmd_stop_streaming(cmd_input_vector.at(2), desc_index);
+                                                }
+                                                catch(std::out_of_range &e)
+                                                {
+                                                        std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+                                                }
+                                        }
+                                        else
+                                        {
+                                                std::cout << "Invalid Command" << std::endl;
+                                        }
+                                }
                                 else
                                 {
                                         std::cout << "Invalid Command" << std::endl;
@@ -439,19 +485,26 @@ int main()
                                 else if(cmd_input_vector.at(0).compare("set") == 0 && cmd_input_vector.at(1).compare("stream_format") == 0)
                                 {
                                         uint16_t desc_index = 0x0;
-                                        uint64_t stream_format;
+                                        uint64_t new_stream_format = 0x0;
 
                                         if(((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0)) &&
                                            ((cmd_input_vector.at(4).compare("0") == 0) || (atoi(cmd_input_vector.at(4).c_str()) != 0)))
                                         {
                                         	is_input_valid = true;
                                         	desc_index = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
-                                        	stream_format = (uint64_t)atoi(cmd_input_vector.at(4).c_str());
+                                        	new_stream_format = (uint64_t)atoi(cmd_input_vector.at(4).c_str());
                                         }
 
                                         if(is_input_valid)
                                         {
-                                        	avdecc_cmd_line_ref->cmd_set_stream_format(cmd_input_vector.at(2), desc_index, stream_format);
+						try
+                                                {
+							avdecc_cmd_line_ref->cmd_set_stream_format(cmd_input_vector.at(2), desc_index, new_stream_format);
+                                                }
+                                                catch(std::out_of_range &e)
+                                                {
+                                                        std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+                                                }
                                         }
                                         else
                                         {
@@ -473,7 +526,72 @@ int main()
 
                                         if(is_input_valid)
                                         {
-                                        	avdecc_cmd_line_ref->cmd_get_name(cmd_input_vector.at(2), desc_index, name_index);
+						try
+                                                {
+							avdecc_cmd_line_ref->cmd_get_name(cmd_input_vector.at(2), desc_index, name_index);
+                                                }
+                                                catch(std::out_of_range &e)
+                                                {
+                                                        std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+                                                }                                       	
+                                        }
+                                        else
+                                        {
+                                        	std::cout << "Invalid Command" << std::endl;
+                                        }
+                                }
+                                else if(cmd_input_vector.at(0).compare("set") == 0 && cmd_input_vector.at(1).compare("sampling_rate") == 0)
+                                {
+                                        uint16_t desc_index = 0x0;
+                                        uint32_t new_sampling_rate = 0x0;
+
+                                        if(((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0)) &&
+                                           ((cmd_input_vector.at(4).compare("0") == 0) || (atoi(cmd_input_vector.at(4).c_str()) != 0)))
+                                        {
+                                        	is_input_valid = true;
+                                        	desc_index = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
+                                        	new_sampling_rate = (uint32_t)atoi(cmd_input_vector.at(4).c_str());
+                                        }
+
+                                        if(is_input_valid)
+                                        {
+						try
+                                                {
+							avdecc_cmd_line_ref->cmd_set_sampling_rate(cmd_input_vector.at(2), desc_index, new_sampling_rate);
+                                                }
+                                                catch(std::out_of_range &e)
+                                                {
+                                                        std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+                                                }
+                                        }
+                                        else
+                                        {
+                                        	std::cout << "Invalid Command" << std::endl;
+                                        }
+                                }
+                                else if(cmd_input_vector.at(0).compare("set") == 0 && cmd_input_vector.at(1).compare("clock_source") == 0)
+                                {
+                                        uint16_t desc_index = 0x0;
+                                        uint16_t new_clk_src_index = 0x0;
+
+                                        if(((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0)) &&
+                                           ((cmd_input_vector.at(4).compare("0") == 0) || (atoi(cmd_input_vector.at(4).c_str()) != 0)))
+                                        {
+                                        	is_input_valid = true;
+                                        	desc_index = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
+                                        	new_clk_src_index = (uint16_t)atoi(cmd_input_vector.at(4).c_str());
+                                        }
+
+                                        if(is_input_valid)
+                                        {
+						try
+                                                {
+							avdecc_cmd_line_ref->cmd_set_clock_source(cmd_input_vector.at(2), desc_index, new_clk_src_index);
+                                                }
+                                                catch(std::out_of_range &e)
+                                                {
+                                                        std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+                                                }
                                         }
                                         else
                                         {

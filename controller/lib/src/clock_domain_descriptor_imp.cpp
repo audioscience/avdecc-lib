@@ -130,10 +130,10 @@ namespace avdecc_lib
 		/***************************************** AECP Common Data ********************************************/
 		aem_cmd_set_clk_src.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
 		// Fill aem_cmd_set_clk_src.sequence_id in AEM Controller State Machine
-		aem_cmd_set_clk_src.command_type = JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE;
+		aem_cmd_set_clk_src.command_type = JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE;
 
 		/************************** AECP Message Specific Data ************************/
-		aem_cmd_set_clk_src.descriptor_type = JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT;
+		aem_cmd_set_clk_src.descriptor_type = JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN;
 		aem_cmd_set_clk_src.descriptor_index = desc_index;
 		aem_cmd_set_clk_src.clock_source_index = new_clk_src_index;
 
@@ -201,10 +201,10 @@ namespace avdecc_lib
 		/***************************************** AECP Common Data ********************************************/
 		aem_cmd_get_clk_src.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
 		// Fill aem_cmd_get_clk_src.sequence_id in AEM Controller State Machine
-		aem_cmd_get_clk_src.command_type = JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE;
+		aem_cmd_get_clk_src.command_type = JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE;
 
 		/************************** AECP Message Specific Data ************************/
-		aem_cmd_get_clk_src.descriptor_type = JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT;
+		aem_cmd_get_clk_src.descriptor_type = JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN;
 		aem_cmd_get_clk_src.descriptor_index = desc_index;
 
 		/******************************** Fill frame payload with AECP data and send the frame ***************************/

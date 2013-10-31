@@ -63,6 +63,7 @@ avdecc_cmd_line::avdecc_cmd_line(void (*notification_callback) (void *, int32_t,
         std::cout << "avdecc_controller version: " << controller_ref->get_version() << std::endl;
         std::cout << "(c) AudioScience, Inc. 2013\n"<< std::endl;
         print_interfaces_and_select();
+	is_setting_valid(current_end_station, current_entity, current_config);
         system_ref->process_start();
 }
 
@@ -357,25 +358,30 @@ int avdecc_cmd_line::cmd_select(uint32_t new_end_station, uint16_t new_entity, u
 {
 	uint8_t *end_station_name = controller_ref->get_end_station_by_index(new_end_station)->get_entity_desc_by_index(current_entity)->get_entity_name();
 
-        if((current_end_station == new_end_station) && (current_entity == new_entity) && (current_config == new_config))
-        {
-                std::cout << "Same setting" << std::endl;
-                std::cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
-                std::cout << "\tEntity: " << std::dec << current_entity << std::endl;
-                std::cout << "\tConfiguration: " << std::dec << current_config << std::endl;
-        }
-        else
-        {
-                current_end_station = new_end_station;
-                current_entity = new_entity;
-                current_config = new_config;
-                std::cout << "New setting" << std::endl;
-                std::cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
-                std::cout << "\tEntity: " << std::dec << current_entity << std::endl;
-                std::cout << "\tConfiguration: " << std::dec << current_config << std::endl;
-        }
-
-	is_setting_valid(); // Check if the new setting is valid
+	if(is_setting_valid(new_end_station, new_entity, new_config)) // Check if the new setting is valid
+	{
+		if((current_end_station == new_end_station) && (current_entity == new_entity) && (current_config == new_config))
+		{
+			std::cout << "Same setting" << std::endl;
+			std::cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
+			std::cout << "\tEntity: " << std::dec << current_entity << std::endl;
+			std::cout << "\tConfiguration: " << std::dec << current_config << std::endl;
+		}
+		else
+		{
+			current_end_station = new_end_station;
+			current_entity = new_entity;
+			current_config = new_config;
+			std::cout << "New setting" << std::endl;
+			std::cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
+			std::cout << "\tEntity: " << std::dec << current_entity << std::endl;
+			std::cout << "\tConfiguration: " << std::dec << current_config << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "Invalid new setting" << std::endl;
+	}
 
         return 0;
 }
@@ -465,6 +471,13 @@ int avdecc_cmd_line::cmd_view_all()
                                         std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_locale_desc_by_index(index_j)->get_locale_identifier() << std::endl;
                                 }
 
+                     case avdecc_lib::AEM_DESC_STRINGS:
+			     for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_strings_desc_count(); index_j++)
+                                {
+					std::cout << std::setw(20) << avdecc_lib::aem_string::desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_strings_desc_by_index(index_j)->get_descriptor_type());
+                                        std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_strings_desc_by_index(index_j)->get_descriptor_index() << std::endl;
+                                }
+
                         case avdecc_lib::AEM_DESC_CLOCK_DOMAIN:
                                 for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_clock_domain_desc_count(); index_j++)
                                 {
@@ -484,8 +497,8 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 {
         uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
 
-	std::cout << "\nDescriptor Type: " << avdecc_lib::aem_string::desc_value_to_name(desc_type_value);
-	std::cout << "\nDescriptor Index: 0x" << std::hex << desc_index;
+	std::cout << "\ndescriptor_type: " << avdecc_lib::aem_string::desc_value_to_name(desc_type_value);
+	std::cout << "\ndescriptor_index: 0x" << std::hex << desc_index;
 
         switch(desc_type_value)
         {
@@ -720,14 +733,14 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 
                 case avdecc_lib::AEM_DESC_STRINGS:
 			{
-				avdecc_lib::strings_descriptor *strings_desc = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_strings_desc_by_index(desc_index);				
-				std::cout << "\nget_string_0 = " << std::hex << strings_desc->get_string_by_index(0);
-				std::cout << "\nget_string_1 = " << std::hex << strings_desc->get_string_by_index(1);
-				std::cout << "\nget_string_2 = " << std::hex << strings_desc->get_string_by_index(2);
-				std::cout << "\nget_string_3 = " << std::hex << strings_desc->get_string_by_index(3);
-				std::cout << "\nget_string_4 = " << std::hex << strings_desc->get_string_by_index(4);
-				std::cout << "\nget_string_5 = " << std::hex << strings_desc->get_string_by_index(5);
-				std::cout << "\nget_string_6 = " << std::hex << strings_desc->get_string_by_index(6);
+				avdecc_lib::strings_descriptor *strings_desc = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_strings_desc_by_index(desc_index);	
+				std::cout << "\nstring_0 = " << std::hex << strings_desc->get_string_by_index(0);
+				std::cout << "\nstring_1 = " << std::hex << strings_desc->get_string_by_index(1);
+				std::cout << "\nstring_2 = " << std::hex << strings_desc->get_string_by_index(2);
+				std::cout << "\nstring_3 = " << std::hex << strings_desc->get_string_by_index(3);
+				std::cout << "\nstring_4 = " << std::hex << strings_desc->get_string_by_index(4);
+				std::cout << "\nstring_5 = " << std::hex << strings_desc->get_string_by_index(5);
+				std::cout << "\nstring_6 = " << std::hex << strings_desc->get_string_by_index(6);
 			}
                         break;
 
@@ -750,15 +763,14 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
         return 0;
 }
 
-#ifndef IMPLEMENT_SEND_READ_DESCRIPTOR_CMD
 int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_index)
 {
 	uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
+	uint32_t cmd_notification_id = get_next_notification_id();
 
 	if(desc_type_value == avdecc_lib::AEM_DESC_STRINGS && desc_index == 0)
 	{
-		controller_ref->get_end_station_by_index(current_end_station)->send_read_desc_cmd((void *)notification_id, desc_type_value, desc_index);
-		notification_id++;
+		controller_ref->get_end_station_by_index(current_end_station)->send_read_desc_cmd((void *)cmd_notification_id, desc_type_value, desc_index);
 	}
 	else
 	{
@@ -768,12 +780,6 @@ int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_in
 
 	return 0;
 }
-#else
-int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_index)
-{
-	return 0;	
-}
-#endif
 
 #ifdef IMPLEMENT_SEND_ACQUIRE_ENTITY_CMD
 int avdecc_cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
@@ -875,59 +881,35 @@ int avdecc_cmd_line::cmd_entity_avail()
 }
 #endif
 
-#ifdef IMPLEMENT_SEND_SET_STREAM_FORMAT_CMD
 int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, uint64_t new_stream_format)
-{
-	uint16_t desc_type_value;
-
-	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-
-	if((desc_type_value == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT || desc_type_value == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT) &&
-	  (endpoint_vec.at(endpoint)->get_config_desc_by_index(current_config)->are_desc_type_and_index_in_config(desc_type_value, desc_index)))
-	{
-		endpoint_vec.at(endpoint)->send_set_stream_format_cmd(net_if, desc_type_value, desc_index, new_stream_format);
-		return 1;
-	}
-	else
-	{
-		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-		return -1;
-	}
-}
-#else
-int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, uint64_t new_stream_format)
-{
-	return 0;
-}
-#endif
-
-#ifdef DEBUG_SEND_GET_STREAM_FORMAT_CMD
-int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_index)
 {
         uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
 	int status = -1;
+	uint32_t cmd_notification_id = 0;
 
         if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
         {              
-		system_ref->set_wait_for_next_cmd((void *)notification_id);
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
 		avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
-		stream_input_desc_ref->send_get_stream_format_cmd((void *)notification_id, desc_index);
+		stream_input_desc_ref->send_set_stream_format_cmd((void *)notification_id, desc_index, new_stream_format);
 		status = system_ref->get_last_resp_status();
-		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
-		std::cout << "\nStream format: " << std::hex << stream_input_desc_ref->get_stream_format_stream_format() << std::endl;
 
-		notification_id++;
+		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
+		std::cout << "Stream format: " << std::hex << stream_input_desc_ref->set_stream_format_stream_format() << std::endl;
+
                 return 1;
         }
         else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
         {
-		system_ref->set_wait_for_next_cmd((void *)notification_id);
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
 		avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
 		stream_output_desc_ref->send_get_stream_format_cmd((void *)notification_id, desc_index);
 		status = system_ref->get_last_resp_status();
+
 		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
 
-		notification_id++;
 		return 1;
         }
         else
@@ -936,7 +918,44 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
                 return -1;
         }
 }
-#endif
+
+int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_index)
+{
+        uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
+	int status = -1;
+	uint32_t cmd_notification_id = 0;
+
+        if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
+        {              
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
+		avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
+		stream_input_desc_ref->send_get_stream_format_cmd((void *)notification_id, desc_index);
+		status = system_ref->get_last_resp_status();
+
+		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
+		std::cout << "Stream format: " << std::hex << stream_input_desc_ref->get_stream_format_stream_format() << std::endl;
+               
+		return 1;
+        }
+        else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
+        {
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
+		avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
+		stream_output_desc_ref->send_get_stream_format_cmd((void *)notification_id, desc_index);
+		status = system_ref->get_last_resp_status();
+
+		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
+
+		return 1;
+        }
+        else
+        {
+                std::cout << "cmd_get_stream_format error" << std::endl;
+                return -1;
+        }
+}
 
 #ifdef IMPLEMENT_SEND_SET_STREAM_INFO_CMD
 int avdecc_cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
@@ -970,32 +989,34 @@ int avdecc_cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_in
 }
 #endif
 
-#ifdef DEBUG_SEND_GET_STREAM_INFO_CMD
 int avdecc_cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
 {
         uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
 	int status = -1;
+	uint32_t cmd_notification_id = 0;
 
         if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
         {
-		system_ref->set_wait_for_next_cmd((void *)notification_id);
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
 		avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
 		stream_input_desc_ref->send_get_stream_info_cmd((void *)notification_id, desc_index);
 		status = system_ref->get_last_resp_status();
+
 		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
 
-		notification_id++;
 		return 1;
         }
         else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
         {
+		cmd_notification_id = get_next_notification_id();
 		system_ref->set_wait_for_next_cmd((void *)notification_id);
                 avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
 		stream_output_desc_ref->send_get_stream_info_cmd((void *)notification_id, desc_index);
 		status = system_ref->get_last_resp_status();
+
 		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
 
-		notification_id++;
 		return 1;
         }
         else
@@ -1004,7 +1025,6 @@ int avdecc_cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_in
                 return -1;
         }
 }
-#endif
 
 #ifdef IMPLEMENT_SEND_SET_NAME_CMD
 int avdecc_cmd_line::cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name)
@@ -1058,21 +1078,23 @@ int avdecc_cmd_line::cmd_get_name(std::string desc_name, uint16_t desc_index, ui
 }
 #endif
 
-int avdecc_cmd_line::cmd_get_sampling_rate(std::string desc_name, uint16_t desc_index)
+int avdecc_cmd_line::cmd_set_sampling_rate(std::string desc_name, uint16_t desc_index, uint32_t new_sampling_rate)
 {
 	uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
 	int status = -1;
+	uint32_t cmd_notification_id = 0;
 
         if(desc_type_value == avdecc_lib::AEM_DESC_AUDIO_UNIT)
         {
-		system_ref->set_wait_for_next_cmd((void *)notification_id);
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
 		avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_audio_unit_desc_by_index(desc_index);
-		audio_unit_desc_ref->send_get_sampling_rate_cmd((void *)notification_id, desc_index);
+		audio_unit_desc_ref->send_set_sampling_rate_cmd((void *)notification_id, desc_index, new_sampling_rate);
 		status = system_ref->get_last_resp_status();
-		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
-		std::cout << "\nSampling rate: 0x" << std::dec << audio_unit_desc_ref->get_sampling_rate_sampling_rates();
 
-		notification_id++;
+		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
+		std::cout << "Sampling rate: 0x" << std::dec << audio_unit_desc_ref->set_sampling_rate_sampling_rates();
+
 		return 1;
         }
         else if(desc_type_value == avdecc_lib::AEM_DESC_VIDEO_CLUSTER)
@@ -1094,21 +1116,155 @@ int avdecc_cmd_line::cmd_get_sampling_rate(std::string desc_name, uint16_t desc_
 	return 0;
 }
 
-int avdecc_cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_index)
+int avdecc_cmd_line::cmd_get_sampling_rate(std::string desc_name, uint16_t desc_index)
 {
 	uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
 	int status = -1;
+	uint32_t cmd_notification_id = 0;
+
+        if(desc_type_value == avdecc_lib::AEM_DESC_AUDIO_UNIT)
+        {
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)notification_id);
+		avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_audio_unit_desc_by_index(desc_index);
+		audio_unit_desc_ref->send_get_sampling_rate_cmd((void *)notification_id, desc_index);
+		status = system_ref->get_last_resp_status();
+
+		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
+		std::cout << "Sampling rate: 0x" << std::dec << audio_unit_desc_ref->get_sampling_rate_sampling_rates();
+
+		return 1;
+        }
+        else if(desc_type_value == avdecc_lib::AEM_DESC_VIDEO_CLUSTER)
+        {
+		std::cout << "\nVideo Cluster descriptor is not implemented." << std::endl;
+		return 1;
+        }
+	else if(desc_type_value == avdecc_lib::AEM_DESC_SENSOR_CLUSTER)
+        {
+                std::cout << "\nSensor Cluster descriptor is not implemented." << std::endl;
+		return 1;
+        }
+        else
+        {
+                std::cout << "cmd_get_sampling_rate error" << std::endl;
+                return -1;
+        }
+
+	return 0;
+}
+
+int avdecc_cmd_line::cmd_set_clock_source(std::string desc_name, uint16_t desc_index, uint16_t new_clk_src_index)
+{
+	uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
+	int status = -1;
+	uint32_t cmd_notification_id = get_next_notification_id();
 
 	system_ref->set_wait_for_next_cmd((void *)notification_id);
 	avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_clock_domain_desc_by_index(desc_index);
+	clk_domain_desc_ref->send_set_clock_source_cmd((void *)notification_id, desc_index, new_clk_src_index);
+	status = system_ref->get_last_resp_status();
+
+	std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
+	std::cout << "Sampling rate: 0x" << std::dec << clk_domain_desc_ref->set_clock_source_clock_source_index();
+
+	return 0;
+}
+
+uint32_t avdecc_cmd_line::get_next_notification_id()
+{
+	return notification_id++;
+}
+
+int avdecc_cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_index)
+{
+	uint32_t cmd_notification_id = get_next_notification_id();
+	uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
+	int status = -1;
+
+	system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
+	avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_clock_domain_desc_by_index(desc_index);
 	clk_domain_desc_ref->send_get_clock_source_cmd((void *)notification_id, desc_index);
 	status = system_ref->get_last_resp_status();
+
 	std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
-	std::cout << "\nSampling rate: 0x" << std::dec << clk_domain_desc_ref->get_clock_source_clock_source_index();
+	std::cout << "Clock source: 0x" << std::dec << clk_domain_desc_ref->get_clock_source_clock_source_index();
 
-	notification_id++;
 	return 0;
+}
 
+int avdecc_cmd_line::cmd_start_streaming(std::string desc_name, uint16_t desc_index)
+{
+        uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
+	int status = -1;
+	uint32_t cmd_notification_id = 0;
+
+        if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
+        {
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
+		avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
+		stream_input_desc_ref->send_start_streaming_cmd((void *)notification_id, desc_index);
+		status = system_ref->get_last_resp_status();
+
+		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
+
+		return 1;
+        }
+        else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
+        {
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)notification_id);
+                avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
+		stream_output_desc_ref->send_start_streaming_cmd((void *)notification_id, desc_index);
+		status = system_ref->get_last_resp_status();
+
+		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
+
+		return 1;
+        }
+        else
+        {
+                std::cout << "cmd_get_stream_info error" << std::endl;
+                return -1;
+        }
+}
+
+int avdecc_cmd_line::cmd_stop_streaming(std::string desc_name, uint16_t desc_index)
+{
+        uint16_t desc_type_value = avdecc_lib::aem_string::desc_name_to_value(desc_name.c_str());
+	int status = -1;
+	uint32_t cmd_notification_id = 0;
+
+        if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
+        {
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
+		avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
+		stream_input_desc_ref->send_stop_streaming_cmd((void *)notification_id, desc_index);
+		status = system_ref->get_last_resp_status();
+
+		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
+
+		return 1;
+        }
+        else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
+        {
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)notification_id);
+                avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_ref->get_config_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
+		stream_output_desc_ref->send_stop_streaming_cmd((void *)notification_id, desc_index);
+		status = system_ref->get_last_resp_status();
+
+		std::cout << "\nStatus: " << avdecc_lib::aem_string::cmd_status_value_to_name(status) << std::endl;
+
+		return 1;
+        }
+        else
+        {
+                std::cout << "cmd_get_stream_info error" << std::endl;
+                return -1;
+        }
 }
 
 void avdecc_cmd_line::cmd_path()
@@ -1122,11 +1278,11 @@ int avdecc_cmd_line::cmd_path(std::string new_log_path)
         return 0;
 }
 
-bool avdecc_cmd_line::is_setting_valid()
+bool avdecc_cmd_line::is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config)
 {
-	bool is_setting_valid = (current_end_station < controller_ref->get_end_station_count()) &&
-				(current_entity < controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_count()) &&
-				(current_config == controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_by_index(current_entity)->get_current_configuration());
+	bool is_setting_valid = (end_station < controller_ref->get_end_station_count()) &&
+				(entity < controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_count()) &&
+				(config == controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_by_index(current_entity)->get_current_configuration());
 
         return is_setting_valid;
 }

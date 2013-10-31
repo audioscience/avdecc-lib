@@ -182,6 +182,12 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_buffer_length() = 0;
 
 		/**
+		 * \return The stream format of a stream after sending a SET_STREAM_FORMAT command and
+		 * receiving a response back for the command.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL set_stream_format_stream_format() = 0;
+
+		/**
 		 * \return The stream format of a stream after sending a GET_STREAM_FORMAT command and
 		 * receiving a response back for the command.
 		 */
@@ -248,6 +254,17 @@ namespace avdecc_lib
 		 * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void *notification_id, uint16_t desc_index) = 0;
+
+		/**
+		 * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
+		 * via ACMP. 
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_start_streaming_cmd(void *notification_id, uint16_t desc_index) = 0;
+
+		/**
+		 * Send a STOP_STREAMING command with a notification id to stop a connected stream for streaming media.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_stop_streaming_cmd(void *notification_id, uint16_t desc_index) = 0;
 	};
 }
 

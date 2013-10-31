@@ -174,6 +174,7 @@ const char *aem_cmds_status_names[] =
 	"STATUS_NOT_SUPPORTED",
 	"STATUS_STREAM_IS_RUNNING",
 	"STATUS_INVALID_COMMAND",
+	"STATUS_TICK_TIMEOUT"
 };
 
 const char *aem_cmd_status_error = "AEM_CMD_STATUS_ERROR";

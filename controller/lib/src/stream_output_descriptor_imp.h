@@ -60,7 +60,9 @@ namespace avdecc_lib
 		};
 
 		struct stream_input_desc_stream_flags stream_flags;
+		struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp;
 		struct jdksavdecc_aem_command_get_stream_format_response aem_cmd_get_stream_format_resp;
+		struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp;
 		struct jdksavdecc_aem_command_get_stream_info_response aem_cmd_get_stream_info_resp;
 
 	public:
@@ -232,6 +234,12 @@ namespace avdecc_lib
 		uint32_t STDCALL get_buffer_length();
 
 		/**
+		 * \return The stream format of a stream after sending a SET_STREAM_FORMAT command and
+		 * receiving a response back for the command.
+		 */
+		uint64_t STDCALL set_stream_format_stream_format();
+
+		/**
 		 * \return The stream format of a stream after sending a GET_STREAM_FORMAT command and
 		 * receiving a response back for the command.
 		 */
@@ -292,7 +300,7 @@ namespace avdecc_lib
 		/**
 		 * Process a SET_STREAM_FORMAT response for the SET_STREAM_FORMAT command.
 		 */
-		int proc_set_stream_format_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len);
+		int proc_set_stream_format_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
@@ -312,7 +320,7 @@ namespace avdecc_lib
 		/**
 		 * Process a SET_STREAM_INFO response for the SET_STREAM_INFO command.
 		 */
-		int proc_set_stream_info_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len);
+		int proc_set_stream_info_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
@@ -323,6 +331,27 @@ namespace avdecc_lib
 		 * Process a GET_STREAM_INFO response for the GET_STREAM_INFO command.
 		 */
 		int proc_get_stream_info_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+
+		/**
+		 * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
+		 * via ACMP or has previously been stopped with the STOP_STREAMING command.
+		 */
+		int STDCALL send_start_streaming_cmd(void *notification_id, uint16_t desc_index);
+
+		/**
+		 * Process a START_STREAMING response for the START_STREAMING command.
+		 */
+		int proc_start_streaming_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+
+		/**
+		 * Send a STOP_STREAMING command with a notification id to stop a connected stream for streaming media.
+		 */
+		int STDCALL send_stop_streaming_cmd(void *notification_id, uint16_t desc_index);
+
+		/**
+		 * Process a START_STREAMING response for the START_STREAMING command.
+		 */
+		int proc_stop_streaming_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 }
 

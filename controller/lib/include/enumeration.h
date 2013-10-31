@@ -174,7 +174,8 @@ namespace avdecc_lib
 	        STATUS_NOT_SUPPORTED = 11,
 	        STATUS_STREAM_IS_RUNNING = 12,
 	        STATUS_INVALID_COMMAND = 13,
-	        TOTAL_NUM_OF_AEM_CMDS_STATUS = 14
+		STATUS_TICK_TIMEOUT = 14,
+	        TOTAL_NUM_OF_AEM_CMDS_STATUS = 15
 	};
 
 	enum aem_cmd_waiting

@@ -38,8 +38,6 @@
 #include "system_tx_queue.h"
 #include "system_layer2_multithreaded_callback.h"
 
-#define DEBUG_ONLY_NEED_TO_REMOVE
-
 namespace avdecc_lib
 {
 	net_interface *netif_obj_in_system;
@@ -51,6 +49,7 @@ namespace avdecc_lib
 	HANDLE system_layer2_multithreaded_callback::poll_events_array[NUM_OF_EVENTS];
 	HANDLE system_layer2_multithreaded_callback::waiting_sem;
 	bool system_layer2_multithreaded_callback::is_waiting = false;
+	bool system_layer2_multithreaded_callback::queue_is_waiting = false;
 	void *system_layer2_multithreaded_callback::waiting_notification_id = 0;
 	int system_layer2_multithreaded_callback::resp_status_for_cmd = STATUS_INVALID_COMMAND;
 
@@ -79,6 +78,7 @@ namespace avdecc_lib
 	{
 		netif_obj_in_system = netif;
 		controller_ref_in_system = controller_obj;
+		queue_is_waiting = false;
 	}
 
 	system_layer2_multithreaded_callback::~system_layer2_multithreaded_callback()
@@ -97,10 +97,6 @@ namespace avdecc_lib
 
 	int system_layer2_multithreaded_callback::queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
 	{
-#ifndef DEBUG_ONLY_NEED_TO_REMOVE
-		avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "Called system_layer2_multithreaded_callback::queue_tx_frame");
-#endif
-
 		struct poll_thread_data thread_data;
 
 		thread_data.frame = (uint8_t *)malloc(1600);
@@ -111,18 +107,13 @@ namespace avdecc_lib
 		poll_tx.tx_queue->queue_push(&thread_data);
 
 		/**
-		 * If is_waiting is true, wait for the response before returning.
+		 * If queue_is_waiting is true, wait for the response before returning.
 		 */
-		if(is_waiting)
+		if(queue_is_waiting)
 		{
-#ifndef DEBUG_ONLY_NEED_TO_REMOVE
-		avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "Called system_layer2_multithreaded_callback::WaitForSingleObject");
-#endif
+			is_waiting = true;
 			WaitForSingleObject(waiting_sem, INFINITE);
-
-#ifndef DEBUG_ONLY_NEED_TO_REMOVE
-		avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "Called system_layer2_multithreaded_callback::WaitForSingleObject returned");
-#endif
+			queue_is_waiting = false;
 		}
 
 		return 0;
@@ -130,11 +121,7 @@ namespace avdecc_lib
 
 	int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd(void *notification_id)
 	{
-#ifndef DEBUG_ONLY_NEED_TO_REMOVE
-		avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "Called system_layer2_multithreaded_callback::set_wait_for_next_cmd");
-#endif
-
-		is_waiting = true;
+		queue_is_waiting = true;
 		resp_status_for_cmd = STATUS_INVALID_COMMAND; // Reset the status
 
 		return 0;
@@ -142,11 +129,6 @@ namespace avdecc_lib
 
 	int STDCALL system_layer2_multithreaded_callback::get_last_resp_status()
 	{
-#ifndef DEBUG_ONLY_NEED_TO_REMOVE
-		avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "Called system_layer2_multithreaded_callback::get_last_resp_status");
-#endif
-
-		is_waiting = false;
 		return resp_status_for_cmd;
 	}
 
@@ -282,7 +264,10 @@ namespace avdecc_lib
 
 					if(is_waiting && (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)))
 					{
+						is_waiting = false;
+						resp_status_for_cmd = STATUS_TICK_TIMEOUT;
 						ReleaseSemaphore(waiting_sem, 1, NULL);
+
 					}
 				}
 
@@ -304,13 +289,11 @@ namespace avdecc_lib
 
 					if(is_waiting && (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
 					   is_notification_id_valid && (waiting_notification_id == thread_data.notification_id))
-					{
+					{					
 						resp_status_for_cmd = status;
+						is_waiting = false;
 						ReleaseSemaphore(waiting_sem, 1, NULL);
 
-#ifndef DEBUG_ONLY_NEED_TO_REMOVE
-		avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "Called system_layer2_multithreaded_callback::ReleaseSemaphore");
-#endif
 					}
 
 					free(thread_data.frame);
@@ -325,10 +308,6 @@ namespace avdecc_lib
 				if(thread_data.notification_flag == avdecc_lib::CMD_WITH_NOTIFICATION)
 				{
 					waiting_notification_id = thread_data.notification_id;
-
-#ifndef DEBUG_ONLY_NEED_TO_REMOVE
-		avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "Called system_layer2_multithreaded_callback::WPCAP_TX_PACKET event");
-#endif
 				}
 
 				break;

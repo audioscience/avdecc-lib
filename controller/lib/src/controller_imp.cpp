@@ -40,8 +40,6 @@
 #include "aem_controller_state_machine.h"
 #include "controller_imp.h"
 
-#define DEBUG_ONLY_NEED_TO_REMOVE
-
 namespace avdecc_lib
 {
 	net_interface_imp *net_interface_ref;
@@ -278,10 +276,6 @@ namespace avdecc_lib
 						{
 							end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, notification_flag, frame, mem_buf_len, status);
 							is_notification_id_valid = true;
-
-#ifndef DEBUG_ONLY_NEED_TO_REMOVE
-		avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "Called controller_imp::rx_packet_event (notification_id = %d, status = %d)", (uint32_t)notification_id, status);
-#endif
 						}
 						else
 						{
