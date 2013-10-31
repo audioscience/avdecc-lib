@@ -137,7 +137,7 @@ namespace avdecc_lib
 		aem_command_read_desc.descriptor_index = desc_index;
 
 		/******************************* Fill frame payload with AECP data and send the frame ****************************/
-		aecp::ether_frame_init(adp_ref, ether_frame);
+		aecp::ether_frame_init(this, ether_frame);
 		aem_command_read_desc_returned = jdksavdecc_aem_command_read_descriptor_write(&aem_command_read_desc,
 		                                                                              ether_frame->payload,
 		                                                                              aecp::CMD_POS,

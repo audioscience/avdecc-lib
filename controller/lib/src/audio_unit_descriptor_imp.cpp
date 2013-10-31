@@ -321,7 +321,7 @@ namespace avdecc_lib
 		aem_cmd_get_sampling_rate.descriptor_index = desc_index;
 
 		/******************************** Fill frame payload with AECP data and send the frame ***************************/
-		aecp::ether_frame_init(base_end_station_imp_ref->get_adp(), ether_frame);
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_get_sampling_rate_returned = jdksavdecc_aem_command_get_sampling_rate_write(&aem_cmd_get_sampling_rate,
 		                                                                                    ether_frame->payload,
 		                                                                                    aecp::CMD_POS,

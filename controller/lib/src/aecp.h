@@ -33,6 +33,7 @@
 
 #include "jdksavdecc_aecp_aem.h"
 #include "jdksavdecc_aem_command.h"
+#include "end_station.h"
 
 namespace avdecc_lib
 {
@@ -73,7 +74,7 @@ namespace avdecc_lib
 		/**
 		 * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
 		 */
-		static int ether_frame_init(adp *adp_ref, struct jdksavdecc_frame *ether_frame);
+		static int ether_frame_init(end_station *end_station, struct jdksavdecc_frame *ether_frame);
 
 		/**
 		 * Initialize and fill Ethernet frame payload with 1722 AECP Header information.

@@ -27,6 +27,7 @@
  * AVDECC Enumeration and Control Protocol implementation
  */
 
+#include "net_interface_imp.h"
 #include "enumeration.h"
 #include "log.h"
 #include "util.h"
@@ -55,7 +56,7 @@ namespace avdecc_lib
 		free(aecp_frame);
 	}
 
-	int aecp::ether_frame_init(adp *adp_ref, struct jdksavdecc_frame *ether_frame)
+	int aecp::ether_frame_init(end_station *end_station, struct jdksavdecc_frame *ether_frame)
 	{
 		/*** Offset to write the field to ***/
 		size_t ether_frame_pos = 0x0;
@@ -63,8 +64,8 @@ namespace avdecc_lib
 
 		/***************************** Ethernet Frame ****************************/
 		ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-		ether_frame->src_address = adp_ref->get_src_mac_addr();
-		ether_frame->dest_address = adp_ref->get_dest_addr();
+		convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
+		convert_uint64_to_eui48(end_station->get_end_station_mac(), ether_frame->dest_address.value);
 		ether_frame->length = AECP_FRAME_LEN; // Length of AECP packet is 64 bytes
 
 		/*********************** Fill frame payload with Ethernet frame information ********************/
