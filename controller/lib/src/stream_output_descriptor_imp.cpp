@@ -244,7 +244,7 @@ namespace avdecc_lib
 		aem_cmd_set_stream_format.stream_format = jdksavdecc_eui64_get(&new_stream_format, 0);
 
 		/******************************** Fill frame payload with AECP data and send the frame ***************************/
-		aecp::ether_frame_init(base_end_station_imp_ref->get_adp(), ether_frame);
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_set_stream_format_returned = jdksavdecc_aem_command_set_stream_format_write(&aem_cmd_set_stream_format,
 		                                                                                    ether_frame->payload,
 		                                                                                    aecp::CMD_POS,
@@ -315,7 +315,7 @@ namespace avdecc_lib
 		aem_cmd_get_stream_format.descriptor_index = desc_index;
 
 		/******************************** Fill frame payload with AECP data and send the frame ***************************/
-		aecp::ether_frame_init(base_end_station_imp_ref->get_adp(), ether_frame);
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_get_stream_format_returned = jdksavdecc_aem_command_get_stream_format_write(&aem_cmd_get_stream_format,
 		                                                                                    ether_frame->payload,
 		                                                                                    aecp::CMD_POS,
@@ -403,7 +403,7 @@ namespace avdecc_lib
 		}*/
 
 		/************************** Fill frame payload with AECP data and send the frame *****************************/
-		aecp::ether_frame_init(base_end_station_imp_ref->get_adp(), ether_frame);
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_set_stream_info_returned = jdksavdecc_aem_command_set_stream_info_write(&aem_cmd_set_stream_info,
 		                                                                                ether_frame->payload,
 		                                                                                aecp::CMD_POS,
@@ -473,7 +473,7 @@ namespace avdecc_lib
 		aem_cmd_get_stream_info.descriptor_index = desc_index;
 
 		/************************** Fill frame payload with AECP data and send the frame *****************************/
-		aecp::ether_frame_init(base_end_station_imp_ref->get_adp(), ether_frame);
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_get_stream_info_returned = jdksavdecc_aem_command_get_stream_info_write(&aem_cmd_get_stream_info,
 		                                                                                ether_frame->payload,
 		                                                                                aecp::CMD_POS,
