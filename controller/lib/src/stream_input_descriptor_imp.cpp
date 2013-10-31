@@ -87,7 +87,7 @@ namespace avdecc_lib
 
 	uint16_t stream_input_descriptor_imp::get_stream_flags()
 	{
-		
+
 		stream_flags.class_a = stream_input_desc.stream_flags >> 1 & 0x01;
 		stream_flags.class_b = stream_input_desc.stream_flags >> 2 & 0x01;
 		stream_flags.supports_encrypted = stream_input_desc.stream_flags >> 3 & 0x01;
@@ -424,7 +424,7 @@ namespace avdecc_lib
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_set_stream_info aem_cmd_set_stream_info;
 		int aem_cmd_set_stream_info_returned;
-//		uint32_t stream_info_index;
+		//		uint32_t stream_info_index;
 		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
 		/****************************************** AECP Common Data *****************************************/
@@ -595,7 +595,7 @@ namespace avdecc_lib
 		aem_cmd_start_streaming.descriptor_index = desc_index;
 
 		/************************** Fill frame payload with AECP data and send the frame *****************************/
-		aecp::ether_frame_init(base_end_station_imp_ref->get_adp(), ether_frame);
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_start_streaming_returned = jdksavdecc_aem_command_start_streaming_write(&aem_cmd_start_streaming,
 		                                                                                ether_frame->payload,
 		                                                                                aecp::CMD_POS,
@@ -664,7 +664,7 @@ namespace avdecc_lib
 		aem_cmd_stop_streaming.descriptor_index = desc_index;
 
 		/************************** Fill frame payload with AECP data and send the frame *****************************/
-		aecp::ether_frame_init(base_end_station_imp_ref->get_adp(), ether_frame);
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_stop_streaming_returned = jdksavdecc_aem_command_stop_streaming_write(&aem_cmd_stop_streaming,
 		                                                                              ether_frame->payload,
 		                                                                              aecp::CMD_POS,

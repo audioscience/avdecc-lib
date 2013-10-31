@@ -138,7 +138,7 @@ namespace avdecc_lib
 		aem_cmd_set_clk_src.clock_source_index = new_clk_src_index;
 
 		/******************************** Fill frame payload with AECP data and send the frame ***************************/
-		aecp::ether_frame_init(base_end_station_imp_ref->get_adp(), ether_frame);
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_set_clk_src_returned = jdksavdecc_aem_command_set_clock_source_write(&aem_cmd_set_clk_src,
 		                                                                             ether_frame->payload,
 		                                                                             aecp::CMD_POS,
@@ -155,7 +155,7 @@ namespace avdecc_lib
 		system_queue_tx(notification_id, avdecc_lib::CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
 		free(ether_frame);
-		return 0;		
+		return 0;
 
 	}
 
@@ -188,7 +188,7 @@ namespace avdecc_lib
 		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
-		return 0;		
+		return 0;
 	}
 
 	int STDCALL clock_domain_descriptor_imp::send_get_clock_source_cmd(void *notification_id, uint16_t desc_index)
@@ -208,11 +208,11 @@ namespace avdecc_lib
 		aem_cmd_get_clk_src.descriptor_index = desc_index;
 
 		/******************************** Fill frame payload with AECP data and send the frame ***************************/
-		aecp::ether_frame_init(base_end_station_imp_ref->get_adp(), ether_frame);
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_get_clk_src_returned = jdksavdecc_aem_command_get_clock_source_write(&aem_cmd_get_clk_src,
-		                                                                                    ether_frame->payload,
-		                                                                                    aecp::CMD_POS,
-		                                                                                    sizeof(ether_frame->payload));
+		                                                                             ether_frame->payload,
+		                                                                             aecp::CMD_POS,
+		                                                                             sizeof(ether_frame->payload));
 
 		if(aem_cmd_get_clk_src_returned < 0)
 		{

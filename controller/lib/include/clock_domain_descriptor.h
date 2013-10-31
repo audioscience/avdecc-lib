@@ -86,8 +86,8 @@ namespace avdecc_lib
 		 * Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_clock_source_cmd(void *notification_id,
-											  uint16_t desc_index,
-											  uint16_t new_clk_src_index) = 0;
+		                                                                          uint16_t desc_index,
+		                                                                          uint16_t new_clk_src_index) = 0;
 
 		/**
 		 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.

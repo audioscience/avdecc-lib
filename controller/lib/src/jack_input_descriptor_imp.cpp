@@ -89,4 +89,3 @@ namespace avdecc_lib
 		return jack_input_desc.base_control;
 	}
 }
-

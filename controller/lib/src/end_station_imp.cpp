@@ -398,7 +398,7 @@ namespace avdecc_lib
 		switch(cmd_type)
 		{
 			case JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY:
-			
+
 				/**
 				 * TODO - P1
 				 *

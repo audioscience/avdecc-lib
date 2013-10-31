@@ -257,7 +257,7 @@ namespace avdecc_lib
 
 		/**
 		 * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
-		 * via ACMP. 
+		 * via ACMP.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_start_streaming_cmd(void *notification_id, uint16_t desc_index) = 0;
 

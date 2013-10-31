@@ -289,7 +289,7 @@ namespace avdecc_lib
 
 					if(is_waiting && (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
 					   is_notification_id_valid && (waiting_notification_id == thread_data.notification_id))
-					{					
+					{
 						resp_status_for_cmd = status;
 						is_waiting = false;
 						ReleaseSemaphore(waiting_sem, 1, NULL);

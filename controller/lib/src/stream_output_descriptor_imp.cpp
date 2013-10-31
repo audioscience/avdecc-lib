@@ -589,7 +589,7 @@ namespace avdecc_lib
 		aem_cmd_start_streaming.descriptor_index = desc_index;
 
 		/************************** Fill frame payload with AECP data and send the frame *****************************/
-		aecp::ether_frame_init(base_end_station_imp_ref->get_adp(), ether_frame);
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_start_streaming_returned = jdksavdecc_aem_command_start_streaming_write(&aem_cmd_start_streaming,
 		                                                                                ether_frame->payload,
 		                                                                                aecp::CMD_POS,
@@ -658,7 +658,7 @@ namespace avdecc_lib
 		aem_cmd_stop_streaming.descriptor_index = desc_index;
 
 		/************************** Fill frame payload with AECP data and send the frame *****************************/
-		aecp::ether_frame_init(base_end_station_imp_ref->get_adp(), ether_frame);
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_stop_streaming_returned = jdksavdecc_aem_command_stop_streaming_write(&aem_cmd_stop_streaming,
 		                                                                              ether_frame->payload,
 		                                                                              aecp::CMD_POS,
