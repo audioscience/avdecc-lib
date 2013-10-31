@@ -90,7 +90,7 @@ namespace avdecc_lib
 											  uint16_t new_clk_src_index) = 0;
 
 		/**
-		 * Send a GET_CLOCK_SOURCE command to \return The current clock source of a clock domain.
+		 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_clock_source_cmd(void *notification_id, uint16_t desc_index) = 0;
 	};

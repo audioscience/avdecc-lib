@@ -71,7 +71,7 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index, char * new_name) = 0;
 
 		/**
-		 * Send a GET_NAME command to \return The value of a name field within a descriptor.
+		 * Send a GET_NAME command to get the value of a name field within a descriptor.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index) = 0;
 	};

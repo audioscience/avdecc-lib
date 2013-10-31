@@ -253,7 +253,7 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_sampling_rate_cmd(void *notification_id, uint16_t desc_index, uint32_t new_sampling_rate) = 0;
 
 		/**
-		 * Send a GET_SAMPLING_RATE command to \return The current sampling rate of a port or unit.
+		 * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_sampling_rate_cmd(void *notification_id, uint16_t desc_index) = 0;
 	};
