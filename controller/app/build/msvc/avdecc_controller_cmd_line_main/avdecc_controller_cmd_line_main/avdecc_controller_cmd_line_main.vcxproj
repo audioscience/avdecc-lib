@@ -56,12 +56,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>\asi\sw\avdecc-lib\controller\app\cmdline\src;\asi\sw\avdecc-lib\controller\lib\include;\asi\sw\avdecc-lib\controller\lib\src\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\..\cmdline\src;$(ProjectDir)\..\..\..\..\..\lib\include;$(ProjectDir)\..\..\..\..\..\lib\src\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>\asi\sw\avdecc-lib\controller\lib\bin\avdecc_controller_lib32_debug\avdecc_controller_lib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)\..\..\..\..\..\lib\bin\avdecc_controller_lib32_debug\avdecc_controller_lib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

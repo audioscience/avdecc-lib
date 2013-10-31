@@ -40,7 +40,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\..\..\bin\avdecc_controller_lib32_debug\</OutDir>
-    <IncludePath>$(JDKSAVDECC_DIR)\include;$(WPCAP_DIR)\Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(JDKSAVDECC_DIR)\include;$(WPCAP_DIR)\Include;$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\..\src;$(ProjectDir)\..\..\..\src\msvc;$(IncludePath)</IncludePath>
     <LibraryPath>$(WPCAP_DIR)\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -56,7 +56,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;AVDECC_CONTROLLER_LIB32_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>\asi\sw\avdecc-lib\controller\lib\include;\asi\sw\avdecc-lib\controller\lib\src;\asi\sw\avdecc-lib\controller\lib\src\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
