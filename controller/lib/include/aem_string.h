@@ -73,6 +73,11 @@ namespace avdecc_lib
 		 * Convert logging value to its corresponding logging name.
 		 */
 		static AVDECC_CONTROLLER_LIB32_API const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value);
+
+		/**
+		 * Convert IEEE1722 format value to name.
+		 */
+		static AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_value_to_name(uint64_t format);
 	};
 }
 

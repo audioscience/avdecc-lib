@@ -33,7 +33,7 @@
 #include "enumeration.h"
 #include "aem_string.h"
 
-const char *aem_cmds_names[] =
+static const char *aem_cmds_names[] =
 {
 	"ACQUIRE_ENTITY",
 	"LOCK_ENTITY",
@@ -112,9 +112,7 @@ const char *aem_cmds_names[] =
 	"GET_STREAM_BACKUP"
 };
 
-const char *aem_cmd_error = "AEM_CMD_ERROR";
-
-const char *aem_descs_names[] =
+static const char *aem_descs_names[] =
 {
 	"ENTITY",
 	"CONFIGURATION",
@@ -156,9 +154,7 @@ const char *aem_descs_names[] =
 	"CONTROL_BLOCK"
 };
 
-const char *aem_desc_error = "AEM_DESC_ERROR";
-
-const char *aem_cmds_status_names[] =
+static const char *aem_cmds_status_names[] =
 {
 	"STATUS_SUCCESS",
 	"STATUS_NOT_IMPLEMENTED",
@@ -177,9 +173,7 @@ const char *aem_cmds_status_names[] =
 	"STATUS_TICK_TIMEOUT"
 };
 
-const char *aem_cmd_status_error = "AEM_CMD_STATUS_ERROR";
-
-const char *notification_names[] =
+static const char *notification_names[] =
 {
 	"NO_MATCH_FOUND",
 	"END_STATION_DISCOVERED",
@@ -193,9 +187,7 @@ const char *notification_names[] =
 	"RESPONSE_RECEIVED"
 };
 
-const char *notification_error = "NOTIFICATION_ERROR";
-
-const char *logging_level_names[] =
+static const char *logging_level_names[] =
 {
 	"LOGGING_LEVEL_ERROR",
 	"LOGGING_LEVEL_WARNING",
@@ -205,7 +197,16 @@ const char *logging_level_names[] =
 	"LOGGING_LEVEL_VERBOSE"
 };
 
-const char *logging_level_error = "LOGGING_LEVEL_ERROR";
+struct ieee1722_format{
+	uint64_t fmt;
+	char *str;
+};
+
+static struct ieee1722_format ieee1722_format_table[] = {
+	{UINT64_C(0x00a0020140000100), "IEC61883_AM824_MBLA_48KHZ_1CH"},
+	{UINT64_C(0x00a0020240000200), "IEC61883_AM824_MBLA_48KHZ_2CH"},
+	{UINT64_C(0x0000000000000000), "UNKOWN"},
+};
 
 namespace avdecc_lib
 {
@@ -216,7 +217,7 @@ namespace avdecc_lib
 			return aem_cmds_names[cmd_value];
 		}
 
-		return aem_cmd_error;
+		return "UNKNOWN";
 	}
 
 	uint16_t STDCALL aem_string::cmd_name_to_value(const char *cmd_name)
@@ -244,7 +245,7 @@ namespace avdecc_lib
 			return aem_descs_names[desc_value];
 		}
 
-		return aem_desc_error;
+		return "UNKNOWN";
 	}
 
 	uint16_t STDCALL aem_string::desc_name_to_value(const char * desc_name)
@@ -272,7 +273,7 @@ namespace avdecc_lib
 			return aem_cmds_status_names[cmd_status_value];
 		}
 
-		return aem_cmd_status_error;
+		return "UNKNOWN";
 	}
 
 	const char * STDCALL aem_string::notification_value_to_name(uint16_t notification_value)
@@ -282,7 +283,7 @@ namespace avdecc_lib
 			return notification_names[notification_value];
 		}
 
-		return notification_error;
+		return "UNKNOWN";
 	}
 
 	const char * STDCALL aem_string::logging_level_value_to_name(uint16_t logging_level_value)
@@ -292,6 +293,18 @@ namespace avdecc_lib
 			return logging_level_names[logging_level_value];
 		}
 
-		return logging_level_error;
+		return "UNKNOWN";
 	}
+
+	const char * STDCALL ieee1722_format_value_to_name(uint64_t format)
+	{
+		struct ieee1722_format *p = &ieee1722_format_table[0];
+
+		while(p->fmt != 0) {
+			if (p->fmt == format)
+				return p->str;
+		}
+		return p->str;
+	}
+
 }
