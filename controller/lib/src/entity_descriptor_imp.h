@@ -200,13 +200,6 @@ namespace avdecc_lib
 		 * Process a GET_CONFIGURATION response for the GET_CONFIFURATION command.
 		 */
 		int proc_get_config_resp();
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out ENTITY descriptor fields.
-		 */
-		void print_entity_desc_info();
-#endif
 	};
 }
 

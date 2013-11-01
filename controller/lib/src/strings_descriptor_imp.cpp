@@ -98,21 +98,4 @@ namespace avdecc_lib
 
 		return 0;
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void strings_descriptor_imp::print_strings_desc_info()
-	{
-		std::cout << "\nStrings Descriptor";
-		std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-		std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-		std::cout << "\nget_string_0 = " << std::hex << get_string_0().value;
-		std::cout << "\nget_string_1 = " << std::hex << get_string_1().value;
-		std::cout << "\nget_string_2 = " << std::hex << get_string_2().value;
-		std::cout << "\nget_string_3 = " << std::hex << get_string_3().value;
-		std::cout << "\nget_string_4 = " << std::hex << get_string_4().value;
-		std::cout << "\nget_string_5 = " << std::hex << get_string_5().value;
-		std::cout << "\nget_string_6 = " << std::hex << get_string_6().value;
-	}
-#endif
-
 }

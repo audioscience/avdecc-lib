@@ -31,169 +31,188 @@
 #ifndef _AVDECC_CMD_LINE_H_
 #define _AVDECC_CMD_LINE_H_
 
-#include <windows.h>
 #include "net_interface.h"
 #include "system.h"
 #include "controller.h"
-#include "descriptor_base.h"
 #include "aem_string.h"
 #include "enumeration.h"
-
-#define DEBUG_SEND_GET_STREAM_FORMAT_CMD
-#define DEBUG_SEND_GET_STREAM_INFO_CMD
 
 class avdecc_cmd_line
 {
 private:
-        avdecc_lib::net_interface *netif_ref;
-        avdecc_lib::system *system_ref;
-        avdecc_lib::controller *controller_ref;
+	avdecc_lib::net_interface *netif_ref;
+	avdecc_lib::system *system_ref;
+	avdecc_lib::controller *controller_ref;
 
 public:
-        static std::string log_path;
+	static std::string log_path;
 	static uint32_t current_end_station;
-        static uint16_t current_entity;
-        static uint16_t current_config;
-        static uint32_t notification_id;
+	static uint16_t current_entity;
+	static uint16_t current_config;
+	static uint32_t notification_id;
 
-        /**
-         * An empty constructor for avdecc_cmd_line
-         */
-        avdecc_cmd_line();
+	/**
+	 * An empty constructor for avdecc_cmd_line
+	 */
+	avdecc_cmd_line();
 
-        /**
-         * Constructor for avdecc_cmd_line used for constructing an object with notification and log callback functions.
-         */
-        avdecc_cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
-                        void (*log_callback) (void *, int32_t, const char *, int32_t));
+	/**
+	 * Constructor for avdecc_cmd_line used for constructing an object with notification and log callback functions.
+	 */
+	avdecc_cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
+	                void (*log_callback) (void *, int32_t, const char *, int32_t));
 
-        /**
-         * Destructor for avdecc_cmd_line used for destroying objects
-         */
-        ~avdecc_cmd_line();
+	/**
+	 * Destructor for avdecc_cmd_line used for destroying objects
+	 */
+	~avdecc_cmd_line();
 
 private:
-        int print_interfaces_and_select();
-
-        int display_desc_info(uint16_t desc_type, uint16_t desc_index);
+	int print_interfaces_and_select();
 
 public:
 
-        /**
-         * Display a list of valid commands.
-         */
-        int cmd_help();
+	/**
+	 * Display a list of valid commands.
+	 */
+	int cmd_help();
 
-        /**
-         * Display the current build release version.
-         */
-        int cmd_version();
+	/**
+	 * Display the current build release version.
+	 */
+	int cmd_version();
 
-        /**
-         * Display a table with information about each end station discovered using ADP.
-         */
-        int cmd_list();
+	/**
+	 * Display a table with information about each end station discovered using ADP.
+	 */
+	int cmd_list();
 
-        /**
-         * Display a list of descriptors that has the Clock Sync Source flag set.
-         */
-        int cmd_list_clock_sync_source();
+	/**
+	 * Display a list of descriptors that has the Clock Sync Source flag set.
+	 */
+	int cmd_list_clock_sync_source();
 
-        /**
-         * Display the current end station and configuration setting.
-         */
-        void cmd_select();
+	/**
+	 * Display the current end station and configuration setting.
+	 */
+	void cmd_select();
 
-        /**
-         * Change the setting of end station and configuration.
-         */
-        int cmd_select(uint32_t new_end_station, uint16_t new_entity, uint16_t new_config);
+	/**
+	 * Change the setting of end station, entity, and configuration.
+	 */
+	int cmd_select(uint32_t new_end_station, uint16_t new_entity, uint16_t new_config);
 
-        /**
-         * Display all the descriptors in each end station.
-         */
-        int cmd_view_all();
+	/**
+	 * Display all the descriptors in each end station.
+	 */
+	int cmd_view_all();
 
-        /**
-         * Display information for the specified descriptor using the current end station and configuration setting.
-         */
-        int cmd_view_descriptor(std::string desc_name, uint16_t desc_index);
+	/**
+	 * Display information for the specified descriptor using the current end station, entity, and configuration setting.
+	 */
+	int cmd_view_descriptor(std::string desc_name, uint16_t desc_index);
 
-        /**
-         * Send an ACQUIRE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
-         */
-        int cmd_acquire_entity(std::string flag_name, std::string desc_name, uint16_t desc_index);
+	/**
+	 * Send an ACQUIRE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
+	 */
+	int cmd_acquire_entity(std::string flag_name, std::string desc_name, uint16_t desc_index);
 
-        /**
-         * Send a LOCK_ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
-         */
-        int cmd_lock_entity(std::string flag_name, std::string desc_name, uint16_t desc_index);
+	/**
+	 * Send a LOCK_ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
+	 */
+	int cmd_lock_entity(std::string flag_name, std::string desc_name, uint16_t desc_index);
 
-        /**
-         * Send a ENTITY_AVAILABLE command to determine if another AVDECC Entity is still alive.
-         */
-        int cmd_entity_avail();
+	/**
+	 * Send a ENTITY_AVAILABLE command to determine if another AVDECC Entity is still alive.
+	 */
+	int cmd_entity_avail();
 
-        /**
-         * Send a READ_DESCRIPTOR command to get the localized strings from an AVDECC Entity.
-         */
-        int cmd_read_descriptor(std::string desc_name, uint16_t desc_index);
+	/**
+	 * Send a READ_DESCRIPTOR command to get the localized strings from an AVDECC Entity.
+	 */
+	int cmd_read_descriptor(std::string desc_name, uint16_t desc_index);
 
-        /**
-         * Send a SET_STREAM_FORMAT command to change the format of a stream.
-         */
-        int cmd_set_stream_format(std::string desc_name, uint16_t desc_index, uint64_t new_stream_format);
+	/**
+	 * Send a SET_STREAM_FORMAT command to change the format of a stream.
+	 */
+	int cmd_set_stream_format(std::string desc_name, uint16_t desc_index, uint64_t new_stream_format);
 
-        /**
-         * Send a GET_STREAM_FORMAT command with nofitication id to fetch the current format of a stream.
-         */
-        int cmd_get_stream_format(std::string desc_name, uint16_t desc_index);
+	/**
+	 * Send a GET_STREAM_FORMAT command with nofitication id to fetch the current format of a stream.
+	 */
+	int cmd_get_stream_format(std::string desc_name, uint16_t desc_index);
 
-        /**
-         * Send a SET_STREAM_INFO command to change a stream info field value to a new value.
-         */
-        int cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
-                                uint64_t new_stream_info_field_value);
+	/**
+	 * Send a SET_STREAM_INFO command to change a stream info field value to a new value.
+	 */
+	int cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
+	                        uint64_t new_stream_info_field_value);
 
-        /**
-         * Send a GET_STREAM_INFO command to fetch the current information of a stream.
-         */
-        int cmd_get_stream_info(std::string desc_name, uint16_t desc_index);
+	/**
+	 * Send a GET_STREAM_INFO command to fetch the current information of a stream.
+	 */
+	int cmd_get_stream_info(std::string desc_name, uint16_t desc_index);
 
-        /**
-         * Send a SET_NAME command to change the value of a name field within a descriptor.
-         */
-        int cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name);
+	/**
+	 * Send a SET_NAME command to change the value of a name field within a descriptor.
+	 */
+	int cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name);
 
-        /**
-         * Send a GET_NAME command to fetch the value of a name field within a descriptor.
-         */
-        int cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index);
+	/**
+	 * Send a GET_NAME command to fetch the value of a name field within a descriptor.
+	 */
+	int cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index);
 
-        /**
+	/**
+	 * Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.
+	 */
+	int cmd_set_sampling_rate(std::string desc_name, uint16_t desc_index, uint32_t new_sampling_rate);
+
+	/**
 	 * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
 	 */
 	int cmd_get_sampling_rate(std::string desc_name, uint16_t desc_index);
 
-        /**
-         * Display the location of the redirected output file.
-         */
-        void cmd_path();
-
-        /**
-         * Change the path of the redirected output file.
-         */
-        int cmd_path(std::string new_log_path);
+	/**
+	 * Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.
+	 */
+	int cmd_set_clock_source(std::string desc_name, uint16_t desc_index, uint16_t new_clk_src_index);
 
 	/**
-	 * Get the descriptor object corresponding to the descriptor type and descriptor index.
+	 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
 	 */
-	avdecc_lib::descriptor_base * get_descriptor_obj(uint16_t desc_type, uint16_t desc_index);
+	int cmd_get_clock_source(std::string desc_name, uint16_t desc_index);
 
-        /**
-         * Check if end station and configuration setting is in range and valid.
-         */
-        bool is_setting_valid();
+	/**
+	 * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
+	 * via ACMP or has previously been stopped with the STOP_STREAMING command.
+	 */
+	int cmd_start_streaming(std::string desc_name, uint16_t desc_index);
+
+	/**
+	 * Send a STOP_STREAMING command with a notification id to stop a connected stream for streaming media.
+	 */
+	int cmd_stop_streaming(std::string desc_name, uint16_t desc_index);
+
+	/**
+	 * Display the location of the redirected output file.
+	 */
+	void cmd_path();
+
+	/**
+	 * Change the path of the redirected output file.
+	 */
+	int cmd_path(std::string new_log_path);
+
+	/**
+	 * Get the next unique notification id.
+	 */
+	uint32_t get_next_notification_id();
+
+	/**
+	 * Check if end station, entity, and configuration setting is in range and valid.
+	 */
+	bool is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config);
 };
 
 #endif

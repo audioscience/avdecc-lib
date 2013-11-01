@@ -51,6 +51,7 @@ namespace avdecc_lib
 
 		std::vector<struct current_sample_rates> sample_rates_vector; // Store sample rates pull field, base frequency, and frequency information
 		struct current_sample_rates sample_rates;
+		struct jdksavdecc_aem_command_set_sampling_rate_response aem_cmd_set_sampling_rate_resp;
 		struct jdksavdecc_aem_command_get_sampling_rate_response aem_cmd_get_sampling_rate_resp;
 
 	public:
@@ -276,10 +277,26 @@ namespace avdecc_lib
 		uint8_t STDCALL get_pull_field_multiplier(uint8_t pull_field_value);
 
 		/**
-		 * Get the sampling rate of a port or uint after sending a GET_SAMPLING_RATE command and
+		 * Get the sampling rate of a port or unit after sending a SET_SAMPLING_RATE command and
+		 * receiving a response back for the command.
+		 */
+		uint32_t STDCALL set_sampling_rate_sampling_rates();
+
+		/**
+		 * Get the sampling rate of a port or unit after sending a GET_SAMPLING_RATE command and
 		 * receiving a response back for the command.
 		 */
 		uint32_t STDCALL get_sampling_rate_sampling_rates();
+
+		/**
+		 * Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.
+		 */
+		int STDCALL send_set_sampling_rate_cmd(void *notification_id, uint16_t desc_index, uint32_t new_sampling_rate);
+
+		/**
+		 * Process a SET_SAMPLING_RATE response for the SET_SAMPLING_RATE command.
+		 */
+		int proc_set_sampling_rate_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
@@ -290,16 +307,6 @@ namespace avdecc_lib
 		 * Process a GET_SAMPLING_RATE response for the GET_SAMPLING_RATE command.
 		 */
 		int proc_get_sampling_rate_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
-
-
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out AUDIO_UNIT descriptor fields.
-		 */
-		void print_audio_unit_desc_info();
-#endif
-
 	};
 }
 

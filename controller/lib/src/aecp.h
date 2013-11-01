@@ -112,14 +112,6 @@ namespace avdecc_lib
 		{
 			return aecpdu.command_type;
 		}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out AECPDU fields.
-		 */
-		void print_aecpdu_information();
-#endif
-
 	};
 }
 

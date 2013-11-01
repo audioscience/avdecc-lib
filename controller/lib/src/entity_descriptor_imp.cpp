@@ -190,33 +190,4 @@ namespace avdecc_lib
 
 		return 0;
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void entity_descriptor_imp::print_entity_desc_info()
-	{
-		std::cout << "\nEntity Descriptor";
-		std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-		std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-		std::cout << "\nentity_id = 0x" << std::hex << get_entity_id();
-		std::cout << "\nvendor_id = " << std::dec << get_vendor_id();
-		std::cout << "\nentity_model_id = 0x" << std::hex << get_entity_model_id();
-		std::cout << "\nentity_capabilities = 0x" << std::hex << get_entity_capabilities();
-		std::cout << "\ntalker_stream_sources = 0x" << std::hex << get_talker_stream_sources();
-		std::cout << "\ntalker_capabilities = 0x" << std::hex << get_talker_capabilities();
-		std::cout << "\nlistener_stream_sinks = 0x" << std::hex << get_listener_stream_sinks();
-		std::cout << "\nlistener_capabilities = 0x" << std::hex << get_listener_capabilities();
-		std::cout << "\ncontroller_capabilities = 0x" << std::hex << get_controller_capabilities();
-		std::cout << "\navailable_index = 0x" << std::hex << get_available_index();
-		std::cout << "\nassociation_id = 0x" << std::hex << get_association_id();
-		std::cout << "\nentity_name = " << std::dec << get_entity_name().value;
-		std::cout << "\nvendor_name_string = " << std::dec << get_vendor_name_string();
-		std::cout << "\nmodel_name_string = " << std::dec << get_model_name_string();
-		std::cout << "\nfirmware_version = " << std::dec << get_firmware_version().value;
-		std::cout << "\ngroup_name = " << std::dec << get_group_name().value;
-		std::cout << "\nserial_number = " << std::dec << get_serial_number().value;
-		std::cout << "\nconfigurations_count = " << std::dec << get_configurations_count();
-		std::cout << "\ncurrent_configuration = " << std::dec << get_current_configuration();
-	}
-#endif
-
 }

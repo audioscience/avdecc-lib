@@ -258,14 +258,6 @@ namespace avdecc_lib
 		{
 			return adpdu.reserved1;
 		}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out ADPDU fields.
-		 */
-		void print_adpdu_information();
-#endif
-
 	};
 }
 

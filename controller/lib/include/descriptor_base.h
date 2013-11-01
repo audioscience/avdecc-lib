@@ -41,12 +41,12 @@ namespace avdecc_lib
 	{
 	public:
 		/**
-		 * Get the descriptor type of a descriptor object.
+		 * \return The descriptor type of a descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_type() = 0;
 
 		/**
-		 * Get the descriptor index of a descriptor object.
+		 * \return The descriptor index of a descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_index() = 0;
 

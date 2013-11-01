@@ -49,6 +49,7 @@ namespace avdecc_lib
 	HANDLE system_layer2_multithreaded_callback::poll_events_array[NUM_OF_EVENTS];
 	HANDLE system_layer2_multithreaded_callback::waiting_sem;
 	bool system_layer2_multithreaded_callback::is_waiting = false;
+	bool system_layer2_multithreaded_callback::queue_is_waiting = false;
 	void *system_layer2_multithreaded_callback::waiting_notification_id = 0;
 	int system_layer2_multithreaded_callback::resp_status_for_cmd = STATUS_INVALID_COMMAND;
 
@@ -77,6 +78,7 @@ namespace avdecc_lib
 	{
 		netif_obj_in_system = netif;
 		controller_ref_in_system = controller_obj;
+		queue_is_waiting = false;
 	}
 
 	system_layer2_multithreaded_callback::~system_layer2_multithreaded_callback()
@@ -105,11 +107,13 @@ namespace avdecc_lib
 		poll_tx.tx_queue->queue_push(&thread_data);
 
 		/**
-		 * If the command with notification id is in the inflight list, wait for the response before returning.
+		 * If queue_is_waiting is true, wait for the response before returning.
 		 */
-		if(is_waiting)
+		if(queue_is_waiting)
 		{
+			is_waiting = true;
 			WaitForSingleObject(waiting_sem, INFINITE);
+			queue_is_waiting = false;
 		}
 
 		return 0;
@@ -117,7 +121,7 @@ namespace avdecc_lib
 
 	int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd(void *notification_id)
 	{
-		is_waiting = true;
+		queue_is_waiting = true;
 		resp_status_for_cmd = STATUS_INVALID_COMMAND; // Reset the status
 
 		return 0;
@@ -125,7 +129,6 @@ namespace avdecc_lib
 
 	int STDCALL system_layer2_multithreaded_callback::get_last_resp_status()
 	{
-		is_waiting = false;
 		return resp_status_for_cmd;
 	}
 
@@ -261,7 +264,10 @@ namespace avdecc_lib
 
 					if(is_waiting && (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)))
 					{
+						is_waiting = false;
+						resp_status_for_cmd = STATUS_TICK_TIMEOUT;
 						ReleaseSemaphore(waiting_sem, 1, NULL);
+
 					}
 				}
 
@@ -272,18 +278,22 @@ namespace avdecc_lib
 					poll_rx.rx_queue->queue_pop_nowait(&thread_data);
 
 					bool is_notification_id_valid = false;
+					int status = -1;
+
 					controller_ref_in_system->rx_packet_event(thread_data.notification_id,
 					                                          is_notification_id_valid,
 					                                          thread_data.notification_flag,
 					                                          thread_data.frame,
 					                                          thread_data.mem_buf_len,
-					                                          resp_status_for_cmd);
+					                                          status);
 
 					if(is_waiting && (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
 					   is_notification_id_valid && (waiting_notification_id == thread_data.notification_id))
 					{
-
+						resp_status_for_cmd = status;
+						is_waiting = false;
 						ReleaseSemaphore(waiting_sem, 1, NULL);
+
 					}
 
 					free(thread_data.frame);

@@ -83,14 +83,6 @@ namespace avdecc_lib
 		 * Get the base strings of the Locale descriptor object.
 		 */
 		uint16_t STDCALL get_base_strings();
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out Locale Descriptor fields.
-		 */
-		void print_locale_desc_info();
-#endif
-
 	};
 }
 

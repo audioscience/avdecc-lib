@@ -41,158 +41,230 @@ namespace avdecc_lib
 	{
 	public:
 		/**
-		 * Get the name of the Stream Input descriptor object.
+		 * \return The name of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
 
 		/**
-		 * Get the localized description of the Stream Input descriptor object.
+		 * \return The localized description of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
 		/**
-		 * Get the Clock Domain index of the Stream Input descriptor object.
+		 * \return The Clock Domain index of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_domain_index() = 0;
 
 		/**
-		 * Get the stream flags of the Stream Input descriptor object.
+		 * \return The stream flags of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_stream_flags() = 0;
 
 		/**
-		* Get the current format of the Stream Input descriptor object.
+		 * \return True if the stream can be used as a clock synchronization source.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_clock_sync_source() = 0;
+
+		/**
+		 * \return True if the stream supports streaming at Class A.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_class_a() = 0;
+
+		/**
+		 * \return True if the stream supports streaming at Class B.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_class_b() = 0;
+
+		/**
+		 * \return True if the stream supports streaming with encrypted PDUs.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_supports_encrypted() = 0;
+
+		/**
+		 * \return True if the backup_talker_entity_id_0 and backup_talker_unique_id_0 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_primary_backup_supported() = 0;
+
+		/**
+		 * \return True if the backup_talker_entity_id_0 and backup_talker_unique_id_0 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_primary_backup_valid() = 0;
+
+		/**
+		 * \return True if the backup_talker_entity_id_1 and backup_talker_unique_id_1 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_secondary_backup_supported() = 0;
+
+		/**
+		 * \return True if the backup_talker_entity_id_1 and backup_talker_unique_id_1 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_secondary_backup_valid() = 0;
+
+		/**
+		 * \return True if the backup_talker_entity_id_2 and backup_talker_unique_id_2 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_tertiary_backup_supported() = 0;
+
+		/**
+		 * \return True if the backup_talker_entity_id_2 and backup_talker_unique_id_2 fields of
+		 *	   the Stream Input descriptor object are supported.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_tertiary_back_up_valid() = 0;
+
+		/**
+		* \return The current format of the Stream Input descriptor object.
 		*/
 		AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_current_format() = 0;
 
 		/**
-		 * Get the formats offset of the Stream Input descriptor object.
+		 * \return The formats offset of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_formats_offset() = 0;
 
 		/**
-		 * Get the number of formats of the Stream Input descriptor object.
+		 * \return The number of formats of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_formats() = 0;
 
 		/**
-		 * Get the backup talker entity id 0 of the Stream Input descriptor object.
+		 * \return The backup talker entity id 0 of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backup_talker_entity_id_0() = 0;
 
 		/**
-		 * Get the backup talker unique 0 of the Stream Input descriptor object.
+		 * \return The backup talker unique 0 of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backup_talker_unique_0() = 0;
 
 		/**
-		 * Get the backup talker entity id 1 of the Stream Input descriptor object.
+		 * \return The backup talker entity id 1 of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backup_talker_entity_id_1() = 0;
 
 		/**
-		 * Get the backup talker unique 1 of the Stream Input descriptor object.
+		 * \return The backup talker unique 1 of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backup_talker_unique_1() = 0;
 
 		/**
-		 * Get the backup talker entity id 2 of the Stream Input descriptor object.
+		 * \return The backup talker entity id 2 of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backup_talker_entity_id_2() = 0;
 
 		/**
-		 * Get the backup talker unique 2 of the Stream Input descriptor object.
+		 * \return The backup talker unique 2 of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backup_talker_unique_2() = 0;
 
 		/**
-		 * Get the backedup talker entity id of the Stream Input descriptor object.
+		 * \return The backedup talker entity id of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backedup_talker_entity_id() = 0;
 
 		/**
-		 * Get the backedup talker unique of the Stream Input descriptor object.
+		 * \return The backedup talker unique of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backedup_talker_unique() = 0;
 
 		/**
-		 * Get the AVB Interface index of the Stream Input descriptor object.
+		 * \return The AVB Interface index of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_avb_interface_index() = 0;
 
 		/**
-		 * Get the buffer length of the Stream Input descriptor object.
+		 * \return The buffer length of the Stream Input descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_buffer_length() = 0;
 
 		/**
-		 * Get the stream format of a stream after sending a GET_STREAM_FORMAT command and
+		 * \return The stream format of a stream after sending a SET_STREAM_FORMAT command and
+		 * receiving a response back for the command.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL set_stream_format_stream_format() = 0;
+
+		/**
+		 * \return The stream format of a stream after sending a GET_STREAM_FORMAT command and
 		 * receiving a response back for the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_format_stream_format() = 0;
 
 		/**
-		 * Get the stream info flags of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info flags of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_info_flags() = 0;
 
 		/**
-		 * Get the stream info stream format of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info stream format of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_stream_format() = 0;
 
 		/**
-		 * Get the stream info stream id of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info stream id of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_stream_id() = 0;
 
 		/**
-		 * Get the stream info MSRP accumulated latency of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info MSRP accumulated latency of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_info_msrp_accumulated_latency() = 0;
 
 		/**
-		 * Get the stream info stream destination MAC of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info stream destination MAC of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_stream_info_stream_dest_mac() = 0;
 
 		/**
-		 * Get the stream info MSRP failure code of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info MSRP failure code of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_stream_info_msrp_failure_code() = 0;
 
 		/**
-		 * Get the stream info MSRP failure bridge id of a stream after sending a GET_STREAM_info command and
+		 * \return The stream info MSRP failure bridge id of a stream after sending a GET_STREAM_info command and
 		 * receiving a response back for the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_msrp_failure_bridge_id() = 0;
 
 		/**
-		 * Send a SET_STREAM_FORMAT command with or without notifying id based on the notifying flag to change the format of a stream.
+		 * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_format_cmd(void *notification_id, uint16_t desc_index, uint64_t new_stream_format) = 0;
 
 		/**
-		 * Send a GET_STREAM_FORMAT command with or without a notifying id based on the notifying flag to fetch the current format of a stream.
+		 * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_format_cmd(void *notification_id, uint16_t desc_index) = 0;
 
 		/**
-		 * Send a SET_STREAM_INFO command with or without a notifying id based on the notifying flag to change the current values
-		 * of the dynamic information of the stream.
+		 * Send a SET_STREAM_INFO command with a notification id to change the current values of the dynamic information of the stream.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_info_cmd(void *notification_id, uint16_t desc_index, void *new_stream_info_field) = 0;
 
 		/**
-		 * Send a GET_STREAM_INFO command with or without a notifying id based on the notifying flag to fetch the current information for a stream.
+		 * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void *notification_id, uint16_t desc_index) = 0;
+
+		/**
+		 * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
+		 * via ACMP.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_start_streaming_cmd(void *notification_id, uint16_t desc_index) = 0;
+
+		/**
+		 * Send a STOP_STREAMING command with a notification id to stop a connected stream for streaming media.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_stop_streaming_cmd(void *notification_id, uint16_t desc_index) = 0;
 	};
 }
 

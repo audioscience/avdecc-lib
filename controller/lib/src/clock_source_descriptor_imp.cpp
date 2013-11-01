@@ -93,21 +93,4 @@ namespace avdecc_lib
 	{
 		return clock_source_desc.clock_source_location_index;
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void clock_source_descriptor_imp::print_clock_source_desc_info()
-	{
-		std::cout << "\nClock Source Descriptor";
-		std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-		std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-		std::cout << "\nobject_name = " << std::hex << get_object_name().value;
-		std::cout << "\nlocalized_description = 0x" << std::hex << get_localized_description();
-		std::cout << "\nclock_source_flags = 0x" << std::hex << get_clock_source_flags();
-		std::cout << "\nclock_source_type = 0x" << std::hex << get_clock_source_type();
-		std::cout << "\nclock_source_identifier = 0x" << std::hex << get_clock_source_identifier();
-		std::cout << "\nclock_source_location_type = 0x" << std::hex << get_clock_source_location_type();
-		std::cout << "\nclock_source_location_index = 0x" << std::hex << get_clock_source_location_index();
-	}
-#endif
-
 }

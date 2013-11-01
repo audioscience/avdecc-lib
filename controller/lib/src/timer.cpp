@@ -94,7 +94,3 @@ namespace avdecc_lib
 		return elapsed;
 	}
 }
-
-
-
-

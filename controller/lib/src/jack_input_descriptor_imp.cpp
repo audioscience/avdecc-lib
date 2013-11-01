@@ -88,21 +88,4 @@ namespace avdecc_lib
 	{
 		return jack_input_desc.base_control;
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void jack_input_descriptor_imp::print_jack_desc_info()
-	{
-		std::cout << "\nJack Descriptor";
-		std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-		std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-		std::cout << "\nobject_name = " << std::hex << get_object_name().value;
-		std::cout << "\nlocalized_description = 0x" << std::hex << get_localized_description();
-		std::cout << "\njack_flags = 0x" << std::hex << get_jack_flags();
-		std::cout << "\njack_type = 0x" << std::hex << get_jack_type();
-		std::cout << "\nnumber_of_controls = " << std::dec << get_number_of_controls();
-		std::cout << "\nbase_control = " << std::dec << get_base_control();
-	}
-#endif
-
 }
-

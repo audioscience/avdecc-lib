@@ -82,7 +82,7 @@ namespace avdecc_lib
 		/**
 		 * Get the MAC address of the AVB Interface descriptor object.
 		 */
-		struct jdksavdecc_eui48 STDCALL get_mac_address();
+		uint8_t * STDCALL get_mac_addr();
 
 		/**
 		 * Get the interface flags of the AVB Interface descriptor object.
@@ -128,14 +128,6 @@ namespace avdecc_lib
 		 * Get the log sync interval of the AVB Interface descriptor object.
 		 */
 		uint32_t STDCALL get_log_sync_interval();
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out AVB Interface Descriptor fields.
-		 */
-		void print_avb_interface_desc_info();
-#endif
-
 	};
 }
 
