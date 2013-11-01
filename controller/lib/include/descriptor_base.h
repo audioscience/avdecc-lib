@@ -53,12 +53,12 @@ namespace avdecc_lib
 		/**
 		 * Send a ACQURE ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_acquire_entity_cmd(uint16_t desc_index, uint32_t acquire_entity_flags) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag) = 0;
 
 		/**
 		 * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_lock_entity_cmd(uint16_t desc_index, uint32_t lock_entity_flags) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag) = 0;
 
 		/**
 		 * Send a ENTITY AVAILABLE command to determine if another AVDECC Entity is still alive and responding to commands.

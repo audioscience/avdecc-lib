@@ -363,8 +363,8 @@ namespace avdecc_lib
 		aem_cmd_get_stream_format.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
 
 		/************************** AECP Message Specific Data ************************/
-		aem_cmd_get_stream_format.descriptor_type = JDKSAVDECC_DESCRIPTOR_STREAM_INPUT;
-		aem_cmd_get_stream_format.descriptor_index = desc_index;
+		aem_cmd_get_stream_format.descriptor_type = get_descriptor_type(); //JDKSAVDECC_DESCRIPTOR_STREAM_INPUT;
+		aem_cmd_get_stream_format.descriptor_index = get_descriptor_index(); //desc_index;
 
 		/******************************** Fill frame payload with AECP data and send the frame ***************************/
 		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);

@@ -60,10 +60,10 @@ namespace avdecc_lib
 		};
 
 		struct stream_input_desc_stream_flags stream_flags;
-		struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp;
-		struct jdksavdecc_aem_command_get_stream_format_response aem_cmd_get_stream_format_resp;
-		struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp;
-		struct jdksavdecc_aem_command_get_stream_info_response aem_cmd_get_stream_info_resp;
+		struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp; // Store the response received after sending a SET_STREAM_FORMAT command.
+		struct jdksavdecc_aem_command_get_stream_format_response aem_cmd_get_stream_format_resp; // Store the response received after sending a GET_STREAM_FORMAT command.
+		struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp; // Store the response received after sending a SET_STREAM_INFO command.
+		struct jdksavdecc_aem_command_get_stream_info_response aem_cmd_get_stream_info_resp; // Store the response received after sending a GET_STREAM_INFO command.
 
 	public:
 		/**
@@ -83,32 +83,32 @@ namespace avdecc_lib
 		virtual ~stream_output_descriptor_imp();
 
 		/**
-		 * \return The descriptor type of the Stream Input descriptor object.
+		 * \return The descriptor type of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_descriptor_type();
 
 		/**
-		 * \return The descriptor index of the Stream Input descriptor object.
+		 * \return The descriptor index of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_descriptor_index();
 
 		/**
-		 * \return The name of the Stream Input descriptor object.
+		 * \return The name of the Stream Output descriptor object.
 		 */
 		uint8_t * STDCALL get_object_name();
 
 		/**
-		 * \return The localized description of the Stream Input descriptor object.
+		 * \return The localized description of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_localized_description();
 
 		/**
-		 * \return The Clock Domain index of the Stream Input descriptor object.
+		 * \return The Clock Domain index of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_clock_domain_index();
 
 		/**
-		 * \return The stream flags of the Stream Input descriptor object.
+		 * \return The stream flags of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_stream_flags();
 
@@ -134,102 +134,102 @@ namespace avdecc_lib
 
 		/**
 		 * \return True if the backup_talker_entity_id_0 and backup_talker_unique_id_0 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		bool STDCALL get_stream_flags_primary_backup_supported();
 
 		/**
 		 * \return True if the backup_talker_entity_id_0 and backup_talker_unique_id_0 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		bool STDCALL get_stream_flags_primary_backup_valid();
 
 		/**
 		 * \return True if the backup_talker_entity_id_1 and backup_talker_unique_id_1 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		bool STDCALL get_stream_flags_secondary_backup_supported();
 
 		/**
 		 * \return True if the backup_talker_entity_id_1 and backup_talker_unique_id_1 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		bool STDCALL get_stream_flags_secondary_backup_valid();
 
 		/**
 		 * \return True if the backup_talker_entity_id_2 and backup_talker_unique_id_2 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		bool STDCALL get_stream_flags_tertiary_backup_supported();
 
 		/**
 		 * \return True if the backup_talker_entity_id_2 and backup_talker_unique_id_2 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		bool STDCALL get_stream_flags_tertiary_back_up_valid();
 
 		/**
-		* \return The current format of the Stream Input descriptor object.
+		* \return The current format of the Stream Output descriptor object.
 		*/
 		char * STDCALL get_current_format();
 
 		/**
-		 * \return The formats offset of the Stream Input descriptor object.
+		 * \return The formats offset of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_formats_offset();
 
 		/**
-		 * \return The number of formats of the Stream Input descriptor object.
+		 * \return The number of formats of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_number_of_formats();
 
 		/**
-		 * \return The backup talker entity id 0 of the Stream Input descriptor object.
+		 * \return The backup talker entity id 0 of the Stream Output descriptor object.
 		 */
 		uint64_t STDCALL get_backup_talker_entity_id_0();
 
 		/**
-		 * \return The backup talker unique 0 of the Stream Input descriptor object.
+		 * \return The backup talker unique 0 of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_backup_talker_unique_0();
 
 		/**
-		 * \return The backup talker entity id 1 of the Stream Input descriptor object.
+		 * \return The backup talker entity id 1 of the Stream Output descriptor object.
 		 */
 		uint64_t STDCALL get_backup_talker_entity_id_1();
 
 		/**
-		 * \return The backup talker unique 1 of the Stream Input descriptor object.
+		 * \return The backup talker unique 1 of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_backup_talker_unique_1();
 
 		/**
-		 * \return The backup talker entity id 2 of the Stream Input descriptor object.
+		 * \return The backup talker entity id 2 of the Stream Output descriptor object.
 		 */
 		uint64_t STDCALL get_backup_talker_entity_id_2();
 
 		/**
-		 * \return The backup talker unique 2 of the Stream Input descriptor object.
+		 * \return The backup talker unique 2 of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_backup_talker_unique_2();
 
 		/**
-		 * \return The backedup talker entity id of the Stream Input descriptor object.
+		 * \return The backedup talker entity id of the Stream Output descriptor object.
 		 */
 		uint64_t STDCALL get_backedup_talker_entity_id();
 
 		/**
-		 * \return The backedup talker unique of the Stream Input descriptor object.
+		 * \return The backedup talker unique of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_backedup_talker_unique();
 
 		/**
-		 * \return The AVB Interface index of the Stream Input descriptor object.
+		 * \return The AVB Interface index of the Stream Output descriptor object.
 		 */
 		uint16_t STDCALL get_avb_interface_index();
 
 		/**
-		 * \return The buffer length of the Stream Input descriptor object.
+		 * \return The buffer length of the Stream Output descriptor object.
 		 */
 		uint32_t STDCALL get_buffer_length();
 

@@ -96,7 +96,7 @@ Prerequisites
 
 1. MSVC 2010 or later
 1. jdksavdecc-c git repository from <https://github.com/jdkoftinoff/jdksavdecc-c>
-1. winpcap from <http://www.winpcap.org/>
+1. winpcap development package from <http://www.winpcap.org/devel.htm>
 
 The following environment variables must be defined:
 * WPCAP_DIR the directory where WinPcap is installed

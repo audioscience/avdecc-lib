@@ -33,7 +33,7 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.0.7"
+#define AVDECC_CONTROLLER_VERSION "v0.0.8"
 
 namespace avdecc_lib
 {
@@ -76,7 +76,7 @@ namespace avdecc_lib
 		uint64_t STDCALL get_controller_guid();
 
 		/**
-		 * Get the number of End Stations connected
+		 * Get the total number of End Stations connected
 		 */
 		uint32_t STDCALL get_end_station_count();
 
@@ -106,7 +106,7 @@ namespace avdecc_lib
 		bool STDCALL is_inflight_cmd_with_notification_id(void *notification_id);
 
 		/**
-		 * Update the log level.
+		 * Update the base log level for messages to be logged by the logging callback.
 		 */
 		void STDCALL update_log_level(int32_t new_log_level);
 

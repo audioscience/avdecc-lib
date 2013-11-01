@@ -77,22 +77,44 @@ namespace avdecc_lib
 		/**
 		 * Send a ACQURE ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
 		 */
-		virtual int STDCALL send_acquire_entity_cmd(uint16_t desc_index, uint32_t acquire_entity_flags);
+		virtual int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag);
 
 		/**
 		 * Process a ACQURE ENTITY response for the ACQURE ENTITY command.
 		 */
-		virtual int proc_acquire_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
+		virtual int proc_acquire_entity_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+
+		/**
+		 * Send a ACQURE ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
+		 */
+		int default_send_acquire_entity_cmd(descriptor_base_imp *descriptor_base_imp_ref, void *notification_id, uint32_t acquire_entity_flag);
+
+		/**
+		 * Process a ACQURE ENTITY response for the ACQURE ENTITY command.
+		 */
+		int default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp, void *&notification_id,
+					             uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
 		 */
-		virtual int STDCALL send_lock_entity_cmd(uint16_t desc_index, uint32_t lock_entity_flags);
+		virtual int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag);
 
 		/**
 		 * Process a LOCK ENTITY response for the LOCK ENTITY command.
 		 */
-		virtual int proc_lock_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
+		virtual int proc_lock_entity_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+
+		/**
+		 * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
+		 */
+		int default_send_lock_entity_cmd(descriptor_base_imp *descriptor_base_imp_ref, void *notification_id, uint32_t lock_entity_flag);
+
+		/**
+		 * Process a LOCK ENTITY response for the LOCK ENTITY command.
+		 */
+		int default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp, void *&notification_id,
+					          uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a ENTITY AVAILABLE command to determine if another AVDECC Entity is still alive and responding to commands.

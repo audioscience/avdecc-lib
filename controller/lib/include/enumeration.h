@@ -33,7 +33,7 @@
 
 namespace avdecc_lib
 {
-	enum aem_cmds_values
+	enum aem_cmds_values // The command codes values for AEM commands
 	{
 	        AEM_CMD_ACQUIRE_ENTITY,
 	        AEM_CMD_LOCK_ENTITY,
@@ -114,7 +114,7 @@ namespace avdecc_lib
 	        AEM_CMD_ERROR = 0xffff
 	};
 
-	enum aem_descs_values
+	enum aem_descs_values // The descriptor types values for AEM descriptors 
 	{
 	        AEM_DESC_ENTITY,
 	        AEM_DESC_CONFIGURATION,
@@ -154,63 +154,56 @@ namespace avdecc_lib
 	        AEM_DESC_SIGNAL_TRANSCODER,
 	        AEM_DESC_CLOCK_DOMAIN,
 	        AEM_DESC_CONTROL_BLOCK,
-	        TOTAL_NUM_OF_AEM_DESCS = 38, // The total number of AEM descriptors currently supproted in the 1722.1 specification
+	        TOTAL_NUM_OF_AEM_DESCS = 38, // The total number of AEM descriptors currently supported in the 1722.1 specification
 	        AEM_DESC_ERROR = 0xffff
 	};
 
 	enum aem_cmds_status
 	{
-	        STATUS_SUCCESS = 0,
-	        STATUS_NOT_IMPLEMENTED = 1,
-	        STATUS_NO_SUCH_DESCRIPTOR = 2,
-	        STATUS_ENTITY_LOCKED = 3,
-	        STATUS_ENTITY_ACQUIRED = 4,
-	        STATUS_NOT_AUTHENTICATED = 5,
-	        STATUS_AUTHENTICATION_DISABLED = 6,
-	        STATUS_BAD_ARGUMENTS = 7,
-	        STATUS_NO_RESOURCES = 8,
-	        STATUS_IN_PROGRESS = 9,
-	        STATUS_ENTITY_MISBEHAVING = 10,
-	        STATUS_NOT_SUPPORTED = 11,
-	        STATUS_STREAM_IS_RUNNING = 12,
-	        STATUS_INVALID_COMMAND = 13,
-	        STATUS_TICK_TIMEOUT = 14,
+	        STATUS_SUCCESS = 0, //< The AVDECC Entity successfully performed the command and has valid results
+	        STATUS_NOT_IMPLEMENTED = 1, // The AVDECC Entity does not support the command type
+	        STATUS_NO_SUCH_DESCRIPTOR = 2, // A descriptor with the descriptor type and index does not exist
+	        STATUS_ENTITY_LOCKED = 3, // The AVDECC Entity has been locked by another AVDECC Controller
+	        STATUS_ENTITY_ACQUIRED = 4, // The AVDECC Entity has been acquired by another AVDECC Controller
+	        STATUS_NOT_AUTHENTICATED = 5, // The AVDECC Controller is not authenticated with the AVDECC Entity
+	        STATUS_AUTHENTICATION_DISABLED = 6, // The AVDECC Controller is trying to use an authentication command when authentication is not enabled on the AVDECC Entity
+	        STATUS_BAD_ARGUMENTS = 7, // One or more of the values in the fields of the frame were deemed to be bad by the AVDECC Entity
+	        STATUS_NO_RESOURCES = 8, // The AVDECC Entity cannot complete the command because it does not have the resources to support it
+	        STATUS_IN_PROGRESS = 9, // The AVDECC Entity is processing the command and will send a second response at a later time with the result of the command
+	        STATUS_ENTITY_MISBEHAVING = 10, // The AVDECC Entity is generating an internal error while trying to process the command
+	        STATUS_NOT_SUPPORTED = 11, // The command is implemented, but the target of the command is not supported
+	        STATUS_STREAM_IS_RUNNING = 12, // The stream is currently streaming and the command is one which cannot be executed on a streaming stream
+	        STATUS_INVALID = 13,
+	        STATUS_TICK_TIMEOUT = 14, // The response is not received within the timeout period after re-sending a command
 	        TOTAL_NUM_OF_AEM_CMDS_STATUS = 15
 	};
 
 	enum aem_cmd_waiting
 	{
-	        CMD_WITHOUT_NOTIFICATION = 0,
-	        CMD_WITH_NOTIFICATION = 1,
+	        CMD_WITHOUT_NOTIFICATION = 0, // All internal commands are sent without notification ids
+	        CMD_WITH_NOTIFICATION = 1, // All user commands are sent with unique notification ids
 	};
 
 	enum frame_lengths
 	{
 	        ADP_FRAME_LEN = 82, // Length of ADP packet is 82 bytes
 	        AECP_FRAME_LEN = 64, // Length of AECP packet is 64 bytes
-
 	};
 
 	enum timeouts
 	{
 	        NETIF_READ_TIMEOUT_MS = 100,
 	        AVDECC_MSG_TIMEOUT = 250  // AVDECC messages have a 250 milliseconds timeout
-
 	};
 
 	enum notifications // Notifications for the AVDECC library implementation, not part of the 1722.1 specification
 	{
-	        NO_MATCH_FOUND = 0,
-	        END_STATION_DISCOVERED = 1,
-	        END_STATION_CONNECTED = 2,
-	        END_STATION_RECONNECTED = 3,
-	        END_STATION_DISCONNECTED = 4,
-	        COMMAND_SENT = 5,
-	        COMMAND_TIMEOUT = 6,
-	        COMMAND_RESENT = 7,
-	        COMMAND_SUCCESS = 8,
-	        RESPONSE_RECEIVED = 9,
-	        TOTAL_NUM_OF_NOTIFICATIONS = 10
+	        NO_MATCH_FOUND = 0, // A command or response is not implemented
+	        END_STATION_CONNECTED = 1, // An AVDECC End Station is discovered and connected
+	        END_STATION_DISCONNECTED = 2, // An AVDECC End Station is disconnected
+	        COMMAND_TIMEOUT = 3, // A command is sent, but the response is not received within a timeout period
+	        RESPONSE_RECEIVED = 4, // A response is received after sending a command
+	        TOTAL_NUM_OF_NOTIFICATIONS = 5
 	};
 
 	enum logging_levels

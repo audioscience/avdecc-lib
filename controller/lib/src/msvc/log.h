@@ -84,7 +84,7 @@ namespace avdecc_lib
 		virtual ~log();
 
 		/**
-		 * Update to a new log level.
+		 * Update the base log level for messages to be logged by the logging callback.
 		 */
 		void set_log_level(int32_t new_log_level);
 

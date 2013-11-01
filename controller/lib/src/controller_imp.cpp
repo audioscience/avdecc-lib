@@ -243,7 +243,7 @@ namespace avdecc_lib
 							//avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Entity GUID is 0x0");
 						}
 
-						status = STATUS_INVALID_COMMAND;
+						status = STATUS_INVALID;
 						is_notification_id_valid = false;
 					}
 					break;
@@ -280,7 +280,7 @@ namespace avdecc_lib
 						else
 						{
 							//avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "Need to have ADP packet first.");
-							status = STATUS_INVALID_COMMAND;
+							status = STATUS_INVALID;
 						}
 					}
 					break;

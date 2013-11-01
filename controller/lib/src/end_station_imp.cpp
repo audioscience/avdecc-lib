@@ -398,38 +398,71 @@ namespace avdecc_lib
 		switch(cmd_type)
 		{
 			case JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY:
+				{
+					desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
+					desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
 
-				/**
-				 * TODO - P1
-				 *
-				 * Add implementation for ACQUIRE_ENTITY command.
-				 */
+					if(desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY)
+					{
+						entity_descriptor_imp *entity_desc_imp_ref;
+						entity_desc_imp_ref = dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
+
+						if(entity_desc_imp_ref)
+						{
+							entity_desc_imp_ref->proc_acquire_entity_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						}
+						else
+						{
+							avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_input_descriptor to derived stream_input_descriptor_imp error");
+						}
+					}
+					else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
+					{
+						stream_input_descriptor_imp *stream_input_desc_imp_ref;
+						stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+
+						if(stream_input_desc_imp_ref)
+						{
+							stream_input_desc_imp_ref->proc_acquire_entity_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						}
+						else
+						{
+							avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_input_descriptor to derived stream_input_descriptor_imp error");
+						}
+					}
+					else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
+					{
+						stream_output_descriptor_imp *stream_output_desc_imp_ref;
+						stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+
+						if(stream_output_desc_imp_ref)
+						{
+							stream_output_desc_imp_ref->proc_acquire_entity_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						}
+						else
+						{
+							avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_output_descriptor_imp to derived stream_output_descriptor_imp error");
+						}
+					}
+				}
 
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY:
 
-				/**
-				 * TODO - P1
-				 *
-				 * Add implementation for LOCK_ENTITY command.
-				 */
+				printf("\nLOCK_ENTITY command is not implemented.");
 
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE:
 
-				/**
-				 * TODO - Add implementation for ENTITY_AVAILABLE command.
-				 */
+				printf("\nENTITY_AVAILABLE command is not implemented.");
 
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE:
 
-				/**
-				 * TODO - Add implementation for CONTROLLER_AVAILABLE command.
-				 */
+				printf("\nCONTROLLER_AVAILABLE command is not implemented.");
 
 				break;
 
@@ -438,43 +471,74 @@ namespace avdecc_lib
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT:
+				{
+					desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
+					desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
 
-				/**
-				 * TODO - Add implementation for SET_STREAM_FORMAT command.
-				 */
+					if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
+					{
+						stream_input_descriptor_imp *stream_input_desc_imp_ref;
+						stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+
+						if(stream_input_desc_imp_ref)
+						{
+							stream_input_desc_imp_ref->proc_set_stream_format_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						}
+						else
+						{
+							avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_input_descriptor to derived stream_input_descriptor_imp error");
+						}
+					}
+					else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
+					{
+						stream_output_descriptor_imp *stream_output_desc_imp_ref;
+						stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+
+						if(stream_output_desc_imp_ref)
+						{
+							stream_output_desc_imp_ref->proc_set_stream_format_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						}
+						else
+						{
+							avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_output_descriptor_imp to derived stream_output_descriptor_imp error");
+						}
+					}
+				}
 
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT:
-				desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-				desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
-
-				if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
 				{
-					stream_input_descriptor_imp *stream_input_desc_imp_ref;
-					stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+					desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
+					desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
 
-					if(stream_input_desc_imp_ref)
+					if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
 					{
-						stream_input_desc_imp_ref->proc_get_stream_format_resp(notification_id, notification_flag, frame, mem_buf_len, status);
-					}
-					else
-					{
-						avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_input_descriptor to derived stream_input_descriptor_imp error");
-					}
-				}
-				else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
-				{
-					stream_output_descriptor_imp *stream_output_desc_imp_ref;
-					stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+						stream_input_descriptor_imp *stream_input_desc_imp_ref;
+						stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 
-					if(stream_output_desc_imp_ref)
-					{
-						stream_output_desc_imp_ref->proc_get_stream_format_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						if(stream_input_desc_imp_ref)
+						{
+							stream_input_desc_imp_ref->proc_get_stream_format_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						}
+						else
+						{
+							avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_input_descriptor to derived stream_input_descriptor_imp error");
+						}
 					}
-					else
+					else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
 					{
-						avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_output_descriptor_imp to derived stream_output_descriptor_imp error");
+						stream_output_descriptor_imp *stream_output_desc_imp_ref;
+						stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+
+						if(stream_output_desc_imp_ref)
+						{
+							stream_output_desc_imp_ref->proc_get_stream_format_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						}
+						else
+						{
+							avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_output_descriptor_imp to derived stream_output_descriptor_imp error");
+						}
 					}
 				}
 
@@ -482,9 +546,7 @@ namespace avdecc_lib
 
 			case JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO:
 
-				/**
-				 * TODO - Add implementation for SET_STREAM_INFO command.
-				 */
+				printf("\nSET_STREAM_INFO command is not implemented.");
 
 				break;
 
@@ -525,17 +587,13 @@ namespace avdecc_lib
 
 			case JDKSAVDECC_AEM_COMMAND_SET_NAME:
 
-				/**
-				 * TODO - Add implementation for SET_NAME command.
-				 */
+				printf("\nSET_NAME command is not implemented.");
 
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_GET_NAME:
 
-				/**
-				 * TODO - Add implementation for GET_NAME command.
-				 */
+				printf("\nGET_NAME command is not implemented.");
 
 				break;
 

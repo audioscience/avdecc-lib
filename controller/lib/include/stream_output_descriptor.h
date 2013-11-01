@@ -41,22 +41,22 @@ namespace avdecc_lib
 	{
 	public:
 		/**
-		 * \return The name of the Stream Input descriptor object.
+		 * \return The name of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
 
 		/**
-		 * \return The localized description of the Stream Input descriptor object.
+		 * \return The localized description of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
 		/**
-		 * \return The Clock Domain index of the Stream Input descriptor object.
+		 * \return The Clock Domain index of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_domain_index() = 0;
 
 		/**
-		 * \return The stream flags of the Stream Input descriptor object.
+		 * \return The stream flags of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_stream_flags() = 0;
 
@@ -82,102 +82,102 @@ namespace avdecc_lib
 
 		/**
 		 * \return True if the backup_talker_entity_id_0 and backup_talker_unique_id_0 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_primary_backup_supported() = 0;
 
 		/**
 		 * \return True if the backup_talker_entity_id_0 and backup_talker_unique_id_0 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_primary_backup_valid() = 0;
 
 		/**
 		 * \return True if the backup_talker_entity_id_1 and backup_talker_unique_id_1 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_secondary_backup_supported() = 0;
 
 		/**
 		 * \return True if the backup_talker_entity_id_1 and backup_talker_unique_id_1 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_secondary_backup_valid() = 0;
 
 		/**
 		 * \return True if the backup_talker_entity_id_2 and backup_talker_unique_id_2 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_tertiary_backup_supported() = 0;
 
 		/**
 		 * \return True if the backup_talker_entity_id_2 and backup_talker_unique_id_2 fields of
-		 *	   the Stream Input descriptor object are supported.
+		 *	   the Stream Output descriptor object are supported.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_tertiary_back_up_valid() = 0;
 
 		/**
-		* \return The current format of the Stream Input descriptor object.
+		* \return The current format of the Stream Output descriptor object.
 		*/
 		AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_current_format() = 0;
 
 		/**
-		 * \return The formats offset of the Stream Input descriptor object.
+		 * \return The formats offset of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_formats_offset() = 0;
 
 		/**
-		 * \return The number of formats of the Stream Input descriptor object.
+		 * \return The number of formats of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_formats() = 0;
 
 		/**
-		 * \return The backup talker entity id 0 of the Stream Input descriptor object.
+		 * \return The backup talker entity id 0 of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backup_talker_entity_id_0() = 0;
 
 		/**
-		 * \return The backup talker unique 0 of the Stream Input descriptor object.
+		 * \return The backup talker unique 0 of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backup_talker_unique_0() = 0;
 
 		/**
-		 * \return The backup talker entity id 1 of the Stream Input descriptor object.
+		 * \return The backup talker entity id 1 of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backup_talker_entity_id_1() = 0;
 
 		/**
-		 * \return The backup talker unique 1 of the Stream Input descriptor object.
+		 * \return The backup talker unique 1 of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backup_talker_unique_1() = 0;
 
 		/**
-		 * \return The backup talker entity id 2 of the Stream Input descriptor object.
+		 * \return The backup talker entity id 2 of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backup_talker_entity_id_2() = 0;
 
 		/**
-		 * \return The backup talker unique 2 of the Stream Input descriptor object.
+		 * \return The backup talker unique 2 of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backup_talker_unique_2() = 0;
 
 		/**
-		 * \return The backedup talker entity id of the Stream Input descriptor object.
+		 * \return The backedup talker entity id of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backedup_talker_entity_id() = 0;
 
 		/**
-		 * \return The backedup talker unique of the Stream Input descriptor object.
+		 * \return The backedup talker unique of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backedup_talker_unique() = 0;
 
 		/**
-		 * \return The AVB Interface index of the Stream Input descriptor object.
+		 * \return The AVB Interface index of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_avb_interface_index() = 0;
 
 		/**
-		 * \return The buffer length of the Stream Input descriptor object.
+		 * \return The buffer length of the Stream Output descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_buffer_length() = 0;
 

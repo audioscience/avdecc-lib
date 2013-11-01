@@ -31,6 +31,7 @@
 #include "enumeration.h"
 #include "log.h"
 #include "util.h"
+#include "end_station.h"
 #include "adp.h"
 #include "aecp.h"
 

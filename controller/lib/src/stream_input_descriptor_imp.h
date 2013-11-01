@@ -60,10 +60,10 @@ namespace avdecc_lib
 		};
 
 		struct stream_input_desc_stream_flags stream_flags;
-		struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp;
-		struct jdksavdecc_aem_command_get_stream_format_response aem_cmd_get_stream_format_resp;
-		struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp;
-		struct jdksavdecc_aem_command_get_stream_info_response aem_cmd_get_stream_info_resp;
+		struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp; // Store the response received after sending a SET_STREAM_FORMAT command.
+		struct jdksavdecc_aem_command_get_stream_format_response aem_cmd_get_stream_format_resp; // Store the response received after sending a GET_STREAM_FORMAT command.
+		struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp; // Store the response received after sending a SET_STREAM_INFO command.
+		struct jdksavdecc_aem_command_get_stream_info_response aem_cmd_get_stream_info_resp; // Store the response received after sending a GET_STREAM_INFO command.
 
 	public:
 		/**

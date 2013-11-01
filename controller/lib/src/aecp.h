@@ -33,10 +33,11 @@
 
 #include "jdksavdecc_aecp_aem.h"
 #include "jdksavdecc_aem_command.h"
-#include "end_station.h"
 
 namespace avdecc_lib
 {
+	class end_station;
+
 	class aecp
 	{
 	private:

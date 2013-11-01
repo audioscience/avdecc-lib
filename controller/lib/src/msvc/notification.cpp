@@ -124,11 +124,9 @@ namespace avdecc_lib
 			return;
 		}
 
-		if(notification_type == avdecc_lib::NO_MATCH_FOUND || notification_type == avdecc_lib::END_STATION_DISCOVERED ||
-		   notification_type == avdecc_lib::END_STATION_CONNECTED || notification_type == avdecc_lib::END_STATION_RECONNECTED ||
-		   notification_type == avdecc_lib::END_STATION_DISCONNECTED || notification_type == avdecc_lib::COMMAND_SENT ||
-		   notification_type == avdecc_lib::COMMAND_TIMEOUT || notification_type == avdecc_lib::COMMAND_RESENT ||
-		   notification_type == avdecc_lib::RESPONSE_RECEIVED || notification_type == avdecc_lib::COMMAND_SUCCESS)
+		if(notification_type == avdecc_lib::NO_MATCH_FOUND || notification_type == avdecc_lib::END_STATION_CONNECTED || 
+		   notification_type == avdecc_lib::END_STATION_DISCONNECTED || notification_type == avdecc_lib::COMMAND_TIMEOUT || 
+		   notification_type == avdecc_lib::RESPONSE_RECEIVED)
 		{
 			notification_buf[write_index % NOTIFICATION_BUF_COUNT].notification_type = notification_type;
 			notification_buf[write_index % NOTIFICATION_BUF_COUNT].guid = guid;

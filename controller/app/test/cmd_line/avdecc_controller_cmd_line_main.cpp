@@ -40,9 +40,7 @@ using namespace std;
 extern "C" void notification_callback(void *user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
                                       uint16_t desc_type, uint16_t desc_index, void *notification_id)
 {
-	if(notification_type == avdecc_lib::COMMAND_SENT || notification_type == avdecc_lib::COMMAND_TIMEOUT ||
-	   notification_type == avdecc_lib::COMMAND_RESENT || notification_type == avdecc_lib::COMMAND_SUCCESS ||
-	   notification_type == avdecc_lib::RESPONSE_RECEIVED)
+	if(notification_type == avdecc_lib::COMMAND_TIMEOUT || notification_type == avdecc_lib::RESPONSE_RECEIVED)
 	{
 		printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %d)\n",
 		       avdecc_lib::aem_string::notification_value_to_name(notification_type),
@@ -208,6 +206,29 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command" << std::endl;
+				}
+
+				break;
+
+			case 3:
+				if(cmd_input_vector.at(0).compare("log") == 0 && cmd_input_vector.at(1).compare("level") == 0)
+				{
+					uint32_t new_log_level;
+
+					if((cmd_input_vector.at(2).compare("0") == 0) || (atoi(cmd_input_vector.at(1).c_str()) != 0))
+					{
+						is_input_valid = true;
+						new_log_level = (uint16_t)atoi(cmd_input_vector.at(2).c_str());
+					}
+
+					if(is_input_valid)
+					{
+						avdecc_cmd_line_ref->cmd_log_level(new_log_level);
+					}
+					else
+					{
+						std::cout << "Invalid Command" << std::endl;
+					}
 				}
 
 				break;

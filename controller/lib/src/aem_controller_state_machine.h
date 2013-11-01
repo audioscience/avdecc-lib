@@ -92,7 +92,7 @@ namespace avdecc_lib
 		/**
 		 * Notify the application that a command has timed out and the retry has timed out.
 		 */
-		void timeout(uint32_t inflight_cmds_vector_index);
+		void timeout(uint32_t inflight_cmd_index);
 
 		/**
 		 * Process the Waiting state of the AEM Controller State Machine.
