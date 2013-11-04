@@ -41,12 +41,20 @@ namespace avdecc_lib
 
 		if(desc_jack_input_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "desc_jack_input_read error");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "desc_jack_input_read error");
 			assert(desc_jack_input_read_returned >= 0);
 		}
+
+		jack_flags_init();
 	}
 
 	jack_input_descriptor_imp::~jack_input_descriptor_imp() {}
+
+	void jack_input_descriptor_imp::jack_flags_init()
+	{
+		jack_flags.clock_sync_source = jack_input_desc.jack_flags >> 1 & 0x01;
+		jack_flags.captive = jack_input_desc.jack_flags >> 2 & 0x01;
+	}
 
 	uint16_t STDCALL jack_input_descriptor_imp::get_descriptor_type()
 	{
@@ -72,6 +80,16 @@ namespace avdecc_lib
 	uint16_t STDCALL jack_input_descriptor_imp::get_jack_flags()
 	{
 		return jack_input_desc.jack_flags;
+	}
+
+	uint16_t STDCALL jack_input_descriptor_imp::get_jack_flag_clock_sync_source()
+	{
+		return jack_flags.clock_sync_source;
+	}
+
+	uint16_t STDCALL jack_input_descriptor_imp::get_captive()
+	{
+		return jack_flags.captive;
 	}
 
 	uint16_t STDCALL jack_input_descriptor_imp::get_jack_type()

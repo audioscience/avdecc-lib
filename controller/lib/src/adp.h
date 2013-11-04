@@ -136,7 +136,7 @@ namespace avdecc_lib
 		 */
 		inline uint64_t get_entity_entity_id()
 		{
-			return jdksavdecc_uint64_get(&adpdu.header.entity_entity_id, 0);
+			return jdksavdecc_uint64_get(&adpdu.header.entity_id, 0);
 		}
 
 		/**

@@ -84,7 +84,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\aem_string.h" />
     <ClInclude Include="..\..\..\include\audio_unit_descriptor.h" />
     <ClInclude Include="..\..\..\include\avb_interface_descriptor.h" />
     <ClInclude Include="..\..\..\include\build.h" />
@@ -104,6 +103,7 @@
     <ClInclude Include="..\..\..\include\stream_output_descriptor.h" />
     <ClInclude Include="..\..\..\include\strings_descriptor.h" />
     <ClInclude Include="..\..\..\include\system.h" />
+    <ClInclude Include="..\..\..\include\util.h" />
     <ClInclude Include="..\..\..\src\adp.h" />
     <ClInclude Include="..\..\..\src\adp_discovery_state_machine.h" />
     <ClInclude Include="..\..\..\src\aecp.h" />
@@ -130,8 +130,7 @@
     <ClInclude Include="..\..\..\src\strings_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\system_tx_queue.h" />
     <ClInclude Include="..\..\..\src\timer.h" />
-    <ClInclude Include="..\..\..\src\util.h" />
-    <ClInclude Include="..\..\..\src\world.h" />
+    <ClInclude Include="..\..\..\src\util_imp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\..\jdksavdecc-c\src\jdksavdecc_pdu.c" />
@@ -139,7 +138,6 @@
     <ClCompile Include="..\..\..\src\adp_discovery_state_machine.cpp" />
     <ClCompile Include="..\..\..\src\aecp.cpp" />
     <ClCompile Include="..\..\..\src\aem_controller_state_machine.cpp" />
-    <ClCompile Include="..\..\..\src\aem_string.cpp" />
     <ClCompile Include="..\..\..\src\audio_unit_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\avb_interface_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\clock_domain_descriptor_imp.cpp" />
@@ -161,6 +159,7 @@
     <ClCompile Include="..\..\..\src\stream_output_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\strings_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\timer.cpp" />
+    <ClCompile Include="..\..\..\src\util_imp.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

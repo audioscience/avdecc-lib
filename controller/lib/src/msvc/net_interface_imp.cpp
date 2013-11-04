@@ -29,10 +29,10 @@
 
 #include <winsock2.h>
 #include <iphlpapi.h>
+#include "util_imp.h"
 #include "enumeration.h"
 #include "log.h"
 #include "jdksavdecc_util.h"
-#include "util.h"
 #include "net_interface_imp.h"
 
 namespace avdecc_lib
@@ -48,7 +48,7 @@ namespace avdecc_lib
 
 		if(pcap_findalldevs(&all_devs, err_buf) == -1) // Retrieve the device list on the local machine.
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "pcap_findalldevs error %s", err_buf);
+			log_ref->logging(LOGGING_LEVEL_ERROR, "pcap_findalldevs error %s", err_buf);
 			exit(EXIT_FAILURE);
 		}
 
@@ -65,7 +65,7 @@ namespace avdecc_lib
 
 		if(total_devs == 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "No interfaces found! Make sure WinPcap is installed.");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "No interfaces found! Make sure WinPcap is installed.");
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -94,7 +94,7 @@ namespace avdecc_lib
 
 		if(!dev->description)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Interface description is blank.");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "Interface description is blank.");
 		}
 
 		return dev->description;
@@ -114,7 +114,7 @@ namespace avdecc_lib
 		{
 			if(interface_num < 1 || interface_num > total_devs)
 			{
-				avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Interface number out of range.");
+				log_ref->logging(LOGGING_LEVEL_ERROR, "Interface number out of range.");
 				pcap_freealldevs(all_devs); // Free the device list
 				exit(EXIT_FAILURE);
 			}
@@ -136,7 +136,7 @@ namespace avdecc_lib
 		                                    err_buf		       // Error buffer
 		                                   )) == NULL)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Unable to open the adapter. %s is not supported by WinPcap.", dev->name);
+			log_ref->logging(LOGGING_LEVEL_ERROR, "Unable to open the adapter. %s is not supported by WinPcap.", dev->name);
 			pcap_freealldevs(all_devs); // Free the device list
 			exit(EXIT_FAILURE);
 		}
@@ -152,7 +152,7 @@ namespace avdecc_lib
 
 			if(AdapterInfo == NULL)
 			{
-				avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Allocating memory needed to call GetAdaptersinfo.", dev->name);
+				log_ref->logging(LOGGING_LEVEL_ERROR, "Allocating memory needed to call GetAdaptersinfo.", dev->name);
 				exit(EXIT_FAILURE);
 			}
 
@@ -160,7 +160,7 @@ namespace avdecc_lib
 
 			if(status != ERROR_SUCCESS)
 			{
-				avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "GetAdaptersInfo call in netif_win32_pcap.c failed.", dev->name);
+				log_ref->logging(LOGGING_LEVEL_ERROR, "GetAdaptersInfo call in netif_win32_pcap.c failed.", dev->name);
 				free(AdapterInfo);
 				exit(EXIT_FAILURE);
 			}
@@ -177,7 +177,7 @@ namespace avdecc_lib
 				my_ip = inet_addr(Current->IpAddressList.IpAddress.String);
 				len = sizeof(tmp);
 				SendARP(my_ip ,INADDR_ANY, tmp, &len);
-				convert_eui48_to_uint64(&tmp[0], mac);
+				utility->convert_eui48_to_uint64(&tmp[0], mac);
 			}
 		}
 
@@ -209,7 +209,7 @@ namespace avdecc_lib
 		/******************************************************* Compile a filter ************************************************/
 		if(pcap_compile(pcap_interface, &fcode, ether_type_string, 1, 0) < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Unable to compile the packet filter.");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "Unable to compile the packet filter.");
 			pcap_freealldevs(all_devs); // Free the device list
 			return -1;
 		}
@@ -217,7 +217,7 @@ namespace avdecc_lib
 		/*************************************************** Set the filter *******************************************/
 		if(pcap_setfilter(pcap_interface, &fcode) < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Error setting the filter.");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "Error setting the filter.");
 			pcap_freealldevs(all_devs);  // Free the device list
 			return -1;
 		}
@@ -244,7 +244,7 @@ namespace avdecc_lib
 			ether_frame = *frame;
 			*mem_buf_len = (uint16_t)header->len;
 
-			//		printf("Rx frame: %d bytes\n", *length);
+	//		printf("Rx frame: %d bytes\n", *length);
 
 			return 1;
 		}
@@ -254,11 +254,11 @@ namespace avdecc_lib
 
 	int net_interface_imp::send_frame(uint8_t *frame, uint16_t mem_buf_len)
 	{
-		//	printf("TX frame: %d bytes\n", length);
+	//	printf("TX frame: %d bytes\n", length);
 
 		if(pcap_sendpacket(pcap_interface, frame, mem_buf_len) != 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "pcap_sendpacket error %s", pcap_geterr(pcap_interface));
+			log_ref->logging(LOGGING_LEVEL_ERROR, "pcap_sendpacket error %s", pcap_geterr(pcap_interface));
 			return -1;
 		}
 

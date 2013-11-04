@@ -43,7 +43,7 @@ namespace avdecc_lib
 
 		if(desc_entity_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "entity_desc_read error");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "entity_desc_read error");
 			assert(desc_entity_read_returned >= 0);
 		}
 	}
@@ -191,14 +191,14 @@ namespace avdecc_lib
 
 	int STDCALL entity_descriptor_imp::send_set_config_cmd()
 	{
-		printf("\nSET_CONFIGURATION command is not implemented.");
+		printf("\nNeed to implement SET_CONFIGURATION command.");
 
 		return 0;
 	}
 
 	int STDCALL entity_descriptor_imp::send_get_config_cmd()
 	{
-		printf("\nSET_CONFIGURATION response is not implemented.");
+		printf("\nNeed to implement SET_CONFIGURATION response.");
 
 		return 0;
 	}

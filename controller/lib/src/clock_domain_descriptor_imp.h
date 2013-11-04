@@ -123,7 +123,7 @@ namespace avdecc_lib
 		/**
 		 * Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.
 		 */
-		int STDCALL send_set_clock_source_cmd(void *notification_id, uint16_t desc_index, uint16_t new_clk_src_index);
+		int STDCALL send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index);
 
 		/**
 		 * Process a SET_CLOCK_SOURCE response for the SET_CLOCK_SOURCE command.
@@ -133,7 +133,7 @@ namespace avdecc_lib
 		/**
 		 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
 		 */
-		int STDCALL send_get_clock_source_cmd(void *notification_id, uint16_t desc_index);
+		int STDCALL send_get_clock_source_cmd(void *notification_id);
 
 		/**
 		 * Process a GET_CLOCK_SOURCE response for the GET_CLOCK_SOURCE command.

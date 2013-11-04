@@ -174,7 +174,8 @@ namespace avdecc_lib
 	        STATUS_NOT_SUPPORTED = 11, // The command is implemented, but the target of the command is not supported
 	        STATUS_STREAM_IS_RUNNING = 12, // The stream is currently streaming and the command is one which cannot be executed on a streaming stream
 	        STATUS_INVALID = 13,
-	        STATUS_TICK_TIMEOUT = 14, // The response is not received within the timeout period after re-sending a command
+	        AVDECC_LIB_STATUS_TICK_TIMEOUT = 1024, // AVDECC library specific status, not part of the 1722.1 specification
+						       // The response is not received within the timeout period after re-sending a command
 	        TOTAL_NUM_OF_AEM_CMDS_STATUS = 15
 	};
 
@@ -193,7 +194,8 @@ namespace avdecc_lib
 	enum timeouts
 	{
 	        NETIF_READ_TIMEOUT_MS = 100,
-	        AVDECC_MSG_TIMEOUT = 250  // AVDECC messages have a 250 milliseconds timeout
+	        AVDECC_MSG_TIMEOUT = 250,  // AVDECC messages have a 250 milliseconds timeout
+		END_STATION_CONNECTION_TIMEOUT = 62000
 	};
 
 	enum notifications // Notifications for the AVDECC library implementation, not part of the 1722.1 specification

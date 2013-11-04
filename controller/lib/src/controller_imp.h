@@ -33,7 +33,7 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.0.8"
+#define AVDECC_CONTROLLER_VERSION "v0.0.9"
 
 namespace avdecc_lib
 {
@@ -83,7 +83,7 @@ namespace avdecc_lib
 		/**
 		 * Get the corresponding End Station by index.
 		 */
-		avdecc_lib::end_station * STDCALL get_end_station_by_index(uint32_t end_station_index);
+		end_station * STDCALL get_end_station_by_index(uint32_t end_station_index);
 
 		/**
 		 * Get the corresponding End Station by GUID.
@@ -93,7 +93,7 @@ namespace avdecc_lib
 		/**
 		 * Get the corresponding Configuration descriptor by index.
 		 */
-		configuration_descriptor * STDCALL get_config_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index);
+		configuration_descriptor * STDCALL get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index);
 
 		/**
 		 * Get the corresponding Configuration descriptor by GUID.

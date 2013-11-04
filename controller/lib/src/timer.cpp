@@ -24,7 +24,7 @@
 /**
  * timer.cpp
  *
- * Timer implementation, which calculates start, end, and timeout times for network packets.
+ * Timer implementation
  */
 
 #include "timer.h"

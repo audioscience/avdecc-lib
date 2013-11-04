@@ -33,23 +33,13 @@
 
 #include "timer.h"
 
-#define END_STATION_CONNECTION_TIMEOUT 62000
-
 namespace avdecc_lib
 {
 	class adp_discovery_state_machine
 	{
 	private:
-		//struct adp_discovery_state_machine_rcvd_entity_info
-		//{
-		//	struct jdksavdecc_adpdu adpdu;
-		//	struct jdksavdecc_eui48 entity_mac;
-		//	struct jdksavdecc_eui48 local_mac;
-		//};
-
 		struct adp_discovery_state_machine_entities
 		{
-			//			struct adp_discovery_state_machine_rcvd_entity_info rcvd_entity_info;
 			uint64_t entity_id;
 			timer *avdecc_lib_timer_ref;
 		};

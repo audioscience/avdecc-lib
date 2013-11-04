@@ -44,7 +44,7 @@ namespace avdecc_lib
 		static uint32_t write_index;
 		static void (*callback_func)(void *, int32_t, const char *, int32_t);
 		static void *user_obj;
-		static uint32_t missed_log_event_cnt;
+		uint32_t missed_log_event_cnt;
 
 		enum
 		{

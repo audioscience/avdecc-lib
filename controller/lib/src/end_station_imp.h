@@ -38,7 +38,7 @@ namespace avdecc_lib
 {
 	class adp;
 
-	class end_station_imp : public virtual avdecc_lib::end_station
+	class end_station_imp : public virtual end_station
 	{
 	private:
 		uint64_t end_station_guid; // The unique identifier of the AVDECC Entity the command is targeted to
@@ -110,11 +110,6 @@ namespace avdecc_lib
 		 * Change the End Station connection status to connected.
 		 */
 		void set_connected();
-
-		/**
-		 * Change the End Station connection status to reconnected.
-		 */
-		void set_reconnected();
 
 		/**
 		 * Change the End Station connection status to disconnected.

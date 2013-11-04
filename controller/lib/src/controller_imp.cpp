@@ -32,7 +32,7 @@
 #include "enumeration.h"
 #include "notification.h"
 #include "log.h"
-#include "util.h"
+#include "util_imp.h"
 #include "adp.h"
 #include "aecp.h"
 #include "end_station_imp.h"
@@ -53,7 +53,7 @@ namespace avdecc_lib
 
 		if(!net_interface_ref)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Dynamic cast from derived net_interface_imp to base net_interface error");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "Dynamic cast from derived net_interface_imp to base net_interface error");
 		}
 
 		controller_imp_ref = new controller_imp(notification_callback, log_callback);
@@ -65,8 +65,8 @@ namespace avdecc_lib
 	controller_imp::controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
 	                               void (*log_callback) (void *, int32_t, const char *, int32_t))
 	{
-		avdecc_lib::notification_ref->set_notification_callback(notification_callback, NULL);
-		avdecc_lib::log_ref->set_logging_callback(log_callback, NULL);
+		notification_ref->set_notification_callback(notification_callback, NULL);
+		log_ref->set_logging_callback(log_callback, NULL);
 	}
 
 	controller_imp::~controller_imp()
@@ -99,7 +99,7 @@ namespace avdecc_lib
 		return end_station_vec.size();
 	}
 
-	avdecc_lib::end_station * STDCALL controller_imp::get_end_station_by_index(uint32_t end_station_index)
+	end_station * STDCALL controller_imp::get_end_station_by_index(uint32_t end_station_index)
 	{
 		return end_station_vec.at(end_station_index);
 	}
@@ -122,7 +122,7 @@ namespace avdecc_lib
 		return false;
 	}
 
-	configuration_descriptor * STDCALL controller_imp::get_config_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index)
+	configuration_descriptor * STDCALL controller_imp::get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index)
 	{
 		bool is_valid;
 		is_valid = ((end_station_index < end_station_vec.size()) &&
@@ -136,7 +136,7 @@ namespace avdecc_lib
 
 		else
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "get_config_by_index error");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
 			return NULL;
 		}
 	}
@@ -185,7 +185,7 @@ namespace avdecc_lib
 		uint64_t dest_mac_addr;
 		uint32_t subtype;
 
-		convert_eui48_to_uint64(frame, dest_mac_addr);
+		utility->convert_eui48_to_uint64(frame, dest_mac_addr);
 
 		if((dest_mac_addr == net_interface_ref->get_mac()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address
 		{
@@ -196,10 +196,10 @@ namespace avdecc_lib
 				case JDKSAVDECC_SUBTYPE_ADP:
 					{
 						int found_end_station_index = -1;
-						bool found_adp_in_endpoint = false;
+						bool found_adp_in_end_station = false;
 						uint64_t entity_guid = jdksavdecc_uint64_get(frame, adp::ETHER_HDR_SIZE + adp::PROTOCOL_HDR_SIZE);
 
-						//avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "ADP packet discovered.");
+						//log_ref->logging(LOGGING_LEVEL_DEBUG, "ADP packet discovered.");
 
 						/**
 						 * Check if an ADP object is already in the system. If not, create a new End Station object storing the ADPDU information
@@ -209,14 +209,14 @@ namespace avdecc_lib
 						{
 							if(end_station_vec.at(index_i)->get_adp()->get_entity_entity_id() == entity_guid)
 							{
-								found_adp_in_endpoint = true;
+								found_adp_in_end_station = true;
 								found_end_station_index = index_i;
 							}
 						}
 
 						if(entity_guid != 0x0)
 						{
-							if(!found_adp_in_endpoint)
+							if(!found_adp_in_end_station)
 							{
 								adp_discovery_state_machine_ref->set_rcvd_avail(true);
 								adp_discovery_state_machine_ref->adp_discovery_state_waiting(frame);
@@ -240,7 +240,7 @@ namespace avdecc_lib
 						}
 						else
 						{
-							//avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Entity GUID is 0x0");
+							//log_ref->logging(LOGGING_LEVEL_ERROR, "Entity GUID is 0x0");
 						}
 
 						status = STATUS_INVALID;
@@ -279,7 +279,7 @@ namespace avdecc_lib
 						}
 						else
 						{
-							//avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_DEBUG, "Need to have ADP packet first.");
+							//log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to have ADP packet first.");
 							status = STATUS_INVALID;
 						}
 					}
@@ -290,7 +290,7 @@ namespace avdecc_lib
 					break;
 
 				default:
-					//avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Invalid subtype");
+					//log_ref->logging(LOGGING_LEVEL_ERROR, "Invalid subtype");
 					break;
 			}
 		}

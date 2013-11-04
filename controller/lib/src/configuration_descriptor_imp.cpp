@@ -43,7 +43,7 @@ namespace avdecc_lib
 
 		if(desc_config_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "desc_config_read error");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "desc_config_read error");
 			assert(desc_config_read_returned >= 0);
 		}
 

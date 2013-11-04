@@ -70,7 +70,7 @@ namespace avdecc_lib
 		/**
 		 * \return The corresponding Configuration descriptor by index.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index) = 0;
 
 		/**
 		 * \return The corresponding Configuration descriptor by GUID.

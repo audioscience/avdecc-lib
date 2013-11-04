@@ -96,13 +96,13 @@ namespace avdecc_lib
 
 		if(aem_cmd_acquire_entity_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_write error\n");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_write error\n");
 			assert(aem_cmd_acquire_entity_returned >= 0);
 			return -1;
 		}
 
 		aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
-		system_queue_tx(notification_id, avdecc_lib::CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+		system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
 		free(ether_frame);
 		return 0;
@@ -126,7 +126,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_acquire_entity_resp_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_resp_read error\n");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_resp_read error\n");
 			assert(aem_cmd_acquire_entity_resp_returned >= 0);
 			return -1;
 		}
@@ -168,8 +168,8 @@ namespace avdecc_lib
 		/************************** AECP Message Specific Data ************************/
 		aem_cmd_lock_entity.aem_lock_flags = lock_entity_flag;
 		jdksavdecc_eui64_init(&aem_cmd_lock_entity.locked_entity_id);
-		//aem_cmd_lock_entity.descriptor_type = descriptor_base_imp_ref->get_descriptor_type();
-		//aem_cmd_lock_entity.descriptor_index = descriptor_base_imp_ref->get_descriptor_index();
+		aem_cmd_lock_entity.descriptor_type = descriptor_base_imp_ref->get_descriptor_type();
+		aem_cmd_lock_entity.descriptor_index = descriptor_base_imp_ref->get_descriptor_index();
 
 		/******************************** Fill frame payload with AECP data and send the frame ***************************/
 		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
@@ -180,13 +180,13 @@ namespace avdecc_lib
 
 		if(aem_cmd_acquire_entity_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_write error\n");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_write error\n");
 			assert(aem_cmd_acquire_entity_returned >= 0);
 			return -1;
 		}
 
 		aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
-		system_queue_tx(notification_id, avdecc_lib::CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+		system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
 		free(ether_frame);
 		return 0;
@@ -210,7 +210,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_lock_entity_resp_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_resp_read error\n");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_resp_read error\n");
 			assert(aem_cmd_lock_entity_resp_returned >= 0);
 			return -1;
 		}
@@ -227,35 +227,35 @@ namespace avdecc_lib
 
 	int STDCALL descriptor_base_imp::send_entity_avail_cmd()
 	{
-		printf("\nENTITY_AVAILABLE command is not implemented.");
+		printf("\nNeed to implement ENTITY_AVAILABLE command.");
 
 		return 0;
 	}
 
 	int descriptor_base_imp::proc_entity_avail_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
 	{
-		printf("\nENTITY_AVAILABLE response is not implemented.");
+		printf("\nNeed to implement ENTITY_AVAILABLE response.");
 
 		return 0;
 	}
 
 	int STDCALL descriptor_base_imp::send_set_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index, char * name)
 	{
-		printf("\nSET_NAME command is not implemented.");
+		printf("\nNeed to implement SET_NAME command.");
 
 		return 0;
 	}
 
 	int descriptor_base_imp::proc_set_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
 	{
-		printf("\nSET_NAME response is not implemented.");
+		printf("\nNeed to implement SET_NAME response.");
 
 		return 0;
 	}
 
 	int STDCALL descriptor_base_imp::send_get_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index)
 	{
-		printf("\nGET_NAME command is not implemented.");
+		printf("\nNeed to implement GET_NAME command.");
 
 		return 0;
 	}

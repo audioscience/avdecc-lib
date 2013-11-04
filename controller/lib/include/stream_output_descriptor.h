@@ -119,7 +119,7 @@ namespace avdecc_lib
 		/**
 		* \return The current format of the Stream Output descriptor object.
 		*/
-		AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_current_format() = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_current_format() = 0;
 
 		/**
 		 * \return The formats offset of the Stream Output descriptor object.
@@ -238,33 +238,33 @@ namespace avdecc_lib
 		/**
 		 * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_format_cmd(void *notification_id, uint16_t desc_index, uint64_t new_stream_format) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_format_cmd(void *notification_id, uint64_t new_stream_format) = 0;
 
 		/**
 		 * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_format_cmd(void *notification_id, uint16_t desc_index) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_format_cmd(void *notification_id) = 0;
 
 		/**
 		 * Send a SET_STREAM_INFO command with a notification id to change the current values of the dynamic information of the stream.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_info_cmd(void *notification_id, uint16_t desc_index, void *new_stream_info_field) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_info_cmd(void *notification_id, void *new_stream_info_field) = 0;
 
 		/**
 		 * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void *notification_id, uint16_t desc_index) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void *notification_id) = 0;
 
 		/**
 		 * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
 		 * via ACMP.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_start_streaming_cmd(void *notification_id, uint16_t desc_index) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_start_streaming_cmd(void *notification_id) = 0;
 
 		/**
 		 * Send a STOP_STREAMING command with a notification id to stop a connected stream for streaming media.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_stop_streaming_cmd(void *notification_id, uint16_t desc_index) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_stop_streaming_cmd(void *notification_id) = 0;
 	};
 }
 

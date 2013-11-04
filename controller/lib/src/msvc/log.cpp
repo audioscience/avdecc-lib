@@ -42,7 +42,6 @@ namespace avdecc_lib
 	uint32_t log::write_index = 0;
 	void (*log::callback_func) (void *, int32_t, const char *, int32_t);
 	void *log::user_obj;
-	uint32_t log::missed_log_event_cnt = 0;
 	HANDLE log::poll_events[2];
 
 	log *log_ref = new log();
@@ -51,7 +50,7 @@ namespace avdecc_lib
 	{
 		callback_func = default_log;
 		user_obj = NULL;
-		log_level = avdecc_lib::LOGGING_LEVEL_ERROR;
+		log_level = LOGGING_LEVEL_ERROR;
 		missed_log_event_cnt = 0;
 
 		logging_thread_init(); // Start logging thread

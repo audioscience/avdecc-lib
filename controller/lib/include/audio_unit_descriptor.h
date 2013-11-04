@@ -221,6 +221,11 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_current_sampling_rate() = 0;
 
 		/**
+		 * \return The corresponding sampling rate by index of the Audio Unit descriptor object.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_sampling_rate_by_index(uint32_t sampling_rate_index) = 0;
+
+		/**
 		 * \return The sampling rates offset of the Audio Unit descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_sampling_rates_offset() = 0;
@@ -231,31 +236,26 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_sampling_rates_count() = 0;
 
 		/**
-		 * \return The corresponding pull field multiplier for the pull field value.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_pull_field_multiplier(uint8_t pull_field_value) = 0;
-
-		/**
 		 * \return The sampling rate of a port or unit after sending a SET_SAMPLING_RATE command and
 		 * receiving a response back for the command.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL set_sampling_rate_sampling_rates() = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL set_sampling_rate_sampling_rate() = 0;
 
 		/**
 		 * \return The sampling rate of a port or unit after sending a GET_SAMPLING_RATE command and
 		 * receiving a response back for the command.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_sampling_rate_sampling_rates() = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_sampling_rate_sampling_rate() = 0;
 
 		/**
 		 * Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_sampling_rate_cmd(void *notification_id, uint16_t desc_index, uint32_t new_sampling_rate) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_sampling_rate_cmd(void *notification_id, uint32_t new_sampling_rate) = 0;
 
 		/**
 		 * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_sampling_rate_cmd(void *notification_id, uint16_t desc_index) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_sampling_rate_cmd(void *notification_id) = 0;
 	};
 }
 

@@ -43,14 +43,13 @@ namespace avdecc_lib
 	uint32_t notification::write_index = 0;
 	void (*notification::notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *);
 	void *notification::user_obj;
-	uint32_t notification::missed_notification_event_cnt = 0;
 	HANDLE notification::poll_events[2];
 
 	notification *notification_ref = new notification();
 
 	notification::notification()
 	{
-		notifications = avdecc_lib::NO_MATCH_FOUND;
+		notifications = NO_MATCH_FOUND;
 		notification_callback = default_notification;
 		user_obj = NULL;
 		missed_notification_event_cnt = 0;
@@ -124,9 +123,9 @@ namespace avdecc_lib
 			return;
 		}
 
-		if(notification_type == avdecc_lib::NO_MATCH_FOUND || notification_type == avdecc_lib::END_STATION_CONNECTED || 
-		   notification_type == avdecc_lib::END_STATION_DISCONNECTED || notification_type == avdecc_lib::COMMAND_TIMEOUT || 
-		   notification_type == avdecc_lib::RESPONSE_RECEIVED)
+		if(notification_type == NO_MATCH_FOUND || notification_type == END_STATION_CONNECTED || 
+		   notification_type == END_STATION_DISCONNECTED || notification_type == COMMAND_TIMEOUT || 
+		   notification_type == RESPONSE_RECEIVED)
 		{
 			notification_buf[write_index % NOTIFICATION_BUF_COUNT].notification_type = notification_type;
 			notification_buf[write_index % NOTIFICATION_BUF_COUNT].guid = guid;

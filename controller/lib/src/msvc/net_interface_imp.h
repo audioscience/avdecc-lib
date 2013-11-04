@@ -75,7 +75,7 @@ namespace avdecc_lib
 		uint64_t get_mac();
 
 		/**
-		 * Get the corresponding device description by index.
+		 * Get the corresponding network interface description by index.
 		 */
 		char * STDCALL get_dev_desc_by_index(uint32_t dev_index);
 

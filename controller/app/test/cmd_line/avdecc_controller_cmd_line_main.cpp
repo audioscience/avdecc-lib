@@ -40,21 +40,22 @@ using namespace std;
 extern "C" void notification_callback(void *user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
                                       uint16_t desc_type, uint16_t desc_index, void *notification_id)
 {
+	avdecc_lib::util *utility = avdecc_lib::create_util();
+
 	if(notification_type == avdecc_lib::COMMAND_TIMEOUT || notification_type == avdecc_lib::RESPONSE_RECEIVED)
 	{
 		printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %d)\n",
-		       avdecc_lib::aem_string::notification_value_to_name(notification_type),
+		       utility->notification_value_to_name(notification_type),
 		       guid,
-		       avdecc_lib::aem_string::cmd_value_to_name(cmd_type),
-		       avdecc_lib::aem_string::desc_value_to_name(desc_type),
+		       utility->cmd_value_to_name(cmd_type),
+		       utility->desc_value_to_name(desc_type),
 		       desc_index,
 		       notification_id);
 	}
-
 	else
 	{
 		printf("\n[NOTIFICATION] (%s, 0x%llx, %d, %d, %d, %d)\n",
-		       avdecc_lib::aem_string::notification_value_to_name(notification_type),
+		       utility->notification_value_to_name(notification_type),
 		       guid,
 		       cmd_type,
 		       desc_type,
@@ -65,7 +66,9 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
 
 extern "C" void log_callback(void *user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms)
 {
-	printf("\n[LOG] %s (%s)\n", avdecc_lib::aem_string::logging_level_value_to_name(log_level), log_msg);
+	avdecc_lib::util *utility = avdecc_lib::create_util();
+
+	printf("\n[LOG] %s (%s)\n", utility->logging_level_value_to_name(log_level), log_msg);
 }
 
 int main()
