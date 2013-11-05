@@ -47,7 +47,7 @@ namespace avdecc_lib
 
 		if(desc_clock_domain_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "desc_clock_domain_read error");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "desc_clock_domain_read error");
 			assert(desc_clock_domain_read_returned >= 0);
 		}
 
@@ -120,24 +120,24 @@ namespace avdecc_lib
 		return aem_cmd_get_clk_src_resp.clock_source_index;
 	}
 
-	int STDCALL clock_domain_descriptor_imp::send_set_clock_source_cmd(void *notification_id, uint16_t desc_index, uint16_t new_clk_src_index)
+	int STDCALL clock_domain_descriptor_imp::send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_set_clock_source aem_cmd_set_clk_src;
 		int aem_cmd_set_clk_src_returned;
 		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
-		/***************************************** AECP Common Data ********************************************/
+		/***************************************** AECP Common Data ******************************************/
 		aem_cmd_set_clk_src.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
 		// Fill aem_cmd_set_clk_src.sequence_id in AEM Controller State Machine
 		aem_cmd_set_clk_src.command_type = JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE;
 
-		/************************** AECP Message Specific Data ************************/
-		aem_cmd_set_clk_src.descriptor_type = JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN;
-		aem_cmd_set_clk_src.descriptor_index = desc_index;
+		/***************** AECP Message Specific Data ****************/
+		aem_cmd_set_clk_src.descriptor_type = get_descriptor_type();
+		aem_cmd_set_clk_src.descriptor_index = get_descriptor_index();
 		aem_cmd_set_clk_src.clock_source_index = new_clk_src_index;
 
-		/******************************** Fill frame payload with AECP data and send the frame ***************************/
+		/**************************** Fill frame payload with AECP data and send the frame ************************/
 		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_set_clk_src_returned = jdksavdecc_aem_command_set_clock_source_write(&aem_cmd_set_clk_src,
 		                                                                             ether_frame->payload,
@@ -146,13 +146,13 @@ namespace avdecc_lib
 
 		if(aem_cmd_set_clk_src_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_write error\n");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_write error\n");
 			assert(aem_cmd_set_clk_src_returned >= 0);
 			return -1;
 		}
 
 		aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
-		system_queue_tx(notification_id, avdecc_lib::CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+		system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
 		free(ether_frame);
 		return 0;
@@ -176,7 +176,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_set_clk_src_resp_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_resp_read error\n");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_resp_read error\n");
 			assert(aem_cmd_set_clk_src_resp_returned >= 0);
 			return -1;
 		}
@@ -191,23 +191,23 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int STDCALL clock_domain_descriptor_imp::send_get_clock_source_cmd(void *notification_id, uint16_t desc_index)
+	int STDCALL clock_domain_descriptor_imp::send_get_clock_source_cmd(void *notification_id)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_get_clock_source aem_cmd_get_clk_src;
 		int aem_cmd_get_clk_src_returned;
 		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
-		/***************************************** AECP Common Data ********************************************/
+		/***************************************** AECP Common Data ******************************************/
 		aem_cmd_get_clk_src.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
 		// Fill aem_cmd_get_clk_src.sequence_id in AEM Controller State Machine
 		aem_cmd_get_clk_src.command_type = JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE;
 
-		/************************** AECP Message Specific Data ************************/
-		aem_cmd_get_clk_src.descriptor_type = JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN;
-		aem_cmd_get_clk_src.descriptor_index = desc_index;
+		/****************** AECP Message Specific Data ***************/
+		aem_cmd_get_clk_src.descriptor_type = get_descriptor_type();
+		aem_cmd_get_clk_src.descriptor_index = get_descriptor_index();
 
-		/******************************** Fill frame payload with AECP data and send the frame ***************************/
+		/***************************** Fill frame payload with AECP data and send the frame ***********************/
 		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_get_clk_src_returned = jdksavdecc_aem_command_get_clock_source_write(&aem_cmd_get_clk_src,
 		                                                                             ether_frame->payload,
@@ -216,13 +216,13 @@ namespace avdecc_lib
 
 		if(aem_cmd_get_clk_src_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_write error\n");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_write error\n");
 			assert(aem_cmd_get_clk_src_returned >= 0);
 			return -1;
 		}
 
 		aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
-		system_queue_tx(notification_id, avdecc_lib::CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+		system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
 		free(ether_frame);
 		return 0;
@@ -245,7 +245,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_get_clk_src_resp_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_resp_read error\n");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_resp_read error\n");
 			assert(aem_cmd_get_clk_src_resp_returned >= 0);
 			return -1;
 		}

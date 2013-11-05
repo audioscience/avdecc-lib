@@ -56,6 +56,17 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_jack_flags() = 0;
 
 		/**
+		 * Check if the jack can be used as a clock synchronization source.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_jack_flag_clock_sync_source() = 0;
+
+		/**
+		 * Check if the jack connection is hardwired, cannot be disconnected and
+		 * may be physically within the device's structure.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_captive() = 0;
+
+		/**
 		* \return The type of the Jack Input descriptor object.
 		*/
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_jack_type() = 0;

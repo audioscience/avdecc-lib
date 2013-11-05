@@ -51,7 +51,7 @@ namespace avdecc_lib
 	bool system_layer2_multithreaded_callback::is_waiting = false;
 	bool system_layer2_multithreaded_callback::queue_is_waiting = false;
 	void *system_layer2_multithreaded_callback::waiting_notification_id = 0;
-	int system_layer2_multithreaded_callback::resp_status_for_cmd = STATUS_INVALID_COMMAND;
+	int system_layer2_multithreaded_callback::resp_status_for_cmd = STATUS_INVALID;
 
 	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
 	{
@@ -122,7 +122,7 @@ namespace avdecc_lib
 	int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd(void *notification_id)
 	{
 		queue_is_waiting = true;
-		resp_status_for_cmd = STATUS_INVALID_COMMAND; // Reset the status
+		resp_status_for_cmd = STATUS_INVALID; // Reset the status
 
 		return 0;
 	}
@@ -155,7 +155,7 @@ namespace avdecc_lib
 			{
 				if(!SetEvent(data->timeout_event))
 				{
-					avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "SetEvent pkt_event_wpcap_timeout failed");
+					log_ref->logging(LOGGING_LEVEL_ERROR, "SetEvent pkt_event_wpcap_timeout failed");
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -185,7 +185,7 @@ namespace avdecc_lib
 	{
 		if(init_wpcap_thread() < 0 || init_poll_thread() < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "init_polling error");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "init_polling error");
 		}
 
 		return 0;
@@ -208,7 +208,7 @@ namespace avdecc_lib
 
 		if(poll_rx.queue_thread.handle == NULL)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Error creating the wpcap thread");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "Error creating the wpcap thread");
 			exit(EXIT_FAILURE);
 		}
 
@@ -237,7 +237,7 @@ namespace avdecc_lib
 
 		if(poll_thread.handle == NULL)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "Error creating the poll thread");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "Error creating the poll thread");
 			exit(EXIT_FAILURE);
 		}
 
@@ -265,7 +265,7 @@ namespace avdecc_lib
 					if(is_waiting && (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)))
 					{
 						is_waiting = false;
-						resp_status_for_cmd = STATUS_TICK_TIMEOUT;
+						resp_status_for_cmd = AVDECC_LIB_STATUS_TICK_TIMEOUT;
 						ReleaseSemaphore(waiting_sem, 1, NULL);
 
 					}
@@ -305,7 +305,7 @@ namespace avdecc_lib
 
 				controller_ref_in_system->tx_packet_event(thread_data.notification_id, thread_data.notification_flag, thread_data.frame, thread_data.mem_buf_len);
 
-				if(thread_data.notification_flag == avdecc_lib::CMD_WITH_NOTIFICATION)
+				if(thread_data.notification_flag == CMD_WITH_NOTIFICATION)
 				{
 					waiting_notification_id = thread_data.notification_id;
 				}

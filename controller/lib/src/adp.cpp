@@ -30,7 +30,7 @@
 #include "net_interface_imp.h"
 #include "enumeration.h"
 #include "log.h"
-#include "util.h"
+#include "util_imp.h"
 #include "adp.h"
 
 namespace avdecc_lib
@@ -49,7 +49,7 @@ namespace avdecc_lib
 
 		if(frame_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "frame_read error");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "frame_read error");
 			assert(frame_read_returned >= 0);
 		}
 
@@ -57,12 +57,12 @@ namespace avdecc_lib
 
 		if(adpdu_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "adpdu_read error");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "adpdu_read error");
 			assert(adpdu_read_returned >= 0);
 		}
 
-		convert_uint64_to_eui48(net_interface_ref->get_mac(), src_mac_addr.value);
-		convert_uint64_to_eui48(net_interface_ref->get_mac(), dest_mac_addr.value);
+		utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), src_mac_addr.value);
+		utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), dest_mac_addr.value);
 	}
 
 	adp::~adp()
@@ -84,13 +84,13 @@ namespace avdecc_lib
 		size_t ether_frame_pos = 0x0;
 		jdksavdecc_frame_init(ether_frame);
 
-		/********************** Ethernet Frame ***********************/
+		/**************************** Ethernet Frame ****************************/
 		ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
 		ether_frame->src_address = src_mac_addr;
 		//ether_frame->dest_address = get_dest_addr();
 		ether_frame->length = ADP_FRAME_LEN; // Length of ADP packet is 82 bytes
 
-		/*********************** Fill frame payload with Ethernet frame information ********************/
+		/********************* Fill frame payload with Ethernet frame information *****************/
 		jdksavdecc_frame_write(ether_frame, ether_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
 
 		return 0;
@@ -101,7 +101,7 @@ namespace avdecc_lib
 		struct jdksavdecc_adpdu_common_control_header adpdu_common_ctrl_hdr;
 		int adpdu_common_ctrl_hdr_returned;
 
-		/****************** 1722 Protocol Header **********************/
+		/********************************** 1722 Protocol Header ***********************************/
 		adpdu_common_ctrl_hdr.cd = 1;
 		adpdu_common_ctrl_hdr.subtype = JDKSAVDECC_SUBTYPE_ADP;
 		adpdu_common_ctrl_hdr.sv = 0;
@@ -109,7 +109,7 @@ namespace avdecc_lib
 		adpdu_common_ctrl_hdr.message_type = 2;
 		adpdu_common_ctrl_hdr.valid_time = 0;
 		adpdu_common_ctrl_hdr.control_data_length = 56;
-		jdksavdecc_uint64_write(target_guid, &adpdu_common_ctrl_hdr.entity_entity_id, 0, sizeof(uint64_t));
+		jdksavdecc_uint64_write(target_guid, &adpdu_common_ctrl_hdr.entity_id, 0, sizeof(uint64_t));
 
 		/********************* Fill frame payload with AECP Common Control Header information **********************/
 		adpdu_common_ctrl_hdr_returned = jdksavdecc_adpdu_common_control_header_write(&adpdu_common_ctrl_hdr,
@@ -119,7 +119,7 @@ namespace avdecc_lib
 
 		if(adpdu_common_ctrl_hdr_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
 			assert(adpdu_common_ctrl_hdr_returned >= 0);
 		}
 	}

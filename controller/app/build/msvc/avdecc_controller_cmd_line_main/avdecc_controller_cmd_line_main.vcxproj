@@ -39,10 +39,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\..\bin\avdecc_controller_cmd_line_main_debug\</OutDir>
+    <OutDir>$(AVDECC_LIB_DIR)\controller\app\bin\avdecc_controller_cmd_line_main_debug\</OutDir>
+    <IncludePath>$(AVDECC_LIB_DIR)\controller\lib\include;$(AVDECC_LIB_DIR)\controller\app\cmdline\src;$(AVDECC_LIB_DIR)\controller\app\test\cmd_line;$(IncludePath)</IncludePath>
+    <LibraryPath>$(AVDECC_LIB_DIR)\controller\lib\bin\avdecc_controller_lib32_debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(AVDECC_LIB_DIR)\controller\lib\include;$(AVDECC_LIB_DIR)\controller\app\cmdline\src;$(AVDECC_LIB_DIR)\controller\app\test\cmd_line;$(IncludePath)</IncludePath>
+    <LibraryPath>$(AVDECC_LIB_DIR)\controller\lib\bin\avdecc_controller_lib32_release;$(LibraryPath)</LibraryPath>
+    <OutDir>$(AVDECC_LIB_DIR)\controller\app\bin\avdecc_controller_cmd_line_main_release\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -51,12 +56,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>\asi\sw\avdecc-lib\controller\lib\include;\asi\sw\avdecc-lib\controller\lib\src\msvc;\asi\sw\avdecc-lib\controller\app\cmdline\src;\asi\sw\avdecc-lib\controller\app\test\cmd_line;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>\asi\sw\avdecc-lib\controller\lib\bin\avdecc_controller_lib32_debug\avdecc_controller_lib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avdecc_controller_lib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -74,6 +79,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>avdecc_controller_lib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

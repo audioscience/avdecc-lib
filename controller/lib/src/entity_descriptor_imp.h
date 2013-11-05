@@ -44,6 +44,8 @@ namespace avdecc_lib
 		int desc_entity_read_returned; // Status of extracting ENTITY descriptor information from a network buffer
 		std::vector<configuration_descriptor_imp *> config_desc_vec; // Store a list of Configuration descriptor class objects
 
+		struct jdksavdecc_aem_command_acquire_entity_response aem_cmd_acquire_entity_resp; // Store the response received after sending a ACQUIRE_ENTITY command.
+
 	public:
 		/**
 		 * An empty constructor for entity_descriptor_imp
@@ -180,6 +182,16 @@ namespace avdecc_lib
 		 * Get the corresponding Configuration descriptor object by index.
 		 */
 		configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index);
+
+		/**
+		 * Send a ACQURE ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
+		 */
+		int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag);
+
+		/**
+		 * Process a ACQURE ENTITY response for the ACQURE ENTITY command.
+		 */
+		int proc_acquire_entity_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a SET_CONFIFURATION command to change the current configuration of the AVDECC Entity.

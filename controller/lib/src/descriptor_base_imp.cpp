@@ -27,6 +27,13 @@
  * Descriptor base implementation
  */
 
+#include "enumeration.h"
+#include "log.h"
+#include "adp.h"
+#include "aecp.h"
+#include "end_station_imp.h"
+#include "system_tx_queue.h"
+#include "aem_controller_state_machine.h"
 #include "descriptor_base_imp.h"
 
 namespace avdecc_lib
@@ -42,72 +49,220 @@ namespace avdecc_lib
 
 	uint16_t STDCALL descriptor_base_imp::get_descriptor_type()
 	{
-
 		return 0;
 	}
 
 	uint16_t STDCALL descriptor_base_imp::get_descriptor_index()
 	{
-
 		return 0;
 	}
 
-	int STDCALL descriptor_base_imp::send_acquire_entity_cmd(uint16_t desc_index, uint32_t acquire_entity_flags)
+	int STDCALL descriptor_base_imp::send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag)
+	{
+	
+		return 0;
+	}
+
+	int descriptor_base_imp::proc_acquire_entity_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 
 		return 0;
 	}
 
-	int descriptor_base_imp::proc_acquire_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
+	int descriptor_base_imp::default_send_acquire_entity_cmd(descriptor_base_imp *descriptor_base_imp_ref, void *notification_id, uint32_t acquire_entity_flag)
+	{
+		struct jdksavdecc_frame *ether_frame;
+		struct jdksavdecc_aem_command_acquire_entity aem_cmd_acquire_entity;
+		int aem_cmd_acquire_entity_returned;
+		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+
+		/***************************************** AECP Common Data ********************************************/
+		aem_cmd_acquire_entity.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+		// Fill aem_cmd_acquire_entity.sequence_id in AEM Controller State Machine
+		aem_cmd_acquire_entity.command_type = JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY;
+
+		/************************** AECP Message Specific Data ************************/
+		aem_cmd_acquire_entity.aem_acquire_flags = acquire_entity_flag;
+		jdksavdecc_eui64_init(&aem_cmd_acquire_entity.owner_entity_id);
+		aem_cmd_acquire_entity.descriptor_type = descriptor_base_imp_ref->get_descriptor_type();
+		aem_cmd_acquire_entity.descriptor_index = descriptor_base_imp_ref->get_descriptor_index();
+
+		/******************************** Fill frame payload with AECP data and send the frame ***************************/
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
+		aem_cmd_acquire_entity_returned = jdksavdecc_aem_command_acquire_entity_write(&aem_cmd_acquire_entity,
+		                                                                              ether_frame->payload,
+		                                                                              aecp::CMD_POS,
+		                                                                              sizeof(ether_frame->payload));
+
+		if(aem_cmd_acquire_entity_returned < 0)
+		{
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_write error\n");
+			assert(aem_cmd_acquire_entity_returned >= 0);
+			return -1;
+		}
+
+		aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+		system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+
+		free(ether_frame);
+		return 0;
+	}
+
+	int descriptor_base_imp::default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp, void *&notification_id,
+								  uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	{
+		struct jdksavdecc_frame *ether_frame;
+		int aem_cmd_acquire_entity_resp_returned;
+		uint32_t msg_type;
+		bool u_field;
+
+		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+		memcpy(ether_frame->payload, frame, mem_buf_len);
+
+		aem_cmd_acquire_entity_resp_returned = jdksavdecc_aem_command_acquire_entity_response_read(&aem_cmd_acquire_entity_resp,
+		                                                                                           frame,
+		                                                                                           aecp::CMD_POS,
+		                                                                                           mem_buf_len);
+
+		if(aem_cmd_acquire_entity_resp_returned < 0)
+		{
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_resp_read error\n");
+			assert(aem_cmd_acquire_entity_resp_returned >= 0);
+			return -1;
+		}
+
+		msg_type = aem_cmd_acquire_entity_resp.aem_header.aecpdu_header.header.message_type;
+		status = aem_cmd_acquire_entity_resp.aem_header.aecpdu_header.header.status;
+		u_field = aem_cmd_acquire_entity_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+
+		free(ether_frame);
+		return 0;
+	}
+
+	int STDCALL descriptor_base_imp::send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag)
 	{
 
 		return 0;
 	}
 
-	int STDCALL descriptor_base_imp::send_lock_entity_cmd(uint16_t desc_index, uint32_t lock_entity_flags)
+	int descriptor_base_imp::proc_lock_entity_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 
 		return 0;
 	}
 
-	int descriptor_base_imp::proc_lock_entity_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
+	int descriptor_base_imp::default_send_lock_entity_cmd(descriptor_base_imp *descriptor_base_imp_ref, void *notification_id, uint32_t lock_entity_flag)
 	{
+		struct jdksavdecc_frame *ether_frame;
+		struct jdksavdecc_aem_command_lock_entity aem_cmd_lock_entity;
+		int aem_cmd_acquire_entity_returned;
+		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
+		/***************************************** AECP Common Data ********************************************/
+		aem_cmd_lock_entity.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+		// Fill aem_cmd_lock_entity.sequence_id in AEM Controller State Machine
+		aem_cmd_lock_entity.command_type = JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY;
+
+		/************************** AECP Message Specific Data ************************/
+		aem_cmd_lock_entity.aem_lock_flags = lock_entity_flag;
+		jdksavdecc_eui64_init(&aem_cmd_lock_entity.locked_entity_id);
+		aem_cmd_lock_entity.descriptor_type = descriptor_base_imp_ref->get_descriptor_type();
+		aem_cmd_lock_entity.descriptor_index = descriptor_base_imp_ref->get_descriptor_index();
+
+		/******************************** Fill frame payload with AECP data and send the frame ***************************/
+		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
+		aem_cmd_acquire_entity_returned = jdksavdecc_aem_command_lock_entity_write(&aem_cmd_lock_entity,
+		                                                                           ether_frame->payload,
+		                                                                           aecp::CMD_POS,
+		                                                                           sizeof(ether_frame->payload));
+
+		if(aem_cmd_acquire_entity_returned < 0)
+		{
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_write error\n");
+			assert(aem_cmd_acquire_entity_returned >= 0);
+			return -1;
+		}
+
+		aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+		system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+
+		free(ether_frame);
+		return 0;
+	}
+
+	int descriptor_base_imp::default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp, void *&notification_id,
+							       uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	{
+		struct jdksavdecc_frame *ether_frame;
+		int aem_cmd_lock_entity_resp_returned;
+		uint32_t msg_type;
+		bool u_field;
+
+		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+		memcpy(ether_frame->payload, frame, mem_buf_len);
+
+		aem_cmd_lock_entity_resp_returned = jdksavdecc_aem_command_lock_entity_response_read(&aem_cmd_lock_entity_resp,
+		                                                                                     frame,
+		                                                                                     aecp::CMD_POS,
+		                                                                                     mem_buf_len);
+
+		if(aem_cmd_lock_entity_resp_returned < 0)
+		{
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_resp_read error\n");
+			assert(aem_cmd_lock_entity_resp_returned >= 0);
+			return -1;
+		}
+
+		msg_type = aem_cmd_lock_entity_resp.aem_header.aecpdu_header.header.message_type;
+		status = aem_cmd_lock_entity_resp.aem_header.aecpdu_header.header.status;
+		u_field = aem_cmd_lock_entity_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+
+		free(ether_frame);
 		return 0;
 	}
 
 	int STDCALL descriptor_base_imp::send_entity_avail_cmd()
 	{
+		printf("\nNeed to implement ENTITY_AVAILABLE command.");
 
 		return 0;
 	}
 
 	int descriptor_base_imp::proc_entity_avail_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
 	{
+		printf("\nNeed to implement ENTITY_AVAILABLE response.");
 
 		return 0;
 	}
 
 	int STDCALL descriptor_base_imp::send_set_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index, char * name)
 	{
+		printf("\nNeed to implement SET_NAME command.");
 
 		return 0;
 	}
 
 	int descriptor_base_imp::proc_set_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
 	{
+		printf("\nNeed to implement SET_NAME response.");
 
 		return 0;
 	}
 
 	int STDCALL descriptor_base_imp::send_get_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index)
 	{
+		printf("\nNeed to implement GET_NAME command.");
 
 		return 0;
 	}
 
 	int descriptor_base_imp::proc_get_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
 	{
+		printf("\nGET_NAME response is not implemented.");
 
 		return 0;
 	}

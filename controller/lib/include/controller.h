@@ -58,7 +58,7 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_controller_guid() = 0;
 
 		/**
-		 * \return The number of End Stations connected.
+		 * \return The total number of End Stations connected.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_end_station_count() = 0;
 
@@ -70,7 +70,7 @@ namespace avdecc_lib
 		/**
 		 * \return The corresponding Configuration descriptor by index.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index) = 0;
 
 		/**
 		 * \return The corresponding Configuration descriptor by GUID.
@@ -78,12 +78,12 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_by_guid(uint64_t end_station_guid, uint16_t entity_index, uint16_t config_index) = 0;
 
 		/**
-		 * Check if the command with the corresponding notification id is in the inflight list.
+		 * \return True, if the command with the notification id is in the inflight list.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL is_inflight_cmd_with_notification_id(void *notification_id) = 0;
 
 		/**
-		 * Update the log level.
+		 * Update the base log level for messages to be logged by the logging callback.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL update_log_level(int32_t new_log_level) = 0;
 

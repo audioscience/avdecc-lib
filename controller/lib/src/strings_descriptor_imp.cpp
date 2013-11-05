@@ -41,7 +41,7 @@ namespace avdecc_lib
 
 		if(desc_strings_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "desc_strings_read error");
+			log_ref->logging(LOGGING_LEVEL_ERROR, "desc_strings_read error");
 			assert(desc_strings_read_returned >= 0);
 		}
 	}
@@ -92,7 +92,7 @@ namespace avdecc_lib
 				break;
 
 			default:
-				avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "get_string_by_index error");
+				log_ref->logging(LOGGING_LEVEL_ERROR, "get_string_by_index error");
 				break;
 		}
 

@@ -24,7 +24,7 @@
 /**
  * avdecc_cmd_line.h
  *
- * AVDECC command line processing class
+ * AVDECC Controller command line processing class
  */
 
 #pragma once
@@ -34,7 +34,7 @@
 #include "net_interface.h"
 #include "system.h"
 #include "controller.h"
-#include "aem_string.h"
+#include "util.h"
 #include "enumeration.h"
 
 class avdecc_cmd_line
@@ -43,6 +43,7 @@ private:
 	avdecc_lib::net_interface *netif_ref;
 	avdecc_lib::system *system_ref;
 	avdecc_lib::controller *controller_ref;
+	avdecc_lib::util *utility;
 
 public:
 	static std::string log_path;
@@ -101,6 +102,11 @@ public:
 	 * Change the setting of end station, entity, and configuration.
 	 */
 	int cmd_select(uint32_t new_end_station, uint16_t new_entity, uint16_t new_config);
+
+	/**
+	 * Change the base log level for messages to be logged by the logging callback.
+	 */
+	int cmd_log_level(uint32_t new_log_level);
 
 	/**
 	 * Display all the descriptors in each end station.

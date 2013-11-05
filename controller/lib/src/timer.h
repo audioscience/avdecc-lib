@@ -24,7 +24,7 @@
 /**
  * timer.h
  *
- * Timer class, which calculates start, end, and timeout times for network packets.
+ * Timer class
  */
 
 #pragma once
