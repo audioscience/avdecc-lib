@@ -33,7 +33,7 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.0.9"
+#define AVDECC_CONTROLLER_VERSION "v0.1.0"
 
 namespace avdecc_lib
 {
@@ -50,7 +50,7 @@ namespace avdecc_lib
 		controller_imp();
 
 		/**
-		 * A constructor for controller_imp used for constructing an object with network interface, notification, and logging callback functions.
+		 * A constructor for controller_imp used for constructing an object with network interface, notification, and post_log_msg callback functions.
 		 */
 		controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
 		               void (*log_callback) (void *, int32_t, const char *, int32_t));
@@ -106,7 +106,7 @@ namespace avdecc_lib
 		bool STDCALL is_inflight_cmd_with_notification_id(void *notification_id);
 
 		/**
-		 * Update the base log level for messages to be logged by the logging callback.
+		 * Update the base log level for messages to be logged by the post_log_msg callback.
 		 */
 		void STDCALL set_logging_level(int32_t new_log_level);
 

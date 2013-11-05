@@ -110,6 +110,7 @@
     <ClInclude Include="..\..\..\src\aem_controller_state_machine.h" />
     <ClInclude Include="..\..\..\src\audio_unit_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\avb_interface_descriptor_imp.h" />
+    <ClInclude Include="..\..\..\src\avdecc_lib_os.h" />
     <ClInclude Include="..\..\..\src\clock_domain_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\clock_source_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\configuration_descriptor_imp.h" />
@@ -120,11 +121,13 @@
     <ClInclude Include="..\..\..\src\jack_input_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\jack_output_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\locale_descriptor_imp.h" />
-    <ClInclude Include="..\..\..\src\msvc\log.h" />
+    <ClInclude Include="..\..\..\src\log.h" />
+    <ClInclude Include="..\..\..\src\msvc\log_imp.h" />
     <ClInclude Include="..\..\..\src\msvc\net_interface_imp.h" />
-    <ClInclude Include="..\..\..\src\msvc\notification.h" />
+    <ClInclude Include="..\..\..\src\msvc\notification_imp.h" />
     <ClInclude Include="..\..\..\src\msvc\system_layer2_multithreaded_callback.h" />
     <ClInclude Include="..\..\..\src\msvc\system_message_queue.h" />
+    <ClInclude Include="..\..\..\src\notification.h" />
     <ClInclude Include="..\..\..\src\stream_input_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\stream_output_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\strings_descriptor_imp.h" />
@@ -150,19 +153,18 @@
     <ClCompile Include="..\..\..\src\jack_input_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\jack_output_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\locale_descriptor_imp.cpp" />
-    <ClCompile Include="..\..\..\src\msvc\log.cpp" />
+    <ClCompile Include="..\..\..\src\log.cpp" />
+    <ClCompile Include="..\..\..\src\msvc\log_imp.cpp" />
     <ClCompile Include="..\..\..\src\msvc\net_interface_imp.cpp" />
-    <ClCompile Include="..\..\..\src\msvc\notification.cpp" />
+    <ClCompile Include="..\..\..\src\msvc\notification_imp.cpp" />
     <ClCompile Include="..\..\..\src\msvc\system_layer2_multithreaded_callback.cpp" />
     <ClCompile Include="..\..\..\src\msvc\system_message_queue.cpp" />
+    <ClCompile Include="..\..\..\src\notification.cpp" />
     <ClCompile Include="..\..\..\src\stream_input_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\stream_output_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\strings_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\timer.cpp" />
     <ClCompile Include="..\..\..\src\util_imp.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\..\app\build\msvc\avdecc_controller_cmd_line_main\avdecc_controller_cmd_line_main.vcxproj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

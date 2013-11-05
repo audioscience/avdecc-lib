@@ -29,7 +29,7 @@
 
 #include "net_interface_imp.h"
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "util_imp.h"
 #include "end_station.h"
 #include "adp.h"
@@ -47,7 +47,7 @@ namespace avdecc_lib
 
 		if(aecpdu_aem_read_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aecpdu_aem_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aecpdu_aem_read error");
 			assert(aecpdu_aem_read_returned >= 0);
 		}
 	}
@@ -105,7 +105,7 @@ namespace avdecc_lib
 
 		if(aecpdu_common_ctrl_hdr_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
 			assert(aecpdu_common_ctrl_hdr_returned >= 0);
 		}
 	}

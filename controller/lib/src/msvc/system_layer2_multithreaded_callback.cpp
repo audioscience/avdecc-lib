@@ -30,8 +30,8 @@
 #include <vector>
 #include "net_interface.h"
 #include "enumeration.h"
-#include "notification.h"
-#include "log.h"
+#include "notification_imp.h"
+#include "log_imp.h"
 #include "end_station.h"
 #include "controller.h"
 #include "system_message_queue.h"
@@ -155,7 +155,7 @@ namespace avdecc_lib
 			{
 				if(!SetEvent(data->timeout_event))
 				{
-					log_ref->logging(LOGGING_LEVEL_ERROR, "SetEvent pkt_event_wpcap_timeout failed");
+					log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "SetEvent pkt_event_wpcap_timeout failed");
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -185,7 +185,7 @@ namespace avdecc_lib
 	{
 		if(init_wpcap_thread() < 0 || init_poll_thread() < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "init_polling error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "init_polling error");
 		}
 
 		return 0;
@@ -208,7 +208,7 @@ namespace avdecc_lib
 
 		if(poll_rx.queue_thread.handle == NULL)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "Error creating the wpcap thread");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Error creating the wpcap thread");
 			exit(EXIT_FAILURE);
 		}
 
@@ -237,7 +237,7 @@ namespace avdecc_lib
 
 		if(poll_thread.handle == NULL)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "Error creating the poll thread");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Error creating the poll thread");
 			exit(EXIT_FAILURE);
 		}
 

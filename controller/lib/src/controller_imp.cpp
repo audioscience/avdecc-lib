@@ -31,8 +31,8 @@
 #include <cstdint>
 #include "net_interface_imp.h"
 #include "enumeration.h"
-#include "notification.h"
-#include "log.h"
+#include "notification_imp.h"
+#include "log_imp.h"
 #include "util_imp.h"
 #include "adp.h"
 #include "aecp.h"
@@ -55,7 +55,7 @@ namespace avdecc_lib
 
 		if(!net_interface_ref)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "Dynamic cast from derived net_interface_imp to base net_interface error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived net_interface_imp to base net_interface error");
 		}
 
 		controller_imp_ref = new controller_imp(notification_callback, log_callback);
@@ -67,8 +67,8 @@ namespace avdecc_lib
 	controller_imp::controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
 	                               void (*log_callback) (void *, int32_t, const char *, int32_t))
 	{
-		notification_ref->set_notification_callback(notification_callback, NULL);
-		log_ref->set_logging_callback(log_callback, NULL);
+		notification_imp_ref->set_notification_callback(notification_callback, NULL);
+		log_imp_ref->set_log_callback(log_callback, NULL);
 	}
 
 	controller_imp::~controller_imp()
@@ -138,7 +138,7 @@ namespace avdecc_lib
 
 		else
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
 			return NULL;
 		}
 	}
@@ -156,17 +156,17 @@ namespace avdecc_lib
 
 	void STDCALL controller_imp::set_logging_level(int32_t new_log_level)
 	{
-		log_ref->set_log_level(new_log_level);
+		log_imp_ref->set_log_level(new_log_level);
 	}
 
 	uint32_t STDCALL controller_imp::missed_notification_count()
 	{
-		return notification_ref->get_missed_notification_event_count();
+		return notification_imp_ref->get_missed_notification_event_count();
 	}
 
 	uint32_t STDCALL controller_imp::missed_log_count()
 	{
-		return log_ref->get_missed_log_event_count();
+		return log_imp_ref->get_missed_log_event_count();
 	}
 
 	void STDCALL controller_imp::time_tick_event()
@@ -201,7 +201,7 @@ namespace avdecc_lib
 						bool found_adp_in_end_station = false;
 						uint64_t entity_guid = jdksavdecc_uint64_get(frame, adp::ETHER_HDR_SIZE + adp::PROTOCOL_HDR_SIZE);
 
-						//log_ref->logging(LOGGING_LEVEL_DEBUG, "ADP packet discovered.");
+						//log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "ADP packet discovered.");
 
 						/**
 						 * Check if an ADP object is already in the system. If not, create a new End Station object storing the ADPDU information
@@ -242,7 +242,7 @@ namespace avdecc_lib
 						}
 						else
 						{
-							//log_ref->logging(LOGGING_LEVEL_ERROR, "Entity GUID is 0x0");
+							//log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Entity GUID is 0x0");
 						}
 
 						status = AVDECC_LIB_STATUS_INVALID;
@@ -291,18 +291,18 @@ namespace avdecc_lib
 						}
 						else
 						{
-							//log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to have ADP packet first.");
+							//log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Need to have ADP packet first.");
 							status = AVDECC_LIB_STATUS_INVALID;
 						}
 					}
 					break;
 
 				case JDKSAVDECC_SUBTYPE_ACMP:
-					//log_ref->logging(LOGGING_LEVEL_ERROR, "ACMP subtype");
+					//log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "ACMP subtype");
 					break;
 
 				default:
-					//log_ref->logging(LOGGING_LEVEL_ERROR, "Invalid subtype");
+					//log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid subtype");
 					break;
 			}
 		}
@@ -341,7 +341,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_controller_avail_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_write error\n");
 			assert(aem_cmd_controller_avail_returned >= 0);
 			return -1;
 		}
@@ -371,7 +371,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_controller_avail_resp_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_resp_read error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_resp_read error\n");
 			assert(aem_cmd_controller_avail_resp_returned >= 0);
 			return -1;
 		}

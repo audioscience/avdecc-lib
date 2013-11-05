@@ -28,7 +28,7 @@
  */
 
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "adp.h"
 #include "aecp.h"
 #include "end_station_imp.h"
@@ -96,7 +96,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_acquire_entity_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_write error\n");
 			assert(aem_cmd_acquire_entity_returned >= 0);
 			return -1;
 		}
@@ -126,7 +126,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_acquire_entity_resp_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_resp_read error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_resp_read error\n");
 			assert(aem_cmd_acquire_entity_resp_returned >= 0);
 			return -1;
 		}
@@ -180,7 +180,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_acquire_entity_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_write error\n");
 			assert(aem_cmd_acquire_entity_returned >= 0);
 			return -1;
 		}
@@ -210,7 +210,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_lock_entity_resp_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_resp_read error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_resp_read error\n");
 			assert(aem_cmd_lock_entity_resp_returned >= 0);
 			return -1;
 		}
@@ -227,21 +227,21 @@ namespace avdecc_lib
 
 	int STDCALL descriptor_base_imp::send_set_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index, char * name)
 	{
-		log_ref->logging(LOGGING_LEVEL_ERROR, "Need to implement SET_NAME command.");
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_NAME command.");
 
 		return 0;
 	}
 
 	int descriptor_base_imp::proc_set_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
 	{
-		log_ref->logging(LOGGING_LEVEL_ERROR, "Need to implement SET_NAME response.");
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_NAME response.");
 
 		return 0;
 	}
 
 	int STDCALL descriptor_base_imp::send_get_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index)
 	{
-		log_ref->logging(LOGGING_LEVEL_ERROR, "Need to implement GET_NAME command.");
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_NAME command.");
 
 		return 0;
 	}

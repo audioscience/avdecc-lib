@@ -95,7 +95,7 @@ namespace avdecc_lib
 		int read_desc_init(uint16_t desc_type, uint16_t desc_index);
 
 		/**
-		 * Send a READ_DESCRIPTOR command with or without a notification id based on the notifying flag
+		 * Send a READ_DESCRIPTOR command with or without a notification id based on the post_notification_msg flag
 		 * to read a descriptor from an AVDECC Entity.
 		 */
 		int send_read_desc_cmd_with_flag(void *notification_id, uint32_t notification_flag, uint16_t desc_type, uint16_t desc_index);

@@ -75,7 +75,7 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL notification_value_to_name(uint16_t notification_value) = 0;
 
 		/**
-		 * Convert logging value to its corresponding logging name.
+		 * Convert post_log_msg value to its corresponding post_log_msg name.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value) = 0;
 

@@ -45,8 +45,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\..\..\include;..\..\..\app\cmdline\src;..\..\..\app\test\cmd_line;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\..\lib\bin\avdecc_controller_lib32_release;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\..\..\lib\include;..\..\..\..\app\cmdline\src;..\..\..\..\app\test\cmd_line;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\..\lib\bin\avdecc_controller_lib32_release;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\..\bin\avdecc_controller_cmd_line_main_release\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

@@ -80,7 +80,7 @@ namespace avdecc_lib
 		void tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
 
 		/**
-		 * Handle the receipt and processing of a received unsolicited notifying.
+		 * Handle the receipt and processing of a received unsolicited post_notification_msg.
 		 */
 		int process_unsolicited(struct jdksavdecc_frame *ether_frame);
 
@@ -189,7 +189,7 @@ namespace avdecc_lib
 		int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t &notification_flag, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame);
 
 		/**
-		 * Call notification or logging callback function for the command sent or response received.
+		 * Call notification or post_log_msg callback function for the command sent or response received.
 		 */
 		int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
 
