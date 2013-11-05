@@ -414,14 +414,14 @@ namespace avdecc_lib
 
 	int STDCALL stream_input_descriptor_imp::send_set_stream_info_cmd(void *notification_id, void *new_stream_info_field)
 	{
-		log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement SET_STREAM_INFO command.");
+		log_ref->logging(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO command.");
 
 		return 0;
 	}
 
 	int stream_input_descriptor_imp::proc_set_stream_info_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
-		log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement SET_STREAM_INFO response.");
+		log_ref->logging(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO response.");
 
 		return 0;
 	}

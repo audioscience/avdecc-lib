@@ -36,6 +36,7 @@
 #include "util_imp.h"
 #include "adp.h"
 #include "aecp.h"
+#include "system_tx_queue.h"
 #include "end_station_imp.h"
 #include "adp_discovery_state_machine.h"
 #include "aem_controller_state_machine.h"
@@ -90,10 +91,10 @@ namespace avdecc_lib
 		return AVDECC_CONTROLLER_VERSION;
 	}
 
-	uint64_t STDCALL controller_imp::get_controller_guid()
-	{
-		return controller_guid;
-	}
+	//uint64_t STDCALL controller_imp::get_controller_guid()
+	//{
+	//	return controller_guid;
+	//}
 
 	uint32_t STDCALL controller_imp::get_end_station_count()
 	{
@@ -275,7 +276,17 @@ namespace avdecc_lib
 
 						if(found_aecp_in_end_station)
 						{
-							end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							uint16_t cmd_type = jdksavdecc_uint16_get(frame, aecp::CMD_TYPE_POS);
+
+							if(cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
+							{
+								proc_controller_avail_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							}
+							else
+							{
+								end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							}
+
 							is_notification_id_valid = true;
 						}
 						else
@@ -307,5 +318,71 @@ namespace avdecc_lib
 		aem_controller_state_machine_ref->set_do_cmd(true);
 		aem_controller_state_machine_ref->aem_controller_state_waiting(notification_id, notification_flag, &packet_frame);
 		memcpy(frame, packet_frame.payload, mem_buf_len);
+	}
+
+	int STDCALL controller_imp::send_controller_avail_cmd(void *notification_id, uint32_t end_station_index)
+	{
+		struct jdksavdecc_frame *ether_frame;
+		struct jdksavdecc_aem_command_controller_available aem_cmd_controller_avail;
+		int aem_cmd_controller_avail_returned;
+		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+
+		/*************************************************** AECP Common Data **************************************************/
+		aem_cmd_controller_avail.controller_entity_id = end_station_vec.at(end_station_index)->get_adp()->get_controller_guid();
+		// Fill aem_cmd_controller_avail.sequence_id in AEM Controller State Machine
+		aem_cmd_controller_avail.command_type = JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE;
+
+		/******************************** Fill frame payload with AECP data and send the frame ***************************/
+		aecp::ether_frame_init(end_station_vec.at(end_station_index), ether_frame);
+		aem_cmd_controller_avail_returned = jdksavdecc_aem_command_controller_available_write(&aem_cmd_controller_avail,
+												      ether_frame->payload,
+												      aecp::CMD_POS,
+												      sizeof(ether_frame->payload));
+
+		if(aem_cmd_controller_avail_returned < 0)
+		{
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_write error\n");
+			assert(aem_cmd_controller_avail_returned >= 0);
+			return -1;
+		}
+
+		aecp::common_hdr_init(ether_frame, end_station_vec.at(end_station_index)->get_end_station_guid());
+		system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+
+		free(ether_frame);
+		return 0;
+	}
+
+	int controller_imp::proc_controller_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	{
+		struct jdksavdecc_frame *ether_frame;
+		struct jdksavdecc_aem_command_controller_available_response aem_cmd_controller_avail_resp;
+		int aem_cmd_controller_avail_resp_returned = 0;
+		uint32_t msg_type = 0;
+		bool u_field = false;
+
+		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+		memcpy(ether_frame->payload, frame, mem_buf_len);
+
+		aem_cmd_controller_avail_resp_returned = jdksavdecc_aem_command_controller_available_response_read(&aem_cmd_controller_avail_resp,
+														   frame,
+														   aecp::CMD_POS,
+														   mem_buf_len);
+
+		if(aem_cmd_controller_avail_resp_returned < 0)
+		{
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_resp_read error\n");
+			assert(aem_cmd_controller_avail_resp_returned >= 0);
+			return -1;
+		}
+
+		msg_type = aem_cmd_controller_avail_resp.aem_header.aecpdu_header.header.message_type;
+		status = aem_cmd_controller_avail_resp.aem_header.aecpdu_header.header.status;
+		u_field = aem_cmd_controller_avail_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+
+		free(ether_frame);
+		return 0;
 	}
 }

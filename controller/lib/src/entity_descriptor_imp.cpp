@@ -191,14 +191,14 @@ namespace avdecc_lib
 
 	int STDCALL entity_descriptor_imp::send_set_config_cmd()
 	{
-		log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement SET_CONFIGURATION command.");
+		log_ref->logging(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION command.");
 
 		return 0;
 	}
 
 	int STDCALL entity_descriptor_imp::send_get_config_cmd()
 	{
-		log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement SET_CONFIGURATION response.");
+		log_ref->logging(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION response.");
 
 		return 0;
 	}

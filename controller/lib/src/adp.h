@@ -101,7 +101,7 @@ namespace avdecc_lib
 		}
 
 		/**
-		 * Get the Controller GUID of the ADP packet.
+		 * Get the Controller GUID of the AVDECC Entity sending the command.
 		 */
 		struct jdksavdecc_eui64 get_controller_guid();
 

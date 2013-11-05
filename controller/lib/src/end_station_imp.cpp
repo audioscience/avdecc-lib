@@ -383,6 +383,72 @@ namespace avdecc_lib
 		return 0;
 	}
 
+	int STDCALL end_station_imp::send_entity_avail_cmd(void *notification_id)
+	{
+		struct jdksavdecc_frame *ether_frame;
+		struct jdksavdecc_aem_command_entity_available aem_cmd_entity_avail;
+		int aem_cmd_entity_avail_returned;
+		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+
+		/**************************** AECP Common Data ****************************/
+		aem_cmd_entity_avail.controller_entity_id = adp_ref->get_controller_guid();
+		// Fill aem_cmd_entity_avail.sequence_id in AEM Controller State Machine
+		aem_cmd_entity_avail.command_type = JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE;
+
+		/**************************** Fill frame payload with AECP data and send the frame *************************/
+		aecp::ether_frame_init(this, ether_frame);
+		aem_cmd_entity_avail_returned = jdksavdecc_aem_command_entity_available_write(&aem_cmd_entity_avail,
+											      ether_frame->payload,
+											      aecp::CMD_POS,
+											      sizeof(ether_frame->payload));
+
+		if(aem_cmd_entity_avail_returned < 0)
+		{
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_entity_avail_write error\n");
+			assert(aem_cmd_entity_avail_returned >= 0);
+			return -1;
+		}
+
+		aecp::common_hdr_init(ether_frame, end_station_guid);
+		system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+
+		free(ether_frame);
+		return 0;
+	}
+
+	int end_station_imp::proc_entity_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	{
+		struct jdksavdecc_frame *ether_frame;
+		struct jdksavdecc_aem_command_entity_available_response aem_cmd_entity_avail_resp;
+		int aem_cmd_entity_avail_resp_returned = 0;
+		uint32_t msg_type = 0;
+		bool u_field = false;
+
+		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+		memcpy(ether_frame->payload, frame, mem_buf_len);
+
+		aem_cmd_entity_avail_resp_returned = jdksavdecc_aem_command_entity_available_response_read(&aem_cmd_entity_avail_resp,
+													   frame,
+													   aecp::CMD_POS,
+													    mem_buf_len);
+
+		if(aem_cmd_entity_avail_resp_returned < 0)
+		{
+			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_entity_avail_resp_read error\n");
+			assert(aem_cmd_entity_avail_resp_returned >= 0);
+			return -1;
+		}
+
+		msg_type = aem_cmd_entity_avail_resp.aem_header.aecpdu_header.header.message_type;
+		status = aem_cmd_entity_avail_resp.aem_header.aecpdu_header.header.status;
+		u_field = aem_cmd_entity_avail_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+
+		free(ether_frame);
+		return 0;
+	}
+
 	int end_station_imp::proc_rcvd_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		uint16_t cmd_type;
@@ -445,20 +511,12 @@ namespace avdecc_lib
 
 			case JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY:
 
-				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement LOCK_ENTITY command.");
+				log_ref->logging(LOGGING_LEVEL_ERROR, "Need to implement LOCK_ENTITY command.");
 
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE:
-
-				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement ENTITY_AVAILABLE command.");
-
-				break;
-
-			case JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE:
-
-				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement CONTROLLER_AVAILABLE command.");
-
+				proc_entity_avail_resp(notification_id, notification_flag, frame, mem_buf_len, status);
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR:
@@ -541,7 +599,7 @@ namespace avdecc_lib
 
 			case JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO:
 
-				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement SET_STREAM_INFO command.");
+				log_ref->logging(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO command.");
 
 				break;
 
@@ -582,13 +640,13 @@ namespace avdecc_lib
 
 			case JDKSAVDECC_AEM_COMMAND_SET_NAME:
 
-				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement SET_NAME command.");
+				log_ref->logging(LOGGING_LEVEL_ERROR, "Need to implement SET_NAME command.");
 
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_GET_NAME:
 
-				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement GET_NAME command.");
+				log_ref->logging(LOGGING_LEVEL_ERROR, "Need to implement GET_NAME command.");
 
 				break;
 

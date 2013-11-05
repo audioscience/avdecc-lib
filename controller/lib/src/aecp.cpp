@@ -63,10 +63,13 @@ namespace avdecc_lib
 		size_t ether_frame_pos = 0x0;
 		jdksavdecc_frame_init(ether_frame);
 
-		/************************************************* Ethernet Frame *************************************/
+		/************************************************ Ethernet Frame *************************************/
 		ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
 		utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
-		utility->convert_uint64_to_eui48(end_station->get_end_station_mac(), ether_frame->dest_address.value);
+		if(end_station)
+		{
+			utility->convert_uint64_to_eui48(end_station->get_end_station_mac(), ether_frame->dest_address.value);
+		}
 		ether_frame->length = AECP_FRAME_LEN; // Length of AECP packet is 64 bytes
 
 		/*********************** Fill frame payload with Ethernet frame information ********************/

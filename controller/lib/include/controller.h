@@ -55,7 +55,7 @@ namespace avdecc_lib
 		/**
 		 * \return The AVDECC Controller GUID of the AVDECC Entity sending the command.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_controller_guid() = 0;
+		//AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_controller_guid() = 0;
 
 		/**
 		 * \return The total number of End Stations connected.
@@ -111,6 +111,11 @@ namespace avdecc_lib
 		 * Send queued packet to the AEM Controller State Machine.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len) = 0;
+
+		/**
+		 * Send a CONTROLLER_AVAILABLE command to verify that the AVDECC Controller is still there.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_controller_avail_cmd(void *notification_id, uint32_t end_station_index) = 0;
 	};
 
 	/**

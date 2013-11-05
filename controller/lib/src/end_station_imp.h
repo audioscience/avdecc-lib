@@ -142,7 +142,7 @@ namespace avdecc_lib
 		entity_descriptor * STDCALL get_entity_desc_by_index(uint32_t entity_desc_index);
 
 		/**
-		 * Send a READ_DESCRIPTOR command with notification id to read a descriptor from an AVDECC Entity.
+		 * Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity.
 		 */
 		int STDCALL send_read_desc_cmd(void *notification_id, uint16_t desc_type, uint16_t desc_index);
 
@@ -150,6 +150,16 @@ namespace avdecc_lib
 		 * Process a READ_DESCRIPTOR response for the READ_DESCRIPTOR command.
 		 */
 		int proc_read_desc_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+
+		/**
+		 * Send a ENTITY_AVAILABLE command to verify that an AVDECC Entity is still available and responding to commands.
+		 */
+		int STDCALL send_entity_avail_cmd(void *notification_id);
+
+		/**
+		 * Process a ENTITY_AVAILABLE response for the ENTITY_AVAILABLE command.
+		 */
+		int proc_entity_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Process response received for the corresponding command.
