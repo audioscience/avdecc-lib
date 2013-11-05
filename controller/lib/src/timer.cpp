@@ -72,7 +72,7 @@ namespace avdecc_lib
 		LARGE_INTEGER freq;
 		QueryPerformanceFrequency(&freq);
 
-		return (uint32_t)((time_ms * 1000/freq.QuadPart) & 0xfffffff);
+		return (uint32_t)((time_stamp * 1000/freq.QuadPart) & 0xfffffff);
 	}
 #elif defined __linux__
 	uint32_t timer::clk_convert_to_ms(avdecc_lib_os::aTimestamp time_stamp)

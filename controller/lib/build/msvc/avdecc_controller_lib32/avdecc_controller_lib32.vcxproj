@@ -161,6 +161,9 @@
     <ClCompile Include="..\..\..\src\timer.cpp" />
     <ClCompile Include="..\..\..\src\util_imp.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\app\build\msvc\avdecc_controller_cmd_line_main\avdecc_controller_cmd_line_main.vcxproj" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

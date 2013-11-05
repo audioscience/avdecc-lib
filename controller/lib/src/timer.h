@@ -31,6 +31,8 @@
 #ifndef _AVDECC_CONTROLLER_LIB_TIMER_H_
 #define _AVDECC_CONTROLLER_LIB_TIMER_H_
 
+#include <cstdint>
+
 #include "avdecc_lib_os.h"
 
 namespace avdecc_lib
