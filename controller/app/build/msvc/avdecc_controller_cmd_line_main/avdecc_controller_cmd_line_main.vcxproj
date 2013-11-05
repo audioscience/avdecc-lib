@@ -39,15 +39,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(AVDECC_LIB_DIR)\controller\app\bin\avdecc_controller_cmd_line_main_debug\</OutDir>
+    <OutDir>..\..\..\bin\avdecc_controller_cmd_line_main_debug\</OutDir>
     <IncludePath>..\..\..\..\lib\include;..\..\..\..\app\cmdline\src;..\..\..\..\app\test\cmd_line;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\..\lib\bin\avdecc_controller_lib32_debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(AVDECC_LIB_DIR)\controller\lib\include;$(AVDECC_LIB_DIR)\controller\app\cmdline\src;$(AVDECC_LIB_DIR)\controller\app\test\cmd_line;$(IncludePath)</IncludePath>
-    <LibraryPath>$(AVDECC_LIB_DIR)\controller\lib\bin\avdecc_controller_lib32_release;$(LibraryPath)</LibraryPath>
-    <OutDir>$(AVDECC_LIB_DIR)\controller\app\bin\avdecc_controller_cmd_line_main_release\</OutDir>
+    <IncludePath>..\..\..\include;..\..\..\app\cmdline\src;..\..\..\app\test\cmd_line;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\lib\bin\avdecc_controller_lib32_release;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\..\bin\avdecc_controller_cmd_line_main_release\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
