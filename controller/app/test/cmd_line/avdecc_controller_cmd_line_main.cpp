@@ -185,6 +185,10 @@ int main()
 				{
 					avdecc_cmd_line_ref->cmd_entity_avail();
 				}
+				else if(cmd_input_vector.at(0).compare("controller") == 0 && cmd_input_vector.at(1).compare("available") == 0)
+				{
+					avdecc_cmd_line_ref->cmd_controller_avail();
+				}
 				else if(cmd_input_vector.at(0).compare("path") == 0)
 				{
 					avdecc_cmd_line_ref->cmd_path(cmd_input_vector.at(1));

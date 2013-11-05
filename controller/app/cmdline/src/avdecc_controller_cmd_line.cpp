@@ -116,6 +116,8 @@ int avdecc_cmd_line::cmd_help()
 	          std::setw(35) << "" << "integers.\n" <<
 	          std::setw(35) << "" << "To see a list of valid end stations, enter\n" <<
 	          std::setw(35) << "" << "\"list\" command." << std::endl;
+	std::cout << "\nlog level [nll]" << std::setw(20) << "" << "Update the base log level for messages to be\n" <<
+	          std::setw(35) << "" << "logged by the logging callback." << std::endl;
 	std::cout << "\nview all" << std::setw(27) << "" << "Display all the descriptors present in each\n" <<
 	          std::setw(35) << "" << "end station." << std::endl;
 	std::cout << "\nview descriptor [dt] [di]" << std::setw(10) << "" << "Display information for the specified\n" <<
@@ -154,6 +156,9 @@ int avdecc_cmd_line::cmd_help()
 	std::cout << "\nentity available" << std::setw(19) << "" << "Send a ENTITY_AVAILABLE command to determine\n" <<
 	          std::setw(35) << "" << "if another AVDECC Entity is still alive and\n" <<
 	          std::setw(35) << "" << "responding to commands." << std::endl;
+	std::cout << "\ncontroller available" << std::setw(15) << "" << "Send a CONTROLLER_AVAILABLE command to\n" <<
+	          std::setw(35) << "" << "determine if an AVDECC Controller is still\n" <<
+		  std::setw(35) << "" << "alive." << std::endl;
 	std::cout << "\nread descriptor [dt] [di]" << std::setw(10) << "" << "Send a READ_DESCRIPTOR command to get the\n" <<
 	          std::setw(35) << "" << "localized strings from an AVDECC Entity\n" <<
 	          std::setw(35) << "" << "using the current setting, where dt stands\n" <<
@@ -214,22 +219,22 @@ int avdecc_cmd_line::cmd_help()
 	          std::setw(35) << "" << "and di stands for descriptor index and\n" <<
 	          std::setw(35) << "" << "should be an integer.\n" <<
 	          std::setw(35) << "" << "Valid descriptor types are STREAM_INPUT\n" <<
-	          std::setw(35) << "" << "and STREAM_OUTPUT.\n" << std::endl;
+	          std::setw(35) << "" << "and STREAM_OUTPUT." << std::endl;
 	std::cout << "\nset sampling_rate [dt] [di]" << std::setw(8) << "" << "Send a SET_SAMPLING_RATE command to change\n" <<
-		  std::setw(35) << "" << "the sampling rate of a port or unit.\n" << std::endl;
+		  std::setw(35) << "" << "the sampling rate of a port or unit." << std::endl;
 	std::cout << "\nget sampling_rate [dt] [di]" << std::setw(8) << "" << "Send a GET_SAMPLING_RATE command to get the \n" <<
-		  std::setw(35) << "" << "current sampling rate of a port or unit.\n" << std::endl;
+		  std::setw(35) << "" << "current sampling rate of a port or unit." << std::endl;
 	std::cout << "\nset clock_source [dt] [di]" << std::setw(9) << "" << "Send a SET_CLOCK_SOURCE command to change\n" <<
-		 std::setw(35) << "" << "the clock source of a clock domain.\n" << std::endl;
+		 std::setw(35) << "" << "the clock source of a clock domain." << std::endl;
 	std::cout << "\nget clock_source [dt] [di]" << std::setw(9) << "" << "Send a GET_CLOCK_SOURCE command to get the\n" <<
-		 std::setw(35) << "" << "current clock source of a clock domain.\n" << std::endl;
+		 std::setw(35) << "" << "current clock source of a clock domain." << std::endl;
 	std::cout << "\nstart streaming [dt] [di]" << std::setw(10) << "" << "Send a START_STREAMING command to start\n" <<
 		std::setw(35) << "" << "streaming on a previously connected stream\n" <<
 		std::setw(35) << "" << "that was connected via ACMP or has\n" <<
 		std::setw(35) << "" << "previously been stopped with the\n" <<
-		std::setw(35) << "" << "STOP_STREAMING command.\n" << std::endl;
+		std::setw(35) << "" << "STOP_STREAMING command." << std::endl;
 	std::cout << "\nstop streaming [dt] [di]" << std::setw(11) << "" << "Send a STOP_STREAMING command to stop a\n" <<
-		std::setw(35) << "" << "connected stream for streaming media.\n" << std::endl;
+		std::setw(35) << "" << "connected stream for streaming media." << std::endl;
 	std::cout << "\nset name [dt] [di] [ni] [n]" << std::setw(8) << "" << "Send a GET_NAME command to change the\n" <<
 	          std::setw(35) << "" << "value of a name field within a\n" <<
 	          std::setw(35) << "" << "descriptor using the current setting, where\n" <<
@@ -237,7 +242,7 @@ int avdecc_cmd_line::cmd_help()
 	          std::setw(35) << "" << "a string, di stands for descriptor index and\n" <<
 	          std::setw(35) << "" << "should be an integer, ni stands for name\n" <<
 	          std::setw(35) << "" << "index and should be an integer, and n stands\n" <<
-	          std::setw(35) << "" << "for name and should be a string.\n" << std::endl;
+	          std::setw(35) << "" << "for name and should be a string." << std::endl;
 	std::cout << "\nget name [dt] [di] [ni]" << std::setw(12) << "" << "Send a GET_NAME command to fetch the\n" <<
 	          std::setw(35) << "" << "value of a name field within a\n" <<
 	          std::setw(35) << "" << "descriptor using the current end station and\n" <<
@@ -245,7 +250,7 @@ int avdecc_cmd_line::cmd_help()
 	          std::setw(35) << "" << "descriptor type and should be a string, di\n" <<
 	          std::setw(35) << "" << "stands for descriptor index and should be an\n" <<
 	          std::setw(35) << "" << "integer, and ni stands for name index and\n" <<
-	          std::setw(35) << "" << "should be an integer.\n" << std::endl;
+	          std::setw(35) << "" << "should be an integer." << std::endl;
 	std::cout << "\npath" << std::setw(31) << "" << "Display the location of the redirected\n" <<
 	          std::setw(35) << "" << "output file." << std::endl;
 	std::cout << "\npath [pathname]" << std::setw(20) << "" << "Change the location of the redirected output\n" <<
@@ -388,7 +393,7 @@ int avdecc_cmd_line::cmd_log_level(uint32_t new_log_level)
 {
 	if(new_log_level < avdecc_lib::TOTAL_NUM_OF_LOGGING_LEVELS)
 	{
-		controller_ref->update_log_level(new_log_level);
+		controller_ref->set_logging_level(new_log_level);
 	}
 	else
 	{
@@ -870,13 +875,12 @@ int avdecc_cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_
 
 }
 
-#ifdef IMPLEMENT_SEND_LOCK_ENTITY_CMD
 int avdecc_cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
 {
 	uint32_t flag_id;
 	uint16_t desc_type_value;
 
-	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
+	desc_type_value = utility->desc_name_to_value(desc_name.c_str());
 
 	if(flag_name.compare("0") == 0)
 	{
@@ -888,41 +892,43 @@ int avdecc_cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_nam
 	}
 	else
 	{
-		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
+		std::cout << "\nInvalid flag" << std::endl;
 		return -1;
 	}
 
-	if(((desc_type_value == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type_value == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) && desc_index == 0) ||
-	   (endpoint_vec.at(endpoint)->get_config_desc_by_index(current_config)->are_desc_type_and_index_in_config(desc_type_value)))
-	{
-		endpoint_vec.at(endpoint)->send_lock_entity_cmd(net_if, flag_id, desc_type_value);
-		return 1;
-	}
-	else
-	{
-		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-		return -1;
-	}
-}
-#else
-int avdecc_cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
-{
-	return 0;
-}
-#endif
+	std::cout << "Need to implement cmd_lock_entity" << std::endl;
 
-#ifdef IMPLEMENT_SEND_ENTITY_AVAILABLE_CMD
-int avdecc_cmd_line::cmd_entity_avail()
-{
-	endpoint_vec.at(endpoint)->send_entity_avail_cmd(net_if);
 	return 0;
 }
-#else
+
+
 int avdecc_cmd_line::cmd_entity_avail()
 {
+	int status = -1;
+	uint32_t cmd_notification_id = get_next_notification_id();
+	
+	system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
+	controller_ref->get_end_station_by_index(current_end_station)->send_entity_avail_cmd((void *)cmd_notification_id);
+	status = system_ref->get_last_resp_status();
+
+	std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+
 	return 0;
 }
-#endif
+
+int avdecc_cmd_line::cmd_controller_avail()
+{
+	int status = -1;
+	uint32_t cmd_notification_id = get_next_notification_id();
+	
+	system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
+	controller_ref->send_controller_avail_cmd((void *)cmd_notification_id, current_end_station);
+	status = system_ref->get_last_resp_status();
+
+	std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+
+	return 0;
+}
 
 int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, uint64_t new_stream_format)
 {
@@ -1000,37 +1006,15 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
 	}
 }
 
-#ifdef IMPLEMENT_SEND_SET_STREAM_INFO_CMD
+
 int avdecc_cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
                                          uint64_t new_stream_info_field_value)
 {
-	uint16_t desc_type_value;
+	std::cout << "Need to implement cmd_set_stream_info" << std::endl;
 
-	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-
-	if(stream_info_field.compare("msrp_accumulated_latency") == 0)
-	{
-		endpoint_vec.at(endpoint)->send_set_stream_info_cmd(net_if, desc_type_value, (uint32_t)new_stream_info_field_value, 0xffffffffffffffff);
-		return 1;
-	}
-	else if(stream_info_field.compare("stream_dest_mac") == 0)
-	{
-		endpoint_vec.at(endpoint)->send_set_stream_info_cmd(net_if, desc_type_value, 0xffffffff, new_stream_info_field_value);
-		return 1;
-	}
-	else
-	{
-		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-		return -1;
-	}
-}
-#else
-int avdecc_cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
-                                         uint64_t new_stream_info_field_value)
-{
 	return 0;
 }
-#endif
+
 
 int avdecc_cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
 {
@@ -1069,57 +1053,20 @@ int avdecc_cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_in
 	}
 }
 
-#ifdef IMPLEMENT_SEND_SET_NAME_CMD
 int avdecc_cmd_line::cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name)
 {
-	uint16_t desc_type_value;
+	
+	std::cout << "Need to implement cmd_set_name" << std::endl;
 
-	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-
-	if(((desc_type_value == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type_value == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) && desc_index == 0) ||
-	   (endpoint_vec.at(endpoint)->get_config_desc_by_index(current_config)->are_desc_type_and_index_in_config(desc_type_value)))
-	{
-		endpoint_vec.at(endpoint)->send_set_name_cmd(net_if, desc_type_value, name_index, 0, jdksavdecc_string_get(new_name.c_str(), 0));
-		return 1;
-	}
-	else
-	{
-		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-		return -1;
-	}
-}
-#else
-int avdecc_cmd_line::cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name)
-{
 	return 0;
 }
-#endif
 
-#ifdef IMPLEMENT_SEND_GET_NAME_CMD
 int avdecc_cmd_line::cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index)
 {
-	uint16_t desc_type_value;
+	std::cout << "Need to implement cmd_get_name" << std::endl;
 
-	desc_type_value = avdecc_string_ref->convert_desc_name_to_value(desc_name.c_str());
-
-	if(((desc_type_value == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type_value == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) && desc_index == 0) ||
-	   (endpoint_vec.at(endpoint)->get_config_desc_by_index(current_config)->are_desc_type_and_index_in_config(desc_type_value)))
-	{
-		endpoint_vec.at(endpoint)->send_get_name_cmd(net_if, desc_type_value, name_index, 0);
-		return 1;
-	}
-	else
-	{
-		avdecc_lib::avdecc_notification_ref->notification(avdecc_lib::NO_MATCH_FOUND, 0, 0, 0, 0, 0);
-		return -1;
-	}
-}
-#else
-int avdecc_cmd_line::cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index)
-{
 	return 0;
 }
-#endif
 
 int avdecc_cmd_line::cmd_set_sampling_rate(std::string desc_name, uint16_t desc_index, uint32_t new_sampling_rate)
 {
