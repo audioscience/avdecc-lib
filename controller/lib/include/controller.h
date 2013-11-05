@@ -85,7 +85,7 @@ namespace avdecc_lib
 		/**
 		 * Update the base log level for messages to be logged by the logging callback.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL update_log_level(int32_t new_log_level) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_logging_level(int32_t new_log_level) = 0;
 
 		/**
 		 * \return The missed notification events count.

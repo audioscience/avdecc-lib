@@ -108,7 +108,7 @@ namespace avdecc_lib
 		/**
 		 * Update the base log level for messages to be logged by the logging callback.
 		 */
-		void STDCALL update_log_level(int32_t new_log_level);
+		void STDCALL set_logging_level(int32_t new_log_level);
 
 		/**
 		 * Get the missed notification event count.

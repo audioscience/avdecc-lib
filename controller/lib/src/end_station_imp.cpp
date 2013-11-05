@@ -445,19 +445,19 @@ namespace avdecc_lib
 
 			case JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY:
 
-				printf("\nNeed to implement LOCK_ENTITY command.");
+				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement LOCK_ENTITY command.");
 
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE:
 
-				printf("\nNeed to implement ENTITY_AVAILABLE command.");
+				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement ENTITY_AVAILABLE command.");
 
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE:
 
-				printf("\nNeed to implement CONTROLLER_AVAILABLE command.");
+				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement CONTROLLER_AVAILABLE command.");
 
 				break;
 
@@ -541,7 +541,7 @@ namespace avdecc_lib
 
 			case JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO:
 
-				printf("\nNeed to implement SET_STREAM_INFO command.");
+				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement SET_STREAM_INFO command.");
 
 				break;
 
@@ -582,13 +582,13 @@ namespace avdecc_lib
 
 			case JDKSAVDECC_AEM_COMMAND_SET_NAME:
 
-				printf("\nNeed to implement SET_NAME command.");
+				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement SET_NAME command.");
 
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_GET_NAME:
 
-				printf("\nNeed to implement GET_NAME command.");
+				log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement GET_NAME command.");
 
 				break;
 

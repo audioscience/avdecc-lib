@@ -227,35 +227,35 @@ namespace avdecc_lib
 
 	int STDCALL descriptor_base_imp::send_entity_avail_cmd()
 	{
-		printf("\nNeed to implement ENTITY_AVAILABLE command.");
+		log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement ENTITY_AVAILABLE command.");
 
 		return 0;
 	}
 
 	int descriptor_base_imp::proc_entity_avail_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
 	{
-		printf("\nNeed to implement ENTITY_AVAILABLE response.");
+		log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement ENTITY_AVAILABLE response.");
 
 		return 0;
 	}
 
 	int STDCALL descriptor_base_imp::send_set_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index, char * name)
 	{
-		printf("\nNeed to implement SET_NAME command.");
+		log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement SET_NAME command.");
 
 		return 0;
 	}
 
 	int descriptor_base_imp::proc_set_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
 	{
-		printf("\nNeed to implement SET_NAME response.");
+		log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement SET_NAME response.");
 
 		return 0;
 	}
 
 	int STDCALL descriptor_base_imp::send_get_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index)
 	{
-		printf("\nNeed to implement GET_NAME command.");
+		log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to implement GET_NAME command.");
 
 		return 0;
 	}

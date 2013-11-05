@@ -51,7 +51,7 @@ namespace avdecc_lib
 	bool system_layer2_multithreaded_callback::is_waiting = false;
 	bool system_layer2_multithreaded_callback::queue_is_waiting = false;
 	void *system_layer2_multithreaded_callback::waiting_notification_id = 0;
-	int system_layer2_multithreaded_callback::resp_status_for_cmd = STATUS_INVALID;
+	int system_layer2_multithreaded_callback::resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID;
 
 	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
 	{
@@ -122,7 +122,7 @@ namespace avdecc_lib
 	int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd(void *notification_id)
 	{
 		queue_is_waiting = true;
-		resp_status_for_cmd = STATUS_INVALID; // Reset the status
+		resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID; // Reset the status
 
 		return 0;
 	}

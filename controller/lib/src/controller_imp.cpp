@@ -153,7 +153,7 @@ namespace avdecc_lib
 		return aem_controller_state_machine_ref->find_inflight_cmd_by_notification_id(notification_id);
 	}
 
-	void STDCALL controller_imp::update_log_level(int32_t new_log_level)
+	void STDCALL controller_imp::set_logging_level(int32_t new_log_level)
 	{
 		log_ref->set_log_level(new_log_level);
 	}
@@ -244,7 +244,7 @@ namespace avdecc_lib
 							//log_ref->logging(LOGGING_LEVEL_ERROR, "Entity GUID is 0x0");
 						}
 
-						status = STATUS_INVALID;
+						status = AVDECC_LIB_STATUS_INVALID;
 						is_notification_id_valid = false;
 					}
 					break;
@@ -281,13 +281,13 @@ namespace avdecc_lib
 						else
 						{
 							//log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to have ADP packet first.");
-							status = STATUS_INVALID;
+							status = AVDECC_LIB_STATUS_INVALID;
 						}
 					}
 					break;
 
 				case JDKSAVDECC_SUBTYPE_ACMP:
-					//std::cout << "\nACMP subtype";
+					//log_ref->logging(LOGGING_LEVEL_ERROR, "ACMP subtype");
 					break;
 
 				default:
