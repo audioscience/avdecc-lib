@@ -22,30 +22,46 @@
  */
 
 /**
- * build.h
+ * system_message_queue.h
  *
- * Build file, which defines the API to be used.
+ * System message queue class, which is called by System modules to queue packets.
  */
 
-#pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_BUILD_H_
-#define _AVDECC_CONTROLLER_LIB_BUILD_H_
+#include <stdint.h>
 
-#if defined __linux__
+class system_message_queue
+{
+private:
+	HANDLE space_avail;
+	HANDLE data_avail;
+	CRITICAL_SECTION critical_section_obj;
+	uint8_t *buf;
+	int in_pos;
+	int out_pos;
+	int entry_count;
+	int entry_size;
 
-  #define AVDECC_CONTROLLER_LIB32_API
-  #define STDCALL
+public:
+	/**
+	 * An empty constructor for system_message_queue
+	 */
+	system_message_queue();
 
-#elif defined _WIN32 || defined _WIN64
+	/**
+	 * Constructor for system_message_queue used for constructing an object with count and size.
+	 */
+	system_message_queue(int count, int size);
 
-  #ifdef AVDECC_CONTROLLER_LIB32_EXPORTS
-    #define AVDECC_CONTROLLER_LIB32_API __declspec(dllexport)
-  #else
-    #define AVDECC_CONTROLLER_LIB32_API __declspec(dllimport)
-  #endif
+	/**
+	 * Destructor for system_message_queue used for destroying objects
+	 */
+	~system_message_queue();
 
-  #define STDCALL __stdcall
+	void queue_push(void *thread_data);
 
-#endif
+	void queue_pop_nowait(void *thread_data);
 
-#endif
+	void queue_pop_wait(void *thread_data);
+
+	HANDLE queue_data_available_object();
+};

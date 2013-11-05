@@ -22,29 +22,44 @@
  */
 
 /**
- * build.h
+ * avdecc_lib_os.h
  *
- * Build file, which defines the API to be used.
+ * Add handles for some OS specific objects.
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_BUILD_H_
-#define _AVDECC_CONTROLLER_LIB_BUILD_H_
+#ifndef _AVDECC_LIB_OS_H_
+#define _AVDECC_LIB_OS_H_
 
 #if defined __linux__
 
-  #define AVDECC_CONTROLLER_LIB32_API
-  #define STDCALL
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <time.h>
+#include <unistd.h>
+#include <errno.h>
+#include <cstdint>
+ 
+namespace avdecc_lib_os
+{
+	typedef uint32_t aTimestamp;
+	typedef pthread_t *aThread;
+	typedef sem_t *aSemaphore;
+}
 
 #elif defined _WIN32 || defined _WIN64
 
-  #ifdef AVDECC_CONTROLLER_LIB32_EXPORTS
-    #define AVDECC_CONTROLLER_LIB32_API __declspec(dllexport)
-  #else
-    #define AVDECC_CONTROLLER_LIB32_API __declspec(dllimport)
-  #endif
+#include <windows.h>
+namespace avdecc_lib_os
+{
+	typedef LONGLONG aTimestamp;
+	typedef HANDLE aThread;
+	typedef HANDLE aSemaphore;
+}
 
-  #define STDCALL __stdcall
 
 #endif
 

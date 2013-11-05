@@ -28,7 +28,9 @@
  */
 
 #pragma once
+#if defined _MSC_VER
 #pragma warning(disable : 4250) // Disable warning message C4250: inherits via dominance
+ #endif
 
 #ifndef _AVDECC_CONTROLLER_LIB_DESCRIPTOR_BASE_IMP_H_
 #define _AVDECC_CONTROLLER_LIB_DESCRIPTOR_BASE_IMP_H_

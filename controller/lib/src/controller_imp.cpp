@@ -28,6 +28,7 @@
  */
 
 #include <vector>
+#include <cstdint>
 #include "net_interface_imp.h"
 #include "enumeration.h"
 #include "notification.h"
