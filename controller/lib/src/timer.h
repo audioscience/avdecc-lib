@@ -38,7 +38,7 @@ typedef LONGLONG time_type;
 typedef int64_t time_type;
 #endif
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace avdecc_lib
 {
