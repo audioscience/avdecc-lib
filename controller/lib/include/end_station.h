@@ -70,9 +70,14 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor * STDCALL get_entity_desc_by_index(uint32_t entity_desc_index) = 0;
 
 		/**
-		 * Send a READ_DESCRIPTOR command with notification id to read a descriptor from an AVDECC Entity.
+		 * Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_read_desc_cmd(void *notification_id, uint16_t desc_type, uint16_t desc_index) = 0;
+
+		/**
+		 *  Send a ENTITY_AVAILABLE command to verify that an AVDECC Entity is still available and responding to commands.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_entity_avail_cmd(void *notification_id) = 0;
 	};
 }
 

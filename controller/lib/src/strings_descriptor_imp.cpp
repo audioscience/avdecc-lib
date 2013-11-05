@@ -28,7 +28,7 @@
  */
 
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "strings_descriptor_imp.h"
 
 namespace avdecc_lib
@@ -41,7 +41,7 @@ namespace avdecc_lib
 
 		if(desc_strings_read_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "desc_strings_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_strings_read error");
 			assert(desc_strings_read_returned >= 0);
 		}
 	}
@@ -92,7 +92,7 @@ namespace avdecc_lib
 				break;
 
 			default:
-				log_ref->logging(LOGGING_LEVEL_ERROR, "get_string_by_index error");
+				log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_string_by_index error");
 				break;
 		}
 

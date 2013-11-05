@@ -30,7 +30,7 @@
 #include <vector>
 #include "util_imp.h"
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "adp.h"
 #include "aecp.h"
 #include "end_station_imp.h"
@@ -48,7 +48,7 @@ namespace avdecc_lib
 
 		if(stream_output_desc_read_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "desc_stream_output_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_stream_output_read error");
 			assert(stream_output_desc_read_returned >= 0);
 		}
 
@@ -296,7 +296,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_set_stream_format_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_set_stream_format_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_stream_format_write error\n");
 			assert(aem_cmd_set_stream_format_returned >= 0);
 			return -1;
 		}
@@ -325,7 +325,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_set_stream_format_resp_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_set_stream_format_resp_read error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_stream_format_resp_read error\n");
 			assert(aem_cmd_set_stream_format_resp_returned >= 0);
 			return -1;
 		}
@@ -365,7 +365,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_get_stream_format_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_format_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_format_write error\n");
 			assert(aem_cmd_get_stream_format_returned >= 0);
 			return -1;
 		}
@@ -394,7 +394,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_get_stream_format_resp_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_format_resp_read error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_format_resp_read error\n");
 			assert(aem_cmd_get_stream_format_resp_returned >= 0);
 			return -1;
 		}
@@ -411,14 +411,14 @@ namespace avdecc_lib
 
 	int STDCALL stream_output_descriptor_imp::send_set_stream_info_cmd(void *notification_id, void *new_stream_info_field)
 	{
-		printf("\nNeed to implement SET_STREAM_INFO command.");
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO command.");
 
 		return 0;
 	}
 
 	int stream_output_descriptor_imp::proc_set_stream_info_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
-		printf("\nNeed to implement SET_STREAM_INFO response.");
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO response.");
 
 		return 0;
 	}
@@ -448,7 +448,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_get_stream_info_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_info_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_info_write error\n");
 			assert(aem_cmd_get_stream_info_returned >= 0);
 			return -1;
 		}
@@ -477,7 +477,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_get_stream_info_resp_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_info_resp_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_info_resp_read error");
 			assert(aem_cmd_get_stream_info_resp_returned >= 0);
 			return -1;
 		}
@@ -517,7 +517,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_start_streaming_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_start_streaming_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_start_streaming_write error\n");
 			assert(aem_cmd_start_streaming_returned >= 0);
 			return -1;
 		}
@@ -546,7 +546,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_start_streaming_resp_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_start_streaming_resp_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_start_streaming_resp_read error");
 			assert(aem_cmd_start_streaming_resp_returned >= 0);
 			return -1;
 		}
@@ -586,7 +586,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_stop_streaming_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_stop_streaming_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_stop_streaming_write error\n");
 			assert(aem_cmd_stop_streaming_returned >= 0);
 			return -1;
 		}
@@ -615,7 +615,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_stop_streaming_resp_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_stop_streaming_resp_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_stop_streaming_resp_read error");
 			assert(aem_cmd_stop_streaming_resp_returned >= 0);
 			return -1;
 		}

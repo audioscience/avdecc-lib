@@ -170,8 +170,6 @@ namespace avdecc_lib
 		"STATUS_ENTITY_MISBEHAVING",
 		"STATUS_NOT_SUPPORTED",
 		"STATUS_STREAM_IS_RUNNING",
-		"STATUS_INVALID",
-		"STATUS_TICK_TIMEOUT"
 	};
 
 	const char *notification_names[] =
@@ -287,7 +285,15 @@ namespace avdecc_lib
 		{
 			return aem_cmds_status_names[cmd_status_value];
 		}
-
+		else if(cmd_status_value == AVDECC_LIB_STATUS_INVALID)
+		{
+			return "AVDECC_LIB_STATUS_INVALID";
+		}
+		else if(cmd_status_value == AVDECC_LIB_STATUS_TICK_TIMEOUT)
+		{
+			return "AVDECC_LIB_STATUS_TICK_TIMEOUT";
+		}
+					
 		return "UNKNOWN";
 	}
 

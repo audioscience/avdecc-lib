@@ -31,11 +31,12 @@
 #include <cstdint>
 #include "net_interface_imp.h"
 #include "enumeration.h"
-#include "notification.h"
-#include "log.h"
+#include "notification_imp.h"
+#include "log_imp.h"
 #include "util_imp.h"
 #include "adp.h"
 #include "aecp.h"
+#include "system_tx_queue.h"
 #include "end_station_imp.h"
 #include "adp_discovery_state_machine.h"
 #include "aem_controller_state_machine.h"
@@ -54,7 +55,7 @@ namespace avdecc_lib
 
 		if(!net_interface_ref)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "Dynamic cast from derived net_interface_imp to base net_interface error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived net_interface_imp to base net_interface error");
 		}
 
 		controller_imp_ref = new controller_imp(notification_callback, log_callback);
@@ -66,8 +67,8 @@ namespace avdecc_lib
 	controller_imp::controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
 	                               void (*log_callback) (void *, int32_t, const char *, int32_t))
 	{
-		notification_ref->set_notification_callback(notification_callback, NULL);
-		log_ref->set_logging_callback(log_callback, NULL);
+		notification_imp_ref->set_notification_callback(notification_callback, NULL);
+		log_imp_ref->set_log_callback(log_callback, NULL);
 	}
 
 	controller_imp::~controller_imp()
@@ -90,10 +91,10 @@ namespace avdecc_lib
 		return AVDECC_CONTROLLER_VERSION;
 	}
 
-	uint64_t STDCALL controller_imp::get_controller_guid()
-	{
-		return controller_guid;
-	}
+	//uint64_t STDCALL controller_imp::get_controller_guid()
+	//{
+	//	return controller_guid;
+	//}
 
 	uint32_t STDCALL controller_imp::get_end_station_count()
 	{
@@ -137,7 +138,7 @@ namespace avdecc_lib
 
 		else
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
 			return NULL;
 		}
 	}
@@ -153,19 +154,19 @@ namespace avdecc_lib
 		return aem_controller_state_machine_ref->find_inflight_cmd_by_notification_id(notification_id);
 	}
 
-	void STDCALL controller_imp::update_log_level(int32_t new_log_level)
+	void STDCALL controller_imp::set_logging_level(int32_t new_log_level)
 	{
-		log_ref->set_log_level(new_log_level);
+		log_imp_ref->set_log_level(new_log_level);
 	}
 
 	uint32_t STDCALL controller_imp::missed_notification_count()
 	{
-		return notification_ref->get_missed_notification_event_count();
+		return notification_imp_ref->get_missed_notification_event_count();
 	}
 
 	uint32_t STDCALL controller_imp::missed_log_count()
 	{
-		return log_ref->get_missed_log_event_count();
+		return log_imp_ref->get_missed_log_event_count();
 	}
 
 	void STDCALL controller_imp::time_tick_event()
@@ -200,7 +201,7 @@ namespace avdecc_lib
 						bool found_adp_in_end_station = false;
 						uint64_t entity_guid = jdksavdecc_uint64_get(frame, adp::ETHER_HDR_SIZE + adp::PROTOCOL_HDR_SIZE);
 
-						//log_ref->logging(LOGGING_LEVEL_DEBUG, "ADP packet discovered.");
+						//log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "ADP packet discovered.");
 
 						/**
 						 * Check if an ADP object is already in the system. If not, create a new End Station object storing the ADPDU information
@@ -241,10 +242,10 @@ namespace avdecc_lib
 						}
 						else
 						{
-							//log_ref->logging(LOGGING_LEVEL_ERROR, "Entity GUID is 0x0");
+							//log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Entity GUID is 0x0");
 						}
 
-						status = STATUS_INVALID;
+						status = AVDECC_LIB_STATUS_INVALID;
 						is_notification_id_valid = false;
 					}
 					break;
@@ -275,23 +276,33 @@ namespace avdecc_lib
 
 						if(found_aecp_in_end_station)
 						{
-							end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							uint16_t cmd_type = jdksavdecc_uint16_get(frame, aecp::CMD_TYPE_POS);
+
+							if(cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
+							{
+								proc_controller_avail_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							}
+							else
+							{
+								end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							}
+
 							is_notification_id_valid = true;
 						}
 						else
 						{
-							//log_ref->logging(LOGGING_LEVEL_DEBUG, "Need to have ADP packet first.");
-							status = STATUS_INVALID;
+							//log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Need to have ADP packet first.");
+							status = AVDECC_LIB_STATUS_INVALID;
 						}
 					}
 					break;
 
 				case JDKSAVDECC_SUBTYPE_ACMP:
-					//std::cout << "\nACMP subtype";
+					//log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "ACMP subtype");
 					break;
 
 				default:
-					//log_ref->logging(LOGGING_LEVEL_ERROR, "Invalid subtype");
+					//log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid subtype");
 					break;
 			}
 		}
@@ -307,5 +318,71 @@ namespace avdecc_lib
 		aem_controller_state_machine_ref->set_do_cmd(true);
 		aem_controller_state_machine_ref->aem_controller_state_waiting(notification_id, notification_flag, &packet_frame);
 		memcpy(frame, packet_frame.payload, mem_buf_len);
+	}
+
+	int STDCALL controller_imp::send_controller_avail_cmd(void *notification_id, uint32_t end_station_index)
+	{
+		struct jdksavdecc_frame *ether_frame;
+		struct jdksavdecc_aem_command_controller_available aem_cmd_controller_avail;
+		int aem_cmd_controller_avail_returned;
+		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+
+		/*************************************************** AECP Common Data **************************************************/
+		aem_cmd_controller_avail.controller_entity_id = end_station_vec.at(end_station_index)->get_adp()->get_controller_guid();
+		// Fill aem_cmd_controller_avail.sequence_id in AEM Controller State Machine
+		aem_cmd_controller_avail.command_type = JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE;
+
+		/******************************** Fill frame payload with AECP data and send the frame ***************************/
+		aecp::ether_frame_init(end_station_vec.at(end_station_index), ether_frame);
+		aem_cmd_controller_avail_returned = jdksavdecc_aem_command_controller_available_write(&aem_cmd_controller_avail,
+												      ether_frame->payload,
+												      aecp::CMD_POS,
+												      sizeof(ether_frame->payload));
+
+		if(aem_cmd_controller_avail_returned < 0)
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_write error\n");
+			assert(aem_cmd_controller_avail_returned >= 0);
+			return -1;
+		}
+
+		aecp::common_hdr_init(ether_frame, end_station_vec.at(end_station_index)->get_end_station_guid());
+		system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+
+		free(ether_frame);
+		return 0;
+	}
+
+	int controller_imp::proc_controller_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	{
+		struct jdksavdecc_frame *ether_frame;
+		struct jdksavdecc_aem_command_controller_available_response aem_cmd_controller_avail_resp;
+		int aem_cmd_controller_avail_resp_returned = 0;
+		uint32_t msg_type = 0;
+		bool u_field = false;
+
+		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+		memcpy(ether_frame->payload, frame, mem_buf_len);
+
+		aem_cmd_controller_avail_resp_returned = jdksavdecc_aem_command_controller_available_response_read(&aem_cmd_controller_avail_resp,
+														   frame,
+														   aecp::CMD_POS,
+														   mem_buf_len);
+
+		if(aem_cmd_controller_avail_resp_returned < 0)
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_resp_read error\n");
+			assert(aem_cmd_controller_avail_resp_returned >= 0);
+			return -1;
+		}
+
+		msg_type = aem_cmd_controller_avail_resp.aem_header.aecpdu_header.header.message_type;
+		status = aem_cmd_controller_avail_resp.aem_header.aecpdu_header.header.status;
+		u_field = aem_cmd_controller_avail_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+
+		free(ether_frame);
+		return 0;
 	}
 }

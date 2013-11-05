@@ -184,12 +184,12 @@ namespace avdecc_lib
 		configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index);
 
 		/**
-		 * Send a ACQURE ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
+		 * Send a ACQURE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
 		 */
 		int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag);
 
 		/**
-		 * Process a ACQURE ENTITY response for the ACQURE ENTITY command.
+		 * Process a ACQURE_ENTITY response for the ACQURE_ENTITY command.
 		 */
 		int proc_acquire_entity_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 

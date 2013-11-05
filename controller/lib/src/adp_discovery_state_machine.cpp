@@ -31,8 +31,8 @@
 #include <vector>
 #include "net_interface_imp.h"
 #include "enumeration.h"
-#include "notification.h"
-#include "log.h"
+#include "notification_imp.h"
+#include "log_imp.h"
 #include "adp.h"
 #include "adp_discovery_state_machine.h"
 
@@ -66,7 +66,7 @@ namespace avdecc_lib
 
 		if(send_frame_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "netif_send_frame error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "netif_send_frame error");
 			assert(send_frame_returned >= 0);
 		}
 
@@ -155,7 +155,7 @@ namespace avdecc_lib
 			entity.avdecc_lib_timer_ref = new timer();
 			entity.avdecc_lib_timer_ref ->start(END_STATION_CONNECTION_TIMEOUT);
 			adp_discovery_add_entity(entity);
-			notification_ref->notifying(END_STATION_CONNECTED, entity_guid, 0, 0, 0, 0);
+			notification_imp_ref->post_notification_msg(END_STATION_CONNECTED, entity_guid, 0, 0, 0, 0);
 		}
 
 		discovery_state_machine_vars.rcvd_avail = false;
@@ -181,7 +181,7 @@ namespace avdecc_lib
 			{
 				end_station_guid = discovery_state_machine_vars.entities_vector.at(index_i).entity_id;
 				adp_discovery_state_timeout(index_i);
-				notification_ref->notifying(END_STATION_DISCONNECTED, end_station_guid, 0, 0, 0, 0);
+				notification_imp_ref->post_notification_msg(END_STATION_DISCONNECTED, end_station_guid, 0, 0, 0, 0);
 				return true;
 			}
 		}

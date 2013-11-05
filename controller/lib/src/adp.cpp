@@ -31,7 +31,7 @@
 
 #include "net_interface_imp.h"
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "util_imp.h"
 #include "adp.h"
 
@@ -51,7 +51,7 @@ namespace avdecc_lib
 
 		if(frame_read_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "frame_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "frame_read error");
 			assert(frame_read_returned >= 0);
 		}
 
@@ -59,7 +59,7 @@ namespace avdecc_lib
 
 		if(adpdu_read_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "adpdu_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "adpdu_read error");
 			assert(adpdu_read_returned >= 0);
 		}
 
@@ -123,7 +123,7 @@ namespace avdecc_lib
 
 		if(adpdu_common_ctrl_hdr_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
 			assert(adpdu_common_ctrl_hdr_returned >= 0);
 		}
 	}

@@ -51,7 +51,7 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_index() = 0;
 
 		/**
-		 * Send a ACQURE ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
+		 * Send a ACQURE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag) = 0;
 
@@ -59,11 +59,6 @@ namespace avdecc_lib
 		 * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag) = 0;
-
-		/**
-		 * Send a ENTITY AVAILABLE command to determine if another AVDECC Entity is still alive and responding to commands.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_entity_avail_cmd() = 0;
 
 		/**
 		 * Send a SET_NAME command to change the value of a name field within a descriptor.

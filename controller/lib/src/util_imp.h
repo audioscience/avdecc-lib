@@ -84,7 +84,7 @@ namespace avdecc_lib
 		const char * STDCALL notification_value_to_name(uint16_t notification_value);
 
 		/**
-		 * Convert logging value to its corresponding logging name.
+		 * Convert post_log_msg value to its corresponding post_log_msg name.
 		 */
 		const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value);
 

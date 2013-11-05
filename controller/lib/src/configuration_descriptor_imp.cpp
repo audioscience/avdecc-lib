@@ -29,7 +29,7 @@
 
 #include <vector>
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "end_station_imp.h"
 #include "configuration_descriptor_imp.h"
 
@@ -43,7 +43,7 @@ namespace avdecc_lib
 
 		if(desc_config_read_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "desc_config_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_config_read error");
 			assert(desc_config_read_returned >= 0);
 		}
 

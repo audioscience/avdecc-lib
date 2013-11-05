@@ -31,8 +31,8 @@
 #include "net_interface_imp.h"
 #include "util_imp.h"
 #include "enumeration.h"
-#include "notification.h"
-#include "log.h"
+#include "notification_imp.h"
+#include "log_imp.h"
 #include "adp.h"
 #include "aecp.h"
 #include "aem_controller_state_machine.h"
@@ -72,7 +72,7 @@ namespace avdecc_lib
 		send_frame_returned = net_interface_ref->send_frame(ether_frame->payload, ether_frame->length);
 		if(send_frame_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "netif_send_frame error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "netif_send_frame error");
 			assert(send_frame_returned >= 0);
 		}
 
@@ -106,7 +106,7 @@ namespace avdecc_lib
 			notification_id = controller_state_machine_vars.inflight_cmds_vector.at(inflight_index).notification_id;
 			notification_flag = controller_state_machine_vars.inflight_cmds_vector.at(inflight_index).notification_flag;
 			callback(notification_id, notification_flag, ether_frame->payload);
-			log_ref->logging(LOGGING_LEVEL_DEBUG, "Command Success");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command Success");
 			remove_inflight_cmd(inflight_index);
 
 			return 1;
@@ -121,13 +121,13 @@ namespace avdecc_lib
 
 		if(is_retry)
 		{
-			log_ref->logging(LOGGING_LEVEL_DEBUG, "Command timeout");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
 			remove_inflight_cmd(inflight_cmd_index);
 			printf("\n>");
 		}
 		else
 		{
-			log_ref->logging(LOGGING_LEVEL_DEBUG,
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
 			                             "Resend the command with sequence id = %d",
 			                             controller_state_machine_vars.inflight_cmds_vector.at(inflight_cmd_index).seq_id);
 
@@ -211,7 +211,7 @@ namespace avdecc_lib
 		}
 		else
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "Invalid message type");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid message type");
 			return -1;
 		}
 
@@ -236,6 +236,9 @@ namespace avdecc_lib
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE:
+				break;
+
+			case JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE:
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR:
@@ -304,13 +307,13 @@ namespace avdecc_lib
 				break;
 
 			default:
-				log_ref->logging(LOGGING_LEVEL_DEBUG, "NO_MATCH_FOUND for %s", utility->cmd_value_to_name(cmd_type));
+				log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "NO_MATCH_FOUND for %s", utility->cmd_value_to_name(cmd_type));
 				break;
 		}
 
 		if((notification_flag == CMD_WITH_NOTIFICATION) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE))
 		{
-			notification_ref->notifying(RESPONSE_RECEIVED,
+			notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
 			                            jdksavdecc_uint64_get(frame, aecp::TARGET_GUID_POS),
 			                            cmd_type,
 			                            desc_type,
@@ -319,7 +322,7 @@ namespace avdecc_lib
 		}
 		else if(((notification_flag == CMD_WITH_NOTIFICATION) || (notification_flag == CMD_WITHOUT_NOTIFICATION)) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND))
 		{
-			log_ref->logging(LOGGING_LEVEL_DEBUG,
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
 			                 "COMMAND_SENT, 0x%llx, %s, %s, %d, %d",
 			                 jdksavdecc_uint64_get(frame, aecp::TARGET_GUID_POS),
 			                 utility->cmd_value_to_name(cmd_type),
@@ -329,7 +332,7 @@ namespace avdecc_lib
 		}
 		else if((notification_flag == CMD_WITHOUT_NOTIFICATION) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE))
 		{
-			log_ref->logging(LOGGING_LEVEL_DEBUG,
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
 			                 "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d",
 			                 jdksavdecc_uint64_get(frame, aecp::TARGET_GUID_POS),
 			                 utility->cmd_value_to_name(cmd_type),

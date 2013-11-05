@@ -30,8 +30,8 @@
 #include <vector>
 #include "net_interface.h"
 #include "enumeration.h"
-#include "notification.h"
-#include "log.h"
+#include "notification_imp.h"
+#include "log_imp.h"
 #include "end_station.h"
 #include "controller.h"
 #include "system_message_queue.h"
@@ -51,7 +51,7 @@ namespace avdecc_lib
 	bool system_layer2_multithreaded_callback::is_waiting = false;
 	bool system_layer2_multithreaded_callback::queue_is_waiting = false;
 	void *system_layer2_multithreaded_callback::waiting_notification_id = 0;
-	int system_layer2_multithreaded_callback::resp_status_for_cmd = STATUS_INVALID;
+	int system_layer2_multithreaded_callback::resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID;
 
 	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
 	{
@@ -122,7 +122,7 @@ namespace avdecc_lib
 	int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd(void *notification_id)
 	{
 		queue_is_waiting = true;
-		resp_status_for_cmd = STATUS_INVALID; // Reset the status
+		resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID; // Reset the status
 
 		return 0;
 	}
@@ -155,7 +155,7 @@ namespace avdecc_lib
 			{
 				if(!SetEvent(data->timeout_event))
 				{
-					log_ref->logging(LOGGING_LEVEL_ERROR, "SetEvent pkt_event_wpcap_timeout failed");
+					log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "SetEvent pkt_event_wpcap_timeout failed");
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -185,7 +185,7 @@ namespace avdecc_lib
 	{
 		if(init_wpcap_thread() < 0 || init_poll_thread() < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "init_polling error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "init_polling error");
 		}
 
 		return 0;
@@ -208,7 +208,7 @@ namespace avdecc_lib
 
 		if(poll_rx.queue_thread.handle == NULL)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "Error creating the wpcap thread");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Error creating the wpcap thread");
 			exit(EXIT_FAILURE);
 		}
 
@@ -237,7 +237,7 @@ namespace avdecc_lib
 
 		if(poll_thread.handle == NULL)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "Error creating the poll thread");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Error creating the poll thread");
 			exit(EXIT_FAILURE);
 		}
 

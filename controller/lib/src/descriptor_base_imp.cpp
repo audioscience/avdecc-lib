@@ -28,7 +28,7 @@
  */
 
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "adp.h"
 #include "aecp.h"
 #include "end_station_imp.h"
@@ -76,18 +76,18 @@ namespace avdecc_lib
 		int aem_cmd_acquire_entity_returned;
 		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
-		/***************************************** AECP Common Data ********************************************/
+		/***************************************** AECP Common Data *********************************************/
 		aem_cmd_acquire_entity.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
 		// Fill aem_cmd_acquire_entity.sequence_id in AEM Controller State Machine
 		aem_cmd_acquire_entity.command_type = JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY;
 
-		/************************** AECP Message Specific Data ************************/
+		/****************************** AECP Message Specific Data ******************************/
 		aem_cmd_acquire_entity.aem_acquire_flags = acquire_entity_flag;
 		jdksavdecc_eui64_init(&aem_cmd_acquire_entity.owner_entity_id);
 		aem_cmd_acquire_entity.descriptor_type = descriptor_base_imp_ref->get_descriptor_type();
 		aem_cmd_acquire_entity.descriptor_index = descriptor_base_imp_ref->get_descriptor_index();
 
-		/******************************** Fill frame payload with AECP data and send the frame ***************************/
+		/***************************** Fill frame payload with AECP data and send the frame ***********************/
 		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_acquire_entity_returned = jdksavdecc_aem_command_acquire_entity_write(&aem_cmd_acquire_entity,
 		                                                                              ether_frame->payload,
@@ -96,7 +96,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_acquire_entity_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_write error\n");
 			assert(aem_cmd_acquire_entity_returned >= 0);
 			return -1;
 		}
@@ -126,7 +126,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_acquire_entity_resp_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_resp_read error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_acquire_entity_resp_read error\n");
 			assert(aem_cmd_acquire_entity_resp_returned >= 0);
 			return -1;
 		}
@@ -160,7 +160,7 @@ namespace avdecc_lib
 		int aem_cmd_acquire_entity_returned;
 		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
-		/***************************************** AECP Common Data ********************************************/
+		/***************************************** AECP Common Data ******************************************/
 		aem_cmd_lock_entity.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
 		// Fill aem_cmd_lock_entity.sequence_id in AEM Controller State Machine
 		aem_cmd_lock_entity.command_type = JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY;
@@ -171,7 +171,7 @@ namespace avdecc_lib
 		aem_cmd_lock_entity.descriptor_type = descriptor_base_imp_ref->get_descriptor_type();
 		aem_cmd_lock_entity.descriptor_index = descriptor_base_imp_ref->get_descriptor_index();
 
-		/******************************** Fill frame payload with AECP data and send the frame ***************************/
+		/**************************** Fill frame payload with AECP data and send the frame **********************/
 		aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
 		aem_cmd_acquire_entity_returned = jdksavdecc_aem_command_lock_entity_write(&aem_cmd_lock_entity,
 		                                                                           ether_frame->payload,
@@ -180,7 +180,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_acquire_entity_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_write error\n");
 			assert(aem_cmd_acquire_entity_returned >= 0);
 			return -1;
 		}
@@ -196,9 +196,9 @@ namespace avdecc_lib
 							       uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
-		int aem_cmd_lock_entity_resp_returned;
-		uint32_t msg_type;
-		bool u_field;
+		int aem_cmd_lock_entity_resp_returned = 0;
+		uint32_t msg_type = 0;
+		bool u_field = false;
 
 		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 		memcpy(ether_frame->payload, frame, mem_buf_len);
@@ -210,7 +210,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_lock_entity_resp_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_resp_read error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_resp_read error\n");
 			assert(aem_cmd_lock_entity_resp_returned >= 0);
 			return -1;
 		}
@@ -225,37 +225,23 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int STDCALL descriptor_base_imp::send_entity_avail_cmd()
-	{
-		printf("\nNeed to implement ENTITY_AVAILABLE command.");
-
-		return 0;
-	}
-
-	int descriptor_base_imp::proc_entity_avail_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
-	{
-		printf("\nNeed to implement ENTITY_AVAILABLE response.");
-
-		return 0;
-	}
-
 	int STDCALL descriptor_base_imp::send_set_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index, char * name)
 	{
-		printf("\nNeed to implement SET_NAME command.");
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_NAME command.");
 
 		return 0;
 	}
 
 	int descriptor_base_imp::proc_set_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len)
 	{
-		printf("\nNeed to implement SET_NAME response.");
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_NAME response.");
 
 		return 0;
 	}
 
 	int STDCALL descriptor_base_imp::send_get_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index)
 	{
-		printf("\nNeed to implement GET_NAME command.");
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_NAME command.");
 
 		return 0;
 	}

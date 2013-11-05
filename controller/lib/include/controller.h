@@ -55,7 +55,7 @@ namespace avdecc_lib
 		/**
 		 * \return The AVDECC Controller GUID of the AVDECC Entity sending the command.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_controller_guid() = 0;
+		//AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_controller_guid() = 0;
 
 		/**
 		 * \return The total number of End Stations connected.
@@ -83,9 +83,9 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL is_inflight_cmd_with_notification_id(void *notification_id) = 0;
 
 		/**
-		 * Update the base log level for messages to be logged by the logging callback.
+		 * Update the base log level for messages to be logged by the post_log_msg callback.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL update_log_level(int32_t new_log_level) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_logging_level(int32_t new_log_level) = 0;
 
 		/**
 		 * \return The missed notification events count.
@@ -111,10 +111,15 @@ namespace avdecc_lib
 		 * Send queued packet to the AEM Controller State Machine.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len) = 0;
+
+		/**
+		 * Send a CONTROLLER_AVAILABLE command to verify that the AVDECC Controller is still there.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_controller_avail_cmd(void *notification_id, uint32_t end_station_index) = 0;
 	};
 
 	/**
-	 * Create a public AVDECC Controller object with a network interface object, notification and logging callback functions used for accessing from outside the library.
+	 * Create a public AVDECC Controller object with a network interface object, notification and post_log_msg callback functions used for accessing from outside the library.
 	 *
 	 * \param netif A network interface object created in the application level using the public network interface API provided.
 	 * \param notification_user_obj A void pointer used to store any helpful C++ class object.
@@ -126,7 +131,7 @@ namespace avdecc_lib
 	 * \param notification_id A void pointer to the unique identifier for each notification message.
 	 *
 	 * \param log_user_obj A void pointer used to store any helpful class object.
-	 * \param log_level The log level that the callback function is called with. (Refer to logging levels enumeration included in the library for a list of log levels supported.)
+	 * \param log_level The log level that the callback function is called with. (Refer to post_log_msg levels enumeration included in the library for a list of log levels supported.)
 	 * \param log_msg A message containing additional information to be logged.
 	 * \param time_stamp_ms The time in milliseconds indicating when the message is logged.
 	 */

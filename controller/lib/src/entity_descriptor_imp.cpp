@@ -29,7 +29,7 @@
 
 #include <vector>
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "end_station_imp.h"
 #include "entity_descriptor_imp.h"
 
@@ -37,13 +37,13 @@ namespace avdecc_lib
 {
 	entity_descriptor_imp::entity_descriptor_imp() {}
 
-	entity_descriptor_imp::entity_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
+	entity_descriptor_imp::entity_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len)// : descriptor_base_imp(base_end_station_imp_ref)
 	{
 		desc_entity_read_returned = jdksavdecc_descriptor_entity_read(&entity_desc, frame, pos, mem_buf_len);
 
 		if(desc_entity_read_returned < 0)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "entity_desc_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "entity_desc_read error");
 			assert(desc_entity_read_returned >= 0);
 		}
 	}
@@ -191,14 +191,14 @@ namespace avdecc_lib
 
 	int STDCALL entity_descriptor_imp::send_set_config_cmd()
 	{
-		printf("\nNeed to implement SET_CONFIGURATION command.");
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION command.");
 
 		return 0;
 	}
 
 	int STDCALL entity_descriptor_imp::send_get_config_cmd()
 	{
-		printf("\nNeed to implement SET_CONFIGURATION response.");
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION response.");
 
 		return 0;
 	}
