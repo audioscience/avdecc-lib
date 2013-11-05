@@ -42,6 +42,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <cstdint>
+
+#define vsprintf_s vsnprintf
  
 namespace avdecc_lib_os
 {
