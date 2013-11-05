@@ -31,12 +31,21 @@
 #ifndef _AVDECC_CONTROLLER_LIB_BUILD_H_
 #define _AVDECC_CONTROLLER_LIB_BUILD_H_
 
-#ifdef AVDECC_CONTROLLER_LIB32_EXPORTS
-#define AVDECC_CONTROLLER_LIB32_API __declspec(dllexport)
-#else
-#define AVDECC_CONTROLLER_LIB32_API __declspec(dllimport)
-#endif
+#if defined __linux__
 
-#define STDCALL __stdcall
+  #define AVDECC_CONTROLLER_LIB32_API
+  #define STDCALL
+
+#elif defined _WIN32 || defined _WIN64
+
+  #ifdef AVDECC_CONTROLLER_LIB32_EXPORTS
+    #define AVDECC_CONTROLLER_LIB32_API __declspec(dllexport)
+  #else
+    #define AVDECC_CONTROLLER_LIB32_API __declspec(dllimport)
+  #endif
+
+  #define STDCALL __stdcall
+
+#endif
 
 #endif

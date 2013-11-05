@@ -22,50 +22,46 @@
  */
 
 /**
- * timer.h
+ * system_message_queue.h
  *
- * Timer class
+ * System message queue class, which is called by System modules to queue packets.
  */
 
-#pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_TIMER_H_
-#define _AVDECC_CONTROLLER_LIB_TIMER_H_
+#include <stdint.h>
 
-#include <cstdint>
-
-#include "avdecc_lib_os.h"
-
-namespace avdecc_lib
+class system_message_queue
 {
-	class timer
-	{
-	private:
-		bool running;
-		bool elapsed;
-		uint32_t count;
-		avdecc_lib_os::aTimestamp start_time;
+private:
+	HANDLE space_avail;
+	HANDLE data_avail;
+	CRITICAL_SECTION critical_section_obj;
+	uint8_t *buf;
+	int in_pos;
+	int out_pos;
+	int entry_count;
+	int entry_size;
 
-	public:
-		/**
-		 * An empty constructor for timer
-		 */
-		timer();
+public:
+	/**
+	 * An empty constructor for system_message_queue
+	 */
+	system_message_queue();
 
-		/**
-		 * Destructor for timer used for destroying objects
-		 */
-		~timer();
+	/**
+	 * Constructor for system_message_queue used for constructing an object with count and size.
+	 */
+	system_message_queue(int count, int size);
 
-		avdecc_lib_os::aTimestamp clk_monotonic(void);
+	/**
+	 * Destructor for system_message_queue used for destroying objects
+	 */
+	~system_message_queue();
 
-		uint32_t clk_convert_to_ms(avdecc_lib_os::aTimestamp timestamp);
+	void queue_push(void *thread_data);
 
-		void start(int duration_ms);
+	void queue_pop_nowait(void *thread_data);
 
-		void stop();
+	void queue_pop_wait(void *thread_data);
 
-		int timeout();
-	};
-}
-
-#endif
+	HANDLE queue_data_available_object();
+};

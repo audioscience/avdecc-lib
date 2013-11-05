@@ -15,3 +15,5 @@ bin
 *.cache
 *.idb
 *.orig
+*.o
+

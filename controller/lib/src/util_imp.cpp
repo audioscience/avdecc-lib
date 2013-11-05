@@ -196,7 +196,7 @@ namespace avdecc_lib
 	struct ieee1722_format
 	{
 		uint64_t fmt;
-		char *str;
+		const char *str;
 	};
 
 	struct ieee1722_format ieee1722_format_table[] =

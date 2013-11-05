@@ -22,50 +22,45 @@
  */
 
 /**
- * timer.h
+ * avdecc_lib_os.h
  *
- * Timer class
+ * Add handles for some OS specific objects.
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_TIMER_H_
-#define _AVDECC_CONTROLLER_LIB_TIMER_H_
+#ifndef _AVDECC_LIB_OS_H_
+#define _AVDECC_LIB_OS_H_
 
+#if defined __linux__
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <time.h>
+#include <unistd.h>
+#include <errno.h>
 #include <cstdint>
-
-#include "avdecc_lib_os.h"
-
-namespace avdecc_lib
+ 
+namespace avdecc_lib_os
 {
-	class timer
-	{
-	private:
-		bool running;
-		bool elapsed;
-		uint32_t count;
-		avdecc_lib_os::aTimestamp start_time;
-
-	public:
-		/**
-		 * An empty constructor for timer
-		 */
-		timer();
-
-		/**
-		 * Destructor for timer used for destroying objects
-		 */
-		~timer();
-
-		avdecc_lib_os::aTimestamp clk_monotonic(void);
-
-		uint32_t clk_convert_to_ms(avdecc_lib_os::aTimestamp timestamp);
-
-		void start(int duration_ms);
-
-		void stop();
-
-		int timeout();
-	};
+	typedef uint32_t aTimestamp;
+	typedef pthread_t *aThread;
+	typedef sem_t *aSemaphore;
 }
+
+#elif defined _WIN32 || defined _WIN64
+
+#include <windows.h>
+namespace avdecc_lib_os
+{
+	typedef LONGLONG aTimestamp;
+	typedef HANDLE aThread;
+	typedef HANDLE aSemaphore;
+}
+
+
+#endif
 
 #endif
