@@ -22,48 +22,60 @@
  */
 
 /**
- * avdecc_lib_os.h
+ * log_imp.h
  *
- * Add handles for some OS specific objects.
+ * Log implementation class
  */
 
 #pragma once
-#ifndef _AVDECC_LIB_OS_H_
-#define _AVDECC_LIB_OS_H_
+#ifndef _AVDECC_CONTROLLER_LIB_IMP_LOG_H_
+#define _AVDECC_CONTROLLER_LIB_IMP_LOG_H_
 
-#if defined __linux__
+#include "avdecc_lib_os.h"
+#include <stdint.h>
+#include "log.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include <time.h>
-#include <unistd.h>
-#include <errno.h>
-#include <cstdint>
-
-#define vsprintf_s vsnprintf
-#define InterlockedExchangeAdd __sync_fetch_and_add
- 
-namespace avdecc_lib_os
+namespace avdecc_lib
 {
-	typedef uint32_t aTimestamp;
-	typedef pthread_t *aThread;
-	typedef sem_t *aSemaphore;
+	class log_imp : public virtual log
+	{
+	private:
+
+		pthread_t h_thread;
+		sem_t log_waiting;
+
+	public:
+		/**
+		 * An empty constructor for log_imp
+		 */
+		log_imp();
+
+		/**
+		 * Destructor for log_imp used for destroying objects
+		 */
+		virtual ~log_imp();
+
+	private:
+		/**
+		 * Create and initialize post_log_msg thread, event, and semaphore.
+		 */
+		int logging_thread_init();
+
+		/**
+		 * Start of the post_log_msg thread used for post_log_msg purposes.
+		 */
+		static void * dispatch_thread(void *param);
+
+		void * dispatch_callbacks(void);
+
+	public:
+		/**
+		 * Release sempahore so that log callback function is called.
+		 */
+		void post_log_event();
+	};
+
+	extern log_imp *log_imp_ref;
 }
-
-#elif defined _WIN32 || defined _WIN64
-
-#include <windows.h>
-namespace avdecc_lib_os
-{
-	typedef LONGLONG aTimestamp;
-	typedef HANDLE aThread;
-	typedef HANDLE aSemaphore;
-}
-
-
-#endif
 
 #endif

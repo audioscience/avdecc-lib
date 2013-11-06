@@ -48,7 +48,11 @@ OBJS =  adp.o \
 	stream_output_descriptor_imp.o \
 	strings_descriptor_imp.o \
 	timer.o \
-	util_imp.o
+	util_imp.o \
+	log.o \
+	log_imp.o \
+	notification.o \
+	notification_imp.o
 
 
 # Search .o files in build directory

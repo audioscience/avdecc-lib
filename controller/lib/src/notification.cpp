@@ -36,14 +36,11 @@ namespace avdecc_lib
 	extern "C" void default_notification(void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
 					     uint16_t desc_type, uint16_t desc_index, void *notification_id) {}
 
-	uint32_t notification::read_index = 0;
-	uint32_t notification::write_index = 0;
-	void (*notification::notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *);
-	void *notification::user_obj;
-
 	notification::notification()
 	{
 		notifications = NO_MATCH_FOUND;
+		read_index = 0;
+		write_index = 0;
 		notification_callback = default_notification;
 		user_obj = NULL;
 		missed_notification_event_cnt = 0;
@@ -53,6 +50,7 @@ namespace avdecc_lib
 
 	void notification::post_notification_msg(int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id)
 	{
+		uint32_t index;
 		if((write_index - read_index) > NOTIFICATION_BUF_COUNT)
 		{
 			missed_notification_event_cnt++;
@@ -63,15 +61,14 @@ namespace avdecc_lib
 		   notification_type == END_STATION_DISCONNECTED || notification_type == COMMAND_TIMEOUT || 
 		   notification_type == RESPONSE_RECEIVED)
 		{
-			notification_buf[write_index % NOTIFICATION_BUF_COUNT].notification_type = notification_type;
-			notification_buf[write_index % NOTIFICATION_BUF_COUNT].guid = guid;
-			notification_buf[write_index % NOTIFICATION_BUF_COUNT].cmd_type = cmd_type;
-			notification_buf[write_index % NOTIFICATION_BUF_COUNT].desc_type = desc_type;
-			notification_buf[write_index % NOTIFICATION_BUF_COUNT].desc_index = desc_index;
-			notification_buf[write_index % NOTIFICATION_BUF_COUNT].notification_id = notification_id;
+			index = InterlockedExchangeAdd(&write_index, 1);
+			notification_buf[index % NOTIFICATION_BUF_COUNT].notification_type = notification_type;
+			notification_buf[index % NOTIFICATION_BUF_COUNT].guid = guid;
+			notification_buf[index % NOTIFICATION_BUF_COUNT].cmd_type = cmd_type;
+			notification_buf[index % NOTIFICATION_BUF_COUNT].desc_type = desc_type;
+			notification_buf[index % NOTIFICATION_BUF_COUNT].desc_index = desc_index;
+			notification_buf[index % NOTIFICATION_BUF_COUNT].notification_id = notification_id;
 
-			write_index++;
-			
 			post_log_event();
 		}
 	}

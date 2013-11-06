@@ -22,48 +22,59 @@
  */
 
 /**
- * avdecc_lib_os.h
+ * notification_imp.h
  *
- * Add handles for some OS specific objects.
+ * Notification implementation class
  */
 
 #pragma once
-#ifndef _AVDECC_LIB_OS_H_
-#define _AVDECC_LIB_OS_H_
+#ifndef _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
+#define _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
 
-#if defined __linux__
+#include "avdecc_lib_os.h"
+#include <stdint.h>
+#include "notification.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include <time.h>
-#include <unistd.h>
-#include <errno.h>
-#include <cstdint>
-
-#define vsprintf_s vsnprintf
-#define InterlockedExchangeAdd __sync_fetch_and_add
- 
-namespace avdecc_lib_os
+namespace avdecc_lib
 {
-	typedef uint32_t aTimestamp;
-	typedef pthread_t *aThread;
-	typedef sem_t *aSemaphore;
+	class notification_imp : public virtual notification
+	{
+	private:
+		pthread_t h_thread;
+		sem_t notify_waiting;
+
+	public:
+		/**
+		 * An empty constructor for notification_imp
+		 */
+		notification_imp();
+
+		/**
+		 * Destructor for notification_imp used for destroying objects
+		 */
+		virtual ~notification_imp();
+
+	private:
+		/**
+		 * Create and initialize notification thread, event, and semaphore.
+		 */
+		int notification_thread_init();
+
+		/**
+		 * Start of the post_notification_msg thread used for generating notification messages.
+		 */
+		static void * dispatch_thread(void * lpParam);
+
+		void * dispatch_callbacks(void);
+
+	public:
+		/**
+		 * Release sempahore so that notification callback function is called.
+		 */
+		void post_log_event();
+	};
+
+	extern notification_imp *notification_imp_ref;
 }
-
-#elif defined _WIN32 || defined _WIN64
-
-#include <windows.h>
-namespace avdecc_lib_os
-{
-	typedef LONGLONG aTimestamp;
-	typedef HANDLE aThread;
-	typedef HANDLE aSemaphore;
-}
-
-
-#endif
 
 #endif
