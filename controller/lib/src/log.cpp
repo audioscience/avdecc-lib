@@ -36,14 +36,11 @@ namespace avdecc_lib
 {
 	extern "C" void default_log(void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms) {}
 
-	uint32_t log::read_index = 0;
-	uint32_t log::write_index = 0;
-	void (*log::callback_func) (void *, int32_t, const char *, int32_t);
-	void *log::user_obj;
-
 	log::log()
 	{
 		log_level = LOGGING_LEVEL_ERROR;
+		read_index = 0;
+		write_index = 0;
 		callback_func = default_log;
 		user_obj = NULL;
 		missed_log_event_cnt = 0;
@@ -61,19 +58,19 @@ namespace avdecc_lib
 		if (level >= log_level)
 		{
 			va_list arglist;
+			uint32_t index;
 
 			if ((write_index - read_index) > LOG_BUF_COUNT)
 			{
 				missed_log_event_cnt++;
 				return;
 			}
-
+			index = InterlockedExchangeAdd(&write_index, 1);
 			va_start(arglist, fmt);
-			vsprintf_s(log_buf[write_index % LOG_BUF_COUNT].msg, sizeof(log_buf[0].msg), fmt, arglist);  // Write to log_buf using write_index
+			vsprintf_s(log_buf[index % LOG_BUF_COUNT].msg, sizeof(log_buf[0].msg), fmt, arglist);  // Write to log_buf using write_index
 			va_end(arglist);
-			log_buf[write_index % LOG_BUF_COUNT].level = level;
-			log_buf[write_index % LOG_BUF_COUNT].time_stamp_ms = 0;
-			write_index++;
+			log_buf[index % LOG_BUF_COUNT].level = level;
+			log_buf[index % LOG_BUF_COUNT].time_stamp_ms = 0;
 
 			post_log_event();
 		}

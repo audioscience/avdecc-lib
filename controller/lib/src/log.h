@@ -40,10 +40,10 @@ namespace avdecc_lib
 	{
 	protected:
 		int32_t log_level; // The base log level for messages to be logged
-		static uint32_t read_index;
-		static uint32_t write_index;
-		static void (*callback_func)(void *, int32_t, const char *, int32_t);
-		static void *user_obj;
+		uint32_t read_index;
+		uint32_t write_index;
+		void (*callback_func)(void *, int32_t, const char *, int32_t);
+		void *user_obj;
 		uint32_t missed_log_event_cnt; // The number of missed log that exceeds the log buffer count.
 
 		enum
