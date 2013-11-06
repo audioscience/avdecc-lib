@@ -32,8 +32,6 @@
 
 namespace avdecc_lib
 {
-	HANDLE notification_imp::poll_events[2];
-
 	notification_imp *notification_imp_ref = new notification_imp();
 
 	notification_imp::notification_imp()
@@ -51,7 +49,7 @@ namespace avdecc_lib
 		h_thread = CreateThread(NULL, // Default security descriptor
 		                        0, // Default stack size
 		                        proc_notification_thread, // Point to the start address of the thread
-		                        &notification_buf, // Data to be passed to the thread
+		                        this, // Data to be passed to the thread
 		                        0, // Flag controlling the creation of the thread
 		                        &thread_id // Thread identifier
 		                       );
@@ -66,8 +64,12 @@ namespace avdecc_lib
 
 	DWORD WINAPI notification_imp::proc_notification_thread(LPVOID lpParam)
 	{
+		return reinterpret_cast<notification_imp *>(lpParam)->proc_notification_thread_callback();
+	}
+
+	int notification_imp::proc_notification_thread_callback()
+	{
 		DWORD dwEvent;
-		struct notification_data *data = (struct notification_data *)lpParam;
 
 		while (true)
 		{
@@ -78,12 +80,12 @@ namespace avdecc_lib
 				if((write_index - read_index) > 0)
 				{
 					notification_callback(user_obj,
-					                      data[read_index % NOTIFICATION_BUF_COUNT].notification_type,
-					                      data[read_index % NOTIFICATION_BUF_COUNT].guid,
-					                      data[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
-					                      data[read_index % NOTIFICATION_BUF_COUNT].desc_type,
-					                      data[read_index % NOTIFICATION_BUF_COUNT].desc_index,
-					                      data[read_index % NOTIFICATION_BUF_COUNT].notification_id
+					                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_type,
+					                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].guid,
+					                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
+					                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
+					                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
+					                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id
 					                     ); // Call callback function
 					read_index++;
 				}

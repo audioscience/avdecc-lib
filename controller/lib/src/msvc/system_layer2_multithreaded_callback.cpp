@@ -43,15 +43,6 @@ namespace avdecc_lib
 	net_interface *netif_obj_in_system;
 	controller *controller_ref_in_system;
 	system_layer2_multithreaded_callback *local_system = NULL;
-	struct system_layer2_multithreaded_callback::msg_poll system_layer2_multithreaded_callback::poll_rx;
-	struct system_layer2_multithreaded_callback::msg_poll system_layer2_multithreaded_callback::poll_tx;
-	struct system_layer2_multithreaded_callback::thread_creation system_layer2_multithreaded_callback::poll_thread;
-	HANDLE system_layer2_multithreaded_callback::poll_events_array[NUM_OF_EVENTS];
-	HANDLE system_layer2_multithreaded_callback::waiting_sem;
-	bool system_layer2_multithreaded_callback::is_waiting = false;
-	bool system_layer2_multithreaded_callback::queue_is_waiting = false;
-	void *system_layer2_multithreaded_callback::waiting_notification_id = 0;
-	int system_layer2_multithreaded_callback::resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID;
 
 	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
 	{
@@ -76,6 +67,11 @@ namespace avdecc_lib
 
 	system_layer2_multithreaded_callback::system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj)
 	{
+		is_waiting = false;
+		queue_is_waiting = false;
+		waiting_notification_id = 0;
+		resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID;
+
 		netif_obj_in_system = netif;
 		controller_ref_in_system = controller_obj;
 		queue_is_waiting = false;
@@ -134,13 +130,17 @@ namespace avdecc_lib
 
 	DWORD WINAPI system_layer2_multithreaded_callback::proc_wpcap_thread(LPVOID lpParam)
 	{
-		struct msg_poll *data = (struct msg_poll *)lpParam;
+		return reinterpret_cast<system_layer2_multithreaded_callback *>(lpParam)->proc_wpcap_thread_callback();
+	}
+
+	int system_layer2_multithreaded_callback::proc_wpcap_thread_callback()
+	{
 		int status;
 		struct poll_thread_data thread_data;
 		const uint8_t *frame;
 		uint16_t length;
 
-		while(WaitForSingleObject(data->queue_thread.kill_sem, 0))
+		while(WaitForSingleObject(poll_rx.queue_thread.kill_sem, 0))
 		{
 			status = netif_obj_in_system->capture_frame(&frame, &length);
 
@@ -153,7 +153,7 @@ namespace avdecc_lib
 			}
 			else
 			{
-				if(!SetEvent(data->timeout_event))
+				if(!SetEvent(poll_rx.timeout_event))
 				{
 					log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "SetEvent pkt_event_wpcap_timeout failed");
 					exit(EXIT_FAILURE);
@@ -165,6 +165,11 @@ namespace avdecc_lib
 	}
 
 	DWORD WINAPI system_layer2_multithreaded_callback::proc_poll_thread(LPVOID lpParam)
+	{
+		return reinterpret_cast<system_layer2_multithreaded_callback *>(lpParam)->proc_poll_thread_callback();
+	}
+
+	int system_layer2_multithreaded_callback::proc_poll_thread_callback()
 	{
 		int status;
 
@@ -178,7 +183,7 @@ namespace avdecc_lib
 			}
 		}
 
-		return 0;
+		return 0;	
 	}
 
 	int STDCALL system_layer2_multithreaded_callback::process_start()
@@ -201,7 +206,7 @@ namespace avdecc_lib
 		poll_rx.queue_thread.handle = CreateThread(NULL, // Default security descriptor
 		                                           0, // Default stack size
 		                                           proc_wpcap_thread, // Point to the start address of the thread
-		                                           &poll_rx, // Data to be passed to the thread
+		                                           this, // Data to be passed to the thread
 		                                           0, // Flag controlling the creation of the thread
 		                                           &poll_rx.queue_thread.id // Thread identifier
 		                                          );
@@ -230,7 +235,7 @@ namespace avdecc_lib
 		poll_thread.handle = CreateThread(NULL, // Default security descriptor //poll_thread_handle = CreateThread(NULL, // Default security descriptor
 		                                  0, // Default stack size
 		                                  proc_poll_thread, // Point to the start address of the thread
-		                                  NULL, // Data to be passed to the thread
+		                                  this, // Data to be passed to the thread
 		                                  0, // Flag controlling the creation of the thread
 		                                  &poll_thread.id // Thread identifier
 		                                 );

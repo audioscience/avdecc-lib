@@ -75,9 +75,9 @@ namespace avdecc_lib
 	struct jdksavdecc_eui64 adp::get_controller_guid()
 	{
 		uint64_t mac_guid;
-		mac_guid = (    (net_interface_ref->get_mac() & UINT64_C(0xFFFFFF000000)) << 16) |
-				UINT64_C(0x000000FFFF000000) |
-				(net_interface_ref->get_mac() & UINT64_C(0xFFFFFF));
+		mac_guid = ((net_interface_ref->get_mac() & UINT64_C(0xFFFFFF000000)) << 16) |
+			    UINT64_C(0x000000FFFF000000) |
+			    (net_interface_ref->get_mac() & UINT64_C(0xFFFFFF));
 
 		return jdksavdecc_eui64_get(&mac_guid, 0);
 	}
