@@ -59,6 +59,7 @@ namespace avdecc_lib
 		}
 
 		controller_imp_ref = new controller_imp(notification_callback, log_callback);
+
 		return controller_imp_ref;
 	}
 
@@ -145,8 +146,28 @@ namespace avdecc_lib
 
 	configuration_descriptor * controller_imp::get_config_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index)
 	{
+		uint64_t end_station_guid;
 
-		return 0;
+		for(uint32_t index_i = 0; index_i < end_station_vec.size(); index_i++)
+		{
+			end_station_guid = end_station_vec.at(index_i)->get_end_station_guid();
+
+			if(end_station_guid == entity_guid)
+			{
+				configuration_descriptor * config_desc_ref;
+				config_desc_ref = end_station_vec.at(index_i)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
+
+				if(config_desc_ref)
+				{
+					return config_desc_ref;
+				}
+				else
+				{
+					log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_by_guid error");
+					return NULL;
+				}
+			}
+		}
 	}
 
 	bool STDCALL controller_imp::is_inflight_cmd_with_notification_id(void *notification_id)

@@ -405,102 +405,205 @@ int avdecc_cmd_line::cmd_log_level(uint32_t new_log_level)
 
 int avdecc_cmd_line::cmd_view_all()
 {
+	uint8_t *obj_name = NULL;
+
 	for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
 	{
 		std::cout << "\nEnd Station: " << index_i << " (" << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_entity_name() << ")" << std::endl;
 		std::cout << std::setw(20) << "Descriptor Type" << "   " << std::setw(16)  <<  "Descriptor Index" << "   " << std::setw(20) << "Descriptor Name" << std::endl;
 		std::cout << "------------------------------------------------------------------------------" << std::endl;
+		
+		avdecc_lib::entity_descriptor *entity_desc_ref = controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity);
+		avdecc_lib::configuration_descriptor *config_desc_ref = entity_desc_ref->get_config_desc_by_index(current_config);
+		avdecc_lib::locale_descriptor *locale_desc_ref = NULL;
+		avdecc_lib::strings_descriptor *strings_desc_ref = NULL;
+
+		if(config_desc_ref->get_locale_desc_count() >= 1)
+		{
+			locale_desc_ref = config_desc_ref->get_locale_desc_by_index(0);
+		}
+
+		if(config_desc_ref->get_strings_desc_count() >= 1)
+		{
+			strings_desc_ref = config_desc_ref->get_strings_desc_by_index(0);
+		}
 
 		switch(0x0)
 		{
 			case avdecc_lib::AEM_DESC_ENTITY:
-				std::cout << std::setw(20) << std::hex << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_descriptor_type());
-				std::cout << "   " << std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_descriptor_index();
-				std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_entity_name() << std::endl;
+				{
+					std::cout << std::setw(20) << std::hex << utility->desc_value_to_name(entity_desc_ref->get_descriptor_type());
+					std::cout << "   " << std::setw(16) << std::hex << entity_desc_ref->get_descriptor_index();
+					std::cout << "   " << std::setw(20) << std::hex << entity_desc_ref->get_entity_name() << std::endl;
+				}
 
 			case avdecc_lib::AEM_DESC_CONFIGURATION:
-				std::cout << std::setw(20) << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(current_config)->get_descriptor_type());
-				std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(current_config)->get_descriptor_index();
-				std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(current_config)->get_object_name() << std::endl;
-				std::cout << "\nTop Level Descriptors" << std::endl;
+				{
+					std::cout << std::setw(20) << utility->desc_value_to_name(config_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << config_desc_ref->get_descriptor_index();
+					std::cout << "   " << std::setw(20) << std::hex << config_desc_ref->get_object_name() << std::endl;
+					std::cout << "\nTop Level Descriptors" << std::endl;
+				}
 
 			case avdecc_lib::AEM_DESC_AUDIO_UNIT:
-				for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_audio_unit_desc_count(); index_j++)
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_audio_unit_desc_count(); index_j++)
 				{
-					std::cout << std::setw(20) << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_audio_unit_desc_by_index(index_j)->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_audio_unit_desc_by_index(index_j)->get_descriptor_index();
-					std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_audio_unit_desc_by_index(index_j)->get_object_name() << std::endl;
+					avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = config_desc_ref->get_audio_unit_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(audio_unit_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << audio_unit_desc_ref->get_descriptor_index();
+					
+					uint8_t localized_desc_index = (audio_unit_desc_ref->get_localized_description()) & 0x3;
+					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()) && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
+					{
+						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
+					}
+					else
+					{
+						std::cout << "   " << std::setw(20) << std::hex << audio_unit_desc_ref->get_object_name() << std::endl;
+					}
 				}
 
 			case avdecc_lib::AEM_DESC_STREAM_INPUT:
-				for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_stream_input_desc_count(); index_j++)
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_stream_input_desc_count(); index_j++)
 				{
-					std::cout << std::setw(20) << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_stream_input_desc_by_index(index_j)->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(current_config)->get_stream_input_desc_by_index(index_j)->get_descriptor_index();
-					std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(current_config)->get_stream_input_desc_by_index(index_j)->get_object_name() << std::endl;
+					avdecc_lib::stream_input_descriptor *stream_input_desc_ref = config_desc_ref->get_stream_input_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(stream_input_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << stream_input_desc_ref->get_descriptor_index();
+					
+					uint8_t localized_desc_index = (stream_input_desc_ref->get_localized_description()) & 0x3;
+					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
+					{
+						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
+					}
+					else
+					{
+						std::cout << "   " << std::setw(20) << std::hex << stream_input_desc_ref->get_object_name() << std::endl;
+					}
 				}
 
 			case avdecc_lib::AEM_DESC_STREAM_OUTPUT:
-				for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_stream_output_desc_count(); index_j++)
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_stream_output_desc_count(); index_j++)
 				{
-					std::cout << std::setw(20) << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_stream_output_desc_by_index(index_j)->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_stream_output_desc_by_index(index_j)->get_descriptor_index();
-					std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_stream_output_desc_by_index(index_j)->get_object_name() << std::endl;
+					avdecc_lib::stream_output_descriptor *stream_output_desc_ref = config_desc_ref->get_stream_output_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(stream_output_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << stream_output_desc_ref->get_descriptor_index();
+
+					uint8_t localized_desc_index = (stream_output_desc_ref->get_localized_description()) & 0x3;
+					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
+					{
+						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
+					}
+					else
+					{
+						std::cout << "   " << std::setw(20) << std::hex << stream_output_desc_ref->get_object_name() << std::endl;
+					}
 				}
 
 			case avdecc_lib::AEM_DESC_JACK_INPUT:
-				for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_jack_input_desc_count(); index_j++)
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_jack_input_desc_count(); index_j++)
 				{
-					std::cout << std::setw(20) << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_jack_input_desc_by_index(index_j)->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_jack_input_desc_by_index(index_j)->get_descriptor_index();
-					std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_jack_input_desc_by_index(index_j)->get_object_name() << std::endl;
+					avdecc_lib::jack_input_descriptor *jack_input_desc_ref = config_desc_ref->get_jack_input_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(jack_input_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << jack_input_desc_ref->get_descriptor_index();
+				
+					uint8_t localized_desc_index = (jack_input_desc_ref->get_localized_description()) & 0x3;
+					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
+					{
+						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
+					}
+					else
+					{
+						std::cout << "   " << std::setw(20) << std::hex << jack_input_desc_ref->get_object_name() << std::endl;
+					}
 				}
 
 			case avdecc_lib::AEM_DESC_JACK_OUTPUT:
-				for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_jack_output_desc_count(); index_j++)
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_jack_output_desc_count(); index_j++)
 				{
-					std::cout << std::setw(20) << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_jack_output_desc_by_index(index_j)->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_jack_output_desc_by_index(index_j)->get_descriptor_index();
-					std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_jack_output_desc_by_index(index_j)->get_object_name() << std::endl;
+					avdecc_lib::jack_output_descriptor *jack_output_desc_ref = config_desc_ref->get_jack_output_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(jack_output_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << jack_output_desc_ref->get_descriptor_index();
+								
+					uint8_t localized_desc_index = (jack_output_desc_ref->get_localized_description()) & 0x3;
+					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
+					{
+						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
+					}
+					else
+					{
+						std::cout << "   " << std::setw(20) << std::hex << jack_output_desc_ref->get_object_name() << std::endl;
+					}
 				}
 
 			case avdecc_lib::AEM_DESC_AVB_INTERFACE:
-				for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_avb_interface_desc_count(); index_j++)
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_avb_interface_desc_count(); index_j++)
 				{
-					std::cout << std::setw(20) << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_avb_interface_desc_by_index(index_j)->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_avb_interface_desc_by_index(index_j)->get_descriptor_index();
-					std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_avb_interface_desc_by_index(index_j)->get_object_name() << std::endl;
+					avdecc_lib::avb_interface_descriptor *avb_interface_desc_ref = config_desc_ref->get_avb_interface_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(avb_interface_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << avb_interface_desc_ref->get_descriptor_index();
+												
+					uint8_t localized_desc_index = (avb_interface_desc_ref->get_localized_description()) & 0x3;
+					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
+					{
+						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
+					}
+					else
+					{
+						std::cout << "   " << std::setw(20) << std::hex << avb_interface_desc_ref->get_object_name() << std::endl;
+					}
 				}
 
 			case avdecc_lib::AEM_DESC_CLOCK_SOURCE:
-				for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_clock_source_desc_count(); index_j++)
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_clock_source_desc_count(); index_j++)
 				{
-					std::cout << std::setw(20) << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_clock_source_desc_by_index(index_j)->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_clock_source_desc_by_index(index_j)->get_descriptor_index();
-					std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_clock_source_desc_by_index(index_j)->get_object_name() << std::endl;
+					avdecc_lib::clock_source_descriptor *clk_src_desc_ref = config_desc_ref->get_clock_source_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(clk_src_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << clk_src_desc_ref->get_descriptor_index();
+																
+					uint8_t localized_desc_index = (clk_src_desc_ref->get_localized_description()) & 0x3;
+					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
+					{
+						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
+					}
+					else
+					{
+						std::cout << "   " << std::setw(20) << std::hex << clk_src_desc_ref->get_object_name() << std::endl;
+					}
 				}
 
 			case avdecc_lib::AEM_DESC_LOCALE:
-				for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_locale_desc_count(); index_j++)
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_locale_desc_count(); index_j++)
 				{
-					std::cout << std::setw(20) << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_locale_desc_by_index(index_j)->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_locale_desc_by_index(index_j)->get_descriptor_index();
-					std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_locale_desc_by_index(index_j)->get_locale_identifier() << std::endl;
+					avdecc_lib::locale_descriptor *locale_def_ref = config_desc_ref->get_locale_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(locale_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << locale_desc_ref->get_descriptor_index();
+					std::cout << "   " << std::setw(20) << std::hex << locale_desc_ref->get_locale_identifier() << std::endl;
 				}
 
 			case avdecc_lib::AEM_DESC_STRINGS:
-				for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_strings_desc_count(); index_j++)
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_strings_desc_count(); index_j++)
 				{
-					std::cout << std::setw(20) << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_strings_desc_by_index(index_j)->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_strings_desc_by_index(index_j)->get_descriptor_index() << std::endl;
+					avdecc_lib::strings_descriptor *strings_desc_ref = config_desc_ref->get_strings_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(strings_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << strings_desc_ref->get_descriptor_index() << std::endl;
 				}
 
 			case avdecc_lib::AEM_DESC_CLOCK_DOMAIN:
-				for(uint32_t index_j = 0; index_j < controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_clock_domain_desc_count(); index_j++)
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_clock_domain_desc_count(); index_j++)
 				{
-					std::cout << std::setw(20) << utility->desc_value_to_name(controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_clock_domain_desc_by_index(index_j)->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_clock_domain_desc_by_index(index_j)->get_descriptor_index();
-					std::cout << "   " << std::setw(20) << std::hex << controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_config_desc_by_index(0)->get_clock_domain_desc_by_index(index_j)->get_object_name() << std::endl;
+					avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = config_desc_ref->get_clock_domain_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(clk_domain_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << clk_domain_desc_ref->get_descriptor_index();
+																
+					uint8_t localized_desc_index = (clk_domain_desc_ref->get_localized_description()) & 0x3;
+					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
+					{
+						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
+					}
+					else
+					{
+						std::cout << "   " << std::setw(20) << std::hex << clk_domain_desc_ref->get_object_name() << std::endl;
+					}
 				}
 
 				break;
@@ -627,7 +730,7 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 			{
 				avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
 				std::cout << "\nobject_name = " << std::hex << stream_input_desc_ref->get_object_name();
-				std::cout << "\nlocalized_description = " << std::dec << stream_input_desc_ref->get_localized_description();
+				std::cout << "\nlocalized_description = 0x" << std::hex << stream_input_desc_ref->get_localized_description();
 				std::cout << "\nclock_domain_index = 0x" << std::hex << stream_input_desc_ref->get_clock_domain_index();
 				std::cout << "\nstream_flags = 0x" << std::hex << stream_input_desc_ref->get_stream_flags();
 				std::cout << "\n\tstream_flags.clock_sync_source = " << std::dec << stream_input_desc_ref->get_stream_flags_clock_sync_source();
@@ -660,7 +763,7 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 			{
 				avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
 				std::cout << "\nobject_name = " << std::hex << stream_output_desc_ref->get_object_name();
-				std::cout << "\nlocalized_description = " << std::dec << stream_output_desc_ref->get_localized_description();
+				std::cout << "\nlocalized_description = 0x" << std::hex << stream_output_desc_ref->get_localized_description();
 				std::cout << "\nclock_domain_index = 0x" << std::hex << stream_output_desc_ref->get_clock_domain_index();
 				std::cout << "\nstream_flags = 0x" << std::hex << stream_output_desc_ref->get_stream_flags();
 				std::cout << "\n\tstream_flags.clock_sync_source = " << std::dec << stream_output_desc_ref->get_stream_flags_clock_sync_source();
@@ -749,23 +852,23 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 
 		case avdecc_lib::AEM_DESC_LOCALE:
 			{
-				avdecc_lib::locale_descriptor *locale_desc = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_locale_desc_by_index(desc_index);
-				std::cout << "\nlocale_identifier = " << std::hex << locale_desc->get_locale_identifier();
-				std::cout << "\nnumber_of_strings = " << std::hex << locale_desc->get_number_of_strings();
-				std::cout << "\nbase_strings = " << std::hex << locale_desc->get_base_strings();
+				avdecc_lib::locale_descriptor *locale_desc_ref = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_locale_desc_by_index(desc_index);
+				std::cout << "\nlocale_identifier = " << std::hex << locale_desc_ref->get_locale_identifier();
+				std::cout << "\nnumber_of_strings = " << std::hex << locale_desc_ref->get_number_of_strings();
+				std::cout << "\nbase_strings = " << std::hex << locale_desc_ref->get_base_strings();
 			}
 			break;
 
 		case avdecc_lib::AEM_DESC_STRINGS:
 			{
-				avdecc_lib::strings_descriptor *strings_desc = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_strings_desc_by_index(desc_index);
-				std::cout << "\nstring_0 = " << std::hex << strings_desc->get_string_by_index(0);
-				std::cout << "\nstring_1 = " << std::hex << strings_desc->get_string_by_index(1);
-				std::cout << "\nstring_2 = " << std::hex << strings_desc->get_string_by_index(2);
-				std::cout << "\nstring_3 = " << std::hex << strings_desc->get_string_by_index(3);
-				std::cout << "\nstring_4 = " << std::hex << strings_desc->get_string_by_index(4);
-				std::cout << "\nstring_5 = " << std::hex << strings_desc->get_string_by_index(5);
-				std::cout << "\nstring_6 = " << std::hex << strings_desc->get_string_by_index(6);
+				avdecc_lib::strings_descriptor *strings_desc_ref = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_strings_desc_by_index(desc_index);
+				std::cout << "\nstring_0 = " << std::hex << strings_desc_ref->get_string_by_index(0);
+				std::cout << "\nstring_1 = " << std::hex << strings_desc_ref->get_string_by_index(1);
+				std::cout << "\nstring_2 = " << std::hex << strings_desc_ref->get_string_by_index(2);
+				std::cout << "\nstring_3 = " << std::hex << strings_desc_ref->get_string_by_index(3);
+				std::cout << "\nstring_4 = " << std::hex << strings_desc_ref->get_string_by_index(4);
+				std::cout << "\nstring_5 = " << std::hex << strings_desc_ref->get_string_by_index(5);
+				std::cout << "\nstring_6 = " << std::hex << strings_desc_ref->get_string_by_index(6);
 			}
 			break;
 

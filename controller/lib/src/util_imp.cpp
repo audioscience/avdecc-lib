@@ -324,8 +324,13 @@ namespace avdecc_lib
 		while(p->fmt != 0)
 		{
 			if (p->fmt == format)
+			{
 				return p->str;
+			}
+
+			p++;
 		}
+
 		return p->str;
 	}
 

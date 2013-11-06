@@ -33,7 +33,7 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.1.0"
+#define AVDECC_CONTROLLER_VERSION "v0.1.2"
 
 namespace avdecc_lib
 {
@@ -86,7 +86,7 @@ namespace avdecc_lib
 		end_station * STDCALL get_end_station_by_index(uint32_t end_station_index);
 
 		/**
-		 * Get the corresponding End Station by GUID.
+		 * Check if the corresponding End Station with the GUID exist.
 		 */
 		bool find_end_station_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
 

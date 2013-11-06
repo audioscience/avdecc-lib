@@ -155,7 +155,7 @@ namespace avdecc_lib
 
 		for(uint32_t index_i = 0; index_i < get_descriptor_counts_count(); index_i++)
 		{
-			desc_count_vector.push_back(jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + pos  + offset));
+			desc_count_vector.push_back(jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + pos + offset));
 			offset += 0x4;
 		}
 	}

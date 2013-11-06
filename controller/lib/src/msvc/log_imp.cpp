@@ -33,8 +33,6 @@
 
 namespace avdecc_lib
 {
-	HANDLE log_imp::poll_events[2];
-
 	log_imp *log_imp_ref = new log_imp();
 
 	log_imp::log_imp()
@@ -51,8 +49,8 @@ namespace avdecc_lib
 
 		h_thread = CreateThread(NULL, // Default security descriptor
 		                        0, // Default stack size
-		                        process_logging_thread, // Point to the start address of the thread
-		                        &log_buf, // Data to be passed to the thread
+		                        proc_logging_thread, // Point to the start address of the thread
+		                        this, // Data to be passed to the thread
 		                        0, // Flag controlling the creation of the thread
 		                        &thread_id // Thread identifier
 		                       );
@@ -65,10 +63,14 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	DWORD WINAPI log_imp::process_logging_thread(LPVOID lpParam)
+	DWORD WINAPI log_imp::proc_logging_thread(LPVOID lpParam)
+	{
+		return reinterpret_cast<log_imp *>(lpParam)->proc_logging_thread_callback();
+	}
+
+	int log_imp::proc_logging_thread_callback()
 	{
 		DWORD dwEvent;
-		struct log_data *data = (struct log_data *)lpParam;
 
 		while (true)
 		{
@@ -79,15 +81,14 @@ namespace avdecc_lib
 				if((write_index - read_index) > 0)
 				{
 					callback_func(user_obj,
-					              data[read_index % LOG_BUF_COUNT].level,
-					              data[read_index % LOG_BUF_COUNT].msg,
-					              data[read_index % LOG_BUF_COUNT].time_stamp_ms
+					              log_buf[read_index % LOG_BUF_COUNT].level,
+					              log_buf[read_index % LOG_BUF_COUNT].msg,
+					              log_buf[read_index % LOG_BUF_COUNT].time_stamp_ms
 					             ); // Call callback function
 
 					read_index++;
 				}
 			}
-
 			else
 			{
 				SetEvent(poll_events[KILL_EVENT]);
@@ -102,5 +103,4 @@ namespace avdecc_lib
 	{
 		ReleaseSemaphore(poll_events[LOG_EVENT], 1, NULL);
 	}
-
 }
