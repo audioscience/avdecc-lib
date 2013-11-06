@@ -27,14 +27,16 @@
  * System message queue class, which is called by System modules to queue packets.
  */
 
-#include <stdint.h>
+#include <cstdint>
+
+#include "avdecc_lib_os.h"
 
 class system_message_queue
 {
 private:
-	HANDLE space_avail;
-	HANDLE data_avail;
-	CRITICAL_SECTION critical_section_obj;
+	avdecc_lib_os::aSemaphore space_avail;
+	avdecc_lib_os::aSemaphore data_avail;
+	avdecc_lib_os::aCriticalSection critical_section_obj;
 	uint8_t *buf;
 	int in_pos;
 	int out_pos;
@@ -63,5 +65,5 @@ public:
 
 	void queue_pop_wait(void *thread_data);
 
-	HANDLE queue_data_available_object();
+	avdecc_lib_os::aSemaphore queue_data_available_object();
 };

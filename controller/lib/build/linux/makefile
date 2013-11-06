@@ -52,7 +52,8 @@ OBJS =  adp.o \
 	log.o \
 	log_imp.o \
 	notification.o \
-	notification_imp.o
+	notification_imp.o \
+	system_message_queue.o
 
 
 # Search .o files in build directory
