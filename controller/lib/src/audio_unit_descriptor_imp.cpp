@@ -52,6 +52,9 @@ namespace avdecc_lib
 		}
 
 		sampling_rates_init(frame);
+
+		memset(&aem_cmd_set_sampling_rate_resp, 0, sizeof(struct jdksavdecc_aem_command_set_sampling_rate_response));
+		memset(&aem_cmd_get_sampling_rate_resp, 0, sizeof(struct jdksavdecc_aem_command_get_sampling_rate_response));
 	}
 
 	audio_unit_descriptor_imp::~audio_unit_descriptor_imp() {}

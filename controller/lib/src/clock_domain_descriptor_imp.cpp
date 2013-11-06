@@ -52,6 +52,8 @@ namespace avdecc_lib
 		}
 
 		store_clock_sources(frame, pos);
+		memset(&aem_cmd_set_clk_src_resp, 0, sizeof(struct jdksavdecc_aem_command_set_clock_source_response));
+		memset(&aem_cmd_get_clk_src_resp, 0, sizeof(struct jdksavdecc_aem_command_get_clock_source_response));
 	}
 
 	clock_domain_descriptor_imp::~clock_domain_descriptor_imp() {}
@@ -146,7 +148,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_set_clk_src_returned < 0)
 		{
-			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_clk_src_write error\n");
 			assert(aem_cmd_set_clk_src_returned >= 0);
 			return -1;
 		}
@@ -169,14 +171,14 @@ namespace avdecc_lib
 		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 		memcpy(ether_frame->payload, frame, mem_buf_len);
 
-		aem_cmd_set_clk_src_resp_returned = jdksavdecc_aem_command_get_clock_source_response_read(&aem_cmd_set_clk_src_resp,
+		aem_cmd_set_clk_src_resp_returned = jdksavdecc_aem_command_set_clock_source_response_read(&aem_cmd_set_clk_src_resp,
 		                                                                                          frame,
 		                                                                                          aecp::CMD_POS,
 		                                                                                          mem_buf_len);
 
 		if(aem_cmd_set_clk_src_resp_returned < 0)
 		{
-			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_resp_read error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_clk_src_resp_read error\n");
 			assert(aem_cmd_set_clk_src_resp_returned >= 0);
 			return -1;
 		}

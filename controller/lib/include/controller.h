@@ -75,7 +75,7 @@ namespace avdecc_lib
 		/**
 		 * \return The corresponding Configuration descriptor by GUID.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_by_guid(uint64_t end_station_guid, uint16_t entity_index, uint16_t config_index) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_guid(uint64_t end_station_guid, uint16_t entity_index, uint16_t config_index) = 0;
 
 		/**
 		 * \return True, if the command with the notification id is in the inflight list.

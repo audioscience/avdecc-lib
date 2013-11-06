@@ -291,51 +291,161 @@ namespace avdecc_lib
 
 	audio_unit_descriptor * STDCALL configuration_descriptor_imp::get_audio_unit_desc_by_index(uint32_t audio_unit_desc_index)
 	{
-		return audio_unit_desc_vec.at(audio_unit_desc_index);
+		bool is_valid = (audio_unit_desc_index < audio_unit_desc_vec.size());
+
+		if(is_valid)
+		{
+			return audio_unit_desc_vec.at(audio_unit_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_audio_unit_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	stream_input_descriptor * STDCALL configuration_descriptor_imp::get_stream_input_desc_by_index(uint32_t stream_input_desc_index)
 	{
-		return stream_input_desc_vec.at(stream_input_desc_index);
+		bool is_valid = (stream_input_desc_index < stream_input_desc_vec.size());
+
+		if(is_valid)
+		{
+			return stream_input_desc_vec.at(stream_input_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_input_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	stream_output_descriptor * STDCALL configuration_descriptor_imp::get_stream_output_desc_by_index(uint32_t stream_output_desc_index)
 	{
-		return stream_output_desc_vec.at(stream_output_desc_index);
+		bool is_valid = (stream_output_desc_index < stream_output_desc_vec.size());
+
+		if(is_valid)
+		{
+			return stream_output_desc_vec.at(stream_output_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_output_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	jack_input_descriptor * STDCALL configuration_descriptor_imp::get_jack_input_desc_by_index(uint32_t jack_input_desc_index)
 	{
-		return jack_input_desc_vec.at(jack_input_desc_index);
+		bool is_valid = (jack_input_desc_index < jack_input_desc_vec.size());
+
+		if(is_valid)
+		{
+			return jack_input_desc_vec.at(jack_input_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_jack_input_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	jack_output_descriptor * STDCALL configuration_descriptor_imp::get_jack_output_desc_by_index(uint32_t jack_output_desc_index)
 	{
-		return jack_output_desc_vec.at(jack_output_desc_index);
+		bool is_valid = (jack_output_desc_index < jack_output_desc_vec.size());
+
+		if(is_valid)
+		{
+			return jack_output_desc_vec.at(jack_output_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_jack_output_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	avb_interface_descriptor * STDCALL configuration_descriptor_imp::get_avb_interface_desc_by_index(uint32_t avb_interface_desc_index)
 	{
-		return avb_interface_desc_vec.at(avb_interface_desc_index);
+		bool is_valid = (avb_interface_desc_index < avb_interface_desc_vec.size());
+
+		if(is_valid)
+		{
+			return avb_interface_desc_vec.at(avb_interface_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_avb_interface_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	clock_source_descriptor * STDCALL configuration_descriptor_imp::get_clock_source_desc_by_index(uint32_t clock_source_desc_index)
 	{
-		return clock_source_desc_vec.at(clock_source_desc_index);
+		bool is_valid = (clock_source_desc_index < clock_source_desc_vec.size());
+
+		if(is_valid)
+		{
+			return clock_source_desc_vec.at(clock_source_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_clock_source_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	locale_descriptor * STDCALL configuration_descriptor_imp::get_locale_desc_by_index(uint32_t locale_desc_index)
 	{
-		return locale_desc_vec.at(locale_desc_index);
+		bool is_valid = (locale_desc_index < locale_desc_vec.size());
+
+		if(is_valid)
+		{
+			return locale_desc_vec.at(locale_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_locale_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	strings_descriptor * STDCALL configuration_descriptor_imp::get_strings_desc_by_index(uint32_t strings_desc_index)
 	{
-		return strings_desc_vec.at(strings_desc_index);
+		bool is_valid = (strings_desc_index < strings_desc_vec.size());
+
+		if(is_valid)
+		{
+			return strings_desc_vec.at(strings_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_strings_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	clock_domain_descriptor * STDCALL configuration_descriptor_imp::get_clock_domain_desc_by_index(uint32_t clock_domain_desc_index)
 	{
-		return clock_domain_desc_vec.at(clock_domain_desc_index);
+		bool is_valid = (clock_domain_desc_index < clock_domain_desc_vec.size());
+
+		if(is_valid)
+		{
+			return clock_domain_desc_vec.at(clock_domain_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_clock_domain_desc_by_index error");
+		}
+
+		return NULL;
 	}
 }

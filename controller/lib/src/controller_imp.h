@@ -33,7 +33,7 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.1.2"
+#define AVDECC_CONTROLLER_VERSION "v0.1.3"
 
 namespace avdecc_lib
 {
@@ -98,7 +98,7 @@ namespace avdecc_lib
 		/**
 		 * Get the corresponding Configuration descriptor by GUID.
 		 */
-		configuration_descriptor * STDCALL get_config_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index);
+		configuration_descriptor * STDCALL get_config_desc_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index);
 
 		/**
 		 * Check if the command with the corresponding notification id is in the inflight list.

@@ -176,7 +176,18 @@ namespace avdecc_lib
 
 	configuration_descriptor * STDCALL entity_descriptor_imp::get_config_desc_by_index(uint16_t config_desc_index)
 	{
-		return config_desc_vec.at(config_desc_index);
+		bool is_valid = (config_desc_index < config_desc_vec.size());
+
+		if(is_valid)
+		{
+			return config_desc_vec.at(config_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	int STDCALL entity_descriptor_imp::send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag)

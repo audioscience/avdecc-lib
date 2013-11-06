@@ -115,7 +115,18 @@ namespace avdecc_lib
 
 	entity_descriptor * STDCALL end_station_imp::get_entity_desc_by_index(uint32_t entity_desc_index)
 	{
-		return entity_desc_vec.at(entity_desc_index);
+		bool is_valid = (entity_desc_index < entity_desc_vec.size());
+
+		if(is_valid)
+		{
+			return entity_desc_vec.at(entity_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_entity_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	int end_station_imp::read_desc_init(uint16_t desc_type, uint16_t desc_index)

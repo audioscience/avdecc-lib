@@ -52,7 +52,12 @@ namespace avdecc_lib
 			assert(stream_output_desc_read_returned >= 0);
 		}
 
-		get_stream_flags();
+		stream_flags_init();
+
+		memset(&aem_cmd_set_stream_format_resp, 0, sizeof(struct jdksavdecc_aem_command_set_stream_format_response));
+		memset(&aem_cmd_get_stream_format_resp, 0, sizeof(struct jdksavdecc_aem_command_get_stream_format_response));
+		memset(&aem_cmd_set_stream_info_resp, 0, sizeof(struct jdksavdecc_aem_command_set_stream_info_response));
+		memset(&aem_cmd_get_stream_info_resp, 0, sizeof(struct jdksavdecc_aem_command_get_stream_info_response));
 	}
 
 	stream_output_descriptor_imp::~stream_output_descriptor_imp() {}
