@@ -38,7 +38,7 @@ namespace avdecc_lib
 {
 	class adp;
 
-	class end_station_imp : public virtual avdecc_lib::end_station
+	class end_station_imp : public virtual end_station
 	{
 	private:
 		uint64_t end_station_guid; // The unique identifier of the AVDECC Entity the command is targeted to
@@ -95,7 +95,7 @@ namespace avdecc_lib
 		int read_desc_init(uint16_t desc_type, uint16_t desc_index);
 
 		/**
-		 * Send a READ_DESCRIPTOR command with or without a notifying id based on the notifying flag
+		 * Send a READ_DESCRIPTOR command with or without a notification id based on the post_notification_msg flag
 		 * to read a descriptor from an AVDECC Entity.
 		 */
 		int send_read_desc_cmd_with_flag(void *notification_id, uint32_t notification_flag, uint16_t desc_type, uint16_t desc_index);
@@ -104,22 +104,17 @@ namespace avdecc_lib
 		/**
 		 * Get the status of the End Station connection.
 		 */
-		char STDCALL get_end_station_connection_status();
+		char STDCALL get_connection_status();
 
 		/**
 		 * Change the End Station connection status to connected.
 		 */
-		void set_end_station_connected();
-
-		/**
-		 * Change the End Station connection status to reconnected.
-		 */
-		void set_end_station_reconnected();
+		void set_connected();
 
 		/**
 		 * Change the End Station connection status to disconnected.
 		 */
-		void set_end_station_disconnected();
+		void set_disconnected();
 
 		/**
 		 * Get the GUID of the End Station.
@@ -130,21 +125,6 @@ namespace avdecc_lib
 		 * Get the source MAC address of the End Station.
 		 */
 		uint64_t STDCALL get_end_station_mac();
-
-		/**
-		 * Send a READ_DESCRIPTOR command with notification id to read a descriptor from an AVDECC Entity.
-		 */
-		int STDCALL send_read_desc_cmd(void *notification_id, uint16_t desc_type, uint16_t desc_index);
-
-		/**
-		 * Process a READ_DESCRIPTOR response for the READ_DESCRIPTOR command.
-		 */
-		int proc_read_desc_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
-
-		/**
-		 * Process response received for the corresponding command.
-		 */
-		int proc_rcvd_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Get the ADP associated with the End Station.
@@ -160,6 +140,31 @@ namespace avdecc_lib
 		 * Get the corresponding Entity descriptor by index.
 		 */
 		entity_descriptor * STDCALL get_entity_desc_by_index(uint32_t entity_desc_index);
+
+		/**
+		 * Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity.
+		 */
+		int STDCALL send_read_desc_cmd(void *notification_id, uint16_t desc_type, uint16_t desc_index);
+
+		/**
+		 * Process a READ_DESCRIPTOR response for the READ_DESCRIPTOR command.
+		 */
+		int proc_read_desc_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+
+		/**
+		 * Send a ENTITY_AVAILABLE command to verify that an AVDECC Entity is still available and responding to commands.
+		 */
+		int STDCALL send_entity_avail_cmd(void *notification_id);
+
+		/**
+		 * Process a ENTITY_AVAILABLE response for the ENTITY_AVAILABLE command.
+		 */
+		int proc_entity_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+
+		/**
+		 * Process response received for the corresponding command.
+		 */
+		int proc_rcvd_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 }
 

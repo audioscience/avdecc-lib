@@ -22,25 +22,66 @@
  */
 
 /**
- * world.h
+ * notification_imp.h
  *
- * World class, which contains a list of common include files.
+ * Notification implementation class
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_WORLD_H_
-#define _AVDECC_CONTROLLER_LIB_WORLD_H_
+#ifndef _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
+#define _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <string>
-#include <eh.h>
-#include <locale>
-#include <vector>
-#include <map>
-#include <assert.h>
+#include "avdecc_lib_os.h"
 #include <stdint.h>
-#include <algorithm>
+#include "notification.h"
+
+namespace avdecc_lib
+{
+	class notification_imp : public virtual notification
+	{
+	private:
+		enum notification_events
+		{
+		        NOTIFICATION_EVENT,
+		        KILL_EVENT
+		};
+
+		LPTHREAD_START_ROUTINE thread;
+		HANDLE h_thread;
+		DWORD thread_id;
+
+		static HANDLE poll_events[2];
+
+	public:
+		/**
+		 * An empty constructor for notification_imp
+		 */
+		notification_imp();
+
+		/**
+		 * Destructor for notification_imp used for destroying objects
+		 */
+		virtual ~notification_imp();
+
+	private:
+		/**
+		 * Create and initialize notification thread, event, and semaphore.
+		 */
+		int notification_thread_init();
+
+		/**
+		 * Start of the post_notification_msg thread used for generating notification messages.
+		 */
+		static DWORD WINAPI proc_notification_thread(LPVOID lpParam);
+
+	public:
+		/**
+		 * Release sempahore so that notification callback function is called.
+		 */
+		void post_log_event();
+	};
+
+	extern notification_imp *notification_imp_ref;
+}
 
 #endif

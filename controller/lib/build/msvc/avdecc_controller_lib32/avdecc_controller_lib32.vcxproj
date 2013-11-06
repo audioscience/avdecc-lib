@@ -40,13 +40,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\..\..\bin\avdecc_controller_lib32_debug\</OutDir>
-    <IncludePath>$(JDKSAVDECC_DIR)\include;$(WPCAP_DIR)\Include;$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\..\src;$(ProjectDir)\..\..\..\src\msvc;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\include;..\..\..\src;..\..\..\src\msvc;$(JDKSAVDECC_DIR)\include;$(WPCAP_DIR)\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(WPCAP_DIR)\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\..\..\bin\avdecc_controller_lib32_release\</OutDir>
-    <IncludePath>$(JDKSAVDECC_DIR)\include;$(WPCAP_DIR)\Include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\include;..\..\..\src;..\..\..\src\msvc;$(JDKSAVDECC_DIR)\include;$(WPCAP_DIR)\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(WPCAP_DIR)\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -73,7 +73,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;AVDECC_CONTROLLER_LIB32_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>\asi\sw\avdecc-lib\controller\lib\include;\asi\sw\avdecc-lib\controller\lib\src;\asi\sw\avdecc-lib\controller\lib\src\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -84,9 +84,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\aem_string.h" />
     <ClInclude Include="..\..\..\include\audio_unit_descriptor.h" />
     <ClInclude Include="..\..\..\include\avb_interface_descriptor.h" />
+    <ClInclude Include="..\..\..\include\build.h" />
     <ClInclude Include="..\..\..\include\clock_domain_descriptor.h" />
     <ClInclude Include="..\..\..\include\clock_source_descriptor.h" />
     <ClInclude Include="..\..\..\include\configuration_descriptor.h" />
@@ -103,12 +103,14 @@
     <ClInclude Include="..\..\..\include\stream_output_descriptor.h" />
     <ClInclude Include="..\..\..\include\strings_descriptor.h" />
     <ClInclude Include="..\..\..\include\system.h" />
+    <ClInclude Include="..\..\..\include\util.h" />
     <ClInclude Include="..\..\..\src\adp.h" />
     <ClInclude Include="..\..\..\src\adp_discovery_state_machine.h" />
     <ClInclude Include="..\..\..\src\aecp.h" />
     <ClInclude Include="..\..\..\src\aem_controller_state_machine.h" />
     <ClInclude Include="..\..\..\src\audio_unit_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\avb_interface_descriptor_imp.h" />
+    <ClInclude Include="..\..\..\src\avdecc_lib_os.h" />
     <ClInclude Include="..\..\..\src\clock_domain_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\clock_source_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\configuration_descriptor_imp.h" />
@@ -119,19 +121,19 @@
     <ClInclude Include="..\..\..\src\jack_input_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\jack_output_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\locale_descriptor_imp.h" />
-    <ClInclude Include="..\..\..\src\msvc\build.h" />
-    <ClInclude Include="..\..\..\src\msvc\log.h" />
+    <ClInclude Include="..\..\..\src\log.h" />
+    <ClInclude Include="..\..\..\src\msvc\log_imp.h" />
     <ClInclude Include="..\..\..\src\msvc\net_interface_imp.h" />
-    <ClInclude Include="..\..\..\src\msvc\notification.h" />
+    <ClInclude Include="..\..\..\src\msvc\notification_imp.h" />
     <ClInclude Include="..\..\..\src\msvc\system_layer2_multithreaded_callback.h" />
     <ClInclude Include="..\..\..\src\msvc\system_message_queue.h" />
+    <ClInclude Include="..\..\..\src\notification.h" />
     <ClInclude Include="..\..\..\src\stream_input_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\stream_output_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\strings_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\system_tx_queue.h" />
     <ClInclude Include="..\..\..\src\timer.h" />
-    <ClInclude Include="..\..\..\src\util.h" />
-    <ClInclude Include="..\..\..\src\world.h" />
+    <ClInclude Include="..\..\..\src\util_imp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\..\jdksavdecc-c\src\jdksavdecc_pdu.c" />
@@ -139,7 +141,6 @@
     <ClCompile Include="..\..\..\src\adp_discovery_state_machine.cpp" />
     <ClCompile Include="..\..\..\src\aecp.cpp" />
     <ClCompile Include="..\..\..\src\aem_controller_state_machine.cpp" />
-    <ClCompile Include="..\..\..\src\aem_string.cpp" />
     <ClCompile Include="..\..\..\src\audio_unit_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\avb_interface_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\clock_domain_descriptor_imp.cpp" />
@@ -152,15 +153,18 @@
     <ClCompile Include="..\..\..\src\jack_input_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\jack_output_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\locale_descriptor_imp.cpp" />
-    <ClCompile Include="..\..\..\src\msvc\log.cpp" />
+    <ClCompile Include="..\..\..\src\log.cpp" />
+    <ClCompile Include="..\..\..\src\msvc\log_imp.cpp" />
     <ClCompile Include="..\..\..\src\msvc\net_interface_imp.cpp" />
-    <ClCompile Include="..\..\..\src\msvc\notification.cpp" />
+    <ClCompile Include="..\..\..\src\msvc\notification_imp.cpp" />
     <ClCompile Include="..\..\..\src\msvc\system_layer2_multithreaded_callback.cpp" />
     <ClCompile Include="..\..\..\src\msvc\system_message_queue.cpp" />
+    <ClCompile Include="..\..\..\src\notification.cpp" />
     <ClCompile Include="..\..\..\src\stream_input_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\stream_output_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\strings_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\timer.cpp" />
+    <ClCompile Include="..\..\..\src\util_imp.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

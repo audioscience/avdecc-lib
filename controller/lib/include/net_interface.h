@@ -45,7 +45,7 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL devs_count() = 0;
 
 		/**
-		 * Get the corresponding device description by index.
+		 * \return The corresponding network interface description by index.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_desc_by_index(uint32_t dev_index) = 0;
 

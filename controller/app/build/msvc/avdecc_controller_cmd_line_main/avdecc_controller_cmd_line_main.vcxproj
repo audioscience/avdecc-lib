@@ -10,12 +10,8 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\..\cmdline\src\avdecc_controller_cmd_line.cpp" />
-    <ClCompile Include="..\..\..\..\test\cmd_line\avdecc_controller_cmd_line_main.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{FE328B10-4CAB-4F93-A30B-91F7DF6E7B8A}</ProjectGuid>
+    <ProjectGuid>{8FC7FD2A-1289-425F-A087-63582D0237D2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>avdecc_controller_cmd_line_main</RootNamespace>
   </PropertyGroup>
@@ -43,11 +39,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\..\..\bin\avdecc_controller_cmd_line_main_debug\</OutDir>
+    <OutDir>..\..\..\bin\avdecc_controller_cmd_line_main_debug\</OutDir>
+    <IncludePath>..\..\..\..\lib\include;..\..\..\..\app\cmdline\src;..\..\..\..\app\test\cmd_line;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\..\lib\bin\avdecc_controller_lib32_debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\..\..\bin\avdecc_controller_cmd_line_main_release\</OutDir>
+    <IncludePath>..\..\..\..\lib\include;..\..\..\..\app\cmdline\src;..\..\..\..\app\test\cmd_line;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\..\lib\bin\avdecc_controller_lib32_release;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\..\bin\avdecc_controller_cmd_line_main_release\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -56,12 +56,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\..\cmdline\src;$(ProjectDir)\..\..\..\..\..\lib\include;$(ProjectDir)\..\..\..\..\..\lib\src\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(ProjectDir)\..\..\..\..\..\lib\bin\avdecc_controller_lib32_debug\avdecc_controller_lib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avdecc_controller_lib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -73,16 +73,19 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>\asi\sw\avdecc-lib\controller\app\cmdline\src;\asi\sw\avdecc-lib\controller\lib\include;\asi\sw\avdecc-lib\controller\lib\src\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>\asi\sw\avdecc-lib\controller\lib\bin\avdecc_controller_lib32_release\avdecc_controller_lib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avdecc_controller_lib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\cmdline\src\avdecc_controller_cmd_line.cpp" />
+    <ClCompile Include="..\..\..\test\cmd_line\avdecc_controller_cmd_line_main.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

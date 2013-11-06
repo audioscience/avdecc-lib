@@ -28,7 +28,7 @@
  */
 
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "avb_interface_descriptor_imp.h"
 
 namespace avdecc_lib
@@ -41,7 +41,7 @@ namespace avdecc_lib
 
 		if(desc_avb_interface_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "desc_audio_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_audio_read error");
 			assert(desc_avb_interface_read_returned >= 0);
 		}
 	}
@@ -69,9 +69,9 @@ namespace avdecc_lib
 		return avb_interface_desc.localized_description;
 	}
 
-	struct jdksavdecc_eui48 STDCALL avb_interface_descriptor_imp::get_mac_address()
+	uint8_t * STDCALL avb_interface_descriptor_imp::get_mac_addr()
 	{
-		return avb_interface_desc.mac_address;
+		return avb_interface_desc.mac_address.value;
 	}
 
 	uint16_t STDCALL avb_interface_descriptor_imp::get_interface_flags()
@@ -118,27 +118,4 @@ namespace avdecc_lib
 	{
 		return (uint32_t)avb_interface_desc.log_sync_interval;
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void avb_interface_descriptor_imp::print_avb_interface_desc_info()
-	{
-		uint64_t mac_address = avb_pdu_get_field_mac(avb_interface_desc.mac_address.value);
-		std::cout << "\nAVB Interface Descriptor";
-		std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-		std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-		std::cout << "\nobject_name = " << std::hex << get_object_name().value;
-		std::cout << "\nlocalized_description = 0x" << std::hex << get_localized_description();
-		std::cout << "\nmac_address = 0x" << std::hex << mac_address;
-		std::cout << "\ninterface_flags = 0x" << std::hex << get_interface_flags();
-		std::cout << "\nclock_identity = 0x" << std::hex << get_clock_identity();
-		std::cout << "\npriority1 = " << std::dec << get_priority1();
-		std::cout << "\nclock_class = " << std::dec << get_clock_class();
-		std::cout << "\noffset_scaled_log_variance = " << std::dec << get_offset_scaled_log_variance();
-		std::cout << "\nclock_accuracy = " << std::dec << get_clock_accuracy();
-		std::cout << "\npriority2 = " << std::dec << get_priority2();
-		std::cout << "\ndomain_number = " << std::dec << get_domain_number();
-		std::cout << "\nlog_sync_interval = " << std::dec << get_log_sync_interval();
-	}
-#endif
-
 }

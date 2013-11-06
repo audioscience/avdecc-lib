@@ -96,7 +96,7 @@ Prerequisites
 
 1. MSVC 2010 or later
 1. jdksavdecc-c git repository from <https://github.com/jdkoftinoff/jdksavdecc-c>
-1. winpcap from <http://www.winpcap.org/>
+1. winpcap development package from <http://www.winpcap.org/devel.htm>
 
 The following environment variables must be defined:
 * WPCAP_DIR the directory where WinPcap is installed
@@ -220,17 +220,17 @@ ACQUIRE_ENTITY | P1 | | |
 LOCK_ENTITY | P1 | | |
 ENTITY_AVAILABLE | P1 | | |
 CONTROLLER_AVAILABLE | P1 | | |
-READ_DESCRIPTOR | P1 | | |
-SET_STREAM_FORMAT | P1 | | |
+READ_DESCRIPTOR | P1 | Y | Y |
+SET_STREAM_FORMAT | P1 | Y | |
 GET_STREAM_FORMAT | P1 | Y | Y |
-SET_STREAM_INFO | P1 | | |
+SET_STREAM_INFO | P1 | Y | |
 GET_STREAM_INFO | P1 | Y | Y |
-SET_SAMPLING_RATE | P1 | | |
+SET_SAMPLING_RATE | P1 | Y | |
 GET_SAMPLING_RATE | P1 | Y | Y |
-SET_CLOCK_SOURCE | P1 | | |
-GET_CLOCK_SOURCE | P1 | | |
-START_STREAMING | P1 | | |
-STOP_STREAMING | P1 | | |
+SET_CLOCK_SOURCE | P1 | Y | |
+GET_CLOCK_SOURCE | P1 | Y | Y|
+START_STREAMING | P1 | Y | |
+STOP_STREAMING | P1 | Y | |
 SET_CONFIGURATION | P2 | | |
 GET_CONFIGURATION | P2 | | |
 SET_CONTROL | P2 | | |

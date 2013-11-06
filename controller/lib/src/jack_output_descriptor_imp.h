@@ -42,6 +42,14 @@ namespace avdecc_lib
 		struct jdksavdecc_descriptor_jack jack_output_desc; // Structure containing the jack_output_desc fields
 		int desc_jack_read_returned; // Status of extracting Jack Input Descriptor or Jack Output descriptor information from a network buffer
 
+		struct jack_input_desc_jack_flags
+		{
+			bool clock_sync_source;
+			bool captive;
+		};
+
+		struct jack_input_desc_jack_flags jack_flags;
+
 	public:
 		/**
 		 * An empty constructor for jack_output_descriptor_imp
@@ -59,6 +67,13 @@ namespace avdecc_lib
 		 */
 		virtual ~jack_output_descriptor_imp();
 
+	private:
+		/**
+		 * Store the jack flags componenets of the Jack Input descriptor object in a vector.
+		 */
+		void jack_flags_init();
+
+	public:
 		/**
 		 * Get the descriptor type of the Jack Output descriptor object.
 		 */
@@ -85,6 +100,17 @@ namespace avdecc_lib
 		uint16_t STDCALL get_jack_flags();
 
 		/**
+		 * Check if the jack can be used as a clock synchronization source.
+		 */
+		uint16_t STDCALL get_jack_flag_clock_sync_source();
+
+		/**
+		 * Check if the jack connection is hardwired, cannot be disconnected and
+		 * may be physically within the device's structure.
+		 */
+		uint16_t STDCALL get_captive();
+
+		/**
 		* Get the type of the Jack Output descriptor object.
 		*/
 		uint16_t STDCALL get_jack_type();
@@ -98,14 +124,6 @@ namespace avdecc_lib
 		 * Get the base control of the Jack Output descriptor object.
 		 */
 		uint16_t STDCALL get_base_control();
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out Jack Descriptor fields.
-		 */
-		void print_jack_desc_info();
-#endif
-
 	};
 }
 

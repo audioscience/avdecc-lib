@@ -28,7 +28,7 @@
  */
 
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "strings_descriptor_imp.h"
 
 namespace avdecc_lib
@@ -41,7 +41,7 @@ namespace avdecc_lib
 
 		if(desc_strings_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "desc_strings_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_strings_read error");
 			assert(desc_strings_read_returned >= 0);
 		}
 	}
@@ -92,27 +92,10 @@ namespace avdecc_lib
 				break;
 
 			default:
-				avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "get_string_by_index error");
+				log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_string_by_index error");
 				break;
 		}
 
 		return 0;
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void strings_descriptor_imp::print_strings_desc_info()
-	{
-		std::cout << "\nStrings Descriptor";
-		std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-		std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-		std::cout << "\nget_string_0 = " << std::hex << get_string_0().value;
-		std::cout << "\nget_string_1 = " << std::hex << get_string_1().value;
-		std::cout << "\nget_string_2 = " << std::hex << get_string_2().value;
-		std::cout << "\nget_string_3 = " << std::hex << get_string_3().value;
-		std::cout << "\nget_string_4 = " << std::hex << get_string_4().value;
-		std::cout << "\nget_string_5 = " << std::hex << get_string_5().value;
-		std::cout << "\nget_string_6 = " << std::hex << get_string_6().value;
-	}
-#endif
-
 }

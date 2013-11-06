@@ -78,6 +78,7 @@ namespace avdecc_lib
 		static HANDLE waiting_sem;
 
 		static bool is_waiting;
+		static bool queue_is_waiting;
 		static void *waiting_notification_id;
 		static int resp_status_for_cmd;
 
@@ -88,7 +89,7 @@ namespace avdecc_lib
 		system_layer2_multithreaded_callback();
 
 		/**
-		 * A constructor for system_layer2_multithreaded_callback used for constructing an object with network interface, notification, and logging callback functions.
+		 * A constructor for system_layer2_multithreaded_callback used for constructing an object with network interface, notification, and post_log_msg callback functions.
 		 */
 		system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj);
 
@@ -113,7 +114,7 @@ namespace avdecc_lib
 		int STDCALL set_wait_for_next_cmd(void *notification_id);
 
 		/**
-		 * Wait for the response packet with the corrsponding notifying id to be received.
+		 * Wait for the response packet with the corrsponding notification id to be received.
 		 */
 		int STDCALL get_last_resp_status();
 

@@ -29,8 +29,9 @@
 
 #include "net_interface_imp.h"
 #include "enumeration.h"
-#include "log.h"
-#include "util.h"
+#include "log_imp.h"
+#include "util_imp.h"
+#include "end_station.h"
 #include "adp.h"
 #include "aecp.h"
 
@@ -46,7 +47,7 @@ namespace avdecc_lib
 
 		if(aecpdu_aem_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "aecpdu_aem_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aecpdu_aem_read error");
 			assert(aecpdu_aem_read_returned >= 0);
 		}
 	}
@@ -62,10 +63,13 @@ namespace avdecc_lib
 		size_t ether_frame_pos = 0x0;
 		jdksavdecc_frame_init(ether_frame);
 
-		/***************************** Ethernet Frame ****************************/
+		/************************************************ Ethernet Frame *************************************/
 		ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-		convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
-		convert_uint64_to_eui48(end_station->get_end_station_mac(), ether_frame->dest_address.value);
+		utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
+		if(end_station)
+		{
+			utility->convert_uint64_to_eui48(end_station->get_end_station_mac(), ether_frame->dest_address.value);
+		}
 		ether_frame->length = AECP_FRAME_LEN; // Length of AECP packet is 64 bytes
 
 		/*********************** Fill frame payload with Ethernet frame information ********************/
@@ -101,24 +105,8 @@ namespace avdecc_lib
 
 		if(aecpdu_common_ctrl_hdr_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
 			assert(aecpdu_common_ctrl_hdr_returned >= 0);
 		}
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void aecp::print_aecpdu_information()
-	{
-		std::cout << "\nAECPDU";
-		std::cout << "\naecpdu_header status = 0x" << std::hex << get_aecpdu_header().header.status;
-		std::cout << "\naecpdu_header message_type = 0x" << std::hex << get_aecpdu_header().header.message_type;
-		std::cout << "\naecpdu_header subtype = 0x" << std::hex << get_aecpdu_header().header.subtype;
-		std::cout << "\naecpdu_header version = 0x" << std::hex << get_aecpdu_header().header.version;
-		std::cout << "\naecpdu_header control_data_length = 0x" << std::hex << get_aecpdu_header().header.control_data_length;
-		std::cout << "\ncontroller_entity_id = 0x" << std::hex << get_controller_entity_id();
-		std::cout << "\nsequence_id = 0x" << std::hex << get_sequence_id();
-		std::cout << "\ncommand_type = 0x" << std::hex << get_command_type();
-	}
-#endif
-
 }

@@ -103,13 +103,6 @@ namespace avdecc_lib
 		 * Get the location index of the Clock Source descriptor object.
 		 */
 		uint16_t STDCALL get_clock_source_location_index();
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out Clock Source Descriptor fields.
-		 */
-		void print_clock_source_desc_info();
-#endif
 	};
 }
 

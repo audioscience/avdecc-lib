@@ -22,36 +22,30 @@
  */
 
 /**
- * util.h
+ * build.h
  *
- * Utility file, which contains useful common functions that can be used by other classes in the library.
+ * Build file, which defines the API to be used.
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_UTIL_H_
-#define _AVDECC_CONTROLLER_LIB_UTIL_H_
+#ifndef _AVDECC_CONTROLLER_LIB_BUILD_H_
+#define _AVDECC_CONTROLLER_LIB_BUILD_H_
 
-#include <stdint.h>
+#if defined __linux__
 
-namespace avdecc_lib
-{
-	inline void convert_uint64_to_eui48(const uint64_t value, uint8_t new_value[6])
-	{
-		for(uint32_t index_i = 0; index_i < 6; index_i++)
-		{
-			new_value[index_i] = (uint8_t) (value >> ((5 - index_i) * 8));
-		}
-	}
+  #define AVDECC_CONTROLLER_LIB32_API
+  #define STDCALL
 
-	inline void convert_eui48_to_uint64(const uint8_t value[6], uint64_t &new_value)
-	{
-		new_value = 0;
+#elif defined _WIN32 || defined _WIN64
 
-		for (uint32_t index_i = 0; index_i < 6; index_i++)
-		{
-			new_value |= (uint64_t) value[index_i] << ((5 - index_i) * 8);
-		}
-	}
-}
+  #ifdef AVDECC_CONTROLLER_LIB32_EXPORTS
+    #define AVDECC_CONTROLLER_LIB32_API __declspec(dllexport)
+  #else
+    #define AVDECC_CONTROLLER_LIB32_API __declspec(dllimport)
+  #endif
+
+  #define STDCALL __stdcall
+
+#endif
 
 #endif

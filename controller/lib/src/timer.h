@@ -24,31 +24,26 @@
 /**
  * timer.h
  *
- * Timer class, which calculates start, end, and timeout times for network packets.
+ * Timer class
  */
 
 #pragma once
 #ifndef _AVDECC_CONTROLLER_LIB_TIMER_H_
 #define _AVDECC_CONTROLLER_LIB_TIMER_H_
 
-#ifdef WIN32
-#include <windows.h>
-typedef LONGLONG time_type;
-#elif defined __linux__
-typedef int64_t time_type;
-#endif
+#include <cstdint>
 
-#include <stdint.h>
+#include "avdecc_lib_os.h"
 
 namespace avdecc_lib
 {
 	class timer
 	{
 	private:
-		int running;
-		int elapsed;
+		bool running;
+		bool elapsed;
 		uint32_t count;
-		time_type start_time;
+		avdecc_lib_os::aTimestamp start_time;
 
 	public:
 		/**
@@ -61,9 +56,9 @@ namespace avdecc_lib
 		 */
 		~timer();
 
-		time_type clk_monotonic(void);
+		avdecc_lib_os::aTimestamp clk_monotonic(void);
 
-		uint32_t clk_convert_to_ms(time_type time_ms);
+		uint32_t clk_convert_to_ms(avdecc_lib_os::aTimestamp timestamp);
 
 		void start(int duration_ms);
 

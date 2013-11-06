@@ -40,7 +40,7 @@ namespace avdecc_lib
 	private:
 		struct aem_controller_state_machine_inflight_cmd
 		{
-			//		uint64_t timeout;
+	//		uint64_t timeout;
 			bool retried;
 			struct jdksavdecc_frame inflight_cmd_frame;
 			uint16_t seq_id;
@@ -80,7 +80,7 @@ namespace avdecc_lib
 		void tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
 
 		/**
-		 * Handle the receipt and processing of a received unsolicited notifying.
+		 * Handle the receipt and processing of a received unsolicited post_notification_msg.
 		 */
 		int process_unsolicited(struct jdksavdecc_frame *ether_frame);
 
@@ -92,7 +92,7 @@ namespace avdecc_lib
 		/**
 		 * Notify the application that a command has timed out and the retry has timed out.
 		 */
-		void timeout(uint32_t inflight_cmds_vector_index);
+		void timeout(uint32_t inflight_cmd_index);
 
 		/**
 		 * Process the Waiting state of the AEM Controller State Machine.
@@ -189,7 +189,7 @@ namespace avdecc_lib
 		int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t &notification_flag, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame);
 
 		/**
-		 * Call notifying or logging callback function for the command sent or response received.
+		 * Call notification or post_log_msg callback function for the command sent or response received.
 		 */
 		int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
 

@@ -28,7 +28,7 @@
  */
 
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "jack_output_descriptor_imp.h"
 
 namespace avdecc_lib
@@ -41,12 +41,20 @@ namespace avdecc_lib
 
 		if(desc_jack_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "desc_jack_output_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_jack_output_read error");
 			assert(desc_jack_read_returned >= 0);
 		}
+
+		jack_flags_init();
 	}
 
 	jack_output_descriptor_imp::~jack_output_descriptor_imp() {}
+
+	void jack_output_descriptor_imp::jack_flags_init()
+	{
+		jack_flags.clock_sync_source = jack_output_desc.jack_flags >> 1 & 0x01;
+		jack_flags.captive = jack_output_desc.jack_flags >> 2 & 0x01;
+	}
 
 	uint16_t STDCALL jack_output_descriptor_imp::get_descriptor_type()
 	{
@@ -74,6 +82,16 @@ namespace avdecc_lib
 		return jack_output_desc.jack_flags;
 	}
 
+	uint16_t STDCALL jack_output_descriptor_imp::get_jack_flag_clock_sync_source()
+	{
+		return jack_flags.clock_sync_source;
+	}
+
+	uint16_t STDCALL jack_output_descriptor_imp::get_captive()
+	{
+		return jack_flags.captive;
+	}
+
 	uint16_t STDCALL jack_output_descriptor_imp::get_jack_type()
 	{
 		return jack_output_desc.jack_type;
@@ -88,21 +106,4 @@ namespace avdecc_lib
 	{
 		return jack_output_desc.base_control;
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void jack_output_descriptor_imp::print_jack_desc_info()
-	{
-		std::cout << "\nJack Descriptor";
-		std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-		std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-		std::cout << "\nobject_name = " << std::hex << get_object_name().value;
-		std::cout << "\nlocalized_description = 0x" << std::hex << get_localized_description();
-		std::cout << "\njack_flags = 0x" << std::hex << get_jack_flags();
-		std::cout << "\njack_type = 0x" << std::hex << get_jack_type();
-		std::cout << "\nnumber_of_controls = " << std::dec << get_number_of_controls();
-		std::cout << "\nbase_control = " << std::dec << get_base_control();
-	}
-#endif
-
 }
-

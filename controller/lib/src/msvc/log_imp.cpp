@@ -22,49 +22,29 @@
  */
 
 /**
- * log.cpp
+ * log_imp.cpp
  *
- * Log class implementation
+ * Log implementation
  */
 
 #include <iostream>
 #include "enumeration.h"
-#include "log.h"
-
-extern "C" void default_log(void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms)
-{
-	printf("avdecc_default_log (%d, %s)\n", log_level, log_msg);
-}
+#include "log_imp.h"
 
 namespace avdecc_lib
 {
-	uint32_t log::read_index = 0;
-	uint32_t log::write_index = 0;
-	void (*log::callback_func) (void *, int32_t, const char *, int32_t);
-	void *log::user_obj;
-	uint32_t log::missed_log_event_cnt = 0;
-	HANDLE log::poll_events[2];
+	HANDLE log_imp::poll_events[2];
 
-	log *log_ref = new log();
+	log_imp *log_imp_ref = new log_imp();
 
-	log::log()
+	log_imp::log_imp()
 	{
-		callback_func = default_log;
-		user_obj = NULL;
-		log_level = avdecc_lib::LOGGING_LEVEL_ERROR;
-		missed_log_event_cnt = 0;
-
-		logging_thread_init(); // Start logging thread
+		logging_thread_init(); // Start log thread
 	}
 
-	log::~log() {}
+	log_imp::~log_imp() {}
 
-	void log::set_log_level(int32_t new_log_level)
-	{
-		log_level = new_log_level;
-	}
-
-	int log::logging_thread_init()
+	int log_imp::logging_thread_init()
 	{
 		poll_events[LOG_EVENT] = CreateSemaphore(NULL, 0, 32767, NULL);
 		poll_events[KILL_EVENT] = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -85,7 +65,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	DWORD WINAPI log::process_logging_thread(LPVOID lpParam)
+	DWORD WINAPI log_imp::process_logging_thread(LPVOID lpParam)
 	{
 		DWORD dwEvent;
 		struct log_data *data = (struct log_data *)lpParam;
@@ -96,7 +76,7 @@ namespace avdecc_lib
 
 			if (dwEvent == (WAIT_OBJECT_0 + LOG_EVENT))
 			{
-				if ((write_index - read_index) > 0)
+				if((write_index - read_index) > 0)
 				{
 					callback_func(user_obj,
 					              data[read_index % LOG_BUF_COUNT].level,
@@ -118,37 +98,9 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	void log::logging(int32_t level, const char *fmt,...)
+	void log_imp::post_log_event()
 	{
-		if (level >= log_level)
-		{
-			va_list arglist;
-
-			if ((write_index - read_index) > LOG_BUF_COUNT)
-			{
-				missed_log_event_cnt++;
-				return;
-			}
-
-			va_start(arglist, fmt);
-			vsprintf_s(log_buf[write_index % LOG_BUF_COUNT].msg, 256, fmt, arglist);  // Write to log_buf using write_index
-			va_end(arglist);
-			log_buf[write_index % LOG_BUF_COUNT].level = level;
-			log_buf[write_index % LOG_BUF_COUNT].time_stamp_ms = 0;
-			write_index++;
-
-			ReleaseSemaphore(poll_events[LOG_EVENT], 1, NULL);
-		}
+		ReleaseSemaphore(poll_events[LOG_EVENT], 1, NULL);
 	}
 
-	void log::set_logging_callback(void (*new_log_callback) (void *, int32_t, const char *, int32_t), void *p)
-	{
-		callback_func = new_log_callback;
-		user_obj = p;
-	}
-
-	uint32_t log::get_missed_log_event_count()
-	{
-		return missed_log_event_cnt;
-	}
 }

@@ -22,35 +22,24 @@
  */
 
 /**
- * log.h
+ * log_imp.h
  *
- * Log class, which is called by AVDECC LIB modules for logging purposes.
+ * Log implementation class
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_LOG_H_
-#define _AVDECC_CONTROLLER_LIB_LOG_H_
+#ifndef _AVDECC_CONTROLLER_LIB_IMP_LOG_H_
+#define _AVDECC_CONTROLLER_LIB_IMP_LOG_H_
 
-#include <windows.h>
+#include "avdecc_lib_os.h"
 #include <stdint.h>
+#include "log.h"
 
 namespace avdecc_lib
 {
-	class log
+	class log_imp : public virtual log
 	{
 	private:
-		int32_t log_level;
-		static uint32_t read_index;
-		static uint32_t write_index;
-		static void (*callback_func)(void *, int32_t, const char *, int32_t);
-		static void *user_obj;
-		static uint32_t missed_log_event_cnt;
-
-		enum
-		{
-		        LOG_BUF_COUNT = 32
-		};
-
 		enum events
 		{
 		        LOG_EVENT,
@@ -63,58 +52,36 @@ namespace avdecc_lib
 
 		static HANDLE poll_events[2];
 
-		struct log_data
-		{
-			int32_t level;
-			char msg[256];
-			int32_t time_stamp_ms;
-		};
-
-		struct log_data log_buf[LOG_BUF_COUNT];
-
 	public:
 		/**
-		 * An empty constructor for log
+		 * An empty constructor for log_imp
 		 */
-		log();
+		log_imp();
 
 		/**
-		 * Destructor for log used for destroying objects
+		 * Destructor for log_imp used for destroying objects
 		 */
-		virtual ~log();
+		virtual ~log_imp();
 
+	private:
 		/**
-		 * Update to a new log level.
-		 */
-		void set_log_level(int32_t new_log_level);
-
-		/**
-		 * Create and initialize logging thread, event, and semaphore.
+		 * Create and initialize post_log_msg thread, event, and semaphore.
 		 */
 		int logging_thread_init();
 
 		/**
-		 * Start of the logging thread used for logging purposes.
+		 * Start of the post_log_msg thread used for post_log_msg purposes.
 		 */
 		static DWORD WINAPI process_logging_thread(LPVOID lpParam);
 
+	public:
 		/**
-		 * AVDECC LIB modules call this function for logging purposes.
+		 * Release sempahore so that log callback function is called.
 		 */
-		void logging(int32_t log_level, const char *fmt,...);
-
-		/**
-		 * Change the logging callback function to a new logging callback function.
-		 */
-		void set_logging_callback(void (*new_log_callback) (void *, int32_t, const char *, int32_t), void *);
-
-		/**
-		 * Get the number of missed log that exceeds the log buffer count.
-		 */
-		uint32_t get_missed_log_event_count();
+		void post_log_event();
 	};
 
-	extern log *log_ref;
+	extern log_imp *log_imp_ref;
 }
 
 #endif

@@ -29,7 +29,7 @@
 
 #include <vector>
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "end_station_imp.h"
 #include "entity_descriptor_imp.h"
 
@@ -37,13 +37,13 @@ namespace avdecc_lib
 {
 	entity_descriptor_imp::entity_descriptor_imp() {}
 
-	entity_descriptor_imp::entity_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
+	entity_descriptor_imp::entity_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len)// : descriptor_base_imp(base_end_station_imp_ref)
 	{
 		desc_entity_read_returned = jdksavdecc_descriptor_entity_read(&entity_desc, frame, pos, mem_buf_len);
 
 		if(desc_entity_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "entity_desc_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "entity_desc_read error");
 			assert(desc_entity_read_returned >= 0);
 		}
 	}
@@ -179,44 +179,27 @@ namespace avdecc_lib
 		return config_desc_vec.at(config_desc_index);
 	}
 
+	int STDCALL entity_descriptor_imp::send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag)
+	{
+		return default_send_acquire_entity_cmd(this, notification_id, acquire_entity_flag);
+	}
+
+	int entity_descriptor_imp::proc_acquire_entity_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	{
+		return default_proc_acquire_entity_resp(aem_cmd_acquire_entity_resp, notification_id, notification_flag, frame, mem_buf_len, status);
+	}
+
 	int STDCALL entity_descriptor_imp::send_set_config_cmd()
 	{
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION command.");
 
 		return 0;
 	}
 
 	int STDCALL entity_descriptor_imp::send_get_config_cmd()
 	{
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION response.");
 
 		return 0;
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void entity_descriptor_imp::print_entity_desc_info()
-	{
-		std::cout << "\nEntity Descriptor";
-		std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-		std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-		std::cout << "\nentity_id = 0x" << std::hex << get_entity_id();
-		std::cout << "\nvendor_id = " << std::dec << get_vendor_id();
-		std::cout << "\nentity_model_id = 0x" << std::hex << get_entity_model_id();
-		std::cout << "\nentity_capabilities = 0x" << std::hex << get_entity_capabilities();
-		std::cout << "\ntalker_stream_sources = 0x" << std::hex << get_talker_stream_sources();
-		std::cout << "\ntalker_capabilities = 0x" << std::hex << get_talker_capabilities();
-		std::cout << "\nlistener_stream_sinks = 0x" << std::hex << get_listener_stream_sinks();
-		std::cout << "\nlistener_capabilities = 0x" << std::hex << get_listener_capabilities();
-		std::cout << "\ncontroller_capabilities = 0x" << std::hex << get_controller_capabilities();
-		std::cout << "\navailable_index = 0x" << std::hex << get_available_index();
-		std::cout << "\nassociation_id = 0x" << std::hex << get_association_id();
-		std::cout << "\nentity_name = " << std::dec << get_entity_name().value;
-		std::cout << "\nvendor_name_string = " << std::dec << get_vendor_name_string();
-		std::cout << "\nmodel_name_string = " << std::dec << get_model_name_string();
-		std::cout << "\nfirmware_version = " << std::dec << get_firmware_version().value;
-		std::cout << "\ngroup_name = " << std::dec << get_group_name().value;
-		std::cout << "\nserial_number = " << std::dec << get_serial_number().value;
-		std::cout << "\nconfigurations_count = " << std::dec << get_configurations_count();
-		std::cout << "\ncurrent_configuration = " << std::dec << get_current_configuration();
-	}
-#endif
-
 }

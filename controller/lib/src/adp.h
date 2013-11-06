@@ -101,7 +101,7 @@ namespace avdecc_lib
 		}
 
 		/**
-		 * Get the Controller GUID of the ADP packet.
+		 * Get the Controller GUID of the AVDECC Entity sending the command.
 		 */
 		struct jdksavdecc_eui64 get_controller_guid();
 
@@ -136,7 +136,7 @@ namespace avdecc_lib
 		 */
 		inline uint64_t get_entity_entity_id()
 		{
-			return jdksavdecc_uint64_get(&adpdu.header.entity_entity_id, 0);
+			return jdksavdecc_uint64_get(&adpdu.header.entity_id, 0);
 		}
 
 		/**
@@ -258,14 +258,6 @@ namespace avdecc_lib
 		{
 			return adpdu.reserved1;
 		}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out ADPDU fields.
-		 */
-		void print_adpdu_information();
-#endif
-
 	};
 }
 

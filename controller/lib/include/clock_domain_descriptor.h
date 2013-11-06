@@ -41,29 +41,56 @@ namespace avdecc_lib
 	{
 	public:
 		/**
-		 * Get the name of the clock_domain_descriptor object.
+		 * \return The name of the Clock Domain descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
 
 		/**
-		 * Get the localized description of the clock_domain_descriptor object.
+		 * \return The localized description of the Clock Domain descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
 		/**
-		 * Get the Clock Source index of the clock_domain_descriptor object.
+		 * \return The Clock Source index of the Clock Domain descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_index() = 0;
 
 		/**
-		* Get the Clock Sources offset of the clock_domain_descriptor object.
+		* \return The Clock Sources offset of the Clock Domain descriptor object.
 		*/
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_sources_offset() = 0;
 
 		/**
-		 * Get the Clock Sources count of the clock_domain_descriptor object.
+		 * \return The Clock Sources count of the Clock Domain descriptor object.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_sources_count() = 0;
+
+		/**
+		 * \return The corresponding Clock Sources by index present in the Clock Domain descriptor object.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_by_index(uint32_t clk_src_index) = 0;
+
+		/**
+		 * \return The clock source index of the requested Clock Domain descriptor after sending a
+		 * SET_CLOCK_SOURCE command and receiving a response back for the command.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL set_clock_source_clock_source_index() = 0;
+
+		/**
+		 * \return The clock source index of the requested Clock Domain descriptor after sending a
+		 * GET_CLOCK_SOURCE command and receiving a response back for the command.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_clock_source_index() = 0;
+
+		/**
+		 * Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index) = 0;
+
+		/**
+		 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_clock_source_cmd(void *notification_id) = 0;
 	};
 }
 

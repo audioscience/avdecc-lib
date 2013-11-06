@@ -33,10 +33,11 @@
 
 #include "jdksavdecc_aecp_aem.h"
 #include "jdksavdecc_aem_command.h"
-#include "end_station.h"
 
 namespace avdecc_lib
 {
+	class end_station;
+
 	class aecp
 	{
 	private:
@@ -112,14 +113,6 @@ namespace avdecc_lib
 		{
 			return aecpdu.command_type;
 		}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-		/**
-		 * Print out AECPDU fields.
-		 */
-		void print_aecpdu_information();
-#endif
-
 	};
 }
 

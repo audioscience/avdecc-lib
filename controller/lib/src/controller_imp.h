@@ -33,14 +33,14 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.0.6"
+#define AVDECC_CONTROLLER_VERSION "v0.1.0"
 
 namespace avdecc_lib
 {
 	class controller_imp : public virtual controller
 	{
 	private:
-		uint64_t controller_guid; // The unique identifier of the AVDECC Entity sending the command
+		//uint64_t controller_guid; // The unique identifier of the AVDECC Entity sending the command
 		std::vector<end_station_imp *> end_station_vec; // Store a list of End Station class objects
 
 	public:
@@ -50,7 +50,7 @@ namespace avdecc_lib
 		controller_imp();
 
 		/**
-		 * A constructor for controller_imp used for constructing an object with network interface, notification, and logging callback functions.
+		 * A constructor for controller_imp used for constructing an object with network interface, notification, and post_log_msg callback functions.
 		 */
 		controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
 		               void (*log_callback) (void *, int32_t, const char *, int32_t));
@@ -73,17 +73,17 @@ namespace avdecc_lib
 		/**
 		 * Get the Controller GUID of the AVDECC Entity sending the command.
 		 */
-		uint64_t STDCALL get_controller_guid();
+		//uint64_t STDCALL get_controller_guid();
 
 		/**
-		 * Get the number of End Stations connected
+		 * Get the total number of End Stations connected
 		 */
 		uint32_t STDCALL get_end_station_count();
 
 		/**
 		 * Get the corresponding End Station by index.
 		 */
-		avdecc_lib::end_station * STDCALL get_end_station_by_index(uint32_t end_station_index);
+		end_station * STDCALL get_end_station_by_index(uint32_t end_station_index);
 
 		/**
 		 * Get the corresponding End Station by GUID.
@@ -93,7 +93,7 @@ namespace avdecc_lib
 		/**
 		 * Get the corresponding Configuration descriptor by index.
 		 */
-		configuration_descriptor * STDCALL get_config_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index);
+		configuration_descriptor * STDCALL get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index);
 
 		/**
 		 * Get the corresponding Configuration descriptor by GUID.
@@ -106,9 +106,9 @@ namespace avdecc_lib
 		bool STDCALL is_inflight_cmd_with_notification_id(void *notification_id);
 
 		/**
-		 * Update the log level.
+		 * Update the base log level for messages to be logged by the post_log_msg callback.
 		 */
-		void STDCALL update_log_level(int32_t new_log_level);
+		void STDCALL set_logging_level(int32_t new_log_level);
 
 		/**
 		 * Get the missed notification event count.
@@ -134,6 +134,16 @@ namespace avdecc_lib
 		 * Send queued packet to the AEM Controller State Machine.
 		 */
 		void STDCALL tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len);
+
+		/**
+		 * Send a CONTROLLER_AVAILABLE command to verify that the AVDECC Controller is still there.
+		 */
+		int STDCALL send_controller_avail_cmd(void *notification_id, uint32_t end_station_index);
+
+		/**
+		 * Process a CONTROLLER_AVAILABLE response for the CONTROLLER_AVAILABLE command.
+		 */
+		int proc_controller_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 
 	extern controller_imp *controller_imp_ref;

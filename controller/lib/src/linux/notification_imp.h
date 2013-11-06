@@ -22,21 +22,59 @@
  */
 
 /**
- * build.h
+ * notification_imp.h
  *
- * Build file, which defines the API to be used.
+ * Notification implementation class
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_BUILD_H_
-#define _AVDECC_CONTROLLER_LIB_BUILD_H_
+#ifndef _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
+#define _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
 
-#ifdef AVDECC_CONTROLLER_LIB32_EXPORTS
-#define AVDECC_CONTROLLER_LIB32_API __declspec(dllexport)
-#else
-#define AVDECC_CONTROLLER_LIB32_API __declspec(dllimport)
-#endif
+#include "avdecc_lib_os.h"
+#include <stdint.h>
+#include "notification.h"
 
-#define STDCALL __stdcall
+namespace avdecc_lib
+{
+	class notification_imp : public virtual notification
+	{
+	private:
+		pthread_t h_thread;
+		sem_t notify_waiting;
+
+	public:
+		/**
+		 * An empty constructor for notification_imp
+		 */
+		notification_imp();
+
+		/**
+		 * Destructor for notification_imp used for destroying objects
+		 */
+		virtual ~notification_imp();
+
+	private:
+		/**
+		 * Create and initialize notification thread, event, and semaphore.
+		 */
+		int notification_thread_init();
+
+		/**
+		 * Start of the post_notification_msg thread used for generating notification messages.
+		 */
+		static void * dispatch_thread(void * lpParam);
+
+		void * dispatch_callbacks(void);
+
+	public:
+		/**
+		 * Release sempahore so that notification callback function is called.
+		 */
+		void post_log_event();
+	};
+
+	extern notification_imp *notification_imp_ref;
+}
 
 #endif

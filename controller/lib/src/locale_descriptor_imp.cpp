@@ -28,7 +28,7 @@
  */
 
 #include "enumeration.h"
-#include "log.h"
+#include "log_imp.h"
 #include "locale_descriptor_imp.h"
 
 namespace avdecc_lib
@@ -41,7 +41,7 @@ namespace avdecc_lib
 
 		if(desc_locale_read_returned < 0)
 		{
-			avdecc_lib::log_ref->logging(avdecc_lib::LOGGING_LEVEL_ERROR, "desc_locale_read error");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_locale_read error");
 			assert(desc_locale_read_returned >= 0);
 		}
 	}
@@ -73,17 +73,4 @@ namespace avdecc_lib
 	{
 		return locale_desc.base_strings;
 	}
-
-#ifdef DEBUG_DESCRIPTOR_FIELD_INFORMATION
-	void locale_descriptor_imp::print_locale_desc_info()
-	{
-		std::cout << "\nLocale Descriptor";
-		std::cout << "\ndescriptor_type = 0x" << std::hex << get_descriptor_type();
-		std::cout << "\ndescriptor_index = 0x" << std::hex << get_descriptor_index();
-		std::cout << "\nlocale_identifier = " << std::hex << get_locale_identifier().value;
-		std::cout << "\nnumber_of_strings = " << std::hex << get_number_of_strings();
-		std::cout << "\nbase_strings = " << std::hex << get_base_strings();
-	}
-#endif
-
 }

@@ -24,7 +24,7 @@
 /**
  * timer.cpp
  *
- * Timer implementation, which calculates start, end, and timeout times for network packets.
+ * Timer implementation
  */
 
 #include "timer.h"
@@ -41,27 +41,46 @@ namespace avdecc_lib
 
 	timer::~timer() {}
 
-	time_type timer::clk_monotonic(void)
-	{
 #ifdef WIN32
+	avdecc_lib_os::aTimestamp timer::clk_monotonic(void)
+	{
 		LARGE_INTEGER count;
 		QueryPerformanceCounter(&count);
 
 		return count.QuadPart;
-#elif defined __linux__
-#endif
 	}
 
-	uint32_t timer::clk_convert_to_ms(time_type time_ms)
+#elif defined __linux__
+	avdecc_lib_os::aTimestamp timer::clk_monotonic(void)
 	{
+		struct timespec tp;
+		avdecc_lib_os::aTimestamp time;
+
+		if ( clock_getres( CLOCK_MONOTONIC, &tp ) != 0 ) {
+			printf("Timer not supported in asios_Clock_monotonic(), asios.c\n");
+		}
+
+		clock_gettime( CLOCK_MONOTONIC, &tp );
+		time = (avdecc_lib_os::aTimestamp)(tp.tv_sec * 1000) + (avdecc_lib_os::aTimestamp)(tp.tv_nsec/1000000);
+		return time;
+	}
+#endif
+
 #ifdef WIN32
+	uint32_t timer::clk_convert_to_ms(avdecc_lib_os::aTimestamp time_stamp)
+	{
 		LARGE_INTEGER freq;
 		QueryPerformanceFrequency(&freq);
 
-		return (uint32_t)((time_ms * 1000/freq.QuadPart) & 0xfffffff);
-#elif defined __linux__
-#endif
+		return (uint32_t)((time_stamp * 1000/freq.QuadPart) & 0xfffffff);
 	}
+#elif defined __linux__
+	uint32_t timer::clk_convert_to_ms(avdecc_lib_os::aTimestamp time_stamp)
+	{
+		return time_stamp;
+
+	}
+#endif
 
 	void timer::start(int duration_ms)
 	{
@@ -82,19 +101,15 @@ namespace avdecc_lib
 		if(running && !elapsed)
 		{
 			uint32_t elapsed_ms;
-			time_type current_time = clk_monotonic();
+			avdecc_lib_os::aTimestamp current_time = clk_monotonic();
 			elapsed_ms = (uint32_t)clk_convert_to_ms(current_time - start_time);
 
 			if(elapsed_ms > count)
 			{
-				elapsed = TRUE;
+				elapsed = true;
 			}
 		}
 
 		return elapsed;
 	}
 }
-
-
-
-
