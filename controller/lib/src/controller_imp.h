@@ -123,17 +123,17 @@ namespace avdecc_lib
 		/**
 		 * Check for End Station connection, command packet, and response packet timeouts.
 		 */
-		void STDCALL time_tick_event();
+		void time_tick_event();
 
 		/**
 		 * Lookup and process packet received.
 		 */
-		void STDCALL rx_packet_event(void *&notification_id, bool &notification_id_flag, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send queued packet to the AEM Controller State Machine.
 		 */
-		void STDCALL tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len);
+		void tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len);
 
 		/**
 		 * Send a CONTROLLER_AVAILABLE command to verify that the AVDECC Controller is still there.
@@ -143,7 +143,7 @@ namespace avdecc_lib
 		/**
 		 * Process a CONTROLLER_AVAILABLE response for the CONTROLLER_AVAILABLE command.
 		 */
-		int proc_controller_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_controller_avail_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 
 	extern controller_imp *controller_imp_ref;

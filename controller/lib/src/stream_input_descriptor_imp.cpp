@@ -313,7 +313,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int stream_input_descriptor_imp::proc_set_stream_format_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int stream_input_descriptor_imp::proc_set_stream_format_resp(void *notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_set_stream_format_resp_returned;
@@ -339,7 +339,7 @@ namespace avdecc_lib
 		status = aem_cmd_get_stream_format_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_get_stream_format_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;
@@ -382,7 +382,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int stream_input_descriptor_imp::proc_get_stream_format_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int stream_input_descriptor_imp::proc_get_stream_format_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_get_stream_format_resp_returned;
@@ -408,7 +408,7 @@ namespace avdecc_lib
 		status = aem_cmd_get_stream_format_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_get_stream_format_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;
@@ -421,7 +421,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int stream_input_descriptor_imp::proc_set_stream_info_resp(void *notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int stream_input_descriptor_imp::proc_set_stream_info_resp(void *notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO response.");
 
@@ -465,7 +465,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int stream_input_descriptor_imp::proc_get_stream_info_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int stream_input_descriptor_imp::proc_get_stream_info_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_get_stream_info_response aem_cmd_get_stream_info_resp;
@@ -491,7 +491,7 @@ namespace avdecc_lib
 		status = aem_cmd_get_stream_info_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_get_stream_info_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;
@@ -534,7 +534,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int stream_input_descriptor_imp::proc_start_streaming_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int stream_input_descriptor_imp::proc_start_streaming_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_start_streaming_response aem_cmd_start_streaming_resp;
@@ -560,7 +560,7 @@ namespace avdecc_lib
 		status = aem_cmd_get_stream_info_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_get_stream_info_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;
@@ -603,7 +603,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int stream_input_descriptor_imp::proc_stop_streaming_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int stream_input_descriptor_imp::proc_stop_streaming_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_stop_streaming_response aem_cmd_stop_streaming_resp;
@@ -629,7 +629,7 @@ namespace avdecc_lib
 		status = aem_cmd_get_stream_info_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_get_stream_info_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;

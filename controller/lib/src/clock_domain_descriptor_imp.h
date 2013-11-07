@@ -128,7 +128,7 @@ namespace avdecc_lib
 		/**
 		 * Process a SET_CLOCK_SOURCE response for the SET_CLOCK_SOURCE command.
 		 */
-		int proc_set_clock_source_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_set_clock_source_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
@@ -138,7 +138,7 @@ namespace avdecc_lib
 		/**
 		 * Process a GET_CLOCK_SOURCE response for the GET_CLOCK_SOURCE command.
 		 */
-		int proc_get_clock_source_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_get_clock_source_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 }
 

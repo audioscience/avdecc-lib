@@ -39,7 +39,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\..\bin\avdecc_controller_cmd_line_main_debug\</OutDir>
+    <OutDir>..\..\..\bin\cmd_line_main_debug\</OutDir>
     <IncludePath>..\..\..\..\lib\include;..\..\..\..\app\cmdline\src;..\..\..\..\app\test\cmd_line;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\..\lib\bin\avdecc_controller_lib32_debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -47,7 +47,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\..\..\lib\include;..\..\..\..\app\cmdline\src;..\..\..\..\app\test\cmd_line;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\..\lib\bin\avdecc_controller_lib32_release;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\..\bin\avdecc_controller_cmd_line_main_release\</OutDir>
+    <OutDir>..\..\..\bin\cmd_line_main_release\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -84,7 +84,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\cmdline\src\avdecc_controller_cmd_line.cpp" />
-    <ClCompile Include="..\..\..\test\cmd_line\avdecc_controller_cmd_line_main.cpp" />
+    <ClCompile Include="..\..\..\cmdline\src\avdecc_controller_cmd_line_main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

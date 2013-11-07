@@ -191,7 +191,7 @@ namespace avdecc_lib
 		/**
 		 * Process a ACQURE_ENTITY response for the ACQURE_ENTITY command.
 		 */
-		int proc_acquire_entity_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_acquire_entity_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a SET_CONFIFURATION command to change the current configuration of the AVDECC Entity.

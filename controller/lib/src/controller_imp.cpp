@@ -52,7 +52,6 @@ namespace avdecc_lib
 	                                       void (*log_callback) (void *, int32_t, const char *, int32_t))
 	{
 		net_interface_ref = dynamic_cast<net_interface_imp *>(netif);
-
 		if(!net_interface_ref)
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived net_interface_imp to base net_interface error");
@@ -194,7 +193,7 @@ namespace avdecc_lib
 		return log_imp_ref->get_missed_log_event_count();
 	}
 
-	void STDCALL controller_imp::time_tick_event()
+	void controller_imp::time_tick_event()
 	{
 		uint64_t end_station_guid;
 		uint32_t disconnected_end_station_index;
@@ -207,7 +206,7 @@ namespace avdecc_lib
 		}
 	}
 
-	void STDCALL controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		uint64_t dest_mac_addr;
 		uint32_t subtype;
@@ -305,11 +304,11 @@ namespace avdecc_lib
 
 							if(cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
 							{
-								proc_controller_avail_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+								proc_controller_avail_resp(notification_id, frame, mem_buf_len, status);
 							}
 							else
 							{
-								end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+								end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, frame, mem_buf_len, status);
 							}
 
 							is_notification_id_valid = true;
@@ -333,7 +332,7 @@ namespace avdecc_lib
 		}
 	}
 
-	void STDCALL controller_imp::tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len)
+	void controller_imp::tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len)
 	{
 		struct jdksavdecc_frame packet_frame;
 
@@ -378,7 +377,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int controller_imp::proc_controller_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int controller_imp::proc_controller_avail_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_controller_available_response aem_cmd_controller_avail_resp;
@@ -405,7 +404,7 @@ namespace avdecc_lib
 		status = aem_cmd_controller_avail_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_controller_avail_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;

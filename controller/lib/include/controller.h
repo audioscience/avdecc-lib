@@ -98,21 +98,6 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL missed_log_count() = 0;
 
 		/**
-		 * Check for End Station connection, command packet, and response packet timeouts.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL time_tick_event() = 0;
-
-		/**
-		 * Lookup and process packet received.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL rx_packet_event(void *&notification_id, bool &notification_id_flag, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status) = 0;
-
-		/**
-		 * Send queued packet to the AEM Controller State Machine.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len) = 0;
-
-		/**
 		 * Send a CONTROLLER_AVAILABLE command to verify that the AVDECC Controller is still there.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_controller_avail_cmd(void *notification_id, uint32_t end_station_index) = 0;
