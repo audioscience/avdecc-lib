@@ -295,7 +295,7 @@ namespace avdecc_lib
 		/**
 		 * Process a SET_SAMPLING_RATE response for the SET_SAMPLING_RATE command.
 		 */
-		int proc_set_sampling_rate_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_set_sampling_rate_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
@@ -305,7 +305,7 @@ namespace avdecc_lib
 		/**
 		 * Process a GET_SAMPLING_RATE response for the GET_SAMPLING_RATE command.
 		 */
-		int proc_get_sampling_rate_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_get_sampling_rate_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 }
 

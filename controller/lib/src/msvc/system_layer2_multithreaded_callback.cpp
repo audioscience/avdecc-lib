@@ -32,8 +32,8 @@
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
-#include "end_station.h"
-#include "controller.h"
+#include "end_station_imp.h"
+#include "controller_imp.h"
 #include "system_message_queue.h"
 #include "system_tx_queue.h"
 #include "system_layer2_multithreaded_callback.h"
@@ -41,7 +41,7 @@
 namespace avdecc_lib
 {
 	net_interface *netif_obj_in_system;
-	controller *controller_ref_in_system;
+	controller_imp *controller_imp_ref_in_system;
 	system_layer2_multithreaded_callback *local_system = NULL;
 
 	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
@@ -73,7 +73,12 @@ namespace avdecc_lib
 		resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID;
 
 		netif_obj_in_system = netif;
-		controller_ref_in_system = controller_obj;
+		controller_imp_ref_in_system = dynamic_cast<controller_imp *>(controller_obj);
+		if(!controller_imp_ref_in_system)
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base controller to derived controller_imp error");
+		}
+
 		queue_is_waiting = false;
 	}
 
@@ -82,7 +87,7 @@ namespace avdecc_lib
 		delete poll_rx.rx_queue;
 		delete poll_tx.tx_queue;
 		delete netif_obj_in_system;
-		delete controller_ref_in_system;
+		delete controller_imp_ref_in_system;
 		delete local_system;
 	}
 
@@ -265,9 +270,10 @@ namespace avdecc_lib
 		{
 			case WAIT_OBJECT_0 + WPCAP_TIMEOUT:
 				{
-					controller_ref_in_system->time_tick_event();
+					controller_imp_ref_in_system->time_tick_event();
 
-					if(is_waiting && (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)))
+					bool is_waiting_completed = is_waiting && (!controller_imp_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id));
+					if(is_waiting_completed)
 					{
 						is_waiting = false;
 						resp_status_for_cmd = AVDECC_LIB_STATUS_TICK_TIMEOUT;
@@ -284,16 +290,17 @@ namespace avdecc_lib
 
 					bool is_notification_id_valid = false;
 					int status = -1;
+					bool is_waiting_completed = false;
 
-					controller_ref_in_system->rx_packet_event(thread_data.notification_id,
+					controller_imp_ref_in_system->rx_packet_event(thread_data.notification_id,
 					                                          is_notification_id_valid,
-					                                          thread_data.notification_flag,
 					                                          thread_data.frame,
 					                                          thread_data.mem_buf_len,
 					                                          status);
 
-					if(is_waiting && (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
-					   is_notification_id_valid && (waiting_notification_id == thread_data.notification_id))
+					is_waiting_completed = is_waiting && (!controller_imp_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
+							       is_notification_id_valid && (waiting_notification_id == thread_data.notification_id);
+					if(is_waiting_completed)
 					{
 						resp_status_for_cmd = status;
 						is_waiting = false;
@@ -308,7 +315,7 @@ namespace avdecc_lib
 			case WAIT_OBJECT_0 + WPCAP_TX_PACKET:
 				poll_tx.tx_queue->queue_pop_nowait(&thread_data);
 
-				controller_ref_in_system->tx_packet_event(thread_data.notification_id, thread_data.notification_flag, thread_data.frame, thread_data.mem_buf_len);
+				controller_imp_ref_in_system->tx_packet_event(thread_data.notification_id, thread_data.notification_flag, thread_data.frame, thread_data.mem_buf_len);
 
 				if(thread_data.notification_flag == CMD_WITH_NOTIFICATION)
 				{

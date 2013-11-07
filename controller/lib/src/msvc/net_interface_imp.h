@@ -64,6 +64,8 @@ namespace avdecc_lib
 		 */
 		virtual ~net_interface_imp();
 
+		void STDCALL destroy();
+
 		/**
 		 * Count the number of devices.
 		 */
@@ -85,7 +87,7 @@ namespace avdecc_lib
 		int STDCALL select_interface_by_num(uint32_t interface_num);
 
 		/**
-		 * Update the Ethernet type for the network interface.
+		 * Set packet filter for the network interface.
 		 */
 		int set_capture_ether_type(uint16_t *ether_type, uint32_t count);
 

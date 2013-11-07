@@ -115,7 +115,18 @@ namespace avdecc_lib
 
 	entity_descriptor * STDCALL end_station_imp::get_entity_desc_by_index(uint32_t entity_desc_index)
 	{
-		return entity_desc_vec.at(entity_desc_index);
+		bool is_valid = (entity_desc_index < entity_desc_vec.size());
+
+		if(is_valid)
+		{
+			return entity_desc_vec.at(entity_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_entity_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	int end_station_imp::read_desc_init(uint16_t desc_type, uint16_t desc_index)
@@ -167,7 +178,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int end_station_imp::proc_read_desc_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int end_station_imp::proc_read_desc_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_read_descriptor_response aem_cmd_read_desc_resp;
@@ -208,7 +219,7 @@ namespace avdecc_lib
 		desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR);
 		desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR + 2);
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		/******************* Select the corresponding descriptor based on the descriptor type from the response packet received ******************/
 		switch(desc_type)
@@ -416,7 +427,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int end_station_imp::proc_entity_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int end_station_imp::proc_entity_avail_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_entity_available_response aem_cmd_entity_avail_resp;
@@ -443,13 +454,13 @@ namespace avdecc_lib
 		status = aem_cmd_entity_avail_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_entity_avail_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;
 	}
 
-	int end_station_imp::proc_rcvd_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int end_station_imp::proc_rcvd_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		uint16_t cmd_type;
 		uint16_t desc_type;
@@ -470,7 +481,7 @@ namespace avdecc_lib
 
 						if(entity_desc_imp_ref)
 						{
-							entity_desc_imp_ref->proc_acquire_entity_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							entity_desc_imp_ref->proc_acquire_entity_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -484,7 +495,7 @@ namespace avdecc_lib
 
 						if(stream_input_desc_imp_ref)
 						{
-							stream_input_desc_imp_ref->proc_acquire_entity_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							stream_input_desc_imp_ref->proc_acquire_entity_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -498,7 +509,7 @@ namespace avdecc_lib
 
 						if(stream_output_desc_imp_ref)
 						{
-							stream_output_desc_imp_ref->proc_acquire_entity_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							stream_output_desc_imp_ref->proc_acquire_entity_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -516,11 +527,11 @@ namespace avdecc_lib
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE:
-				proc_entity_avail_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+				proc_entity_avail_resp(notification_id, frame, mem_buf_len, status);
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR:
-				proc_read_desc_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+				proc_read_desc_resp(notification_id, frame, mem_buf_len, status);
 				break;
 
 			case JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT:
@@ -535,7 +546,7 @@ namespace avdecc_lib
 
 						if(stream_input_desc_imp_ref)
 						{
-							stream_input_desc_imp_ref->proc_set_stream_format_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							stream_input_desc_imp_ref->proc_set_stream_format_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -549,7 +560,7 @@ namespace avdecc_lib
 
 						if(stream_output_desc_imp_ref)
 						{
-							stream_output_desc_imp_ref->proc_set_stream_format_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							stream_output_desc_imp_ref->proc_set_stream_format_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -572,7 +583,7 @@ namespace avdecc_lib
 
 						if(stream_input_desc_imp_ref)
 						{
-							stream_input_desc_imp_ref->proc_get_stream_format_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							stream_input_desc_imp_ref->proc_get_stream_format_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -586,7 +597,7 @@ namespace avdecc_lib
 
 						if(stream_output_desc_imp_ref)
 						{
-							stream_output_desc_imp_ref->proc_get_stream_format_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							stream_output_desc_imp_ref->proc_get_stream_format_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -614,7 +625,7 @@ namespace avdecc_lib
 
 					if(stream_input_desc_imp_ref)
 					{
-						stream_input_desc_imp_ref->proc_get_stream_info_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						stream_input_desc_imp_ref->proc_get_stream_info_resp(notification_id, frame, mem_buf_len, status);
 					}
 					else
 					{
@@ -628,7 +639,7 @@ namespace avdecc_lib
 
 					if(stream_output_desc_imp_ref)
 					{
-						stream_output_desc_imp_ref->proc_get_stream_info_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						stream_output_desc_imp_ref->proc_get_stream_info_resp(notification_id, frame, mem_buf_len, status);
 					}
 					else
 					{
@@ -662,7 +673,7 @@ namespace avdecc_lib
 
 						if(audio_unit_desc_imp_ref)
 						{
-							audio_unit_desc_imp_ref->proc_set_sampling_rate_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							audio_unit_desc_imp_ref->proc_set_sampling_rate_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -685,7 +696,7 @@ namespace avdecc_lib
 
 						if(audio_unit_desc_imp_ref)
 						{
-							audio_unit_desc_imp_ref->proc_get_sampling_rate_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							audio_unit_desc_imp_ref->proc_get_sampling_rate_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -706,7 +717,7 @@ namespace avdecc_lib
 
 					if(clock_domain_desc_imp_ref)
 					{
-						clock_domain_desc_imp_ref->proc_set_clock_source_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						clock_domain_desc_imp_ref->proc_set_clock_source_resp(notification_id, frame, mem_buf_len, status);
 					}
 					else
 					{
@@ -725,7 +736,7 @@ namespace avdecc_lib
 
 					if(clock_domain_desc_imp_ref)
 					{
-						clock_domain_desc_imp_ref->proc_get_clock_source_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+						clock_domain_desc_imp_ref->proc_get_clock_source_resp(notification_id, frame, mem_buf_len, status);
 					}
 					else
 					{
@@ -746,7 +757,7 @@ namespace avdecc_lib
 
 						if(stream_input_desc_imp_ref)
 						{
-							stream_input_desc_imp_ref->proc_start_streaming_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							stream_input_desc_imp_ref->proc_start_streaming_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -760,7 +771,7 @@ namespace avdecc_lib
 
 						if(stream_output_desc_imp_ref)
 						{
-							stream_output_desc_imp_ref->proc_start_streaming_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							stream_output_desc_imp_ref->proc_start_streaming_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -782,7 +793,7 @@ namespace avdecc_lib
 
 						if(stream_input_desc_imp_ref)
 						{
-							stream_input_desc_imp_ref->proc_stop_streaming_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							stream_input_desc_imp_ref->proc_stop_streaming_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{
@@ -796,7 +807,7 @@ namespace avdecc_lib
 
 						if(stream_output_desc_imp_ref)
 						{
-							stream_output_desc_imp_ref->proc_stop_streaming_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+							stream_output_desc_imp_ref->proc_stop_streaming_resp(notification_id, frame, mem_buf_len, status);
 						}
 						else
 						{

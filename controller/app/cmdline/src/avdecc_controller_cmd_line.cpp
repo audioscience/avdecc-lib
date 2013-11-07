@@ -880,6 +880,11 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 				std::cout << "\nclock_source_index = 0x" << std::hex << clk_domain_desc->get_clock_source_index();
 				std::cout << "\nclock_sources_offset = " << std::dec << clk_domain_desc->get_clock_sources_offset();
 				std::cout << "\nclock_sources_count = " << std::dec << clk_domain_desc->get_clock_sources_count();
+
+				for(uint32_t index_i = 0; index_i < clk_domain_desc->get_clock_sources_count(); index_i++)
+				{
+					std::cout << "\n\tclock_sources = " << std::dec << clk_domain_desc->get_clock_source_by_index(index_i);
+				}
 			}
 			break;
 
@@ -1273,15 +1278,17 @@ int avdecc_cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_i
 {
 	uint32_t cmd_notification_id = get_next_notification_id();
 	uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+	uint16_t clk_src_index = 0;
 	int status = -1;
 
 	system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
 	avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_clock_domain_desc_by_index(desc_index);
 	clk_domain_desc_ref->send_get_clock_source_cmd((void *)notification_id);
 	status = system_ref->get_last_resp_status();
+	clk_src_index = clk_domain_desc_ref->get_clock_source_clock_source_index();
 
 	std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
-	std::cout << "Clock source: 0x" << std::dec << clk_domain_desc_ref->get_clock_source_clock_source_index();
+	std::cout << "Clock source : 0x" << std::dec << clk_domain_desc_ref->get_clock_source_by_index(clk_src_index);
 
 	return 0;
 }
@@ -1374,8 +1381,8 @@ int avdecc_cmd_line::cmd_path(std::string new_log_path)
 bool avdecc_cmd_line::is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config)
 {
 	bool is_setting_valid = (end_station < controller_ref->get_end_station_count()) &&
-	                        (entity < controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_count()) &&
-	                        (config == controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_by_index(current_entity)->get_current_configuration());
+	                        (entity < controller_ref->get_end_station_by_index(end_station)->get_entity_desc_count()) &&
+	                        (config == controller_ref->get_end_station_by_index(end_station)->get_entity_desc_by_index(entity)->get_current_configuration());
 
 	return is_setting_valid;
 }

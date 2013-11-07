@@ -52,6 +52,9 @@ namespace avdecc_lib
 		}
 
 		sampling_rates_init(frame);
+
+		memset(&aem_cmd_set_sampling_rate_resp, 0, sizeof(struct jdksavdecc_aem_command_set_sampling_rate_response));
+		memset(&aem_cmd_get_sampling_rate_resp, 0, sizeof(struct jdksavdecc_aem_command_get_sampling_rate_response));
 	}
 
 	audio_unit_descriptor_imp::~audio_unit_descriptor_imp() {}
@@ -325,7 +328,7 @@ namespace avdecc_lib
 
 	}
 
-	int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_set_sampling_rate_resp_returned;
@@ -351,7 +354,7 @@ namespace avdecc_lib
 		status = aem_cmd_set_sampling_rate_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_set_sampling_rate_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;
@@ -395,7 +398,7 @@ namespace avdecc_lib
 	}
 
 
-	int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_get_sampling_rate_resp_returned;
@@ -421,7 +424,7 @@ namespace avdecc_lib
 		status = aem_cmd_get_sampling_rate_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_get_sampling_rate_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;

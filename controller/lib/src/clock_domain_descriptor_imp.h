@@ -43,7 +43,7 @@ namespace avdecc_lib
 		int desc_clock_domain_read_returned; // Status of extracting Clock Domain descriptor information from a network buffer
 		std::vector<uint16_t> clk_src_vec; // Store clock sources in a vector
 
-		struct jdksavdecc_aem_command_get_clock_source_response aem_cmd_set_clk_src_resp; // Store the response received after sending a SET_CLOCK_SOURCE command
+		struct jdksavdecc_aem_command_set_clock_source_response aem_cmd_set_clk_src_resp; // Store the response received after sending a SET_CLOCK_SOURCE command
 		struct jdksavdecc_aem_command_get_clock_source_response aem_cmd_get_clk_src_resp; // Store the response received after sending a GET_CLOCK_SOURCE command
 
 	public:
@@ -128,7 +128,7 @@ namespace avdecc_lib
 		/**
 		 * Process a SET_CLOCK_SOURCE response for the SET_CLOCK_SOURCE command.
 		 */
-		int proc_set_clock_source_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_set_clock_source_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
@@ -138,7 +138,7 @@ namespace avdecc_lib
 		/**
 		 * Process a GET_CLOCK_SOURCE response for the GET_CLOCK_SOURCE command.
 		 */
-		int proc_get_clock_source_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_get_clock_source_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 }
 
