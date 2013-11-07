@@ -2,11 +2,13 @@
 DEP_DIR = ./dep
 BUILD_DIR = ./build
 TARGET_DIR = ../../bin
-LIB_DIR = ../../src
-INCLUDE_DIR = ../../include
-OS_DIR = $(LIB_DIR)/linux
+SRC_DIR1 = ../../../cmdline/src
+SRC_DIR2 = ../../../test/cmd_line
+INCLUDE_LIB_DIR = ../../../../lib/include
+AVDECC_LIB = ../../../../lib/bin/avdecc-lib.a
 
-TARGET_LIB = $(TARGET_DIR)/avdecc-lib.a
+
+TARGET_APP = $(TARGET_DIR)/avdecc-console
 
 #ARCH := arm
 
@@ -19,60 +21,34 @@ CC := gcc
 CXX := g++
 endif
 
-INCLUDES += -I$(LIB_DIR)
-INCLUDES += -I$(OS_DIR)
-INCLUDES += -I$(INCLUDE_DIR)
-INCLUDES += -I$(JDKSAVDECC_DIR)/include
+INCLUDES += -I$(INCLUDE_LIB_DIR)
+INCLUDES += -I$(SRC_DIR1)
 
 
 EXTRA_CFLAGS += -g -D__linux__
 EXTRA_CXXFLAGS += -Wall -ansi -g -std=c++0x -D__linux__
 
-OBJS =  adp.o \
-	adp_discovery_state_machine.o \
-	aecp.o \
-	aem_controller_state_machine.o \
-	audio_unit_descriptor_imp.o \
-	avb_interface_descriptor_imp.o \
-	clock_domain_descriptor_imp.o \
-	clock_source_descriptor_imp.o \
-	configuration_descriptor_imp.o \
-	controller_imp.o \
-	descriptor_base_imp.o\
-	end_station_imp.o \
-	entity_descriptor_imp.o \
-	jack_input_descriptor_imp.o \
-	jack_output_descriptor_imp.o \
-	locale_descriptor_imp.o \
-	stream_input_descriptor_imp.o \
-	stream_output_descriptor_imp.o \
-	strings_descriptor_imp.o \
-	timer.o \
-	util_imp.o \
-	log.o \
-	log_imp.o \
-	notification.o \
-	notification_imp.o \
-	system_message_queue.o \
-	system_layer2_multithreaded_callback.o \
-	net_interface_imp.o \
-	jdksavdecc_pdu.o
+OBJS =  avdecc_controller_cmd_line.o \
+	avdecc_controller_cmd_line_main.o
 
 
 # Search .o files in build directory
 vpath %.o $(BUILD_DIR)
 # Search .c files in the current directory or under other places
-vpath %.cpp . $(LIB_DIR) $(OS_DIR)
-vpath %.c $(JDKSAVDECC_DIR)/src
+vpath %.cpp . $(SRC_DIR1) $(SRC_DIR2)
 
 
-all: $(DEP_DIR) $(BUILD_DIR) $(TARGET_LIB)
+all: $(DEP_DIR) $(BUILD_DIR) $(TARGET_DIR) $(TARGET_APP)
 
 $(DEP_DIR):
 	mkdir -p $(DEP_DIR)
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
+
+$(TARGET_DIR):
+	mkdir -p $(TARGET_DIR)
+
 
 %.o: %.c
 	@echo $(CC): $< ...
@@ -82,10 +58,13 @@ $(BUILD_DIR):
 	@echo $(CXX): $< ...
 	@$(CXX) $(INCLUDES) $(CXXFLAGS) $(EXTRA_CXXFLAGS) -o $(BUILD_DIR)/$(notdir $@) -c $<
 
+$(AVDECC_LIB):
+	@echo make: avdecc-lib
+	cd ../../../../lib/build/linux; make
 
-$(TARGET_LIB): $(OBJS)
-	@echo $(AR): $@ ...
-	@$(AR) cr $(TARGET_LIB) $(addprefix $(BUILD_DIR)/,$(notdir $^))
+$(TARGET_APP): $(OBJS) $(AVDECC_LIB)
+	@echo $(CC) linking $@
+	@$(CXX) $(LDFLAGS) -g -lm -lrt -o $@ $(addprefix $(BUILD_DIR)/,$(notdir $(OBJS))) $(AVDECC_LIB)
 
 clean:
 	rm -f $(OBJS) $(TARGET_LIB) $(TARGET_APP) $(BUILD_DIR)/*.o $(DEP_DIR)/*.d
@@ -104,5 +83,5 @@ cppcheck: $(CPPCHECK_DEPS1)
 	@grep --color=always -B 0 -A 0 error $(BUILD_DIR)/$(notdir $*)_cppcheck.log || true
 
 
-.PHONY: all clean cppcheck
+.PHONY: all clean cppcheck $(AVDECC_LIB)
 

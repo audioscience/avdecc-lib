@@ -46,41 +46,28 @@ namespace avdecc_lib
 			uint32_t notification_flag;
 		};
 
-		struct thread_creation
+		enum pipe_index
 		{
-			LPTHREAD_START_ROUTINE thread;
-			HANDLE handle;
-			DWORD id;
-			HANDLE kill_sem;
+			PIPE_WR,
+			PIPE_RD
 		};
 
-		struct msg_poll
-		{
-			struct thread_creation queue_thread;
-			system_message_queue *rx_queue;
-			system_message_queue *tx_queue;
-			HANDLE timeout_event;
-		};
+		int network_fd;
+		int tx_pipe[2];
+		int tick_timer;
 
-		enum wpcap_events
-		{
-		        WPCAP_TIMEOUT,
-		        WPCAP_RX_PACKET,
-		        WPCAP_TX_PACKET,
-		        KILL_ALL,
-		        NUM_OF_EVENTS
-		};
 
-		static struct msg_poll poll_rx;
-		static struct msg_poll poll_tx;
-		static struct thread_creation poll_thread;
-		static HANDLE poll_events_array[NUM_OF_EVENTS];
-		static HANDLE waiting_sem;
+		/* 
+		Events to process:
+		Rx packet - from socket
+		Tx packet - from FIFO
+		Timer tick - from timer
+		*/
 
-		static bool is_waiting;
-		static bool queue_is_waiting;
-		static void *waiting_notification_id;
-		static int resp_status_for_cmd;
+		bool is_waiting;
+		bool queue_is_waiting;
+		void *waiting_notification_id;
+		int resp_status_for_cmd;
 
 	public:
 		/**
@@ -119,30 +106,10 @@ namespace avdecc_lib
 		int STDCALL get_last_resp_status();
 
 	private:
-		/**
-		 * Start of the packet capture thread used for capturing packets.
-		 */
-		static DWORD WINAPI proc_wpcap_thread(LPVOID lpParam);
 
-		/**
-		 * Start of the polling thread used for polling events.
-		 */
-		static DWORD WINAPI proc_poll_thread(LPVOID lpParam);
+		void * proc_poll_thread(void * p);
 
-		/**
-		 * Create and initialize threads, events, and semaphores for wpcap thread.
-		 */
-		int init_wpcap_thread();
-
-		/**
-		 * Create and initialize threads, events, and semaphores for poll thread.
-		 */
-		int init_poll_thread();
-
-		/**
-		 * Execute poll events.
-		 */
-		static int poll_single();
+		int poll_single(void);
 
 	public:
 		/**

@@ -27,16 +27,62 @@
  * Network interface implementation class
  */
 
-#include <winsock2.h>
-#include <iphlpapi.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <signal.h>
+#include <unistd.h>
+
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <linux/if_packet.h>
+#include <linux/if_ether.h>
+#include <linux/if_arp.h>
+#include <linux/filter.h>
+#include <linux/if.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <ifaddrs.h>
+
 #include "util_imp.h"
 #include "enumeration.h"
 #include "log.h"
 #include "jdksavdecc_util.h"
 #include "net_interface_imp.h"
 
+#include "bpf.h"
+
 namespace avdecc_lib
 {
+
+
+	struct etherII {
+		uint8_t destmac[6];
+		uint8_t srcmac[6];
+		uint8_t type[2];
+	};
+	struct ipheader {
+		uint8_t ver_len;
+		uint8_t service;
+		uint8_t len[2];
+		uint8_t ident[2];
+		uint8_t flags;
+		uint8_t frag_offset[2];
+		uint8_t ttl;
+		uint8_t protocol;
+		uint8_t chksum[2];
+		uint8_t sourceip[4];
+		uint8_t destip[4];
+	};
+	struct udpheader {
+		 uint8_t srcport[2];
+		 uint8_t destport[2];
+		 uint8_t len[2];
+		 uint8_t chksum[2];
+	}; 
+
+
 	net_interface * STDCALL create_net_interface()
 	{
 		return (new net_interface_imp());
@@ -44,36 +90,60 @@ namespace avdecc_lib
 
 	net_interface_imp::net_interface_imp()
 	{
-		interface_num = 0;
+		struct ifaddrs *ifaddr, *ifa;
+		int family, s;
+		char host[NI_MAXHOST];
+		char ifname[256];
 
-		if(pcap_findalldevs(&all_devs, err_buf) == -1) // Retrieve the device list on the local machine.
+		interface_num = 0;
+		total_devs = 0;
+
+		ip_hdr_store = new ipheader;
+		udp_hdr_store = new udpheader;
+
+		if (getifaddrs(&ifaddr) == -1)
 		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "pcap_findalldevs error %s", err_buf);
+			perror("getifaddrs");
 			exit(EXIT_FAILURE);
 		}
 
-		for(dev = all_devs, total_devs = 0; dev; dev = dev->next)
-		{
-			total_devs++;
+		/* Walk through linked list, maintaining head pointer so we
+		can free list later */
 
-			/********** If this is the Windows AVB driver then use the RTX Virtual NIC *********/
-			if(strstr(dev->description,"RTX Virtual") || strstr(dev->description,"Virtual RTX"))
+		for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+			if (ifa->ifa_addr == NULL)
+				continue;
+
+			family = ifa->ifa_addr->sa_family;
+
+			/* Display interface name and family (including symbolic
+			form of the latter for the common families) */
+			if (family == AF_INET)
 			{
-				interface_num = total_devs;
+				s = getnameinfo(ifa->ifa_addr,
+					(family == AF_INET) ? sizeof(struct sockaddr_in) :
+					sizeof(struct sockaddr_in6),
+					host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+
+
+
+				snprintf(ifname, sizeof(ifname), "%s, address: <%s>",ifa->ifa_name, host);
+				if (s != 0)
+				{
+					printf("getnameinfo() failed: %s\n", gai_strerror(s));
+					exit(EXIT_FAILURE);
+				}
+				ifnames.push_back(ifname);
+				total_devs++;
 			}
 		}
 
-		if(total_devs == 0)
-		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "No interfaces found! Make sure WinPcap is installed.");
-			exit(EXIT_FAILURE);
-		}
+		freeifaddrs(ifaddr);
 	}
 
 	net_interface_imp::~net_interface_imp()
 	{
-		pcap_freealldevs(all_devs); // Free the device list
-		pcap_close(pcap_interface);
+		close(rawsock);
 	}
 
 	uint32_t STDCALL net_interface_imp::devs_count()
@@ -88,144 +158,68 @@ namespace avdecc_lib
 
 	char * STDCALL net_interface_imp::get_dev_desc_by_index(uint32_t dev_index)
 	{
-		uint32_t index_i;
-
-		for(dev = all_devs, index_i = 0; (index_i < dev_index) && (dev_index < total_devs); dev = dev->next, index_i++); // Get the selected interface
-
-		if(!dev->description)
-		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "Interface description is blank.");
-		}
-
-		return dev->description;
+		return (char *)ifnames[dev_index].c_str();
 	}
 
 
 	int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
 	{
-		uint32_t index;
-		IP_ADAPTER_INFO *AdapterInfo;
-		IP_ADAPTER_INFO *Current;
-		ULONG AIS;
-		DWORD status;
-		int timeout_ms = 100;
+		struct sockaddr_ll sll;
+		struct ifreq if_mac;
+		const char *ifname;
+		char *s;
 
-		if(interface_num == 0)
-		{
-			if(interface_num < 1 || interface_num > total_devs)
-			{
-				log_ref->logging(LOGGING_LEVEL_ERROR, "Interface number out of range.");
-				pcap_freealldevs(all_devs); // Free the device list
-				exit(EXIT_FAILURE);
-			}
-		}
-
-		else
-		{
-			interface_num = interface_num;
-		}
-
-		for(dev = all_devs, index = 0; index < interface_num - 1; dev = dev->next, index++); // Jump to the selected adapter
-
-		/************************************************************** Open the device ****************************************************************/
-		if((pcap_interface = pcap_open_live(dev->name,		       // Name of the device
-		                                    65536,		       // Portion of the packet to capture
-		                                    // 65536 guarantees that the whole packet will be captured on all the link layers
-		                                    PCAP_OPENFLAG_PROMISCUOUS, // In promiscuous mode, all packets including packets of other hosts are captured
-		                                    timeout_ms,		       // Read timeout in ms
-		                                    err_buf		       // Error buffer
-		                                   )) == NULL)
-		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "Unable to open the adapter. %s is not supported by WinPcap.", dev->name);
-			pcap_freealldevs(all_devs); // Free the device list
+		ifname = ifnames[interface_num].c_str();
+		s = (char *)ifname;
+		while(*s != ',') { s++; }
+		*s = 0;
+		rawsock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+		if (rawsock == -1) {
+			fprintf(stderr, "Socket open failed! %s\n", strerror(errno));
 			exit(EXIT_FAILURE);
 		}
 
-		/****************************** Lookup IP address ***************************/
-		AdapterInfo = (IP_ADAPTER_INFO *)calloc(total_devs, sizeof(IP_ADAPTER_INFO));
-		AIS = sizeof(IP_ADAPTER_INFO) * total_devs;
+		ifindex = getifindex(rawsock, ifname);
 
-		if(GetAdaptersInfo(AdapterInfo, &AIS) == ERROR_BUFFER_OVERFLOW)
-		{
-			free(AdapterInfo);
-			AdapterInfo = (IP_ADAPTER_INFO *)calloc(1, AIS);
-
-			if(AdapterInfo == NULL)
-			{
-				log_ref->logging(LOGGING_LEVEL_ERROR, "Allocating memory needed to call GetAdaptersinfo.", dev->name);
-				exit(EXIT_FAILURE);
-			}
-
-			status = GetAdaptersInfo(AdapterInfo, &AIS);
-
-			if(status != ERROR_SUCCESS)
-			{
-				log_ref->logging(LOGGING_LEVEL_ERROR, "GetAdaptersInfo call in netif_win32_pcap.c failed.", dev->name);
-				free(AdapterInfo);
-				exit(EXIT_FAILURE);
-			}
+		// get the mac address of the eth0 interface
+		memset(&if_mac, 0, sizeof(struct ifreq));
+		strncpy(if_mac.ifr_name, ifname, IFNAMSIZ-1);
+		if (ioctl(rawsock, SIOCGIFHWADDR, &if_mac) < 0) {
+			perror("SIOCGIFHWADDR");
+			exit(EXIT_FAILURE);
 		}
 
-		for(Current = AdapterInfo; Current != NULL; Current = Current->Next)
-		{
-			if(strstr(dev->name, Current->AdapterName) != 0)
-			{
-				uint32_t my_ip;
-				ULONG len;
-				uint8_t tmp[16];
+		setpromiscuous(rawsock, ifindex);
 
-				my_ip = inet_addr(Current->IpAddressList.IpAddress.String);
-				len = sizeof(tmp);
-				SendARP(my_ip ,INADDR_ANY, tmp, &len);
-				utility->convert_eui48_to_uint64(&tmp[0], mac);
-			}
-		}
+		memset(&sll,0, sizeof(sll));
+		sll.sll_family = AF_PACKET;
+		sll.sll_ifindex = ifindex;
+		sll.sll_protocol = htons(ETH_P_ALL);
+		bind(rawsock, (struct sockaddr *)&sll, sizeof(sll));
 
-		free(AdapterInfo);
+		utility->convert_eui48_to_uint64((uint8_t *)if_mac.ifr_hwaddr.sa_data, mac);
+
+
 		return 0;
 	}
 
 	int net_interface_imp::set_capture_ether_type(uint16_t *ether_type, uint32_t count)
 	{
-		struct bpf_program fcode;
-		char ether_type_string[512];
-		char ether_type_single[64];
-		const unsigned char *ether_packet = NULL;
-		struct pcap_pkthdr pcap_header;
+		struct sock_fprog Filter;
 
-		ether_type_string[0] = 0;
+		Filter.len = sizeof(BPF_code) / 8;
+		Filter.filter = BPF_code;
 
-		for(uint32_t index_i = 0; index_i < count; index_i++)
-		{
-			sprintf(ether_type_single, "ether proto 0x%04x", ether_type[index_i]);
-			strcat(ether_type_string, ether_type_single);
-
-			if((index_i + 1) < count)
-			{
-				strcat(ether_type_string, " or ");
-			}
+		for (unsigned int i = 0; i < count; i++) {
+			if (ether_type[i] != (uint16_t)ethernet_proto_bpf[i])
+				fprintf(stderr, "NETIF - packet filter mismatch\n");			
 		}
 
-		/******************************************************* Compile a filter ************************************************/
-		if(pcap_compile(pcap_interface, &fcode, ether_type_string, 1, 0) < 0)
-		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "Unable to compile the packet filter.");
-			pcap_freealldevs(all_devs); // Free the device list
-			return -1;
-		}
-
-		/*************************************************** Set the filter *******************************************/
-		if(pcap_setfilter(pcap_interface, &fcode) < 0)
-		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "Error setting the filter.");
-			pcap_freealldevs(all_devs);  // Free the device list
-			return -1;
-		}
-
-		/*********** Flush any packets that might be present **********/
-		for(uint32_t index_j = 0; index_j < 1; index_j++)
-		{
-			ether_packet = pcap_next(pcap_interface, &pcap_header);
+		// attach filter to socket
+		if(setsockopt(rawsock, SOL_SOCKET, SO_ATTACH_FILTER, &Filter, sizeof(Filter)) == -1) {
+			fprintf(stderr, "socket attach filter failed! %s\n", strerror(errno));
+	        	close(rawsock);
+			exit(EXIT_FAILURE);
 		}
 
 		return 0;
@@ -233,35 +227,83 @@ namespace avdecc_lib
 
 	int STDCALL net_interface_imp::capture_frame(const uint8_t **frame, uint16_t *mem_buf_len)
 	{
-		struct pcap_pkthdr *header;
-		int error = 0;
+		int len;
 
-		*mem_buf_len = 0;
-		error = pcap_next_ex(pcap_interface, &header, frame);
-
-		if(error > 0 )
-		{
-			ether_frame = *frame;
-			*mem_buf_len = (uint16_t)header->len;
-
-	//		printf("Rx frame: %d bytes\n", *length);
-
-			return 1;
+		*frame = &rx_buf[0];
+		len = read(rawsock, &rx_buf[0], sizeof(rx_buf));
+		if (len < 0) {
+			*mem_buf_len = 0;
+		} else {
+			*mem_buf_len = len;
 		}
-
-		return -2; // Timeout
+		return len;
 	}
 
 	int net_interface_imp::send_frame(uint8_t *frame, uint16_t mem_buf_len)
 	{
-	//	printf("TX frame: %d bytes\n", length);
+		int send_result;
 
-		if(pcap_sendpacket(pcap_interface, frame, mem_buf_len) != 0)
-		{
-			log_ref->logging(LOGGING_LEVEL_ERROR, "pcap_sendpacket error %s", pcap_geterr(pcap_interface));
-			return -1;
+		/*target address*/
+		struct sockaddr_ll socket_address;
+
+		/*prepare sockaddr_ll*/
+
+		/*RAW communication*/
+		socket_address.sll_family   = PF_PACKET;
+		socket_address.sll_protocol = htons(ethertype);
+
+		/*index of the network device
+		see full code later how to retrieve it*/
+		socket_address.sll_ifindex  = ifindex;
+
+		/*ARP hardware identifier is ethernet*/
+		socket_address.sll_hatype   = ARPHRD_ETHER;
+
+		/*target is another host*/
+		socket_address.sll_pkttype  = PACKET_OTHERHOST;
+
+		/*address length*/
+		socket_address.sll_halen    = ETH_ALEN;
+		/*MAC - begin*/
+		memcpy(&socket_address.sll_addr[0], &frame[0], 6);
+		/*MAC - end*/
+		socket_address.sll_addr[6]  = 0x00;/*not used*/
+		socket_address.sll_addr[7]  = 0x00;/*not used*/
+
+		/*send the packet*/
+		send_result = sendto(rawsock, frame, mem_buf_len, 0,
+			      (struct sockaddr*)&socket_address, sizeof(socket_address));
+
+		return send_result;
+	}
+
+	int net_interface_imp::getifindex(int rawsock, const char *iface)
+	{
+		struct ifreq ifr;
+		int ret;
+
+		memset(&ifr,0,sizeof(ifr));
+		strncpy(ifr.ifr_name,iface,sizeof(ifr.ifr_name));
+
+		ret=ioctl(rawsock,SIOCGIFINDEX,&ifr);
+
+		if(ret<0) {
+			return ret;
 		}
 
-		return 0;
+		return ifr.ifr_ifindex;
 	}
+
+	int net_interface_imp::setpromiscuous(int rawsock, int ifindex)
+	{
+		struct packet_mreq mr;
+
+		memset(&mr,0,sizeof(mr));
+		mr.mr_ifindex=ifindex;
+		mr.mr_type=PACKET_MR_ALLMULTI;
+
+		return setsockopt(rawsock, SOL_PACKET,
+				PACKET_ADD_MEMBERSHIP,&mr,sizeof(mr));
+	}
+
 }
