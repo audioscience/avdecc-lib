@@ -60,7 +60,7 @@ namespace avdecc_lib
 		 * Constructor for jack_input_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
 		 * and memory buffer length.
 		 */
-		jack_input_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		jack_input_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Destructor for jack_input_descriptor_imp used for destroying objects

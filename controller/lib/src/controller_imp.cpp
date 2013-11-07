@@ -206,7 +206,7 @@ namespace avdecc_lib
 		}
 	}
 
-	void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		uint64_t dest_mac_addr;
 		uint32_t subtype;
@@ -377,7 +377,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int controller_imp::proc_controller_avail_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int controller_imp::proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_controller_available_response aem_cmd_controller_avail_resp;

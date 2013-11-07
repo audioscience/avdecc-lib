@@ -42,7 +42,7 @@ namespace avdecc_lib
 
 	adp::adp() {}
 
-	adp::adp(uint8_t *frame, size_t mem_buf_len)
+	adp::adp(const uint8_t *frame, size_t mem_buf_len)
 	{
 		adp_frame = (uint8_t *)malloc(mem_buf_len * sizeof(uint8_t));
 		memcpy(adp_frame, frame, mem_buf_len);

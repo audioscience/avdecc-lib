@@ -29,6 +29,7 @@
  */
 
 #include <vector>
+
 #include "net_interface_imp.h"
 #include "enumeration.h"
 #include "notification_imp.h"
@@ -106,7 +107,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	void adp_discovery_state_machine::adp_discovery_state_waiting(uint8_t *frame)
+	void adp_discovery_state_machine::adp_discovery_state_waiting(const uint8_t *frame)
 	{
 		if(discovery_state_machine_vars.do_discover)
 		{
@@ -136,7 +137,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int adp_discovery_state_machine::adp_discovery_state_avail(uint8_t *frame)
+	int adp_discovery_state_machine::adp_discovery_state_avail(const uint8_t *frame)
 	{
 		uint64_t entity_guid;
 		uint32_t entity_index;

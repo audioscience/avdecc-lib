@@ -128,7 +128,7 @@ namespace avdecc_lib
 		/**
 		 * Lookup and process packet received.
 		 */
-		void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send queued packet to the AEM Controller State Machine.
@@ -143,7 +143,7 @@ namespace avdecc_lib
 		/**
 		 * Process a CONTROLLER_AVAILABLE response for the CONTROLLER_AVAILABLE command.
 		 */
-		int proc_controller_avail_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 
 	extern controller_imp *controller_imp_ref;

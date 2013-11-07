@@ -102,7 +102,7 @@ namespace avdecc_lib
 		/**
 		 * Process the Waiting state of the ADP Discovery State Machine.
 		 */
-		void adp_discovery_state_waiting(uint8_t *frame);
+		void adp_discovery_state_waiting(const uint8_t *frame);
 
 		/**
 		 * Process the Discover state of the ADP Discovery State Machine.
@@ -112,7 +112,7 @@ namespace avdecc_lib
 		/**
 		 * Process the Available state of the ADP Discovery State Machine.
 		 */
-		int adp_discovery_state_avail(uint8_t *frame);
+		int adp_discovery_state_avail(const uint8_t *frame);
 
 		/**
 		 * Process the Departing state of the ADP Discovery State Machine.

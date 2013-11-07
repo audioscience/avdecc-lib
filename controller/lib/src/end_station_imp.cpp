@@ -42,7 +42,7 @@ namespace avdecc_lib
 {
 	end_station_imp::end_station_imp() {}
 
-	end_station_imp::end_station_imp(uint8_t *frame, size_t mem_buf_len)
+	end_station_imp::end_station_imp(const uint8_t *frame, size_t mem_buf_len)
 	{
 		end_station_connection_status = ' ';
 		current_entity_desc = 0;
@@ -178,7 +178,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int end_station_imp::proc_read_desc_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int end_station_imp::proc_read_desc_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_read_descriptor_response aem_cmd_read_desc_resp;
@@ -427,7 +427,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int end_station_imp::proc_entity_avail_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int end_station_imp::proc_entity_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_entity_available_response aem_cmd_entity_avail_resp;
@@ -460,7 +460,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int end_station_imp::proc_rcvd_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int end_station_imp::proc_rcvd_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		uint16_t cmd_type;
 		uint16_t desc_type;

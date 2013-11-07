@@ -41,7 +41,7 @@ namespace avdecc_lib
 {
 	audio_unit_descriptor_imp::audio_unit_descriptor_imp() {}
 
-	audio_unit_descriptor_imp::audio_unit_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
+	audio_unit_descriptor_imp::audio_unit_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
 	{
 		desc_audio_read_returned = jdksavdecc_descriptor_audio_read(&audio_unit_desc, frame, pos, mem_buf_len);
 
@@ -65,7 +65,7 @@ namespace avdecc_lib
 		return audio_unit_desc.descriptor_type;
 	}
 
-	void audio_unit_descriptor_imp::sampling_rates_init(uint8_t *frame)
+	void audio_unit_descriptor_imp::sampling_rates_init(const uint8_t *frame)
 	{
 		uint16_t offset = 0x0;
 		uint32_t sampling_rate = 0x0;
@@ -328,7 +328,7 @@ namespace avdecc_lib
 
 	}
 
-	int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_set_sampling_rate_resp_returned;
@@ -398,7 +398,7 @@ namespace avdecc_lib
 	}
 
 
-	int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_get_sampling_rate_resp_returned;

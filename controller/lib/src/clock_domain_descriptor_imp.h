@@ -46,6 +46,12 @@ namespace avdecc_lib
 		struct jdksavdecc_aem_command_set_clock_source_response aem_cmd_set_clk_src_resp; // Store the response received after sending a SET_CLOCK_SOURCE command
 		struct jdksavdecc_aem_command_get_clock_source_response aem_cmd_get_clk_src_resp; // Store the response received after sending a GET_CLOCK_SOURCE command
 
+		/**
+		* Store the Clock Sources of the Clock Domain descriptor object.
+		*/
+		void store_clock_sources(const uint8_t *frame, size_t pos);
+
+
 	public:
 		/**
 		 * An empty constructor for clock_domain_descriptor_imp
@@ -56,7 +62,7 @@ namespace avdecc_lib
 		 * Constructor for clock_domain_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
 		 * and memory buffer length.
 		 */
-		clock_domain_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		clock_domain_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Destructor for clock_domain_descriptor_imp used for destroying objects
@@ -103,10 +109,6 @@ namespace avdecc_lib
 		 */
 		uint16_t STDCALL get_clock_source_by_index(uint32_t clk_src_index);
 
-		/**
-		* Store the Clock Sources of the Clock Domain descriptor object.
-		*/
-		void store_clock_sources(uint8_t *frame, size_t pos);
 
 		/**
 		 * Get the clock source index of the requested Clock Domain descriptor after sending a
@@ -128,7 +130,7 @@ namespace avdecc_lib
 		/**
 		 * Process a SET_CLOCK_SOURCE response for the SET_CLOCK_SOURCE command.
 		 */
-		int proc_set_clock_source_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
@@ -138,7 +140,7 @@ namespace avdecc_lib
 		/**
 		 * Process a GET_CLOCK_SOURCE response for the GET_CLOCK_SOURCE command.
 		 */
-		int proc_get_clock_source_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 }
 

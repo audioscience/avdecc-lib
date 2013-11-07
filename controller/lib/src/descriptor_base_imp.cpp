@@ -63,7 +63,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int descriptor_base_imp::proc_acquire_entity_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int descriptor_base_imp::proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 
 		return 0;
@@ -108,8 +108,10 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int descriptor_base_imp::default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp, void *&notification_id,
-								  uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int descriptor_base_imp::default_proc_acquire_entity_resp(
+		struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp,
+		void *&notification_id,
+		const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_acquire_entity_resp_returned;
@@ -147,7 +149,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int descriptor_base_imp::proc_lock_entity_resp(void *&notification_id, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int descriptor_base_imp::proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 
 		return 0;
@@ -193,7 +195,7 @@ namespace avdecc_lib
 	}
 
 	int descriptor_base_imp::default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp, void *&notification_id,
-							       uint8_t *frame, uint16_t mem_buf_len, int &status)
+							       const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_lock_entity_resp_returned = 0;

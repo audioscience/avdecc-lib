@@ -35,7 +35,7 @@ namespace avdecc_lib
 {
 	clock_source_descriptor_imp::clock_source_descriptor_imp() {}
 
-	clock_source_descriptor_imp::clock_source_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
+	clock_source_descriptor_imp::clock_source_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
 	{
 		desc_clock_source_read_returned = jdksavdecc_descriptor_clock_source_read(&clock_source_desc, frame, pos, mem_buf_len);
 
