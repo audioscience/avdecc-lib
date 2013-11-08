@@ -71,6 +71,9 @@ namespace avdecc_lib
 	controller_imp *controller_ref_in_system;
 	system_layer2_multithreaded_callback *local_system = NULL;
 
+	system_layer2_multithreaded_callback *system_layer2_multithreaded_callback::instance = NULL;
+
+
 	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
 	{
 		if(local_system)
@@ -306,7 +309,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int system_layer2_multithreaded_callback::proc_poll_loop(void * p)
+	int system_layer2_multithreaded_callback::proc_poll_loop()
 	{
 
 		int epollfd;
@@ -346,15 +349,24 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int STDCALL system_layer2_multithreaded_callback::process_start()
+	void * system_layer2_multithreaded_callback::thread_fn(void *param)
 	{
+		int rc;
 
+		rc = ((system_layer2_multithreaded_callback *)param)->proc_poll_loop();
+		
 		return 0;
 	}
 
-
-	int system_layer2_multithreaded_callback::poll_single(void)
+	int STDCALL system_layer2_multithreaded_callback::process_start()
 	{
+		int rc;
+
+		rc = pthread_create(&h_thread, NULL, &system_layer2_multithreaded_callback::thread_fn, (void *)this);
+ 		if (rc){
+			printf("ERROR; return code from pthread_create() is %d\n", rc);
+ 			exit(-1);
+		}
 		return 0;
 	}
 

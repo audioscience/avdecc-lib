@@ -111,10 +111,11 @@ namespace avdecc_lib
 			TIME_PERIOD_25_MILLISECONDS = 25
 		};
 
+		pthread_t h_thread;
 
-		int network_fd;
+		//int network_fd;
 		int tx_pipe[2];
-		int tick_timer;
+		//int tick_timer;
 
 		sem_t *waiting_sem;
 
@@ -139,7 +140,8 @@ namespace avdecc_lib
 		int timer_start_interval(int timerfd);
 
 		void * proc_poll_thread(void * p);
-		int proc_poll_loop(void * p);
+		int proc_poll_loop();
+		static void * thread_fn(void *param);
 
 		int poll_single(void);
 

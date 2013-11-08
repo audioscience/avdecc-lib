@@ -180,7 +180,7 @@ namespace avdecc_lib
 		*s = 0;
 		rawsock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
 		if (rawsock == -1) {
-			fprintf(stderr, "Socket open failed! %s\n", strerror(errno));
+			fprintf(stderr, "Socket open failed! %s\nuse sudo?\n", strerror(errno));
 			exit(EXIT_FAILURE);
 		}
 
@@ -204,6 +204,9 @@ namespace avdecc_lib
 
 		utility->convert_eui48_to_uint64((uint8_t *)if_mac.ifr_hwaddr.sa_data, mac);
 
+
+		uint16_t etypes[1] = {0x22f0};
+		set_capture_ether_type(etypes, 1);
 
 		return 0;
 	}
