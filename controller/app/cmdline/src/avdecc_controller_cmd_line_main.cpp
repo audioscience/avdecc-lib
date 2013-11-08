@@ -33,6 +33,7 @@
 #include <string>
 #include <vector>
 #include <stdint.h>
+#include <stdexcept>
 #include "avdecc_controller_cmd_line.h"
 
 using namespace std;
@@ -44,7 +45,7 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
 
 	if(notification_type == avdecc_lib::COMMAND_TIMEOUT || notification_type == avdecc_lib::RESPONSE_RECEIVED)
 	{
-		printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %d)\n",
+		printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %p)\n",
 		       utility->notification_value_to_name(notification_type),
 		       guid,
 		       utility->cmd_value_to_name(cmd_type),
@@ -54,7 +55,7 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
 	}
 	else
 	{
-		printf("\n[NOTIFICATION] (%s, 0x%llx, %d, %d, %d, %d)\n",
+		printf("\n[NOTIFICATION] (%s, 0x%llx, %d, %d, %d, %p)\n",
 		       utility->notification_value_to_name(notification_type),
 		       guid,
 		       cmd_type,
