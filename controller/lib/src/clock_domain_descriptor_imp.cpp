@@ -41,7 +41,7 @@ namespace avdecc_lib
 {
 	clock_domain_descriptor_imp::clock_domain_descriptor_imp() {}
 
-	clock_domain_descriptor_imp::clock_domain_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
+	clock_domain_descriptor_imp::clock_domain_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
 	{
 		desc_clock_domain_read_returned = jdksavdecc_descriptor_clock_domain_read(&clock_domain_desc, frame, pos, mem_buf_len);
 
@@ -52,6 +52,8 @@ namespace avdecc_lib
 		}
 
 		store_clock_sources(frame, pos);
+		memset(&aem_cmd_set_clk_src_resp, 0, sizeof(struct jdksavdecc_aem_command_set_clock_source_response));
+		memset(&aem_cmd_get_clk_src_resp, 0, sizeof(struct jdksavdecc_aem_command_get_clock_source_response));
 	}
 
 	clock_domain_descriptor_imp::~clock_domain_descriptor_imp() {}
@@ -94,7 +96,7 @@ namespace avdecc_lib
 		return clock_domain_desc.clock_sources_count;
 	}
 
-	void clock_domain_descriptor_imp::store_clock_sources(uint8_t *frame, size_t pos)
+	void clock_domain_descriptor_imp::store_clock_sources(const uint8_t *frame, size_t pos)
 	{
 		uint16_t offset = 0x0;
 
@@ -146,7 +148,7 @@ namespace avdecc_lib
 
 		if(aem_cmd_set_clk_src_returned < 0)
 		{
-			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_write error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_clk_src_write error\n");
 			assert(aem_cmd_set_clk_src_returned >= 0);
 			return -1;
 		}
@@ -159,7 +161,7 @@ namespace avdecc_lib
 
 	}
 
-	int clock_domain_descriptor_imp::proc_set_clock_source_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int clock_domain_descriptor_imp::proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_set_clk_src_resp_returned;
@@ -169,14 +171,14 @@ namespace avdecc_lib
 		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 		memcpy(ether_frame->payload, frame, mem_buf_len);
 
-		aem_cmd_set_clk_src_resp_returned = jdksavdecc_aem_command_get_clock_source_response_read(&aem_cmd_set_clk_src_resp,
+		aem_cmd_set_clk_src_resp_returned = jdksavdecc_aem_command_set_clock_source_response_read(&aem_cmd_set_clk_src_resp,
 		                                                                                          frame,
 		                                                                                          aecp::CMD_POS,
 		                                                                                          mem_buf_len);
 
 		if(aem_cmd_set_clk_src_resp_returned < 0)
 		{
-			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_clk_src_resp_read error\n");
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_clk_src_resp_read error\n");
 			assert(aem_cmd_set_clk_src_resp_returned >= 0);
 			return -1;
 		}
@@ -185,7 +187,7 @@ namespace avdecc_lib
 		status = aem_cmd_set_clk_src_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_set_clk_src_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;
@@ -228,7 +230,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int clock_domain_descriptor_imp::proc_get_clock_source_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int clock_domain_descriptor_imp::proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_get_clk_src_resp_returned;
@@ -254,7 +256,7 @@ namespace avdecc_lib
 		status = aem_cmd_get_clk_src_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_get_clk_src_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;

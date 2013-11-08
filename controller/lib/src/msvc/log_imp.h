@@ -49,8 +49,7 @@ namespace avdecc_lib
 		LPTHREAD_START_ROUTINE thread;
 		HANDLE h_thread;
 		DWORD thread_id;
-
-		static HANDLE poll_events[2];
+		HANDLE poll_events[2];
 
 	public:
 		/**
@@ -72,7 +71,12 @@ namespace avdecc_lib
 		/**
 		 * Start of the post_log_msg thread used for post_log_msg purposes.
 		 */
-		static DWORD WINAPI process_logging_thread(LPVOID lpParam);
+		static DWORD WINAPI proc_logging_thread(LPVOID lpParam);
+
+		/**
+		 * A member function called to start the logging thread processing.
+		 */
+		int proc_logging_thread_callback();
 
 	public:
 		/**

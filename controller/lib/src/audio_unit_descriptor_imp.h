@@ -56,7 +56,7 @@ namespace avdecc_lib
 		 * Constructor for audio_unit_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
 		 * and memory buffer length.
 		 */
-		audio_unit_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		audio_unit_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Destructor for audio_unit_descriptor_imp used for destroying objects
@@ -67,7 +67,7 @@ namespace avdecc_lib
 		/**
 		 * Store the sampling rates of the Audio Unit descriptor object in a vector.
 		 */
-		void sampling_rates_init(uint8_t *frame);
+		void sampling_rates_init(const uint8_t *frame);
 
 	public:
 		/**
@@ -295,7 +295,7 @@ namespace avdecc_lib
 		/**
 		 * Process a SET_SAMPLING_RATE response for the SET_SAMPLING_RATE command.
 		 */
-		int proc_set_sampling_rate_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_set_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
@@ -305,7 +305,7 @@ namespace avdecc_lib
 		/**
 		 * Process a GET_SAMPLING_RATE response for the GET_SAMPLING_RATE command.
 		 */
-		int proc_get_sampling_rate_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 }
 

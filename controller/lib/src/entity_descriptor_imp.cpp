@@ -37,7 +37,7 @@ namespace avdecc_lib
 {
 	entity_descriptor_imp::entity_descriptor_imp() {}
 
-	entity_descriptor_imp::entity_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len)// : descriptor_base_imp(base_end_station_imp_ref)
+	entity_descriptor_imp::entity_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len)// : descriptor_base_imp(base_end_station_imp_ref)
 	{
 		desc_entity_read_returned = jdksavdecc_descriptor_entity_read(&entity_desc, frame, pos, mem_buf_len);
 
@@ -164,7 +164,7 @@ namespace avdecc_lib
 		return entity_desc.current_configuration;
 	}
 
-	void entity_descriptor_imp::store_config_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len)
+	void entity_descriptor_imp::store_config_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len)
 	{
 		config_desc_vec.push_back(new configuration_descriptor_imp(base_end_station_imp_ref, frame, pos, mem_buf_len));
 	}
@@ -176,7 +176,18 @@ namespace avdecc_lib
 
 	configuration_descriptor * STDCALL entity_descriptor_imp::get_config_desc_by_index(uint16_t config_desc_index)
 	{
-		return config_desc_vec.at(config_desc_index);
+		bool is_valid = (config_desc_index < config_desc_vec.size());
+
+		if(is_valid)
+		{
+			return config_desc_vec.at(config_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
+		}
+
+		return NULL;
 	}
 
 	int STDCALL entity_descriptor_imp::send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag)
@@ -184,9 +195,9 @@ namespace avdecc_lib
 		return default_send_acquire_entity_cmd(this, notification_id, acquire_entity_flag);
 	}
 
-	int entity_descriptor_imp::proc_acquire_entity_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int entity_descriptor_imp::proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
-		return default_proc_acquire_entity_resp(aem_cmd_acquire_entity_resp, notification_id, notification_flag, frame, mem_buf_len, status);
+		return default_proc_acquire_entity_resp(aem_cmd_acquire_entity_resp, notification_id, frame, mem_buf_len, status);
 	}
 
 	int STDCALL entity_descriptor_imp::send_set_config_cmd()

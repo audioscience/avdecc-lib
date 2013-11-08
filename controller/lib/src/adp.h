@@ -68,8 +68,8 @@ namespace avdecc_lib
 
 		/**
 		 * Constructor for ADP used for constructing an object with a base pointer and memory buffer length.
-		 */
-		adp(uint8_t *frame, size_t mem_buf_len);
+		 */ 
+		adp(const uint8_t *frame, size_t mem_buf_len);
 
 		/**
 		 * Destructor for ADP used for destroying objects

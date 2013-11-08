@@ -35,7 +35,7 @@ namespace avdecc_lib
 {
 	strings_descriptor_imp::strings_descriptor_imp() {}
 
-	strings_descriptor_imp::strings_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
+	strings_descriptor_imp::strings_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
 	{
 		desc_strings_read_returned = jdksavdecc_descriptor_strings_read(&strings_desc, frame, pos, mem_buf_len);
 

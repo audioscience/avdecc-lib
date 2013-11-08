@@ -32,8 +32,8 @@
 #define _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
 
 #include "avdecc_lib_os.h"
-#include <stdint.h>
 #include "notification.h"
+
 
 namespace avdecc_lib
 {

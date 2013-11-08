@@ -33,7 +33,7 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.1.0"
+#define AVDECC_CONTROLLER_VERSION "v0.1.3"
 
 namespace avdecc_lib
 {
@@ -86,7 +86,7 @@ namespace avdecc_lib
 		end_station * STDCALL get_end_station_by_index(uint32_t end_station_index);
 
 		/**
-		 * Get the corresponding End Station by GUID.
+		 * Check if the corresponding End Station with the GUID exist.
 		 */
 		bool find_end_station_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
 
@@ -98,7 +98,7 @@ namespace avdecc_lib
 		/**
 		 * Get the corresponding Configuration descriptor by GUID.
 		 */
-		configuration_descriptor * STDCALL get_config_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index);
+		configuration_descriptor * STDCALL get_config_desc_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index);
 
 		/**
 		 * Check if the command with the corresponding notification id is in the inflight list.
@@ -123,17 +123,17 @@ namespace avdecc_lib
 		/**
 		 * Check for End Station connection, command packet, and response packet timeouts.
 		 */
-		void STDCALL time_tick_event();
+		void time_tick_event();
 
 		/**
 		 * Lookup and process packet received.
 		 */
-		void STDCALL rx_packet_event(void *&notification_id, bool &notification_id_flag, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send queued packet to the AEM Controller State Machine.
 		 */
-		void STDCALL tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len);
+		void tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len);
 
 		/**
 		 * Send a CONTROLLER_AVAILABLE command to verify that the AVDECC Controller is still there.
@@ -143,7 +143,7 @@ namespace avdecc_lib
 		/**
 		 * Process a CONTROLLER_AVAILABLE response for the CONTROLLER_AVAILABLE command.
 		 */
-		int proc_controller_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 
 	extern controller_imp *controller_imp_ref;

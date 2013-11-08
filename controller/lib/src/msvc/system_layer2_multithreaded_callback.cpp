@@ -32,8 +32,8 @@
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
-#include "end_station.h"
-#include "controller.h"
+#include "end_station_imp.h"
+#include "controller_imp.h"
 #include "system_message_queue.h"
 #include "system_tx_queue.h"
 #include "system_layer2_multithreaded_callback.h"
@@ -41,17 +41,8 @@
 namespace avdecc_lib
 {
 	net_interface *netif_obj_in_system;
-	controller *controller_ref_in_system;
+	controller_imp *controller_imp_ref_in_system;
 	system_layer2_multithreaded_callback *local_system = NULL;
-	struct system_layer2_multithreaded_callback::msg_poll system_layer2_multithreaded_callback::poll_rx;
-	struct system_layer2_multithreaded_callback::msg_poll system_layer2_multithreaded_callback::poll_tx;
-	struct system_layer2_multithreaded_callback::thread_creation system_layer2_multithreaded_callback::poll_thread;
-	HANDLE system_layer2_multithreaded_callback::poll_events_array[NUM_OF_EVENTS];
-	HANDLE system_layer2_multithreaded_callback::waiting_sem;
-	bool system_layer2_multithreaded_callback::is_waiting = false;
-	bool system_layer2_multithreaded_callback::queue_is_waiting = false;
-	void *system_layer2_multithreaded_callback::waiting_notification_id = 0;
-	int system_layer2_multithreaded_callback::resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID;
 
 	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
 	{
@@ -76,8 +67,18 @@ namespace avdecc_lib
 
 	system_layer2_multithreaded_callback::system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj)
 	{
+		is_waiting = false;
+		queue_is_waiting = false;
+		waiting_notification_id = 0;
+		resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID;
+
 		netif_obj_in_system = netif;
-		controller_ref_in_system = controller_obj;
+		controller_imp_ref_in_system = dynamic_cast<controller_imp *>(controller_obj);
+		if(!controller_imp_ref_in_system)
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base controller to derived controller_imp error");
+		}
+
 		queue_is_waiting = false;
 	}
 
@@ -86,7 +87,7 @@ namespace avdecc_lib
 		delete poll_rx.rx_queue;
 		delete poll_tx.tx_queue;
 		delete netif_obj_in_system;
-		delete controller_ref_in_system;
+		delete controller_imp_ref_in_system;
 		delete local_system;
 	}
 
@@ -134,13 +135,17 @@ namespace avdecc_lib
 
 	DWORD WINAPI system_layer2_multithreaded_callback::proc_wpcap_thread(LPVOID lpParam)
 	{
-		struct msg_poll *data = (struct msg_poll *)lpParam;
+		return reinterpret_cast<system_layer2_multithreaded_callback *>(lpParam)->proc_wpcap_thread_callback();
+	}
+
+	int system_layer2_multithreaded_callback::proc_wpcap_thread_callback()
+	{
 		int status;
 		struct poll_thread_data thread_data;
 		const uint8_t *frame;
 		uint16_t length;
 
-		while(WaitForSingleObject(data->queue_thread.kill_sem, 0))
+		while(WaitForSingleObject(poll_rx.queue_thread.kill_sem, 0))
 		{
 			status = netif_obj_in_system->capture_frame(&frame, &length);
 
@@ -153,7 +158,7 @@ namespace avdecc_lib
 			}
 			else
 			{
-				if(!SetEvent(data->timeout_event))
+				if(!SetEvent(poll_rx.timeout_event))
 				{
 					log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "SetEvent pkt_event_wpcap_timeout failed");
 					exit(EXIT_FAILURE);
@@ -165,6 +170,11 @@ namespace avdecc_lib
 	}
 
 	DWORD WINAPI system_layer2_multithreaded_callback::proc_poll_thread(LPVOID lpParam)
+	{
+		return reinterpret_cast<system_layer2_multithreaded_callback *>(lpParam)->proc_poll_thread_callback();
+	}
+
+	int system_layer2_multithreaded_callback::proc_poll_thread_callback()
 	{
 		int status;
 
@@ -178,7 +188,7 @@ namespace avdecc_lib
 			}
 		}
 
-		return 0;
+		return 0;	
 	}
 
 	int STDCALL system_layer2_multithreaded_callback::process_start()
@@ -201,7 +211,7 @@ namespace avdecc_lib
 		poll_rx.queue_thread.handle = CreateThread(NULL, // Default security descriptor
 		                                           0, // Default stack size
 		                                           proc_wpcap_thread, // Point to the start address of the thread
-		                                           &poll_rx, // Data to be passed to the thread
+		                                           this, // Data to be passed to the thread
 		                                           0, // Flag controlling the creation of the thread
 		                                           &poll_rx.queue_thread.id // Thread identifier
 		                                          );
@@ -230,7 +240,7 @@ namespace avdecc_lib
 		poll_thread.handle = CreateThread(NULL, // Default security descriptor //poll_thread_handle = CreateThread(NULL, // Default security descriptor
 		                                  0, // Default stack size
 		                                  proc_poll_thread, // Point to the start address of the thread
-		                                  NULL, // Data to be passed to the thread
+		                                  this, // Data to be passed to the thread
 		                                  0, // Flag controlling the creation of the thread
 		                                  &poll_thread.id // Thread identifier
 		                                 );
@@ -260,9 +270,10 @@ namespace avdecc_lib
 		{
 			case WAIT_OBJECT_0 + WPCAP_TIMEOUT:
 				{
-					controller_ref_in_system->time_tick_event();
+					controller_imp_ref_in_system->time_tick_event();
 
-					if(is_waiting && (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)))
+					bool is_waiting_completed = is_waiting && (!controller_imp_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id));
+					if(is_waiting_completed)
 					{
 						is_waiting = false;
 						resp_status_for_cmd = AVDECC_LIB_STATUS_TICK_TIMEOUT;
@@ -279,16 +290,17 @@ namespace avdecc_lib
 
 					bool is_notification_id_valid = false;
 					int status = -1;
+					bool is_waiting_completed = false;
 
-					controller_ref_in_system->rx_packet_event(thread_data.notification_id,
+					controller_imp_ref_in_system->rx_packet_event(thread_data.notification_id,
 					                                          is_notification_id_valid,
-					                                          thread_data.notification_flag,
 					                                          thread_data.frame,
 					                                          thread_data.mem_buf_len,
 					                                          status);
 
-					if(is_waiting && (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
-					   is_notification_id_valid && (waiting_notification_id == thread_data.notification_id))
+					is_waiting_completed = is_waiting && (!controller_imp_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
+							       is_notification_id_valid && (waiting_notification_id == thread_data.notification_id);
+					if(is_waiting_completed)
 					{
 						resp_status_for_cmd = status;
 						is_waiting = false;
@@ -303,7 +315,7 @@ namespace avdecc_lib
 			case WAIT_OBJECT_0 + WPCAP_TX_PACKET:
 				poll_tx.tx_queue->queue_pop_nowait(&thread_data);
 
-				controller_ref_in_system->tx_packet_event(thread_data.notification_id, thread_data.notification_flag, thread_data.frame, thread_data.mem_buf_len);
+				controller_imp_ref_in_system->tx_packet_event(thread_data.notification_id, thread_data.notification_flag, thread_data.frame, thread_data.mem_buf_len);
 
 				if(thread_data.notification_flag == CMD_WITH_NOTIFICATION)
 				{

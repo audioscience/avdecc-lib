@@ -49,8 +49,7 @@ namespace avdecc_lib
 		LPTHREAD_START_ROUTINE thread;
 		HANDLE h_thread;
 		DWORD thread_id;
-
-		static HANDLE poll_events[2];
+		HANDLE poll_events[2];
 
 	public:
 		/**
@@ -70,9 +69,14 @@ namespace avdecc_lib
 		int notification_thread_init();
 
 		/**
-		 * Start of the post_notification_msg thread used for generating notification messages.
+		 * Start of the notification thread used for generating notification messages.
 		 */
 		static DWORD WINAPI proc_notification_thread(LPVOID lpParam);
+
+		/**
+		 * A member function called to start the notification thread processing.
+		 */
+		int proc_notification_thread_callback();
 
 	public:
 		/**

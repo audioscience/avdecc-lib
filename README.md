@@ -15,7 +15,7 @@ The repository contains source to build a Windows DLL or a Linux library and a c
 exercising the library.
 
 The overall philosophy of AVDECC LIB is to implement a thin layer of commands that allow an application to
-discover and control AVDECC capable endpoints. The internal operations of the library are designed to be single threaded,
+discover and control AVDECC capable end stations. The internal operations of the library are designed to be single threaded,
 although multiple threads are used to queue operations to be performed by the single threaded "engine" portion of the library.
 The library supports notification events (callbacks) that are triggered on the success (or failure) of a command. 
 It is up to the application to process the notifications in a useful manner. Asynchronous descriptor updates from an
@@ -36,10 +36,8 @@ library is a rather thin wrapper around functions already present in the jdksavd
 
 
 Directory layout
----------------
+----------------
 
- ::
- 
 	controller\	
 		lib\
 			bin\
@@ -67,12 +65,10 @@ Directory layout
 				adp\
 				logging\ 
 				notify\		
-
+				
 Object hierarchy
----------------
+----------------
  
-  ::
-
 	System
 	Controller
 		End Station[1..N]
@@ -86,23 +82,23 @@ Object hierarchy
 					Jack Input[1..N]
 					Jack Output[1..N]
 					Clock Domain[1..N]
-
+	
 Building
 --------
 
-* Windows *
-
+### Windows ###
+	
 Prerequisites
 
 1. MSVC 2010 or later
-1. jdksavdecc-c git repository from <https://github.com/jdkoftinoff/jdksavdecc-c>
-1. winpcap development package from <http://www.winpcap.org/devel.htm>
+2. jdksavdecc-c git repository from <https://github.com/jdkoftinoff/jdksavdecc-c>
+3. winpcap development package from <http://www.winpcap.org/devel.htm>
 
 The following environment variables must be defined:
 * WPCAP_DIR the directory where WinPcap is installed
 * JDKSAVDECC_DIR the directory where JDKSAVDECC-C git 1722.1 C library is installed
 
-* Linux *
+### Linux ###
 
 ToDo
 
@@ -122,29 +118,29 @@ AVDECC AEM descriptor reads
 A descriptor read by referencing the object the object of interest. Since the AVDECC system has
 already read all descriptors, the read operation is completed without producing any network traffic.
 
-To read the name of the first input jack, one would go::
+To read the name of the first input jack, one would go:
 
-    controller->end_station(0)->entity(0)->configuration(0)->input_stream(0)->get_name(name) 
+	controller->end_station(0)->entity(0)->configuration(0)->input_stream(0)->get_name(name)
 
 AVDECC AEM commands
 -------------------
 
-An AVDECC command is sent to the target object, ie::
+An AVDECC command is sent to the target object, ie:
 
-    istream = controller->end_station(0)->entity(0)->configuration(0)->input_stream(0);
+	istream = controller->end_station(0)->entity(0)->configuration(0)->input_stream(0);
 	id = (void *)notify_id;
 	// put the notify_id value in a list somewhere
-    istream->set_format(id, format,...);
+	istream->set_format(id, format,...);
 	notify_id++;
 
 Completion results in a notification message of success or failure via the callback mechanism. An alternative calling
-sequence is to wait for the callback to complete in-line, ie::
+sequence is to wait for the callback to complete in-line, ie:
 
 	id = (void *)notify_id;
 	avdecc_system->set_wait_for_next_cmd(id);
-    istream = controller->end_station(0)->entity(0)->configuration(0)->input_stream(0);
-    istream->set_format(id, format,...);
-    status = avdecc_system->get_last_resp_status();
+	istream = controller->end_station(0)->entity(0)->configuration(0)->input_stream(0);
+	istream->set_format(id, format,...);
+	status = avdecc_system->get_last_resp_status();
 	notify_id++;
 
 The above examples place an uint32_t notify_id in a "void *" container. If the application writer is careful about
@@ -155,8 +151,6 @@ Callbacks
 
 The following callback functions should be supplied. If NULL is passed in for the callback function, not callbacks will be invoked.
 
- ::
- 
 	void log_callback(void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms);
 	void notification_callback(void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id);
 
@@ -190,11 +184,9 @@ Source code is auto-formatted using the astyle formatting tool. All submitted pu
 before the pull request is issued. The format to use is specified in the astyle_code_format option file in this
 directory. asytle is run from the command line using the following command sequence:
 
-::
-
-	AStyle --options=..\avdecc-lib\astyle_code_style.txt ..\avdecc-lib\controller\lib\include\*.h 
-		   ..\avdecc-lib\controller\lib\src\*.h ..\avdecc-lib\controller\lib\src\*.cpp
-		   ..\avdecc-lib\controller\lib\src\msvc\*.h ..\avdecc-lib\controller\lib\src\msvc\*.cpp
+	AStyle --options=..\avdecc-lib\astyle_code_style.txt ..\avdecc-lib\controller\lib\include\*.h
+			 ..\avdecc-lib\controller\lib\src\*.h ..\avdecc-lib\controller\lib\src\*.cpp
+			 ..\avdecc-lib\controller\lib\src\msvc\*.h ..\avdecc-lib\controller\lib\src\msvc\*.cpp
 
 Roadmap
 =======
@@ -216,10 +208,10 @@ Status
 
 Command/Response | Priority | Implemented | Tested |
 -----------------|----------|-------------|--------|
-ACQUIRE_ENTITY | P1 | | |
-LOCK_ENTITY | P1 | | |
-ENTITY_AVAILABLE | P1 | | |
-CONTROLLER_AVAILABLE | P1 | | |
+ACQUIRE_ENTITY | P1 | Y | |
+LOCK_ENTITY | P1 | Y | |
+ENTITY_AVAILABLE | P1 | Y | |
+CONTROLLER_AVAILABLE | P1 | Y | |
 READ_DESCRIPTOR | P1 | Y | Y |
 SET_STREAM_FORMAT | P1 | Y | |
 GET_STREAM_FORMAT | P1 | Y | Y |
@@ -272,23 +264,16 @@ GET_SENSOR_MAP | P4 | | |
 ADD_SENSOR_MAPPINGS | P4 | | |
 REMOVE_SENSOR_MAPPINGS | P4 | | |
 
-ToDo
-....
+
+#### ToDo ####
 * cmd line help needs to be split up into it's own txt file, or a simple .h file.
 * need to work through P1 priorities above
 * add linux and OSX builds
 * add format helper functions
 * get ACMP working
+* add timer to system class to make sure tick isn't held off
 
-Done
-....
-* add astyle cmdline sequence
-* add documentation on parameters of notification and log callback function
-* fix wait_for_cmd_completion() (it needs to go in the public interface) - put example in cmd_line application
-* system_multithreaded callback.cpp needs to be renamed to system_layer2_multithreaded_callback.cpp to distinguish for layer3 IP implementations.
-* extern "C" AVDECC_CONTROLLER_LIB32_API system * STDCALL create_system(enum system_type, net_interface *netif, controller *controller_ref); needs to take an input parameter of the system type to create.
-* need a call that lets the application set the log level
-* add counter and API for missed log and notify events
+#### Done ####
 
 
 

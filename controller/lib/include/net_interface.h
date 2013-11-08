@@ -40,6 +40,11 @@ namespace avdecc_lib
 	{
 	public:
 		/**
+		 * Deallocate memory
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL destroy() = 0;
+
+		/**
 		 * Count the number of devices.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL devs_count() = 0;

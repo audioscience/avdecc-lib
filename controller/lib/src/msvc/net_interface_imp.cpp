@@ -32,7 +32,7 @@
 #include "util_imp.h"
 #include "enumeration.h"
 #include "log_imp.h"
-#include "jdksavdecc_util.h"
+#include "jdksavdecc_pdu.h"
 #include "net_interface_imp.h"
 
 namespace avdecc_lib
@@ -74,6 +74,11 @@ namespace avdecc_lib
 	{
 		pcap_freealldevs(all_devs); // Free the device list
 		pcap_close(pcap_interface);
+	}
+
+	void STDCALL net_interface_imp::destroy()
+	{
+		delete this;
 	}
 
 	uint32_t STDCALL net_interface_imp::devs_count()
@@ -180,6 +185,10 @@ namespace avdecc_lib
 				utility->convert_eui48_to_uint64(&tmp[0], mac);
 			}
 		}
+
+		uint16_t ether_type[1];
+		ether_type[0] = JDKSAVDECC_AVTP_ETHERTYPE;
+		set_capture_ether_type(ether_type, 0); // Set the filter
 
 		free(AdapterInfo);
 		return 0;

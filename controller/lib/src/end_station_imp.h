@@ -75,7 +75,7 @@ namespace avdecc_lib
 		 * Constructor for end_station_imp used for constructing an object with network interface , Ethernet frame
 		 * and memory buffer length information.
 		 */
-		end_station_imp(uint8_t *frame, size_t mem_buf_len);
+		end_station_imp(const uint8_t *frame, size_t mem_buf_len);
 
 		/**
 		 * Destructor for end_station_imp used for destroying objects
@@ -149,7 +149,7 @@ namespace avdecc_lib
 		/**
 		 * Process a READ_DESCRIPTOR response for the READ_DESCRIPTOR command.
 		 */
-		int proc_read_desc_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_read_desc_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Send a ENTITY_AVAILABLE command to verify that an AVDECC Entity is still available and responding to commands.
@@ -159,12 +159,12 @@ namespace avdecc_lib
 		/**
 		 * Process a ENTITY_AVAILABLE response for the ENTITY_AVAILABLE command.
 		 */
-		int proc_entity_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_entity_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
 
 		/**
 		 * Process response received for the corresponding command.
 		 */
-		int proc_rcvd_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_rcvd_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
 	};
 }
 

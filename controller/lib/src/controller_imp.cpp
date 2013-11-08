@@ -52,13 +52,13 @@ namespace avdecc_lib
 	                                       void (*log_callback) (void *, int32_t, const char *, int32_t))
 	{
 		net_interface_ref = dynamic_cast<net_interface_imp *>(netif);
-
 		if(!net_interface_ref)
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived net_interface_imp to base net_interface error");
 		}
 
 		controller_imp_ref = new controller_imp(notification_callback, log_callback);
+
 		return controller_imp_ref;
 	}
 
@@ -126,27 +126,51 @@ namespace avdecc_lib
 
 	configuration_descriptor * STDCALL controller_imp::get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index)
 	{
-		bool is_valid;
-		is_valid = ((end_station_index < end_station_vec.size()) &&
-		            (entity_index < end_station_vec.at(end_station_index)->get_entity_desc_count()) &&
-		            (config_index < end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_configurations_count()));
+		bool is_valid = ((end_station_index < end_station_vec.size()) &&
+			         (entity_index < end_station_vec.at(end_station_index)->get_entity_desc_count()) &&
+				 (config_index < end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_configurations_count()));
 
 		if(is_valid)
 		{
-			return end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
-		}
+			configuration_descriptor * config_desc_ref;
+			config_desc_ref = end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
 
+			return config_desc_ref;
+		}
 		else
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
-			return NULL;
 		}
+
+		return NULL;
 	}
 
-	configuration_descriptor * controller_imp::get_config_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index)
+	configuration_descriptor * controller_imp::get_config_desc_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index)
 	{
+		for(uint32_t index_i = 0; index_i < end_station_vec.size(); index_i++)
+		{
+			uint64_t end_station_guid = end_station_vec.at(index_i)->get_end_station_guid();
 
-		return 0;
+			if(end_station_guid == entity_guid)
+			{
+				bool is_valid = ((entity_index < end_station_vec.at(index_i)->get_entity_desc_count()) &&
+						 (config_index < end_station_vec.at(index_i)->get_entity_desc_by_index(entity_index)->get_configurations_count()));
+
+				if(is_valid)
+				{
+					configuration_descriptor * config_desc_ref;
+					config_desc_ref = end_station_vec.at(index_i)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
+
+					return config_desc_ref;
+				}
+				else
+				{
+					log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_guid error");
+				}
+			}
+		}
+
+		return NULL;
 	}
 
 	bool STDCALL controller_imp::is_inflight_cmd_with_notification_id(void *notification_id)
@@ -169,7 +193,7 @@ namespace avdecc_lib
 		return log_imp_ref->get_missed_log_event_count();
 	}
 
-	void STDCALL controller_imp::time_tick_event()
+	void controller_imp::time_tick_event()
 	{
 		uint64_t end_station_guid;
 		uint32_t disconnected_end_station_index;
@@ -182,7 +206,7 @@ namespace avdecc_lib
 		}
 	}
 
-	void STDCALL controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		uint64_t dest_mac_addr;
 		uint32_t subtype;
@@ -280,11 +304,11 @@ namespace avdecc_lib
 
 							if(cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
 							{
-								proc_controller_avail_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+								proc_controller_avail_resp(notification_id, frame, mem_buf_len, status);
 							}
 							else
 							{
-								end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, notification_flag, frame, mem_buf_len, status);
+								end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, frame, mem_buf_len, status);
 							}
 
 							is_notification_id_valid = true;
@@ -308,7 +332,7 @@ namespace avdecc_lib
 		}
 	}
 
-	void STDCALL controller_imp::tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len)
+	void controller_imp::tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len)
 	{
 		struct jdksavdecc_frame packet_frame;
 
@@ -353,7 +377,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int controller_imp::proc_controller_avail_resp(void *&notification_id, uint32_t &notification_flag, uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int controller_imp::proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_controller_available_response aem_cmd_controller_avail_resp;
@@ -380,7 +404,7 @@ namespace avdecc_lib
 		status = aem_cmd_controller_avail_resp.aem_header.aecpdu_header.header.status;
 		u_field = aem_cmd_controller_avail_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, notification_flag, msg_type, u_field, ether_frame);
+		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		free(ether_frame);
 		return 0;

@@ -71,16 +71,16 @@ namespace avdecc_lib
 		        NUM_OF_EVENTS
 		};
 
-		static struct msg_poll poll_rx;
-		static struct msg_poll poll_tx;
-		static struct thread_creation poll_thread;
-		static HANDLE poll_events_array[NUM_OF_EVENTS];
-		static HANDLE waiting_sem;
+		struct msg_poll poll_rx;
+		struct msg_poll poll_tx;
+		struct thread_creation poll_thread;
+		HANDLE poll_events_array[NUM_OF_EVENTS];
+		HANDLE waiting_sem;
 
-		static bool is_waiting;
-		static bool queue_is_waiting;
-		static void *waiting_notification_id;
-		static int resp_status_for_cmd;
+		bool is_waiting;
+		bool queue_is_waiting;
+		void *waiting_notification_id;
+		int resp_status_for_cmd;
 
 	public:
 		/**
@@ -125,9 +125,19 @@ namespace avdecc_lib
 		static DWORD WINAPI proc_wpcap_thread(LPVOID lpParam);
 
 		/**
+		 * A member function called to start the wpcap thread processing.
+		 */
+		int proc_wpcap_thread_callback();
+
+		/**
 		 * Start of the polling thread used for polling events.
 		 */
 		static DWORD WINAPI proc_poll_thread(LPVOID lpParam);
+
+		/**
+		 * A member function called to start the poll thread processing.
+		 */
+		int proc_poll_thread_callback();
 
 		/**
 		 * Create and initialize threads, events, and semaphores for wpcap thread.
@@ -142,7 +152,7 @@ namespace avdecc_lib
 		/**
 		 * Execute poll events.
 		 */
-		static int poll_single();
+		int poll_single();
 
 	public:
 		/**

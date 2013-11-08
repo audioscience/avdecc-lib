@@ -42,7 +42,7 @@ namespace avdecc_lib
 
 	adp::adp() {}
 
-	adp::adp(uint8_t *frame, size_t mem_buf_len)
+	adp::adp(const uint8_t *frame, size_t mem_buf_len)
 	{
 		adp_frame = (uint8_t *)malloc(mem_buf_len * sizeof(uint8_t));
 		memcpy(adp_frame, frame, mem_buf_len);
@@ -75,9 +75,9 @@ namespace avdecc_lib
 	struct jdksavdecc_eui64 adp::get_controller_guid()
 	{
 		uint64_t mac_guid;
-		mac_guid = (    (net_interface_ref->get_mac() & UINT64_C(0xFFFFFF000000)) << 16) |
-				UINT64_C(0x000000FFFF000000) |
-				(net_interface_ref->get_mac() & UINT64_C(0xFFFFFF));
+		mac_guid = ((net_interface_ref->get_mac() & UINT64_C(0xFFFFFF000000)) << 16) |
+			    UINT64_C(0x000000FFFF000000) |
+			    (net_interface_ref->get_mac() & UINT64_C(0xFFFFFF));
 
 		return jdksavdecc_eui64_get(&mac_guid, 0);
 	}
