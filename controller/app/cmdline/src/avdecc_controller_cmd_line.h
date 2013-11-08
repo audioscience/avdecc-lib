@@ -36,6 +36,7 @@
 #include "controller.h"
 #include "util.h"
 #include "enumeration.h"
+#include "cmd_line_help.h"
 
 class avdecc_cmd_line
 {
@@ -44,6 +45,8 @@ private:
 	avdecc_lib::system *system_ref;
 	avdecc_lib::controller *controller_ref;
 	avdecc_lib::util *utility;
+
+	std::vector<cmd_line_help *> cmd_line_help_vec;
 
 public:
 	static std::string log_path;
@@ -70,6 +73,8 @@ public:
 
 private:
 	int print_interfaces_and_select();
+
+	void cmd_line_help_init();
 
 public:
 

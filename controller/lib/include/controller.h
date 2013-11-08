@@ -116,7 +116,7 @@ namespace avdecc_lib
 	 * \param notification_id A void pointer to the unique identifier for each notification message.
 	 *
 	 * \param log_user_obj A void pointer used to store any helpful class object.
-	 * \param log_level The log level that the callback function is called with. (Refer to post_log_msg levels enumeration included in the library for a list of log levels supported.)
+	 * \param log_level The log level that the callback function is called with. (Refer to logging levels enumeration included in the library for a list of log levels supported.)
 	 * \param log_msg A message containing additional information to be logged.
 	 * \param time_stamp_ms The time in milliseconds indicating when the message is logged.
 	 */

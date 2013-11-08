@@ -441,7 +441,7 @@ namespace avdecc_lib
 		aem_cmd_entity_avail_resp_returned = jdksavdecc_aem_command_entity_available_response_read(&aem_cmd_entity_avail_resp,
 													   frame,
 													   aecp::CMD_POS,
-													    mem_buf_len);
+													   mem_buf_len);
 
 		if(aem_cmd_entity_avail_resp_returned < 0)
 		{

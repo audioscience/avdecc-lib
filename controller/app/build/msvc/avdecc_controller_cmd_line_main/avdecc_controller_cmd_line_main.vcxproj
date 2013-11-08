@@ -85,6 +85,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\cmdline\src\avdecc_controller_cmd_line.cpp" />
     <ClCompile Include="..\..\..\cmdline\src\avdecc_controller_cmd_line_main.cpp" />
+    <ClCompile Include="..\..\..\cmdline\src\cmd_line_help.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\cmdline\src\cmd_line_help.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
