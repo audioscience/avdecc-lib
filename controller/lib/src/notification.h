@@ -64,14 +64,8 @@ namespace avdecc_lib
 		struct notification_data notification_buf[NOTIFICATION_BUF_COUNT];
 
 	public:
-		/**
-		 * An empty constructor for notification
-		 */
 		notification();
 
-		/**
-		 * Destructor for notification used for destroying objects
-		 */
 		~notification();
 
 		/**

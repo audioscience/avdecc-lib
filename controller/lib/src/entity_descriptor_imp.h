@@ -48,19 +48,15 @@ namespace avdecc_lib
 
 	public:
 		/**
-		 * An empty constructor for entity_descriptor_imp
+		 * Constructor for Entity descriptor object.
+		 * 
+		 * \param end_station_obj A pointer to the base End Station object.
+		 * \param frame The raw memory that contains the descriptor information to read from.
+		 * \param pos The position offset to read the descriptor fields from.
+		 * \param frame_len The memory buffer length of the descriptor frame.
 		 */
-		entity_descriptor_imp();
+		entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
-		/**
-		 * Constructor for entity_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
-		 * and memory buffer length.
-		 */
-		entity_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
-
-		/**
-		 * Destructor for entity_descriptor_imp used for destroying objects
-		 */
 		virtual ~entity_descriptor_imp();
 
 		/**
@@ -171,7 +167,7 @@ namespace avdecc_lib
 		/**
 		 * Store Configuration descriptor object.
 		 */
-		void store_config_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
+		void store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
 		/**
 		 * Get the number of Configuration descriptors.
@@ -191,7 +187,7 @@ namespace avdecc_lib
 		/**
 		 * Process a ACQURE_ENTITY response for the ACQURE_ENTITY command.
 		 */
-		int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a SET_CONFIFURATION command to change the current configuration of the AVDECC Entity.

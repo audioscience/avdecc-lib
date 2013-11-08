@@ -51,22 +51,17 @@ namespace avdecc_lib
 		*/
 		void store_clock_sources(const uint8_t *frame, size_t pos);
 
-
 	public:
 		/**
-		 * An empty constructor for clock_domain_descriptor_imp
+		 * Constructor for Clock Domain descriptor object.
+		 * 
+		 * \param end_station_obj A pointer to the base End Station object.
+		 * \param frame The raw memory that contains the descriptor information to read from.
+		 * \param pos The position offset to read the descriptor fields from.
+		 * \param frame_len The memory buffer length of the descriptor frame.
 		 */
-		clock_domain_descriptor_imp();
+		clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
-		/**
-		 * Constructor for clock_domain_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
-		 * and memory buffer length.
-		 */
-		clock_domain_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
-
-		/**
-		 * Destructor for clock_domain_descriptor_imp used for destroying objects
-		 */
 		virtual ~clock_domain_descriptor_imp();
 
 		/**
@@ -130,7 +125,7 @@ namespace avdecc_lib
 		/**
 		 * Process a SET_CLOCK_SOURCE response for the SET_CLOCK_SOURCE command.
 		 */
-		int proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
@@ -140,7 +135,7 @@ namespace avdecc_lib
 		/**
 		 * Process a GET_CLOCK_SOURCE response for the GET_CLOCK_SOURCE command.
 		 */
-		int proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 	};
 }
 

@@ -37,5 +37,5 @@ namespace avdecc_lib
 	/**
 	 * Store command in a queue to be transmitted.
 	 */
-	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len);
+	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len);
 }

@@ -215,7 +215,7 @@ namespace avdecc_lib
 			}
 		}
 
-		/******************************************************* Compile a filter ************************************************/
+		/************************************** Compile a filter **************************************/
 		if(pcap_compile(pcap_interface, &fcode, ether_type_string, 1, 0) < 0)
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Unable to compile the packet filter.");
@@ -223,7 +223,7 @@ namespace avdecc_lib
 			return -1;
 		}
 
-		/*************************************************** Set the filter *******************************************/
+		/********************************** Set the filter *********************************/
 		if(pcap_setfilter(pcap_interface, &fcode) < 0)
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Error setting the filter.");
@@ -240,32 +240,27 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int STDCALL net_interface_imp::capture_frame(const uint8_t **frame, uint16_t *mem_buf_len)
+	int STDCALL net_interface_imp::capture_frame(const uint8_t **frame, uint16_t *frame_len)
 	{
 		struct pcap_pkthdr *header;
 		int error = 0;
 
-		*mem_buf_len = 0;
+		*frame_len = 0;
 		error = pcap_next_ex(pcap_interface, &header, frame);
 
 		if(error > 0 )
 		{
 			ether_frame = *frame;
-			*mem_buf_len = (uint16_t)header->len;
-
-	//		printf("Rx frame: %d bytes\n", *length);
-
+			*frame_len = (uint16_t)header->len;
 			return 1;
 		}
 
 		return -2; // Timeout
 	}
 
-	int net_interface_imp::send_frame(uint8_t *frame, uint16_t mem_buf_len)
+	int net_interface_imp::send_frame(uint8_t *frame, uint16_t frame_len)
 	{
-	//	printf("TX frame: %d bytes\n", length);
-
-		if(pcap_sendpacket(pcap_interface, frame, mem_buf_len) != 0)
+		if(pcap_sendpacket(pcap_interface, frame, frame_len) != 0)
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "pcap_sendpacket error %s", pcap_geterr(pcap_interface));
 			return -1;

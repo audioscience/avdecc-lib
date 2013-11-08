@@ -43,19 +43,14 @@ namespace avdecc_lib
 	{
 	public:
 		/**
-		 * Deallocate memory
+		 * Call destructor for Controller used for destroying objects
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL destroy() = 0;
 
 		/**
-		 * \return The current build release version.
+		 * \return The current AVDECC Controller build release version.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_version() = 0;
-
-		/**
-		 * \return The AVDECC Controller GUID of the AVDECC Entity sending the command.
-		 */
-		//AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_controller_guid() = 0;
 
 		/**
 		 * \return The total number of End Stations connected.
@@ -116,7 +111,7 @@ namespace avdecc_lib
 	 * \param notification_id A void pointer to the unique identifier for each notification message.
 	 *
 	 * \param log_user_obj A void pointer used to store any helpful class object.
-	 * \param log_level The log level that the callback function is called with. (Refer to post_log_msg levels enumeration included in the library for a list of log levels supported.)
+	 * \param log_level The log level that the callback function is called with. (Refer to logging levels enumeration included in the library for a list of log levels supported.)
 	 * \param log_msg A message containing additional information to be logged.
 	 * \param time_stamp_ms The time in milliseconds indicating when the message is logged.
 	 */

@@ -46,14 +46,8 @@ namespace avdecc_lib
 		avdecc_lib_os::aTimestamp start_time;
 
 	public:
-		/**
-		 * An empty constructor for timer
-		 */
 		timer();
 
-		/**
-		 * Destructor for timer used for destroying objects
-		 */
 		~timer();
 
 		avdecc_lib_os::aTimestamp clk_monotonic(void);

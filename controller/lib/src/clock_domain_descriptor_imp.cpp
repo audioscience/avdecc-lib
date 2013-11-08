@@ -39,11 +39,9 @@
 
 namespace avdecc_lib
 {
-	clock_domain_descriptor_imp::clock_domain_descriptor_imp() {}
-
-	clock_domain_descriptor_imp::clock_domain_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
+	clock_domain_descriptor_imp::clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
 	{
-		desc_clock_domain_read_returned = jdksavdecc_descriptor_clock_domain_read(&clock_domain_desc, frame, pos, mem_buf_len);
+		desc_clock_domain_read_returned = jdksavdecc_descriptor_clock_domain_read(&clock_domain_desc, frame, pos, frame_len);
 
 		if(desc_clock_domain_read_returned < 0)
 		{
@@ -161,7 +159,7 @@ namespace avdecc_lib
 
 	}
 
-	int clock_domain_descriptor_imp::proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int clock_domain_descriptor_imp::proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_set_clk_src_resp_returned;
@@ -169,12 +167,12 @@ namespace avdecc_lib
 		bool u_field;
 
 		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
-		memcpy(ether_frame->payload, frame, mem_buf_len);
+		memcpy(ether_frame->payload, frame, frame_len);
 
 		aem_cmd_set_clk_src_resp_returned = jdksavdecc_aem_command_set_clock_source_response_read(&aem_cmd_set_clk_src_resp,
 		                                                                                          frame,
 		                                                                                          aecp::CMD_POS,
-		                                                                                          mem_buf_len);
+		                                                                                          frame_len);
 
 		if(aem_cmd_set_clk_src_resp_returned < 0)
 		{
@@ -230,7 +228,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int clock_domain_descriptor_imp::proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int clock_domain_descriptor_imp::proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		int aem_cmd_get_clk_src_resp_returned;
@@ -238,12 +236,12 @@ namespace avdecc_lib
 		bool u_field;
 
 		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
-		memcpy(ether_frame->payload, frame, mem_buf_len);
+		memcpy(ether_frame->payload, frame, frame_len);
 
 		aem_cmd_get_clk_src_resp_returned = jdksavdecc_aem_command_get_clock_source_response_read(&aem_cmd_get_clk_src_resp,
 		                                                                                          frame,
 		                                                                                          aecp::CMD_POS,
-		                                                                                          mem_buf_len);
+		                                                                                          frame_len);
 
 		if(aem_cmd_get_clk_src_resp_returned < 0)
 		{
