@@ -33,56 +33,32 @@
 
 class cmd_line_help
 {
-public:
-	//std::vector<std::string> details;
+private:
 	std::string command;
 	std::string description;
-	std::string detail;
 
-	/**
-	 * An empty constructor for cmd_line_help
-	 */
+public:
 	cmd_line_help();
 
 	/**
-	 * Constructor for cmd_line_help used for constructing an object with a command.
+	 * Constructor for cmd_line_help used for constructing an object with a command and description.
 	 */
-	cmd_line_help(const std::string cmd, const std::string description, const std::string details);
+	cmd_line_help(const std::string cmd, const std::string desc);
 
 	/**
 	 * Destructor for cmd_line_help used for destroying objects
 	 */
 	~cmd_line_help();
 
+	/**
+	 * Get the command name.
+	 */
 	const std::string get_command();
 
+	/**
+	 * Get the command description.
+	 */
 	const std::string get_description();
-
-	const std::string get_details();
-
-//vector
-//	v->cmd() space v->summary()
-//
-//
-//vector
-//	if ( str in v->cmd)
-//		print details vector
-//
-//
-//print help filename
-
-
-
-
-
-
-
-
-
-
-
-
-
 };
 
 #endif
