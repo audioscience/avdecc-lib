@@ -57,6 +57,7 @@ namespace avdecc_lib
 {
 
 
+
 	struct etherII {
 		uint8_t destmac[6];
 		uint8_t srcmac[6];
@@ -81,12 +82,6 @@ namespace avdecc_lib
 		 uint8_t len[2];
 		 uint8_t chksum[2];
 	}; 
-
-
-	net_interface * STDCALL create_net_interface()
-	{
-		return (new net_interface_imp());
-	}
 
 	net_interface_imp::net_interface_imp()
 	{
@@ -146,6 +141,11 @@ namespace avdecc_lib
 		close(rawsock);
 	}
 
+	void STDCALL net_interface_imp::destroy()
+	{
+		delete this;
+	}
+
 	uint32_t STDCALL net_interface_imp::devs_count()
 	{
 		return total_devs;
@@ -159,6 +159,11 @@ namespace avdecc_lib
 	char * STDCALL net_interface_imp::get_dev_desc_by_index(uint32_t dev_index)
 	{
 		return (char *)ifnames[dev_index].c_str();
+	}
+
+	int net_interface_imp::get_fd()
+	{
+		return rawsock;
 	}
 
 
@@ -304,6 +309,12 @@ namespace avdecc_lib
 
 		return setsockopt(rawsock, SOL_PACKET,
 				PACKET_ADD_MEMBERSHIP,&mr,sizeof(mr));
+	}
+
+
+	net_interface * create_net_interface()
+	{
+		return (new net_interface_imp());
 	}
 
 }

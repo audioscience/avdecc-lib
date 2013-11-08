@@ -31,50 +31,20 @@
 #ifndef _AVDECC_CONTROLLER_LIB_SYSTEM_LAYER2_MULTITHREADED_CALLBACK_H_
 #define _AVDECC_CONTROLLER_LIB_SYSTEM_LAYER2_MULTITHREADED_CALLBACK_H_
 
+#include <sys/epoll.h>
+
+#include "avdecc_lib_os.h"
 #include "system.h"
+
 
 namespace avdecc_lib
 {
+	struct epoll_priv;
+
+
 	class system_layer2_multithreaded_callback : public virtual system
 	{
-	private:
-		struct poll_thread_data
-		{
-			uint8_t *frame;
-			uint16_t mem_buf_len;
-			void *notification_id;
-			uint32_t notification_flag;
-		};
-
-		enum pipe_index
-		{
-			PIPE_WR,
-			PIPE_RD
-		};
-
-		int network_fd;
-		int tx_pipe[2];
-		int tick_timer;
-
-
-		/* 
-		Events to process:
-		Rx packet - from socket
-		Tx packet - from FIFO
-		Timer tick - from timer
-		*/
-
-		bool is_waiting;
-		bool queue_is_waiting;
-		void *waiting_notification_id;
-		int resp_status_for_cmd;
-
 	public:
-		/**
-		 * An empty constructor for system_layer2_multithreaded_callback
-		 */
-		system_layer2_multithreaded_callback();
-
 		/**
 		 * A constructor for system_layer2_multithreaded_callback used for constructing an object with network interface, notification, and logging callback functions.
 		 */
@@ -105,13 +75,6 @@ namespace avdecc_lib
 		 */
 		int STDCALL get_last_resp_status();
 
-	private:
-
-		void * proc_poll_thread(void * p);
-
-		int poll_single(void);
-
-	public:
 		/**
 		 * Start point of the system process, which calls the thread initialization function.
 		 */
@@ -121,6 +84,65 @@ namespace avdecc_lib
 		 * End point of the system process, which terminates the threads.
 		 */
 		int STDCALL process_close();
+
+	private:
+  		static system_layer2_multithreaded_callback *instance;
+  		struct epoll_priv;
+		typedef int (* handler_fn) (struct epoll_priv * priv);
+
+		struct epoll_priv {
+			int fd;
+			handler_fn fn;
+		};
+
+		struct tx_data
+		{
+			uint8_t *frame;
+			size_t mem_buf_len;
+			void *notification_id;
+			uint32_t notification_flag;
+		};
+
+		enum useful_enums
+		{
+			PIPE_RD = 0,
+			PIPE_WR = 1,
+			POLL_COUNT = 3,
+			TIME_PERIOD_25_MILLISECONDS = 25
+		};
+
+
+		int network_fd;
+		int tx_pipe[2];
+		int tick_timer;
+
+		sem_t *waiting_sem;
+
+		/* 
+		Events to process:
+		Rx packet - from socket
+		Tx packet - from FIFO
+		Timer tick - from timer
+		*/
+
+		bool is_waiting;
+		bool queue_is_waiting;
+		void *waiting_notification_id;
+		int resp_status_for_cmd;
+		int prep_evt_desc(int fd, handler_fn fn, struct epoll_priv *priv, struct epoll_event *ev);
+		static int fn_timer_cb(struct epoll_priv *priv);
+		static int fn_netif_cb(struct epoll_priv *priv);
+		static int fn_tx_cb(struct epoll_priv *priv);
+		int fn_timer(struct epoll_priv *priv);
+		int fn_netif(struct epoll_priv *priv);
+		int fn_tx(struct epoll_priv *priv);
+		int timer_start_interval(int timerfd);
+
+		void * proc_poll_thread(void * p);
+		int proc_poll_loop(void * p);
+
+		int poll_single(void);
+
 	};
 }
 
