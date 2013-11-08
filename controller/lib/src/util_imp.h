@@ -38,18 +38,12 @@ namespace avdecc_lib
 	class util_imp : public virtual util
 	{
 	public:
-		/**
-		 * An empty constructor for configuration_descriptor_imp
-		 */
 		util_imp();
 
-		/**
-		 * Destructor for configuration_descriptor_imp used for destroying objects
-		 */
 		virtual ~util_imp();
 
 		/**
-		 * Deallocate memory
+		 * Call destructor for Controller used for destroying objects
 		 */
 		void STDCALL destroy();
 

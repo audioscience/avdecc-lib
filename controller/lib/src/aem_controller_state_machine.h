@@ -38,92 +38,80 @@ namespace avdecc_lib
 	class aem_controller_state_machine
 	{
 	private:
-		struct aem_controller_state_machine_inflight_cmd
+		struct inflight_cmd_data
 		{
 			bool retried;
 			struct jdksavdecc_frame inflight_cmd_frame;
 			uint16_t seq_id;
 			void *notification_id;
 			uint32_t notification_flag;
-			timer *avdecc_lib_timer_ref;
-			uint64_t dest_addr;
+			timer timer_ref;
 		};
 
-		struct aem_controller_state_machine_variables
-		{
-			bool rcvd_normal_resp;
-			bool rcvd_unsolicited_resp;
-			std::vector<struct aem_controller_state_machine_inflight_cmd> inflight_cmds_vector;
-			bool do_cmd;
-			bool do_terminate;
-		};
-
-		struct aem_controller_state_machine_variables controller_state_machine_vars;
+		uint16_t aecp_seq_id; // The sequence id used for identifying the AECP command that a response is for
+		bool rcvd_normal_resp;
+		bool rcvd_unsolicited_resp;	
+		bool do_cmd;
+		bool do_terminate;
+		std::vector<struct inflight_cmd_data> inflight_cmds_vec;
 
 	public:
-		static uint16_t aecp_seq_id; // The sequence id used for identifying the AECP command that a response is for
-
-		/**
-		 * An empty constructor for aem_controller_state_machine
-		 */
 		aem_controller_state_machine();
 
-		/**
-		 * Destructor for aem_controller_state_machine used for destroying objects
-		 */
 		~aem_controller_state_machine();
 
 		/**
 		 * Transmit an AEM Command.
 		 */
-		void tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
+		void tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame, bool resend);
 
 		/**
-		 * Handle the receipt and processing of a received unsolicited post_notification_msg.
+		 * Handle the receipt and processing of a received unsolicited response for a command sent.
 		 */
-		int process_unsolicited(struct jdksavdecc_frame *ether_frame);
+		int proc_unsolicited(void *&notification_id, struct jdksavdecc_frame *ether_frame);
 
 		/**
 		 * Handle the receipt and processing of a received response for a command sent.
 		 */
-		int process_resp(void *&notification_id, struct jdksavdecc_frame *ether_frame);
+		int proc_resp(void *&notification_id, struct jdksavdecc_frame *ether_frame);
 
 		/**
-		 * Notify the application that a command has timed out and the retry has timed out.
+		 * Notify the application that a command has timed out and the retry has timed out and the
+		 * inflight command is removed from the inflight list.
 		 */
 		void timeout(uint32_t inflight_cmd_index);
 
 		/**
 		 * Process the Waiting state of the AEM Controller State Machine.
 		 */
-		void aem_controller_state_waiting(void *&notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
+		void state_waiting(void *&notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
 
 		/**
 		 * Process the Send Command state of the AEM Controller State Machine.
 		 */
-		void aem_controller_state_send_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
+		void state_send_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
 
 		/**
 		 * Process the Received Unsolicited state of the AEM Controller State Machine.
 		 */
-		void aem_controller_state_rcvd_unsolicited(struct jdksavdecc_frame *ether_frame);
+		void state_rcvd_unsolicited(void *&notification_id, struct jdksavdecc_frame *ether_frame);
 
 		/**
 		 * Process the Received Response state of the AEM Controller State Machine.
 		 */
-		void aem_controller_state_rcvd_resp(void *&notification_id, struct jdksavdecc_frame *ether_frame);
+		void state_rcvd_resp(void *&notification_id, struct jdksavdecc_frame *ether_frame);
 
 		/**
 		 * Check timeout for the inflight commands.
 		 */
-		void aem_controller_tick();
+		void tick();
 
 		/**
 		 * Get the rcvd_normal_resp field from the aem_controller_state_machine_variables structure.
 		 */
 		inline bool get_rcvd_normal_resp()
 		{
-			return controller_state_machine_vars.rcvd_normal_resp;
+			return rcvd_normal_resp;
 		}
 
 		/**
@@ -131,7 +119,7 @@ namespace avdecc_lib
 		 */
 		inline void set_rcvd_normal_resp(bool new_rcvd_normal_resp)
 		{
-			controller_state_machine_vars.rcvd_normal_resp = new_rcvd_normal_resp;
+			rcvd_normal_resp = new_rcvd_normal_resp;
 		}
 
 		/**
@@ -139,7 +127,7 @@ namespace avdecc_lib
 		 */
 		inline bool get_rcvd_unsolicited_resp()
 		{
-			return controller_state_machine_vars.rcvd_unsolicited_resp;
+			return rcvd_unsolicited_resp;
 		}
 
 		/**
@@ -147,7 +135,7 @@ namespace avdecc_lib
 		 */
 		inline void set_rcvd_unsolicited_resp(bool new_rcvd_unsolicited_resp)
 		{
-			controller_state_machine_vars.rcvd_unsolicited_resp = new_rcvd_unsolicited_resp;
+			rcvd_unsolicited_resp = new_rcvd_unsolicited_resp;
 		}
 
 		/**
@@ -155,7 +143,7 @@ namespace avdecc_lib
 		 */
 		inline bool get_do_cmd()
 		{
-			return controller_state_machine_vars.do_cmd;
+			return do_cmd;
 		}
 
 		/**
@@ -163,7 +151,7 @@ namespace avdecc_lib
 		 */
 		inline void set_do_cmd(bool new_do_cmd)
 		{
-			controller_state_machine_vars.do_cmd = new_do_cmd;
+			do_cmd = new_do_cmd;
 		}
 
 		/**
@@ -171,7 +159,7 @@ namespace avdecc_lib
 		 */
 		inline bool get_do_terminate()
 		{
-			return controller_state_machine_vars.do_terminate;
+			return do_terminate;
 		}
 
 		/**
@@ -179,7 +167,7 @@ namespace avdecc_lib
 		 */
 		inline void set_do_terminate(bool new_do_terminate)
 		{
-			controller_state_machine_vars.do_terminate = new_do_terminate;
+			do_terminate = new_do_terminate;
 		}
 
 		/**

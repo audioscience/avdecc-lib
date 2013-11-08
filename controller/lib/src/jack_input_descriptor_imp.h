@@ -52,19 +52,15 @@ namespace avdecc_lib
 
 	public:
 		/**
-		 * An empty constructor for jack_input_descriptor_imp
+		 * Constructor for Jack Input descriptor object.
+		 * 
+		 * \param end_station_obj A pointer to the base End Station object.
+		 * \param frame The raw memory that contains the descriptor information to read from.
+		 * \param pos The position offset to read the descriptor fields from.
+		 * \param frame_len The memory buffer length of the descriptor frame.
 		 */
-		jack_input_descriptor_imp();
+		jack_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
-		/**
-		 * Constructor for jack_input_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
-		 * and memory buffer length.
-		 */
-		jack_input_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
-
-		/**
-		 * Destructor for jack_input_descriptor_imp used for destroying objects
-		 */
 		virtual ~jack_input_descriptor_imp();
 
 	private:

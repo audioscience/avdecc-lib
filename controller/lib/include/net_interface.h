@@ -40,12 +40,12 @@ namespace avdecc_lib
 	{
 	public:
 		/**
-		 * Deallocate memory
+		 * Call destructor for Network Interface used for destroying objects
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL destroy() = 0;
 
 		/**
-		 * Count the number of devices.
+		 * \return The number of devices.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL devs_count() = 0;
 
@@ -62,7 +62,7 @@ namespace avdecc_lib
 		/**
 		 * Capture a network packet.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL capture_frame(const uint8_t **frame, uint16_t *mem_buf_len) = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL capture_frame(const uint8_t **frame, uint16_t *frame_len) = 0;
 	};
 
 	/**

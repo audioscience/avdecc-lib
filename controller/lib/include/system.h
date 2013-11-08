@@ -49,7 +49,7 @@ namespace avdecc_lib
 		};
 
 		/**
-		 * Deallocate memory
+		 * Call destructor for System used for destroying objects
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL destroy() = 0;
 

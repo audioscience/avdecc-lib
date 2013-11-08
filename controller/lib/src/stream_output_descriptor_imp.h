@@ -64,19 +64,15 @@ namespace avdecc_lib
 
 	public:
 		/**
-		 * An empty constructor for stream_output_descriptor_imp
+		 * Constructor for Stream Output descriptor object.
+		 * 
+		 * \param end_station_obj A pointer to the base End Station object.
+		 * \param frame The raw memory that contains the descriptor information to read from.
+		 * \param pos The position offset to read the descriptor fields from.
+		 * \param frame_len The memory buffer length of the descriptor frame.
 		 */
-		stream_output_descriptor_imp();
+		stream_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
-		/**
-		 * Constructor for stream_output_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
-		 * and memory buffer length.
-		 */
-		stream_output_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
-
-		/**
-		 * Destructor for stream_output_descriptor_imp used for destroying objects
-		 */
 		virtual ~stream_output_descriptor_imp();
 
 	private:
@@ -305,7 +301,7 @@ namespace avdecc_lib
 		/**
 		 * Process a SET_STREAM_FORMAT response for the SET_STREAM_FORMAT command.
 		 */
-		int proc_set_stream_format_resp(void *notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_set_stream_format_resp(void *notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
@@ -315,7 +311,7 @@ namespace avdecc_lib
 		/**
 		 * Process a GET_STREAM_FORMAT response for the GET_STREAM_FORMAT command.
 		 */
-		int proc_get_stream_format_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_get_stream_format_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a SET_STREAM_INFO command with a notification id to change the current values of the dynamic information of the stream.
@@ -325,7 +321,7 @@ namespace avdecc_lib
 		/**
 		 * Process a SET_STREAM_INFO response for the SET_STREAM_INFO command.
 		 */
-		int proc_set_stream_info_resp(void *notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_set_stream_info_resp(void *notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
@@ -335,7 +331,7 @@ namespace avdecc_lib
 		/**
 		 * Process a GET_STREAM_INFO response for the GET_STREAM_INFO command.
 		 */
-		int proc_get_stream_info_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_get_stream_info_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
@@ -346,7 +342,7 @@ namespace avdecc_lib
 		/**
 		 * Process a START_STREAMING response for the START_STREAMING command.
 		 */
-		int proc_start_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_start_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a STOP_STREAMING command with a notification id to stop a connected stream for streaming media.
@@ -356,7 +352,7 @@ namespace avdecc_lib
 		/**
 		 * Process a START_STREAMING response for the START_STREAMING command.
 		 */
-		int proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 	};
 }
 

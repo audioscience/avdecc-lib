@@ -57,19 +57,11 @@ namespace avdecc_lib
 		};
 
 		/**
-		 * An empty constructor for aecp
-		 */
-		aecp();
-
-		/**
 		 * Constructor for aecp used for constructing an object with a base pointer, position offest,
 		 * and memory buffer length.
 		 */
-		aecp(uint8_t *frame, size_t pos, size_t mem_buf_len);
+		aecp(uint8_t *frame, size_t pos, size_t frame_len);
 
-		/**
-		 * Destructor for adp used for destroying objects
-		 */
 		~aecp();
 
 		/**

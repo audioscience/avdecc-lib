@@ -41,7 +41,7 @@ namespace avdecc_lib
 		struct adp_discovery_state_machine_entities
 		{
 			uint64_t entity_id;
-			timer *avdecc_lib_timer_ref;
+			timer timer_ref;
 		};
 
 		struct adp_discovery_state_machine_vars
@@ -59,14 +59,8 @@ namespace avdecc_lib
 	public:
 		static uint16_t adp_seq_id; // The sequence id used for identifying the ADP command that a response is for
 
-		/**
-		 * An empty constructor for adp_state_machine
-		 */
 		adp_discovery_state_machine();
 
-		/**
-		 * Destructor for adp_state_machine used for destroying objects
-		 */
 		~adp_discovery_state_machine();
 
 		/**

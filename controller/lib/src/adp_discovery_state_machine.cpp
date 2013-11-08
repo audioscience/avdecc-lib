@@ -90,7 +90,7 @@ namespace avdecc_lib
 
 	int adp_discovery_state_machine::adp_discovery_update_entity(uint32_t entity_index)
 	{
-		discovery_state_machine_vars.entities_vector.at(entity_index).avdecc_lib_timer_ref->start(END_STATION_CONNECTION_TIMEOUT);
+		discovery_state_machine_vars.entities_vector.at(entity_index).timer_ref.start(END_STATION_CONNECTION_TIMEOUT);
 		return 0;
 	}
 
@@ -102,7 +102,6 @@ namespace avdecc_lib
 
 	int adp_discovery_state_machine::adp_discovery_remove_entity(uint32_t entity_index)
 	{
-		delete discovery_state_machine_vars.entities_vector.at(entity_index).avdecc_lib_timer_ref;
 		discovery_state_machine_vars.entities_vector.erase(discovery_state_machine_vars.entities_vector.begin() + entity_index);
 		return 0;
 	}
@@ -153,8 +152,7 @@ namespace avdecc_lib
 		{
 			struct adp_discovery_state_machine_entities entity;
 			entity.entity_id = entity_guid;
-			entity.avdecc_lib_timer_ref = new timer();
-			entity.avdecc_lib_timer_ref ->start(END_STATION_CONNECTION_TIMEOUT);
+			entity.timer_ref.start(END_STATION_CONNECTION_TIMEOUT);
 			adp_discovery_add_entity(entity);
 			notification_imp_ref->post_notification_msg(END_STATION_CONNECTED, entity_guid, 0, 0, 0, 0);
 		}
@@ -178,7 +176,7 @@ namespace avdecc_lib
 	{
 		for(uint32_t index_i = 0; index_i < discovery_state_machine_vars.entities_vector.size(); index_i++)
 		{
-			if(discovery_state_machine_vars.entities_vector.at(index_i).avdecc_lib_timer_ref->timeout())
+			if(discovery_state_machine_vars.entities_vector.at(index_i).timer_ref.timeout())
 			{
 				end_station_guid = discovery_state_machine_vars.entities_vector.at(index_i).entity_id;
 				adp_discovery_state_timeout(index_i);

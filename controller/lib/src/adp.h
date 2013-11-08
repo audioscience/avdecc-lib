@@ -43,8 +43,6 @@ namespace avdecc_lib
 		uint8_t *adp_frame; // Point to a raw memory buffer to read from
 		int frame_read_returned; // Status of extracting Ethernet Frame information from a network buffer
 		int adpdu_read_returned; // Status of extracting ADPDU information from a network buffer
-		static struct jdksavdecc_eui48 src_mac_addr;
-		static struct jdksavdecc_eui48 dest_mac_addr;
 
 	public:
 		enum ether_hdr_info
@@ -62,18 +60,10 @@ namespace avdecc_lib
 		};
 
 		/**
-		 * An empty constructor for adp
-		 */
-		adp();
-
-		/**
 		 * Constructor for ADP used for constructing an object with a base pointer and memory buffer length.
 		 */ 
-		adp(const uint8_t *frame, size_t mem_buf_len);
+		adp(const uint8_t *frame, size_t frame_len);
 
-		/**
-		 * Destructor for ADP used for destroying objects
-		 */
 		~adp();
 
 		/**
@@ -103,15 +93,8 @@ namespace avdecc_lib
 		/**
 		 * Get the Controller GUID of the AVDECC Entity sending the command.
 		 */
-		struct jdksavdecc_eui64 get_controller_guid();
+		static struct jdksavdecc_eui64 get_controller_guid();
 
-		/**
-		 * Get the Source MAC address of the ADP packet.
-		 */
-		static inline struct jdksavdecc_eui48 get_src_mac_addr()
-		{
-			return src_mac_addr;
-		}
 
 		/**
 		 * Initialize and fill Ethernet frame payload with Ethernet frame information for ADP messages.

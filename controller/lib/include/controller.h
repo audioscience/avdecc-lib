@@ -43,19 +43,14 @@ namespace avdecc_lib
 	{
 	public:
 		/**
-		 * Deallocate memory
+		 * Call destructor for Controller used for destroying objects
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL destroy() = 0;
 
 		/**
-		 * \return The current build release version.
+		 * \return The current AVDECC Controller build release version.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_version() = 0;
-
-		/**
-		 * \return The AVDECC Controller GUID of the AVDECC Entity sending the command.
-		 */
-		//AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_controller_guid() = 0;
 
 		/**
 		 * \return The total number of End Stations connected.

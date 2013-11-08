@@ -52,14 +52,8 @@ namespace avdecc_lib
 		HANDLE poll_events[2];
 
 	public:
-		/**
-		 * An empty constructor for notification_imp
-		 */
 		notification_imp();
 
-		/**
-		 * Destructor for notification_imp used for destroying objects
-		 */
 		virtual ~notification_imp();
 
 	private:

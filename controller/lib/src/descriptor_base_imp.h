@@ -52,18 +52,12 @@ namespace avdecc_lib
 
 	public:
 		/**
-		 * An empty constructor for descriptor_base_imp
-		 */
-		descriptor_base_imp();
-
-		/**
-		 * Constructor for descriptor_base_imp used for constructing an object with a base End Station.
+		 * Constructor for base descriptor object.
+		 * 
+		 * \param base A pointer to the base End Station object.
 		 */
 		descriptor_base_imp(end_station_imp *base);
 
-		/**
-		 * Destructor for descriptor_base_imp used for destroying objects
-		 */
 		~descriptor_base_imp();
 
 		/**
@@ -84,7 +78,7 @@ namespace avdecc_lib
 		/**
 		 * Process a ACQURE_ENTITY response for the ACQURE_ENTITY command.
 		 */
-		virtual int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		virtual int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a ACQURE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
@@ -95,7 +89,7 @@ namespace avdecc_lib
 		 * Process a ACQURE_ENTITY response for the ACQURE_ENTITY command.
 		 */
 		int default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp, void *&notification_id,
-					             const uint8_t *frame, uint16_t mem_buf_len, int &status);
+					             const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
@@ -105,7 +99,7 @@ namespace avdecc_lib
 		/**
 		 * Process a LOCK ENTITY response for the LOCK ENTITY command.
 		 */
-		virtual int proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		virtual int proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
@@ -116,7 +110,7 @@ namespace avdecc_lib
 		 * Process a LOCK ENTITY response for the LOCK ENTITY command.
 		 */
 		int default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp, void *&notification_id,
-					          const uint8_t *frame, uint16_t mem_buf_len, int &status);
+					          const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a SET_NAME command to change the value of a name field within a descriptor.
@@ -126,7 +120,7 @@ namespace avdecc_lib
 		/**
 		 * Process a SET_NAME response for the SET_NAME command.
 		 */
-		virtual int proc_set_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
+		virtual int proc_set_name_resp(uint8_t *base_pointer, uint16_t frame_len);
 
 		/**
 		 * Send a GET_NAME command to get the value of a name field within a descriptor.
@@ -136,7 +130,7 @@ namespace avdecc_lib
 		/**
 		 * Process a GET_NAME response for the GET_NAME command.
 		 */
-		virtual int proc_get_name_resp(uint8_t *base_pointer, uint16_t mem_buf_len);
+		virtual int proc_get_name_resp(uint8_t *base_pointer, uint16_t frame_len);
 	};
 }
 

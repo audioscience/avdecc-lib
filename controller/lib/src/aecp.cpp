@@ -37,13 +37,11 @@
 
 namespace avdecc_lib
 {
-	aecp::aecp() {}
-
-	aecp::aecp(uint8_t *frame, size_t pos, size_t mem_buf_len)
+	aecp::aecp(uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		aecp_frame = (uint8_t *)malloc(mem_buf_len * sizeof(uint8_t));
-		memcpy(aecp_frame, frame, mem_buf_len);
-		aecpdu_aem_read_returned = jdksavdecc_aecpdu_aem_read(&aecpdu, aecp_frame, pos, mem_buf_len);
+		aecp_frame = (uint8_t *)malloc(frame_len * sizeof(uint8_t));
+		memcpy(aecp_frame, frame, frame_len);
+		aecpdu_aem_read_returned = jdksavdecc_aecpdu_aem_read(&aecpdu, aecp_frame, pos, frame_len);
 
 		if(aecpdu_aem_read_returned < 0)
 		{

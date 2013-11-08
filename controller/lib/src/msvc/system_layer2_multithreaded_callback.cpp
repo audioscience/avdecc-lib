@@ -44,11 +44,11 @@ namespace avdecc_lib
 	controller_imp *controller_imp_ref_in_system;
 	system_layer2_multithreaded_callback *local_system = NULL;
 
-	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
+	size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len)
 	{
 		if(local_system)
 		{
-			return local_system->queue_tx_frame(notification_id, notification_flag, frame, mem_buf_len);
+			return local_system->queue_tx_frame(notification_id, notification_flag, frame, frame_len);
 		}
 		else
 		{
@@ -62,8 +62,6 @@ namespace avdecc_lib
 
 		return local_system;
 	}
-
-	system_layer2_multithreaded_callback::system_layer2_multithreaded_callback() {}
 
 	system_layer2_multithreaded_callback::system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj)
 	{
@@ -96,13 +94,13 @@ namespace avdecc_lib
 		delete this;
 	}
 
-	int system_layer2_multithreaded_callback::queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
+	int system_layer2_multithreaded_callback::queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len)
 	{
 		struct poll_thread_data thread_data;
 
 		thread_data.frame = (uint8_t *)malloc(1600);
-		thread_data.mem_buf_len = mem_buf_len;
-		memcpy(thread_data.frame, frame, mem_buf_len);
+		thread_data.frame_len = frame_len;
+		memcpy(thread_data.frame, frame, frame_len);
 		thread_data.notification_id = notification_id;
 		thread_data.notification_flag = notification_flag;
 		poll_tx.tx_queue->queue_push(&thread_data);
@@ -151,9 +149,9 @@ namespace avdecc_lib
 
 			if(status > 0)
 			{
-				thread_data.mem_buf_len = length;
+				thread_data.frame_len = length;
 				thread_data.frame = (uint8_t *)malloc(1600);
-				memcpy(thread_data.frame, frame, thread_data.mem_buf_len);
+				memcpy(thread_data.frame, frame, thread_data.frame_len);
 				poll_rx.rx_queue->queue_push(&thread_data);
 			}
 			else
@@ -295,7 +293,7 @@ namespace avdecc_lib
 					controller_imp_ref_in_system->rx_packet_event(thread_data.notification_id,
 					                                          is_notification_id_valid,
 					                                          thread_data.frame,
-					                                          thread_data.mem_buf_len,
+					                                          thread_data.frame_len,
 					                                          status);
 
 					is_waiting_completed = is_waiting && (!controller_imp_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
@@ -315,7 +313,7 @@ namespace avdecc_lib
 			case WAIT_OBJECT_0 + WPCAP_TX_PACKET:
 				poll_tx.tx_queue->queue_pop_nowait(&thread_data);
 
-				controller_imp_ref_in_system->tx_packet_event(thread_data.notification_id, thread_data.notification_flag, thread_data.frame, thread_data.mem_buf_len);
+				controller_imp_ref_in_system->tx_packet_event(thread_data.notification_id, thread_data.notification_flag, thread_data.frame, thread_data.frame_len);
 
 				if(thread_data.notification_flag == CMD_WITH_NOTIFICATION)
 				{

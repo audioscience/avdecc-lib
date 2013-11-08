@@ -61,14 +61,8 @@ namespace avdecc_lib
 		struct log_data log_buf[LOG_BUF_COUNT];
 
 	public:
-		/**
-		 * An empty constructor for log
-		 */
 		log(); 
 
-		/**
-		 * Destructor for log used for destroying objects
-		 */
 		~log();
 
 		/**

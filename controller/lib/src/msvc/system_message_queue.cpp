@@ -30,54 +30,55 @@
 #include <Windows.h>
 #include "system_message_queue.h"
 
-system_message_queue::system_message_queue() {}
-
-system_message_queue::system_message_queue(int count, int size)
+namespace avdecc_lib
 {
-	entry_count = count;
-	entry_size = size;
-	in_pos = 0;
-	out_pos = 0;
-	buf = (uint8_t *)calloc(entry_count, entry_size);
-	space_avail = CreateSemaphore(NULL, entry_count, entry_count, NULL);
-	data_avail = CreateSemaphore(NULL, 0, entry_count, NULL);
-	InitializeCriticalSection(&critical_section_obj);
-}
-
-system_message_queue::~system_message_queue()
-{
-	if(buf)
+	system_message_queue::system_message_queue(int count, int size)
 	{
-		free(buf);
+		entry_count = count;
+		entry_size = size;
+		in_pos = 0;
+		out_pos = 0;
+		buf = (uint8_t *)calloc(entry_count, entry_size);
+		space_avail = CreateSemaphore(NULL, entry_count, entry_count, NULL);
+		data_avail = CreateSemaphore(NULL, 0, entry_count, NULL);
+		InitializeCriticalSection(&critical_section_obj);
 	}
-}
 
-void system_message_queue::queue_push(void *thread_data)
-{
-	WaitForSingleObject(space_avail, INFINITE);
-	EnterCriticalSection(&critical_section_obj);
-	memcpy(&buf[in_pos * entry_size], thread_data, entry_size);
-	in_pos = (in_pos + 1) % entry_count;
-	LeaveCriticalSection(&critical_section_obj);
-	ReleaseSemaphore(data_avail, 1, NULL);
-}
+	system_message_queue::~system_message_queue()
+	{
+		if(buf)
+		{
+			free(buf);
+		}
+	}
 
-void system_message_queue::queue_pop_nowait(void *thread_data)
-{
-	EnterCriticalSection(&critical_section_obj);
-	memcpy(thread_data, &buf[out_pos * entry_size], entry_size);
-	out_pos = (out_pos + 1) % entry_count;
-	LeaveCriticalSection(&critical_section_obj);
-	ReleaseSemaphore(space_avail, 1, NULL);
-}
+	void system_message_queue::queue_push(void *thread_data)
+	{
+		WaitForSingleObject(space_avail, INFINITE);
+		EnterCriticalSection(&critical_section_obj);
+		memcpy(&buf[in_pos * entry_size], thread_data, entry_size);
+		in_pos = (in_pos + 1) % entry_count;
+		LeaveCriticalSection(&critical_section_obj);
+		ReleaseSemaphore(data_avail, 1, NULL);
+	}
 
-void system_message_queue::queue_pop_wait(void *thread_data)
-{
-	WaitForSingleObject(data_avail, INFINITE);
-	queue_pop_nowait(thread_data);
-}
+	void system_message_queue::queue_pop_nowait(void *thread_data)
+	{
+		EnterCriticalSection(&critical_section_obj);
+		memcpy(thread_data, &buf[out_pos * entry_size], entry_size);
+		out_pos = (out_pos + 1) % entry_count;
+		LeaveCriticalSection(&critical_section_obj);
+		ReleaseSemaphore(space_avail, 1, NULL);
+	}
 
-HANDLE system_message_queue::queue_data_available_object()
-{
-	return data_avail;
+	void system_message_queue::queue_pop_wait(void *thread_data)
+	{
+		WaitForSingleObject(data_avail, INFINITE);
+		queue_pop_nowait(thread_data);
+	}
+
+	HANDLE system_message_queue::queue_data_available_object()
+	{
+		return data_avail;
+	}
 }
