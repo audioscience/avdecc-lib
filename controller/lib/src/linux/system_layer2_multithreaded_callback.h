@@ -31,63 +31,20 @@
 #ifndef _AVDECC_CONTROLLER_LIB_SYSTEM_LAYER2_MULTITHREADED_CALLBACK_H_
 #define _AVDECC_CONTROLLER_LIB_SYSTEM_LAYER2_MULTITHREADED_CALLBACK_H_
 
+#include <sys/epoll.h>
+
+#include "avdecc_lib_os.h"
 #include "system.h"
+
 
 namespace avdecc_lib
 {
+	struct epoll_priv;
+
+
 	class system_layer2_multithreaded_callback : public virtual system
 	{
-	private:
-		struct poll_thread_data
-		{
-			uint8_t *frame;
-			uint16_t mem_buf_len;
-			void *notification_id;
-			uint32_t notification_flag;
-		};
-
-		struct thread_creation
-		{
-			LPTHREAD_START_ROUTINE thread;
-			HANDLE handle;
-			DWORD id;
-			HANDLE kill_sem;
-		};
-
-		struct msg_poll
-		{
-			struct thread_creation queue_thread;
-			system_message_queue *rx_queue;
-			system_message_queue *tx_queue;
-			HANDLE timeout_event;
-		};
-
-		enum wpcap_events
-		{
-		        WPCAP_TIMEOUT,
-		        WPCAP_RX_PACKET,
-		        WPCAP_TX_PACKET,
-		        KILL_ALL,
-		        NUM_OF_EVENTS
-		};
-
-		static struct msg_poll poll_rx;
-		static struct msg_poll poll_tx;
-		static struct thread_creation poll_thread;
-		static HANDLE poll_events_array[NUM_OF_EVENTS];
-		static HANDLE waiting_sem;
-
-		static bool is_waiting;
-		static bool queue_is_waiting;
-		static void *waiting_notification_id;
-		static int resp_status_for_cmd;
-
 	public:
-		/**
-		 * An empty constructor for system_layer2_multithreaded_callback
-		 */
-		system_layer2_multithreaded_callback();
-
 		/**
 		 * A constructor for system_layer2_multithreaded_callback used for constructing an object with network interface, notification, and logging callback functions.
 		 */
@@ -118,33 +75,6 @@ namespace avdecc_lib
 		 */
 		int STDCALL get_last_resp_status();
 
-	private:
-		/**
-		 * Start of the packet capture thread used for capturing packets.
-		 */
-		static DWORD WINAPI proc_wpcap_thread(LPVOID lpParam);
-
-		/**
-		 * Start of the polling thread used for polling events.
-		 */
-		static DWORD WINAPI proc_poll_thread(LPVOID lpParam);
-
-		/**
-		 * Create and initialize threads, events, and semaphores for wpcap thread.
-		 */
-		int init_wpcap_thread();
-
-		/**
-		 * Create and initialize threads, events, and semaphores for poll thread.
-		 */
-		int init_poll_thread();
-
-		/**
-		 * Execute poll events.
-		 */
-		static int poll_single();
-
-	public:
 		/**
 		 * Start point of the system process, which calls the thread initialization function.
 		 */
@@ -154,6 +84,67 @@ namespace avdecc_lib
 		 * End point of the system process, which terminates the threads.
 		 */
 		int STDCALL process_close();
+
+	private:
+  		static system_layer2_multithreaded_callback *instance;
+  		struct epoll_priv;
+		typedef int (* handler_fn) (struct epoll_priv * priv);
+
+		struct epoll_priv {
+			int fd;
+			handler_fn fn;
+		};
+
+		struct tx_data
+		{
+			uint8_t *frame;
+			size_t mem_buf_len;
+			void *notification_id;
+			uint32_t notification_flag;
+		};
+
+		enum useful_enums
+		{
+			PIPE_RD = 0,
+			PIPE_WR = 1,
+			POLL_COUNT = 3,
+			TIME_PERIOD_25_MILLISECONDS = 25
+		};
+
+		pthread_t h_thread;
+
+		//int network_fd;
+		int tx_pipe[2];
+		//int tick_timer;
+
+		sem_t *waiting_sem;
+
+		/* 
+		Events to process:
+		Rx packet - from socket
+		Tx packet - from FIFO
+		Timer tick - from timer
+		*/
+
+		bool is_waiting;
+		bool queue_is_waiting;
+		void *waiting_notification_id;
+		int resp_status_for_cmd;
+		int prep_evt_desc(int fd, handler_fn fn, struct epoll_priv *priv, struct epoll_event *ev);
+		static int fn_timer_cb(struct epoll_priv *priv);
+		static int fn_netif_cb(struct epoll_priv *priv);
+		static int fn_tx_cb(struct epoll_priv *priv);
+		int fn_timer(struct epoll_priv *priv);
+		int fn_netif(struct epoll_priv *priv);
+		int fn_tx(struct epoll_priv *priv);
+		int timer_start_interval(int timerfd);
+
+		void * proc_poll_thread(void * p);
+		int proc_poll_loop();
+		static void * thread_fn(void *param);
+
+		int poll_single(void);
+
 	};
 }
 

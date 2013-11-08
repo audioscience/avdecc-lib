@@ -82,10 +82,10 @@ int avdecc_cmd_line::print_interfaces_and_select()
 	char *dev_desc;
 	dev_desc = (char *)malloc(256);
 
-	for(uint32_t index_i = 0; index_i < netif_ref->devs_count(); NULL)
+	for(uint32_t i = 0; i < netif_ref->devs_count(); i++)
 	{
-		dev_desc = netif_ref->get_dev_desc_by_index(index_i);
-		printf("%d (%s)\n", ++index_i, dev_desc);
+		dev_desc = netif_ref->get_dev_desc_by_index(i);
+		printf("%d (%s)\n", i, dev_desc);
 	}
 
 	std::cout << "Enter the interface number (1-" << std::dec << netif_ref->devs_count() << "): ";

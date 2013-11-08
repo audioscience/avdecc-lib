@@ -27,6 +27,23 @@
  * Notification implementation
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <signal.h>
+#include <unistd.h>
+
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <linux/if_packet.h>
+#include <linux/if_ether.h>
+#include <linux/if_arp.h>
+#include <linux/filter.h>
+#include <linux/if.h>
+#include <arpa/inet.h>
+
+
 #include "enumeration.h"
 #include "notification_imp.h"
 
@@ -41,7 +58,6 @@ namespace avdecc_lib
 
 	notification_imp::~notification_imp()
 	{
-		/* posting to sem without data causes the thread to terminate */
 		post_log_event();
 	}
 

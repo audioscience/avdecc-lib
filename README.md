@@ -271,15 +271,10 @@ REMOVE_SENSOR_MAPPINGS | P4 | | |
 * add linux and OSX builds
 * add format helper functions
 * get ACMP working
+* add timer to system class to make sure tick isn't held off
 
 #### Done ####
-* add astyle cmdline sequence
-* add documentation on parameters of notification and log callback function
-* fix wait_for_cmd_completion() (it needs to go in the public interface) - put example in cmd_line application
-* system_multithreaded callback.cpp needs to be renamed to system_layer2_multithreaded_callback.cpp to distinguish for layer3 IP implementations.
-* extern "C" AVDECC_CONTROLLER_LIB32_API system * STDCALL create_system(enum system_type, net_interface *netif, controller *controller_ref); needs to take an input parameter of the system type to create.
-* need a call that lets the application set the log level
-* add counter and API for missed log and notify events
+
 
 
 Release Notes

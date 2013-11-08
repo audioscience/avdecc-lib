@@ -66,17 +66,25 @@ namespace avdecc_lib
 		std::vector<strings_descriptor_imp *> strings_desc_vec; // Store a list of Strings descriptor class objects
 		std::vector<clock_domain_descriptor_imp *> clock_domain_desc_vec; // Store a list of Clock Domain descriptor class objects
 
-	public:
 		/**
-		 * An empty constructor for configuration_descriptor_imp
+		 * Initialize the descriptor type vector with descriptor types present in the current Configuration.
 		 */
-		configuration_descriptor_imp();
+		void desc_type_vector_init(const uint8_t *frame, size_t pos);
+
+		/**
+		 * Initialize the descriptor count vector with descriptor counts present in the current Configuration.
+		 */
+		void desc_count_vector_init(const uint8_t *frame, size_t pos);
+
+
+
+	public:
 
 		/**
 		 * Constructor for configuration_descriptor_imp used for constructing an object with a base End Station, frame, position offest,
 		 * and memory buffer length.
 		 */
-		configuration_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		configuration_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Destructor for configuration_descriptor_imp used for destroying objects
@@ -114,64 +122,54 @@ namespace avdecc_lib
 		uint16_t STDCALL get_descriptor_counts_offset();
 
 		/**
-		 * Initialize the descriptor type vector with descriptor types present in the current Configuration.
-		 */
-		void desc_type_vector_init(uint8_t *frame, size_t pos);
-
-		/**
-		 * Initialize the descriptor count vector with descriptor counts present in the current Configuration.
-		 */
-		void desc_count_vector_init(uint8_t *frame, size_t pos);
-
-		/**
 		 * Store Audio Unit descriptor object.
 		 */
-		void store_audio_unit_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		void store_audio_unit_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Store Stream Input descriptor object.
 		 */
-		void store_stream_input_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		void store_stream_input_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Store Stream Output descriptor object.
 		 */
-		void store_stream_output_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		void store_stream_output_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Store Jack Input descriptor object.
 		 */
-		void store_jack_input_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		void store_jack_input_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Store Jack Output descriptor object.
 		 */
-		void store_jack_output_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		void store_jack_output_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Store AVB Interface descriptor object.
 		 */
-		void store_avb_interface_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		void store_avb_interface_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Store Clock Source descriptor object.
 		 */
-		void store_clock_source_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		void store_clock_source_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Store Locale descriptor object.
 		 */
-		void store_locale_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		void store_locale_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Store Strings descriptor object.
 		 */
-		void store_strings_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		void store_strings_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Store Clock Domain descriptor object.
 		 */
-		void store_clock_domain_desc(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len);
+		void store_clock_domain_desc(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len);
 
 		/**
 		 * Get the number of Audio Unit descriptors present in the current Configuration.

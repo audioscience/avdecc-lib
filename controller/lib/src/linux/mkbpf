@@ -1,0 +1,39 @@
+#!/bin/bash
+# Code for using tcpdump to create a Berkley Packet Filter
+# for the AVB protocols listed in the "protos" variable.
+# 
+# Run using
+# $sudo ./mkbpf >bpf.h
+#
+
+if [[ $(/usr/bin/id -u) -ne 0 ]]; then
+	echo "Usage: sudo $0";
+	exit;
+fi
+
+# MSRP = 0x22ea, AVTP=22f0, MVRP=88f5, MMRP=88f6
+#protos="0x22ea 0x22f0 0x88f5 0x88f6"
+protos="0x22f0"
+spec=""
+echo "/* Code generated from ./mkbpf in this dir */"
+echo "static int ethernet_proto_bpf[4] = {"
+for single in $protos
+do
+	spec="$spec or ether proto $single"
+	echo "	"$single","
+done
+spec=${spec:3}
+echo "};"
+
+spec="$spec or vlan 2"
+
+echo "/*"
+echo "tcpdump -d $spec"
+tcpdump -d $spec
+echo "tcpdump -dd $spec"
+echo "*/"
+echo "const struct sock_filter BPF_code[] = {"
+tcpdump -dd $spec
+echo "};"
+  
+

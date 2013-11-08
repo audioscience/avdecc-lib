@@ -35,7 +35,7 @@ namespace avdecc_lib
 {
 	jack_output_descriptor_imp::jack_output_descriptor_imp() {}
 
-	jack_output_descriptor_imp::jack_output_descriptor_imp(end_station_imp *base_end_station_imp_ref, uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
+	jack_output_descriptor_imp::jack_output_descriptor_imp(end_station_imp *base_end_station_imp_ref, const uint8_t *frame, size_t pos, size_t mem_buf_len) : descriptor_base_imp(base_end_station_imp_ref)
 	{
 		desc_jack_read_returned = jdksavdecc_descriptor_jack_read(&jack_output_desc, frame, pos, mem_buf_len);
 

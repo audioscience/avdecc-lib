@@ -33,25 +33,41 @@
 
 #define HAVE_REMOTE
 
-#include <stdint.h>
-#include <pcap.h>
+#include <iostream>
+#include <vector>
+#include <string>
+
 #include "build.h"
 #include "net_interface.h"
 
+
 namespace avdecc_lib
 {
-	class net_interface_imp : public virtual net_interface
+	struct ipheader;
+	struct udpheade;
+	
+	class net_interface_imp : public net_interface
 	{
 	private:
-		pcap_if_t *all_devs;
-		pcap_if_t *dev;
-		uint64_t mac;
+		enum econsts {
+			SIZEOF_BUFFER = 2048
+		};
+
+		std::vector<std::string> ifnames;
+
 		uint32_t total_devs;
 		uint32_t interface_num; // The interface selected
-		pcap_t *pcap_interface;
-		char err_buf[PCAP_ERRBUF_SIZE];
-		const u_char *ether_frame;
-		uint8_t tx_frame[1500];	// Ethernet frame used to send packets
+		struct ipheader *ip_hdr_store;
+		struct udpheader *udp_hdr_store;
+		int rawsock;
+		int ifindex;
+		uint16_t ethertype;
+		uint64_t mac;
+		uint8_t buf[SIZEOF_BUFFER];
+		uint8_t rx_buf[SIZEOF_BUFFER];
+
+		int getifindex(int rawsock, const char *iface);
+		int setpromiscuous(int rawsock, int ifindex);
 
 	public:
 		/**
@@ -64,6 +80,9 @@ namespace avdecc_lib
 		 */
 		virtual ~net_interface_imp();
 
+
+		void STDCALL destroy();
+
 		/**
 		 * Count the number of devices.
 		 */
@@ -75,12 +94,12 @@ namespace avdecc_lib
 		uint64_t get_mac();
 
 		/**
-		 * Get the corresponding network interface description by index.
+		 * Get network interface description by index.
 		 */
 		char * STDCALL get_dev_desc_by_index(uint32_t dev_index);
 
 		/**
-		 * Select the corresponding interface by number.
+		 * Select network interface by number.
 		 */
 		int STDCALL select_interface_by_num(uint32_t interface_num);
 
@@ -98,6 +117,8 @@ namespace avdecc_lib
 		 * Send a network packet.
 		 */
 		int send_frame(uint8_t *frame, uint16_t mem_buf_len);
+
+		int get_fd();
 
 	};
 
