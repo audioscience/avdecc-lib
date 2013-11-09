@@ -58,7 +58,7 @@ namespace avdecc_lib
 
 		void stop();
 
-		int timeout();
+		bool timeout();
 	};
 }
 
