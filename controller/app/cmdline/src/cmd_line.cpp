@@ -43,8 +43,10 @@
 #include "clock_source_descriptor.h"
 #include "locale_descriptor.h"
 #include "strings_descriptor.h"
+#include "audio_cluster_descriptor.h"
+#include "audio_map_descriptor.h"
 #include "clock_domain_descriptor.h"
-#include "avdecc_controller_cmd_line.h"
+#include "cmd_line.h"
 
 std::string avdecc_cmd_line::log_path = "."; // Log to a file in the current working directory
 
@@ -86,10 +88,10 @@ int avdecc_cmd_line::print_interfaces_and_select()
 	char *dev_desc;
 	dev_desc = (char *)malloc(256);
 
-	for(uint32_t i = 0; i < netif_ref->devs_count(); i++)
+	for(uint32_t index_i = 0; index_i < netif_ref->devs_count();)
 	{
-		dev_desc = netif_ref->get_dev_desc_by_index(i);
-		printf("%d (%s)\n", i, dev_desc);
+		dev_desc = netif_ref->get_dev_desc_by_index(index_i);
+		printf("%d (%s)\n", ++index_i, dev_desc);
 	}
 
 	std::cout << "Enter the interface number (1-" << std::dec << netif_ref->devs_count() << "): ";
@@ -130,16 +132,18 @@ void avdecc_cmd_line::cmd_line_help_init()
 						      "select\n" \
 						      "Display the current End Station, Entity, and Configuration setting.\n\n" \
 						      "select [e_s_i] [e_i] [c_i]\n" \
-						      "Change the setting of end station, entity, and configuration, where e_s_i stands for " \
-						      "end station, e_i stands for entity, and c_i stands for configuration and should be " \
-						      "an integers.\n\n" \
+						      "Change the setting of end station, entity, and configuration, where e_s_i" \
+						      "stands for end station, e_i stands for entity, and c_i stands for" \
+						      "configuration and should be integers.\n\n" \
 						      "To see a list of valid end stations, enter \"list\" command." \
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("log level",
 
-						      "log level\n" \
-						      "Update the base log level for messages to be logged by the logging callback."));
+						      "log level [n_l_l]\n" \
+						      "Update the base log level for messages to be logged by the logging callback," \
+						      "where n_l_l stands for new log level and should be an integer." \
+						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("view all",
 
@@ -150,148 +154,174 @@ void avdecc_cmd_line::cmd_line_help_init()
 	cmd_line_help_vec.push_back(new cmd_line_help("view descriptor",
 
 						      "view descriptor [d_t] [d_i]\n" \
-						      "Display information for the specified descriptor using the current setting, " \
-						      "where d_t stands for descriptor type and should be a string, " \
-						      "and d_i stands for descriptor index and should be an integer.\n\n" \
-						      "To see a list of valid descriptor types and " \
+						      "Display information for the specified descriptor using the current setting," \
+						      "where d_t stands for descriptor type and should be a string, and d_i stands" \
+						      "for descriptor index and should be an integer.\n\n" \
+						      "To see a list of valid descriptor types and" \
 						      "corresponding indexes, enter \"view all\" command."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("acquire entity",
 
 						      "acquire entity [a_e_f] [d_t] [d_i]\n" \
-						      "Send a ACQUIRE_ENTITY command to obtain exclusive access to an entire Entity or a " \
-						      "sub-tree of objects using the current setting, where a_e_f stands for Acquire Entity " \
-						      "Flag and should be a string, d_t stands for descriptor type and should be a string, " \
-						      "and d_i stands for descriptor index and should be an integer.\n\n" \
+						      "Send a ACQUIRE_ENTITY command to obtain exclusive access to an entire Entity" \
+						      "or a sub-tree of objects using the current setting, where a_e_f stands for" \
+						      "Acquire Entity Flag and should be a string, d_t stands for descriptor type" \
+						      "and should be a string, and d_i stands for descriptor index and should be an" \
+						      "integer.\n\n" \
 						      "Valid Acquire Entity Flags are 0, persistent, and release.\n" \
-						      "To see a list of valid descriptor types and corresponding indexes, enter \"view all\" command."
+						      "To see a list of valid descriptor types and corresponding indexes, enter" \
+						      "\"view all\" command."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("lock entity",
 
 						      "lock entity [l_e_f] [d_t] [d_i]\n" \
-						      "Send a LOCK_ENTITY command to provide short term exclusive access to the AVDECC Entity " \
-						      "to perform atomic operations using the current setting, where l_e_f stands for Lock Entity " \
-						      "Flag and should be a string, d_t stands for descriptor type and should be a string, and " \
-						      "d_i stands for descriptor index and should be an integer.\n\n" \
+						      "Send a LOCK_ENTITY command to provide short term exclusive access to the" \
+						      "AVDECC Entity to perform atomic operations using the current setting, where" \
+						      "l_e_f stands for Lock Entity Flag and should be a string, d_t stands for" \
+						      "descriptor type and should be a string, and d_i stands for descriptor index" \
+						      "and should be an integer.\n\n" \
 						      "Valid Lock Entity Flags are 0 and unlock.\n" \
-						      "To see a list of valid descriptor types and corresponding indexes, enter \"view all\" command."
+						      "To see a list of valid descriptor types and corresponding indexes, enter" \
+						      "\"view all\" command."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("entity available",
 
 						      "entity available\n" \
-						      "Send a ENTITY_AVAILABLE command to determine if another AVDECC Entity is still alive and " \
-						      "responding to commands."
+						      "Send a ENTITY_AVAILABLE command to determine if another AVDECC Entity is" \
+						      "still alive and responding to commands."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("controller available",
 
 						      "controller available\n" \
-						      "Send a CONTROLLER_AVAILABLE command to determine if an AVDECC Controller is still alive."
+						      "Send a CONTROLLER_AVAILABLE command to determine if an AVDECC Controller is" \
+						      "still alive."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("read descriptor",
 
 						      "read descriptor [d_t] [d_i]\n" \
-						      "Send a READ_DESCRIPTOR command to get the localized strings from an AVDECC Entity using the " \
-						      "current setting, where d_t stands for descriptor type and should be a string, and d_i stands " \
-						      "for descriptor index and should be an integer."
+						      "Send a READ_DESCRIPTOR command to get the localized strings from an AVDECC" \
+						      "Entity using the current setting, where d_t stands for descriptor type and" \
+						      "should be a string, and d_i stands for descriptor index and should be an" \
+						      "integer."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("set stream_format",
 
 						      "set stream_format [d_t] [d_i] [s_f]\n" \
-						      "Send a SET_STREAM_FORMAT command to change the format of a stream using the current setting, " \
-						      "where d_t stands for descriptor type and should be a string, d_i stands for descriptor index " \
-						      "and should be an integer, s_f stands for stream format and should be an integer.\n\n" \
+						      "Send a SET_STREAM_FORMAT command to change the format of a stream using the" \
+						      "current setting, where d_t stands for descriptor type and should be a string, " \
+						      "d_i stands for descriptor indexand should be an integer, s_f stands for stream" \
+						      "format and should be an integer.\n\n" \
 						      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("get stream_format",
 
 						      "get stream_format [d_t] [d_i]\n" \
-						      "Send a GET_STREAM_FORMAT command to display the current format of a stream using the current setting, " \
-						      "where d_t stands for descriptor type and should be a string, and d_i stands for descriptor index and " \
-						      "should be an integer.\n\n" \
+						      "Send a GET_STREAM_FORMAT command to display the current format of a stream" \
+						      "using the current setting, where d_t stands for descriptor type and should be" \
+						      "a string, and d_i stands for descriptor index and should be an integer.\n\n" \
 						      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("set stream_info",
 
 						      "set stream_info [d_t] [d_i] [f] [f_v]\n" \
-						      "Send a SET_STREAM_INFO command to change a stream info field value to a new value using the current setting, " \
-						      "where d_t stands for descriptor type and should be a string, d_i stands for descriptor index and should be an " \
-						      "integer, f stands for field and should be a string, and f_v stands for field value and should be an integer.\n\n" \
+						      "Send a SET_STREAM_INFO command to change a stream info field value to a new" \
+						      "value using the current setting, where d_t stands for descriptor type and" \
+						      "should be a string, d_i stands for descriptor index and should be an integer," \
+						      "f stands for field and should be a string, and f_v stands for field value and" \
+						      "should be an integer.\n\n" \
 						      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
 						      "Valid fields are msrp_accumulated_latency and stream_dest_mac.\n" \
-						      "This command should be used after sending a GET_STREAM_INFO command and receiving a GET_STREAM_INFO response."
+						      "This command should be used after sending a GET_STREAM_INFO command and" \
+						      "receiving a GET_STREAM_INFO response."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("get stream_info",
 
 						      "get stream_info [d_t] [d_i] [f]\n" \
-						      "Display the GET_STREAM_INFO Stream ID or the MSRP Accumulated Latency field using the current setting, where d_t stands " \
-						      "for descriptor type and should be a string, d_i stands for descriptor index and should be an integer, f stands for field " \
-						      "and should be a string.\n\n" \
+						      "Display the GET_STREAM_INFO Stream ID or the MSRP Accumulated Latency field using" \
+						      "the current setting, where d_t stands for descriptor type and should be a string," \
+						      "d_i stands for descriptor index and should be an integer, f stands for field and" \
+						      "should be a string.\n\n" \
 					              "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
 						      "Valid fields are stream_id, msrp_accumulated_latency, and stream_dest_mac.\n" \
-						      "This command should be used after sending a GET_STREAM_INFO command and receiving a GET_STREAM_INFO response."
+						      "This command should be used after sending a GET_STREAM_INFO command and receiving" \
+						      "a GET_STREAM_INFO response."
 						      ));
-
 
 	cmd_line_help_vec.push_back(new cmd_line_help("set sampling_rate",
 
 						      "set sampling_rate [d_t] [d_i]\n" \
-						      "Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit."
+						      "Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit," \
+						      "where d_t stands for descriptor type and should be a string, and d_i stands for" \
+						      "descriptor index and should be an integer." 
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("get sampling_rate",
 
 						      "get sampling_rate [d_t] [d_i]\n" \
-						      "Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit."
+						      "Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or" \
+						      "unit, where d_t stands for descriptor type and should be a string, and d_i" \
+						      "stands for descriptor index and should be an integer." 
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("set clock_source",
 
 						      "set clock_source [d_t] [d_i]\n" \
-						      "Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain."
+						      "Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain," \
+						      "where d_t stands for descriptor type and should be a string, and d_i stands" \
+						      "for descriptor index and should be an integer." 
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("get clock_source",
 
 						      "get clock_source [d_t] [d_i]\n" \
-						      "Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain."
+						      "Send a GET_CLOCK_SOURCE command to get the current clock source of a clock" \
+						      "domain, where d_t stands for descriptor type and should be a string, and d_i" \
+						      "stands for descriptor index and should be an integer." 
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("start streaming",
 
 						      "start streaming [d_t] [d_i]\n" \
-						      "Send a START_STREAMING command to start streaming on a previously connected stream " \
-					              "that was connected via ACMP or has previously been stopped with the STOP_STREAMING command."
+						      "Send a START_STREAMING command to start streaming on a previously connected" \
+						      "stream that was connected via ACMP or has previously been stopped with the" \
+						      "STOP_STREAMING command, where d_t stands for descriptor type and should be a" \
+						      "string, and d_i stands for descriptor index and should be an integer." 
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("stop streaming",
 
 						      "stop streaming [d_t] [d_i]\n" \
-						      "Send a STOP_STREAMING command to stop a connected stream for streaming media."
+						      "Send a STOP_STREAMING command to stop a connected stream for streaming media," \
+						      "where d_t stands for descriptor type and should be a string, and d_i stands" \
+						      "for descriptor index and should be an integer." 
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("set name",
 
 						      "set name [d_t] [d_i] [ni] [n]\n" \
-						      "Send a SET_NAME command to change the value of a name field within a descriptor using the current setting, where " \
-						      "d_t stands for descriptor type and should be a string, d_i stands for descriptor index andshould be an integer, " \
-						      "ni stands for name index and should be an integer, and n stands for name and should be a string."
+						      "Send a SET_NAME command to change the value of a name field within a descriptor" \
+						      "using the current setting, where d_t stands for descriptor type and should be a" \
+						      "string, d_i stands for descriptor index andshould be an integer, ni stands for" \
+						      "name index and should be an integer, and n stands for name and should be a" \
+						      "string."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("get name",
 
 						      "get name [d_t] [d_i] [ni]\n" \
-						      "Send a GET_NAME command to fetch the value of a name field within a descriptor using the current setting, where " \
-						      "d_t stands for descriptor type and should be a string, d_i stands for descriptor index and should be an integer, " \
-						      "and ni stands for name index and should be an integer."
+						      "Send a GET_NAME command to fetch the value of a name field within a descriptor" \
+						      "using the current setting, where d_t stands for descriptor type and should be a" \
+						      "string, d_i stands for descriptor index and should be an integer, and ni stands" \
+						      "for name index and should be an integer."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("path",
@@ -299,13 +329,15 @@ void avdecc_cmd_line::cmd_line_help_init()
 						      "path\n" \
 						      "Display the location of the redirected output file.\n\n"
 						      "path [p_n]\n" \
-						      "Change the location of the redirected output file, where p_n stands for path name and should be a string."
+						      "Change the location of the redirected output file, where p_n stands for path" \
+						      "name and should be a string."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("log",
 
 						      "log [f_n]\n" \
-						      "Redirect output to a specified file, where f_n stands for file name and should be a string."
+						      "Redirect output to a specified file, where f_n stands for file name and should" \
+						      "be a string."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("unlog",
@@ -382,7 +414,7 @@ int avdecc_cmd_line::cmd_help_details(std::string cmd)
 
 int avdecc_cmd_line::cmd_version()
 {
-	std::cout << "avdecc_controller version: " << controller_ref->get_version() << std::endl;
+	std::cout << "AVDECC Controller version: " << controller_ref->get_version() << std::endl;
 	return 0;
 }
 
@@ -422,23 +454,23 @@ int avdecc_cmd_line::cmd_list_clock_sync_source()
 	uint16_t desc_index = 0;
 	uint32_t stream_input_desc_count = 0;
 	uint32_t stream_output_desc_count = 0;
-	bool is_clock_sync_source_set;
+	bool is_clock_sync_source_set = false;
 
-	std::cout << "\n" << std::setw(8) << "Endpoint" << "   " << "Descriptor Name" << std::setw(8) << "" <<
+	std::cout << "\n" << std::setw(8) << "End Station" << "   " << "Descriptor Name" << std::setw(8) << "" <<
 	          std::setw(20) << "Descriptor Type" << "   " << std::setw(16) << "Descriptor Index" << std::endl;
 	std::cout << "------------------------------------------------------------------------------" << std::endl;
 
 	for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
 	{
-		stream_input_desc_count = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_count();
+		stream_input_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_count();
 		for(uint32_t index_j = 0; index_j < stream_input_desc_count; index_j++)
 		{
-			is_clock_sync_source_set = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_stream_flags_clock_sync_source();
+			is_clock_sync_source_set = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_stream_flags_clock_sync_source();
 			if(is_clock_sync_source_set)
 			{
-				desc_obj_name = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_object_name();
-				desc_type_value = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_descriptor_type();
-				desc_index = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_descriptor_index();
+				desc_obj_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_object_name();
+				desc_type_value = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_descriptor_type();
+				desc_index = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_descriptor_index();
 				
 				std::cout << std::setw(8) << index_i << "   " << std::setw(20) << desc_obj_name <<
 					     "   " << std::setw(20) << std::hex << utility->desc_value_to_name(desc_type_value) <<
@@ -446,15 +478,15 @@ int avdecc_cmd_line::cmd_list_clock_sync_source()
 			}
 		}
 
-		stream_output_desc_count = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_count();
+		stream_output_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_count();
 		for(uint32_t index_k = 0; index_k < stream_output_desc_count; index_k++)
 		{
-			is_clock_sync_source_set = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_stream_flags_clock_sync_source();
+			is_clock_sync_source_set = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_stream_flags_clock_sync_source();
 			if(is_clock_sync_source_set)
 			{
-				desc_obj_name = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_object_name();
-				desc_type_value = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_descriptor_type();
-				desc_index = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_descriptor_index();
+				desc_obj_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_object_name();
+				desc_type_value = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_descriptor_type();
+				desc_index = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_descriptor_index();
 				
 				std::cout << std::setw(8) << index_i << "   " << std::setw(20) << desc_obj_name <<
 					     "   " << std::setw(20) << std::hex << utility->desc_value_to_name(desc_type_value) <<
@@ -476,10 +508,10 @@ void avdecc_cmd_line::cmd_select()
 
 int avdecc_cmd_line::cmd_select(uint32_t new_end_station, uint16_t new_entity, uint16_t new_config)
 {
-	uint8_t *end_station_name = controller_ref->get_end_station_by_index(new_end_station)->get_entity_desc_by_index(current_entity)->get_entity_name();
-
 	if(is_setting_valid(new_end_station, new_entity, new_config)) // Check if the new setting is valid
 	{
+		uint8_t *end_station_name = controller_ref->get_end_station_by_index(new_end_station)->get_entity_desc_by_index(current_entity)->get_entity_name();
+
 		if((current_end_station == new_end_station) && (current_entity == new_entity) && (current_config == new_config))
 		{
 			std::cout << "Same setting" << std::endl;
@@ -703,6 +735,22 @@ int avdecc_cmd_line::cmd_view_all()
 					avdecc_lib::strings_descriptor *strings_desc_ref = config_desc_ref->get_strings_desc_by_index(index_j);
 					std::cout << std::setw(20) << utility->desc_value_to_name(strings_desc_ref->get_descriptor_type());
 					std::cout << "   "<<  std::setw(16) << std::hex << strings_desc_ref->get_descriptor_index() << std::endl;
+				}
+
+			case avdecc_lib::AEM_DESC_AUDIO_CLUSTER:
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_audio_cluster_desc_count(); index_j++)
+				{
+					avdecc_lib::audio_cluster_descriptor *audio_cluster_desc_ref = config_desc_ref->get_audio_cluster_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(audio_cluster_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << audio_cluster_desc_ref->get_descriptor_index() << std::endl;
+				}
+
+			case avdecc_lib::AEM_DESC_AUDIO_MAP:
+				for(uint32_t index_j = 0; index_j < config_desc_ref->get_audio_map_desc_count(); index_j++)
+				{
+					avdecc_lib::audio_map_descriptor *audio_map_desc_ref = config_desc_ref->get_audio_map_desc_by_index(index_j);
+					std::cout << std::setw(20) << utility->desc_value_to_name(audio_map_desc_ref->get_descriptor_type());
+					std::cout << "   "<<  std::setw(16) << std::hex << audio_map_desc_ref->get_descriptor_index() << std::endl;
 				}
 
 			case avdecc_lib::AEM_DESC_CLOCK_DOMAIN:
@@ -1023,6 +1071,35 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 			}
 			break;
 
+		case avdecc_lib::AEM_DESC_AUDIO_CLUSTER:
+			{
+				avdecc_lib::audio_cluster_descriptor *audio_cluster_desc = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_audio_cluster_desc_by_index(desc_index);
+				if(audio_cluster_desc)
+				{
+					std::cout << "\nobject_name = " << std::hex << audio_cluster_desc->get_object_name();
+					std::cout << "\nlocalized_description = 0x" << std::hex << audio_cluster_desc->get_localized_description();
+					std::cout << "\nsignal_type = 0x" << std::hex << audio_cluster_desc->get_signal_type();
+				        std::cout << "\nsignal_index = 0x" << std::hex << audio_cluster_desc->get_signal_index();
+					std::cout << "\nsignal_output = 0x" << std::hex << audio_cluster_desc->get_signal_output();
+					std::cout << "\npath_latency = 0x" << std::hex << audio_cluster_desc->get_path_latency();
+					std::cout << "\nblock_latency = 0x" << std::hex << audio_cluster_desc->get_block_latency();
+					std::cout << "\nchannel_count = 0x" << std::hex << audio_cluster_desc->get_channel_count();
+					std::cout << "\nformat = 0x" << std::hex << audio_cluster_desc->get_format();
+				}
+			}
+			break;
+
+		case avdecc_lib::AEM_DESC_AUDIO_MAP:
+			{
+				avdecc_lib::audio_map_descriptor *audio_map_desc = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_audio_map_desc_by_index(desc_index);
+				if(audio_map_desc)
+				{
+					std::cout << "\nmappings_offset = " << std::hex << audio_map_desc->get_mappings_offset();
+				        std::cout << "\nnumber_of_mappings = " << std::hex << audio_map_desc->get_number_of_mappings();
+				}
+			}
+			break;
+
 		case avdecc_lib::AEM_DESC_CLOCK_DOMAIN:
 			{
 				avdecc_lib::clock_domain_descriptor *clk_domain_desc = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_clock_domain_desc_by_index(desc_index);
@@ -1064,6 +1141,46 @@ int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_in
 		std::cout << "cmd_read_descriptor error" << std::endl;
 		return -1;
 	}
+
+	return 0;
+}
+
+int avdecc_cmd_line::cmd_connect()
+{
+	uint8_t * end_station_name;
+	uint8_t *desc_obj_name;
+	const char * current_format;
+	uint32_t stream_input_desc_count = 0;
+
+	std::cout << "\n" << std::setw(25) << "End Station" << "  " << std::setw(20) << "Instreams" << "  " <<
+		     std::setw(20) << "Format" << std::endl;
+	std::cout << "------------------------------------------------------------------------------" << std::endl;
+
+	for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
+	{
+		end_station_name = controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_entity_name();
+		stream_input_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_count();
+
+		for(uint32_t index_j = 0; index_j < stream_input_desc_count; index_j++)
+		{
+			desc_obj_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_object_name();
+			current_format = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_current_format();
+
+			std::cout << std::setw(5) << index_i << std::setw(20) << end_station_name << "  " << std::setw(20) << desc_obj_name << "  " << current_format << std::endl;
+		}
+	}
+
+	return 0;
+}
+
+int avdecc_cmd_line::cmd_connect(uint32_t dest_end_station_index, uint16_t dest_desc_index)
+{
+
+	return 0;
+}
+
+int avdecc_cmd_line::cmd_connect(uint32_t dest_end_station_index, uint16_t dest_desc_index, uint32_t src_end_station_index, uint16_t src_desc_index)
+{
 
 	return 0;
 }
@@ -1245,7 +1362,7 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
 		status = system_ref->get_last_resp_status();
 
 		std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
-		std::cout << "Stream format: " << std::hex << stream_input_desc_ref->get_stream_format_stream_format() << std::endl;
+		std::cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->get_stream_format_stream_format() << std::endl;
 
 		return 1;
 	}
@@ -1258,6 +1375,7 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
 		status = system_ref->get_last_resp_status();
 
 		std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+		std::cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_format_stream_format() << std::endl;
 
 		return 1;
 	}

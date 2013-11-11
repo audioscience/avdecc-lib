@@ -42,7 +42,7 @@ namespace avdecc_lib
 		struct jdksavdecc_descriptor_stream stream_output_desc; // Structure containing the stream_output_desc fields
 		int stream_output_desc_read_returned; // Status of extracting Stream Output descriptor information from a network buffer
 
-		struct stream_input_desc_stream_flags
+		struct stream_output_desc_stream_flags
 		{
 			bool clock_sync_source;
 			bool class_a;
@@ -56,7 +56,7 @@ namespace avdecc_lib
 			bool tertiary_back_up_valid;
 		};
 
-		struct stream_input_desc_stream_flags stream_flags;
+		struct stream_output_desc_stream_flags stream_flags;
 		struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp; // Store the response received after sending a SET_STREAM_FORMAT command.
 		struct jdksavdecc_aem_command_get_stream_format_response aem_cmd_get_stream_format_resp; // Store the response received after sending a GET_STREAM_FORMAT command.
 		struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp; // Store the response received after sending a SET_STREAM_INFO command.

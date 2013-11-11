@@ -50,18 +50,20 @@ namespace avdecc_lib
 			assert(stream_output_desc_read_returned >= 0);
 		}
 
-		stream_flags_init();
-
+		memset(&stream_flags, 0, sizeof(struct stream_output_desc_stream_flags));
 		memset(&aem_cmd_set_stream_format_resp, 0, sizeof(struct jdksavdecc_aem_command_set_stream_format_response));
 		memset(&aem_cmd_get_stream_format_resp, 0, sizeof(struct jdksavdecc_aem_command_get_stream_format_response));
 		memset(&aem_cmd_set_stream_info_resp, 0, sizeof(struct jdksavdecc_aem_command_set_stream_info_response));
 		memset(&aem_cmd_get_stream_info_resp, 0, sizeof(struct jdksavdecc_aem_command_get_stream_info_response));
+
+		stream_flags_init();
 	}
 
 	stream_output_descriptor_imp::~stream_output_descriptor_imp() {}
 
 	void stream_output_descriptor_imp::stream_flags_init()
 	{
+		stream_flags.clock_sync_source = stream_output_desc.stream_flags >> 0 & 0x01;;
 		stream_flags.class_a = stream_output_desc.stream_flags >> 1 & 0x01;
 		stream_flags.class_b = stream_output_desc.stream_flags >> 2 & 0x01;
 		stream_flags.supports_encrypted = stream_output_desc.stream_flags >> 3 & 0x01;

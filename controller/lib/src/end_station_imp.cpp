@@ -315,6 +315,22 @@ namespace avdecc_lib
 
 				break;
 
+			case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
+				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
+				{
+					config_desc_imp_ref->store_audio_cluster_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+				}
+
+				break;
+
+			case JDKSAVDECC_DESCRIPTOR_AUDIO_MAP:
+				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
+				{
+					config_desc_imp_ref->store_audio_map_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+				}
+
+				break;
+
 			case JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN:
 				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
 				{

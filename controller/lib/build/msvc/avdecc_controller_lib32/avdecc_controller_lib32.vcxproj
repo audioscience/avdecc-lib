@@ -84,6 +84,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\audio_cluster_descriptor.h" />
+    <ClInclude Include="..\..\..\include\audio_map_descriptor.h" />
     <ClInclude Include="..\..\..\include\audio_unit_descriptor.h" />
     <ClInclude Include="..\..\..\include\avb_interface_descriptor.h" />
     <ClInclude Include="..\..\..\include\build.h" />
@@ -108,6 +110,8 @@
     <ClInclude Include="..\..\..\src\adp_discovery_state_machine.h" />
     <ClInclude Include="..\..\..\src\aecp.h" />
     <ClInclude Include="..\..\..\src\aem_controller_state_machine.h" />
+    <ClInclude Include="..\..\..\src\audio_cluster_descriptor_imp.h" />
+    <ClInclude Include="..\..\..\src\audio_map_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\audio_unit_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\avb_interface_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\avdecc_lib_os.h" />
@@ -141,6 +145,8 @@
     <ClCompile Include="..\..\..\src\adp_discovery_state_machine.cpp" />
     <ClCompile Include="..\..\..\src\aecp.cpp" />
     <ClCompile Include="..\..\..\src\aem_controller_state_machine.cpp" />
+    <ClCompile Include="..\..\..\src\audio_cluster_descriptor_imp.cpp" />
+    <ClCompile Include="..\..\..\src\audio_map_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\audio_unit_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\avb_interface_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\clock_domain_descriptor_imp.cpp" />

@@ -233,6 +233,16 @@ namespace avdecc_lib
 		strings_desc_vec.push_back(new strings_descriptor_imp(end_station_obj, frame, pos, frame_len));
 	}
 
+	void configuration_descriptor_imp::store_audio_cluster_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
+	{
+		audio_cluster_desc_vec.push_back(new audio_cluster_descriptor_imp(end_station_obj, frame, pos, frame_len));
+	}
+
+	void configuration_descriptor_imp::store_audio_map_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
+	{
+		audio_map_desc_vec.push_back(new audio_map_descriptor_imp(end_station_obj, frame, pos, frame_len));
+	}
+
 	void configuration_descriptor_imp::store_clock_domain_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
 		clock_domain_desc_vec.push_back(new clock_domain_descriptor_imp(end_station_obj, frame, pos, frame_len));
@@ -280,6 +290,16 @@ namespace avdecc_lib
 	uint32_t STDCALL configuration_descriptor_imp::get_strings_desc_count()
 	{
 		return strings_desc_vec.size();
+	}
+
+	uint32_t STDCALL configuration_descriptor_imp::get_audio_cluster_desc_count()
+	{
+		return audio_cluster_desc_vec.size();
+	}
+
+	uint32_t STDCALL configuration_descriptor_imp::get_audio_map_desc_count()
+	{
+		return audio_map_desc_vec.size();
 	}
 
 	uint32_t STDCALL configuration_descriptor_imp::get_clock_domain_desc_count()
@@ -426,6 +446,38 @@ namespace avdecc_lib
 		else
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_strings_desc_by_index error");
+		}
+
+		return NULL;
+	}
+
+	audio_cluster_descriptor * STDCALL configuration_descriptor_imp::get_audio_cluster_desc_by_index(uint32_t audio_cluster_desc_index)
+	{
+		bool is_valid = (audio_cluster_desc_index < audio_cluster_desc_vec.size());
+
+		if(is_valid)
+		{
+			return audio_cluster_desc_vec.at(audio_cluster_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_audio_cluster_desc_by_index error");
+		}
+
+		return NULL;
+	}
+
+	audio_map_descriptor * STDCALL configuration_descriptor_imp::get_audio_map_desc_by_index(uint32_t audio_map_desc_index)
+	{
+		bool is_valid = (audio_map_desc_index < audio_map_desc_vec.size());
+
+		if(is_valid)
+		{
+			return audio_map_desc_vec.at(audio_map_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_audio_map_desc_by_index error");
 		}
 
 		return NULL;
