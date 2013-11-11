@@ -141,6 +141,10 @@ int main()
 					{
 						avdecc_cmd_line_ref->cmd_select();
 					}
+					else if(cmd_input_vector.at(0).compare("connect") == 0)
+					{
+						avdecc_cmd_line_ref->cmd_connect();
+					}
 					else if(cmd_input_vector.at(0).compare("path") == 0)
 					{
 						avdecc_cmd_line_ref->cmd_path();

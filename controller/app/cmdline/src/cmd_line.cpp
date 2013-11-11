@@ -1147,27 +1147,26 @@ int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_in
 
 int avdecc_cmd_line::cmd_connect()
 {
+	uint8_t * end_station_name;
 	uint8_t *desc_obj_name;
-	uint16_t desc_type_value = 0;
-	uint16_t desc_index = 0;
+	const char * current_format;
 	uint32_t stream_input_desc_count = 0;
 
-	std::cout << "\n" << std::setw(8) << "End Station" << "   " << "Instreams" << std::setw(8) << "" <<
-	             std::setw(20) << "Descriptor Type" << "   " << std::setw(16) << "Descriptor Index" << std::endl;
+	std::cout << "\n" << std::setw(25) << "End Station" << "  " << std::setw(20) << "Instreams" << "  " <<
+		     std::setw(20) << "Format" << std::endl;
 	std::cout << "------------------------------------------------------------------------------" << std::endl;
 
 	for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
 	{
+		end_station_name = controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_entity_name();
 		stream_input_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_count();
+
 		for(uint32_t index_j = 0; index_j < stream_input_desc_count; index_j++)
 		{
 			desc_obj_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_object_name();
-			desc_type_value = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_descriptor_type();
-			desc_index = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_descriptor_index();
-				
-			std::cout << std::setw(8) << index_i << "   " << std::setw(20) << desc_obj_name <<
-				     "   " << std::setw(20) << std::hex << utility->desc_value_to_name(desc_type_value) <<
-				     "   " << std::setw(16) << std::hex << desc_index << std::endl;
+			current_format = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_current_format();
+
+			std::cout << std::setw(5) << index_i << std::setw(20) << end_station_name << "  " << std::setw(20) << desc_obj_name << "  " << current_format << std::endl;
 		}
 	}
 
