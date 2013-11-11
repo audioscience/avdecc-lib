@@ -34,7 +34,7 @@
 #include <vector>
 #include <stdint.h>
 #include <stdexcept>
-#include "avdecc_controller_cmd_line.h"
+#include "cmd_line.h"
 
 using namespace std;
 
@@ -107,29 +107,12 @@ int main()
 
 		if((cmd_input_vector.size() == 1) && (cmd_input_vector.at(0).compare("help") == 0))
 		{
-			if(is_output_redirected)
-			{
-				std::cout.rdbuf(cout_buf);
-				avdecc_cmd_line_ref->cmd_help();
-				std::cout.rdbuf(ofstream_ref.rdbuf());
-			}
-			else
-			{
-				avdecc_cmd_line_ref->cmd_help();
-			}
+			avdecc_cmd_line_ref->cmd_help();
 		}
 		else if((cmd_input_vector.at(0).compare("help") == 0))
 		{
-			if(is_output_redirected)
-			{
-				std::cout.rdbuf(cout_buf);
-				avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
-				std::cout.rdbuf(ofstream_ref.rdbuf());
-			}
-			else
-			{
-				avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
-			}
+
+			avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 		}
 		else
 		{

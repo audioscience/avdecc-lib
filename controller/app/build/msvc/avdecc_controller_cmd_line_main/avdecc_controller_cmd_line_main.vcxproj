@@ -10,6 +10,11 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\cmdline\src\cmd_line.cpp" />
+    <ClCompile Include="..\..\..\cmdline\src\cmd_line_help.cpp" />
+    <ClCompile Include="..\..\..\cmdline\src\cmd_line_main.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8FC7FD2A-1289-425F-A087-63582D0237D2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -82,14 +87,6 @@
       <AdditionalDependencies>avdecc_controller_lib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\cmdline\src\avdecc_controller_cmd_line.cpp" />
-    <ClCompile Include="..\..\..\cmdline\src\avdecc_controller_cmd_line_main.cpp" />
-    <ClCompile Include="..\..\..\cmdline\src\cmd_line_help.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\cmdline\src\cmd_line_help.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
