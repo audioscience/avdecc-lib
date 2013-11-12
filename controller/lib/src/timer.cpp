@@ -96,7 +96,7 @@ namespace avdecc_lib
 		elapsed = false;
 	}
 
-	int timer::timeout()
+	bool timer::timeout()
 	{
 		if(running && !elapsed)
 		{
