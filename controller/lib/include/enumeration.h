@@ -196,7 +196,6 @@ namespace avdecc_lib
 	{
 	        NETIF_READ_TIMEOUT_MS = 100, ///< The network interface has a 100 milliseconds timeout in capturing ADP packets
 	        AVDECC_MSG_TIMEOUT = 250,  ///< AVDECC messages have a 250 milliseconds timeout
-		END_STATION_CONNECTION_TIMEOUT = 62000 ///< An End Station is timeout if it fails to advertise through ADP for 62,000 milliseconds
 	};
 
 	enum notifications /// Notifications for the AVDECC library implementation, not part of the 1722.1 specification

@@ -238,7 +238,7 @@ namespace avdecc_lib
 							if(!found_adp_in_end_station)
 							{
 								adp_discovery_state_machine_ref->set_rcvd_avail(true);
-								adp_discovery_state_machine_ref->adp_discovery_state_waiting(frame);
+								adp_discovery_state_machine_ref->adp_discovery_state_waiting(frame, frame_len);
 								end_station_vec.push_back(new end_station_imp(frame, frame_len));
 								end_station_vec.at(end_station_vec.size() - 1)->set_connected();
 							}
@@ -248,12 +248,12 @@ namespace avdecc_lib
 								{
 									end_station_vec.at(found_end_station_index)->set_connected();
 									adp_discovery_state_machine_ref->set_rcvd_avail(true);
-									adp_discovery_state_machine_ref->adp_discovery_state_waiting(frame);
+									adp_discovery_state_machine_ref->adp_discovery_state_waiting(frame, frame_len);
 								}
 								else
 								{
 									adp_discovery_state_machine_ref->set_rcvd_avail(true);
-									adp_discovery_state_machine_ref->adp_discovery_state_waiting(frame);
+									adp_discovery_state_machine_ref->adp_discovery_state_waiting(frame, frame_len);
 								}
 							}
 						}
