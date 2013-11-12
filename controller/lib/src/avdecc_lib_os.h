@@ -31,7 +31,12 @@
 #ifndef _AVDECC_LIB_OS_H_
 #define _AVDECC_LIB_OS_H_
 
-#if defined __linux__
+#if defined __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
+
+#if defined __linux__ || defined __MACH__
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,6 +50,12 @@
 
 #define vsprintf_s vsnprintf
 #define InterlockedExchangeAdd __sync_fetch_and_add
+
+#if defined __linux__
+#define OS_PTHREAD_MUTEX_RECURSIVE_TYPE PTHREAD_MUTEX_RECURSIVE_NP
+#else
+#define OS_PTHREAD_MUTEX_RECURSIVE_TYPE PTHREAD_MUTEX_RECURSIVE
+#endif
  
 namespace avdecc_lib_os
 {

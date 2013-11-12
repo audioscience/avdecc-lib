@@ -31,7 +31,7 @@
 #ifndef _AVDECC_CONTROLLER_LIB_BUILD_H_
 #define _AVDECC_CONTROLLER_LIB_BUILD_H_
 
-#if defined __linux__
+#if defined __linux__ || defined __MACH__
 
   #define AVDECC_CONTROLLER_LIB32_API
   #define STDCALL
