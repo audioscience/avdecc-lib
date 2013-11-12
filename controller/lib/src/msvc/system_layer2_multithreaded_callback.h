@@ -41,7 +41,7 @@ namespace avdecc_lib
 		struct poll_thread_data
 		{
 			uint8_t *frame;
-			uint16_t mem_buf_len;
+			uint16_t frame_len;
 			void *notification_id;
 			uint32_t notification_flag;
 		};
@@ -84,29 +84,21 @@ namespace avdecc_lib
 
 	public:
 		/**
-		 * An empty constructor for system_layer2_multithreaded_callback
-		 */
-		system_layer2_multithreaded_callback();
-
-		/**
 		 * A constructor for system_layer2_multithreaded_callback used for constructing an object with network interface, notification, and post_log_msg callback functions.
 		 */
 		system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj);
 
-		/**
-		 * Destructor for system_layer2_multithreaded_callback used for destroying objects
-		 */
 		virtual ~system_layer2_multithreaded_callback();
 
 		/**
-		 * Deallocate memory
+		 * Call destructor for Controller used for destroying objects
 		 */
 		void STDCALL destroy();
 
 		/**
 		 * Store the frame to be sent in a queue.
 		 */
-		int queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len);
+		int queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len);
 
 		/**
 		 * Set a waiting flag for the command sent.

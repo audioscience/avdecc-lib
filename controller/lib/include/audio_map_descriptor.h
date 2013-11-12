@@ -22,64 +22,34 @@
  */
 
 /**
- * notification_imp.h
+ * audio_map_descriptor.h
  *
- * Notification implementation class
+ * Public Audio Map descriptor interface class
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
+#ifndef _AVDECC_CONTROLLER_LIB_AUDIO_MAP_DESCRIPTOR_H_
+#define _AVDECC_CONTROLLER_LIB_AUDIO_MAP_DESCRIPTOR_H_
 
-#include "avdecc_lib_os.h"
 #include <stdint.h>
-#include "notification.h"
+#include "build.h"
 
 namespace avdecc_lib
 {
-	class notification_imp : public virtual notification
+	class audio_map_descriptor : public virtual descriptor_base
 	{
-	private:
-		enum notification_events
-		{
-		        NOTIFICATION_EVENT,
-		        KILL_EVENT
-		};
-
-		LPTHREAD_START_ROUTINE thread;
-		HANDLE h_thread;
-		DWORD thread_id;
-		HANDLE poll_events[2];
-
-	public:
-		notification_imp();
-
-		virtual ~notification_imp();
-
-	private:
-		/**
-		 * Create and initialize notification thread, event, and semaphore.
-		 */
-		int notification_thread_init();
-
-		/**
-		 * Start of the notification thread used for generating notification messages.
-		 */
-		static DWORD WINAPI proc_notification_thread(LPVOID lpParam);
-
-		/**
-		 * A member function called to start the notification thread processing.
-		 */
-		int proc_notification_thread_callback();
-
 	public:
 		/**
-		 * Release sempahore so that notification callback function is called.
+		 * Get the mappings offset of the Audio Map descriptor object.
 		 */
-		void post_log_event();
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_mappings_offset() = 0;
+
+		/**
+		 * Get the number of mappings of the Audio Map descriptor object.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_mappings() = 0;
 	};
-
-	extern notification_imp *notification_imp_ref;
 }
 
 #endif
+

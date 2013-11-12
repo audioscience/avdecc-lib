@@ -46,6 +46,8 @@ namespace avdecc_lib
 	class clock_source_descriptor;
 	class locale_descriptor;
 	class strings_descriptor;
+	class audio_cluster_descriptor;
+	class audio_map_descriptor;
 	class clock_domain_descriptor;
 
 	class configuration_descriptor : public virtual descriptor_base
@@ -132,6 +134,16 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_strings_desc_count() = 0;
 
 		/**
+		 * \return The number of Audio Cluster descriptors present in the current Configuration.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_audio_cluster_desc_count() = 0;
+
+		/**
+		 * \return The number of Audio Map descriptors present in the current Configuration.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_audio_map_desc_count() = 0;
+
+		/**
 		 * \return The number of Clock Domain descriptors present in the current Configuration.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_clock_domain_desc_count() = 0;
@@ -180,6 +192,16 @@ namespace avdecc_lib
 		 * \return The corresponding STRINGS descriptor object by index.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual strings_descriptor * STDCALL get_strings_desc_by_index(uint32_t strings_desc_index) = 0;
+
+		/**
+		 * \return The corresponding AUDIO CLUSTER descriptor object by index.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual audio_cluster_descriptor * STDCALL get_audio_cluster_desc_by_index(uint32_t clock_domain_desc_index) = 0;
+
+		/**
+		 * \return The corresponding AUDIO MAP descriptor object by index.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual audio_map_descriptor * STDCALL get_audio_map_desc_by_index(uint32_t clock_domain_desc_index) = 0;
 
 		/**
 		 * \return The corresponding CLOCK DOMAIN descriptor object by index.

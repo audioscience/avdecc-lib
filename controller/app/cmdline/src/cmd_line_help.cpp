@@ -22,64 +22,31 @@
  */
 
 /**
- * notification_imp.h
+ * cmd_line_help.cpp
  *
- * Notification implementation class
+ * AVDECC Controller command line help class implementation
  */
 
-#pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
+#include <iostream>
+#include <vector>
+#include "cmd_line_help.h"
 
-#include "avdecc_lib_os.h"
-#include <stdint.h>
-#include "notification.h"
+cmd_line_help::cmd_line_help() {}
 
-namespace avdecc_lib
+cmd_line_help::cmd_line_help(const std::string cmd, const std::string desc)
 {
-	class notification_imp : public virtual notification
-	{
-	private:
-		enum notification_events
-		{
-		        NOTIFICATION_EVENT,
-		        KILL_EVENT
-		};
-
-		LPTHREAD_START_ROUTINE thread;
-		HANDLE h_thread;
-		DWORD thread_id;
-		HANDLE poll_events[2];
-
-	public:
-		notification_imp();
-
-		virtual ~notification_imp();
-
-	private:
-		/**
-		 * Create and initialize notification thread, event, and semaphore.
-		 */
-		int notification_thread_init();
-
-		/**
-		 * Start of the notification thread used for generating notification messages.
-		 */
-		static DWORD WINAPI proc_notification_thread(LPVOID lpParam);
-
-		/**
-		 * A member function called to start the notification thread processing.
-		 */
-		int proc_notification_thread_callback();
-
-	public:
-		/**
-		 * Release sempahore so that notification callback function is called.
-		 */
-		void post_log_event();
-	};
-
-	extern notification_imp *notification_imp_ref;
+	command = cmd;
+	description = desc;
 }
 
-#endif
+cmd_line_help::~cmd_line_help() {}
+
+const std::string cmd_line_help::get_command()
+{
+	return command;
+}
+
+const std::string cmd_line_help::get_description()
+{
+	return description;
+}

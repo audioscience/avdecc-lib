@@ -54,16 +54,13 @@ namespace avdecc_lib
 		uint8_t tx_frame[1500];	// Ethernet frame used to send packets
 
 	public:
-		/**
-		 * An empty constructor for net_interface_imp
-		 */
 		net_interface_imp();
 
-		/**
-		 * Destructor for net_interface_imp used for destroying objects
-		 */
 		virtual ~net_interface_imp();
 
+		/**
+		 * Call destructor for Network Interface used for destroying objects
+		 */
 		void STDCALL destroy();
 
 		/**
@@ -94,12 +91,12 @@ namespace avdecc_lib
 		/**
 		 * Capture a network packet.
 		 */
-		int STDCALL capture_frame(const uint8_t **frame, uint16_t *mem_buf_len);
+		int STDCALL capture_frame(const uint8_t **frame, uint16_t *frame_len);
 
 		/**
 		 * Send a network packet.
 		 */
-		int send_frame(uint8_t *frame, uint16_t mem_buf_len);
+		int send_frame(uint8_t *frame, uint16_t frame_len);
 
 	};
 

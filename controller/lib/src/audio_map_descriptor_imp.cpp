@@ -22,53 +22,51 @@
  */
 
 /**
- * locale_descriptor_imp.cpp
+ * audio_map_descriptor_imp.cpp
  *
- * Locale descriptor implementation
+ * Audio Map descriptor implementation
  */
 
 #include "enumeration.h"
 #include "log_imp.h"
-#include "locale_descriptor_imp.h"
+#include "end_station_imp.h"
+#include "audio_map_descriptor_imp.h"
 
 namespace avdecc_lib
 {
-	locale_descriptor_imp::locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+	audio_map_descriptor_imp::audio_map_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
 	{
-		desc_locale_read_returned = jdksavdecc_descriptor_locale_read(&locale_desc, frame, pos, frame_len);
+		audio_map_desc_read_returned = jdksavdecc_descriptor_audio_map_read(&audio_map_desc, frame, pos, frame_len);
 
-		if(desc_locale_read_returned < 0)
+		if(audio_map_desc_read_returned < 0)
 		{
-			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_locale_read error");
-			assert(desc_locale_read_returned >= 0);
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_config_read error");
+			assert(audio_map_desc_read_returned >= 0);
 		}
+
 	}
 
-	locale_descriptor_imp::~locale_descriptor_imp() {}
+	audio_map_descriptor_imp::~audio_map_descriptor_imp() {}
 
-	uint16_t STDCALL locale_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL audio_map_descriptor_imp::get_descriptor_type()
 	{
-		assert(locale_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_LOCALE);
-		return locale_desc.descriptor_type;
+		assert(audio_map_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AUDIO_MAP);
+		return audio_map_desc.descriptor_type;
 	}
 
-	uint16_t STDCALL locale_descriptor_imp::get_descriptor_index()
+	uint16_t STDCALL audio_map_descriptor_imp::get_descriptor_index()
 	{
-		return locale_desc.descriptor_index;
+		assert(audio_map_desc.descriptor_index == 0);
+		return audio_map_desc.descriptor_index;
 	}
 
-	uint8_t * STDCALL locale_descriptor_imp::get_locale_identifier()
+	uint16_t STDCALL audio_map_descriptor_imp::get_mappings_offset()
 	{
-		return locale_desc.locale_identifier.value;
+		return audio_map_desc.mappings_offset;
 	}
 
-	uint16_t STDCALL locale_descriptor_imp::get_number_of_strings()
+	uint16_t STDCALL audio_map_descriptor_imp::get_number_of_mappings()
 	{
-		return locale_desc.number_of_strings;
-	}
-
-	uint16_t STDCALL locale_descriptor_imp::get_base_strings()
-	{
-		return locale_desc.base_strings;
+		return audio_map_desc.number_of_mappings;
 	}
 }

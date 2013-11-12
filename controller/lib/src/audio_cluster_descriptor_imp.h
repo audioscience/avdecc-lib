@@ -22,84 +22,94 @@
  */
 
 /**
- * clock_source_descriptor_imp.h
+ * audio_cluster_descriptor_imp.h
  *
- * Clock Source descriptor implementation class
+ * Audio Cluster descriptor implementation class
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_CLOCK_SOURCE_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_CLOCK_SOURCE_DESCRIPTOR_IMP_H_
+#ifndef _AVDECC_CONTROLLER_LIB_AUDIO_CLUSTER_DESCRIPTOR_IMP_H_
+#define _AVDECC_CONTROLLER_LIB_AUDIO_CLUSTER_DESCRIPTOR_IMP_H_
 
 #include "descriptor_base_imp.h"
-#include "clock_source_descriptor.h"
+#include "audio_cluster_descriptor.h"
 
 namespace avdecc_lib
 {
-	class clock_source_descriptor_imp : public virtual clock_source_descriptor, public virtual descriptor_base_imp
+	class audio_cluster_descriptor_imp : public virtual audio_cluster_descriptor, public virtual descriptor_base_imp
 	{
 	private:
-		struct jdksavdecc_descriptor_clock_source clock_source_desc; // Structure containing the clock_source_desc fields
-		int desc_clock_source_read_returned; // Status of extracting Clock Source descriptor information from a network buffer
-
+		struct jdksavdecc_descriptor_audio_cluster audio_cluster_desc; // Structure containing the audio_cluster_desc fields
+		int audio_cluster_desc_read_returned; // Status of extracting Audio Cluster descriptor information from a network buffer
 	public:
 		/**
-		 * Constructor for Clock Source descriptor object.
+		 * Constructor for Audio Cluster descriptor object.
 		 * 
 		 * \param end_station_obj A pointer to the base End Station object.
 		 * \param frame The raw memory that contains the descriptor information to read from.
 		 * \param pos The position offset to read the descriptor fields from.
 		 * \param frame_len The memory buffer length of the descriptor frame.
 		 */
-		clock_source_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+		audio_cluster_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
-		virtual ~clock_source_descriptor_imp();
+		virtual ~audio_cluster_descriptor_imp();
 
 		/**
-		 * Get the descriptor type of the Clock Source descriptor object.
+		 * Get the descriptor type of the Audio Cluster descriptor object.
 		 */
 		uint16_t STDCALL get_descriptor_type();
 
 		/**
-		 * Get the descriptor index of the Clock Source descriptor object.
+		 * Get the descriptor index of the Audio Cluster descriptor object.
 		 */
 		uint16_t STDCALL get_descriptor_index();
 
 		/**
-		 * Get the name of the Clock Source descriptor object.
+		 * Get the name of the Audio Cluster descriptor object.
 		 */
 		uint8_t * STDCALL get_object_name();
 
 		/**
-		 * Get the localized description of the Clock Source descriptor object.
+		 * Get the localized description of the Audio Cluster descriptor object.
 		 */
 		uint16_t STDCALL get_localized_description();
 
 		/**
-		 * Get the flags of the Clock Source descriptor object.
+		 * Get the signal type of the Audio Cluster descriptor object.
 		 */
-		uint16_t STDCALL get_clock_source_flags();
+		uint16_t STDCALL get_signal_type();
 
 		/**
-		* Get the type of the Clock Source descriptor object.
-		*/
-		uint16_t STDCALL get_clock_source_type();
-
-		/**
-		* Get the identifier of the Clock Source descriptor object.
-		*/
-		uint64_t STDCALL get_clock_source_identifier();
-
-		/**
-		 * Get the location type of the Clock Source descriptor object.
+		 * Get the signal index of the Audio Cluster descriptor object.
 		 */
-		uint16_t STDCALL get_clock_source_location_type();
+	        uint16_t STDCALL get_signal_index();
 
 		/**
-		 * Get the location index of the Clock Source descriptor object.
+		 * Get the signal output of the Audio Cluster descriptor object.
 		 */
-		uint16_t STDCALL get_clock_source_location_index();
+		uint16_t STDCALL get_signal_output();
+
+		/**
+		 * Get the path latency of the Audio Cluster descriptor object.
+		 */
+		uint32_t STDCALL get_path_latency();
+
+		/**
+		 * Get the block latency of the Audio Cluster descriptor object.
+		 */
+		uint32_t STDCALL get_block_latency();
+
+		/**
+		 * Get the channel count of the Audio Cluster descriptor object.
+		 */
+		uint16_t STDCALL get_channel_count();
+
+		/**
+		 * Get the format of the Audio Cluster descriptor object.
+		 */
+		uint8_t STDCALL get_format();
 	};
 }
 
 #endif
+

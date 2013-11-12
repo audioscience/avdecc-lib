@@ -62,8 +62,6 @@ namespace avdecc_lib
 		return controller_imp_ref;
 	}
 
-	controller_imp::controller_imp() {}
-
 	controller_imp::controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
 	                               void (*log_callback) (void *, int32_t, const char *, int32_t))
 	{
@@ -90,11 +88,6 @@ namespace avdecc_lib
 	{
 		return AVDECC_CONTROLLER_VERSION;
 	}
-
-	//uint64_t STDCALL controller_imp::get_controller_guid()
-	//{
-	//	return controller_guid;
-	//}
 
 	uint32_t STDCALL controller_imp::get_end_station_count()
 	{
@@ -197,7 +190,7 @@ namespace avdecc_lib
 	{
 		uint64_t end_station_guid;
 		uint32_t disconnected_end_station_index;
-		aem_controller_state_machine_ref->aem_controller_tick();
+		aem_controller_state_machine_ref->tick();
 
 		if(adp_discovery_state_machine_ref->adp_discovery_tick(end_station_guid) &&
 		   find_end_station_by_guid(end_station_guid, disconnected_end_station_index))
@@ -206,7 +199,7 @@ namespace avdecc_lib
 		}
 	}
 
-	void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t mem_buf_len, int &status)
+	void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t frame_len, int &status)
 	{
 		uint64_t dest_mac_addr;
 		uint32_t subtype;
@@ -246,7 +239,7 @@ namespace avdecc_lib
 							{
 								adp_discovery_state_machine_ref->set_rcvd_avail(true);
 								adp_discovery_state_machine_ref->adp_discovery_state_waiting(frame);
-								end_station_vec.push_back(new end_station_imp(frame, mem_buf_len));
+								end_station_vec.push_back(new end_station_imp(frame, frame_len));
 								end_station_vec.at(end_station_vec.size() - 1)->set_connected();
 							}
 							else
@@ -285,8 +278,7 @@ namespace avdecc_lib
 						/**
 						 * Check if an AECP object is already in the system. If yes, process response for the AECP packet.
 						 */
-						if((seq_id <= aem_controller_state_machine::aecp_seq_id) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE) &&
-						   (dest_mac_addr == net_interface_ref->get_mac()))
+						if((msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE) && (dest_mac_addr == net_interface_ref->get_mac()))
 						{
 							for(uint32_t index_i = 0; index_i < end_station_vec.size(); index_i++)
 							{
@@ -304,11 +296,11 @@ namespace avdecc_lib
 
 							if(cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
 							{
-								proc_controller_avail_resp(notification_id, frame, mem_buf_len, status);
+								proc_controller_avail_resp(notification_id, frame, frame_len, status);
 							}
 							else
 							{
-								end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, frame, mem_buf_len, status);
+								end_station_vec.at(found_end_station_index)->proc_rcvd_resp(notification_id, frame, frame_len, status);
 							}
 
 							is_notification_id_valid = true;
@@ -332,16 +324,16 @@ namespace avdecc_lib
 		}
 	}
 
-	void controller_imp::tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len)
+	void controller_imp::tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t frame_len)
 	{
 		struct jdksavdecc_frame packet_frame;
 
-		packet_frame.length = mem_buf_len;
-		memcpy(packet_frame.payload, frame, mem_buf_len);
+		packet_frame.length = frame_len;
+		memcpy(packet_frame.payload, frame, frame_len);
 
 		aem_controller_state_machine_ref->set_do_cmd(true);
-		aem_controller_state_machine_ref->aem_controller_state_waiting(notification_id, notification_flag, &packet_frame);
-		memcpy(frame, packet_frame.payload, mem_buf_len);
+		aem_controller_state_machine_ref->state_waiting(notification_id, notification_flag, &packet_frame);
+		memcpy(frame, packet_frame.payload, frame_len);
 	}
 
 	int STDCALL controller_imp::send_controller_avail_cmd(void *notification_id, uint32_t end_station_index)
@@ -377,7 +369,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int controller_imp::proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status)
+	int controller_imp::proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
 	{
 		struct jdksavdecc_frame *ether_frame;
 		struct jdksavdecc_aem_command_controller_available_response aem_cmd_controller_avail_resp;
@@ -386,12 +378,12 @@ namespace avdecc_lib
 		bool u_field = false;
 
 		ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
-		memcpy(ether_frame->payload, frame, mem_buf_len);
+		memcpy(ether_frame->payload, frame, frame_len);
 
 		aem_cmd_controller_avail_resp_returned = jdksavdecc_aem_command_controller_available_response_read(&aem_cmd_controller_avail_resp,
 														   frame,
 														   aecp::CMD_POS,
-														   mem_buf_len);
+														   frame_len);
 
 		if(aem_cmd_controller_avail_resp_returned < 0)
 		{

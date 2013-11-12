@@ -33,35 +33,26 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.1.3"
+#define AVDECC_CONTROLLER_VERSION "v0.1.7"
 
 namespace avdecc_lib
 {
 	class controller_imp : public virtual controller
 	{
 	private:
-		//uint64_t controller_guid; // The unique identifier of the AVDECC Entity sending the command
 		std::vector<end_station_imp *> end_station_vec; // Store a list of End Station class objects
 
 	public:
 		/**
-		 * An empty constructor for controller_imp
-		 */
-		controller_imp();
-
-		/**
-		 * A constructor for controller_imp used for constructing an object with network interface, notification, and post_log_msg callback functions.
+		 * A constructor for controller_imp used for constructing an object with notification, and post_log_msg callback functions.
 		 */
 		controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
 		               void (*log_callback) (void *, int32_t, const char *, int32_t));
 
-		/**
-		 * Destructor for controller_imp used for destroying objects
-		 */
 		virtual ~controller_imp();
 
 		/**
-		 * Deallocate memory
+		 * Call destructor for Controller used for destroying objects
 		 */
 		void STDCALL destroy();
 
@@ -69,11 +60,6 @@ namespace avdecc_lib
 		 * Get the current build release version.
 		 */
 		const char * STDCALL get_version();
-
-		/**
-		 * Get the Controller GUID of the AVDECC Entity sending the command.
-		 */
-		//uint64_t STDCALL get_controller_guid();
 
 		/**
 		 * Get the total number of End Stations connected
@@ -128,12 +114,12 @@ namespace avdecc_lib
 		/**
 		 * Lookup and process packet received.
 		 */
-		void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send queued packet to the AEM Controller State Machine.
 		 */
-		void tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t mem_buf_len);
+		void tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t frame_len);
 
 		/**
 		 * Send a CONTROLLER_AVAILABLE command to verify that the AVDECC Controller is still there.
@@ -143,7 +129,7 @@ namespace avdecc_lib
 		/**
 		 * Process a CONTROLLER_AVAILABLE response for the CONTROLLER_AVAILABLE command.
 		 */
-		int proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t mem_buf_len, int &status);
+		int proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 	};
 
 	extern controller_imp *controller_imp_ref;

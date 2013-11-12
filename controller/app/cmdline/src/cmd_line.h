@@ -36,6 +36,7 @@
 #include "controller.h"
 #include "util.h"
 #include "enumeration.h"
+#include "cmd_line_help.h"
 
 class avdecc_cmd_line
 {
@@ -45,12 +46,15 @@ private:
 	avdecc_lib::controller *controller_ref;
 	avdecc_lib::util *utility;
 
+	uint32_t current_end_station;
+	uint16_t current_entity;
+	uint16_t current_config;
+	uint32_t notification_id;
+
+	std::vector<cmd_line_help *> cmd_line_help_vec;
+
 public:
 	static std::string log_path;
-	static uint32_t current_end_station;
-	static uint16_t current_entity;
-	static uint16_t current_config;
-	static uint32_t notification_id;
 
 	/**
 	 * An empty constructor for avdecc_cmd_line
@@ -71,12 +75,19 @@ public:
 private:
 	int print_interfaces_and_select();
 
+	void cmd_line_help_init();
+
 public:
 
 	/**
-	 * Display a list of valid commands.
+	 * Display a list of valid commands with brief descriptions.
 	 */
 	int cmd_help();
+
+	/**
+	 * Display a detailed description of a command.
+	 */
+	int cmd_help_details(std::string cmd);
 
 	/**
 	 * Display the current build release version.
@@ -117,6 +128,12 @@ public:
 	 * Display information for the specified descriptor using the current end station, entity, and configuration setting.
 	 */
 	int cmd_view_descriptor(std::string desc_name, uint16_t desc_index);
+
+	int cmd_connect();
+
+	int cmd_connect(uint32_t dest_end_station_index, uint16_t dest_desc_index);
+
+	int cmd_connect(uint32_t dest_end_station_index, uint16_t dest_desc_index, uint32_t src_end_station_index, uint16_t src_desc_index);
 
 	/**
 	 * Send an ACQUIRE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.

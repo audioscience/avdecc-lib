@@ -37,17 +37,12 @@
 
 namespace avdecc_lib
 {
-	struct jdksavdecc_eui48 adp::src_mac_addr;
-	struct jdksavdecc_eui48 adp::dest_mac_addr;
-
-	adp::adp() {}
-
-	adp::adp(const uint8_t *frame, size_t mem_buf_len)
+	adp::adp(const uint8_t *frame, size_t frame_len)
 	{
-		adp_frame = (uint8_t *)malloc(mem_buf_len * sizeof(uint8_t));
-		memcpy(adp_frame, frame, mem_buf_len);
+		adp_frame = (uint8_t *)malloc(frame_len * sizeof(uint8_t));
+		memcpy(adp_frame, frame, frame_len);
 
-		frame_read_returned = jdksavdecc_frame_read(&ether_frame, adp_frame, 0x0, mem_buf_len);
+		frame_read_returned = jdksavdecc_frame_read(&ether_frame, adp_frame, 0x0, frame_len);
 
 		if(frame_read_returned < 0)
 		{
@@ -55,16 +50,13 @@ namespace avdecc_lib
 			assert(frame_read_returned >= 0);
 		}
 
-		adpdu_read_returned = jdksavdecc_adpdu_read(&adpdu, adp_frame, ETHER_HDR_SIZE, mem_buf_len);
+		adpdu_read_returned = jdksavdecc_adpdu_read(&adpdu, adp_frame, ETHER_HDR_SIZE, frame_len);
 
 		if(adpdu_read_returned < 0)
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "adpdu_read error");
 			assert(adpdu_read_returned >= 0);
 		}
-
-		utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), src_mac_addr.value);
-		utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), dest_mac_addr.value);
 	}
 
 	adp::~adp()
@@ -88,10 +80,11 @@ namespace avdecc_lib
 		size_t ether_frame_pos = 0x0;
 		jdksavdecc_frame_init(ether_frame);
 
-		/**************************** Ethernet Frame ****************************/
+		/*************************************** Ethernet Frame ***************************************/
 		ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-		ether_frame->src_address = src_mac_addr;
-		//ether_frame->dest_address = get_dest_addr();
+		utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
+//		ether_frame->src_address = src_mac_addr;
+//		ether_frame->dest_address = get_dest_addr();
 		ether_frame->length = ADP_FRAME_LEN; // Length of ADP packet is 82 bytes
 
 		/********************* Fill frame payload with Ethernet frame information *****************/

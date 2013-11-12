@@ -52,14 +52,8 @@ namespace avdecc_lib
 		HANDLE poll_events[2];
 
 	public:
-		/**
-		 * An empty constructor for log_imp
-		 */
 		log_imp();
 
-		/**
-		 * Destructor for log_imp used for destroying objects
-		 */
 		virtual ~log_imp();
 
 	private:
