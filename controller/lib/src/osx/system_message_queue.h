@@ -22,61 +22,48 @@
  */
 
 /**
- * avdecc_lib_os.h
+ * system_message_queue.h
  *
- * Add handles for some OS specific objects.
+ * System message queue class, which is called by System modules to queue packets.
  */
 
-#pragma once
-#ifndef _AVDECC_LIB_OS_H_
-#define _AVDECC_LIB_OS_H_
-
-#if defined __MACH__
-#include <mach/clock.h>
-#include <mach/mach.h>
-#endif
-
-#if defined __linux__ || defined __MACH__
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include <time.h>
-#include <unistd.h>
-#include <errno.h>
 #include <cstdint>
 
-#define vsprintf_s vsnprintf
-#define InterlockedExchangeAdd __sync_fetch_and_add
+#include "avdecc_lib_os.h"
 
-#if defined __linux__
-#define OS_PTHREAD_MUTEX_RECURSIVE_TYPE PTHREAD_MUTEX_RECURSIVE_NP
-#else
-#define OS_PTHREAD_MUTEX_RECURSIVE_TYPE PTHREAD_MUTEX_RECURSIVE
-#endif
- 
-namespace avdecc_lib_os
+class system_message_queue
 {
-	typedef uint32_t aTimestamp;
-	typedef pthread_t *aThread;
-	typedef sem_t *aSemaphore;
-	typedef pthread_mutex_t aCriticalSection;
-}
+private:
+	avdecc_lib_os::aSemaphore space_avail;
+	avdecc_lib_os::aSemaphore data_avail;
+	avdecc_lib_os::aCriticalSection critical_section_obj;
+	uint8_t *buf;
+	int in_pos;
+	int out_pos;
+	int entry_count;
+	int entry_size;
 
-#elif defined _WIN32 || defined _WIN64
+public:
+	/**
+	 * An empty constructor for system_message_queue
+	 */
+	system_message_queue();
 
-#include <windows.h>
-namespace avdecc_lib_os
-{
-	typedef LONGLONG aTimestamp;
-	typedef HANDLE aThread;
-	typedef HANDLE aSemaphore;
-	typedef CRITICAL_SECTION aCriticalSection;
-}
+	/**
+	 * Constructor for system_message_queue used for constructing an object with count and size.
+	 */
+	system_message_queue(int count, int size);
 
+	/**
+	 * Destructor for system_message_queue used for destroying objects
+	 */
+	~system_message_queue();
 
-#endif
+	void queue_push(void *thread_data);
 
-#endif
+	void queue_pop_nowait(void *thread_data);
+
+	void queue_pop_wait(void *thread_data);
+
+	avdecc_lib_os::aSemaphore queue_data_available_object();
+};

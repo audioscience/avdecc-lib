@@ -64,6 +64,23 @@ namespace avdecc_lib
 		time = (avdecc_lib_os::aTimestamp)(tp.tv_sec * 1000) + (avdecc_lib_os::aTimestamp)(tp.tv_nsec/1000000);
 		return time;
 	}
+#elif defined __MACH__
+	avdecc_lib_os::aTimestamp timer::clk_monotonic(void)
+	{
+		struct timespec tp;
+		avdecc_lib_os::aTimestamp time;
+
+		clock_serv_t cclock;
+		mach_timespec_t mts;
+		host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+		clock_get_time(cclock, &mts);
+		mach_port_deallocate(mach_task_self(), cclock);
+		tp.tv_sec = mts.tv_sec;
+		tp.tv_nsec = mts.tv_nsec;
+
+		time = (avdecc_lib_os::aTimestamp)(tp.tv_sec * 1000) + (avdecc_lib_os::aTimestamp)(tp.tv_nsec/1000000);
+		return time;
+	}
 #endif
 
 #ifdef WIN32
@@ -74,7 +91,7 @@ namespace avdecc_lib
 
 		return (uint32_t)((time_stamp * 1000/freq.QuadPart) & 0xfffffff);
 	}
-#elif defined __linux__
+#elif defined __linux__ || defined __MACH__
 	uint32_t timer::clk_convert_to_ms(avdecc_lib_os::aTimestamp time_stamp)
 	{
 		return time_stamp;
