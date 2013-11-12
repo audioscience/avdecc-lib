@@ -27,6 +27,15 @@
  * Network interface implementation class
  */
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <sys/sysctl.h>
+#include <net/if.h>
+#include <net/if_dl.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include "util_imp.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -87,7 +96,8 @@ namespace avdecc_lib
 	{
 		uint32_t index_i;
 
-		for(dev = all_devs, index_i = 0; (index_i < dev_index) && (dev_index < total_devs); dev = dev->next, index_i++); // Get the selected interface
+		// Get the selected interface
+		for(dev = all_devs, index_i = 0; (index_i < dev_index) && (dev_index < total_devs); dev = dev->next, index_i++);
 
 		if(!dev->name)
 		{
@@ -106,12 +116,6 @@ namespace avdecc_lib
 	int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
 	{
 		uint32_t index;
-		/*
-		IP_ADAPTER_INFO *AdapterInfo;
-		IP_ADAPTER_INFO *Current;
-		ULONG AIS;
-		DWORD status;
-		*/
 		int timeout_ms = 100;
 
 		if(interface_num == 0)
@@ -126,72 +130,73 @@ namespace avdecc_lib
 
 		else
 		{
-			interface_num = interface_num;
+			net_interface_imp::interface_num = interface_num;
 		}
 
 		for(dev = all_devs, index = 0; index < interface_num - 1; dev = dev->next, index++); // Jump to the selected adapter
 
-		/************************************************************** Open the device ****************************************************************/
-		if((pcap_interface = pcap_open_live(dev->name,		       // Name of the device
-		                                    65536,		       // Portion of the packet to capture
-		                                    // 65536 guarantees that the whole packet will be captured on all the link layers
-		                                    1, // In promiscuous mode, all packets including packets of other hosts are captured
-		                                    timeout_ms,		       // Read timeout in ms
-		                                    err_buf		       // Error buffer
-		                                   )) == NULL)
+		/************* Open the device **************/
+		if((pcap_interface = pcap_open_live(dev->name,	// Name of the device
+											65536,		// Portion of the packet to capture
+											// 65536 guarantees that the whole packet will be captured on all the link layers
+											1, 			// In promiscuous mode, all packets including packets of other hosts are captured
+											timeout_ms,	// Read timeout in ms
+											err_buf		// Error buffer
+										   )) == NULL)
 		{
-			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Unable to open the adapter. %s is not supported by WinPcap.", dev->name);
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Unable to open the adapter. %s is not supported by pcap.", dev->name);
 			pcap_freealldevs(all_devs); // Free the device list
 			exit(EXIT_FAILURE);
 		}
 
-		/****************************** Lookup IP address ***************************/
-		/*
-		AdapterInfo = (IP_ADAPTER_INFO *)calloc(total_devs, sizeof(IP_ADAPTER_INFO));
-		AIS = sizeof(IP_ADAPTER_INFO) * total_devs;
+		int	mib[6];
+		size_t len;
+		char *buf;
+		unsigned char *ptr;
+		struct if_msghdr *ifm;
+		struct sockaddr_dl *sdl;
 
-		if(GetAdaptersInfo(AdapterInfo, &AIS) == ERROR_BUFFER_OVERFLOW)
-		{
-			free(AdapterInfo);
-			AdapterInfo = (IP_ADAPTER_INFO *)calloc(1, AIS);
+		mib[0] = CTL_NET;
+		mib[1] = AF_ROUTE;
+		mib[2] = 0;
+		mib[3] = AF_LINK;
+		mib[4] = NET_RT_IFLIST;
 
-			if(AdapterInfo == NULL)
-			{
-				log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Allocating memory needed to call GetAdaptersinfo.", dev->name);
-				exit(EXIT_FAILURE);
-			}
-
-			status = GetAdaptersInfo(AdapterInfo, &AIS);
-
-			if(status != ERROR_SUCCESS)
-			{
-				log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "GetAdaptersInfo call in netif_win32_pcap.c failed.", dev->name);
-				free(AdapterInfo);
-				exit(EXIT_FAILURE);
-			}
+		if ((mib[5] = if_nametoindex(dev->name)) == 0) {
+			perror("if_nametoindex error");
+			exit(EXIT_FAILURE);
 		}
 
-		for(Current = AdapterInfo; Current != NULL; Current = Current->Next)
-		{
-			if(strstr(dev->name, Current->AdapterName) != 0)
-			{
-				uint32_t my_ip;
-				ULONG len;
-				uint8_t tmp[16];
-
-				my_ip = inet_addr(Current->IpAddressList.IpAddress.String);
-				len = sizeof(tmp);
-				SendARP(my_ip ,INADDR_ANY, tmp, &len);
-				utility->convert_eui48_to_uint64(&tmp[0], mac);
-			}
+		if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0) {
+			perror("sysctl 1 error");
+			exit(EXIT_FAILURE);
 		}
-		*/
+
+		if ((buf = (char*)malloc(len)) == NULL) {
+			perror("malloc error");
+			exit(EXIT_FAILURE);
+		}
+
+		if (sysctl(mib, 6, buf, &len, NULL, 0) < 0) {
+			perror("sysctl 2 error");
+			exit(EXIT_FAILURE);
+		}
+
+		ifm = (struct if_msghdr *)buf;
+		sdl = (struct sockaddr_dl *)(ifm + 1);
+		ptr = (unsigned char *)LLADDR(sdl);
+		utility->convert_eui48_to_uint64(ptr, mac);
+
+		char mac_str[20];
+		snprintf(mac_str, (size_t)20, "%02x:%02x:%02x:%02x:%02x:%02x", *ptr, *(ptr+1), *(ptr+2),
+			*(ptr+3), *(ptr+4), *(ptr+5));
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, mac_str);
 
 		uint16_t ether_type[1];
 		ether_type[0] = JDKSAVDECC_AVTP_ETHERTYPE;
 		set_capture_ether_type(ether_type, 0); // Set the filter
 
-		// free(AdapterInfo);
+		free(buf);
 		return 0;
 	}
 
@@ -254,8 +259,6 @@ namespace avdecc_lib
 			ether_frame = *frame;
 			*mem_buf_len = (uint16_t)header->len;
 
-	//		printf("Rx frame: %d bytes\n", *length);
-
 			return 1;
 		}
 
@@ -264,8 +267,6 @@ namespace avdecc_lib
 
 	int net_interface_imp::send_frame(uint8_t *frame, uint16_t mem_buf_len)
 	{
-	//	printf("TX frame: %d bytes\n", length);
-
 		if(pcap_sendpacket(pcap_interface, frame, mem_buf_len) != 0)
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "pcap_sendpacket error %s", pcap_geterr(pcap_interface));
