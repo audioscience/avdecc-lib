@@ -106,6 +106,7 @@
     <ClInclude Include="..\..\..\include\strings_descriptor.h" />
     <ClInclude Include="..\..\..\include\system.h" />
     <ClInclude Include="..\..\..\include\util.h" />
+    <ClInclude Include="..\..\..\src\acmp.h" />
     <ClInclude Include="..\..\..\src\adp.h" />
     <ClInclude Include="..\..\..\src\adp_discovery_state_machine.h" />
     <ClInclude Include="..\..\..\src\aecp.h" />
@@ -122,6 +123,7 @@
     <ClInclude Include="..\..\..\src\descriptor_base_imp.h" />
     <ClInclude Include="..\..\..\src\end_station_imp.h" />
     <ClInclude Include="..\..\..\src\entity_descriptor_imp.h" />
+    <ClInclude Include="..\..\..\src\inflight.h" />
     <ClInclude Include="..\..\..\src\jack_input_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\jack_output_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\locale_descriptor_imp.h" />
@@ -141,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\..\jdksavdecc-c\src\jdksavdecc_pdu.c" />
+    <ClCompile Include="..\..\..\src\acmp.cpp" />
     <ClCompile Include="..\..\..\src\adp.cpp" />
     <ClCompile Include="..\..\..\src\adp_discovery_state_machine.cpp" />
     <ClCompile Include="..\..\..\src\aecp.cpp" />
