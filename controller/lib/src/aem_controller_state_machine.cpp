@@ -112,7 +112,7 @@ namespace avdecc_lib
 			notification_flag = inflight_cmds_vec.at(inflight_index).notification_flag;
 			callback(notification_id, notification_flag, ether_frame->payload);
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command Success");
-			remove_inflight_cmd(inflight_index);
+			inflight_cmds_vec.erase(inflight_cmds_vec.begin() + inflight_index);
 
 			return 1;
 		}
@@ -127,7 +127,7 @@ namespace avdecc_lib
 		if(is_retry)
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
-			remove_inflight_cmd(inflight_cmd_index);
+			inflight_cmds_vec.erase(inflight_cmds_vec.begin() + inflight_cmd_index);
 			printf("\n>");
 		}
 		else
@@ -375,10 +375,4 @@ namespace avdecc_lib
 		return false;
 	}
 
-	int aem_controller_state_machine::remove_inflight_cmd(uint32_t inflight_cmd_index)
-	{
-		inflight_cmds_vec.erase(inflight_cmds_vec.begin() + inflight_cmd_index);
-
-		return 0;
-	}
 }
