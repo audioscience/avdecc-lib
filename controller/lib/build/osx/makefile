@@ -18,7 +18,6 @@ INCLUDES += -I$(INCLUDE_DIR)
 INCLUDES += -I$(PCAP_DIR)
 INCLUDES += -I$(JDKSAVDECC_DIR)/include
 
-
 EXTRA_CFLAGS += -g
 EXTRA_CXXFLAGS += -Wall -ansi -g -std=c++0x
 
@@ -72,7 +71,7 @@ $(BUILD_DIR):
 
 %.o: %.c
 	@echo $(CC): $< ...
-	@$(CC) $(INCLUDES) $(CFLAGS) -o $(BUILD_DIR)/$(notdir $@) -c $< 
+	@$(CC) $(INCLUDES) $(CFLAGS) $(EXTRA_CFLAGS) -o $(BUILD_DIR)/$(notdir $@) -c $< 
 
 %.o: %.cpp
 	@echo $(CXX): $< ...

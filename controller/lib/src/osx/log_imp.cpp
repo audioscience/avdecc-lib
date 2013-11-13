@@ -45,13 +45,16 @@ namespace avdecc_lib
 	{
 		/* posting to sem without data causes the thread to terminate */
 		post_log_event();
+		sem_unlink("/log_waiting_sem");
 	}
 
 	int log_imp::logging_thread_init()
 	{
 		int rc;
 
-		if ((log_waiting = sem_open("/log_waiting_sem", O_CREAT, 0644, 0)) == SEM_FAILED) {
+		sem_unlink("/log_waiting_sem");
+
+		if ((log_waiting = sem_open("/log_waiting_sem",  O_CREAT | O_EXCL, 0644, 0)) == SEM_FAILED) {
 			perror("sem_open");
 			exit(-1);
 		}

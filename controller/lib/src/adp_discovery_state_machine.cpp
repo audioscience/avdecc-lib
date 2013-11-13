@@ -88,9 +88,9 @@ namespace avdecc_lib
 		return false;
 	}
 
-	int adp_discovery_state_machine::adp_discovery_update_entity(uint32_t entity_index)
+	int adp_discovery_state_machine::adp_discovery_update_entity_timeout(uint32_t entity_index, uint32_t timeout_ms)
 	{
-		discovery_state_machine_vars.entities_vector.at(entity_index).timer_ref.start(END_STATION_CONNECTION_TIMEOUT);
+		discovery_state_machine_vars.entities_vector.at(entity_index).timer_ref.start(timeout_ms);
 		return 0;
 	}
 
@@ -106,7 +106,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	void adp_discovery_state_machine::adp_discovery_state_waiting(const uint8_t *frame)
+	void adp_discovery_state_machine::adp_discovery_state_waiting(const uint8_t *frame, uint16_t frame_len)
 	{
 		if(discovery_state_machine_vars.do_discover)
 		{
@@ -115,7 +115,7 @@ namespace avdecc_lib
 
 		else if(discovery_state_machine_vars.rcvd_avail)
 		{
-			adp_discovery_state_avail(frame);
+			adp_discovery_state_avail(frame, frame_len);
 		}
 
 		else if(discovery_state_machine_vars.rcvd_departing)
@@ -136,23 +136,24 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int adp_discovery_state_machine::adp_discovery_state_avail(const uint8_t *frame)
+	int adp_discovery_state_machine::adp_discovery_state_avail(const uint8_t *frame, uint16_t frame_len)
 	{
+		struct jdksavdecc_adpdu_common_control_header adp_hdr;
 		uint64_t entity_guid;
 		uint32_t entity_index;
 
 		entity_guid = jdksavdecc_uint64_get(frame, adp::ETHER_HDR_SIZE + adp::PROTOCOL_HDR_SIZE);
+		jdksavdecc_adpdu_common_control_header_read(&adp_hdr, frame, adp::ETHER_HDR_SIZE, frame_len);
 
 		if(adp_discovery_have_entity(entity_guid, &entity_index))
 		{
-			adp_discovery_update_entity(entity_index);
+			adp_discovery_update_entity_timeout(entity_index, adp_hdr.valid_time*2*1000);
 		}
-
 		else
 		{
 			struct adp_discovery_state_machine_entities entity;
 			entity.entity_id = entity_guid;
-			entity.timer_ref.start(END_STATION_CONNECTION_TIMEOUT);
+			entity.timer_ref.start(adp_hdr.valid_time*2*1000);
 			adp_discovery_add_entity(entity);
 			notification_imp_ref->post_notification_msg(END_STATION_CONNECTED, entity_guid, 0, 0, 0, 0);
 		}

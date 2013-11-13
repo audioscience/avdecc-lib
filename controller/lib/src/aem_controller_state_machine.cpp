@@ -72,6 +72,15 @@ namespace avdecc_lib
 			memcpy(&inflight_cmd.inflight_cmd_frame, ether_frame, sizeof(struct jdksavdecc_frame));
 			inflight_cmds_vec.push_back(inflight_cmd);  // Add the inflight command to the inflight command vector
 
+		} else {
+			uint16_t seq_id = jdksavdecc_uint16_get(ether_frame->payload, aecp::SEQ_ID_POS);
+			is_inflight = find_inflight_cmd_by_seq_id(seq_id, &inflight_index); // Check if the command is inflight
+
+			if(is_inflight)
+			{
+				inflight_cmds_vec.at(inflight_index).timer_ref.start(AVDECC_MSG_TIMEOUT);
+				inflight_cmds_vec.at(inflight_index).retried = true;
+			}
 		}
 
 		send_frame_returned = net_interface_ref->send_frame(ether_frame->payload, ether_frame->length);
@@ -82,15 +91,6 @@ namespace avdecc_lib
 		}
 
 		callback(notification_id, notification_flag, ether_frame->payload);
-
-		uint16_t seq_id = jdksavdecc_uint16_get(ether_frame->payload, aecp::SEQ_ID_POS);
-		is_inflight = find_inflight_cmd_by_seq_id(seq_id, &inflight_index); // Check if the command is inflight
-
-		if(is_inflight)
-		{
-			inflight_cmds_vec.at(inflight_index).timer_ref.start(AVDECC_MSG_TIMEOUT);
-			inflight_cmds_vec.at(inflight_index).retried = true;
-		}
 	}
 
 	int aem_controller_state_machine::proc_unsolicited(void *&notification_id, struct jdksavdecc_frame *ether_frame)

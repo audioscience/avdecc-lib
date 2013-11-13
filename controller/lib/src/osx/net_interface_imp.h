@@ -51,7 +51,6 @@ namespace avdecc_lib
 		pcap_t *pcap_interface;
 		char err_buf[PCAP_ERRBUF_SIZE];
 		const u_char *ether_frame;
-		uint8_t tx_frame[1500];	// Ethernet frame used to send packets
 
 	public:
 		/**

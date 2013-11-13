@@ -79,9 +79,9 @@ namespace avdecc_lib
 		bool adp_discovery_have_entity(uint64_t entity_id, uint32_t *entity_index);
 
 		/**
-		 * Update the AVDECC Entity record with the new entity information.
+		 * Update the AVDECC Entity record timeout information.
 		 */
-		int adp_discovery_update_entity(uint32_t entity_index);
+		int adp_discovery_update_entity_timeout(uint32_t entity_index, uint32_t timeout_ms);
 
 		/**
 		 * Add a new Entity record to the entities variable.
@@ -96,7 +96,7 @@ namespace avdecc_lib
 		/**
 		 * Process the Waiting state of the ADP Discovery State Machine.
 		 */
-		void adp_discovery_state_waiting(const uint8_t *frame);
+		void adp_discovery_state_waiting(const uint8_t *frame, uint16_t frame_len);
 
 		/**
 		 * Process the Discover state of the ADP Discovery State Machine.
@@ -106,7 +106,7 @@ namespace avdecc_lib
 		/**
 		 * Process the Available state of the ADP Discovery State Machine.
 		 */
-		int adp_discovery_state_avail(const uint8_t *frame);
+		int adp_discovery_state_avail(const uint8_t *frame, uint16_t frame_len);
 
 		/**
 		 * Process the Departing state of the ADP Discovery State Machine.
