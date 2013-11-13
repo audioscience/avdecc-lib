@@ -151,6 +151,16 @@ void avdecc_cmd_line::cmd_line_help_init()
 						      "Display all the top level descriptors present in all End Stations."
 						      ));
 
+	cmd_line_help_vec.push_back(new cmd_line_help("connect",
+
+						      "connect\n" \
+						      "Display all the available instreams for all End Stations."
+						      "connect [d_e_s_i] [d_d_i]\n" \
+						      "Display all the available outstreams for all End Stations that can connect with" \
+						      "the instreams, where d_e_s_i stands for destination End Station index and d_d_i" \
+						      "stands for destination descriptor index and should be integers."
+						      ));
+
 	cmd_line_help_vec.push_back(new cmd_line_help("view descriptor",
 
 						      "view descriptor [d_t] [d_i]\n" \
@@ -229,31 +239,31 @@ void avdecc_cmd_line::cmd_line_help_init()
 						      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
 						      ));
 
-	cmd_line_help_vec.push_back(new cmd_line_help("set stream_info",
+	//cmd_line_help_vec.push_back(new cmd_line_help("set stream_info",
 
-						      "set stream_info [d_t] [d_i] [f] [f_v]\n" \
-						      "Send a SET_STREAM_INFO command to change a stream info field value to a new" \
-						      "value using the current setting, where d_t stands for descriptor type and" \
-						      "should be a string, d_i stands for descriptor index and should be an integer," \
-						      "f stands for field and should be a string, and f_v stands for field value and" \
-						      "should be an integer.\n\n" \
-						      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
-						      "Valid fields are msrp_accumulated_latency and stream_dest_mac.\n" \
-						      "This command should be used after sending a GET_STREAM_INFO command and" \
-						      "receiving a GET_STREAM_INFO response."
-						      ));
+	//					      "set stream_info [d_t] [d_i] [f] [f_v]\n" \
+	//					      "Send a SET_STREAM_INFO command to change a stream info field value to a new" \
+	//					      "value using the current setting, where d_t stands for descriptor type and" \
+	//					      "should be a string, d_i stands for descriptor index and should be an integer," \
+	//					      "f stands for field and should be a string, and f_v stands for field value and" \
+	//					      "should be an integer.\n\n" \
+	//					      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
+	//					      "Valid fields are msrp_accumulated_latency and stream_dest_mac.\n" \
+	//					      "This command should be used after sending a GET_STREAM_INFO command and" \
+	//					      "receiving a GET_STREAM_INFO response."
+	//					      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("get stream_info",
 
 						      "get stream_info [d_t] [d_i] [f]\n" \
-						      "Display the GET_STREAM_INFO Stream ID or the MSRP Accumulated Latency field using" \
-						      "the current setting, where d_t stands for descriptor type and should be a string," \
-						      "d_i stands for descriptor index and should be an integer, f stands for field and" \
-						      "should be a string.\n\n" \
+						      "Display the GET_STREAM_INFO Stream ID or the MSRP Accumulated Latency field" \
+						      "using the current setting, where d_t stands for descriptor type and should be a" \
+						      "string, d_i stands for descriptor index and should be an integer, f stands for" \
+						      "field and should be a string.\n\n" \
 					              "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
 						      "Valid fields are stream_id, msrp_accumulated_latency, and stream_dest_mac.\n" \
-						      "This command should be used after sending a GET_STREAM_INFO command and receiving" \
-						      "a GET_STREAM_INFO response."
+						      "This command should be used after sending a GET_STREAM_INFO command and" \
+						      "receiving a GET_STREAM_INFO response."
 						      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("set sampling_rate",
@@ -305,24 +315,24 @@ void avdecc_cmd_line::cmd_line_help_init()
 						      "for descriptor index and should be an integer." 
 						      ));
 
-	cmd_line_help_vec.push_back(new cmd_line_help("set name",
+	//cmd_line_help_vec.push_back(new cmd_line_help("set name",
 
-						      "set name [d_t] [d_i] [ni] [n]\n" \
-						      "Send a SET_NAME command to change the value of a name field within a descriptor" \
-						      "using the current setting, where d_t stands for descriptor type and should be a" \
-						      "string, d_i stands for descriptor index andshould be an integer, ni stands for" \
-						      "name index and should be an integer, and n stands for name and should be a" \
-						      "string."
-						      ));
+	//					      "set name [d_t] [d_i] [ni] [n]\n" \
+	//					      "Send a SET_NAME command to change the value of a name field within a descriptor" \
+	//					      "using the current setting, where d_t stands for descriptor type and should be a" \
+	//					      "string, d_i stands for descriptor index andshould be an integer, ni stands for" \
+	//					      "name index and should be an integer, and n stands for name and should be a" \
+	//					      "string."
+	//					      ));
 
-	cmd_line_help_vec.push_back(new cmd_line_help("get name",
+	//cmd_line_help_vec.push_back(new cmd_line_help("get name",
 
-						      "get name [d_t] [d_i] [ni]\n" \
-						      "Send a GET_NAME command to fetch the value of a name field within a descriptor" \
-						      "using the current setting, where d_t stands for descriptor type and should be a" \
-						      "string, d_i stands for descriptor index and should be an integer, and ni stands" \
-						      "for name index and should be an integer."
-						      ));
+	//					      "get name [d_t] [d_i] [ni]\n" \
+	//					      "Send a GET_NAME command to fetch the value of a name field within a descriptor" \
+	//					      "using the current setting, where d_t stands for descriptor type and should be a" \
+	//					      "string, d_i stands for descriptor index and should be an integer, and ni stands" \
+	//					      "for name index and should be an integer."
+	//					      ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("path",
 
@@ -1147,26 +1157,30 @@ int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_in
 
 int avdecc_cmd_line::cmd_connect()
 {
-	uint8_t * end_station_name;
-	uint8_t *desc_obj_name;
-	const char * current_format;
+	uint8_t *dest_end_station_name;
+	uint8_t *desc_desc_name;
+	const char *format;
 	uint32_t stream_input_desc_count = 0;
 
-	std::cout << "\n" << std::setw(25) << "End Station" << "  " << std::setw(20) << "Instreams" << "  " <<
-		     std::setw(20) << "Format" << std::endl;
+	std::cout << "\n" << "End Station" << std::setw(15) << " " << "Instream" << std::setw(13) << " " << "Format" << std::endl;
 	std::cout << "------------------------------------------------------------------------------" << std::endl;
 
 	for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
 	{
-		end_station_name = controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_entity_name();
+		dest_end_station_name = controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_entity_name();
 		stream_input_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_count();
 
 		for(uint32_t index_j = 0; index_j < stream_input_desc_count; index_j++)
 		{
-			desc_obj_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_object_name();
-			current_format = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_current_format();
+			// bool is_instream_connected = check_acmp_instream_connection(dest_end_station_guid, dest_desc_index);
+			// if(!is_instream_connected)
+			//{
+			desc_desc_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_object_name();
+			format = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_current_format();
 
-			std::cout << std::setw(5) << index_i << std::setw(20) << end_station_name << "  " << std::setw(20) << desc_obj_name << "  " << current_format << std::endl;
+			std::cout << std::setw(4) << index_i << std::setw(19) << dest_end_station_name << "  " <<
+				     std::setw(2) << index_j << std::setw(19) << desc_desc_name << "  " << format << std::endl;
+			//}
 		}
 	}
 
@@ -1175,12 +1189,67 @@ int avdecc_cmd_line::cmd_connect()
 
 int avdecc_cmd_line::cmd_connect(uint32_t dest_end_station_index, uint16_t dest_desc_index)
 {
+	bool is_instream_valid = (dest_end_station_index < (controller_ref->get_end_station_count())) &&
+			         (dest_desc_index < (controller_ref->get_config_desc_by_index(dest_end_station_index, current_entity, current_config)->get_stream_input_desc_count()));
+
+	if(is_instream_valid)
+	{
+		uint8_t *src_end_station_name;
+		uint8_t *src_desc_name;
+		const char *format;
+		uint32_t stream_output_desc_count = 0;
+
+		std::cout << "\n" << "End Station" << std::setw(15) << " " << "Outstream" << std::setw(13) << " " << "Format" << std::endl;
+		std::cout << "------------------------------------------------------------------------------" << std::endl;
+
+		for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
+		{
+			if(index_i != dest_end_station_index)
+			{
+				src_end_station_name = controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_entity_name();
+				stream_output_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_count();
+
+				for(uint32_t index_j = 0; index_j < stream_output_desc_count; index_j++)
+				{
+					// bool is_outstream_connected = check_acmp_outstream_connection(src_end_station_guid, src_desc_index);
+					// if(!is_outstream_connected)
+					//{
+					src_desc_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_j)->get_object_name();
+					format = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_j)->get_current_format();
+
+					std::cout << std::setw(4) << index_i << std::setw(19) << src_end_station_name << "  " <<
+					     std::setw(2) << index_j << std::setw(19) << src_desc_name << "  " << format << std::endl;
+					//}
+				}
+			}
+		}
+	}
+	else
+	{
+		std::cout << "Invalid Instream" << std::endl;
+	}
 
 	return 0;
 }
 
 int avdecc_cmd_line::cmd_connect(uint32_t dest_end_station_index, uint16_t dest_desc_index, uint32_t src_end_station_index, uint16_t src_desc_index)
 {
+	bool is_connect_valid = (dest_end_station_index != src_end_station_index) && (dest_end_station_index < (controller_ref->get_end_station_count())) &&
+			        (dest_desc_index < (controller_ref->get_config_desc_by_index(dest_end_station_index, current_entity, current_config)->get_stream_input_desc_count())) &&
+				(src_end_station_index < (controller_ref->get_end_station_count())) &&
+			        (src_desc_index < (controller_ref->get_config_desc_by_index(dest_end_station_index, current_entity, current_config)->get_stream_output_desc_count()));
+
+	// bool is_instream_connected = check_acmp_instream_connection(dest_end_station_guid, dest_desc_index);
+	// bool is_outstream_connected = check_acmp_outstream_connection(src_end_station_guid, src_desc_index);
+
+	//if(is_connect_valid && !is_instream_connected && !is_outstream_connected)
+	//{
+	//	make_connection(dest_end_station_guid, dest_desc_index, src_end_station_guid, src_desc_index);
+	//}
+	//else
+	//{
+	//	std::cout << "Invalid Connection" << std::endl;
+	//}
 
 	return 0;
 }

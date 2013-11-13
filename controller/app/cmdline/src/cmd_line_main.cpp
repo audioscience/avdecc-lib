@@ -222,7 +222,29 @@ int main()
 					break;
 
 				case 3:
-					if(cmd_input_vector.at(0).compare("log") == 0 && cmd_input_vector.at(1).compare("level") == 0)
+					if(cmd_input_vector.at(0).compare("connect") == 0)
+					{
+						uint32_t dest_end_station_index = 0x0;
+						uint16_t dest_desc_index = 0x0;
+
+						if(((cmd_input_vector.at(1).compare("0") == 0) || (atoi(cmd_input_vector.at(1).c_str()) != 0)) &&
+						   ((cmd_input_vector.at(2).compare("0") == 0) || (atoi(cmd_input_vector.at(2).c_str()) != 0)))
+						{
+							is_input_valid = true;
+							dest_end_station_index = (uint16_t)atoi(cmd_input_vector.at(1).c_str());
+							dest_desc_index = (uint16_t)atoi(cmd_input_vector.at(2).c_str());
+						}
+
+						if(is_input_valid)
+						{
+							avdecc_cmd_line_ref->cmd_connect(dest_end_station_index, dest_desc_index);
+						}
+						else
+						{
+							std::cout << "Invalid Command" << std::endl;
+						}
+					}
+					else if(cmd_input_vector.at(0).compare("log") == 0 && cmd_input_vector.at(1).compare("level") == 0)
 					{
 						uint32_t new_log_level;
 
