@@ -99,6 +99,9 @@ namespace avdecc_lib
 		pipe(tx_pipe);
 
 		queue_is_waiting = false;
+		is_waiting = false;
+		waiting_notification_id = NULL;
+		resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID;
 
 		if (waiting_sem)
 			waiting_sem = sem_open("/waiting_sem", O_CREAT, 0644, 0);
