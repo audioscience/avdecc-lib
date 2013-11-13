@@ -49,7 +49,7 @@ private:
 	uint32_t current_end_station;
 	uint16_t current_entity;
 	uint16_t current_config;
-	uint32_t notification_id;
+	intptr_t notification_id;
 
 	std::vector<cmd_line_help *> cmd_line_help_vec;
 
