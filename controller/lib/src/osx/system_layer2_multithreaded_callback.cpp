@@ -103,13 +103,17 @@ namespace avdecc_lib
 		waiting_notification_id = NULL;
 		resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID;
 
-		if (waiting_sem)
-			waiting_sem = sem_open("/waiting_sem", O_CREAT, 0644, 0);
+		sem_unlink("/waiting_sem");
+
+		if ((waiting_sem = sem_open("/waiting_sem", O_CREAT | O_EXCL, 0644, 0)) == SEM_FAILED) {
+			perror("sem_open");
+			exit(-1);
+		}
 	}
 
 	system_layer2_multithreaded_callback::~system_layer2_multithreaded_callback()
 	{
-		free(waiting_sem);
+		sem_unlink("/waiting_sem");
 		delete netif_obj_in_system;
 		delete controller_ref_in_system;
 		delete local_system;
@@ -155,7 +159,9 @@ namespace avdecc_lib
 		if(queue_is_waiting)
 		{
 			is_waiting = true;
-			sem_wait(waiting_sem);
+			if (sem_wait(waiting_sem) != 0) {
+				perror("sem_wait");
+			}
 			queue_is_waiting = false;
 		}
 
@@ -212,8 +218,8 @@ namespace avdecc_lib
 		t = new struct tx_data;
 		if (!t)
 		{
-				perror("malloc");
-				exit(EXIT_FAILURE);
+			perror("malloc");
+			exit(EXIT_FAILURE);
 
 		}
 

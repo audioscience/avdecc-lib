@@ -41,10 +41,19 @@ system_message_queue::system_message_queue(int count, int size)
 	in_pos = 0;
 	out_pos = 0;
 	buf = (uint8_t *)calloc(entry_count, entry_size);
-	if (space_avail)
-		space_avail = sem_open("/space_avail_sem", O_CREAT, 0644, entry_count);
-	if (data_avail)
-		data_avail = sem_open("/data_avail_sem", O_CREAT, 0644, 0);
+
+	sem_unlink("/space_avail_sem");
+	sem_unlink("/data_avail_sem");
+
+	if ((space_avail = sem_open("/space_avail_sem", O_CREAT | O_EXCL, 0644, entry_count)) == SEM_FAILED) {
+		perror("sem_open");
+		exit(-1);
+	}
+
+	if ((data_avail = sem_open("/data_avail_sem", O_CREAT | O_EXCL, 0644, 0)) == SEM_FAILED) {
+		perror("sem_open");
+		exit(-1);
+	}
 
 	//create mutex attribute variable
 	pthread_mutexattr_t mAttr;
@@ -65,6 +74,8 @@ system_message_queue::~system_message_queue()
 	{
 		free(buf);
 	}
+	sem_unlink("/space_avail_sem");
+	sem_unlink("/data_avail_sem");
 }
 
 void system_message_queue::queue_push(void *thread_data)

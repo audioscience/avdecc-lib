@@ -50,13 +50,19 @@ namespace avdecc_lib
 	notification_imp::~notification_imp()
 	{
 		post_log_event();
+		sem_unlink("/notify_waiting_sem");
 	}
 
 	int notification_imp::notification_thread_init()
 	{
 		int rc;
 
-		notify_waiting = sem_open("/notify_waiting_sem", O_CREAT, 0644, 0);
+		sem_unlink("/notify_waiting_sem");
+
+		if ((notify_waiting = sem_open("/notify_waiting_sem", O_CREAT | O_EXCL, 0644, 0)) == SEM_FAILED) {
+			perror("sem_open");
+			exit(-1);
+		}
 
 		rc = pthread_create(&h_thread, NULL, &notification_imp::dispatch_thread, (void *)this);
  		if (rc){
@@ -69,7 +75,7 @@ namespace avdecc_lib
 
 	void * notification_imp::dispatch_thread(void * param)
 	{
-		       	return ((notification_imp *)param)->dispatch_callbacks();
+		return ((notification_imp *)param)->dispatch_callbacks();
 
 	}
 
