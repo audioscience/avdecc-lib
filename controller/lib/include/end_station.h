@@ -45,7 +45,7 @@ namespace avdecc_lib
 		/**
 		 * \return The status of the End Station connection.
 		 *	   'C' if connected. An End Station is connected after capturing an ADP packet with a different and unique entity GUID.
-		 *         'D' if disconnected. An End Station is disconnected if it fails to advertise through ADP for 62,000 milliseconds.
+		 *         'D' if disconnected. An End Station is disconnected after it fails to advertise through ADP for 62,000 milliseconds.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual char STDCALL get_connection_status() = 0;
 
@@ -70,12 +70,20 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor * STDCALL get_entity_desc_by_index(uint32_t entity_desc_index) = 0;
 
 		/**
-		 * Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity.
+		 * Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity. Reading a descriptor can be performed
+		 * by any AVDECC Controller even when the AVDECC Entityis locked or acquired as the act of reading the descriptor
+		 * does not affect the AVDECC Entity state.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
+		 * \param desc_type The type of the descriptor to be read by the command.
+		 * \param desc_index The index of the descriptor to be read by the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_read_desc_cmd(void *notification_id, uint16_t desc_type, uint16_t desc_index) = 0;
 
 		/**
-		 *  Send a ENTITY_AVAILABLE command to verify that an AVDECC Entity is still available and responding to commands.
+		 * Send a ENTITY_AVAILABLE command to verify that an AVDECC Entity is still available and responding to commands.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_entity_avail_cmd(void *notification_id) = 0;
 	};

@@ -84,7 +84,7 @@ namespace avdecc_lib
 		void set_notification_callback(void (*new_notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *), void *);
 
 		/**
-		 * Get the number of missed notification that exceeds the notification buffer count.
+		 * Get the number of missed notifications that exceeds the notification buffer count.
 		 */
 		uint32_t get_missed_notification_event_count();
 	};
