@@ -82,7 +82,6 @@ namespace avdecc_lib
 		void stream_flags_init();
 
 	public:
-
 		/**
 		 * Get the descriptor type of the Stream Input descriptor object.
 		 */

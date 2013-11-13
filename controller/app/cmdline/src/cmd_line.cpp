@@ -119,10 +119,7 @@ void avdecc_cmd_line::cmd_line_help_init()
 	cmd_line_help_vec.push_back(new cmd_line_help("list",
 
 						      "list\n" \
-						      "Display a table with information about each end station."));
-
-	cmd_line_help_vec.push_back(new cmd_line_help("list clock_sync_source",
-
+						      "Display a table with information about each end station.\n\n"
 						      "list clock_sync_source\n" \
 						      "Display a list of descriptors that has the Clock Sync Source flag set."
 						      ));
@@ -163,6 +160,19 @@ void avdecc_cmd_line::cmd_line_help_init()
 						      "the instreams.\n\n" \
 						      "connect [d_e_s_i] [d_d_i] [s_e_s_i] [s_d_i]\n" \
 						      "Connect an instream to an outstream.\n\n" \
+						      "\nParameters"
+						      "\n\t d_e_s_i stands for destination End Station index and is an integer." \
+						      "\n\t d_d_i stands for destination descriptor index and is an integer."
+						      "\n\t s_e_s_i stands for source End Station index and is an integer. " \
+						      "\n\t s_d_i stands for source descriptor index and is an integer."
+						      ));
+
+	cmd_line_help_vec.push_back(new cmd_line_help("disconnect",
+
+						      "disconnect\n" \
+						      "Display all the ACMP connections that can be disconnected.\n\n"
+						      "disconnect [d_e_s_i] [d_d_i]\n" \
+						      "Disconnect an instream from an outstream.\n\n" \
 						      "\nParameters"
 						      "\n\t d_e_s_i stands for destination End Station index and is an integer." \
 						      "\n\t d_d_i stands for destination descriptor index and is an integer."
@@ -325,25 +335,25 @@ void avdecc_cmd_line::cmd_line_help_init()
 						      "\n\t d_i stands for descriptor index and is an integer." 
 						      ));
 
-	cmd_line_help_vec.push_back(new cmd_line_help("start streaming",
+	//cmd_line_help_vec.push_back(new cmd_line_help("start streaming",
 
-						      "start streaming [d_t] [d_i]\n" \
-						      "Send a START_STREAMING command to start streaming on a previously connected\n" \
-						      "stream that was connected via ACMP or has previously been stopped with the\n" \
-						      "STOP_STREAMING command.\n\n" \
-						      "\nParameters" \
-						      "\n\t d_t stands for descriptor type and is a string." \
-						      "\n\t d_i stands for descriptor index and is an integer." 
-						      ));
+	//					      "start streaming [d_t] [d_i]\n" \
+	//					      "Send a START_STREAMING command to start streaming on a previously connected\n" \
+	//					      "stream that was connected via ACMP or has previously been stopped with the\n" \
+	//					      "STOP_STREAMING command.\n\n" \
+	//					      "\nParameters" \
+	//					      "\n\t d_t stands for descriptor type and is a string." \
+	//					      "\n\t d_i stands for descriptor index and is an integer." 
+	//					      ));
 
-	cmd_line_help_vec.push_back(new cmd_line_help("stop streaming",
+	//cmd_line_help_vec.push_back(new cmd_line_help("stop streaming",
 
-						      "stop streaming [d_t] [d_i]\n" \
-						      "Send a STOP_STREAMING command to stop a connected stream for streaming media.\n\n" \
-						      "\nParameters" \
-						      "\n\t d_t stands for descriptor type and is a string." \
-						      "\n\t d_i standsfor descriptor index and is an integer." 
-						      ));
+	//					      "stop streaming [d_t] [d_i]\n" \
+	//					      "Send a STOP_STREAMING command to stop a connected stream for streaming media.\n\n" \
+	//					      "\nParameters" \
+	//					      "\n\t d_t stands for descriptor type and is a string." \
+	//					      "\n\t d_i standsfor descriptor index and is an integer." 
+	//					      ));
 
 	//cmd_line_help_vec.push_back(new cmd_line_help("set name",
 
@@ -1247,8 +1257,8 @@ int avdecc_cmd_line::cmd_connect(uint32_t dest_end_station_index, uint16_t dest_
 
 				for(uint32_t index_j = 0; index_j < stream_output_desc_count; index_j++)
 				{
-					// bool is_outstream_connected = check_acmp_outstream_connection(src_end_station_guid, src_desc_index);
-					// if(!is_outstream_connected)
+					// bool is_connected = check_acmp_connection(dest_end_station_index, dest_desc_index, src_end_station_guid, src_desc_index);
+					// if(!is_connected)
 					//{
 					src_desc_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_j)->get_object_name();
 					format = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_j)->get_current_format();
@@ -1275,17 +1285,72 @@ int avdecc_cmd_line::cmd_connect(uint32_t dest_end_station_index, uint16_t dest_
 				(src_end_station_index < (controller_ref->get_end_station_count())) &&
 			        (src_desc_index < (controller_ref->get_config_desc_by_index(dest_end_station_index, current_entity, current_config)->get_stream_output_desc_count()));
 
-	// bool is_instream_connected = check_acmp_instream_connection(dest_end_station_guid, dest_desc_index);
-	// bool is_outstream_connected = check_acmp_outstream_connection(src_end_station_guid, src_desc_index);
+	// bool is_connected = check_acmp_connection(dest_end_station_index, dest_desc_index, src_end_station_guid, src_desc_index);
 
-	//if(is_connect_valid && !is_instream_connected && !is_outstream_connected)
+	//if(is_connect_valid && !is_connected)
 	//{
-	//	make_connection(dest_end_station_guid, dest_desc_index, src_end_station_guid, src_desc_index);
+	//	make_acmp_connection(dest_end_station_guid, dest_desc_index, src_end_station_guid, src_desc_index);
 	//}
 	//else
 	//{
 	//	std::cout << "Invalid Connection" << std::endl;
 	//}
+
+	return 0;
+}
+
+int avdecc_cmd_line::cmd_disconnect()
+{
+	uint32_t stream_input_desc_count = 0;
+	uint32_t stream_output_desc_count = 0;
+
+	std::cout << "\n" << "End Station" << "  " << "Instream" << "  "<< "End Station" << "  " << "Outstream" << std::endl;
+	std::cout << "------------------------------------------------------------------------------" << std::endl;
+
+	for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
+	{
+		stream_input_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_count();
+		stream_output_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_count();
+
+		for(uint32_t index_j = 0; index_j < stream_input_desc_count; index_j++)
+		{
+			//uint32_t src_end_station_index;
+			//uint16_t src_desc_index;
+
+			// bool is_connected = check_acmp_connection(dest_end_station_index, dest_desc_index, src_end_station_guid, src_desc_index);
+			// if(is_connected)
+			//{
+			//	std::cout << std::setw(4) << index_i <<  "  " << index_j << src_end_station_index << "  " << src_desc_index <<std::endl;
+			//}
+		}
+	}
+
+	return 0;
+}
+
+int avdecc_cmd_line::cmd_disconnect(uint32_t dest_end_station_index, uint16_t dest_desc_index)
+{
+	uint32_t stream_output_desc_count = 0;
+
+	std::cout << "\n" << "End Station" << "  " << "Instream" << "  "<< "End Station" << "  " << "Outstream" << std::endl;
+	std::cout << "------------------------------------------------------------------------------" << std::endl;
+
+	for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
+	{
+		stream_output_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_count();
+
+		for(uint32_t index_j = 0; index_j < stream_output_desc_count; index_j++)
+		{
+			//uint32_t src_end_station_index;
+			//uint16_t src_desc_index;
+
+			// bool is_connected = check_acmp_connection(dest_end_station_index, dest_desc_index, src_end_station_guid, src_desc_index);
+			// if(is_connected && (index_j == src_desc_index))
+			//{
+			//	make_acmp_disconnection(dest_end_station_guid, dest_desc_index, src_end_station_guid, src_desc_index);
+			//}
+		}
+	}
 
 	return 0;
 }
