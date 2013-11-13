@@ -54,7 +54,9 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL destroy() = 0;
 
 		/**
-		 * Set a waiting flag for the command sent.
+		 * Set a waiting flag for the command to be sent.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL set_wait_for_next_cmd(void *notification_id) = 0;
 

@@ -74,6 +74,8 @@ namespace avdecc_lib
 
 		/**
 		 * \return True, if the command with the notification id is in the inflight list.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL is_inflight_cmd_with_notification_id(void *notification_id) = 0;
 
@@ -83,12 +85,12 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_logging_level(int32_t new_log_level) = 0;
 
 		/**
-		 * \return The missed notification events count.
+		 * \return The number of missed notifications that exceeds the notification buffer count.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL missed_notification_count() = 0;
 
 		/**
-		 * \return The missed log events count.
+		 * \return The number of missed logs that exceeds the log buffer count.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL missed_log_count() = 0;
 

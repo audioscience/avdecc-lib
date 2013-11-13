@@ -105,14 +105,299 @@ int main()
 			cmd_input_vector.push_back(cmd_input);
 		}
 
+	//	if(cmd_input_vector.at(0).compare("help") == 0)
+	//	{
+	//		if(cmd_input_vector.size() == 1)
+	//		{
+	//			avdecc_cmd_line_ref->cmd_help();
+	//		}
+	//		else
+	//		{
+	//			avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig.substr(5, cmd_input_orig.length()));
+	//		}
+	//	}
+	//	else if(cmd_input_vector.at(0).compare("version") == 0)
+	//	{
+	//		if(cmd_input_vector.size() == 1)
+	//		{
+	//			if(is_output_redirected)
+	//			{
+	//				std::cout.rdbuf(cout_buf);
+	//				avdecc_cmd_line_ref->cmd_version();
+	//				std::cout.rdbuf(ofstream_ref.rdbuf());
+	//			}
+	//			else
+	//			{
+	//				avdecc_cmd_line_ref->cmd_version();
+	//			}
+	//		}
+	//		else
+	//		{
+	//			std::cout << "Invalid Command\n" << std::endl;
+	//			avdecc_cmd_line_ref->cmd_help_details(cmd_input_vector.at(0));
+	//		}
+	//	}
+	//	else if(cmd_input_vector.at(0).compare("list") == 0)
+	//	{
+	//		if(cmd_input_vector.size() == 1)
+	//		{
+	//			avdecc_cmd_line_ref->cmd_list();
+	//		}
+	//		else if((cmd_input_vector.at(1).compare("clock_sync_source") == 0) &&
+	//			(cmd_input_vector.size() == 2))
+	//		{
+	//			avdecc_cmd_line_ref->cmd_list_clock_sync_source();
+	//		}
+	//		else
+	//		{
+	//			std::cout << "Invalid Command\n" << std::endl;
+	//			avdecc_cmd_line_ref->cmd_help_details(cmd_input_vector.at(0));
+	//		}
+
+	//	}
+	//	else if(cmd_input_vector.at(0).compare("select") == 0)
+	//	{
+	//		if(cmd_input_vector.size() == 1)
+	//		{
+	//			avdecc_cmd_line_ref->cmd_select();
+	//		}
+	//		else if(cmd_input_vector.size() == 4)
+	//		{
+	//			uint32_t new_end_station = 0x0;
+	//			uint16_t new_entity = 0x0;
+	//			uint16_t new_config = 0x0;
+
+	//			if(((cmd_input_vector.at(1).compare("0") == 0) || (atoi(cmd_input_vector.at(1).c_str()) != 0)) &&
+	//			   ((cmd_input_vector.at(2).compare("0") == 0) || (atoi(cmd_input_vector.at(2).c_str()) != 0)) &&
+	//			   ((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0)))
+	//			{
+	//				is_input_valid = true;
+	//				new_end_station = (uint16_t)atoi(cmd_input_vector.at(1).c_str());
+	//				new_entity = (uint16_t)atoi(cmd_input_vector.at(2).c_str());
+	//				new_config = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
+	//			}
+
+	//			if(is_input_valid)
+	//			{
+	//				avdecc_cmd_line_ref->cmd_select(new_end_station, new_entity, new_config);
+	//			}
+	//			else
+	//			{
+	//				std::cout << "Invalid Command\n" << std::endl;
+	//				avdecc_cmd_line_ref->cmd_help_details(cmd_input_vector.at(0));
+	//			}
+	//		}
+	//		else
+	//		{
+	//			std::cout << "Invalid Command\n" << std::endl;
+	//			avdecc_cmd_line_ref->cmd_help_details(cmd_input_vector.at(0));
+	//		}
+	//	}
+	//	else if(cmd_input_vector.at(0).compare("log") == 0)
+	//	{
+	//		if(cmd_input_vector.size() == 2)
+	//		{
+	//			std::string file = avdecc_cmd_line::log_path + cmd_input_vector.at(1) + ".txt";
+	//			try
+	//			{
+	//				ofstream_ref.open(file);
+	//				ofstream_ref.good();
+	//				std::cout.rdbuf(ofstream_ref.rdbuf());
+	//				is_output_redirected = true;
+	//			}
+	//			catch(std::ofstream::failure e)
+	//			{
+	//				std::cerr << "\nofstream exception";
+	//				exit(EXIT_FAILURE);
+	//			}
+	//		}
+	//		else if((cmd_input_vector.size() == 3) && (cmd_input_vector.at(1).compare("level") == 0))
+	//		{
+	//			uint32_t new_log_level;
+
+	//			if((cmd_input_vector.at(2).compare("0") == 0) || (atoi(cmd_input_vector.at(1).c_str()) != 0))
+	//			{
+	//				is_input_valid = true;
+	//				new_log_level = (uint16_t)atoi(cmd_input_vector.at(2).c_str());
+	//			}
+
+	//			if(is_input_valid)
+	//			{
+	//				avdecc_cmd_line_ref->cmd_log_level(new_log_level);
+	//			}
+	//			else
+	//			{
+	//				std::cout << "Invalid Command\n" << std::endl;
+	//				avdecc_cmd_line_ref->cmd_help_details(cmd_input_vector.at(0));
+	//			}
+	//		}
+	//		else
+	//		{
+	//			std::cout << "Invalid Command\n" << std::endl;
+	//			avdecc_cmd_line_ref->cmd_help_details(cmd_input_vector.at(0));
+	//		}
+	//	}
+	//	else if(cmd_input_vector.at(0).compare("view") == 0)
+	//	{
+	//		if((cmd_input_vector.size() == 2) && (cmd_input_vector.at(1).compare("all") == 0))
+	//		{
+	//			try
+	//			{
+	//				avdecc_cmd_line_ref->cmd_view_all();
+	//			}
+	//			catch(std::out_of_range &e)
+	//			{
+	//				std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+	//			}
+	//		}
+	//		else if((cmd_input_vector.size() == 4) && cmd_input_vector.at(1).compare("descriptor") == 0)
+	//		{
+	//			uint16_t desc_index = 0x0;
+
+	//			if((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0))
+	//			{
+	//				is_input_valid = true;
+	//				desc_index = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
+	//			}
+
+	//			if(is_input_valid)
+	//			{
+	//				try
+	//				{
+	//					avdecc_cmd_line_ref->cmd_view_descriptor(cmd_input_vector.at(2), desc_index);
+	//				}
+	//				catch(std::out_of_range &e)
+	//				{
+	//					std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+	//							return -1;
+	//				}
+	//			}
+	//			else
+	//			{
+	//				std::cout << "Invalid Command\n" << std::endl;
+	//				avdecc_cmd_line_ref->cmd_help_details(cmd_input_vector.at(0));
+	//			}
+	//		}
+	//	}
+	//	else if(cmd_input_vector.at(0).compare("connect") == 0)
+	//	{
+	//		if(cmd_input_vector.size() == 1)
+	//		{
+	//			avdecc_cmd_line_ref->cmd_connect();
+	//		}
+	//		else if(cmd_input_vector.size() == 3)
+	//		{
+	//			uint32_t dest_end_station_index = 0x0;
+	//			uint16_t dest_desc_index = 0x0;
+
+	//			if(((cmd_input_vector.at(1).compare("0") == 0) || (atoi(cmd_input_vector.at(1).c_str()) != 0)) &&
+	//			   ((cmd_input_vector.at(2).compare("0") == 0) || (atoi(cmd_input_vector.at(2).c_str()) != 0)))
+	//			{
+	//				is_input_valid = true;
+	//				dest_end_station_index = (uint16_t)atoi(cmd_input_vector.at(1).c_str());
+	//				dest_desc_index = (uint16_t)atoi(cmd_input_vector.at(2).c_str());
+	//			}
+
+	//			if(is_input_valid)
+	//			{
+	//				avdecc_cmd_line_ref->cmd_connect(dest_end_station_index, dest_desc_index);
+	//			}
+	//			else
+	//			{
+	//				std::cout << "Invalid Command" << std::endl;
+	//				avdecc_cmd_line_ref->cmd_help_details(cmd_input_vector.at(0));
+	//			}
+	//		}
+	//		else if(cmd_input_vector.size() == 5)
+	//		{
+	//			std::cout << "Not Implemented" << std::endl;
+	//		}
+	//		else
+	//		{
+	//			std::cout << "Invalid Command\n" << std::endl;
+	//			avdecc_cmd_line_ref->cmd_help_details(cmd_input_vector.at(0));
+	//		}
+
+	//	}
+
+
+
+	//	else if((cmd_input_vector.at(0).compare("set") == 0))
+	//	{
+	//		if((cmd_input_vector.at(1).compare("stream_format") == 0))
+	//		{
+
+	//		}
+	//		else if((cmd_input_vector.at(1).compare("stream_info") == 0))
+	//		{
+
+	//		}
+
+	//	}
+	//	else if((cmd_input_vector.at(0).compare("get") == 0))
+	//	{
+	//		if((cmd_input_vector.at(1).compare("stream_format") == 0))
+	//		{
+	//			if(cmd_input_vector.size() == 4)
+	//			{
+	//				uint16_t desc_index = 0x0;
+
+	//				if((cmd_input_vector.at(3).compare("0") == 0) || (atoi(cmd_input_vector.at(3).c_str()) != 0))
+	//				{
+	//					is_input_valid = true;
+	//					desc_index = (uint16_t)atoi(cmd_input_vector.at(3).c_str());
+	//				}
+
+	//				if(is_input_valid)
+	//				{
+	//					try
+	//					{
+	//						avdecc_cmd_line_ref->cmd_get_stream_format(cmd_input_vector.at(2), desc_index);
+	//					}
+	//					catch(std::out_of_range &e)
+	//					{
+	//						std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+	//					}
+	//				}
+	//				else
+	//				{
+	//					std::cout << "Invalid Command" << std::endl;
+	//					avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+	//				}
+	//			}
+	//			else
+	//			{
+	//				std::cout << "Invalid Command" << std::endl;
+	//			}
+
+	//		}
+	//		else if((cmd_input_vector.at(1).compare("stream_info") == 0))
+	//		{
+
+	//		}
+
+	//	}
+	//}
+
+
+
+
+
+
+
+
+
+
+
+
+
 		if((cmd_input_vector.size() == 1) && (cmd_input_vector.at(0).compare("help") == 0))
 		{
 			avdecc_cmd_line_ref->cmd_help();
 		}
 		else if((cmd_input_vector.at(0).compare("help") == 0))
 		{
-
-			avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+			avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig.substr(5, cmd_input_orig.length()));
 		}
 		else
 		{
@@ -131,7 +416,6 @@ int main()
 						{
 							avdecc_cmd_line_ref->cmd_version();
 						}
-
 					}
 					else if(cmd_input_vector.at(0).compare("list") == 0)
 					{
@@ -165,7 +449,8 @@ int main()
 					}
 					else
 					{
-						std::cout << "Invalid Command" << std::endl;
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;
@@ -216,13 +501,36 @@ int main()
 					}
 					else
 					{
-						std::cout << "Invalid Command" << std::endl;
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;
 
 				case 3:
-					if(cmd_input_vector.at(0).compare("log") == 0 && cmd_input_vector.at(1).compare("level") == 0)
+					if(cmd_input_vector.at(0).compare("connect") == 0)
+					{
+						uint32_t dest_end_station_index = 0x0;
+						uint16_t dest_desc_index = 0x0;
+
+						if(((cmd_input_vector.at(1).compare("0") == 0) || (atoi(cmd_input_vector.at(1).c_str()) != 0)) &&
+						   ((cmd_input_vector.at(2).compare("0") == 0) || (atoi(cmd_input_vector.at(2).c_str()) != 0)))
+						{
+							is_input_valid = true;
+							dest_end_station_index = (uint16_t)atoi(cmd_input_vector.at(1).c_str());
+							dest_desc_index = (uint16_t)atoi(cmd_input_vector.at(2).c_str());
+						}
+
+						if(is_input_valid)
+						{
+							avdecc_cmd_line_ref->cmd_connect(dest_end_station_index, dest_desc_index);
+						}
+						else
+						{
+							std::cout << "Invalid Command" << std::endl;
+						}
+					}
+					else if(cmd_input_vector.at(0).compare("log") == 0 && cmd_input_vector.at(1).compare("level") == 0)
 					{
 						uint32_t new_log_level;
 
@@ -240,6 +548,11 @@ int main()
 						{
 							std::cout << "Invalid Command" << std::endl;
 						}
+					}
+					else
+					{
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;
@@ -470,7 +783,8 @@ int main()
 					}
 					else
 					{
-						std::cout << "Invalid Command" << std::endl;
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;
@@ -632,7 +946,8 @@ int main()
 					}
 					else
 					{
-						std::cout << "Invalid Command" << std::endl;
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;
@@ -684,7 +999,8 @@ int main()
 					}
 					else
 					{
-						std::cout << "Invalid Command" << std::endl;
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;

@@ -143,12 +143,14 @@ namespace avdecc_lib
 
 	int STDCALL descriptor_base_imp::send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag)
 	{
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Need to implement send_lock_entity_cmd\n");
 
 		return 0;
 	}
 
 	int descriptor_base_imp::proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
 	{
+		log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Need to implement proc_lock_entity_resp\n");
 
 		return 0;
 	}
@@ -225,7 +227,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int STDCALL descriptor_base_imp::send_set_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index, char * name)
+	int STDCALL descriptor_base_imp::send_set_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index, char * name)
 	{
 		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_NAME command.");
 
@@ -239,7 +241,7 @@ namespace avdecc_lib
 		return 0;
 	}
 
-	int STDCALL descriptor_base_imp::send_get_name_cmd(uint16_t desc_index, uint16_t name_index, uint16_t config_index)
+	int STDCALL descriptor_base_imp::send_get_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index)
 	{
 		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_NAME command.");
 

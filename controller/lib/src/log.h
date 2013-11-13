@@ -86,7 +86,7 @@ namespace avdecc_lib
 		void set_log_callback(void (*new_log_callback) (void *, int32_t, const char *, int32_t), void *);
 
 		/**
-		 * Get the number of missed log that exceeds the log buffer count.
+		 * Get the number of missed logs that exceeds the log buffer count.
 		 */
 		virtual uint32_t get_missed_log_event_count();
 	};
