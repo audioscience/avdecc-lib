@@ -111,8 +111,7 @@ int main()
 		}
 		else if((cmd_input_vector.at(0).compare("help") == 0))
 		{
-
-			avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+			avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig.substr(5, cmd_input_orig.length()));
 		}
 		else
 		{
@@ -131,7 +130,6 @@ int main()
 						{
 							avdecc_cmd_line_ref->cmd_version();
 						}
-
 					}
 					else if(cmd_input_vector.at(0).compare("list") == 0)
 					{
@@ -165,7 +163,8 @@ int main()
 					}
 					else
 					{
-						std::cout << "Invalid Command" << std::endl;
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;
@@ -216,7 +215,8 @@ int main()
 					}
 					else
 					{
-						std::cout << "Invalid Command" << std::endl;
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;
@@ -262,6 +262,11 @@ int main()
 						{
 							std::cout << "Invalid Command" << std::endl;
 						}
+					}
+					else
+					{
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;
@@ -492,7 +497,8 @@ int main()
 					}
 					else
 					{
-						std::cout << "Invalid Command" << std::endl;
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;
@@ -654,7 +660,8 @@ int main()
 					}
 					else
 					{
-						std::cout << "Invalid Command" << std::endl;
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;
@@ -706,7 +713,8 @@ int main()
 					}
 					else
 					{
-						std::cout << "Invalid Command" << std::endl;
+						std::cout << "Invalid Command\n" << std::endl;
+						avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 					}
 
 					break;
