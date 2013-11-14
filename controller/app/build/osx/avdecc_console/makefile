@@ -16,7 +16,6 @@ CXX := g++
 INCLUDES += -I$(INCLUDE_LIB_DIR)
 INCLUDES += -I$(SRC_DIR1)
 
-
 EXTRA_CFLAGS += -g
 EXTRA_CXXFLAGS += -Wall -ansi -g -std=c++0x
 
@@ -57,7 +56,7 @@ $(AVDECC_LIB):
 
 $(TARGET_APP): $(OBJS) $(AVDECC_LIB)
 	@echo $(CC) linking $@
-	@$(CXX) $(LDFLAGS) -g -lpcap -o $@ $(addprefix $(BUILD_DIR)/,$(notdir $(OBJS))) $(AVDECC_LIB)
+	@$(CXX) $(LDFLAGS) -g -lpcap -lreadline -o $@ $(addprefix $(BUILD_DIR)/,$(notdir $(OBJS))) $(AVDECC_LIB)
 
 clean:
 	rm -f $(OBJS) $(TARGET_LIB) $(TARGET_APP) $(BUILD_DIR)/*.o $(DEP_DIR)/*.d
