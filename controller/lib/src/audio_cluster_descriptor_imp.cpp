@@ -56,7 +56,6 @@ namespace avdecc_lib
 
 	uint16_t STDCALL audio_cluster_descriptor_imp::get_descriptor_index()
 	{
-		assert(audio_cluster_desc.descriptor_index == 0);
 		return audio_cluster_desc.descriptor_index;
 	}
 

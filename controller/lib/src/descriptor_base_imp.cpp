@@ -254,4 +254,14 @@ namespace avdecc_lib
 
 		return 0;
 	}
+
+	uint16_t STDCALL descriptor_base_imp::get_localized_description()
+	{
+		return 0;
+	}
+
+	uint8_t * STDCALL descriptor_base_imp::get_object_name()
+	{
+		return NULL;
+	}
 }

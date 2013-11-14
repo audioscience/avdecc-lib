@@ -38,6 +38,9 @@
 #include "enumeration.h"
 #include "cmd_line_help.h"
 
+ #include "locale_descriptor.h"
+#include "strings_descriptor.h"
+
 class avdecc_cmd_line
 {
 private:
@@ -76,6 +79,10 @@ private:
 	int print_interfaces_and_select();
 
 	void cmd_line_help_init();
+
+	void print_descriptor_type_index_name_row(avdecc_lib::descriptor_base &desc,
+															avdecc_lib::strings_descriptor &strings,
+															avdecc_lib::locale_descriptor &locale);
 
 public:
 

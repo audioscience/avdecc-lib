@@ -35,6 +35,10 @@
 #include <stdint.h>
 #include <stdexcept>
 #include "cmd_line.h"
+#ifdef __MACH__
+#include <readline/readline.h>
+#include <readline/history.h>
+#endif
 
 using namespace std;
 
@@ -77,7 +81,6 @@ int main()
 	avdecc_cmd_line *avdecc_cmd_line_ref = new avdecc_cmd_line(notification_callback, log_callback);
 
 	std::vector<std::string> cmd_input_vector;
-	std::string cmd_input;
 	size_t pos = 0;
 	bool while_loop = true;
 	bool is_input_valid = false;
@@ -85,14 +88,28 @@ int main()
 	std::streambuf *cout_buf = std::cout.rdbuf();
 	bool is_output_redirected = false;
 	std::string cmd_input_orig;
+#ifdef __MACH__
+	char* input, shell_prompt[100];
+#endif
 
 	std::cout << "\nEnter help for a list of valid commands." << std::endl;
 
 	while(while_loop)
 	{
+#ifdef __MACH__
+		snprintf(shell_prompt, sizeof(shell_prompt), "$ ");
+		input = readline(shell_prompt);
+		if (!input)
+			break;
+		std::string cmd_input(input);
+		cmd_input_orig = cmd_input;
+		add_history(input);
+#else
+		std::string cmd_input;
 		printf("\n>");
 		std::getline(std::cin, cmd_input);
 		cmd_input_orig = cmd_input;
+#endif
 
 		while((pos = cmd_input.find(" ")) != std::string::npos)
 		{
@@ -1014,6 +1031,9 @@ int main()
 
 		is_input_valid = false;
 		cmd_input_vector.clear();
+#if __MACH__
+		free(input);
+#endif
 	}
 
 	ofstream_ref.close();
