@@ -237,32 +237,47 @@ namespace avdecc_lib
 
 		/**
 		 * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
+		 * \param new_stream_format The stream format field is set to the new stream format.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_format_cmd(void *notification_id, uint64_t new_stream_format) = 0;
 
 		/**
 		 * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_format_cmd(void *notification_id) = 0;
 
 		/**
-		 * Send a SET_STREAM_INFO command with a notification id to change the current values of the dynamic information of the stream.
+		 * Send a SET_STREAM_INFO command with a notification id to change the current values of the dynamic information of
+		 * the stream, such as the msrp_accumulated_latency, stream ID, and destination MAC.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command. 
+		 * \param new_stream_info_field The new field information to be set to for a stream.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_info_cmd(void *notification_id, void *new_stream_info_field) = 0;
 
 		/**
 		 * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void *notification_id) = 0;
 
 		/**
 		 * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
-		 * via ACMP.
+		 * via ACMP or has previously been stopped with the STOP_STREAMING command.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_start_streaming_cmd(void *notification_id) = 0;
 
 		/**
 		 * Send a STOP_STREAMING command with a notification id to stop a connected stream for streaming media.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_stop_streaming_cmd(void *notification_id) = 0;
 	};

@@ -285,21 +285,29 @@ namespace avdecc_lib
 
 		/**
 		 * Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
+		 * \param new_sampling_rate The sampling rate field is set to the new sampling rate.
 		 */
 		int STDCALL send_set_sampling_rate_cmd(void *notification_id, uint32_t new_sampling_rate);
 
 		/**
-		 * Process a SET_SAMPLING_RATE response for the SET_SAMPLING_RATE command.
+		 * Process a SET_SAMPLING_RATE response for the SET_SAMPLING_RATE command. The response always contains the
+		 * current sampling rate, that is it contains the new sampling rate if the command succeeds or the old
+		 * sampling rate if it fails.
 		 */
 		int proc_set_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
+		 *
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
 		 */
 		int STDCALL send_get_sampling_rate_cmd(void *notification_id);
 
 		/**
-		 * Process a GET_SAMPLING_RATE response for the GET_SAMPLING_RATE command.
+		 * Process a GET_SAMPLING_RATE response for the GET_SAMPLING_RATE command. The sampling rate field is set
+		 * to the current sampling rate of the port or unit in the response.
 		 */
 		int proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 	};
