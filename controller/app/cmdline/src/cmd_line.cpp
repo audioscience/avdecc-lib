@@ -1188,7 +1188,7 @@ int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_in
 	uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
 	intptr_t cmd_notification_id = get_next_notification_id();
 
-	if(desc_type_value == avdecc_lib::AEM_DESC_STRINGS && desc_index == 0)
+	if(desc_type_value < avdecc_lib::TOTAL_NUM_OF_AEM_DESCS)
 	{
 		controller_ref->get_end_station_by_index(current_end_station)->send_read_desc_cmd((void *)cmd_notification_id, desc_type_value, desc_index);
 	}
