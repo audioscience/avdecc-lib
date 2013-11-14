@@ -33,6 +33,7 @@
 
 #include <stdint.h>
 #include "build.h"
+#include "descriptor_base.h"
 
 namespace avdecc_lib
 {
@@ -57,7 +58,7 @@ namespace avdecc_lib
 		/**
 		 * \return The signal index of the Audio Cluster descriptor object.
 		 */
-	        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_signal_index() = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_signal_index() = 0;
 
 		/**
 		 * \return The signal output of the Audio Cluster descriptor object.
@@ -87,4 +88,3 @@ namespace avdecc_lib
 }
 
 #endif
-

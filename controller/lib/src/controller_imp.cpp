@@ -120,8 +120,8 @@ namespace avdecc_lib
 	configuration_descriptor * STDCALL controller_imp::get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index)
 	{
 		bool is_valid = ((end_station_index < end_station_vec.size()) &&
-			         (entity_index < end_station_vec.at(end_station_index)->get_entity_desc_count()) &&
-				 (config_index < end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_configurations_count()));
+		                 (entity_index < end_station_vec.at(end_station_index)->get_entity_desc_count()) &&
+		                 (config_index < end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_configurations_count()));
 
 		if(is_valid)
 		{
@@ -147,7 +147,7 @@ namespace avdecc_lib
 			if(end_station_guid == entity_guid)
 			{
 				bool is_valid = ((entity_index < end_station_vec.at(index_i)->get_entity_desc_count()) &&
-						 (config_index < end_station_vec.at(index_i)->get_entity_desc_by_index(entity_index)->get_configurations_count()));
+				                 (config_index < end_station_vec.at(index_i)->get_entity_desc_by_index(entity_index)->get_configurations_count()));
 
 				if(is_valid)
 				{
@@ -351,9 +351,9 @@ namespace avdecc_lib
 		/******************************** Fill frame payload with AECP data and send the frame ***************************/
 		aecp::ether_frame_init(end_station_vec.at(end_station_index), ether_frame);
 		aem_cmd_controller_avail_returned = jdksavdecc_aem_command_controller_available_write(&aem_cmd_controller_avail,
-												      ether_frame->payload,
-												      aecp::CMD_POS,
-												      sizeof(ether_frame->payload));
+		                                                                                      ether_frame->payload,
+		                                                                                      aecp::CMD_POS,
+		                                                                                      sizeof(ether_frame->payload));
 
 		if(aem_cmd_controller_avail_returned < 0)
 		{
@@ -381,9 +381,9 @@ namespace avdecc_lib
 		memcpy(ether_frame->payload, frame, frame_len);
 
 		aem_cmd_controller_avail_resp_returned = jdksavdecc_aem_command_controller_available_response_read(&aem_cmd_controller_avail_resp,
-														   frame,
-														   aecp::CMD_POS,
-														   frame_len);
+		                                                                                                   frame,
+		                                                                                                   aecp::CMD_POS,
+		                                                                                                   frame_len);
 
 		if(aem_cmd_controller_avail_resp_returned < 0)
 		{

@@ -48,15 +48,15 @@ namespace avdecc_lib
 		 * Transmit an ACMP Command.
 		 */
 		void tx_cmd(	void *notification_id,
-				bool notification_flag,
-				struct jdksavdecc_frame *ether_frame,
-				bool resend);
+		                bool notification_flag,
+		                struct jdksavdecc_frame *ether_frame,
+		                bool resend);
 
 		/**
 		 * Handle the receipt and processing of a received response for a command sent.
 		 */
 		int process_resp(	void *&notification_id,
-					struct jdksavdecc_frame *ether_frame);
+		                        struct jdksavdecc_frame *ether_frame);
 
 		/**
 		 * Check timeout for the inflight commands.

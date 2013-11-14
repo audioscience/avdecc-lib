@@ -33,18 +33,18 @@
 
 #if defined __linux__ || defined __MACH__
 
-  #define AVDECC_CONTROLLER_LIB32_API
-  #define STDCALL
+#define AVDECC_CONTROLLER_LIB32_API
+#define STDCALL
 
 #elif defined _WIN32 || defined _WIN64
 
-  #ifdef AVDECC_CONTROLLER_LIB32_EXPORTS
-    #define AVDECC_CONTROLLER_LIB32_API __declspec(dllexport)
-  #else
-    #define AVDECC_CONTROLLER_LIB32_API __declspec(dllimport)
-  #endif
+#ifdef AVDECC_CONTROLLER_LIB32_EXPORTS
+#define AVDECC_CONTROLLER_LIB32_API __declspec(dllexport)
+#else
+#define AVDECC_CONTROLLER_LIB32_API __declspec(dllimport)
+#endif
 
-  #define STDCALL __stdcall
+#define STDCALL __stdcall
 
 #endif
 

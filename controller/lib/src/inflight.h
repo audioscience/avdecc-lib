@@ -53,21 +53,39 @@ namespace avdecc_lib
 		void *notification_id;
 
 		inflight(
-			struct jdksavdecc_frame *frame,
-			uint16_t sequence,
-			unsigned int timeout_ms,
-			void *notify_id,
-			bool notify_flag)
-			: seq_id(sequence), notification_id(notify_id), notification_flag(notify_flag), 
-			  inflight_timeout(timeout_ms), start_timer_count(0){inflight_cmd_frame = *frame;};
+		        struct jdksavdecc_frame *frame,
+		        uint16_t sequence,
+		        unsigned int timeout_ms,
+		        void *notify_id,
+		        bool notify_flag)
+			: seq_id(sequence), notification_id(notify_id), notification_flag(notify_flag),
+			  inflight_timeout(timeout_ms), start_timer_count(0)
+		{
+			inflight_cmd_frame = *frame;
+		};
 
-		~inflight(){};
+		~inflight() {};
 
-		void start_timer(){ flight_timer.start(inflight_timeout); };
-		void *notify_id(){ return notification_id; };
-		bool timeout(){ return flight_timer.timeout(); };
-		bool notify_flag(){ return notification_flag; }
-		bool retried() { return start_timer_count >= 2; };
+		void start_timer()
+		{
+			flight_timer.start(inflight_timeout);
+		};
+		void *notify_id()
+		{
+			return notification_id;
+		};
+		bool timeout()
+		{
+			return flight_timer.timeout();
+		};
+		bool notify_flag()
+		{
+			return notification_flag;
+		}
+		bool retried()
+		{
+			return start_timer_count >= 2;
+		};
 	};
 
 	/*
@@ -77,7 +95,10 @@ namespace avdecc_lib
 	{
 	public:
 		SeqIdComp(uint16_t i) : v(i) { }
-		inline bool operator()(const inflight & m) const { return m.seq_id == v; }
+		inline bool operator()(const inflight & m) const
+		{
+			return m.seq_id == v;
+		}
 	private:
 		uint16_t v;
 	};
@@ -89,7 +110,10 @@ namespace avdecc_lib
 	{
 	public:
 		NotificationComp(void * p) : v(p) { }
-		inline bool operator()(const inflight & m) const { return m.notification_id == v; }
+		inline bool operator()(const inflight & m) const
+		{
+			return m.notification_id == v;
+		}
 	private:
 		void * v;
 	};

@@ -34,7 +34,7 @@
 namespace avdecc_lib
 {
 	extern "C" void default_notification(void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
-					     uint16_t desc_type, uint16_t desc_index, void *notification_id) {}
+	                                     uint16_t desc_type, uint16_t desc_index, void *notification_id) {}
 
 	notification::notification()
 	{
@@ -58,8 +58,8 @@ namespace avdecc_lib
 			return;
 		}
 
-		if(notification_type == NO_MATCH_FOUND || notification_type == END_STATION_CONNECTED || 
-		   notification_type == END_STATION_DISCONNECTED || notification_type == COMMAND_TIMEOUT || 
+		if(notification_type == NO_MATCH_FOUND || notification_type == END_STATION_CONNECTED ||
+		   notification_type == END_STATION_DISCONNECTED || notification_type == COMMAND_TIMEOUT ||
 		   notification_type == RESPONSE_RECEIVED)
 		{
 			index = InterlockedExchangeAdd(&write_index, 1);

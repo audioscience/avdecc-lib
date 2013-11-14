@@ -61,7 +61,7 @@ namespace avdecc_lib
 
 		/**
 		 * Constructor for ADP used for constructing an object with a base pointer and memory buffer length.
-		 */ 
+		 */
 		adp(const uint8_t *frame, size_t frame_len);
 
 		~adp();
