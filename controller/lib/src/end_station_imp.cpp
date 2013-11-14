@@ -72,7 +72,7 @@ namespace avdecc_lib
 		uint16_t desc_index = 0x0;
 
 		read_desc_init(desc_type, desc_index);
-
+	
 		return 0;
 	}
 
@@ -395,6 +395,11 @@ namespace avdecc_lib
 
 						if(desc_type_index_from_config >= total_num_of_desc)
 						{
+							uint16_t desc_type = JDKSAVDECC_DESCRIPTOR_STRINGS;
+							uint16_t desc_index = 0x0;
+
+							read_desc_init(desc_type, desc_index); // Send a READ_DESCRIPTOR command for the STRINGS descriptor as part of the End Station initialization
+
 							read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_DONE;
 						}
 						else
