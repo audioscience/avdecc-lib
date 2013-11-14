@@ -41,6 +41,8 @@
 #include "clock_source_descriptor_imp.h"
 #include "locale_descriptor_imp.h"
 #include "strings_descriptor_imp.h"
+#include "stream_port_input_descriptor_imp.h"
+#include "stream_port_output_descriptor_imp.h"
 #include "audio_cluster_descriptor_imp.h"
 #include "audio_map_descriptor_imp.h"
 #include "clock_domain_descriptor_imp.h"
@@ -52,7 +54,7 @@ namespace avdecc_lib
 	{
 	private:
 		struct jdksavdecc_descriptor_configuration config_desc; // Structure containing the config_desc fields
-		int desc_config_read_returned; // Status of extracting Configuration descriptor information from a network buffer
+		int config_desc_read_returned; // Status of extracting Configuration descriptor information from a network buffer
 
 		std::vector<uint16_t> desc_type_vector; // Store descriptor types present in the CONFIGURATION descriptor
 		std::vector<uint16_t> desc_count_vector; // Store descriptor counts present in the CONFIGURATION descriptor
@@ -66,6 +68,8 @@ namespace avdecc_lib
 		std::vector<clock_source_descriptor_imp *> clock_source_desc_vec; // Store a list of Clock Source descriptor class objects
 		std::vector<locale_descriptor_imp *> locale_desc_vec; // Store a list of Locale descriptor class objects
 		std::vector<strings_descriptor_imp *> strings_desc_vec; // Store a list of Strings descriptor class objects
+		std::vector<stream_port_input_descriptor_imp *> stream_port_input_desc_vec; // Store a list of Stream Port Input descriptor class objects
+		std::vector<stream_port_output_descriptor_imp *> stream_port_output_desc_vec; // Store a list of Stream Port Output descriptor class objects
 		std::vector<audio_cluster_descriptor_imp *> audio_cluster_desc_vec; // Store a list of Audio Cluster descriptor class objects
 		std::vector<audio_map_descriptor_imp *> audio_map_desc_vec; // Store a list of Audio Map descriptor class objects
 		std::vector<clock_domain_descriptor_imp *> clock_domain_desc_vec; // Store a list of Clock Domain descriptor class objects
@@ -83,7 +87,7 @@ namespace avdecc_lib
 	public:
 		/**
 		 * Constructor for Configuration descriptor object.
-		 * 
+		 *
 		 * \param end_station_obj A pointer to the base End Station object.
 		 * \param frame The raw memory that contains the descriptor information to read from.
 		 * \param pos The position offset to read the descriptor fields from.
@@ -169,6 +173,16 @@ namespace avdecc_lib
 		void store_strings_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
 		/**
+		 * Store Stream Port Input descriptor object.
+		 */
+		void store_stream_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+
+		/**
+		 * Store Stream Port Output descriptor object.
+		 */
+		void store_stream_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+
+		/**
 		 * Store Audio Cluster descriptor object.
 		 */
 		void store_audio_cluster_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
@@ -229,6 +243,16 @@ namespace avdecc_lib
 		uint32_t STDCALL get_strings_desc_count();
 
 		/**
+		 * Get the number of Stream Port Input descriptors present in the current Configuration.
+		 */
+		uint32_t STDCALL get_stream_port_input_desc_count();
+
+		/**
+		 * Get the number of Stream Port Output descriptors present in the current Configuration.
+		 */
+		uint32_t STDCALL get_stream_port_output_desc_count();
+
+		/**
 		 * Get the number of Audio Cluster descriptors present in the current Configuration.
 		 */
 		uint32_t STDCALL get_audio_cluster_desc_count();
@@ -237,7 +261,7 @@ namespace avdecc_lib
 		 * Get the number of Audio Map descriptors present in the current Configuration.
 		 */
 		uint32_t STDCALL get_audio_map_desc_count();
-		
+
 		/**
 		 * Get the number of Clock Domain descriptors present in the current Configuration.
 		 */
@@ -302,6 +326,16 @@ namespace avdecc_lib
 		 * Get the corresponding STRINGS descriptor object by index.
 		 */
 		strings_descriptor * STDCALL get_strings_desc_by_index(uint32_t strings_desc_index);
+
+		/**
+		 * \return The corresponding STREAM PORT INPUT descriptor object by index.
+		 */
+		stream_port_input_descriptor * STDCALL get_stream_port_input_desc_by_index(uint32_t stream_port_input_desc_index);
+
+		/**
+		 * \return The corresponding STREAM PORT OUTPUT descriptor object by index.
+		 */
+		stream_port_output_descriptor * STDCALL get_stream_port_output_desc_by_index(uint32_t stream_port_output_desc_index);
 
 		/**
 		 * Get the corresponding AUDIO CLUSTER descriptor object by index.

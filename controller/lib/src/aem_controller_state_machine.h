@@ -50,7 +50,7 @@ namespace avdecc_lib
 
 		uint16_t aecp_seq_id; // The sequence id used for identifying the AECP command that a response is for
 		bool rcvd_normal_resp;
-		bool rcvd_unsolicited_resp;	
+		bool rcvd_unsolicited_resp;
 		bool do_cmd;
 		bool do_terminate;
 		std::vector<struct inflight_cmd_data> inflight_cmds_vec;

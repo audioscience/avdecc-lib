@@ -44,7 +44,7 @@ namespace avdecc_lib
 	public:
 		/**
 		 * Constructor for Audio Cluster descriptor object.
-		 * 
+		 *
 		 * \param end_station_obj A pointer to the base End Station object.
 		 * \param frame The raw memory that contains the descriptor information to read from.
 		 * \param pos The position offset to read the descriptor fields from.
@@ -82,7 +82,7 @@ namespace avdecc_lib
 		/**
 		 * Get the signal index of the Audio Cluster descriptor object.
 		 */
-	        uint16_t STDCALL get_signal_index();
+		uint16_t STDCALL get_signal_index();
 
 		/**
 		 * Get the signal output of the Audio Cluster descriptor object.
@@ -112,4 +112,3 @@ namespace avdecc_lib
 }
 
 #endif
-

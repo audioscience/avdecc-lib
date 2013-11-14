@@ -56,7 +56,7 @@
 #else
 #define OS_PTHREAD_MUTEX_RECURSIVE_TYPE PTHREAD_MUTEX_RECURSIVE
 #endif
- 
+
 namespace avdecc_lib_os
 {
 	typedef uint32_t aTimestamp;

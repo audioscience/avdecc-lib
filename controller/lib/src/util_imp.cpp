@@ -293,7 +293,7 @@ namespace avdecc_lib
 		{
 			return "AVDECC_LIB_STATUS_TICK_TIMEOUT";
 		}
-					
+
 		return "UNKNOWN";
 	}
 

@@ -315,6 +315,22 @@ namespace avdecc_lib
 
 				break;
 
+			case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
+				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
+				{
+					config_desc_imp_ref->store_stream_port_input_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+				}
+
+				break;
+
+			case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
+				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
+				{
+					config_desc_imp_ref->store_stream_port_output_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+				}
+
+				break;
+
 			case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
 				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
 				{
@@ -423,9 +439,9 @@ namespace avdecc_lib
 		/**************************** Fill frame payload with AECP data and send the frame *************************/
 		aecp::ether_frame_init(this, ether_frame);
 		aem_cmd_entity_avail_returned = jdksavdecc_aem_command_entity_available_write(&aem_cmd_entity_avail,
-											      ether_frame->payload,
-											      aecp::CMD_POS,
-											      sizeof(ether_frame->payload));
+		                                                                              ether_frame->payload,
+		                                                                              aecp::CMD_POS,
+		                                                                              sizeof(ether_frame->payload));
 
 		if(aem_cmd_entity_avail_returned < 0)
 		{
@@ -453,9 +469,9 @@ namespace avdecc_lib
 		memcpy(ether_frame->payload, frame, frame_len);
 
 		aem_cmd_entity_avail_resp_returned = jdksavdecc_aem_command_entity_available_response_read(&aem_cmd_entity_avail_resp,
-													   frame,
-													   aecp::CMD_POS,
-													   frame_len);
+		                                                                                           frame,
+		                                                                                           aecp::CMD_POS,
+		                                                                                           frame_len);
 
 		if(aem_cmd_entity_avail_resp_returned < 0)
 		{

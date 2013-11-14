@@ -186,7 +186,7 @@ namespace avdecc_lib
 			}
 		}
 
-		return 0;	
+		return 0;
 	}
 
 	int STDCALL system_layer2_multithreaded_callback::process_start()
@@ -291,13 +291,13 @@ namespace avdecc_lib
 					bool is_waiting_completed = false;
 
 					controller_imp_ref_in_system->rx_packet_event(thread_data.notification_id,
-					                                          is_notification_id_valid,
-					                                          thread_data.frame,
-					                                          thread_data.frame_len,
-					                                          status);
+					                                              is_notification_id_valid,
+					                                              thread_data.frame,
+					                                              thread_data.frame_len,
+					                                              status);
 
 					is_waiting_completed = is_waiting && (!controller_imp_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
-							       is_notification_id_valid && (waiting_notification_id == thread_data.notification_id);
+					                       is_notification_id_valid && (waiting_notification_id == thread_data.notification_id);
 					if(is_waiting_completed)
 					{
 						resp_status_for_cmd = status;
