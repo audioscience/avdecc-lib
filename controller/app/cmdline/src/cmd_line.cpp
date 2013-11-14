@@ -43,6 +43,8 @@
 #include "clock_source_descriptor.h"
 #include "locale_descriptor.h"
 #include "strings_descriptor.h"
+#include "stream_port_input_descriptor.h"
+#include "stream_port_output_descriptor.h"
 #include "audio_cluster_descriptor.h"
 #include "audio_map_descriptor.h"
 #include "clock_domain_descriptor.h"
@@ -517,7 +519,7 @@ int avdecc_cmd_line::cmd_list_clock_sync_source()
 	bool is_clock_sync_source_set = false;
 
 	std::cout << "\n" << std::setw(8) << "End Station" << "   " << "Descriptor Name" << std::setw(8) << "" <<
-	          std::setw(20) << "Descriptor Type" << "   " << std::setw(16) << "Descriptor Index" << std::endl;
+	             std::setw(20) << "Descriptor Type" << "   " << std::setw(16) << "Descriptor Index" << std::endl;
 	std::cout << "------------------------------------------------------------------------------" << std::endl;
 
 	for(int i = 0; i < controller_ref->get_end_station_count(); i++)
@@ -625,8 +627,8 @@ int avdecc_cmd_line::cmd_log_level(uint32_t new_log_level)
 
 
 void avdecc_cmd_line::print_descriptor_type_index_name_row(avdecc_lib::descriptor_base &desc,
-															avdecc_lib::strings_descriptor &strings,
-															avdecc_lib::locale_descriptor &locale)
+							   avdecc_lib::strings_descriptor &strings,
+							   avdecc_lib::locale_descriptor &locale)
 {
 	std::cout << std::setw(20) << utility->desc_value_to_name(desc.get_descriptor_type());
 	std::cout << "   "<<  std::setw(16) << std::hex << desc.get_descriptor_index();
@@ -749,6 +751,20 @@ int avdecc_cmd_line::cmd_view_all()
 				{
 					avdecc_lib::strings_descriptor *strings_desc_ref = config_desc_ref->get_strings_desc_by_index(j);
 					print_descriptor_type_index_name_row(*strings_desc_ref, *strings_desc_ref, *locale_desc_ref);
+				}
+
+			case avdecc_lib::AEM_DESC_STREAM_PORT_INPUT:
+				for(int j = 0; j < config_desc_ref->get_stream_port_input_desc_count(); j++)
+				{
+					avdecc_lib::stream_port_input_descriptor *stream_port_input_desc_ref = config_desc_ref->get_stream_port_input_desc_by_index(j);
+					print_descriptor_type_index_name_row(*stream_port_input_desc_ref, *strings_desc_ref, *locale_desc_ref);
+				}
+
+			case avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT:
+				for(int j = 0; j < config_desc_ref->get_stream_port_output_desc_count(); j++)
+				{
+					avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref = config_desc_ref->get_stream_port_output_desc_by_index(j);
+					print_descriptor_type_index_name_row(*stream_port_output_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_AUDIO_CLUSTER:
@@ -1068,6 +1084,40 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 					std::cout << "\nstring_4 = " << std::hex << strings_desc_ref->get_string_by_index(4);
 					std::cout << "\nstring_5 = " << std::hex << strings_desc_ref->get_string_by_index(5);
 					std::cout << "\nstring_6 = " << std::hex << strings_desc_ref->get_string_by_index(6);
+				}
+			}
+			break;
+
+		case avdecc_lib::AEM_DESC_STREAM_PORT_INPUT:
+			{
+				avdecc_lib::stream_port_input_descriptor *stream_port_input_desc = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_port_input_desc_by_index(desc_index);
+				if(stream_port_input_desc)
+				{
+					std::cout << "\nclock_domain_index = " << std::hex << stream_port_input_desc->get_clock_domain_index();
+				        std::cout << "\nport_flags = " << std::hex << stream_port_input_desc->get_port_flags();
+					std::cout << "\nnumber_of_controls = " << std::hex << stream_port_input_desc->get_number_of_controls();
+					std::cout << "\nbase_control = " << std::hex << stream_port_input_desc->get_base_control();
+					std::cout << "\nnumber_of_clusters = " << std::hex << stream_port_input_desc->get_number_of_clusters();
+					std::cout << "\nbase_cluster = " << std::hex << stream_port_input_desc->get_base_cluster();
+					std::cout << "\nnumber_of_maps = " << std::hex << stream_port_input_desc->get_number_of_maps();
+					std::cout << "\nbase_map = " << std::hex << stream_port_input_desc->get_base_map();
+				}
+			}
+			break;
+
+		case avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT:
+			{
+				avdecc_lib::stream_port_output_descriptor *stream_port_output_desc = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_port_output_desc_by_index(desc_index);
+				if(stream_port_output_desc)
+				{
+					std::cout << "\nclock_domain_index = " << std::hex << stream_port_output_desc->get_clock_domain_index();
+				        std::cout << "\nport_flags = " << std::hex << stream_port_output_desc->get_port_flags();
+					std::cout << "\nnumber_of_controls = " << std::hex << stream_port_output_desc->get_number_of_controls();
+					std::cout << "\nbase_control = " << std::hex << stream_port_output_desc->get_base_control();
+					std::cout << "\nnumber_of_clusters = " << std::hex << stream_port_output_desc->get_number_of_clusters();
+					std::cout << "\nbase_cluster = " << std::hex << stream_port_output_desc->get_base_cluster();
+					std::cout << "\nnumber_of_maps = " << std::hex << stream_port_output_desc->get_number_of_maps();
+					std::cout << "\nbase_map = " << std::hex << stream_port_output_desc->get_base_map();
 				}
 			}
 			break;
