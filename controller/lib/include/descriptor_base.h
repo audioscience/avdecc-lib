@@ -89,6 +89,17 @@ namespace avdecc_lib
 		 *		       If the descriptor type field is either ENTITY or CONFIGURATION, then this field is set to 0.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index) = 0;
+
+		/**
+		 * \return The localized description of the descriptor
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
+
+		/**
+		 * \return The name of the descriptor object.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
+
 	};
 }
 

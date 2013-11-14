@@ -476,25 +476,29 @@ int avdecc_cmd_line::cmd_version()
 
 int avdecc_cmd_line::cmd_list()
 {
-	uint32_t end_station;
-	uint8_t *end_station_name;
-	uint64_t end_station_guid;
-	uint64_t end_station_mac;
-
 	std::cout << "\n" << "End Station" << "  |  " << "Name" << std::setw(21)  << "  |  " <<  "Entity GUID" << std::setw(10) << "  |  " << "MAC" << std::endl;
 	std::cout << "------------------------------------------------------------------------------" << std::endl;
 
-	for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
+	for(int i = 0; i < controller_ref->get_end_station_count(); i++)
 	{
-		end_station = index_i;
-		end_station_guid = controller_ref->get_end_station_by_index(index_i)->get_end_station_guid();
-		end_station_name = controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_entity_name();
-		end_station_mac = controller_ref->get_end_station_by_index(index_i)->get_end_station_mac();
-		std::cout << controller_ref->get_end_station_by_index(index_i)->get_connection_status()
-		          << std::setw(10) << std::dec << end_station << "  |  "
-		          << std::setw(20) << std::hex << end_station_name << "  |  0x"
-		          << std::setw(14) << std::hex << end_station_guid << "  |  0x"
-		          << std::hex << end_station_mac << std::endl;
+		avdecc_lib::end_station *endstn = controller_ref->get_end_station_by_index(i);
+
+		if (endstn)
+		{
+			uint64_t end_station_guid = endstn->get_end_station_guid();
+			avdecc_lib::entity_descriptor *ent_desc = endstn->get_entity_desc_by_index(current_entity);
+			char *end_station_name;
+			if (ent_desc)
+			{
+				end_station_name = (char *)ent_desc->get_entity_name();
+			}
+			uint64_t end_station_mac = endstn->get_end_station_mac();
+			std::cout << endstn->get_connection_status()
+			          << std::setw(10) << std::dec << i << "  |  "
+			          << std::setw(20) << std::hex << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
+			          << std::setw(14) << std::hex << end_station_guid << "  |  0x"
+			          << std::hex << end_station_mac << std::endl;
+		}
 	}
 
 	std::cout << "\nC - End Station Connected." << std::endl;
@@ -516,37 +520,48 @@ int avdecc_cmd_line::cmd_list_clock_sync_source()
 	          std::setw(20) << "Descriptor Type" << "   " << std::setw(16) << "Descriptor Index" << std::endl;
 	std::cout << "------------------------------------------------------------------------------" << std::endl;
 
-	for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
+	for(int i = 0; i < controller_ref->get_end_station_count(); i++)
 	{
-		stream_input_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_count();
-		for(uint32_t index_j = 0; index_j < stream_input_desc_count; index_j++)
-		{
-			is_clock_sync_source_set = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_stream_flags_clock_sync_source();
-			if(is_clock_sync_source_set)
-			{
-				desc_obj_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_object_name();
-				desc_type_value = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_descriptor_type();
-				desc_index = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_descriptor_index();
-				
-				std::cout << std::setw(8) << index_i << "   " << std::setw(20) << desc_obj_name <<
-					     "   " << std::setw(20) << std::hex << utility->desc_value_to_name(desc_type_value) <<
-				             "   " << std::setw(16) << std::hex << desc_index << std::endl;
-			}
-		}
+		avdecc_lib::configuration_descriptor *config_desc = controller_ref->get_config_desc_by_index(i, current_entity, current_config);
 
-		stream_output_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_count();
-		for(uint32_t index_k = 0; index_k < stream_output_desc_count; index_k++)
+		if (config_desc)
 		{
-			is_clock_sync_source_set = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_stream_flags_clock_sync_source();
-			if(is_clock_sync_source_set)
+			for(int j = 0; j < config_desc->get_stream_input_desc_count(); j++)
 			{
-				desc_obj_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_object_name();
-				desc_type_value = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_descriptor_type();
-				desc_index = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_k)->get_descriptor_index();
-				
-				std::cout << std::setw(8) << index_i << "   " << std::setw(20) << desc_obj_name <<
-					     "   " << std::setw(20) << std::hex << utility->desc_value_to_name(desc_type_value) <<
-				             "   " << std::setw(16) << std::hex << desc_index << std::endl;
+				avdecc_lib::stream_input_descriptor *stream_input_desc = config_desc->get_stream_input_desc_by_index(j);
+				if (stream_input_desc)
+				{
+					is_clock_sync_source_set = stream_input_desc->get_stream_flags_clock_sync_source();
+					if(is_clock_sync_source_set)
+					{
+						desc_obj_name = stream_input_desc->get_object_name();
+						desc_type_value = stream_input_desc->get_descriptor_type();
+						desc_index = stream_input_desc->get_descriptor_index();
+						
+						std::cout << std::setw(8) << i << "   " << std::setw(20) << desc_obj_name <<
+							     "   " << std::setw(20) << std::hex << utility->desc_value_to_name(desc_type_value) <<
+						             "   " << std::setw(16) << std::hex << desc_index << std::endl;
+					}
+				}
+			}
+
+			for(int j = 0; j < config_desc->get_stream_output_desc_count(); j++)
+			{
+				avdecc_lib::stream_output_descriptor *stream_output_desc = config_desc->get_stream_output_desc_by_index(j);
+				if (stream_output_desc)
+				{
+					is_clock_sync_source_set = stream_output_desc->get_stream_flags_clock_sync_source();
+					if(is_clock_sync_source_set)
+					{
+						desc_obj_name = stream_output_desc->get_object_name();
+						desc_type_value = stream_output_desc->get_descriptor_type();
+						desc_index = stream_output_desc->get_descriptor_index();
+						
+						std::cout << std::setw(8) << i << "   " << std::setw(20) << desc_obj_name <<
+							     "   " << std::setw(20) << std::hex << utility->desc_value_to_name(desc_type_value) <<
+						             "   " << std::setw(16) << std::hex << desc_index << std::endl;
+					}
+				}
 			}
 		}
 	}
@@ -608,6 +623,27 @@ int avdecc_cmd_line::cmd_log_level(uint32_t new_log_level)
 	return 0;
 }
 
+
+void avdecc_cmd_line::print_descriptor_type_index_name_row(avdecc_lib::descriptor_base &desc,
+															avdecc_lib::strings_descriptor &strings,
+															avdecc_lib::locale_descriptor &locale)
+{
+	std::cout << std::setw(20) << utility->desc_value_to_name(desc.get_descriptor_type());
+	std::cout << "   "<<  std::setw(16) << std::hex << desc.get_descriptor_index();
+	
+	uint8_t localized_desc_index = (desc.get_localized_description()) & 0x3;
+	if(localized_desc_index < locale.get_number_of_strings())
+	{
+		std::cout << "   " << std::setw(20) << std::hex << strings.get_string_by_index(localized_desc_index) << std::endl;
+	}
+	else
+	{
+		std::cout << "   " << std::setw(20) << std::hex << desc.get_object_name() << std::endl;
+	}
+}
+
+
+
 int avdecc_cmd_line::cmd_view_all()
 {
 	uint8_t *obj_name = NULL;
@@ -651,180 +687,89 @@ int avdecc_cmd_line::cmd_view_all()
 				}
 
 			case avdecc_lib::AEM_DESC_AUDIO_UNIT:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_audio_unit_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_audio_unit_desc_count(); j++)
 				{
-					avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = config_desc_ref->get_audio_unit_desc_by_index(index_j);
-					std::cout << std::setw(20) << utility->desc_value_to_name(audio_unit_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << audio_unit_desc_ref->get_descriptor_index();
-					
-					uint8_t localized_desc_index = (audio_unit_desc_ref->get_localized_description()) & 0x3;
-					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
-					{
-						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
-					}
-					else
-					{
-						std::cout << "   " << std::setw(20) << std::hex << audio_unit_desc_ref->get_object_name() << std::endl;
-					}
+					avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = config_desc_ref->get_audio_unit_desc_by_index(j);
+					print_descriptor_type_index_name_row(*audio_unit_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_STREAM_INPUT:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_stream_input_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_stream_input_desc_count(); j++)
 				{
-					avdecc_lib::stream_input_descriptor *stream_input_desc_ref = config_desc_ref->get_stream_input_desc_by_index(index_j);
-					std::cout << std::setw(20) << utility->desc_value_to_name(stream_input_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << stream_input_desc_ref->get_descriptor_index();
-					
-					uint8_t localized_desc_index = (stream_input_desc_ref->get_localized_description()) & 0x3;
-					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
-					{
-						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
-					}
-					else
-					{
-						std::cout << "   " << std::setw(20) << std::hex << stream_input_desc_ref->get_object_name() << std::endl;
-					}
+					avdecc_lib::stream_input_descriptor *stream_input_desc_ref = config_desc_ref->get_stream_input_desc_by_index(j);
+					print_descriptor_type_index_name_row(*stream_input_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_STREAM_OUTPUT:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_stream_output_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_stream_output_desc_count(); j++)
 				{
-					avdecc_lib::stream_output_descriptor *stream_output_desc_ref = config_desc_ref->get_stream_output_desc_by_index(index_j);
-					std::cout << std::setw(20) << utility->desc_value_to_name(stream_output_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << stream_output_desc_ref->get_descriptor_index();
-
-					uint8_t localized_desc_index = (stream_output_desc_ref->get_localized_description()) & 0x3;
-					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
-					{
-						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
-					}
-					else
-					{
-						std::cout << "   " << std::setw(20) << std::hex << stream_output_desc_ref->get_object_name() << std::endl;
-					}
+					avdecc_lib::stream_output_descriptor *stream_output_desc_ref = config_desc_ref->get_stream_output_desc_by_index(j);
+					print_descriptor_type_index_name_row(*stream_output_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_JACK_INPUT:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_jack_input_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_jack_input_desc_count(); j++)
 				{
-					avdecc_lib::jack_input_descriptor *jack_input_desc_ref = config_desc_ref->get_jack_input_desc_by_index(index_j);
-					std::cout << std::setw(20) << utility->desc_value_to_name(jack_input_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << jack_input_desc_ref->get_descriptor_index();
-				
-					uint8_t localized_desc_index = (jack_input_desc_ref->get_localized_description()) & 0x3;
-					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
-					{
-						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
-					}
-					else
-					{
-						std::cout << "   " << std::setw(20) << std::hex << jack_input_desc_ref->get_object_name() << std::endl;
-					}
+					avdecc_lib::jack_input_descriptor *jack_input_desc_ref = config_desc_ref->get_jack_input_desc_by_index(j);
+					print_descriptor_type_index_name_row(*jack_input_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_JACK_OUTPUT:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_jack_output_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_jack_output_desc_count(); j++)
 				{
-					avdecc_lib::jack_output_descriptor *jack_output_desc_ref = config_desc_ref->get_jack_output_desc_by_index(index_j);
-					std::cout << std::setw(20) << utility->desc_value_to_name(jack_output_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << jack_output_desc_ref->get_descriptor_index();
-								
-					uint8_t localized_desc_index = (jack_output_desc_ref->get_localized_description()) & 0x3;
-					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
-					{
-						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
-					}
-					else
-					{
-						std::cout << "   " << std::setw(20) << std::hex << jack_output_desc_ref->get_object_name() << std::endl;
-					}
+					avdecc_lib::jack_output_descriptor *jack_output_desc_ref = config_desc_ref->get_jack_output_desc_by_index(j);
+					print_descriptor_type_index_name_row(*jack_output_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_AVB_INTERFACE:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_avb_interface_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_avb_interface_desc_count(); j++)
 				{
-					avdecc_lib::avb_interface_descriptor *avb_interface_desc_ref = config_desc_ref->get_avb_interface_desc_by_index(index_j);
-					std::cout << std::setw(20) << utility->desc_value_to_name(avb_interface_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << avb_interface_desc_ref->get_descriptor_index();
-												
-					uint8_t localized_desc_index = (avb_interface_desc_ref->get_localized_description()) & 0x3;
-					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
-					{
-						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
-					}
-					else
-					{
-						std::cout << "   " << std::setw(20) << std::hex << avb_interface_desc_ref->get_object_name() << std::endl;
-					}
+					avdecc_lib::avb_interface_descriptor *avb_interface_desc_ref = config_desc_ref->get_avb_interface_desc_by_index(j);
+					print_descriptor_type_index_name_row(*avb_interface_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_CLOCK_SOURCE:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_clock_source_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_clock_source_desc_count(); j++)
 				{
-					avdecc_lib::clock_source_descriptor *clk_src_desc_ref = config_desc_ref->get_clock_source_desc_by_index(index_j);
-					std::cout << std::setw(20) << utility->desc_value_to_name(clk_src_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << clk_src_desc_ref->get_descriptor_index();
-																
-					uint8_t localized_desc_index = (clk_src_desc_ref->get_localized_description()) & 0x3;
-					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
-					{
-						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
-					}
-					else
-					{
-						std::cout << "   " << std::setw(20) << std::hex << clk_src_desc_ref->get_object_name() << std::endl;
-					}
+					avdecc_lib::clock_source_descriptor *clk_src_desc_ref = config_desc_ref->get_clock_source_desc_by_index(j);
+					print_descriptor_type_index_name_row(*clk_src_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_LOCALE:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_locale_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_locale_desc_count(); j++)
 				{
-					avdecc_lib::locale_descriptor *locale_def_ref = config_desc_ref->get_locale_desc_by_index(index_j);
+					avdecc_lib::locale_descriptor *locale_def_ref = config_desc_ref->get_locale_desc_by_index(j);
 					std::cout << std::setw(20) << utility->desc_value_to_name(locale_desc_ref->get_descriptor_type());
 					std::cout << "   "<<  std::setw(16) << std::hex << locale_desc_ref->get_descriptor_index();
 					std::cout << "   " << std::setw(20) << std::hex << locale_desc_ref->get_locale_identifier() << std::endl;
 				}
 
 			case avdecc_lib::AEM_DESC_STRINGS:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_strings_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_strings_desc_count(); j++)
 				{
-					avdecc_lib::strings_descriptor *strings_desc_ref = config_desc_ref->get_strings_desc_by_index(index_j);
-					std::cout << std::setw(20) << utility->desc_value_to_name(strings_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << strings_desc_ref->get_descriptor_index() << std::endl;
+					avdecc_lib::strings_descriptor *strings_desc_ref = config_desc_ref->get_strings_desc_by_index(j);
+					print_descriptor_type_index_name_row(*strings_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_AUDIO_CLUSTER:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_audio_cluster_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_audio_cluster_desc_count(); j++)
 				{
-					avdecc_lib::audio_cluster_descriptor *audio_cluster_desc_ref = config_desc_ref->get_audio_cluster_desc_by_index(index_j);
-					std::cout << std::setw(20) << utility->desc_value_to_name(audio_cluster_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << audio_cluster_desc_ref->get_descriptor_index() << std::endl;
+					avdecc_lib::audio_cluster_descriptor *audio_cluster_desc_ref = config_desc_ref->get_audio_cluster_desc_by_index(j);
+					print_descriptor_type_index_name_row(*audio_cluster_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_AUDIO_MAP:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_audio_map_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_audio_map_desc_count(); j++)
 				{
-					avdecc_lib::audio_map_descriptor *audio_map_desc_ref = config_desc_ref->get_audio_map_desc_by_index(index_j);
-					std::cout << std::setw(20) << utility->desc_value_to_name(audio_map_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << audio_map_desc_ref->get_descriptor_index() << std::endl;
+					avdecc_lib::audio_map_descriptor *audio_map_desc_ref = config_desc_ref->get_audio_map_desc_by_index(j);
+					print_descriptor_type_index_name_row(*audio_map_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_CLOCK_DOMAIN:
-				for(uint32_t index_j = 0; index_j < config_desc_ref->get_clock_domain_desc_count(); index_j++)
+				for(int j = 0; j < config_desc_ref->get_clock_domain_desc_count(); j++)
 				{
-					avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = config_desc_ref->get_clock_domain_desc_by_index(index_j);
-					std::cout << std::setw(20) << utility->desc_value_to_name(clk_domain_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << clk_domain_desc_ref->get_descriptor_index();
-																
-					uint8_t localized_desc_index = (clk_domain_desc_ref->get_localized_description()) & 0x3;
-					if(strings_desc_ref && locale_desc_ref && (localized_desc_index < locale_desc_ref->get_number_of_strings()))
-					{
-						std::cout << "   " << std::setw(20) << std::hex << strings_desc_ref->get_string_by_index(localized_desc_index) << std::endl;
-					}
-					else
-					{
-						std::cout << "   " << std::setw(20) << std::hex << clk_domain_desc_ref->get_object_name() << std::endl;
-					}
+					avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = config_desc_ref->get_clock_domain_desc_by_index(j);
+					print_descriptor_type_index_name_row(*clk_domain_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 				break;

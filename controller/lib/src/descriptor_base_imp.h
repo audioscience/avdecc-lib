@@ -152,6 +152,16 @@ namespace avdecc_lib
 		 * Process a GET_NAME response for the GET_NAME command.
 		 */
 		virtual int proc_get_name_resp(uint8_t *base_pointer, uint16_t frame_len);
+
+		/**
+		 * \return The localized description of the descriptor
+		 */
+		virtual uint16_t STDCALL get_localized_description();
+
+		/**
+		 * \return The name of the descriptor object.
+		 */
+		virtual uint8_t * STDCALL get_object_name();
 	};
 }
 
