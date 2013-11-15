@@ -63,7 +63,7 @@ namespace avdecc_lib
 		/**
 		 * Get the descriptor index of the Stream Port Input descriptor object.
 		 */
-		uint16_t STDCALL get_descriptor_index();
+		uint16_t STDCALL get_descriptor_index() const;
 
 		/**
 		 * Get the clock domain index of the Stream Port Input descriptor object.
