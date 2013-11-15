@@ -39,12 +39,12 @@ namespace avdecc_lib
 {
 	configuration_descriptor_imp::configuration_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
 	{
-		desc_config_read_returned = jdksavdecc_descriptor_configuration_read(&config_desc, frame, pos, frame_len);
+		config_desc_read_returned = jdksavdecc_descriptor_configuration_read(&config_desc, frame, pos, frame_len);
 
-		if(desc_config_read_returned < 0)
+		if(config_desc_read_returned < 0)
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_config_read error");
-			assert(desc_config_read_returned >= 0);
+			assert(config_desc_read_returned >= 0);
 		}
 
 		desc_type_vector_init(frame, pos);
@@ -235,6 +235,16 @@ namespace avdecc_lib
 		add_or_replace_descriptor_and_sort(d, strings_desc_vec);
 	}
 
+	void configuration_descriptor_imp::store_stream_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
+	{
+		stream_port_input_desc_vec.push_back(new stream_port_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
+	}
+
+	void configuration_descriptor_imp::store_stream_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
+	{
+		stream_port_output_desc_vec.push_back(new stream_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
+	}
+
 	void configuration_descriptor_imp::store_audio_cluster_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
 		audio_cluster_descriptor_imp *d = new audio_cluster_descriptor_imp(end_station_obj, frame, pos, frame_len);
@@ -295,6 +305,16 @@ namespace avdecc_lib
 	uint32_t STDCALL configuration_descriptor_imp::get_strings_desc_count()
 	{
 		return strings_desc_vec.size();
+	}
+
+	uint32_t STDCALL configuration_descriptor_imp::get_stream_port_input_desc_count()
+	{
+		return stream_port_input_desc_vec.size();
+	}
+
+	uint32_t STDCALL configuration_descriptor_imp::get_stream_port_output_desc_count()
+	{
+		return stream_port_output_desc_vec.size();
 	}
 
 	uint32_t STDCALL configuration_descriptor_imp::get_audio_cluster_desc_count()
@@ -451,6 +471,38 @@ namespace avdecc_lib
 		else
 		{
 			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_strings_desc_by_index error");
+		}
+
+		return NULL;
+	}
+
+	stream_port_input_descriptor * STDCALL configuration_descriptor_imp::get_stream_port_input_desc_by_index(uint32_t stream_port_input_desc_index)
+	{
+		bool is_valid = (stream_port_input_desc_index < stream_port_input_desc_vec.size());
+
+		if(is_valid)
+		{
+			return stream_port_input_desc_vec.at(stream_port_input_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_port_input_desc_by_index error");
+		}
+
+		return NULL;
+	}
+
+	stream_port_output_descriptor * STDCALL configuration_descriptor_imp::get_stream_port_output_desc_by_index(uint32_t stream_port_output_desc_index)
+	{
+		bool is_valid = (stream_port_output_desc_index < stream_port_output_desc_vec.size());
+
+		if(is_valid)
+		{
+			return stream_port_output_desc_vec.at(stream_port_output_desc_index);
+		}
+		else
+		{
+			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_port_output_desc_by_index error");
 		}
 
 		return NULL;

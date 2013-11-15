@@ -30,7 +30,7 @@
 #pragma once
 #if defined _MSC_VER
 #pragma warning(disable : 4250) // Disable warning message C4250: inherits via dominance
- #endif
+#endif
 
 #ifndef _AVDECC_CONTROLLER_LIB_DESCRIPTOR_BASE_IMP_H_
 #define _AVDECC_CONTROLLER_LIB_DESCRIPTOR_BASE_IMP_H_
@@ -53,7 +53,7 @@ namespace avdecc_lib
 	public:
 		/**
 		 * Constructor for base descriptor object.
-		 * 
+		 *
 		 * \param base A pointer to the base End Station object.
 		 */
 		descriptor_base_imp(end_station_imp *base);
@@ -92,7 +92,7 @@ namespace avdecc_lib
 		 * Process a ACQURE_ENTITY response for the ACQURE_ENTITY command.
 		 */
 		int default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp, void *&notification_id,
-					             const uint8_t *frame, uint16_t frame_len, int &status);
+		                                     const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
@@ -116,7 +116,7 @@ namespace avdecc_lib
 		 * Process a LOCK ENTITY response for the LOCK ENTITY command.
 		 */
 		int default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp, void *&notification_id,
-					          const uint8_t *frame, uint16_t frame_len, int &status);
+		                                  const uint8_t *frame, uint16_t frame_len, int &status);
 
 		/**
 		 * Send a SET_NAME command to change the value of a name field within a descriptor. For descriptors with multiple names, this
@@ -127,7 +127,7 @@ namespace avdecc_lib
 		 * \param config_index The descriptor index of the configuration, which contains the descriptor whose name is being set.
 		 *		       If the descriptor type field is either ENTITY or CONFIGURATION, then this field is set to 0.
 		 * \param new_name The new name to be set. The name does not contain a trailing NULL, but if the name is less than 64 bytes
-		 *		   in length, then it is zero padded. 
+		 *		   in length, then it is zero padded.
 		 */
 		virtual int STDCALL send_set_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index, char * new_name);
 

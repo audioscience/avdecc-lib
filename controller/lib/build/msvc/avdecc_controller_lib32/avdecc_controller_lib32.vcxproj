@@ -103,6 +103,8 @@
     <ClInclude Include="..\..\..\include\net_interface.h" />
     <ClInclude Include="..\..\..\include\stream_input_descriptor.h" />
     <ClInclude Include="..\..\..\include\stream_output_descriptor.h" />
+    <ClInclude Include="..\..\..\include\stream_port_input_descriptor.h" />
+    <ClInclude Include="..\..\..\include\stream_port_output_descriptor.h" />
     <ClInclude Include="..\..\..\include\strings_descriptor.h" />
     <ClInclude Include="..\..\..\include\system.h" />
     <ClInclude Include="..\..\..\include\util.h" />
@@ -136,6 +138,8 @@
     <ClInclude Include="..\..\..\src\notification.h" />
     <ClInclude Include="..\..\..\src\stream_input_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\stream_output_descriptor_imp.h" />
+    <ClInclude Include="..\..\..\src\stream_port_input_descriptor_imp.h" />
+    <ClInclude Include="..\..\..\src\stream_port_output_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\strings_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\system_tx_queue.h" />
     <ClInclude Include="..\..\..\src\timer.h" />
@@ -171,6 +175,8 @@
     <ClCompile Include="..\..\..\src\notification.cpp" />
     <ClCompile Include="..\..\..\src\stream_input_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\stream_output_descriptor_imp.cpp" />
+    <ClCompile Include="..\..\..\src\stream_port_input_descriptor_imp.cpp" />
+    <ClCompile Include="..\..\..\src\stream_port_output_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\strings_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\timer.cpp" />
     <ClCompile Include="..\..\..\src\util_imp.cpp" />

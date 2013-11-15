@@ -33,6 +33,7 @@
 
 #include <stdint.h>
 #include "build.h"
+#include "descriptor_base.h"
 
 namespace avdecc_lib
 {

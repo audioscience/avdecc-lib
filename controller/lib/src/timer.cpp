@@ -56,7 +56,8 @@ namespace avdecc_lib
 		struct timespec tp;
 		avdecc_lib_os::aTimestamp time;
 
-		if ( clock_getres( CLOCK_MONOTONIC, &tp ) != 0 ) {
+		if ( clock_getres( CLOCK_MONOTONIC, &tp ) != 0 )
+		{
 			printf("Timer not supported in asios_Clock_monotonic(), asios.c\n");
 		}
 

@@ -75,7 +75,7 @@ namespace avdecc_lib
 		 * \param config_index The descriptor index of the configuration, which contains the descriptor whose name is being set.
 		 *		       If the descriptor type field is either ENTITY or CONFIGURATION, then this field is set to 0.
 		 * \param new_name The new name to be set. The name does not contain a trailing NULL, but if the name is less than 64 bytes
-		 *		   in length, then it is zero padded. 
+		 *		   in length, then it is zero padded.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index, char * new_name) = 0;
 

@@ -254,7 +254,7 @@ namespace avdecc_lib
 		 * Send a SET_STREAM_INFO command with a notification id to change the current values of the dynamic information of
 		 * the stream, such as the msrp_accumulated_latency, stream ID, and destination MAC.
 		 *
-		 * \param notification_id A void pointer to the unique identifier associated with the command. 
+		 * \param notification_id A void pointer to the unique identifier associated with the command.
 		 * \param new_stream_info_field The new field information to be set to for a stream.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_info_cmd(void *notification_id, void *new_stream_info_field) = 0;

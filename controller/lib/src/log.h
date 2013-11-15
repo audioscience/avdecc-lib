@@ -61,14 +61,14 @@ namespace avdecc_lib
 		struct log_data log_buf[LOG_BUF_COUNT];
 
 	public:
-		log(); 
+		log();
 
 		~log();
 
 		/**
 		 * Update the base log level for messages to be logged by the logging callback.
 		 */
-		void set_log_level(int32_t new_log_level); 
+		void set_log_level(int32_t new_log_level);
 
 		/**
 		 * AVDECC LIB modules call this function for logging purposes.

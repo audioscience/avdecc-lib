@@ -68,8 +68,8 @@ namespace avdecc_lib
 	{
 		uint64_t mac_guid;
 		mac_guid = ((net_interface_ref->get_mac() & UINT64_C(0xFFFFFF000000)) << 16) |
-			    UINT64_C(0x000000FFFF000000) |
-			    (net_interface_ref->get_mac() & UINT64_C(0xFFFFFF));
+		           UINT64_C(0x000000FFFF000000) |
+		           (net_interface_ref->get_mac() & UINT64_C(0xFFFFFF));
 
 		return jdksavdecc_eui64_get(&mac_guid, 0);
 	}
@@ -83,8 +83,8 @@ namespace avdecc_lib
 		/*************************************** Ethernet Frame ***************************************/
 		ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
 		utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
-//		ether_frame->src_address = src_mac_addr;
-//		ether_frame->dest_address = get_dest_addr();
+		//		ether_frame->src_address = src_mac_addr;
+		//		ether_frame->dest_address = get_dest_addr();
 		ether_frame->length = ADP_FRAME_LEN; // Length of ADP packet is 82 bytes
 
 		/********************* Fill frame payload with Ethernet frame information *****************/

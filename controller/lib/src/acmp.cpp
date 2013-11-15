@@ -39,7 +39,7 @@
 
 namespace avdecc_lib
 {
-	static int acmp_timeouts_ms[7] = 
+	static int acmp_timeouts_ms[7] =
 	{
 		2000, // JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_TX_COMMAND (0)
 		200,  // JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_TX_COMMAND (2)
@@ -62,10 +62,10 @@ namespace avdecc_lib
 	 * Transmit an ACMP Command.
 	 */
 	void acmp::tx_cmd(
-		void *notification_id,
-		bool notification_flag,
-		struct jdksavdecc_frame *ether_frame,
-		bool resend)
+	        void *notification_id,
+	        bool notification_flag,
+	        struct jdksavdecc_frame *ether_frame,
+	        bool resend)
 	{
 		int inflight_index;
 		bool is_inflight;
@@ -87,10 +87,10 @@ namespace avdecc_lib
 			int timeout_ms = acmp_timeouts_ms[msg_type];
 
 			inflight in_flight = inflight(ether_frame,
-						seq_id,
-						timeout_ms,
-						notification_id,
-						notification_flag);
+			                              seq_id,
+			                              timeout_ms,
+			                              notification_id,
+			                              notification_flag);
 
 			in_flight.start_timer();
 			inflight_cmds.push_back(in_flight);
@@ -107,8 +107,8 @@ namespace avdecc_lib
 
 		//uint16_t seq_id = jdksavdecc_uint16_get(ether_frame->payload, aecp::SEQ_ID_POS);
 
-		std::vector<inflight>::iterator j = 
-			std::find_if(inflight_cmds.begin(), inflight_cmds.end(), SeqIdComp(seq_id));
+		std::vector<inflight>::iterator j =
+		        std::find_if(inflight_cmds.begin(), inflight_cmds.end(), SeqIdComp(seq_id));
 
 		if(j != inflight_cmds.end())	// found?
 		{

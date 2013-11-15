@@ -46,6 +46,8 @@ namespace avdecc_lib
 	class clock_source_descriptor;
 	class locale_descriptor;
 	class strings_descriptor;
+	class stream_port_input_descriptor;
+	class stream_port_output_descriptor;
 	class audio_cluster_descriptor;
 	class audio_map_descriptor;
 	class clock_domain_descriptor;
@@ -134,6 +136,16 @@ namespace avdecc_lib
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_strings_desc_count() = 0;
 
 		/**
+		 * \return The number of Stream Port Input descriptors present in the current Configuration.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_port_input_desc_count() = 0;
+
+		/**
+		 * \return The number of Stream Port Output descriptors present in the current Configuration.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_port_output_desc_count() = 0;
+
+		/**
 		 * \return The number of Audio Cluster descriptors present in the current Configuration.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_audio_cluster_desc_count() = 0;
@@ -192,6 +204,16 @@ namespace avdecc_lib
 		 * \return The corresponding STRINGS descriptor object by index.
 		 */
 		AVDECC_CONTROLLER_LIB32_API virtual strings_descriptor * STDCALL get_strings_desc_by_index(uint32_t strings_desc_index) = 0;
+
+		/**
+		 * \return The corresponding STREAM PORT INPUT descriptor object by index.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual stream_port_input_descriptor * STDCALL get_stream_port_input_desc_by_index(uint32_t stream_port_input_desc_index) = 0;
+
+		/**
+		 * \return The corresponding STREAM PORT OUTPUT descriptor object by index.
+		 */
+		AVDECC_CONTROLLER_LIB32_API virtual stream_port_output_descriptor * STDCALL get_stream_port_output_desc_by_index(uint32_t stream_port_output_desc_index) = 0;
 
 		/**
 		 * \return The corresponding AUDIO CLUSTER descriptor object by index.

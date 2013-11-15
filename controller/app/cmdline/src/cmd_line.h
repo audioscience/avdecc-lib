@@ -38,7 +38,7 @@
 #include "enumeration.h"
 #include "cmd_line_help.h"
 
- #include "locale_descriptor.h"
+#include "locale_descriptor.h"
 #include "strings_descriptor.h"
 
 class avdecc_cmd_line
@@ -81,8 +81,8 @@ private:
 	void cmd_line_help_init();
 
 	void print_descriptor_type_index_name_row(avdecc_lib::descriptor_base &desc,
-															avdecc_lib::strings_descriptor &strings,
-															avdecc_lib::locale_descriptor &locale);
+	                                          avdecc_lib::strings_descriptor &strings,
+	                                          avdecc_lib::locale_descriptor &locale);
 
 public:
 
@@ -177,7 +177,7 @@ public:
 	int cmd_entity_avail();
 
 	/**
-         * Send a CONTROLLER_AVAILABLE command to determine if an AVDECC Controller is still alive.
+	 * Send a CONTROLLER_AVAILABLE command to determine if an AVDECC Controller is still alive.
 	 */
 	int cmd_controller_avail();
 
