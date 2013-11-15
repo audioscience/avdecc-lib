@@ -76,7 +76,7 @@ namespace avdecc_lib
 		}
 	}
 
-	uint16_t STDCALL audio_unit_descriptor_imp::get_descriptor_index()
+	uint16_t STDCALL audio_unit_descriptor_imp::get_descriptor_index() const
 	{
 		return audio_unit_desc.descriptor_index;
 	}

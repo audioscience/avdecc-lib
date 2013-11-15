@@ -52,7 +52,7 @@ namespace avdecc_lib
 		return strings_desc.descriptor_type;
 	}
 
-	uint16_t STDCALL strings_descriptor_imp::get_descriptor_index()
+	uint16_t STDCALL strings_descriptor_imp::get_descriptor_index() const
 	{
 		return strings_desc.descriptor_index;
 	}

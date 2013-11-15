@@ -90,7 +90,7 @@ namespace avdecc_lib
 		/**
 		 * Get the descriptor index of the Stream Input descriptor object.
 		 */
-		uint16_t STDCALL get_descriptor_index();
+		uint16_t STDCALL get_descriptor_index() const;
 
 		/**
 		 * Get the name of the Stream Input descriptor object.

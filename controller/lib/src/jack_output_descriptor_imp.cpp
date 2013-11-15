@@ -60,7 +60,7 @@ namespace avdecc_lib
 		return jack_output_desc.descriptor_type;
 	}
 
-	uint16_t STDCALL jack_output_descriptor_imp::get_descriptor_index()
+	uint16_t STDCALL jack_output_descriptor_imp::get_descriptor_index() const
 	{
 		return jack_output_desc.descriptor_index;
 	}

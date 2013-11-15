@@ -54,7 +54,7 @@ namespace avdecc_lib
 		return audio_map_desc.descriptor_type;
 	}
 
-	uint16_t STDCALL audio_map_descriptor_imp::get_descriptor_index()
+	uint16_t STDCALL audio_map_descriptor_imp::get_descriptor_index() const
 	{
 		assert(audio_map_desc.descriptor_index == 0);
 		return audio_map_desc.descriptor_index;
