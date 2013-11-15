@@ -132,6 +132,11 @@ public:
 	int cmd_view_all();
 
 	/**
+	 * Display all the descriptors with details in the end station.
+	 */
+	int cmd_view_details(uint32_t end_station_index);
+
+	/**
 	 * Display information for the specified descriptor using the current end station, entity, and configuration setting.
 	 */
 	int cmd_view_descriptor(std::string desc_name, uint16_t desc_index);
