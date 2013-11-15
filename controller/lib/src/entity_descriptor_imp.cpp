@@ -54,7 +54,7 @@ namespace avdecc_lib
 		}
 	}
 
-	uint16_t STDCALL entity_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL entity_descriptor_imp::get_descriptor_type() const
 	{
 		assert(entity_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_ENTITY);
 		return entity_desc.descriptor_type;

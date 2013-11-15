@@ -46,7 +46,7 @@ namespace avdecc_lib
 
 	locale_descriptor_imp::~locale_descriptor_imp() {}
 
-	uint16_t STDCALL locale_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL locale_descriptor_imp::get_descriptor_type() const
 	{
 		assert(locale_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_LOCALE);
 		return locale_desc.descriptor_type;

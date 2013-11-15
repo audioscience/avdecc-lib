@@ -157,7 +157,6 @@ int main()
 			{
 				std::cout << "Invalid Command\n" << std::endl;
 				avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
-
 			}
 		}
 		else if(input_argv.at(0) == "list")
@@ -300,7 +299,7 @@ int main()
 					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
-			else if((input_argv.size() == 4) && input_argv.at(1) == "desc")
+			else if((input_argv.size() == 4) && input_argv.at(1) == "descriptor")
 			{
 				uint16_t desc_index = 0x0;
 

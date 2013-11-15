@@ -67,7 +67,7 @@ namespace avdecc_lib
 		/**
 		 * Get the descriptor type of the Clock Domain descriptor object.
 		 */
-		uint16_t STDCALL get_descriptor_type();
+		uint16_t STDCALL get_descriptor_type() const;
 
 		/**
 		 * Get the descriptor index of the Clock Domain descriptor object.

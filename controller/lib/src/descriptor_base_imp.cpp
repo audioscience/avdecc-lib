@@ -57,7 +57,7 @@ namespace avdecc_lib
 	}
 
 
-	uint16_t STDCALL descriptor_base_imp::get_descriptor_type()
+	uint16_t STDCALL descriptor_base_imp::get_descriptor_type() const
 	{
 		return 0;
 	}

@@ -166,9 +166,9 @@ void avdecc_cmd_line::cmd_line_help_init()
 	                                              "To see a list of valid End Stations, enter \"list\" command."
 	                                             ));
 
-	cmd_line_help_vec.push_back(new cmd_line_help("view desc",
+	cmd_line_help_vec.push_back(new cmd_line_help("view descriptor",
 
-	                                              "view desc [d_t] [d_i]\n" \
+	                                              "view descriptor [d_t] [d_i]\n" \
 	                                              "Display information for the specified descriptor using the current setting.\n\n" \
 	                                              "\nParameters"
 	                                              "\n\t d_t stands for descriptor type and is a string." \
@@ -176,7 +176,6 @@ void avdecc_cmd_line::cmd_line_help_init()
 	                                              "To see a list of valid descriptor types and corresponding indexes, enter\n" \
 	                                              "\"view all\" command."
 	                                             ));
-
 
 	cmd_line_help_vec.push_back(new cmd_line_help("connect",
 
@@ -532,8 +531,8 @@ int avdecc_cmd_line::cmd_list_clock_sync_source()
 	uint32_t stream_output_desc_count = 0;
 	bool is_clock_sync_source_set = false;
 
-	std::cout << "\n" << std::setw(8) << "End Station" << "   " << "Descriptor Name" << std::setw(8) << "" <<
-	          std::setw(20) << "Descriptor Type" << "   " << std::setw(16) << "Descriptor Index" << std::endl;
+	std::cout << "\n" << "End Station" << "  " << std::setw(20) << "Descriptor Name" << "  " <<
+	          std::setw(18) << "Descriptor Type" << "  " << std::setw(18) << "Descriptor Index" << std::endl;
 	std::cout << "------------------------------------------------------------------------------" << std::endl;
 
 	for(int i = 0; i < controller_ref->get_end_station_count(); i++)
@@ -554,9 +553,9 @@ int avdecc_cmd_line::cmd_list_clock_sync_source()
 						desc_type_value = stream_input_desc->get_descriptor_type();
 						desc_index = stream_input_desc->get_descriptor_index();
 
-						std::cout << std::setw(8) << i << "   " << std::setw(20) << desc_obj_name <<
-						          "   " << std::setw(20) << utility->desc_value_to_name(desc_type_value) <<
-						          "   " << std::setw(16) << std::dec << desc_index << std::endl;
+						std::cout << std::setw(8) << i << std::setw(5) << "" << std::setw(20) << desc_obj_name <<
+						          "  " << std::setw(18) << utility->desc_value_to_name(desc_type_value) <<
+						          "  " << std::setw(16) << std::dec << desc_index << std::endl;
 					}
 				}
 			}
@@ -573,9 +572,9 @@ int avdecc_cmd_line::cmd_list_clock_sync_source()
 						desc_type_value = stream_output_desc->get_descriptor_type();
 						desc_index = stream_output_desc->get_descriptor_index();
 
-						std::cout << std::setw(8) << i << "   " << std::setw(20) << desc_obj_name <<
-						          "   " << std::setw(20) << std::hex << utility->desc_value_to_name(desc_type_value) <<
-						          "   " << std::setw(16) << std::dec << desc_index << std::endl;
+						std::cout << std::setw(8) << i << std::setw(5) << "" << std::setw(20) << desc_obj_name <<
+						          "  " << std::setw(18) << std::hex << utility->desc_value_to_name(desc_type_value) <<
+						          "  " << std::setw(16) << std::dec << desc_index << std::endl;
 					}
 				}
 			}
@@ -644,12 +643,12 @@ void avdecc_cmd_line::print_desc_type_index_name_row(avdecc_lib::descriptor_base
                                                      avdecc_lib::strings_descriptor &strings,
                                                      avdecc_lib::locale_descriptor &locale)
 {
-	uint8_t localized_string_max_index = 7;
+	const uint8_t localized_string_max_index = 7;
 
 	std::cout << std::setw(20) << utility->desc_value_to_name(desc.get_descriptor_type());
 	std::cout << "   "<<  std::setw(16) << std::dec << desc.get_descriptor_index();
 
-	uint8_t localized_desc_index = (desc.get_localized_description()) & 0x7; // The 3-bit index subfield defining the index of the string within the STRINGS descriptor
+	uint8_t localized_desc_index = (desc.get_localized_description()) & 0x7; // The 3 bit index subfield defining the index of the string within the STRINGS descriptor
 	if(localized_desc_index < localized_string_max_index)
 	{
 		std::cout << "   " << std::setw(20) << std::hex << strings.get_string_by_index(localized_desc_index) << std::endl;
@@ -760,12 +759,12 @@ int avdecc_cmd_line::cmd_view_all()
 					std::cout << "   " << std::setw(20) << std::hex << locale_desc_ref->get_locale_identifier() << std::endl;
 				}
 
-			case avdecc_lib::AEM_DESC_STRINGS:
-				for(int j = 0; j < config_desc_ref->get_strings_desc_count(); j++)
-				{
-					avdecc_lib::strings_descriptor *strings_desc_ref = config_desc_ref->get_strings_desc_by_index(j);
-					print_desc_type_index_name_row(*strings_desc_ref, *strings_desc_ref, *locale_desc_ref);
-				}
+			//case avdecc_lib::AEM_DESC_STRINGS:
+			//	for(int j = 0; j < config_desc_ref->get_strings_desc_count(); j++)
+			//	{
+			//		avdecc_lib::strings_descriptor *strings_desc_ref = config_desc_ref->get_strings_desc_by_index(j);
+			//		print_desc_type_index_name_row(*strings_desc_ref, *strings_desc_ref, *locale_desc_ref);
+			//	}
 
 			case avdecc_lib::AEM_DESC_STREAM_PORT_INPUT:
 				for(int j = 0; j < config_desc_ref->get_stream_port_input_desc_count(); j++)

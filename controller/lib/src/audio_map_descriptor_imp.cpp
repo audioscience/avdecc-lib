@@ -47,7 +47,7 @@ namespace avdecc_lib
 
 	audio_map_descriptor_imp::~audio_map_descriptor_imp() {}
 
-	uint16_t STDCALL audio_map_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL audio_map_descriptor_imp::get_descriptor_type() const
 	{
 		assert(audio_map_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AUDIO_MAP);
 		return audio_map_desc.descriptor_type;

@@ -75,7 +75,7 @@ namespace avdecc_lib
 		stream_flags.tertiary_back_up_valid = stream_input_desc.stream_flags >> 9 & 0x01;
 	}
 
-	uint16_t STDCALL stream_input_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL stream_input_descriptor_imp::get_descriptor_type() const
 	{
 		assert(stream_input_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT);
 		return stream_input_desc.descriptor_type;
@@ -159,7 +159,6 @@ namespace avdecc_lib
 	const char * STDCALL stream_input_descriptor_imp::get_current_format()
 	{
 		uint64_t current_format = jdksavdecc_uint64_get(&stream_input_desc.current_format, 0);
-
 		return utility->ieee1722_format_value_to_name(current_format);
 	}
 

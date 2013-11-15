@@ -75,7 +75,7 @@ namespace avdecc_lib
 		stream_flags.tertiary_back_up_valid = stream_output_desc.stream_flags >> 9 & 0x01;
 	}
 
-	uint16_t STDCALL stream_output_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL stream_output_descriptor_imp::get_descriptor_type() const
 	{
 		assert(stream_output_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT);
 		return stream_output_desc.descriptor_type;

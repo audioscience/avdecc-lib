@@ -63,7 +63,7 @@ namespace avdecc_lib
 		/**
 		 * Get the descriptor type of a descriptor object.
 		 */
-		virtual uint16_t STDCALL get_descriptor_type();
+		virtual uint16_t STDCALL get_descriptor_type() const;
 
 		/**
 		 * Get the descriptor index of a descriptor object.

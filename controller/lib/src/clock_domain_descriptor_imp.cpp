@@ -56,7 +56,7 @@ namespace avdecc_lib
 
 	clock_domain_descriptor_imp::~clock_domain_descriptor_imp() {}
 
-	uint16_t STDCALL clock_domain_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL clock_domain_descriptor_imp::get_descriptor_type() const
 	{
 		assert(clock_domain_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN);
 		return clock_domain_desc.descriptor_type;

@@ -75,7 +75,7 @@ namespace avdecc_lib
 		std::for_each(clock_domain_desc_vec.begin(), clock_domain_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
 	}
 
-	uint16_t STDCALL configuration_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL configuration_descriptor_imp::get_descriptor_type() const
 	{
 		assert(config_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_CONFIGURATION);
 		return config_desc.descriptor_type;

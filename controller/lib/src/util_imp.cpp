@@ -331,7 +331,7 @@ namespace avdecc_lib
 			p++;
 		}
 
-		return p->str;
+		return ((p->str == "UNKNOWN") ? p->str : std::to_string(format).c_str());
 	}
 
 	void util_imp::convert_uint64_to_eui48(const uint64_t value, uint8_t new_value[6])

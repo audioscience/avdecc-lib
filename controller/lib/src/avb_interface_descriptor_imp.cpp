@@ -46,7 +46,7 @@ namespace avdecc_lib
 
 	avb_interface_descriptor_imp::~avb_interface_descriptor_imp() {}
 
-	uint16_t STDCALL avb_interface_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL avb_interface_descriptor_imp::get_descriptor_type() const
 	{
 		assert(avb_interface_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE);
 		return avb_interface_desc.descriptor_type;

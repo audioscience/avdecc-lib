@@ -46,7 +46,7 @@ namespace avdecc_lib
 
 	clock_source_descriptor_imp::~clock_source_descriptor_imp() {}
 
-	uint16_t STDCALL clock_source_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL clock_source_descriptor_imp::get_descriptor_type() const
 	{
 		assert(clock_source_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE);
 		return clock_source_desc.descriptor_type;

@@ -54,7 +54,7 @@ namespace avdecc_lib
 		jack_flags.captive = jack_output_desc.jack_flags >> 2 & 0x01;
 	}
 
-	uint16_t STDCALL jack_output_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL jack_output_descriptor_imp::get_descriptor_type() const
 	{
 		assert(jack_output_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT);
 		return jack_output_desc.descriptor_type;

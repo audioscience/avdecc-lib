@@ -43,7 +43,7 @@ namespace avdecc_lib
 		/**
 		 * \return The descriptor type of a descriptor object.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_type() = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_type() const = 0;
 
 		/**
 		 * \return The descriptor index of a descriptor object.

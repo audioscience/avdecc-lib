@@ -57,7 +57,7 @@ namespace avdecc_lib
 
 	audio_unit_descriptor_imp::~audio_unit_descriptor_imp() {}
 
-	uint16_t STDCALL audio_unit_descriptor_imp::get_descriptor_type()
+	uint16_t STDCALL audio_unit_descriptor_imp::get_descriptor_type() const
 	{
 		assert(audio_unit_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT);
 		return audio_unit_desc.descriptor_type;

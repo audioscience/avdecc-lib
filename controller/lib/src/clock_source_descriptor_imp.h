@@ -58,7 +58,7 @@ namespace avdecc_lib
 		/**
 		 * Get the descriptor type of the Clock Source descriptor object.
 		 */
-		uint16_t STDCALL get_descriptor_type();
+		uint16_t STDCALL get_descriptor_type() const;
 
 		/**
 		 * Get the descriptor index of the Clock Source descriptor object.
