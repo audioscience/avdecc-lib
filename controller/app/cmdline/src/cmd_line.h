@@ -80,7 +80,7 @@ private:
 
 	void cmd_line_help_init();
 
-	void print_descriptor_type_index_name_row(avdecc_lib::descriptor_base &desc,
+	void print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
 	                                          avdecc_lib::strings_descriptor &strings,
 	                                          avdecc_lib::locale_descriptor &locale);
 
