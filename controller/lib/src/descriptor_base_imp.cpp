@@ -27,6 +27,7 @@
  * Descriptor base implementation
  */
 
+#include <iostream>
 #include "enumeration.h"
 #include "log_imp.h"
 #include "adp.h"
@@ -45,12 +46,23 @@ namespace avdecc_lib
 
 	descriptor_base_imp::~descriptor_base_imp() {}
 
+	bool operator== (const descriptor_base_imp &n1, const descriptor_base_imp &n2)
+	{
+		return n1.get_descriptor_index() == n2.get_descriptor_index();
+	}
+
+	bool operator< (const descriptor_base_imp &n1, const descriptor_base_imp &n2)
+	{
+		return n1.get_descriptor_index() < n2.get_descriptor_index();
+	}
+
+
 	uint16_t STDCALL descriptor_base_imp::get_descriptor_type()
 	{
 		return 0;
 	}
 
-	uint16_t STDCALL descriptor_base_imp::get_descriptor_index()
+	uint16_t STDCALL descriptor_base_imp::get_descriptor_index() const
 	{
 		return 0;
 	}
