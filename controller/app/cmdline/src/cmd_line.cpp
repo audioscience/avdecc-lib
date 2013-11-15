@@ -541,8 +541,8 @@ int avdecc_cmd_line::cmd_list_clock_sync_source()
 						desc_index = stream_input_desc->get_descriptor_index();
 
 						std::cout << std::setw(8) << i << "   " << std::setw(20) << desc_obj_name <<
-						          "   " << std::setw(20) << std::hex << utility->desc_value_to_name(desc_type_value) <<
-						          "   " << std::setw(16) << std::hex << desc_index << std::endl;
+						          "   " << std::setw(20) << utility->desc_value_to_name(desc_type_value) <<
+						          "   " << std::setw(16) << std::dec << desc_index << std::endl;
 					}
 				}
 			}
@@ -561,7 +561,7 @@ int avdecc_cmd_line::cmd_list_clock_sync_source()
 
 						std::cout << std::setw(8) << i << "   " << std::setw(20) << desc_obj_name <<
 						          "   " << std::setw(20) << std::hex << utility->desc_value_to_name(desc_type_value) <<
-						          "   " << std::setw(16) << std::hex << desc_index << std::endl;
+						          "   " << std::setw(16) << std::dec << desc_index << std::endl;
 					}
 				}
 			}
@@ -631,7 +631,7 @@ void avdecc_cmd_line::print_descriptor_type_index_name_row(avdecc_lib::descripto
                                                            avdecc_lib::locale_descriptor &locale)
 {
 	std::cout << std::setw(20) << utility->desc_value_to_name(desc.get_descriptor_type());
-	std::cout << "   "<<  std::setw(16) << std::hex << desc.get_descriptor_index();
+	std::cout << "   "<<  std::setw(16) << std::dec << desc.get_descriptor_index();
 
 	uint8_t localized_desc_index = (desc.get_localized_description()) & 0x3;
 	if(localized_desc_index < locale.get_number_of_strings())
@@ -674,14 +674,14 @@ int avdecc_cmd_line::cmd_view_all()
 			case avdecc_lib::AEM_DESC_ENTITY:
 				{
 					std::cout << std::setw(20) << std::hex << utility->desc_value_to_name(entity_desc_ref->get_descriptor_type());
-					std::cout << "   " << std::setw(16) << std::hex << entity_desc_ref->get_descriptor_index();
+					std::cout << "   " << std::setw(16) << std::dec << entity_desc_ref->get_descriptor_index();
 					std::cout << "   " << std::setw(20) << std::hex << entity_desc_ref->get_entity_name() << std::endl;
 				}
 
 			case avdecc_lib::AEM_DESC_CONFIGURATION:
 				{
 					std::cout << std::setw(20) << utility->desc_value_to_name(config_desc_ref->get_descriptor_type());
-					std::cout << "   "<<  std::setw(16) << std::hex << config_desc_ref->get_descriptor_index();
+					std::cout << "   " << std::setw(16) << std::dec << config_desc_ref->get_descriptor_index();
 					std::cout << "   " << std::setw(20) << std::hex << config_desc_ref->get_object_name() << std::endl;
 					std::cout << "\nTop Level Descriptors" << std::endl;
 				}
@@ -990,7 +990,7 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 	uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
 
 	std::cout << "\ndescriptor_type: " << utility->desc_value_to_name(desc_type_value);
-	std::cout << "\ndescriptor_index: 0x" << std::hex << desc_index;
+	std::cout << "\ndescriptor_index: " << std::dec << desc_index;
 
 	switch(desc_type_value)
 	{
@@ -1010,7 +1010,7 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 					std::cout << "\ncontroller_capabilities = 0x" << std::hex << entity_desc_ref->get_controller_capabilities();
 					std::cout << "\navailable_index = 0x" << std::hex << entity_desc_ref->get_available_index();
 					std::cout << "\nassociation_id = 0x" << std::hex << entity_desc_ref->get_association_id();
-					std::cout << "\nentity_name = " << std::dec << entity_desc_ref->get_entity_name();
+					std::cout << "\nentity_name = " << std::hex << entity_desc_ref->get_entity_name();
 					std::cout << "\nvendor_name_string = " << std::dec << entity_desc_ref->get_vendor_name_string();
 					std::cout << "\nmodel_name_string = " << std::dec << entity_desc_ref->get_model_name_string();
 					std::cout << "\nfirmware_version = " << std::dec << entity_desc_ref->get_firmware_version();
