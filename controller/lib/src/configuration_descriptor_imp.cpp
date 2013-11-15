@@ -27,11 +27,13 @@
  * Configuration descriptor implementation
  */
 
+#include <iostream>
 #include <vector>
 #include "enumeration.h"
 #include "log_imp.h"
 #include "end_station_imp.h"
 #include "configuration_descriptor_imp.h"
+#include "descriptor_base_imp.h"
 
 namespace avdecc_lib
 {
@@ -49,57 +51,27 @@ namespace avdecc_lib
 		desc_count_vector_init(frame, pos);
 	}
 
+	template <typename T>
+	void delete_pointed_to(T* const ptr)
+	{
+		delete ptr;
+	}
+
 	configuration_descriptor_imp::~configuration_descriptor_imp()
 	{
-		for(uint32_t audio_unit_vec_index = 0; audio_unit_vec_index < audio_unit_desc_vec.size(); audio_unit_vec_index++)
-		{
-			delete audio_unit_desc_vec.at(audio_unit_vec_index);
-		}
-
-		for(uint32_t stream_input_vec_index = 0; stream_input_vec_index < stream_input_desc_vec.size(); stream_input_vec_index++)
-		{
-			delete stream_input_desc_vec.at(stream_input_vec_index);
-		}
-
-		for(uint32_t stream_output_vec_index = 0; stream_output_vec_index < stream_output_desc_vec.size(); stream_output_vec_index++)
-		{
-			delete stream_output_desc_vec.at(stream_output_vec_index);
-		}
-
-		for(uint32_t jack_input_vec_index = 0; jack_input_vec_index < jack_input_desc_vec.size(); jack_input_vec_index++)
-		{
-			delete jack_input_desc_vec.at(jack_input_vec_index);
-		}
-
-		for(uint32_t jack_output_vec_index = 0; jack_output_vec_index < jack_output_desc_vec.size(); jack_output_vec_index++)
-		{
-			delete jack_output_desc_vec.at(jack_output_vec_index);
-		}
-
-		for(uint32_t avb_if_vec_index = 0; avb_if_vec_index < avb_interface_desc_vec.size(); avb_if_vec_index++)
-		{
-			delete avb_interface_desc_vec.at(avb_if_vec_index);
-		}
-
-		for(uint32_t clk_src_vec_index = 0; clk_src_vec_index < clock_source_desc_vec.size(); clk_src_vec_index++)
-		{
-			delete clock_source_desc_vec.at(clk_src_vec_index);
-		}
-
-		for(uint32_t locale_vec_index = 0; locale_vec_index < locale_desc_vec.size(); locale_vec_index++)
-		{
-			delete locale_desc_vec.at(locale_vec_index);
-		}
-
-		for(uint32_t strings_vec_index = 0; strings_vec_index < strings_desc_vec.size(); strings_vec_index++)
-		{
-			delete strings_desc_vec.at(strings_vec_index);
-		}
-
-		for(uint32_t clk_domain_vec_index = 0; clk_domain_vec_index < clock_domain_desc_vec.size(); clk_domain_vec_index++)
-		{
-			delete clock_domain_desc_vec.at(clk_domain_vec_index);
-		}
+		std::for_each(audio_unit_desc_vec.begin(), audio_unit_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(stream_input_desc_vec.begin(), stream_input_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(stream_output_desc_vec.begin(), stream_output_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(jack_input_desc_vec.begin(), jack_input_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(jack_output_desc_vec.begin(), jack_output_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(avb_interface_desc_vec.begin(), avb_interface_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(clock_source_desc_vec.begin(), clock_source_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(locale_desc_vec.begin(), locale_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(strings_desc_vec.begin(), strings_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(strings_desc_vec.begin(), strings_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(audio_cluster_desc_vec.begin(), audio_cluster_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(audio_map_desc_vec.begin(), audio_map_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(clock_domain_desc_vec.begin(), clock_domain_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
 	}
 
 	uint16_t STDCALL configuration_descriptor_imp::get_descriptor_type()
