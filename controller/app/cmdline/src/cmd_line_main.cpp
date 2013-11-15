@@ -80,7 +80,7 @@ int main()
 {
 	avdecc_cmd_line *avdecc_cmd_line_ref = new avdecc_cmd_line(notification_callback, log_callback);
 
-	std::vector<std::string> argv;
+	std::vector<std::string> input_argv;
 	size_t pos = 0;
 	bool while_loop = true;
 	bool is_input_valid = false;
@@ -113,18 +113,23 @@ int main()
 
 		while((pos = cmd_input.find(" ")) != std::string::npos)
 		{
-			argv.push_back(cmd_input.substr(0, pos));
+			input_argv.push_back(cmd_input.substr(0, pos));
 			cmd_input.erase(0, pos + 1);
 		}
 
-		if(cmd_input.compare(" ") != 0)
+		if(cmd_input != " ")
 		{
-			argv.push_back(cmd_input);
+			input_argv.push_back(cmd_input);
 		}
 
-		if(argv.at(0) == "help")
+		if(is_output_redirected)
 		{
-			if(argv.size() == 1)
+			std::cout << "\n> " << cmd_input_orig << std::endl;
+		}
+
+		if(input_argv.at(0) == "help")
+		{
+			if(input_argv.size() == 1)
 			{
 				avdecc_cmd_line_ref->cmd_help();
 			}
@@ -133,9 +138,9 @@ int main()
 				avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig.substr(5, cmd_input_orig.length()));
 			}
 		}
-		else if(argv.at(0) == "version")
+		else if(input_argv.at(0) == "version")
 		{
-			if(argv.size() == 1)
+			if(input_argv.size() == 1)
 			{
 				if(is_output_redirected)
 				{
@@ -150,64 +155,64 @@ int main()
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "list")
+		else if(input_argv.at(0) == "list")
 		{
-			if(argv.size() == 1)
+			if(input_argv.size() == 1)
 			{
 				avdecc_cmd_line_ref->cmd_list();
 			}
-			else if((argv.at(1) == "clock_sync_source") &&
-			        (argv.size() == 2))
+			else if((input_argv.at(1) == "clock_sync_source") &&
+			        (input_argv.size() == 2))
 			{
 				avdecc_cmd_line_ref->cmd_list_clock_sync_source();
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 
 		}
-		else if(argv.at(0) == "select")
+		else if(input_argv.at(0) == "select")
 		{
-			if(argv.size() == 1)
+			if(input_argv.size() == 1)
 			{
 				avdecc_cmd_line_ref->cmd_select();
 			}
-			else if(argv.size() == 4)
+			else if(input_argv.size() == 4)
 			{
 				uint32_t new_end_station = 0x0;
 				uint16_t new_entity = 0x0;
 				uint16_t new_config = 0x0;
 
-				if(((argv.at(1) == "0") || (atoi(argv.at(1).c_str()) != 0)) &&
-				   ((argv.at(2) == "0") || (atoi(argv.at(2).c_str()) != 0)) &&
-				   ((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0)))
+				if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
+				   ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)) &&
+				   ((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)))
 				{
 					is_input_valid = true;
-					new_end_station = (uint16_t)atoi(argv.at(1).c_str());
-					new_entity = (uint16_t)atoi(argv.at(2).c_str());
-					new_config = (uint16_t)atoi(argv.at(3).c_str());
+					new_end_station = (uint16_t)atoi(input_argv.at(1).c_str());
+					new_entity = (uint16_t)atoi(input_argv.at(2).c_str());
+					new_config = (uint16_t)atoi(input_argv.at(3).c_str());
 				}
 
 				if(is_input_valid)
@@ -217,28 +222,28 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "log")
+		else if(input_argv.at(0) == "log")
 		{
-			if(argv.size() == 2)
+			if(input_argv.size() == 2)
 			{
-				std::string file = avdecc_cmd_line::log_path + argv.at(1) + ".txt";
+				std::string file = avdecc_cmd_line::log_path + input_argv.at(1) + ".txt";
 				try
 				{
 					ofstream_ref.open(file);
@@ -252,14 +257,14 @@ int main()
 					exit(EXIT_FAILURE);
 				}
 			}
-			else if((argv.size() == 3) && (argv.at(1) == "level"))
+			else if((input_argv.size() == 3) && (input_argv.at(1) == "level"))
 			{
 				uint32_t new_log_level;
 
-				if((argv.at(2) == "0") || (atoi(argv.at(1).c_str()) != 0))
+				if((input_argv.at(2) == "0") || (atoi(input_argv.at(1).c_str()) != 0))
 				{
 					is_input_valid = true;
-					new_log_level = (uint16_t)atoi(argv.at(2).c_str());
+					new_log_level = (uint16_t)atoi(input_argv.at(2).c_str());
 				}
 
 				if(is_input_valid)
@@ -269,26 +274,26 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "view")
+		else if(input_argv.at(0) == "view")
 		{
-			if((argv.size() == 2) && (argv.at(1) == "all"))
+			if((input_argv.size() == 2) && (input_argv.at(1) == "all"))
 			{
 				try
 				{
@@ -299,21 +304,21 @@ int main()
 					std::cerr << "Out Of Range Exception " << e.what() << std::endl;
 				}
 			}
-			else if((argv.size() == 4) && argv.at(1) == "descriptor")
+			else if((input_argv.size() == 3) && (input_argv.at(1) == "details"))
 			{
-				uint16_t desc_index = 0x0;
+				uint16_t end_station_index = 0x0;
 
-				if((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0))
+				if((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
+					end_station_index = (uint16_t)atoi(input_argv.at(2).c_str());
 				}
 
 				if(is_input_valid)
 				{
 					try
 					{
-						avdecc_cmd_line_ref->cmd_view_descriptor(argv.at(2), desc_index);
+						avdecc_cmd_line_ref->cmd_view_details(end_station_index);
 					}
 					catch(std::out_of_range &e)
 					{
@@ -324,40 +329,68 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
-			else
+			else if((input_argv.size() == 4) && input_argv.at(1) == "descriptor")
 			{
-				if(argv.size() == 1)
+				uint16_t desc_index = 0x0;
+
+				if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
 				{
-					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					is_input_valid = true;
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
+				}
+
+				if(is_input_valid)
+				{
+					try
+					{
+						avdecc_cmd_line_ref->cmd_view_descriptor(input_argv.at(2), desc_index);
+					}
+					catch(std::out_of_range &e)
+					{
+						std::cerr << "Out Of Range Exception " << e.what() << std::endl;
+						return -1;
+					}
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
+				}
+			}
+			else
+			{
+				if(input_argv.size() == 1)
+				{
+					std::cout << "Invalid Command\n" << std::endl;
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
+				}
+				else
+				{
+					std::cout << "Invalid Command\n" << std::endl;
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "connect")
+		else if(input_argv.at(0) == "connect")
 		{
-			if(argv.size() == 1)
+			if(input_argv.size() == 1)
 			{
 				avdecc_cmd_line_ref->cmd_connect();
 			}
-			else if(argv.size() == 3)
+			else if(input_argv.size() == 3)
 			{
 				uint32_t dest_end_station_index = 0x0;
 				uint16_t dest_desc_index = 0x0;
 
-				if(((argv.at(1) == "0") || (atoi(argv.at(1).c_str()) != 0)) &&
-				   ((argv.at(2) == "0") || (atoi(argv.at(2).c_str()) != 0)))
+				if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
+				   ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)))
 				{
 					is_input_valid = true;
-					dest_end_station_index = (uint16_t)atoi(argv.at(1).c_str());
-					dest_desc_index = (uint16_t)atoi(argv.at(2).c_str());
+					dest_end_station_index = (uint16_t)atoi(input_argv.at(1).c_str());
+					dest_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
 				}
 
 				if(is_input_valid)
@@ -367,45 +400,45 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 			}
-			else if(argv.size() == 5)
+			else if(input_argv.size() == 5)
 			{
 				std::cout << "Not Implemented" << std::endl;
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 
 		}
-		else if(argv.at(0) == "disconnect")
+		else if(input_argv.at(0) == "disconnect")
 		{
-			if(argv.size() == 1)
+			if(input_argv.size() == 1)
 			{
 				avdecc_cmd_line_ref->cmd_disconnect();
 			}
-			else if(argv.size() == 3)
+			else if(input_argv.size() == 3)
 			{
 				uint32_t dest_end_station_index = 0x0;
 				uint16_t dest_desc_index = 0x0;
 
-				if(((argv.at(1) == "0") || (atoi(argv.at(1).c_str()) != 0)) &&
-				   ((argv.at(2) == "0") || (atoi(argv.at(2).c_str()) != 0)))
+				if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
+				   ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)))
 				{
 					is_input_valid = true;
-					dest_end_station_index = (uint16_t)atoi(argv.at(1).c_str());
-					dest_desc_index = (uint16_t)atoi(argv.at(2).c_str());
+					dest_end_station_index = (uint16_t)atoi(input_argv.at(1).c_str());
+					dest_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
 				}
 
 				if(is_input_valid)
@@ -415,191 +448,191 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "acquire")
+		else if(input_argv.at(0) == "acquire")
 		{
-			if(argv.size() == 5 && argv.at(1) == "entity")
+			if(input_argv.size() == 5 && input_argv.at(1) == "entity")
 			{
 				uint16_t desc_index = 0x0;
 
-				if((argv.at(4) == "0") || (atoi(argv.at(4).c_str()) != 0))
+				if((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(4).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
 				}
 
 				if(is_input_valid)
 				{
-					avdecc_cmd_line_ref->cmd_acquire_entity(argv.at(2), argv.at(3), desc_index);
+					avdecc_cmd_line_ref->cmd_acquire_entity(input_argv.at(2), input_argv.at(3), desc_index);
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "lock")
+		else if(input_argv.at(0) == "lock")
 		{
-			if(argv.size() == 5 && argv.at(1) == "entity")
+			if(input_argv.size() == 5 && input_argv.at(1) == "entity")
 			{
 				uint16_t desc_index = 0x0;
 
-				if((argv.at(4) == "0") || (atoi(argv.at(4).c_str()) != 0))
+				if((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(4).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
 				}
 
 				if(is_input_valid)
 				{
-					avdecc_cmd_line_ref->cmd_lock_entity(argv.at(2), argv.at(3), desc_index);
+					avdecc_cmd_line_ref->cmd_lock_entity(input_argv.at(2), input_argv.at(3), desc_index);
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "entity")
+		else if(input_argv.at(0) == "entity")
 		{
-			if(argv.size() == 2 && argv.at(1) == "available")
+			if(input_argv.size() == 2 && input_argv.at(1) == "available")
 			{
 				avdecc_cmd_line_ref->cmd_entity_avail();
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "controller")
+		else if(input_argv.at(0) == "controller")
 		{
-			if(argv.size() == 2 && argv.at(1) == "available")
+			if(input_argv.size() == 2 && input_argv.at(1) == "available")
 			{
 				avdecc_cmd_line_ref->cmd_controller_avail();
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "read")
+		else if(input_argv.at(0) == "read")
 		{
-			if(argv.size() == 4 && argv.at(1) == "descriptor")
+			if(input_argv.size() == 4 && input_argv.at(1) == "descriptor")
 			{
 				uint16_t desc_index = 0x0;
 
-				if((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0))
+				if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
 				}
 
 				if(is_input_valid)
 				{
-					avdecc_cmd_line_ref->cmd_read_descriptor(argv.at(2), desc_index);
+					avdecc_cmd_line_ref->cmd_read_descriptor(input_argv.at(2), desc_index);
 				}
 				else
 				{
 					std::cout << "Invalid Command" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if((argv.at(0) == "set"))
+		else if((input_argv.at(0) == "set"))
 		{
-			if((argv.size() == 5) && (argv.at(1) == "stream_format"))
+			if((input_argv.size() == 5) && (input_argv.at(1) == "stream_format"))
 			{
 				uint16_t desc_index = 0x0;
 				uint64_t new_stream_format = 0x0;
 
-				if(((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0)) &&
-				   ((argv.at(4) == "0") || (atoi(argv.at(4).c_str()) != 0)))
+				if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+				   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
-					new_stream_format = (uint64_t)atoi(argv.at(4).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
+					new_stream_format = (uint64_t)atoi(input_argv.at(4).c_str());
 				}
 
 				if(is_input_valid)
 				{
 					try
 					{
-						avdecc_cmd_line_ref->cmd_set_stream_format(argv.at(2), desc_index, new_stream_format);
+						avdecc_cmd_line_ref->cmd_set_stream_format(input_argv.at(2), desc_index, new_stream_format);
 					}
 					catch(std::out_of_range &e)
 					{
@@ -609,73 +642,73 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
-			else if((argv.size() == 6) && (argv.at(1) == "stream_info"))
+			else if((input_argv.size() == 6) && (input_argv.at(1) == "stream_info"))
 			{
 				uint16_t desc_index = 0;
 				uint64_t stream_info_field_value = 0x0;
 
-				if(((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0)) &&
-				   ((argv.at(5) == "0") || (atoi(argv.at(5).c_str()) != 0)))
+				if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+				   ((input_argv.at(5) == "0") || (atoi(input_argv.at(5).c_str()) != 0)))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
-					stream_info_field_value = (uint16_t)atoi(argv.at(5).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
+					stream_info_field_value = (uint16_t)atoi(input_argv.at(5).c_str());
 				}
 
 				if(is_input_valid)
 				{
-					avdecc_cmd_line_ref->cmd_set_stream_info(argv.at(2), desc_index, argv.at(4), stream_info_field_value);
+					avdecc_cmd_line_ref->cmd_set_stream_info(input_argv.at(2), desc_index, input_argv.at(4), stream_info_field_value);
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
-			else if((argv.size() == 6) && (argv.at(1) == "name"))
+			else if((input_argv.size() == 6) && (input_argv.at(1) == "name"))
 			{
 				uint16_t desc_index = 0x0;
 				uint16_t name_index = 0x0;
 
-				if(((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0)) &&
-				   ((argv.at(4) == "0") || (atoi(argv.at(4).c_str()) != 0)))
+				if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+				   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
-					name_index = (uint16_t)atoi(argv.at(4).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
+					name_index = (uint16_t)atoi(input_argv.at(4).c_str());
 				}
 
 				if(is_input_valid)
 				{
-					avdecc_cmd_line_ref->cmd_set_name(argv.at(2), desc_index, name_index, argv.at(5));
+					avdecc_cmd_line_ref->cmd_set_name(input_argv.at(2), desc_index, name_index, input_argv.at(5));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
-			else if((argv.size() == 5) && (argv.at(1) == "sampling_rate"))
+			else if((input_argv.size() == 5) && (input_argv.at(1) == "sampling_rate"))
 			{
 				uint16_t desc_index = 0x0;
 				uint32_t new_sampling_rate = 0x0;
 
-				if(((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0)) &&
-				   ((argv.at(4) == "0") || (atoi(argv.at(4).c_str()) != 0)))
+				if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+				   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
-					new_sampling_rate = (uint32_t)atoi(argv.at(4).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
+					new_sampling_rate = (uint32_t)atoi(input_argv.at(4).c_str());
 				}
 
 				if(is_input_valid)
 				{
 					try
 					{
-						avdecc_cmd_line_ref->cmd_set_sampling_rate(argv.at(2), desc_index, new_sampling_rate);
+						avdecc_cmd_line_ref->cmd_set_sampling_rate(input_argv.at(2), desc_index, new_sampling_rate);
 					}
 					catch(std::out_of_range &e)
 					{
@@ -685,27 +718,27 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
-			else if((argv.size() == 5) && (argv.at(1) == "clock_source"))
+			else if((input_argv.size() == 5) && (input_argv.at(1) == "clock_source"))
 			{
 				uint16_t desc_index = 0x0;
 				uint16_t new_clk_src_index = 0x0;
 
-				if(((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0)) &&
-				   ((argv.at(4) == "0") || (atoi(argv.at(4).c_str()) != 0)))
+				if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+				   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
-					new_clk_src_index = (uint16_t)atoi(argv.at(4).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
+					new_clk_src_index = (uint16_t)atoi(input_argv.at(4).c_str());
 				}
 
 				if(is_input_valid)
 				{
 					try
 					{
-						avdecc_cmd_line_ref->cmd_set_clock_source(argv.at(2), desc_index, new_clk_src_index);
+						avdecc_cmd_line_ref->cmd_set_clock_source(input_argv.at(2), desc_index, new_clk_src_index);
 					}
 					catch(std::out_of_range &e)
 					{
@@ -715,40 +748,40 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if((argv.at(0) == "get"))
+		else if((input_argv.at(0) == "get"))
 		{
-			if((argv.size() == 4) && (argv.at(1) == "stream_format"))
+			if((input_argv.size() == 4) && (input_argv.at(1) == "stream_format"))
 			{
 				uint16_t desc_index = 0x0;
 
-				if((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0))
+				if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
 				}
 
 				if(is_input_valid)
 				{
 					try
 					{
-						avdecc_cmd_line_ref->cmd_get_stream_format(argv.at(2), desc_index);
+						avdecc_cmd_line_ref->cmd_get_stream_format(input_argv.at(2), desc_index);
 					}
 					catch(std::out_of_range &e)
 					{
@@ -758,24 +791,24 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
-			else if((argv.size() == 4) && (argv.at(1) == "stream_info"))
+			else if((input_argv.size() == 4) && (input_argv.at(1) == "stream_info"))
 			{
 				uint16_t desc_index = 0x0;
 
-				if((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0))
+				if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
 				}
 
 				if(is_input_valid)
 				{
 					try
 					{
-						avdecc_cmd_line_ref->cmd_get_stream_info(argv.at(2), desc_index);
+						avdecc_cmd_line_ref->cmd_get_stream_info(input_argv.at(2), desc_index);
 					}
 					catch(std::out_of_range &e)
 					{
@@ -785,27 +818,27 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
-			else if((argv.size() == 5) && (argv.at(1) == "name"))
+			else if((input_argv.size() == 5) && (input_argv.at(1) == "name"))
 			{
 				uint16_t desc_index = 0x0;
 				uint16_t name_index = 0x0;
 
-				if(((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0)) &&
-				   ((argv.at(4) == "0") || (atoi(argv.at(4).c_str()) != 0)))
+				if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+				   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
-					name_index = (uint16_t)atoi(argv.at(4).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
+					name_index = (uint16_t)atoi(input_argv.at(4).c_str());
 				}
 
 				if(is_input_valid)
 				{
 					try
 					{
-						avdecc_cmd_line_ref->cmd_get_name(argv.at(2), desc_index, name_index);
+						avdecc_cmd_line_ref->cmd_get_name(input_argv.at(2), desc_index, name_index);
 					}
 					catch(std::out_of_range &e)
 					{
@@ -815,24 +848,24 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
-			else if((argv.size() == 4) && (argv.at(1) == "sampling_rate"))
+			else if((input_argv.size() == 4) && (input_argv.at(1) == "sampling_rate"))
 			{
 				uint16_t desc_index = 0x0;
 
-				if((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0))
+				if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
 				}
 
 				if(is_input_valid)
 				{
 					try
 					{
-						avdecc_cmd_line_ref->cmd_get_sampling_rate(argv.at(2), desc_index);
+						avdecc_cmd_line_ref->cmd_get_sampling_rate(input_argv.at(2), desc_index);
 					}
 					catch(std::out_of_range &e)
 					{
@@ -842,24 +875,24 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
-			else if((argv.size() == 4) && (argv.at(1) == "clock_source"))
+			else if((input_argv.size() == 4) && (input_argv.at(1) == "clock_source"))
 			{
 				uint16_t desc_index = 0x0;
 
-				if((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0))
+				if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
 				}
 
 				if(is_input_valid)
 				{
 					try
 					{
-						avdecc_cmd_line_ref->cmd_get_clock_source(argv.at(2), desc_index);
+						avdecc_cmd_line_ref->cmd_get_clock_source(input_argv.at(2), desc_index);
 					}
 					catch(std::out_of_range &e)
 					{
@@ -869,40 +902,40 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if((argv.at(0) == "start"))
+		else if((input_argv.at(0) == "start"))
 		{
-			if((argv.size() == 4) && (argv.at(1) == "streaming"))
+			if((input_argv.size() == 4) && (input_argv.at(1) == "streaming"))
 			{
 				uint16_t desc_index = 0x0;
 
-				if((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0))
+				if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
 				}
 
 				if(is_input_valid)
 				{
 					try
 					{
-						avdecc_cmd_line_ref->cmd_start_streaming(argv.at(2), desc_index);
+						avdecc_cmd_line_ref->cmd_start_streaming(input_argv.at(2), desc_index);
 					}
 					catch(std::out_of_range &e)
 					{
@@ -912,42 +945,42 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 
 
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if((argv.at(0) == "stop"))
+		else if((input_argv.at(0) == "stop"))
 		{
-			if((argv.size() == 4) && (argv.at(1) == "streaming"))
+			if((input_argv.size() == 4) && (input_argv.at(1) == "streaming"))
 			{
 				uint16_t desc_index = 0x0;
 
-				if((argv.at(3) == "0") || (atoi(argv.at(3).c_str()) != 0))
+				if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
 				{
 					is_input_valid = true;
-					desc_index = (uint16_t)atoi(argv.at(3).c_str());
+					desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
 				}
 
 				if(is_input_valid)
 				{
 					try
 					{
-						avdecc_cmd_line_ref->cmd_stop_streaming(argv.at(2), desc_index);
+						avdecc_cmd_line_ref->cmd_stop_streaming(input_argv.at(2), desc_index);
 					}
 					catch(std::out_of_range &e)
 					{
@@ -957,50 +990,50 @@ int main()
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "path")
+		else if(input_argv.at(0) == "path")
 		{
-			if(argv.size() == 1)
+			if(input_argv.size() == 1)
 			{
 				avdecc_cmd_line_ref->cmd_path();
 			}
-			else if(argv.size() == 2)
+			else if(input_argv.size() == 2)
 			{
-				avdecc_cmd_line_ref->cmd_path(argv.at(1));
+				avdecc_cmd_line_ref->cmd_path(input_argv.at(1));
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "unlog")
+		else if(input_argv.at(0) == "unlog")
 		{
-			if(argv.size() == 1)
+			if(input_argv.size() == 1)
 			{
 				std::cout.rdbuf(cout_buf);
 				ofstream_ref.close();
@@ -1008,66 +1041,66 @@ int main()
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "clr")
+		else if(input_argv.at(0) == "clr")
 		{
-			if(argv.size() == 1)
+			if(input_argv.size() == 1)
 			{
 				std::system("cls");
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
-		else if(argv.at(0) == "q" || argv.at(0) == "quit")
+		else if(input_argv.at(0) == "q" || input_argv.at(0) == "quit")
 		{
-			if(argv.size() == 1)
+			if(input_argv.size() == 1)
 			{
 				while_loop = false;
 			}
 			else
 			{
-				if(argv.size() == 1)
+				if(input_argv.size() == 1)
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 				}
 				else
 				{
 					std::cout << "Invalid Command\n" << std::endl;
-					avdecc_cmd_line_ref->cmd_help_details(argv.at(0) + " " + argv.at(1));
+					avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
 				}
 			}
 		}
 		else
 		{
 			std::cout << "Invalid Command\n" << std::endl;
-			avdecc_cmd_line_ref->cmd_help_details(argv.at(0));
+			avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
 		}
 
 		is_input_valid = false;
-		argv.clear();
+		input_argv.clear();
 #if __MACH__
 		free(input);
 #endif
