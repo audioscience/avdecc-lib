@@ -121,7 +121,11 @@ void avdecc_cmd_line::cmd_line_help_init()
 	cmd_line_help_vec.push_back(new cmd_line_help("list",
 
 	                                              "list\n" \
-	                                              "Display a table with information about each end station.\n\n"
+	                                              "Display a table with information about each end station."
+	                                             ));
+
+	cmd_line_help_vec.push_back(new cmd_line_help("list clock_sync_source",
+
 	                                              "list clock_sync_source\n" \
 	                                              "Display a list of descriptors that has the Clock Sync Source flag set."
 	                                             ));
@@ -153,6 +157,27 @@ void avdecc_cmd_line::cmd_line_help_init()
 	                                              "Display all the top level descriptors present in all End Stations."
 	                                             ));
 
+	cmd_line_help_vec.push_back(new cmd_line_help("view details",
+
+	                                              "view desc [e_s_i]\n" \
+	                                              "Display all the descriptors with details in the end station.\n\n" \
+	                                              "\nParameters"
+	                                              "\n\t e_s_i stands for End Station index and is an integer." \
+	                                              "To see a list of valid End Stations, enter \"list\" command."
+	                                             ));
+
+	cmd_line_help_vec.push_back(new cmd_line_help("view desc",
+
+	                                              "view desc [d_t] [d_i]\n" \
+	                                              "Display information for the specified descriptor using the current setting.\n\n" \
+	                                              "\nParameters"
+	                                              "\n\t d_t stands for descriptor type and is a string." \
+	                                              "\n\t d_i stands for descriptor index and is an integer.\n\n" \
+	                                              "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+	                                              "\"view all\" command."
+	                                             ));
+
+
 	cmd_line_help_vec.push_back(new cmd_line_help("connect",
 
 	                                              "connect\n" \
@@ -180,17 +205,6 @@ void avdecc_cmd_line::cmd_line_help_init()
 	                                              "\n\t d_d_i stands for destination descriptor index and is an integer."
 	                                              "\n\t s_e_s_i stands for source End Station index and is an integer. " \
 	                                              "\n\t s_d_i stands for source descriptor index and is an integer."
-	                                             ));
-
-	cmd_line_help_vec.push_back(new cmd_line_help("view descriptor",
-
-	                                              "view descriptor [d_t] [d_i]\n" \
-	                                              "Display information for the specified descriptor using the current setting.\n\n" \
-	                                              "\nParameters"
-	                                              "\n\t d_t stands for descriptor type and is a string." \
-	                                              "\n\t d_i stands for descriptor index and is an integer.\n\n" \
-	                                              "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-	                                              "\"view all\" command."
 	                                             ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("acquire entity",
@@ -626,15 +640,17 @@ int avdecc_cmd_line::cmd_log_level(uint32_t new_log_level)
 }
 
 
-void avdecc_cmd_line::print_descriptor_type_index_name_row(avdecc_lib::descriptor_base &desc,
-                                                           avdecc_lib::strings_descriptor &strings,
-                                                           avdecc_lib::locale_descriptor &locale)
+void avdecc_cmd_line::print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
+                                                     avdecc_lib::strings_descriptor &strings,
+                                                     avdecc_lib::locale_descriptor &locale)
 {
+	uint8_t localized_string_max_index = 7;
+
 	std::cout << std::setw(20) << utility->desc_value_to_name(desc.get_descriptor_type());
 	std::cout << "   "<<  std::setw(16) << std::dec << desc.get_descriptor_index();
 
-	uint8_t localized_desc_index = (desc.get_localized_description()) & 0x3;
-	if(localized_desc_index < locale.get_number_of_strings())
+	uint8_t localized_desc_index = (desc.get_localized_description()) & 0x7; // The 3-bit index subfield defining the index of the string within the STRINGS descriptor
+	if(localized_desc_index < localized_string_max_index)
 	{
 		std::cout << "   " << std::setw(20) << std::hex << strings.get_string_by_index(localized_desc_index) << std::endl;
 	}
@@ -690,49 +706,49 @@ int avdecc_cmd_line::cmd_view_all()
 				for(int j = 0; j < config_desc_ref->get_audio_unit_desc_count(); j++)
 				{
 					avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = config_desc_ref->get_audio_unit_desc_by_index(j);
-					print_descriptor_type_index_name_row(*audio_unit_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*audio_unit_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_STREAM_INPUT:
 				for(int j = 0; j < config_desc_ref->get_stream_input_desc_count(); j++)
 				{
 					avdecc_lib::stream_input_descriptor *stream_input_desc_ref = config_desc_ref->get_stream_input_desc_by_index(j);
-					print_descriptor_type_index_name_row(*stream_input_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*stream_input_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_STREAM_OUTPUT:
 				for(int j = 0; j < config_desc_ref->get_stream_output_desc_count(); j++)
 				{
 					avdecc_lib::stream_output_descriptor *stream_output_desc_ref = config_desc_ref->get_stream_output_desc_by_index(j);
-					print_descriptor_type_index_name_row(*stream_output_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*stream_output_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_JACK_INPUT:
 				for(int j = 0; j < config_desc_ref->get_jack_input_desc_count(); j++)
 				{
 					avdecc_lib::jack_input_descriptor *jack_input_desc_ref = config_desc_ref->get_jack_input_desc_by_index(j);
-					print_descriptor_type_index_name_row(*jack_input_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*jack_input_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_JACK_OUTPUT:
 				for(int j = 0; j < config_desc_ref->get_jack_output_desc_count(); j++)
 				{
 					avdecc_lib::jack_output_descriptor *jack_output_desc_ref = config_desc_ref->get_jack_output_desc_by_index(j);
-					print_descriptor_type_index_name_row(*jack_output_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*jack_output_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_AVB_INTERFACE:
 				for(int j = 0; j < config_desc_ref->get_avb_interface_desc_count(); j++)
 				{
 					avdecc_lib::avb_interface_descriptor *avb_interface_desc_ref = config_desc_ref->get_avb_interface_desc_by_index(j);
-					print_descriptor_type_index_name_row(*avb_interface_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*avb_interface_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_CLOCK_SOURCE:
 				for(int j = 0; j < config_desc_ref->get_clock_source_desc_count(); j++)
 				{
 					avdecc_lib::clock_source_descriptor *clk_src_desc_ref = config_desc_ref->get_clock_source_desc_by_index(j);
-					print_descriptor_type_index_name_row(*clk_src_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*clk_src_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_LOCALE:
@@ -748,42 +764,42 @@ int avdecc_cmd_line::cmd_view_all()
 				for(int j = 0; j < config_desc_ref->get_strings_desc_count(); j++)
 				{
 					avdecc_lib::strings_descriptor *strings_desc_ref = config_desc_ref->get_strings_desc_by_index(j);
-					print_descriptor_type_index_name_row(*strings_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*strings_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_STREAM_PORT_INPUT:
 				for(int j = 0; j < config_desc_ref->get_stream_port_input_desc_count(); j++)
 				{
 					avdecc_lib::stream_port_input_descriptor *stream_port_input_desc_ref = config_desc_ref->get_stream_port_input_desc_by_index(j);
-					print_descriptor_type_index_name_row(*stream_port_input_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*stream_port_input_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT:
 				for(int j = 0; j < config_desc_ref->get_stream_port_output_desc_count(); j++)
 				{
 					avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref = config_desc_ref->get_stream_port_output_desc_by_index(j);
-					print_descriptor_type_index_name_row(*stream_port_output_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*stream_port_output_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_AUDIO_CLUSTER:
 				for(int j = 0; j < config_desc_ref->get_audio_cluster_desc_count(); j++)
 				{
 					avdecc_lib::audio_cluster_descriptor *audio_cluster_desc_ref = config_desc_ref->get_audio_cluster_desc_by_index(j);
-					print_descriptor_type_index_name_row(*audio_cluster_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*audio_cluster_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_AUDIO_MAP:
 				for(int j = 0; j < config_desc_ref->get_audio_map_desc_count(); j++)
 				{
 					avdecc_lib::audio_map_descriptor *audio_map_desc_ref = config_desc_ref->get_audio_map_desc_by_index(j);
-					print_descriptor_type_index_name_row(*audio_map_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*audio_map_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 			case avdecc_lib::AEM_DESC_CLOCK_DOMAIN:
 				for(int j = 0; j < config_desc_ref->get_clock_domain_desc_count(); j++)
 				{
 					avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = config_desc_ref->get_clock_domain_desc_by_index(j);
-					print_descriptor_type_index_name_row(*clk_domain_desc_ref, *strings_desc_ref, *locale_desc_ref);
+					print_desc_type_index_name_row(*clk_domain_desc_ref, *strings_desc_ref, *locale_desc_ref);
 				}
 
 				break;

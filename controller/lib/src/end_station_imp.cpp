@@ -220,7 +220,7 @@ namespace avdecc_lib
 		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
 		bool store_descriptor = false;
-		if (status == avdecc_lib::STATUS_SUCCESS)
+		if(status == avdecc_lib::STATUS_SUCCESS)
 		{
 			switch(desc_type)
 			{
@@ -242,8 +242,7 @@ namespace avdecc_lib
 			}
 		}
 
-
-		if (store_descriptor)
+		if(store_descriptor)
 		{
 			switch(desc_type)
 			{
@@ -300,19 +299,11 @@ namespace avdecc_lib
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_stream_port_input_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_stream_port_input_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_stream_port_output_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_stream_port_output_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
@@ -368,10 +359,12 @@ namespace avdecc_lib
 
 						if(desc_type_index_from_config >= total_num_of_desc)
 						{
-							uint16_t desc_type = JDKSAVDECC_DESCRIPTOR_STRINGS;
-							uint16_t desc_index = 0x0;
-
-							read_desc_init(desc_type, desc_index); // Send a READ_DESCRIPTOR command for the STRINGS descriptor as part of the End Station initialization
+							uint16_t num_of_string_desc = config_desc_imp_ref->get_locale_desc_by_index(0)->get_number_of_strings();							uint16_t desc_type = JDKSAVDECC_DESCRIPTOR_STRINGS;
+							
+							for(int i = 0; i < num_of_string_desc; i++)
+							{
+								read_desc_init(JDKSAVDECC_DESCRIPTOR_STRINGS, i); // Send a READ_DESCRIPTOR command for the STRINGS descriptor as part of the End Station initialization
+							}
 
 							read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_DONE;
 						}
