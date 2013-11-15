@@ -219,9 +219,34 @@ namespace avdecc_lib
 
 		aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
-		/******************* Select the corresponding descriptor based on the descriptor type from the response packet received ******************/
-		switch(desc_type)
+		bool store_descriptor = false;
+		if (status == avdecc_lib::STATUS_SUCCESS)
 		{
+			switch(desc_type)
+			{
+				case JDKSAVDECC_DESCRIPTOR_ENTITY:
+					store_descriptor = true;
+					break;
+				case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
+					if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() == 0)
+					{
+						store_descriptor = true;
+					}
+					break;
+				default:
+					if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
+					{
+						store_descriptor = true;
+					}
+					break;
+			}
+		}
+
+
+		if (store_descriptor)
+		{
+			switch(desc_type)
+			{
 			case JDKSAVDECC_DESCRIPTOR_ENTITY:
 				if(entity_desc_vec.size() == 0)
 				{
@@ -231,88 +256,47 @@ namespace avdecc_lib
 					uint16_t desc_index = 0x0;
 					read_desc_init(desc_type, desc_index);
 				}
-
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() == 0)
-				{
-					entity_desc_vec.at(current_entity_desc)->store_config_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-					read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_STARTING;
-				}
-
+				entity_desc_vec.at(current_entity_desc)->store_config_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+				read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_STARTING;
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_audio_unit_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_audio_unit_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_STREAM_INPUT:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_stream_input_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_stream_input_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_stream_output_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_stream_output_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_JACK_INPUT:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_jack_input_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_jack_input_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_jack_output_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_jack_output_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_avb_interface_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_avb_interface_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_clock_source_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_clock_source_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_LOCALE:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_locale_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_locale_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_STRINGS:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_strings_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_strings_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
@@ -332,32 +316,21 @@ namespace avdecc_lib
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_audio_cluster_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_audio_cluster_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_AUDIO_MAP:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_audio_map_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_audio_map_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			case JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN:
-				if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
-				{
-					config_desc_imp_ref->store_clock_domain_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-				}
-
+				config_desc_imp_ref->store_clock_domain_desc(this, frame, aecp::READ_DESC_POS, frame_len);
 				break;
 
 			default:
 				log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "The descriptor is not implemented.");
 				break;
+			}
 		}
 
 		/*

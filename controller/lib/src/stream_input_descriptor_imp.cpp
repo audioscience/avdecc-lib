@@ -81,7 +81,7 @@ namespace avdecc_lib
 		return stream_input_desc.descriptor_type;
 	}
 
-	uint16_t STDCALL stream_input_descriptor_imp::get_descriptor_index()
+	uint16_t STDCALL stream_input_descriptor_imp::get_descriptor_index() const
 	{
 		return stream_input_desc.descriptor_index;
 	}

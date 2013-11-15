@@ -53,7 +53,7 @@ namespace avdecc_lib
 		return audio_cluster_desc.descriptor_type;
 	}
 
-	uint16_t STDCALL audio_cluster_descriptor_imp::get_descriptor_index()
+	uint16_t STDCALL audio_cluster_descriptor_imp::get_descriptor_index() const
 	{
 		return audio_cluster_desc.descriptor_index;
 	}

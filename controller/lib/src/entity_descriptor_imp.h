@@ -67,7 +67,7 @@ namespace avdecc_lib
 		/**
 		 * Get the descriptor index of the Entity descriptor object.
 		 */
-		uint16_t STDCALL get_descriptor_index();
+		uint16_t STDCALL get_descriptor_index() const;
 
 		/**
 		 * Get the id of the Entity descriptor object.

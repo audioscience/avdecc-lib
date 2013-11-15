@@ -41,6 +41,8 @@ OBJS =  adp.o \
 	locale_descriptor_imp.o \
 	stream_input_descriptor_imp.o \
 	stream_output_descriptor_imp.o \
+	stream_port_input_descriptor_imp.o \
+	stream_port_output_descriptor_imp.o \
 	strings_descriptor_imp.o \
 	timer.o \
 	util_imp.o \

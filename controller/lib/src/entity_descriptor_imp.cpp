@@ -60,7 +60,7 @@ namespace avdecc_lib
 		return entity_desc.descriptor_type;
 	}
 
-	uint16_t STDCALL entity_descriptor_imp::get_descriptor_index()
+	uint16_t STDCALL entity_descriptor_imp::get_descriptor_index() const
 	{
 		assert(entity_desc.descriptor_index == 0);
 		return entity_desc.descriptor_index;

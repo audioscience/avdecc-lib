@@ -91,7 +91,7 @@ namespace avdecc_lib
 		/**
 		 * \return The descriptor index of the Stream Output descriptor object.
 		 */
-		uint16_t STDCALL get_descriptor_index();
+		uint16_t STDCALL get_descriptor_index() const;
 
 		/**
 		 * Get the name of the Stream Output descriptor object.

@@ -58,7 +58,7 @@ namespace avdecc_lib
 		 */
 		descriptor_base_imp(end_station_imp *base);
 
-		~descriptor_base_imp();
+		virtual ~descriptor_base_imp();
 
 		/**
 		 * Get the descriptor type of a descriptor object.
@@ -68,7 +68,7 @@ namespace avdecc_lib
 		/**
 		 * Get the descriptor index of a descriptor object.
 		 */
-		virtual uint16_t STDCALL get_descriptor_index();
+		virtual uint16_t STDCALL get_descriptor_index() const;
 
 		/**
 		 * Send a ACQURE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
@@ -163,6 +163,9 @@ namespace avdecc_lib
 		 */
 		virtual uint8_t * STDCALL get_object_name();
 	};
+
+	bool operator== (const descriptor_base_imp &n1, const descriptor_base_imp &n2);
+	bool operator< (const descriptor_base_imp &n1, const descriptor_base_imp &n2);
 }
 
 #endif

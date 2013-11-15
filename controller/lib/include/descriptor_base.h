@@ -48,7 +48,7 @@ namespace avdecc_lib
 		/**
 		 * \return The descriptor index of a descriptor object.
 		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_index() = 0;
+		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_index() const = 0;
 
 		/**
 		 * Send a ACQURE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.

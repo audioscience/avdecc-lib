@@ -62,7 +62,7 @@ namespace avdecc_lib
 		return clock_domain_desc.descriptor_type;
 	}
 
-	uint16_t STDCALL clock_domain_descriptor_imp::get_descriptor_index()
+	uint16_t STDCALL clock_domain_descriptor_imp::get_descriptor_index() const
 	{
 		return clock_domain_desc.descriptor_index;
 	}

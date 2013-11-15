@@ -27,11 +27,13 @@
  * Configuration descriptor implementation
  */
 
+#include <iostream>
 #include <vector>
 #include "enumeration.h"
 #include "log_imp.h"
 #include "end_station_imp.h"
 #include "configuration_descriptor_imp.h"
+#include "descriptor_base_imp.h"
 
 namespace avdecc_lib
 {
@@ -49,57 +51,27 @@ namespace avdecc_lib
 		desc_count_vector_init(frame, pos);
 	}
 
+	template <typename T>
+	void delete_pointed_to(T* const ptr)
+	{
+		delete ptr;
+	}
+
 	configuration_descriptor_imp::~configuration_descriptor_imp()
 	{
-		for(uint32_t audio_unit_vec_index = 0; audio_unit_vec_index < audio_unit_desc_vec.size(); audio_unit_vec_index++)
-		{
-			delete audio_unit_desc_vec.at(audio_unit_vec_index);
-		}
-
-		for(uint32_t stream_input_vec_index = 0; stream_input_vec_index < stream_input_desc_vec.size(); stream_input_vec_index++)
-		{
-			delete stream_input_desc_vec.at(stream_input_vec_index);
-		}
-
-		for(uint32_t stream_output_vec_index = 0; stream_output_vec_index < stream_output_desc_vec.size(); stream_output_vec_index++)
-		{
-			delete stream_output_desc_vec.at(stream_output_vec_index);
-		}
-
-		for(uint32_t jack_input_vec_index = 0; jack_input_vec_index < jack_input_desc_vec.size(); jack_input_vec_index++)
-		{
-			delete jack_input_desc_vec.at(jack_input_vec_index);
-		}
-
-		for(uint32_t jack_output_vec_index = 0; jack_output_vec_index < jack_output_desc_vec.size(); jack_output_vec_index++)
-		{
-			delete jack_output_desc_vec.at(jack_output_vec_index);
-		}
-
-		for(uint32_t avb_if_vec_index = 0; avb_if_vec_index < avb_interface_desc_vec.size(); avb_if_vec_index++)
-		{
-			delete avb_interface_desc_vec.at(avb_if_vec_index);
-		}
-
-		for(uint32_t clk_src_vec_index = 0; clk_src_vec_index < clock_source_desc_vec.size(); clk_src_vec_index++)
-		{
-			delete clock_source_desc_vec.at(clk_src_vec_index);
-		}
-
-		for(uint32_t locale_vec_index = 0; locale_vec_index < locale_desc_vec.size(); locale_vec_index++)
-		{
-			delete locale_desc_vec.at(locale_vec_index);
-		}
-
-		for(uint32_t strings_vec_index = 0; strings_vec_index < strings_desc_vec.size(); strings_vec_index++)
-		{
-			delete strings_desc_vec.at(strings_vec_index);
-		}
-
-		for(uint32_t clk_domain_vec_index = 0; clk_domain_vec_index < clock_domain_desc_vec.size(); clk_domain_vec_index++)
-		{
-			delete clock_domain_desc_vec.at(clk_domain_vec_index);
-		}
+		std::for_each(audio_unit_desc_vec.begin(), audio_unit_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(stream_input_desc_vec.begin(), stream_input_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(stream_output_desc_vec.begin(), stream_output_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(jack_input_desc_vec.begin(), jack_input_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(jack_output_desc_vec.begin(), jack_output_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(avb_interface_desc_vec.begin(), avb_interface_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(clock_source_desc_vec.begin(), clock_source_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(locale_desc_vec.begin(), locale_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(strings_desc_vec.begin(), strings_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(strings_desc_vec.begin(), strings_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(audio_cluster_desc_vec.begin(), audio_cluster_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(audio_map_desc_vec.begin(), audio_map_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+		std::for_each(clock_domain_desc_vec.begin(), clock_domain_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
 	}
 
 	uint16_t STDCALL configuration_descriptor_imp::get_descriptor_type()
@@ -108,7 +80,7 @@ namespace avdecc_lib
 		return config_desc.descriptor_type;
 	}
 
-	uint16_t STDCALL configuration_descriptor_imp::get_descriptor_index()
+	uint16_t STDCALL configuration_descriptor_imp::get_descriptor_index() const
 	{
 		assert(config_desc.descriptor_index == 0);
 		return config_desc.descriptor_index;
@@ -188,49 +160,79 @@ namespace avdecc_lib
 		return desc_count_vector.at(desc_index);
 	}
 
+	template <class T>
+	static void add_or_replace_descriptor_and_sort(T *d, std::vector<T *> &desc_vec)
+	{
+		typename std::vector<T*>::const_iterator it;
+		if ((it = std::find_if(desc_vec.begin(), desc_vec.end(), [d](T const* n){
+			return *d == *n;
+		})) != desc_vec.end()) {
+			// If the descriptor was found, delete the old and add the new in its place
+			delete *it;
+			desc_vec.erase(it);
+			desc_vec.insert(it, d);
+
+		}
+		else {
+			// Insert the descriptor in the list and sort by descriptor ID
+			desc_vec.push_back(d);
+			std::sort(desc_vec.begin(), desc_vec.end(),
+				[](T const* a, T const* b){return *a < *b;});
+		}
+	}
+
 	void configuration_descriptor_imp::store_audio_unit_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		audio_unit_desc_vec.push_back(new audio_unit_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		audio_unit_descriptor_imp *d = new audio_unit_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, audio_unit_desc_vec);
 	}
 
 	void configuration_descriptor_imp::store_stream_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		stream_input_desc_vec.push_back(new stream_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		stream_input_descriptor_imp *d = new stream_input_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, stream_input_desc_vec);
 	}
 
 	void configuration_descriptor_imp::store_stream_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		stream_output_desc_vec.push_back(new stream_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		stream_output_descriptor_imp *d = new stream_output_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, stream_output_desc_vec);
 	}
 
 	void configuration_descriptor_imp::store_jack_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		jack_input_desc_vec.push_back(new jack_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		jack_input_descriptor_imp *d = new jack_input_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, jack_input_desc_vec);
 	}
 
 	void configuration_descriptor_imp::store_jack_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		jack_output_desc_vec.push_back(new jack_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		jack_output_descriptor_imp *d = new jack_output_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, jack_output_desc_vec);
 	}
 
 	void configuration_descriptor_imp::store_avb_interface_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		avb_interface_desc_vec.push_back(new avb_interface_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		avb_interface_descriptor_imp *d = new avb_interface_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, avb_interface_desc_vec);
 	}
 
 	void configuration_descriptor_imp::store_clock_source_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		clock_source_desc_vec.push_back(new clock_source_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		clock_source_descriptor_imp *d = new clock_source_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, clock_source_desc_vec);
 	}
 
 	void configuration_descriptor_imp::store_locale_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		locale_desc_vec.push_back(new locale_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		locale_descriptor_imp *d = new locale_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, locale_desc_vec);
 	}
 
 	void configuration_descriptor_imp::store_strings_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		strings_desc_vec.push_back(new strings_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		strings_descriptor_imp *d = new strings_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, strings_desc_vec);
 	}
 
 	void configuration_descriptor_imp::store_stream_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
@@ -245,17 +247,20 @@ namespace avdecc_lib
 
 	void configuration_descriptor_imp::store_audio_cluster_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		audio_cluster_desc_vec.push_back(new audio_cluster_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		audio_cluster_descriptor_imp *d = new audio_cluster_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, audio_cluster_desc_vec);
 	}
 
 	void configuration_descriptor_imp::store_audio_map_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		audio_map_desc_vec.push_back(new audio_map_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		audio_map_descriptor_imp *d = new audio_map_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, audio_map_desc_vec);
 	}
 
 	void configuration_descriptor_imp::store_clock_domain_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len)
 	{
-		clock_domain_desc_vec.push_back(new clock_domain_descriptor_imp(end_station_obj, frame, pos, frame_len));
+		clock_domain_descriptor_imp *d = new clock_domain_descriptor_imp(end_station_obj, frame, pos, frame_len);
+		add_or_replace_descriptor_and_sort(d, clock_domain_desc_vec);
 	}
 
 	uint32_t STDCALL configuration_descriptor_imp::get_audio_unit_desc_count()
