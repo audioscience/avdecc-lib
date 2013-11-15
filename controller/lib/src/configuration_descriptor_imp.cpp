@@ -28,6 +28,7 @@
  */
 
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include "enumeration.h"
 #include "log_imp.h"
