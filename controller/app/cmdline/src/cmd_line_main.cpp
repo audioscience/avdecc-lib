@@ -122,6 +122,11 @@ int main()
 			input_argv.push_back(cmd_input);
 		}
 
+		if(is_output_redirected)
+		{
+			std::cout << "\n> " << cmd_input_orig << std::endl;
+		}
+
 		if(input_argv.at(0) == "help")
 		{
 			if(input_argv.size() == 1)
