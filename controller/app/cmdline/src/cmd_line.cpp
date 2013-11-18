@@ -118,18 +118,6 @@ void avdecc_cmd_line::cmd_line_help_init()
 	                                              "Display the current AVDECC Controller build release version."
 	                                             ));
 
-	cmd_line_help_vec.push_back(new cmd_line_help("list",
-
-	                                              "list\n" \
-	                                              "Display a table with information about each end station."
-	                                             ));
-
-	cmd_line_help_vec.push_back(new cmd_line_help("list clock_sync_source",
-
-	                                              "list clock_sync_source\n" \
-	                                              "Display a list of descriptors that has the Clock Sync Source flag set."
-	                                             ));
-
 	cmd_line_help_vec.push_back(new cmd_line_help("select",
 
 	                                              "select\n" \
@@ -151,10 +139,22 @@ void avdecc_cmd_line::cmd_line_help_init()
 	                                              "\n\t n_l_l stands for new log level and is an integer." \
 	                                             ));
 
+	cmd_line_help_vec.push_back(new cmd_line_help("view",
+
+	                                              "view\n" \
+	                                              "Display a table with information about each end station."
+	                                             ));
+
 	cmd_line_help_vec.push_back(new cmd_line_help("view all",
 
 	                                              "view all\n" \
 	                                              "Display all the top level descriptors present in all End Stations."
+	                                             ));
+
+	cmd_line_help_vec.push_back(new cmd_line_help("view media clock",
+
+	                                              "view media clock\n" \
+	                                              "Display a list of descriptors that has the Clock Sync Source flag set."
 	                                             ));
 
 	cmd_line_help_vec.push_back(new cmd_line_help("view details",
@@ -489,7 +489,7 @@ int avdecc_cmd_line::cmd_version()
 	return 0;
 }
 
-int avdecc_cmd_line::cmd_list()
+int avdecc_cmd_line::cmd_view()
 {
 	std::cout << "\n" << "End Station" << "  |  " << "Name" << std::setw(21)  << "  |  " <<  "Entity GUID" << std::setw(10) << "  |  " << "MAC" << std::endl;
 	std::cout << "------------------------------------------------------------------------------" << std::endl;
@@ -522,7 +522,7 @@ int avdecc_cmd_line::cmd_list()
 	return 0;
 }
 
-int avdecc_cmd_line::cmd_list_clock_sync_source()
+int avdecc_cmd_line::cmd_view_media_clock()
 {
 	uint8_t *desc_obj_name;
 	uint16_t desc_type_value = 0;
@@ -1385,11 +1385,18 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_index)
 {
 	uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
-	intptr_t cmd_notification_id = get_next_notification_id();
+	int status = -1;
+	intptr_t cmd_notification_id = 0;
 
 	if(desc_type_value < avdecc_lib::TOTAL_NUM_OF_AEM_DESCS)
 	{
+		cmd_notification_id = get_next_notification_id();
+		system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
 		controller_ref->get_end_station_by_index(current_end_station)->send_read_desc_cmd((void *)cmd_notification_id, desc_type_value, desc_index);
+		status = system_ref->get_last_resp_status();
+
+		std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+
 	}
 	else
 	{
@@ -1721,6 +1728,7 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
 	uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
 	int status = -1;
 	intptr_t cmd_notification_id = 0;
+	uint64_t stream_format = 0;
 
 	if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
 	{
@@ -1729,10 +1737,18 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
 		avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
 		stream_input_desc_ref->send_get_stream_format_cmd((void *)cmd_notification_id);
 		status = system_ref->get_last_resp_status();
+		stream_format = stream_input_desc_ref->get_stream_format_stream_format();
 
 		std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
-		std::cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->get_stream_format_stream_format() << std::endl;
 
+		if (utility->ieee1722_format_value_to_name(stream_format) == "UNKOWN")
+		{
+			std::cout << "Stream format: 0x" << std::hex << stream_format << std::endl;
+		}
+		else
+		{
+			std::cout << "Stream format: 0x" << std::hex << utility->ieee1722_format_value_to_name(stream_format) << std::endl;
+		}
 		return 1;
 	}
 	else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
@@ -1742,9 +1758,10 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
 		avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
 		stream_output_desc_ref->send_get_stream_format_cmd((void *)cmd_notification_id);
 		status = system_ref->get_last_resp_status();
+		stream_format = stream_output_desc_ref->get_stream_format_stream_format();
 
 		std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
-		std::cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_format_stream_format() << std::endl;
+		std::cout << "Stream format: 0x" << std::hex << utility->ieee1722_format_value_to_name(stream_format) << std::endl;
 
 		return 1;
 	}
@@ -1754,7 +1771,6 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
 		return -1;
 	}
 }
-
 
 int avdecc_cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
                                          uint64_t new_stream_info_field_value)

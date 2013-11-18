@@ -81,8 +81,8 @@ private:
 	void cmd_line_help_init();
 
 	void print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
-	                                          avdecc_lib::strings_descriptor &strings,
-	                                          avdecc_lib::locale_descriptor &locale);
+	                                    avdecc_lib::strings_descriptor &strings,
+	                                    avdecc_lib::locale_descriptor &locale);
 
 public:
 
@@ -102,16 +102,6 @@ public:
 	int cmd_version();
 
 	/**
-	 * Display a table with information about each end station discovered using ADP.
-	 */
-	int cmd_list();
-
-	/**
-	 * Display a list of descriptors that has the Clock Sync Source flag set.
-	 */
-	int cmd_list_clock_sync_source();
-
-	/**
 	 * Display the current end station and configuration setting.
 	 */
 	void cmd_select();
@@ -127,9 +117,19 @@ public:
 	int cmd_log_level(uint32_t new_log_level);
 
 	/**
+	 * Display a table with information about each end station discovered with ADP.
+	 */
+	int cmd_view();
+
+	/**
 	 * Display all the descriptors in each end station.
 	 */
 	int cmd_view_all();
+
+	/**
+	 * Display a list of descriptors that has the Clock Sync Source flag set.
+	 */
+	int cmd_view_media_clock();
 
 	/**
 	 * Display all the descriptors with details in the end station.

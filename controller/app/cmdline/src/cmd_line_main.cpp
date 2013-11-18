@@ -159,23 +159,6 @@ int main()
 				avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
 			}
 		}
-		else if(input_argv.at(0) == "list")
-		{
-			if(input_argv.size() == 1)
-			{
-				avdecc_cmd_line_ref->cmd_list();
-			}
-			else if((input_argv.size() == 2) && (input_argv.at(1) == "clock_sync_source"))
-			{
-				avdecc_cmd_line_ref->cmd_list_clock_sync_source();
-			}
-			else
-			{
-				std::cout << "Invalid Command\n" << std::endl;
-				avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
-			}
-
-		}
 		else if(input_argv.at(0) == "select")
 		{
 			if(input_argv.size() == 1)
@@ -260,6 +243,10 @@ int main()
 		}
 		else if(input_argv.at(0) == "view")
 		{
+			if(input_argv.size() == 1)
+			{
+				avdecc_cmd_line_ref->cmd_view();
+			}
 			if((input_argv.size() == 2) && (input_argv.at(1) == "all"))
 			{
 				try
@@ -270,6 +257,10 @@ int main()
 				{
 					std::cerr << "Out Of Range Exception " << e.what() << std::endl;
 				}
+			}
+			else if((input_argv.size() == 2) && (input_argv.at(1) == "media_clock"))
+			{
+				avdecc_cmd_line_ref->cmd_view_media_clock();
 			}
 			else if((input_argv.size() == 3) && (input_argv.at(1) == "details"))
 			{
