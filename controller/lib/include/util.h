@@ -80,9 +80,14 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value) = 0;
 
                 /**
+                 * Convert IEEE1722 format name to value.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL ieee1722_format_name_to_value(const char *format_name) = 0;
+
+                /**
                  * Convert IEEE1722 format value to name.
                  */
-                AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL ieee1722_format_value_to_name(uint64_t format) = 0;
+                AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL ieee1722_format_value_to_name(uint64_t format_value) = 0;
         };
 
         /**

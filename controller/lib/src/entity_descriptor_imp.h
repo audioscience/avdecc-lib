@@ -45,6 +45,7 @@ namespace avdecc_lib
                 std::vector<configuration_descriptor_imp *> config_desc_vec; // Store a list of Configuration descriptor class objects
 
                 struct jdksavdecc_aem_command_acquire_entity_response aem_cmd_acquire_entity_resp; // Store the response received after sending a ACQUIRE_ENTITY command.
+		struct jdksavdecc_aem_command_lock_entity_response aem_cmd_lock_entity_resp; // Store the response received after sending a LOCK_ENTITY command.
 
         public:
                 /**
@@ -188,6 +189,19 @@ namespace avdecc_lib
                  * Process a ACQURE_ENTITY response for the ACQURE_ENTITY command.
                  */
                 int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+
+                /**
+                 * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
+                 *
+                 * \param notification_id A void pointer to the unique identifier associated with the command.
+                 * \param lock_entity_flag The flag to be set for the command. Valid flags are 0 and 1 (UNLOCK).
+                 */
+		int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag);
+
+                /**
+                 * Process a LOCK ENTITY response for the LOCK ENTITY command.
+                 */
+                int proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
                 /**
                  * Send a SET_CONFIFURATION command to change the current configuration of the AVDECC Entity.

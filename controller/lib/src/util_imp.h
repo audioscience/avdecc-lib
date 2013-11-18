@@ -82,10 +82,15 @@ namespace avdecc_lib
                  */
                 const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value);
 
+               /**
+                 * Convert IEEE1722 format name to value.
+                 */
+                uint64_t STDCALL ieee1722_format_name_to_value(const char *format_name);
+
                 /**
                  * Convert IEEE1722 format value to name.
                  */
-                const char * STDCALL ieee1722_format_value_to_name(uint64_t format);
+                const char * STDCALL ieee1722_format_value_to_name(uint64_t format_value);
 
                 /**
                  * Convert an uint64_t value to eui48.

@@ -198,6 +198,16 @@ namespace avdecc_lib
                 return default_proc_acquire_entity_resp(aem_cmd_acquire_entity_resp, notification_id, frame, frame_len, status);
         }
 
+        int STDCALL entity_descriptor_imp::send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag)
+	{
+		return default_send_lock_entity_cmd(this, notification_id, lock_entity_flag);
+	}
+
+        int entity_descriptor_imp::proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+	{
+		return default_proc_lock_entity_resp(aem_cmd_lock_entity_resp, notification_id, frame, frame_len, status);
+	}
+
         int STDCALL entity_descriptor_imp::send_set_config_cmd()
         {
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION command.");

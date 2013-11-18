@@ -201,7 +201,7 @@ namespace avdecc_lib
         {
                 {UINT64_C(0x00a0020140000100), "IEC61883_AM824_MBLA_48KHZ_1CH"},
                 {UINT64_C(0x00a0020240000200), "IEC61883_AM824_MBLA_48KHZ_2CH"},
-                {UINT64_C(0x0000000000000000), "UNKOWN"},
+                {UINT64_C(0x0000000000000000), "UNKNOWN"},
         };
 
         util_imp *utility = new util_imp();
@@ -315,6 +315,23 @@ namespace avdecc_lib
                 }
 
                 return "UNKNOWN";
+        }
+
+        uint64_t STDCALL util_imp::ieee1722_format_name_to_value(const char *format_name)
+        {
+                struct ieee1722_format *p = &ieee1722_format_table[0];
+
+                while(p->str != "UNKNOWN")
+                {
+			if(strcmp(p->str, format_name) == 0)
+                        {
+                                return p->fmt;
+                        }
+
+                        p++;
+                }
+
+                return (uint64_t)0xffff;
         }
 
         const char * STDCALL util_imp::ieee1722_format_value_to_name(uint64_t format)

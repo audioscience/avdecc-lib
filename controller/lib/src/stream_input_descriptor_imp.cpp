@@ -284,7 +284,7 @@ namespace avdecc_lib
                 /******************************************** AECP Common Data *********************************************/
                 aem_cmd_set_stream_format.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
                 // Fill aem_cmd_set_stream_format.sequence_id in AEM Controller State Machine
-                aem_cmd_set_stream_format.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
+                aem_cmd_set_stream_format.command_type = JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT;
 
                 /**************************************** AECP Message Specific Data *************************************/
                 aem_cmd_set_stream_format.descriptor_type = get_descriptor_type();
@@ -334,9 +334,9 @@ namespace avdecc_lib
                         return -1;
                 }
 
-                msg_type = aem_cmd_get_stream_format_resp.aem_header.aecpdu_header.header.message_type;
-                status = aem_cmd_get_stream_format_resp.aem_header.aecpdu_header.header.status;
-                u_field = aem_cmd_get_stream_format_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+                msg_type = aem_cmd_set_stream_format_resp.aem_header.aecpdu_header.header.message_type;
+                status = aem_cmd_set_stream_format_resp.aem_header.aecpdu_header.header.status;
+                u_field = aem_cmd_set_stream_format_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
                 aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 

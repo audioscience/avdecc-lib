@@ -175,9 +175,9 @@ namespace avdecc_lib
                 STATUS_STREAM_IS_RUNNING = 12, ///< The stream is currently streaming and the command is one which cannot be executed on a streaming stream
                 TOTAL_NUM_OF_AEM_CMDS_STATUS = 13,  ///< The total number of AEM commands status currently supported in the 1722.1 specification
                 AVDECC_LIB_STATUS_INVALID = 1023, ///< AVDECC library specific status, not part of the 1722.1 specification
-                ///< The response received has a subtype different from the subtype of the command sent
+						  ///< The response received has a subtype different from the subtype of the command sent
                 AVDECC_LIB_STATUS_TICK_TIMEOUT = 1024 ///< AVDECC library specific status, not part of the 1722.1 specification
-                                                 ///< The response is not received within the timeout period after re-sending a command
+                                                      ///< The response is not received within the timeout period after re-sending a command
         };
 
         enum aem_cmd_waiting

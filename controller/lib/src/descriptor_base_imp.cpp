@@ -176,9 +176,9 @@ namespace avdecc_lib
                 /***************************************** AECP Common Data ******************************************/
                 aem_cmd_lock_entity.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
                 // Fill aem_cmd_lock_entity.sequence_id in AEM Controller State Machine
-                aem_cmd_lock_entity.command_type = JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY;
+                aem_cmd_lock_entity.command_type = JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY;
 
-                /************************** AECP Message Specific Data ************************/
+                /****************************** AECP Message Specific Data ****************************/
                 aem_cmd_lock_entity.aem_lock_flags = lock_entity_flag;
                 jdksavdecc_eui64_init(&aem_cmd_lock_entity.locked_entity_id);
                 aem_cmd_lock_entity.descriptor_type = descriptor_base_imp_ref->get_descriptor_type();

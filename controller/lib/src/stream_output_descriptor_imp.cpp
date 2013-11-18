@@ -335,9 +335,9 @@ namespace avdecc_lib
                         return -1;
                 }
 
-                msg_type = aem_cmd_get_stream_format_resp.aem_header.aecpdu_header.header.message_type;
-                status = aem_cmd_get_stream_format_resp.aem_header.aecpdu_header.header.status;
-                u_field = aem_cmd_get_stream_format_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+                msg_type = aem_cmd_set_stream_format_resp.aem_header.aecpdu_header.header.message_type;
+                status = aem_cmd_set_stream_format_resp.aem_header.aecpdu_header.header.status;
+                u_field = aem_cmd_set_stream_format_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
                 aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 

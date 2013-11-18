@@ -472,8 +472,8 @@ namespace avdecc_lib
                 {
                         case JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY:
                                 {
-                                        desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                                        desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                                        desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
+                                        desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
 
                                         if(desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY)
                                         {
@@ -486,7 +486,7 @@ namespace avdecc_lib
                                                 }
                                                 else
                                                 {
-                                                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_input_descriptor to derived stream_input_descriptor_imp error");
+                                                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base entity_descriptor to derived entity_descriptor_imp error");
                                                 }
                                         }
                                         else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
@@ -517,13 +517,66 @@ namespace avdecc_lib
                                                         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_output_descriptor_imp to derived stream_output_descriptor_imp error");
                                                 }
                                         }
+					else
+                                        {
+						log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Descriptor type %d is not implemented.", desc_type);
+                                        }
                                 }
 
                                 break;
 
                         case JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY:
+				{
+					desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
+                                        desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
 
-                                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement LOCK_ENTITY command.");
+                                        if(desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY)
+                                        {
+                                                entity_descriptor_imp *entity_desc_imp_ref;
+                                                entity_desc_imp_ref = dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
+
+                                                if(entity_desc_imp_ref)
+                                                {
+                                                        entity_desc_imp_ref->proc_lock_entity_resp(notification_id, frame, frame_len, status);
+                                                }
+                                                else
+                                                {
+                                                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base entity_descriptor to derived entity_descriptor_imp error");
+                                                }
+                                        }
+					else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
+                                        {
+                                                stream_input_descriptor_imp *stream_input_desc_imp_ref;
+                                                stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+
+                                                if(stream_input_desc_imp_ref)
+                                                {
+                                                        stream_input_desc_imp_ref->proc_lock_entity_resp(notification_id, frame, frame_len, status);
+                                                }
+                                                else
+                                                {
+                                                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_input_descriptor to derived stream_input_descriptor_imp error");
+                                                }
+                                        }
+                                        else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
+                                        {
+                                                stream_output_descriptor_imp *stream_output_desc_imp_ref;
+                                                stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+
+                                                if(stream_output_desc_imp_ref)
+                                                {
+                                                        stream_output_desc_imp_ref->proc_lock_entity_resp(notification_id, frame, frame_len, status);
+                                                }
+                                                else
+                                                {
+                                                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_output_descriptor_imp to derived stream_output_descriptor_imp error");
+                                                }
+                                        }
+					else
+                                        {
+						log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Descriptor type %d is not implemented.", desc_type);
+                                        }
+				}
 
                                 break;
 
@@ -537,8 +590,8 @@ namespace avdecc_lib
 
                         case JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT:
                                 {
-                                        desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                                        desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                                        desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
+                                        desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
 
                                         if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
                                         {
@@ -574,7 +627,7 @@ namespace avdecc_lib
 
                         case JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT:
                                 {
-                                        desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
+                                        desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
                                         desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
 
                                         if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
