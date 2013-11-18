@@ -159,6 +159,18 @@ int main()
                                 avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
                         }
                 }
+		else if(input_argv.at(0) == "list")
+		{
+			if(input_argv.size() == 1)
+                        {
+                                avdecc_cmd_line_ref->cmd_list();
+                        }
+                        else
+                        {
+                                std::cout << "Invalid Command\n" << std::endl;
+                                avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+                        }
+		}
                 else if(input_argv.at(0) == "select")
                 {
                         if(input_argv.size() == 1)
@@ -243,11 +255,7 @@ int main()
                 }
                 else if(input_argv.at(0) == "view")
                 {
-                        if(input_argv.size() == 1)
-                        {
-                                avdecc_cmd_line_ref->cmd_view();
-                        }
-                        else if((input_argv.size() == 2) && (input_argv.at(1) == "all"))
+                        if((input_argv.size() == 2) && (input_argv.at(1) == "all"))
                         {
                                 try
                                 {
@@ -513,21 +521,18 @@ int main()
                         if((input_argv.size() == 5) && (input_argv.at(1) == "stream_format"))
                         {
                                 uint16_t desc_index = 0x0;
-                                uint64_t new_stream_format = 0x0;
 
-                                if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
-                                   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
+                                if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
                                 {
                                         is_input_valid = true;
                                         desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
-                                        new_stream_format = (uint64_t)atoi(input_argv.at(4).c_str());
                                 }
 
                                 if(is_input_valid)
                                 {
                                         try
                                         {
-                                                avdecc_cmd_line_ref->cmd_set_stream_format(input_argv.at(2), desc_index, new_stream_format);
+                                                avdecc_cmd_line_ref->cmd_set_stream_format(input_argv.at(2), desc_index, input_argv.at(4));
                                         }
                                         catch(std::out_of_range &e)
                                         {

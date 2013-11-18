@@ -20,7 +20,7 @@ although multiple threads are used to queue operations to be performed by the si
 The library supports notification events (callbacks) that are triggered on the success (or failure) of a command. 
 It is up to the application to process the notifications in a useful manner. Asynchronous descriptor updates from an
 end station are also supported. A descriptor notification does not have data about the updated descriptor values embedded
-in it. Instead the AVDECC application should query the desriptor class to obtain the updated values. 
+in it. Instead the AVDECC application should query the descriptor class to obtain the updated values. 
 
 Users developing 1722.1 end stations and controllers are encouraged to add new descriptors to this library as required.
 The library provides an easy entry point for adding and a testing a completely new 1722.1 descriptor without having
@@ -215,7 +215,7 @@ CONTROLLER_AVAILABLE | P1 | Y | |
 READ_DESCRIPTOR | P1 | Y | Y |
 SET_STREAM_FORMAT | P1 | Y | |
 GET_STREAM_FORMAT | P1 | Y | Y |
-SET_STREAM_INFO | P1 | Y | |
+SET_STREAM_INFO | P1 | | |
 GET_STREAM_INFO | P1 | Y | Y |
 SET_SAMPLING_RATE | P1 | Y | |
 GET_SAMPLING_RATE | P1 | Y | Y |
@@ -266,16 +266,14 @@ REMOVE_SENSOR_MAPPINGS | P4 | | |
 
 
 #### ToDo ####
-* cmd line help needs to be split up into it's own txt file, or a simple .h file.
 * need to work through P1 priorities above
 * add linux and OSX builds
-* add format helper functions
 * get ACMP working
-* add timer to system class to make sure tick isn't held off
 
 #### Done ####
-
-
+* cmd line help needs to be split up into it's own txt file, or a simple .h file.
+* add format helper functions
+* add timer to system class to make sure tick isn't held off
 
 Release Notes
 =============

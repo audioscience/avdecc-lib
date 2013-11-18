@@ -102,6 +102,11 @@ public:
         int cmd_version();
 
         /**
+         * Display a table with information about each end station discovered with ADP.
+         */
+        int cmd_list();
+
+        /**
          * Display the current end station and configuration setting.
          */
         void cmd_select();
@@ -115,11 +120,6 @@ public:
          * Change the base log level for messages to be logged by the logging callback.
          */
         int cmd_log_level(uint32_t new_log_level);
-
-        /**
-         * Display a table with information about each end station discovered with ADP.
-         */
-        int cmd_view();
 
         /**
          * Display all the descriptors in each end station.
@@ -194,7 +194,7 @@ public:
         /**
          * Send a SET_STREAM_FORMAT command to change the format of a stream.
          */
-        int cmd_set_stream_format(std::string desc_name, uint16_t desc_index, uint64_t new_stream_format);
+        int cmd_set_stream_format(std::string desc_name, uint16_t desc_index, std::string new_stream_format_name);
 
         /**
          * Send a GET_STREAM_FORMAT command with nofitication id to fetch the current format of a stream.

@@ -118,6 +118,12 @@ void avdecc_cmd_line::cmd_line_help_init()
                                                       "Display the current AVDECC Controller build release version."
                                                      ));
 
+	cmd_line_help_vec.push_back(new cmd_line_help("list",
+
+                                                      "list\n" \
+                                                      "Display a table with information about each end station."
+                                                     ));
+
         cmd_line_help_vec.push_back(new cmd_line_help("select",
 
                                                       "select\n" \
@@ -137,12 +143,6 @@ void avdecc_cmd_line::cmd_line_help_init()
                                                       "Update the base log level for messages to be logged by the logging callback.\n\n" \
                                                       "\nParameters" \
                                                       "\n\t n_l_l stands for new log level and is an integer." \
-                                                     ));
-
-        cmd_line_help_vec.push_back(new cmd_line_help("view",
-
-                                                      "view\n" \
-                                                      "Display a table with information about each end station."
                                                      ));
 
         cmd_line_help_vec.push_back(new cmd_line_help("view all",
@@ -215,7 +215,7 @@ void avdecc_cmd_line::cmd_line_help_init()
                                                       "\n\t a_e_f stands for Acquire Entity Flag and is a string." \
                                                       "\n\t d_t stands for descriptor type and is a string." \
                                                       "\n\t d_i stands for descriptor index and is an integer.\n\n" \
-                                                      "Valid Acquire Entity Flags are 0, persistent, and release.\n" \
+                                                      "Valid Acquire Entity Flags are acquire, persistent, and release.\n" \
                                                       "To see a list of valid descriptor types and corresponding indexes, enter\n" \
                                                       "\"view all\" command."
                                                      ));
@@ -229,7 +229,7 @@ void avdecc_cmd_line::cmd_line_help_init()
                                                       "\n\t l_e_f stands for Lock Entity Flag and is a string." \
                                                       "\n\t d_t stands for descriptor type and is a string." \
                                                       "\n\t d_i stands for descriptor index and is an integer.\n\n" \
-                                                      "Valid Lock Entity Flags are 0 and unlock.\n" \
+                                                      "Valid Lock Entity Flags are lock and unlock.\n" \
                                                       "To see a list of valid descriptor types and corresponding indexes, enter\n" \
                                                       "\"view all\" command."
                                                      ));
@@ -266,7 +266,7 @@ void avdecc_cmd_line::cmd_line_help_init()
                                                       "\nParameters" \
                                                       "\n\t d_t stands for descriptor type and is a string." \
                                                       "\n\t d_i stands for descriptor indexand is an integer." \
-                                                      "\n\t s_f stands for stream format and is an integer.\n\n" \
+                                                      "\n\t s_f stands for stream format and is a string.\n\n" \
                                                       "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
                                                      ));
 
@@ -489,7 +489,7 @@ int avdecc_cmd_line::cmd_version()
         return 0;
 }
 
-int avdecc_cmd_line::cmd_view()
+int avdecc_cmd_line::cmd_list()
 {
         std::cout << "\n" << "End Station" << "  |  " << "Name" << std::setw(21)  << "  |  " <<  "Entity GUID" << std::setw(10) << "  |  " << "MAC" << std::endl;
         std::cout << "------------------------------------------------------------------------------" << std::endl;
@@ -1568,7 +1568,7 @@ int avdecc_cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_
         int status = -1;
         intptr_t cmd_notification_id = 0;
 
-        if(flag_name == "0")
+        if(flag_name == "acquire")
         {
                 flag_id = 0x0;
         }
@@ -1634,10 +1634,12 @@ int avdecc_cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_nam
 {
         uint32_t flag_id;
         uint16_t desc_type_value;
+	int status = -1;
+        intptr_t cmd_notification_id;
 
         desc_type_value = utility->desc_name_to_value(desc_name.c_str());
 
-        if(flag_name == "0")
+        if(flag_name == "lock")
         {
                 flag_id = 0x0;
         }
@@ -1651,7 +1653,20 @@ int avdecc_cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_nam
                 return -1;
         }
 
-        std::cout << "Need to implement cmd_lock_entity" << std::endl;
+       if(desc_type_value == avdecc_lib::AEM_DESC_ENTITY)
+        {
+                cmd_notification_id = get_next_notification_id();
+                system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
+                avdecc_lib::entity_descriptor *entity_desc_ref = controller_ref->get_end_station_by_index(current_end_station)->get_entity_desc_by_index(current_entity);
+		entity_desc_ref->send_lock_entity_cmd((void *)cmd_notification_id, flag_id);
+                status = system_ref->get_last_resp_status();
+
+                std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+
+                return 1;
+        }
+
+//        std::cout << "Need to implement cmd_lock_entity" << std::endl;
 
         return 0;
 }
@@ -1685,22 +1700,33 @@ int avdecc_cmd_line::cmd_controller_avail()
         return 0;
 }
 
-int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, uint64_t new_stream_format)
+int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, std::string new_stream_format_name)
 {
         uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+	uint64_t stream_format_value = utility->ieee1722_format_name_to_value(new_stream_format_name.c_str());
         int status = -1;
         intptr_t cmd_notification_id = 0;
+	std::string stream_format;
 
         if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
         {
                 cmd_notification_id = get_next_notification_id();
                 system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
                 avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
-                stream_input_desc_ref->send_set_stream_format_cmd((void *)cmd_notification_id, new_stream_format);
+                stream_input_desc_ref->send_set_stream_format_cmd((void *)cmd_notification_id, stream_format_value);
                 status = system_ref->get_last_resp_status();
 
                 std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
-                std::cout << "Stream format: " << std::hex << stream_input_desc_ref->set_stream_format_stream_format() << std::endl;
+
+                stream_format = utility->ieee1722_format_value_to_name(stream_input_desc_ref->set_stream_format_stream_format());
+                if(stream_format == "UNKNOWN")
+                {
+                        std::cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->set_stream_format_stream_format() << std::endl;
+                }
+                else
+                {
+                        std::cout << "Stream format: " << stream_format << std::endl;
+                }
 
                 return 1;
         }
@@ -1709,10 +1735,20 @@ int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_
                 cmd_notification_id = get_next_notification_id();
                 system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
                 avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_ref->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
-                stream_output_desc_ref->send_get_stream_format_cmd((void *)cmd_notification_id);
+                stream_output_desc_ref->send_set_stream_format_cmd((void *)cmd_notification_id, stream_format_value);
                 status = system_ref->get_last_resp_status();
 
                 std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+
+                stream_format = utility->ieee1722_format_value_to_name(stream_output_desc_ref->set_stream_format_stream_format());
+                if(stream_format == "UNKNOWN")
+                {
+                        std::cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_format_stream_format() << std::endl;
+                }
+                else
+                {
+                        std::cout << "Stream format: " << stream_format << std::endl;
+                }
 
                 return 1;
         }
