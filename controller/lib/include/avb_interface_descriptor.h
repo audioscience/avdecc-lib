@@ -37,69 +37,69 @@
 
 namespace avdecc_lib
 {
-	class avb_interface_descriptor : public virtual descriptor_base
-	{
-	public:
-		/**
-		 * \return The name of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
+        class avb_interface_descriptor : public virtual descriptor_base
+        {
+        public:
+                /**
+                 * \return The name of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
 
-		/**
-		 * \return The localized description of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
+                /**
+                 * \return The localized description of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
-		/**
-		 * \return The MAC address of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_mac_addr() = 0;
+                /**
+                 * \return The MAC address of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_mac_addr() = 0;
 
-		/**
-		 * \return The interface flags of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_interface_flags() = 0;
+                /**
+                 * \return The interface flags of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_interface_flags() = 0;
 
-		/**
-		 * \return The clock identity of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_clock_identity() = 0;
+                /**
+                 * \return The clock identity of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_clock_identity() = 0;
 
-		/**
-		 * \return The priority1 of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_priority1() = 0;
+                /**
+                 * \return The priority1 of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_priority1() = 0;
 
-		/**
-		 * \return The clock class of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_clock_class() = 0;
+                /**
+                 * \return The clock class of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_clock_class() = 0;
 
-		/**
-		 * \return The offset scaled log variance of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_offset_scaled_log_variance() = 0;
+                /**
+                 * \return The offset scaled log variance of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_offset_scaled_log_variance() = 0;
 
-		/**
-		 * \return The clock accuracy of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_clock_accuracy() = 0;
+                /**
+                 * \return The clock accuracy of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_clock_accuracy() = 0;
 
-		/**
-		 * \return The priority2 of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_priority2() = 0;
+                /**
+                 * \return The priority2 of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_priority2() = 0;
 
-		/**
-		 * \return The domain number of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_domain_number() = 0;
+                /**
+                 * \return The domain number of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_domain_number() = 0;
 
-		/**
-		 * \return The log sync interval of the AVB Interface descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_log_sync_interval() = 0;
-	};
+                /**
+                 * \return The log sync interval of the AVB Interface descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_log_sync_interval() = 0;
+        };
 }
 
 #endif

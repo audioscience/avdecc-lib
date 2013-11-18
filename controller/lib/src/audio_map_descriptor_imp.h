@@ -36,46 +36,45 @@
 
 namespace avdecc_lib
 {
-	class audio_map_descriptor_imp : public virtual audio_map_descriptor, public virtual descriptor_base_imp
-	{
+        class audio_map_descriptor_imp : public virtual audio_map_descriptor, public virtual descriptor_base_imp
+        {
 
-	private:
-		struct jdksavdecc_descriptor_audio_map audio_map_desc; // Structure containing the audio_map_desc fields
-		int audio_map_desc_read_returned; // Status of extracting Audio Map descriptor information from a network buffer
-	public:
-		/**
-		 * Constructor for Audio Cluster descriptor object.
-		 *
-		 * \param end_station_obj A pointer to the base End Station object.
-		 * \param frame The raw memory that contains the descriptor information to read from.
-		 * \param pos The position offset to read the descriptor fields from.
-		 * \param frame_len The memory buffer length of the descriptor frame.
-		 */
-		audio_map_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        private:
+                struct jdksavdecc_descriptor_audio_map audio_map_desc; // Structure containing the audio_map_desc fields
+                int audio_map_desc_read_returned; // Status of extracting Audio Map descriptor information from a network buffer
+        public:
+                /**
+                 * Constructor for Audio Cluster descriptor object.
+                 *
+                 * \param end_station_obj A pointer to the base End Station object.
+                 * \param frame The raw memory that contains the descriptor information to read from.
+                 * \param pos The position offset to read the descriptor fields from.
+                 * \param frame_len The memory buffer length of the descriptor frame.
+                 */
+                audio_map_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
-		virtual ~audio_map_descriptor_imp();
+                virtual ~audio_map_descriptor_imp();
 
-		/**
-		 * Get the descriptor type of the Audio Map descriptor object.
-		 */
-		uint16_t STDCALL get_descriptor_type() const;
+                /**
+                 * Get the descriptor type of the Audio Map descriptor object.
+                 */
+                uint16_t STDCALL get_descriptor_type() const;
 
-		/**
-		 * Get the descriptor index of the Audio Map descriptor object.
-		 */
-		uint16_t STDCALL get_descriptor_index() const;
+                /**
+                 * Get the descriptor index of the Audio Map descriptor object.
+                 */
+                uint16_t STDCALL get_descriptor_index() const;
 
-		/**
-		 * Get the mappings offset of the Audio Map descriptor object.
-		 */
-		uint16_t STDCALL get_mappings_offset();
+                /**
+                 * Get the mappings offset of the Audio Map descriptor object.
+                 */
+                uint16_t STDCALL get_mappings_offset();
 
-		/**
-		 * Get the number of mappings of the Audio Map descriptor object.
-		 */
-		uint16_t STDCALL get_number_of_mappings();
-	};
+                /**
+                 * Get the number of mappings of the Audio Map descriptor object.
+                 */
+                uint16_t STDCALL get_number_of_mappings();
+        };
 }
 
 #endif
-

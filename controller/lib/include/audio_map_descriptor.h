@@ -37,19 +37,19 @@
 
 namespace avdecc_lib
 {
-	class audio_map_descriptor : public virtual descriptor_base
-	{
-	public:
-		/**
-		 * Get the mappings offset of the Audio Map descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_mappings_offset() = 0;
+        class audio_map_descriptor : public virtual descriptor_base
+        {
+        public:
+                /**
+                 * Get the mappings offset of the Audio Map descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_mappings_offset() = 0;
 
-		/**
-		 * Get the number of mappings of the Audio Map descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_mappings() = 0;
-	};
+                /**
+                 * Get the number of mappings of the Audio Map descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_mappings() = 0;
+        };
 }
 
 #endif

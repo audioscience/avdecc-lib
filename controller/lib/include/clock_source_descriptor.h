@@ -37,44 +37,44 @@
 
 namespace avdecc_lib
 {
-	class clock_source_descriptor : public virtual descriptor_base
-	{
-	public:
-		/**
-		 * \return The name of the Clock Source descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
+        class clock_source_descriptor : public virtual descriptor_base
+        {
+        public:
+                /**
+                 * \return The name of the Clock Source descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
 
-		/**
-		 * \return The localized description of the Clock Source descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description () = 0;
+                /**
+                 * \return The localized description of the Clock Source descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description () = 0;
 
-		/**
-		 * \return The flags of the Clock Source descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_flags() = 0;
+                /**
+                 * \return The flags of the Clock Source descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_flags() = 0;
 
-		/**
-		* \return The type of the Clock Source descriptor object.
-		*/
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_type() = 0;
+                /**
+                * \return The type of the Clock Source descriptor object.
+                */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_type() = 0;
 
-		/**
-		* \return The identifier of the Clock Source descriptor object.
-		*/
-		AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_clock_source_identifier() = 0;
+                /**
+                * \return The identifier of the Clock Source descriptor object.
+                */
+                AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_clock_source_identifier() = 0;
 
-		/**
-		 * \return The location type of the Clock Source descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_location_type() = 0;
+                /**
+                 * \return The location type of the Clock Source descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_location_type() = 0;
 
-		/**
-		 * \return The location index of the Clock Source descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_location_index() = 0;
-	};
+                /**
+                 * \return The location index of the Clock Source descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_location_index() = 0;
+        };
 }
 
 #endif

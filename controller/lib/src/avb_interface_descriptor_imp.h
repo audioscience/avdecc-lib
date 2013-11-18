@@ -36,95 +36,95 @@
 
 namespace avdecc_lib
 {
-	class avb_interface_descriptor_imp : public virtual avb_interface_descriptor, public virtual descriptor_base_imp
-	{
-	private:
-		struct jdksavdecc_descriptor_avb_interface avb_interface_desc; // Structure containing the avb_interface_desc fields
-		int desc_avb_interface_read_returned; // Status of extracting AVB Interface descriptor information from a network buffer
+        class avb_interface_descriptor_imp : public virtual avb_interface_descriptor, public virtual descriptor_base_imp
+        {
+        private:
+                struct jdksavdecc_descriptor_avb_interface avb_interface_desc; // Structure containing the avb_interface_desc fields
+                int desc_avb_interface_read_returned; // Status of extracting AVB Interface descriptor information from a network buffer
 
-	public:
-		/**
-		 * Constructor for AVB Interface descriptor object.
-		 *
-		 * \param end_station_obj A pointer to the base End Station object.
-		 * \param frame The raw memory that contains the descriptor information to read from.
-		 * \param pos The position offset to read the descriptor fields from.
-		 * \param frame_len The memory buffer length of the descriptor frame.
-		 */
-		avb_interface_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        public:
+                /**
+                 * Constructor for AVB Interface descriptor object.
+                 *
+                 * \param end_station_obj A pointer to the base End Station object.
+                 * \param frame The raw memory that contains the descriptor information to read from.
+                 * \param pos The position offset to read the descriptor fields from.
+                 * \param frame_len The memory buffer length of the descriptor frame.
+                 */
+                avb_interface_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
-		virtual ~avb_interface_descriptor_imp();
+                virtual ~avb_interface_descriptor_imp();
 
-		/**
-		 * Get the descriptor type of the AVB Interface descriptor object.
-		 */
-		uint16_t STDCALL get_descriptor_type() const;
+                /**
+                 * Get the descriptor type of the AVB Interface descriptor object.
+                 */
+                uint16_t STDCALL get_descriptor_type() const;
 
-		/**
-		 * Get the descriptor index of the AVB Interface descriptor object.
-		 */
-		uint16_t STDCALL get_descriptor_index() const;
+                /**
+                 * Get the descriptor index of the AVB Interface descriptor object.
+                 */
+                uint16_t STDCALL get_descriptor_index() const;
 
-		/**
-		 * Get the name of the AVB Interface descriptor object.
-		 */
-		uint8_t * STDCALL get_object_name();
+                /**
+                 * Get the name of the AVB Interface descriptor object.
+                 */
+                uint8_t * STDCALL get_object_name();
 
-		/**
-		 * Get the localized description of the AVB Interface descriptor object.
-		 */
-		uint16_t STDCALL get_localized_description();
+                /**
+                 * Get the localized description of the AVB Interface descriptor object.
+                 */
+                uint16_t STDCALL get_localized_description();
 
-		/**
-		 * Get the MAC address of the AVB Interface descriptor object.
-		 */
-		uint8_t * STDCALL get_mac_addr();
+                /**
+                 * Get the MAC address of the AVB Interface descriptor object.
+                 */
+                uint8_t * STDCALL get_mac_addr();
 
-		/**
-		 * Get the interface flags of the AVB Interface descriptor object.
-		 */
-		uint16_t STDCALL get_interface_flags();
+                /**
+                 * Get the interface flags of the AVB Interface descriptor object.
+                 */
+                uint16_t STDCALL get_interface_flags();
 
-		/**
-		 * Get the clock identity of the AVB Interface descriptor object.
-		 */
-		uint64_t STDCALL get_clock_identity();
+                /**
+                 * Get the clock identity of the AVB Interface descriptor object.
+                 */
+                uint64_t STDCALL get_clock_identity();
 
-		/**
-		 * Get the priority1 of the AVB Interface descriptor object.
-		 */
-		uint32_t STDCALL get_priority1();
+                /**
+                 * Get the priority1 of the AVB Interface descriptor object.
+                 */
+                uint32_t STDCALL get_priority1();
 
-		/**
-		 * Get the clock class of the AVB Interface descriptor object.
-		 */
-		uint32_t STDCALL get_clock_class();
+                /**
+                 * Get the clock class of the AVB Interface descriptor object.
+                 */
+                uint32_t STDCALL get_clock_class();
 
-		/**
-		 * Get the offset scaled log variance of the AVB Interface descriptor object.
-		 */
-		uint16_t STDCALL get_offset_scaled_log_variance();
+                /**
+                 * Get the offset scaled log variance of the AVB Interface descriptor object.
+                 */
+                uint16_t STDCALL get_offset_scaled_log_variance();
 
-		/**
-		 * Get the clock accuracy of the AVB Interface descriptor object.
-		 */
-		uint32_t STDCALL get_clock_accuracy();
+                /**
+                 * Get the clock accuracy of the AVB Interface descriptor object.
+                 */
+                uint32_t STDCALL get_clock_accuracy();
 
-		/**
-		 * Get the priority2 of the AVB Interface descriptor object.
-		 */
-		uint32_t STDCALL get_priority2();
+                /**
+                 * Get the priority2 of the AVB Interface descriptor object.
+                 */
+                uint32_t STDCALL get_priority2();
 
-		/**
-		 * Get the domain number of the AVB Interface descriptor object.
-		 */
-		uint32_t STDCALL get_domain_number();
+                /**
+                 * Get the domain number of the AVB Interface descriptor object.
+                 */
+                uint32_t STDCALL get_domain_number();
 
-		/**
-		 * Get the log sync interval of the AVB Interface descriptor object.
-		 */
-		uint32_t STDCALL get_log_sync_interval();
-	};
+                /**
+                 * Get the log sync interval of the AVB Interface descriptor object.
+                 */
+                uint32_t STDCALL get_log_sync_interval();
+        };
 }
 
 #endif

@@ -36,91 +36,91 @@
 
 namespace avdecc_lib
 {
-	class jack_input_descriptor_imp : public virtual jack_input_descriptor, public virtual descriptor_base_imp
-	{
-	private:
-		struct jdksavdecc_descriptor_jack jack_input_desc; // Structure containing the jack_input_desc fields
-		int desc_jack_input_read_returned; // Status of extracting Jack Input descriptor information from a network buffer
+        class jack_input_descriptor_imp : public virtual jack_input_descriptor, public virtual descriptor_base_imp
+        {
+        private:
+                struct jdksavdecc_descriptor_jack jack_input_desc; // Structure containing the jack_input_desc fields
+                int desc_jack_input_read_returned; // Status of extracting Jack Input descriptor information from a network buffer
 
-		struct jack_input_desc_jack_flags
-		{
-			bool clock_sync_source;
-			bool captive;
-		};
+                struct jack_input_desc_jack_flags
+                {
+                        bool clock_sync_source;
+                        bool captive;
+                };
 
-		struct jack_input_desc_jack_flags jack_flags;
+                struct jack_input_desc_jack_flags jack_flags;
 
-	public:
-		/**
-		 * Constructor for Jack Input descriptor object.
-		 *
-		 * \param end_station_obj A pointer to the base End Station object.
-		 * \param frame The raw memory that contains the descriptor information to read from.
-		 * \param pos The position offset to read the descriptor fields from.
-		 * \param frame_len The memory buffer length of the descriptor frame.
-		 */
-		jack_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        public:
+                /**
+                 * Constructor for Jack Input descriptor object.
+                 *
+                 * \param end_station_obj A pointer to the base End Station object.
+                 * \param frame The raw memory that contains the descriptor information to read from.
+                 * \param pos The position offset to read the descriptor fields from.
+                 * \param frame_len The memory buffer length of the descriptor frame.
+                 */
+                jack_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
-		virtual ~jack_input_descriptor_imp();
+                virtual ~jack_input_descriptor_imp();
 
-	private:
-		/**
-		 * Store the jack flags componenets of the Jack Input descriptor object in a vector.
-		 */
-		void jack_flags_init();
+        private:
+                /**
+                 * Store the jack flags componenets of the Jack Input descriptor object in a vector.
+                 */
+                void jack_flags_init();
 
-	public:
-		/**
-		 * Get the descriptor type of the Jack Input descriptor object.
-		 */
-		uint16_t STDCALL get_descriptor_type() const;
+        public:
+                /**
+                 * Get the descriptor type of the Jack Input descriptor object.
+                 */
+                uint16_t STDCALL get_descriptor_type() const;
 
-		/**
-		 * Get the descriptor index of the Jack Input descriptor object.
-		 */
-		uint16_t STDCALL get_descriptor_index() const;
+                /**
+                 * Get the descriptor index of the Jack Input descriptor object.
+                 */
+                uint16_t STDCALL get_descriptor_index() const;
 
-		/**
-		 * Get the name of the Jack Input descriptor object.
-		 */
-		uint8_t * STDCALL get_object_name();
+                /**
+                 * Get the name of the Jack Input descriptor object.
+                 */
+                uint8_t * STDCALL get_object_name();
 
-		/**
-		 * Get the localized description of the Jack Input descriptor object.
-		 */
-		uint16_t STDCALL get_localized_description();
+                /**
+                 * Get the localized description of the Jack Input descriptor object.
+                 */
+                uint16_t STDCALL get_localized_description();
 
-		/**
-		 * Get the flags of the Jack Input descriptor object.
-		 */
-		uint16_t STDCALL get_jack_flags();
+                /**
+                 * Get the flags of the Jack Input descriptor object.
+                 */
+                uint16_t STDCALL get_jack_flags();
 
-		/**
-		 * Check if the jack can be used as a clock synchronization source.
-		 */
-		uint16_t STDCALL get_jack_flag_clock_sync_source();
+                /**
+                 * Check if the jack can be used as a clock synchronization source.
+                 */
+                uint16_t STDCALL get_jack_flag_clock_sync_source();
 
-		/**
-		 * Check if the jack connection is hardwired, cannot be disconnected and
-		 * may be physically within the device's structure.
-		 */
-		uint16_t STDCALL get_captive();
+                /**
+                 * Check if the jack connection is hardwired, cannot be disconnected and
+                 * may be physically within the device's structure.
+                 */
+                uint16_t STDCALL get_captive();
 
-		/**
-		* Get the type of the Jack Input descriptor object.
-		*/
-		uint16_t STDCALL get_jack_type();
+                /**
+                * Get the type of the Jack Input descriptor object.
+                */
+                uint16_t STDCALL get_jack_type();
 
-		/**
-		 * Get the number of controls of the Jack Input descriptor object.
-		 */
-		uint16_t STDCALL get_number_of_controls();
+                /**
+                 * Get the number of controls of the Jack Input descriptor object.
+                 */
+                uint16_t STDCALL get_number_of_controls();
 
-		/**
-		 * Get the base control of the Jack Input descriptor object.
-		 */
-		uint16_t STDCALL get_base_control();
-	};
+                /**
+                 * Get the base control of the Jack Input descriptor object.
+                 */
+                uint16_t STDCALL get_base_control();
+        };
 }
 
 #endif

@@ -37,54 +37,54 @@
 
 namespace avdecc_lib
 {
-	class audio_cluster_descriptor : public virtual descriptor_base
-	{
-	public:
-		/**
-		 * \return The name of the Audio Cluster descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
+        class audio_cluster_descriptor : public virtual descriptor_base
+        {
+        public:
+                /**
+                 * \return The name of the Audio Cluster descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
 
-		/**
-		 * \return The localized description of the Audio Cluster descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
+                /**
+                 * \return The localized description of the Audio Cluster descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
-		/**
-		 * \return The signal type of the Audio Cluster descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_signal_type() = 0;
+                /**
+                 * \return The signal type of the Audio Cluster descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_signal_type() = 0;
 
-		/**
-		 * \return The signal index of the Audio Cluster descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_signal_index() = 0;
+                /**
+                 * \return The signal index of the Audio Cluster descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_signal_index() = 0;
 
-		/**
-		 * \return The signal output of the Audio Cluster descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_signal_output() = 0;
+                /**
+                 * \return The signal output of the Audio Cluster descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_signal_output() = 0;
 
-		/**
-		 * \return The path latency of the Audio Cluster descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_path_latency() = 0;
+                /**
+                 * \return The path latency of the Audio Cluster descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_path_latency() = 0;
 
-		/**
-		 * \return The block latency of the Audio Cluster descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_block_latency() = 0;
+                /**
+                 * \return The block latency of the Audio Cluster descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_block_latency() = 0;
 
-		/**
-		 * \return The channel count of the Audio Cluster descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_channel_count() = 0;
+                /**
+                 * \return The channel count of the Audio Cluster descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_channel_count() = 0;
 
-		/**
-		 * \return The format of the Audio Cluster descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_format() = 0;
-	};
+                /**
+                 * \return The format of the Audio Cluster descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_format() = 0;
+        };
 }
 
 #endif

@@ -35,18 +35,18 @@ cmd_line_help::cmd_line_help() {}
 
 cmd_line_help::cmd_line_help(const std::string cmd, const std::string desc)
 {
-	command = cmd;
-	description = desc;
+        command = cmd;
+        description = desc;
 }
 
 cmd_line_help::~cmd_line_help() {}
 
 const std::string cmd_line_help::get_command()
 {
-	return command;
+        return command;
 }
 
 const std::string cmd_line_help::get_description()
 {
-	return description;
+        return description;
 }
