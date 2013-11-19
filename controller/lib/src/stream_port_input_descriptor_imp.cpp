@@ -33,68 +33,68 @@
 
 namespace avdecc_lib
 {
-	stream_port_input_descriptor_imp::stream_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
-	{
-		stream_port_input_desc_read_returned = jdksavdecc_descriptor_stream_port_read(&stream_port_input_desc, frame, pos, frame_len);
+        stream_port_input_descriptor_imp::stream_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+        {
+                stream_port_input_desc_read_returned = jdksavdecc_descriptor_stream_port_read(&stream_port_input_desc, frame, pos, frame_len);
 
-		if(stream_port_input_desc_read_returned < 0)
-		{
-			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_config_read error");
-			assert(stream_port_input_desc_read_returned >= 0);
-		}
-	}
+                if(stream_port_input_desc_read_returned < 0)
+                {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_config_read error");
+                        assert(stream_port_input_desc_read_returned >= 0);
+                }
+        }
 
-	stream_port_input_descriptor_imp::~stream_port_input_descriptor_imp() {}
+        stream_port_input_descriptor_imp::~stream_port_input_descriptor_imp() {}
 
-	uint16_t STDCALL stream_port_input_descriptor_imp::get_descriptor_type()
-	{
-		assert(stream_port_input_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT);
-		return stream_port_input_desc.descriptor_type;
-	}
+        uint16_t STDCALL stream_port_input_descriptor_imp::get_descriptor_type() const
+        {
+                assert(stream_port_input_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT);
+                return stream_port_input_desc.descriptor_type;
+        }
 
-	uint16_t STDCALL stream_port_input_descriptor_imp::get_descriptor_index() const
-	{
-		assert(stream_port_input_desc.descriptor_index == 0);
-		return stream_port_input_desc.descriptor_index;
-	}
+        uint16_t STDCALL stream_port_input_descriptor_imp::get_descriptor_index() const
+        {
+                assert(stream_port_input_desc.descriptor_index == 0);
+                return stream_port_input_desc.descriptor_index;
+        }
 
-	uint16_t STDCALL stream_port_input_descriptor_imp::get_clock_domain_index()
-	{
-		return stream_port_input_desc.clock_domain_index;
-	}
+        uint16_t STDCALL stream_port_input_descriptor_imp::get_clock_domain_index()
+        {
+                return stream_port_input_desc.clock_domain_index;
+        }
 
-	uint16_t STDCALL stream_port_input_descriptor_imp::get_port_flags()
-	{
-		return stream_port_input_desc.port_flags;
-	}
+        uint16_t STDCALL stream_port_input_descriptor_imp::get_port_flags()
+        {
+                return stream_port_input_desc.port_flags;
+        }
 
-	uint16_t STDCALL stream_port_input_descriptor_imp::get_number_of_controls()
-	{
-		return stream_port_input_desc.number_of_controls;
-	}
+        uint16_t STDCALL stream_port_input_descriptor_imp::get_number_of_controls()
+        {
+                return stream_port_input_desc.number_of_controls;
+        }
 
-	uint16_t STDCALL stream_port_input_descriptor_imp::get_base_control()
-	{
-		return stream_port_input_desc.base_control;
-	}
+        uint16_t STDCALL stream_port_input_descriptor_imp::get_base_control()
+        {
+                return stream_port_input_desc.base_control;
+        }
 
-	uint16_t STDCALL stream_port_input_descriptor_imp::get_number_of_clusters()
-	{
-		return stream_port_input_desc.number_of_clusters;
-	}
+        uint16_t STDCALL stream_port_input_descriptor_imp::get_number_of_clusters()
+        {
+                return stream_port_input_desc.number_of_clusters;
+        }
 
-	uint16_t STDCALL stream_port_input_descriptor_imp::get_base_cluster()
-	{
-		return stream_port_input_desc.base_cluster;
-	}
+        uint16_t STDCALL stream_port_input_descriptor_imp::get_base_cluster()
+        {
+                return stream_port_input_desc.base_cluster;
+        }
 
-	uint16_t STDCALL stream_port_input_descriptor_imp::get_number_of_maps()
-	{
-		return stream_port_input_desc.number_of_maps;
-	}
+        uint16_t STDCALL stream_port_input_descriptor_imp::get_number_of_maps()
+        {
+                return stream_port_input_desc.number_of_maps;
+        }
 
-	uint16_t STDCALL stream_port_input_descriptor_imp::get_base_map()
-	{
-		return stream_port_input_desc.base_map;
-	}
+        uint16_t STDCALL stream_port_input_descriptor_imp::get_base_map()
+        {
+                return stream_port_input_desc.base_map;
+        }
 }

@@ -36,76 +36,76 @@
 
 namespace avdecc_lib
 {
-	class end_station;
+        class end_station;
 
-	class aecp
-	{
-	private:
-		struct jdksavdecc_aecpdu_aem aecpdu; // Structure containing the AECPDU fields
-		uint8_t *aecp_frame; // Point to a raw memory buffer to read from
-		int aecpdu_aem_read_returned; // Status of extracting AECPDU information from a network buffer
+        class aecp
+        {
+        private:
+                struct jdksavdecc_aecpdu_aem aecpdu; // Structure containing the AECPDU fields
+                uint8_t *aecp_frame; // Point to a raw memory buffer to read from
+                int aecpdu_aem_read_returned; // Status of extracting AECPDU information from a network buffer
 
-	public:
-		enum aem_fields_offsets
-		{
-		        CMD_POS = adp::ETHER_HDR_SIZE,
-		        MSG_TYPE_POS = adp::ETHER_HDR_SIZE + 1,
-		        TARGET_GUID_POS = adp::ETHER_HDR_SIZE + adp::PROTOCOL_HDR_SIZE,
-		        SEQ_ID_POS = adp::ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN + JDKSAVDECC_AECPDU_AEM_OFFSET_SEQUENCE_ID,
-		        CMD_TYPE_POS = adp::ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN + JDKSAVDECC_AECPDU_AEM_OFFSET_COMMAND_TYPE,
-		        READ_DESC_POS = adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN
-		};
+        public:
+                enum aem_fields_offsets
+                {
+                        CMD_POS = adp::ETHER_HDR_SIZE,
+                        MSG_TYPE_POS = adp::ETHER_HDR_SIZE + 1,
+                        TARGET_GUID_POS = adp::ETHER_HDR_SIZE + adp::PROTOCOL_HDR_SIZE,
+                        SEQ_ID_POS = adp::ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN + JDKSAVDECC_AECPDU_AEM_OFFSET_SEQUENCE_ID,
+                        CMD_TYPE_POS = adp::ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN + JDKSAVDECC_AECPDU_AEM_OFFSET_COMMAND_TYPE,
+                        READ_DESC_POS = adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN
+                };
 
-		/**
-		 * Constructor for aecp used for constructing an object with a base pointer, position offest,
-		 * and memory buffer length.
-		 */
-		aecp(uint8_t *frame, size_t pos, size_t frame_len);
+                /**
+                 * Constructor for aecp used for constructing an object with a base pointer, position offest,
+                 * and memory buffer length.
+                 */
+                aecp(uint8_t *frame, size_t pos, size_t frame_len);
 
-		~aecp();
+                ~aecp();
 
-		/**
-		 * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
-		 */
-		static int ether_frame_init(end_station *end_station, struct jdksavdecc_frame *ether_frame);
+                /**
+                 * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
+                 */
+                static int ether_frame_init(end_station *end_station, struct jdksavdecc_frame *ether_frame);
 
-		/**
-		 * Initialize and fill Ethernet frame payload with 1722 AECP Header information.
-		 */
-		static void common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid);
+                /**
+                 * Initialize and fill Ethernet frame payload with 1722 AECP Header information.
+                 */
+                static void common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid);
 
-		/**
-		 * Get the header field of the AECP object.
-		 */
-		inline struct jdksavdecc_aecpdu_common get_aecpdu_header()
-		{
-			return aecpdu.aecpdu_header;
-		}
+                /**
+                 * Get the header field of the AECP object.
+                 */
+                inline struct jdksavdecc_aecpdu_common get_aecpdu_header()
+                {
+                        return aecpdu.aecpdu_header;
+                }
 
-		/**
-		 * Get the Controller GUID field of the AECP object.
-		 */
-		inline uint64_t get_controller_entity_id()
-		{
-			return jdksavdecc_uint64_get(&aecpdu.controller_entity_id, 0);
-		}
+                /**
+                 * Get the Controller GUID field of the AECP object.
+                 */
+                inline uint64_t get_controller_entity_id()
+                {
+                        return jdksavdecc_uint64_get(&aecpdu.controller_entity_id, 0);
+                }
 
-		/**
-		 * Get the sequence id field of the AECP object.
-		 */
-		inline uint16_t get_sequence_id()
-		{
-			return aecpdu.sequence_id;
-		}
+                /**
+                 * Get the sequence id field of the AECP object.
+                 */
+                inline uint16_t get_sequence_id()
+                {
+                        return aecpdu.sequence_id;
+                }
 
-		/**
-		 * Get the command type field of the AECP object.
-		 */
-		inline uint16_t get_command_type()
-		{
-			return aecpdu.command_type;
-		}
-	};
+                /**
+                 * Get the command type field of the AECP object.
+                 */
+                inline uint16_t get_command_type()
+                {
+                        return aecpdu.command_type;
+                }
+        };
 }
 
 #endif

@@ -37,49 +37,49 @@
 
 namespace avdecc_lib
 {
-	class stream_port_input_descriptor : public virtual descriptor_base
-	{
-	public:
-		/**
-		 * \return The clock domain index of the Stream Port Input descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_domain_index() = 0;
+        class stream_port_input_descriptor : public virtual descriptor_base
+        {
+        public:
+                /**
+                 * \return The clock domain index of the Stream Port Input descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_domain_index() = 0;
 
-		/**
-		 * \return The port flags of the Stream Port Input descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_port_flags() = 0;
+                /**
+                 * \return The port flags of the Stream Port Input descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_port_flags() = 0;
 
-		/**
-		 * \return The number of controls of the Stream Port Input descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_controls() = 0;
+                /**
+                 * \return The number of controls of the Stream Port Input descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_controls() = 0;
 
-		/**
-		 * \return The base control of the Stream Port Input descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_control() = 0;
+                /**
+                 * \return The base control of the Stream Port Input descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_control() = 0;
 
-		/**
-		 * \return The number of clusters of the Stream Port Input descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_clusters() = 0;
+                /**
+                 * \return The number of clusters of the Stream Port Input descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_clusters() = 0;
 
-		/**
-		 * \return The base cluster of the Stream Port Input descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_cluster() = 0;
+                /**
+                 * \return The base cluster of the Stream Port Input descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_cluster() = 0;
 
-		/**
-		 * \return The number of maps of the Stream Port Input descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_maps() = 0;
+                /**
+                 * \return The number of maps of the Stream Port Input descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_maps() = 0;
 
-		/**
-		 * \return The base map of the Stream Port Input descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_map() = 0;
-	};
+                /**
+                 * \return The base map of the Stream Port Input descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_map() = 0;
+        };
 }
 
 #endif

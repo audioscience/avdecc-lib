@@ -35,70 +35,75 @@
 
 namespace avdecc_lib
 {
-	class util_imp : public virtual util
-	{
-	public:
-		util_imp();
+        class util_imp : public virtual util
+        {
+        public:
+                util_imp();
 
-		virtual ~util_imp();
+                virtual ~util_imp();
 
-		/**
-		 * Call destructor for Controller used for destroying objects
-		 */
-		void STDCALL destroy();
+                /**
+                 * Call destructor for Controller used for destroying objects
+                 */
+                void STDCALL destroy();
 
-		/**
-		 * Convert command value to its corresponding command name.
-		 */
-		const char * STDCALL cmd_value_to_name(uint16_t cmd_value);
+                /**
+                 * Convert command value to its corresponding command name.
+                 */
+                const char * STDCALL cmd_value_to_name(uint16_t cmd_value);
 
-		/**
-		 * Convert command name to its corresponding command value.
-		 */
-		uint16_t STDCALL cmd_name_to_value(const char *cmd_name);
+                /**
+                 * Convert command name to its corresponding command value.
+                 */
+                uint16_t STDCALL cmd_name_to_value(const char *cmd_name);
 
-		/**
-		 * Convert descriptor value to its corresponding descriptor name.
-		 */
-		const char * STDCALL desc_value_to_name(uint16_t desc_value);
+                /**
+                 * Convert descriptor value to its corresponding descriptor name.
+                 */
+                const char * STDCALL desc_value_to_name(uint16_t desc_value);
 
-		/**
-		 * Convert descriptor name to its corresponding descriptor value.
-		 */
-		uint16_t STDCALL desc_name_to_value(const char *desc_name);
+                /**
+                 * Convert descriptor name to its corresponding descriptor value.
+                 */
+                uint16_t STDCALL desc_name_to_value(const char *desc_name);
 
-		/**
-		 * Convert command status value to its corresponding command status name.
-		 */
-		const char * STDCALL cmd_status_value_to_name(uint16_t cmd_status_value);
+                /**
+                 * Convert command status value to its corresponding command status name.
+                 */
+                const char * STDCALL cmd_status_value_to_name(uint16_t cmd_status_value);
 
-		/**
-		 * Convert notification value to its corresponding notification name.
-		 */
-		const char * STDCALL notification_value_to_name(uint16_t notification_value);
+                /**
+                 * Convert notification value to its corresponding notification name.
+                 */
+                const char * STDCALL notification_value_to_name(uint16_t notification_value);
 
-		/**
-		 * Convert post_log_msg value to its corresponding post_log_msg name.
-		 */
-		const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value);
+                /**
+                 * Convert post_log_msg value to its corresponding post_log_msg name.
+                 */
+                const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value);
 
-		/**
-		 * Convert IEEE1722 format value to name.
-		 */
-		const char * STDCALL ieee1722_format_value_to_name(uint64_t format);
+               /**
+                 * Convert IEEE1722 format name to value.
+                 */
+                uint64_t STDCALL ieee1722_format_name_to_value(const char *format_name);
 
-		/**
-		 * Convert an uint64_t value to eui48.
-		 */
-		void convert_uint64_to_eui48(const uint64_t value, uint8_t new_value[6]);
+                /**
+                 * Convert IEEE1722 format value to name.
+                 */
+                const char * STDCALL ieee1722_format_value_to_name(uint64_t format_value);
 
-		/**
-		 * Convert an eui48 value to uint64_t.
-		 */
-		void convert_eui48_to_uint64(const uint8_t value[6], uint64_t &new_value);
-	};
+                /**
+                 * Convert an uint64_t value to eui48.
+                 */
+                void convert_uint64_to_eui48(const uint64_t value, uint8_t new_value[6]);
 
-	extern util_imp *utility;
+                /**
+                 * Convert an eui48 value to uint64_t.
+                 */
+                void convert_eui48_to_uint64(const uint8_t value[6], uint64_t &new_value);
+        };
+
+        extern util_imp *utility;
 }
 
 #endif

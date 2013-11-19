@@ -37,14 +37,14 @@
 
 namespace avdecc_lib
 {
-	class strings_descriptor : public virtual descriptor_base
-	{
-	public:
-		/**
-		 * \return The corresponding string of the Strings descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_string_by_index(uint32_t string_index) = 0;
-	};
+        class strings_descriptor : public virtual descriptor_base
+        {
+        public:
+                /**
+                 * \return The corresponding string of the Strings descriptor object.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_string_by_index(uint32_t string_index) = 0;
+        };
 }
 
 #endif

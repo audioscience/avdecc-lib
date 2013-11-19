@@ -37,49 +37,49 @@
 
 namespace avdecc_lib
 {
-	class notification_imp : public virtual notification
-	{
-	private:
-		enum notification_events
-		{
-		        NOTIFICATION_EVENT,
-		        KILL_EVENT
-		};
+        class notification_imp : public virtual notification
+        {
+        private:
+                enum notification_events
+                {
+                        NOTIFICATION_EVENT,
+                        KILL_EVENT
+                };
 
-		LPTHREAD_START_ROUTINE thread;
-		HANDLE h_thread;
-		DWORD thread_id;
-		HANDLE poll_events[2];
+                LPTHREAD_START_ROUTINE thread;
+                HANDLE h_thread;
+                DWORD thread_id;
+                HANDLE poll_events[2];
 
-	public:
-		notification_imp();
+        public:
+                notification_imp();
 
-		virtual ~notification_imp();
+                virtual ~notification_imp();
 
-	private:
-		/**
-		 * Create and initialize notification thread, event, and semaphore.
-		 */
-		int notification_thread_init();
+        private:
+                /**
+                 * Create and initialize notification thread, event, and semaphore.
+                 */
+                int notification_thread_init();
 
-		/**
-		 * Start of the notification thread used for generating notification messages.
-		 */
-		static DWORD WINAPI proc_notification_thread(LPVOID lpParam);
+                /**
+                 * Start of the notification thread used for generating notification messages.
+                 */
+                static DWORD WINAPI proc_notification_thread(LPVOID lpParam);
 
-		/**
-		 * A member function called to start the notification thread processing.
-		 */
-		int proc_notification_thread_callback();
+                /**
+                 * A member function called to start the notification thread processing.
+                 */
+                int proc_notification_thread_callback();
 
-	public:
-		/**
-		 * Release sempahore so that notification callback function is called.
-		 */
-		void post_log_event();
-	};
+        public:
+                /**
+                 * Release sempahore so that notification callback function is called.
+                 */
+                void post_log_event();
+        };
 
-	extern notification_imp *notification_imp_ref;
+        extern notification_imp *notification_imp_ref;
 }
 
 #endif
