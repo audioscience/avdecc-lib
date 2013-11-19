@@ -114,7 +114,7 @@ namespace avdecc_lib
 
                 /**
                  * \return The number of formats supported by this audio stream. The maximum value
-		 * for this field is 47 for this version of AEM.
+		 *	   for this field is 47 for this version of AEM.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_formats() = 0;
 

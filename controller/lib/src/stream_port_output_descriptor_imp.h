@@ -73,9 +73,9 @@ namespace avdecc_lib
                 /**
                  * The flags describing the capabilities or features of the port.
 		 *
-		 * \return 1 (Clock Sync Source) if the port can be used as a clock synchronization source.
-		 *	   2 (Async Sample Rate Conv) if the port has an asynchronous sample rate converter
-		 *	     to convert sample rates between another clock domain and the Unit's.
+		 * \return 1 (Clock Sync Source) if the port can be used as a clock synchronization source. \n
+		 *	   2 (Async Sample Rate Conv) if the port has an asynchronous sample rate converter 
+		 *	     to convert sample rates between another clock domain and the Unit's. \n
 		 *	   3 (Sync Sample Rate Conv) if the port has a synchronous sample rate converter
 		 *	     to convert between sample rates in the same clock domain.
                  */

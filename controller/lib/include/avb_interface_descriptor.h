@@ -51,9 +51,9 @@ namespace avdecc_lib
                 /**
                  * The flags describing the features of the interface.
 		 * 
-		 * \return 1 if the interface supports the grandmaster functionality.
-		 *	   2 if the interface supports the functionality.
-		 *	   3 if the interface supports the "Stream Reservation Protocol (SRP)" functionality.
+		 * \return 1 (GPTP Grandmaster Supported) if the interface supports the grandmaster functionality. \n
+		 *	   2 (GPTP Supported) if the interface supports the functionality. \n
+		 *	   4 (SRP Supported) if the interface supports the "Stream Reservation Protocol (SRP)" functionality.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_interface_flags() = 0;
 
@@ -88,7 +88,7 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_priority2() = 0;
 
                 /**
-                 * \return The domain number field of the grandmaster functionality of the AVB Interface if supporte, 0 otherwise.
+                 * \return The domain number field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_domain_number() = 0;
 
