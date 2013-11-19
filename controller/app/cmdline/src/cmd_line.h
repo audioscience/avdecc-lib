@@ -187,7 +187,7 @@ public:
         int cmd_controller_avail();
 
         /**
-         * Send a READ_DESCRIPTOR command to get the localized strings from an AVDECC Entity.
+         * Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity.
          */
         int cmd_read_descriptor(std::string desc_name, uint16_t desc_index);
 
