@@ -80,7 +80,7 @@ namespace avdecc_lib
                 void desc_type_vec_init(const uint8_t *frame, size_t pos);
 
                 /**
-                 * Initialize the descriptor count vector with descriptor counts present in the current Configuration.
+                 * Initialize the descriptor count vector with the number of the corresponding type of descriptor present in the current Configuration.
                  */
                 void desc_count_vec_init(const uint8_t *frame, size_t pos);
 
@@ -98,32 +98,37 @@ namespace avdecc_lib
                 virtual ~configuration_descriptor_imp();
 
                 /**
-                 * Get the descriptor type of the Configuration descriptor object.
+                 * Get the type of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_type() const;
 
                 /**
-                 * Get the descriptor index of the Configuration descriptor object.
+                 * Get the index of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_index() const;
 
                 /**
-                 * Get the name of the Configuration descriptor object.
+                 * Get the name of the Configuration. This may be user set through the use of a SET_NAME command.
+		 * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+		 * defined value being provided in a localized form via the localized descripton field. By leaving
+		 * this field blank an AVDECC Controller can determine if the user has overridden the name and can
+		 * use this name rather than the localized name.
                  */
                 uint8_t * STDCALL get_object_name();
 
                 /**
-                 * Get the localized description of the Configuration descriptor object.
+                 * Get the localized string reference pointing to the localized Configuration name.
                  */
                 uint16_t STDCALL get_localized_description();
 
                 /**
-                 * Get the descriptor counts count of the Configuration descriptor object.
+                 * Get the number of descriptor counts. The maximum value for this field is 108 for this version of AEM.
                  */
                 uint16_t STDCALL get_descriptor_counts_count();
 
                 /**
-                 * Get the descriptor counts offset of the Configuration descriptor object.
+                 * Get the offset to read the counts of the top level descriptor from the start of the descriptor.
+		 * This field is set to 74 for this version of AEM.
                  */
                 uint16_t STDCALL get_descriptor_counts_offset();
 
@@ -268,12 +273,12 @@ namespace avdecc_lib
                 uint32_t STDCALL get_clock_domain_desc_count();
 
                 /**
-                 * Get the top level descriptor present in the Configuration descriptor object.
+                 * Get the top level descriptor present in the Configuration descriptor.
                  */
                 uint16_t STDCALL get_desc_type_from_config_by_index(int desc_index);
 
                 /**
-                 * Get the count of the top level descriptor present in the Configuration descriptor object.
+                 * Get the count of the top level descriptor present in the Configuration descriptor.
                  */
                 uint16_t STDCALL get_desc_count_from_config_by_index(int desc_index);
 
@@ -283,72 +288,72 @@ namespace avdecc_lib
                 bool STDCALL are_desc_type_and_index_in_config(int desc_type, int desc_count_index);
 
                 /**
-                 * Get the corresponding AUDIO UNIT descriptor object by index.
+                 * Get the corresponding AUDIO UNIT descriptor by index.
                  */
                 audio_unit_descriptor * STDCALL get_audio_unit_desc_by_index(uint32_t audio_unit_desc_index);
 
                 /**
-                 * Get the corresponding STREAM INPUT descriptor object by index.
+                 * Get the corresponding STREAM INPUT descriptor by index.
                  */
                 stream_input_descriptor * STDCALL get_stream_input_desc_by_index(uint32_t stream_input_desc_index);
 
                 /**
-                 * Get the corresponding STREAM OUTPUT descriptor object by index.
+                 * Get the corresponding STREAM OUTPUT descriptor by index.
                  */
                 stream_output_descriptor * STDCALL get_stream_output_desc_by_index(uint32_t stream_output_desc_index);
 
                 /**
-                 * Get the corresponding JACK INPUT descriptor object by index.
+                 * Get the corresponding JACK INPUT descriptor by index.
                  */
                 jack_input_descriptor * STDCALL get_jack_input_desc_by_index(uint32_t jack_input_desc_index);
 
                 /**
-                 * Get the corresponding JACK OUTPUT descriptor object by index.
+                 * Get the corresponding JACK OUTPUT descriptor by index.
                  */
                 jack_output_descriptor * STDCALL get_jack_output_desc_by_index(uint32_t jack_output_desc_index);
 
                 /**
-                 * Get the corresponding AVB INTERFACE descriptor object by index.
+                 * Get the corresponding AVB INTERFACE descriptor by index.
                  */
                 avb_interface_descriptor * STDCALL get_avb_interface_desc_by_index(uint32_t avb_interface_desc_index);
 
                 /**
-                 * Get the corresponding CLOCK SOURCE descriptor object by index.
+                 * Get the corresponding CLOCK SOURCE descriptor by index.
                  */
                 clock_source_descriptor * STDCALL get_clock_source_desc_by_index(uint32_t clock_source_desc_index);
 
                 /**
-                 * Get the corresponding LOCALE descriptor object by index.
+                 * Get the corresponding LOCALE descriptor by index.
                  */
                 locale_descriptor * STDCALL get_locale_desc_by_index(uint32_t locale_desc_index);
 
                 /**
-                 * Get the corresponding STRINGS descriptor object by index.
+                 * Get the corresponding STRINGS descriptor by index.
                  */
                 strings_descriptor * STDCALL get_strings_desc_by_index(uint32_t strings_desc_index);
 
                 /**
-                 * \return The corresponding STREAM PORT INPUT descriptor object by index.
+                 * \return The corresponding STREAM PORT INPUT descriptor by index.
                  */
                 stream_port_input_descriptor * STDCALL get_stream_port_input_desc_by_index(uint32_t stream_port_input_desc_index);
 
                 /**
-                 * \return The corresponding STREAM PORT OUTPUT descriptor object by index.
+                 * \return The corresponding STREAM PORT OUTPUT descriptor by index.
                  */
                 stream_port_output_descriptor * STDCALL get_stream_port_output_desc_by_index(uint32_t stream_port_output_desc_index);
 
                 /**
-                 * Get the corresponding AUDIO CLUSTER descriptor object by index.
+                 * Get the corresponding AUDIO CLUSTER descriptor by index.
                  */
                 audio_cluster_descriptor * STDCALL get_audio_cluster_desc_by_index(uint32_t audio_cluster_desc_index);
 
                 /**
-                 * Get the corresponding AUDIO MAP descriptor object by index.
+                 * Get the corresponding AUDIO MAP descriptor by index.
                  */
                 audio_map_descriptor * STDCALL get_audio_map_desc_by_index(uint32_t audio_map_desc_index);
 
                 /**
-                 * Get the corresponding CLOCK DOMAIN descriptor object by index.
+                 * Get the corresponding CLOCK DOMAIN descriptor by index.
                  */
                 clock_domain_descriptor * STDCALL get_clock_domain_desc_by_index(uint32_t clock_domain_desc_index);
         };

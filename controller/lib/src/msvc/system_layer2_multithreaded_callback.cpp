@@ -78,7 +78,7 @@ namespace avdecc_lib
                 }
 
                 queue_is_waiting = false;
-                winpcap_timer.start(NETIF_READ_TIMEOUT_MS);
+                tick_timer.start(NETIF_READ_TIMEOUT_MS);
         }
 
         system_layer2_multithreaded_callback::~system_layer2_multithreaded_callback()
@@ -315,7 +315,7 @@ namespace avdecc_lib
                                 break;
                 }
 
-                if(winpcap_timer.timeout()) // Check tick timeout for winpcap
+                if(tick_timer.timeout()) // Check tick timeout
                 {
                         controller_imp_ref_in_system->time_tick_event();
 
@@ -327,7 +327,7 @@ namespace avdecc_lib
                                 ReleaseSemaphore(waiting_sem, 1, NULL);
                         }
 
-                        winpcap_timer.start(NETIF_READ_TIMEOUT_MS);
+                        tick_timer.start(NETIF_READ_TIMEOUT_MS);
                 }
 
                 return status;

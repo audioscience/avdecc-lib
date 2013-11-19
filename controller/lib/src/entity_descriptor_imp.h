@@ -61,107 +61,110 @@ namespace avdecc_lib
                 virtual ~entity_descriptor_imp();
 
                 /**
-                 * Get the descriptor type of the Entity descriptor object.
+                 * Get the type of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_type() const;
 
                 /**
-                 * Get the descriptor index of the Entity descriptor object.
+                 * Get the index of the descriptor. This is always set to 0 as
+		 * there is only ever one in an AVDECC Entity.
                  */
                 uint16_t STDCALL get_descriptor_index() const;
 
                 /**
-                 * Get the id of the Entity descriptor object.
+                 * Get the Entity ID of the AVDECC Entity.
                  */
                 uint64_t STDCALL get_entity_id();
 
                 /**
-                 * Get the vendor id of the Entity descriptor object.
+                 * Get the vendor id of the AVDECC Entity.
                  */
                 uint32_t STDCALL get_vendor_id();
 
                 /**
-                 * Get the model id of the Entity descriptor object.
+                 * Get the AVDECC Entity model id for the AVDECC Entity.
                  */
                 uint32_t STDCALL get_entity_model_id();
 
                 /**
-                 * Get the capabilities of the Entity descriptor object.
+                 * Get the capabilities of the AVDECC Entity.
                  */
                 uint32_t STDCALL get_entity_capabilities();
 
                 /**
-                 * Get the Talker Stream Sources of the Entity descriptor object.
+                 * Get the number of Output Streams the AVDECC Entity has. This is also the number
+		 * of STREAM_OUTPUT descriptors the AVDECC Entity has for Output Streams.
                  */
                 uint16_t STDCALL get_talker_stream_sources();
 
                 /**
-                 * Get the Talker capabilities of the Entity descriptor object.
+                 * Get the AVDECC Talker capabilities of the AVDECC Entity.
                  */
                 uint16_t STDCALL get_talker_capabilities();
 
                 /**
-                 * Get the Listener Stream Sinks of the Entity descriptor object.
+                 * Get the number of Input Streams the AVDECC Entity has. This is also the number
+		 * of STREAM_INPUT descriptors the AVDECC Entity has for Input Streams.
                  */
                 uint16_t STDCALL get_listener_stream_sinks();
 
                 /**
-                 * Get the Listener capabilities of the Entity descriptor object.
+                 * Get the AVDECC Listener capabilities of the AVDECC Entity.
                  */
                 uint16_t STDCALL get_listener_capabilities();
 
                 /**
-                 * Get the Controller capabilities of the Entity descriptor object.
+                 * Get the AVDECC Controller capabilities of the AVDECC Entity.
                  */
                 uint32_t STDCALL get_controller_capabilities();
 
                 /**
-                 * Get the available index of the Entity descriptor object.
+                 * Get the available index of the AVDECC Entity.
                  */
                 uint32_t STDCALL get_available_index();
 
                 /**
-                 * Get the association id of the Entity descriptor object.
+                 * Get the association ID for the AVDECC Entity.
                  */
                 uint64_t STDCALL get_association_id();
 
                 /**
-                 * Get the name of the Entity descriptor object.
+                 * Get the name of the AVDECC Entity. This may be user set through the use of a SET_NAME command.
                  */
                 uint8_t * STDCALL get_entity_name();
 
                 /**
-                 * Get the vendor name string of the Entity descriptor object.
+                 * Get the localized string reference pointing to the localized vendor name.
                  */
                 uint16_t STDCALL get_vendor_name_string();
 
                 /**
-                 * Get the model name string of the Entity descriptor object.
+                 * Get the localized string reference pointing to the localized model name.
                  */
                 uint16_t STDCALL get_model_name_string();
 
                 /**
-                 * Get the firmware version of the Entity descriptor object.
+                 * Get the firmware version of the AVDECC Entity.
                  */
                 uint8_t * STDCALL get_firmware_version();
 
                 /**
-                 * Get the group name of the Entity descriptor object.
+                 * Get the group name of the AVDECC Entity. This may be user set through the use of a SET_NAME command.
                  */
                 uint8_t * STDCALL get_group_name();
 
                 /**
-                 * Get the serial number of the Entity descriptor object.
+                 * Get the serial number of the AVDECC Entity.
                  */
                 uint8_t * STDCALL get_serial_number();
 
                 /**
-                 * Get the configurations count of the Entity descriptor object.
+                 * Get the number of Configurations the device has. A device is required to have at least 1 Configuration.
                  */
                 uint16_t STDCALL get_configurations_count();
 
                 /**
-                 * Get the current Configuration of the Entity descriptor object.
+                 * Get the index of the currently set Configuration.
                  */
                 uint16_t STDCALL get_current_configuration();
 
@@ -176,7 +179,7 @@ namespace avdecc_lib
                 uint32_t STDCALL get_config_desc_count();
 
                 /**
-                 * Get the corresponding Configuration descriptor object by index.
+                 * Get the corresponding Configuration descriptorby index.
                  */
                 configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index);
 
@@ -194,7 +197,7 @@ namespace avdecc_lib
                  * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
                  *
                  * \param notification_id A void pointer to the unique identifier associated with the command.
-                 * \param lock_entity_flag The flag to be set for the command. Valid flags are 0 and 1 (UNLOCK).
+                 * \param lock_entity_flag The flag to be set for the command. Valid flags are 0 (LOCK) and 1 (UNLOCK).
                  */
 		int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag);
 

@@ -82,7 +82,7 @@ namespace avdecc_lib
                 bool queue_is_waiting;
                 void *waiting_notification_id;
                 int resp_status_for_cmd;
-                timer winpcap_timer;
+                timer tick_timer; // A tick timer that is always running
 
         public:
                 /**

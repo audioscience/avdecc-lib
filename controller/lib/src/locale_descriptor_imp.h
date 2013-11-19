@@ -56,27 +56,32 @@ namespace avdecc_lib
                 virtual ~locale_descriptor_imp();
 
                 /**
-                 * Get the descriptor type of the Locale descriptor object.
+                 * Get the type of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_type() const;
 
                 /**
-                 * Get the descriptor index of the Locale descriptor object.
+                 * Get the index of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_index() const;
 
                 /**
-                 * Get the locale identifier of the Locale descriptor object.
+                 * Get the identifier of the Locale. The identifier is a UTF-8 string that
+		 * contains one to three components such as a language code, a region code,
+		 * or a variant code, separated by the dash character. Examples of valid
+		 * locale identifiers are en-US for English in the US, en-AU for English in
+		 * Australia, and fr-CA for French in Canada.
                  */
                 uint8_t * STDCALL get_locale_identifier();
 
                 /**
-                 * Get the number of strings of the Locale descriptor object.
+                 * Get the number of Strings descriptor in this locale. This is the same value for
+		 * all locales in an AVDECC Entity.
                  */
                 uint16_t STDCALL get_number_of_strings();
 
                 /**
-                 * Get the base strings of the Locale descriptor object.
+                 * Get the descriptor index of the first Strings descriptor for this Locale.
                  */
                 uint16_t STDCALL get_base_strings();
         };

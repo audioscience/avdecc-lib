@@ -25,6 +25,7 @@
  * jack_output_descriptor.h
  *
  * Public Jack Output descriptor interface class
+ * The Jack Output descriptor describes an Output Jack.
  */
 
 #pragma once
@@ -41,17 +42,7 @@ namespace avdecc_lib
         {
         public:
                 /**
-                 * \return The name of the Jack Output descriptor object.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
-
-                /**
-                 * \return The localized description of the Jack Output descriptor object.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
-
-                /**
-                 * \return The flags of the Jack Output descriptor object.
+                 * \return The flags describing the capabilities or features of the Jack.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_jack_flags() = 0;
 
@@ -67,17 +58,17 @@ namespace avdecc_lib
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_captive() = 0;
 
                 /**
-                * \return The type of the Jack Output descriptor object.
+                * \return The type of the jack.
                 */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_jack_type() = 0;
 
                 /**
-                 * \return The number of controls of the Jack Output descriptor object.
+                 * \return The number of controls within this jack.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_controls() = 0;
 
                 /**
-                 * \return The base control of the Jack Output descriptor object.
+                 * \return The index of the first Control descriptor.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_control() = 0;
         };

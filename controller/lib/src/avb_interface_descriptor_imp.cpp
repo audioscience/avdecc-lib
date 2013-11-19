@@ -39,7 +39,7 @@ namespace avdecc_lib
 
                 if(desc_avb_interface_read_returned < 0)
                 {
-                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_audio_read error");
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "avb_interface_desc_read error");
                         assert(desc_avb_interface_read_returned >= 0);
                 }
         }

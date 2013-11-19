@@ -71,27 +71,31 @@ namespace avdecc_lib
 
         public:
                 /**
-                 * Get the descriptor type of the Jack Output descriptor object.
+                 * Get the type of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_type() const;
 
                 /**
-                 * Get the descriptor index of the Jack Output descriptor object.
+                 * Get the index of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_index() const;
 
                 /**
-                 * Get the name of the Jack Output descriptor object.
+                 * Get the name of the Jack Output. This may be user set through the use of a SET_NAME command.
+		 * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+		 * defined value being provided in a localized form via the localized descripton field. By leaving
+		 * this field blank an AVDECC Controller can determine if the user has overridden the name and can
+		 * use this name rather than the localized name.
                  */
                 uint8_t * STDCALL get_object_name();
 
                 /**
-                 * Get the localized description of the Jack Output descriptor object.
+                 * Get the localized string reference pointing to the localized Jack Output name.
                  */
                 uint16_t STDCALL get_localized_description();
 
                 /**
-                 * Get the flags of the Jack Output descriptor object.
+                 * Get the flags describing the capabilities or features of the Jack.
                  */
                 uint16_t STDCALL get_jack_flags();
 
@@ -107,17 +111,17 @@ namespace avdecc_lib
                 uint16_t STDCALL get_captive();
 
                 /**
-                * Get the type of the Jack Output descriptor object.
+                * Get the type of the jack.
                 */
                 uint16_t STDCALL get_jack_type();
 
                 /**
-                 * Get the number of controls of the Jack Output descriptor object.
+                 * Get the number of controls within this jack.
                  */
                 uint16_t STDCALL get_number_of_controls();
 
                 /**
-                 * Get the base control of the Jack Output descriptor object.
+                 * Get the index of the first Control descriptor.
                  */
                 uint16_t STDCALL get_base_control();
         };

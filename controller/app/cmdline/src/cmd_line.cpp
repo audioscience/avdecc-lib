@@ -251,8 +251,8 @@ void avdecc_cmd_line::cmd_line_help_init()
         cmd_line_help_vec.push_back(new cmd_line_help("read descriptor",
 
                                                       "read descriptor [d_t] [d_i]\n" \
-                                                      "Send a READ_DESCRIPTOR command to get the localized strings from an AVDECC\n" \
-                                                      "Entity using the current setting.\n\n" \
+                                                      "Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity\n" \
+                                                      "using the current setting.\n\n" \
                                                       "\nParameters" \
                                                       "\n\t d_t stands for descriptor type and is a string." \
                                                       "\n\t d_i stands for descriptor index and is an integer."
@@ -292,9 +292,7 @@ void avdecc_cmd_line::cmd_line_help_init()
         //					      "\n\t f stands for field and is a string." \
         //					      "\n\t f_v stands for field value and is an integer.\n\n" \
         //					      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
-        //					      "Valid fields are msrp_accumulated_latency and stream_dest_mac.\n" \
-        //					      "This command is used after sending a GET_STREAM_INFO command and\n" \
-        //					      "receiving a GET_STREAM_INFO response."
+        //					      "Valid fields are stream_id, msrp_accumulated_latency, and stream_dest_mac."
         //					      ));
 
         cmd_line_help_vec.push_back(new cmd_line_help("get stream_info",
@@ -307,9 +305,7 @@ void avdecc_cmd_line::cmd_line_help_init()
                                                       "\n\t d_i stands for descriptor index and is an integer."
                                                       "\n\t f stands for stream info field and is a string.\n\n" \
                                                       "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
-                                                      "Valid fields are stream_id, msrp_accumulated_latency, and stream_dest_mac.\n" \
-                                                      "This command is used after sending a GET_STREAM_INFO command and\n" \
-                                                      "receiving a GET_STREAM_INFO response."
+                                                      "Valid fields are stream_id, msrp_accumulated_latency, and stream_dest_mac."
                                                      ));
 
         cmd_line_help_vec.push_back(new cmd_line_help("set sampling_rate",
@@ -318,7 +314,8 @@ void avdecc_cmd_line::cmd_line_help_init()
                                                       "Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.\n\n" \
                                                       "\nParameters" \
                                                       "\n\t d_t stands for descriptor type and is a string."
-                                                      "\n\t d_i stands for descriptor index and is an integer."
+                                                      "\n\t d_i stands for descriptor index and is an integer.\n\n"
+						      "Valid descriptor types are AUDIO_UNIT, VIDEO_CLUSTER, SENSOR_CLUSTER." 
                                                      ));
 
         cmd_line_help_vec.push_back(new cmd_line_help("get sampling_rate",
@@ -328,7 +325,8 @@ void avdecc_cmd_line::cmd_line_help_init()
                                                       "port or unit.\n\n"
                                                       "\nParameters" \
                                                       "\n\t d_t stands for descriptor type and is a string." \
-                                                      "\n\t d_i stands for descriptor index and is an integer."
+                                                      "\n\t d_i stands for descriptor index and is an integer.\n\n"
+						      "Valid descriptor types are AUDIO_UNIT, VIDEO_CLUSTER, SENSOR_CLUSTER." 
                                                      ));
 
         cmd_line_help_vec.push_back(new cmd_line_help("set clock_source",
@@ -337,7 +335,8 @@ void avdecc_cmd_line::cmd_line_help_init()
                                                       "Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.\n\n" \
                                                       "\nParameters" \
                                                       "\n\t d_t stands for descriptor type and is a string."
-                                                      "\n\t d_i stands for descriptor index and is an integer."
+                                                      "\n\t d_i stands for descriptor index and is an integer.\n\n"
+						      "Valid descriptor type is CLOCK_DOMAIN." 
                                                      ));
 
         cmd_line_help_vec.push_back(new cmd_line_help("get clock_source",
@@ -347,7 +346,8 @@ void avdecc_cmd_line::cmd_line_help_init()
                                                       "domain.\n\n"
                                                       "\nParameters" \
                                                       "\n\t d_t stands for descriptor type and is a string."
-                                                      "\n\t d_i stands for descriptor index and is an integer."
+                                                      "\n\t d_i stands for descriptor index and is an integer.\n\n"
+						      "Valid descriptor type is CLOCK_DOMAIN."
                                                      ));
 
         //cmd_line_help_vec.push_back(new cmd_line_help("start streaming",
@@ -358,7 +358,8 @@ void avdecc_cmd_line::cmd_line_help_init()
         //					      "STOP_STREAMING command.\n\n" \
         //					      "\nParameters" \
         //					      "\n\t d_t stands for descriptor type and is a string." \
-        //					      "\n\t d_i stands for descriptor index and is an integer."
+        //					      "\n\t d_i stands for descriptor index and is an integer.\n\n"
+	//					      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
         //					      ));
 
         //cmd_line_help_vec.push_back(new cmd_line_help("stop streaming",
@@ -367,7 +368,8 @@ void avdecc_cmd_line::cmd_line_help_init()
         //					      "Send a STOP_STREAMING command to stop a connected stream for streaming media.\n\n" \
         //					      "\nParameters" \
         //					      "\n\t d_t stands for descriptor type and is a string." \
-        //					      "\n\t d_i standsfor descriptor index and is an integer."
+        //					      "\n\t d_i standsfor descriptor index and is an integer.\n\n"
+	//					      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
         //					      ));
 
         //cmd_line_help_vec.push_back(new cmd_line_help("set name",

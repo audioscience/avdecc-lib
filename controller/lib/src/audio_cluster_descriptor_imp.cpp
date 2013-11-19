@@ -40,7 +40,7 @@ namespace avdecc_lib
 
                 if(audio_cluster_desc_read_returned < 0)
                 {
-                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_config_read error");
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "audio_cluster_desc_read error");
                         assert(audio_cluster_desc_read_returned >= 0);
                 }
         }

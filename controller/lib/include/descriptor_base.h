@@ -41,14 +41,28 @@ namespace avdecc_lib
         {
         public:
                 /**
-                 * \return The descriptor type of a descriptor object.
+                 * \return The type of the descriptor.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_type() const = 0;
 
                 /**
-                 * \return The descriptor index of a descriptor object.
+                 * \return The index of the descriptor.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_index() const = 0;
+
+                /**
+                 * \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
+		 *	   The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+		 *	   defined value being provided in a localized form via the localized descripton field. By leaving
+		 *	   this field blank an AVDECC Controller can determine if the user has overridden the name and can
+		 *	   use this name rather than the localized name.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
+
+                /**
+                 * \return The localized string reference pointing to the localized descriptor name.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
                 /**
                  * Send a ACQURE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
@@ -89,16 +103,6 @@ namespace avdecc_lib
                  *		       If the descriptor type field is either ENTITY or CONFIGURATION, then this field is set to 0.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index) = 0;
-
-                /**
-                 * \return The localized description of the descriptor
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
-
-                /**
-                 * \return The name of the descriptor object.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
         };
 }
 

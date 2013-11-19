@@ -39,7 +39,7 @@ namespace avdecc_lib
 
                 if(stream_port_output_desc_read_returned < 0)
                 {
-                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_config_read error");
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "stream_port_output_desc_read error");
                         assert(stream_port_output_desc_read_returned >= 0);
                 }
         }
