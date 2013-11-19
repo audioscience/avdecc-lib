@@ -101,12 +101,12 @@ namespace avdecc_lib
                 /**
                  * Get the priority1 field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
                  */
-                uint32_t STDCALL get_priority1();
+                uint8_t STDCALL get_priority1();
 
                 /**
                  * Get the clock class field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
                  */
-                uint32_t STDCALL get_clock_class();
+                uint8_t STDCALL get_clock_class();
 
                 /**
                  * Get the offset scaled log variance field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
@@ -116,22 +116,37 @@ namespace avdecc_lib
                 /**
                  * Get the clock accuracy field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
                  */
-                uint32_t STDCALL get_clock_accuracy();
+                uint8_t STDCALL get_clock_accuracy();
 
                 /**
                  * Get the priority2 field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
                  */
-                uint32_t STDCALL get_priority2();
+                uint8_t STDCALL get_priority2();
 
                 /**
                  * Get the domain number field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
                  */
-                uint32_t STDCALL get_domain_number();
+                uint8_t STDCALL get_domain_number();
 
                 /**
-                 * Get the log sync interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+                 * Get the current log sync interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
                  */
-                uint32_t STDCALL get_log_sync_interval();
+                uint8_t STDCALL get_log_sync_interval();
+
+		/**
+                 * Get the current log announce interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+                 */
+                uint8_t STDCALL get_log_announce_interval();
+		
+		/**
+                 * Get the current log pdelay interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+                 */
+                uint8_t STDCALL get_log_pdelay_interval();
+		
+		/**
+                 * Get the port number field as used by the functionality of the AVB Interface if supported, 0 otherwise.
+                 */
+                uint16_t STDCALL get_port_number();
         };
 }
 

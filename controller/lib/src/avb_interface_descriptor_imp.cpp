@@ -82,14 +82,14 @@ namespace avdecc_lib
                 return jdksavdecc_uint64_get(&avb_interface_desc.clock_identity, 0);
         }
 
-        uint32_t STDCALL avb_interface_descriptor_imp::get_priority1()
+        uint8_t STDCALL avb_interface_descriptor_imp::get_priority1()
         {
-                return (uint32_t)avb_interface_desc.priority1;
+                return avb_interface_desc.priority1;
         }
 
-        uint32_t STDCALL avb_interface_descriptor_imp::get_clock_class()
+        uint8_t STDCALL avb_interface_descriptor_imp::get_clock_class()
         {
-                return (uint32_t)avb_interface_desc.clock_class;
+                return avb_interface_desc.clock_class;
         }
 
         uint16_t STDCALL avb_interface_descriptor_imp::get_offset_scaled_log_variance()
@@ -97,23 +97,38 @@ namespace avdecc_lib
                 return avb_interface_desc.offset_scaled_log_variance;
         }
 
-        uint32_t STDCALL avb_interface_descriptor_imp::get_clock_accuracy()
+        uint8_t STDCALL avb_interface_descriptor_imp::get_clock_accuracy()
         {
-                return (uint32_t)avb_interface_desc.clock_accuracy;
+                return avb_interface_desc.clock_accuracy;
         }
 
-        uint32_t STDCALL avb_interface_descriptor_imp::get_priority2()
+        uint8_t STDCALL avb_interface_descriptor_imp::get_priority2()
         {
-                return (uint32_t)avb_interface_desc.priority2;
+                return avb_interface_desc.priority2;
         }
 
-        uint32_t STDCALL avb_interface_descriptor_imp::get_domain_number()
+        uint8_t STDCALL avb_interface_descriptor_imp::get_domain_number()
         {
-                return (uint32_t)avb_interface_desc.domain_number;
+                return avb_interface_desc.domain_number;
         }
 
-        uint32_t STDCALL avb_interface_descriptor_imp::get_log_sync_interval()
+        uint8_t STDCALL avb_interface_descriptor_imp::get_log_sync_interval()
         {
-                return (uint32_t)avb_interface_desc.log_sync_interval;
+                return avb_interface_desc.log_sync_interval;
         }
+
+	uint8_t STDCALL avb_interface_descriptor_imp::get_log_announce_interval()
+	{
+		return avb_interface_desc.log_announce_interval;
+	}
+		
+	uint8_t STDCALL avb_interface_descriptor_imp::get_log_pdelay_interval()
+	{
+		return avb_interface_desc.log_pdelay_interval;
+	}
+		
+	uint16_t STDCALL avb_interface_descriptor_imp::get_port_number()
+	{
+		return avb_interface_desc.port_number;
+	}
 }
