@@ -65,54 +65,60 @@ namespace avdecc_lib
                 virtual ~clock_domain_descriptor_imp();
 
                 /**
-                 * Get the descriptor type of the Clock Domain descriptor object.
+                 * Get the type of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_type() const;
 
                 /**
-                 * Get the descriptor index of the Clock Domain descriptor object.
+                 * Get the index of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_index() const;
 
                 /**
-                 * Get the name of the Clock Domain descriptor object.
+                 * Get the name of the Clock Domain. This may be user set through the use of a SET_NAME command.
+		 * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+		 * defined value being provided in a localized form via the localized descripton field. By leaving
+		 * this field blank an AVDECC Controller can determine if the user has overridden the name and can
+		 * use this name rather than the localized name.
                  */
                 uint8_t * STDCALL get_object_name();
 
                 /**
-                 * Get the localized description of the Clock Domain descriptor object.
+                 * Get the localized string reference pointing to the localized Clock Domain name.
                  */
                 uint16_t STDCALL get_localized_description();
 
                 /**
-                 * Get the Clock Source index of the Clock Domain descriptor object.
+                 * Get the descriptor index of the Clock Source descriptor describing the current Clock Source
+		 * for the Clock Domain.
                  */
                 uint16_t STDCALL get_clock_source_index();
 
                 /**
-                * Get the Clock Sources offset of the Clock Domain descriptor object.
-                */
+		 * Get the offset to the clock sources field from the start of the descriptor.
+		 * This is 76 for this version of AEM.
+                 */
                 uint16_t STDCALL get_clock_sources_offset();
 
                 /**
-                 * Get the Clock Sources count of the Clock Domain descriptor object.
+                 * Get the number of clock source indexes in the clock sources field. The maximum value for this field
+		 * is 249 for this version of AEM.
                  */
                 uint16_t STDCALL get_clock_sources_count();
 
                 /**
-                 * Get the corresponding Clock Sources by index present in the Clock Domain descriptor object.
+                 * Get the corresponding Clock Source by index present in the Clock Domain.
                  */
                 uint16_t STDCALL get_clock_source_by_index(uint32_t clk_src_index);
 
-
                 /**
-                 * Get the clock source index of the requested Clock Domain descriptor after sending a
+                 * Get the clock source index of the requested Clock Domain after sending a
                  * SET_CLOCK_SOURCE command and receiving a response back for the command.
                  */
                 uint16_t STDCALL set_clock_source_clock_source_index();
 
                 /**
-                 * Get the clock source index of the requested Clock Domain descriptor after sending a
+                 * Get the clock source index of the requested Clock Domain after sending a
                  * GET_CLOCK_SOURCE command and receiving a response back for the command.
                  */
                 uint16_t STDCALL get_clock_source_clock_source_index();

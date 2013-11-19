@@ -45,7 +45,7 @@ namespace avdecc_lib
 
                 if(desc_audio_read_returned < 0)
                 {
-                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_audio_read error");
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "audio_unit_desc_read error");
                         assert(desc_audio_read_returned >= 0);
                 }
 

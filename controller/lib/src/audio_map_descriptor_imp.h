@@ -56,22 +56,24 @@ namespace avdecc_lib
                 virtual ~audio_map_descriptor_imp();
 
                 /**
-                 * Get the descriptor type of the Audio Map descriptor object.
+                 * Get the type of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_type() const;
 
                 /**
-                 * Get the descriptor index of the Audio Map descriptor object.
+                 * Get the index of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_index() const;
 
                 /**
-                 * Get the mappings offset of the Audio Map descriptor object.
+                 * Get the offset from the start of the descriptor for the first octet of the mapping stream channel 0 string.
+		 * This field is 8 for this version of AEM.
                  */
                 uint16_t STDCALL get_mappings_offset();
 
                 /**
-                 * Get the number of mappings of the Audio Map descriptor object.
+                 * Get the number of channel mappings within the Audio Map. The maximum value
+		 * of this field is 62 for this version of AEM.
                  */
                 uint16_t STDCALL get_number_of_mappings();
         };

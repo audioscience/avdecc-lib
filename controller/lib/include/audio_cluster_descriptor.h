@@ -25,6 +25,9 @@
  * audio_cluster_descriptor.h
  *
  * Public Audio Cluster descriptor interface class
+ * The Audio Cluster descriptor describes groups of audio channels in a stream.
+ * An Audio Cluster could represent a stereo IEC 60958 encoded signal, a one or
+ * more channel multibit linear audio signal, a MIDI signal or a SMPTE signal.
  */
 
 #pragma once
@@ -41,47 +44,53 @@ namespace avdecc_lib
         {
         public:
                 /**
-                 * \return The name of the Audio Cluster descriptor object.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
-
-                /**
-                 * \return The localized description of the Audio Cluster descriptor object.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
-
-                /**
-                 * \return The signal type of the Audio Cluster descriptor object.
+                 * \return The descriptor type for the signal source of the cluster.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_signal_type() = 0;
 
                 /**
-                 * \return The signal index of the Audio Cluster descriptor object.
+                 * \return The descriptor index for the signal source of the cluster.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_signal_index() = 0;
 
                 /**
-                 * \return The signal output of the Audio Cluster descriptor object.
+                 * \return The index of the output of the signal source of the cluster. For a signal type of
+		 *	   Signal Splitter or Signal Demultiplexer, this is which output of the object it is
+		 *	   being source from, for a signal type of Matrix, this is the column the signal is
+		 *	   from and for any other signal type this is 0.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_signal_output() = 0;
 
                 /**
-                 * \return The path latency of the Audio Cluster descriptor object.
+                 * \return The latency in nanoseconds between the timing reference plane and the opposite end
+		 *	   of the currently selected signal path. This does not include any latency added by a
+		 *	   delay control. The path latency is used to inform smart Controllers of the extra 
+		 *	   latency to get the samples to the output, so that output across multiple entries
+		 *	   can be sample aligned.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_path_latency() = 0;
 
                 /**
-                 * \return The block latency of the Audio Cluster descriptor object.
+                 * \return The block latency of the Audio Cluster. For an Aduio Cluster attached to a Stream Port Input,
+		 *	   this is the latency in nanoseconds between the reference plane and the output of the cluster. For
+		 *	   an Audio Cluster attached to a Stream Port Output, this is the latency in nanoseconds between the
+		 *	   output of the previous block's output and the reference plane. The previous block is the object
+		 *	   identified by the signal type and signal index fields.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_block_latency() = 0;
 
                 /**
-                 * \return The channel count of the Audio Cluster descriptor object.
+                 * \return The number of channels within the cluster.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_channel_count() = 0;
 
                 /**
-                 * \return The format of the Audio Cluster descriptor object.
+                 * The format for each channel of this cluster, all channels within the cluster have the same format.
+		 *
+		 * \return 0x00 (IEC 60958) for IEC 60958 encoded Audio Cluster.
+		 *	   0x40 (MBLA) for Multi-bit Linear Audio.
+		 *	   0x80 (MIDI) for MIDI data.
+		 *	   0x88 (SMPTE) for SMPTE data.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_format() = 0;
         };

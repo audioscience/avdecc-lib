@@ -61,12 +61,12 @@ namespace avdecc_lib
                 virtual ~descriptor_base_imp();
 
                 /**
-                 * Get the descriptor type of a descriptor object.
+                 * Get the type of the descriptor.
                  */
                 virtual uint16_t STDCALL get_descriptor_type() const;
 
                 /**
-                 * Get the descriptor index of a descriptor object.
+                 * Get the index of the descriptor.
                  */
                 virtual uint16_t STDCALL get_descriptor_index() const;
 
@@ -98,7 +98,7 @@ namespace avdecc_lib
                  * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
                  *
                  * \param notification_id A void pointer to the unique identifier associated with the command.
-                 * \param lock_entity_flag The flag to be set for the command. Valid flags are 0 and 1 (UNLOCK).
+                 * \param lock_entity_flag The flag to be set for the command. Valid flags are 0 (LOCK) and 1 (UNLOCK).
                  */
                 virtual int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag);
 
@@ -154,12 +154,16 @@ namespace avdecc_lib
                 virtual int proc_get_name_resp(uint8_t *base_pointer, uint16_t frame_len);
 
                 /**
-                 * \return The localized description of the descriptor
+                 * \return The localized string reference pointing to the localized descriptor name.
                  */
                 virtual uint16_t STDCALL get_localized_description();
 
                 /**
-                 * \return The name of the descriptor object.
+                 * \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
+		 * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+		 * defined value being provided in a localized form via the localized descripton field. By leaving
+		 * this field blank an AVDECC Controller can determine if the user has overridden the name and can
+		 * use this name rather than the localized name.
                  */
                 virtual uint8_t * STDCALL get_object_name();
         };

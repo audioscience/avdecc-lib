@@ -40,7 +40,7 @@ namespace avdecc_lib
 
                 if(audio_map_desc_read_returned < 0)
                 {
-                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_config_read error");
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "audio_map_desc_read error");
                         assert(audio_map_desc_read_returned >= 0);
                 }
         }
@@ -55,17 +55,18 @@ namespace avdecc_lib
 
         uint16_t STDCALL audio_map_descriptor_imp::get_descriptor_index() const
         {
-                assert(audio_map_desc.descriptor_index == 0);
                 return audio_map_desc.descriptor_index;
         }
 
         uint16_t STDCALL audio_map_descriptor_imp::get_mappings_offset()
         {
+		assert(audio_map_desc.mappings_offset == 8);
                 return audio_map_desc.mappings_offset;
         }
 
         uint16_t STDCALL audio_map_descriptor_imp::get_number_of_mappings()
         {
+		assert(audio_map_desc.number_of_mappings == 62);
                 return audio_map_desc.number_of_mappings;
         }
 }

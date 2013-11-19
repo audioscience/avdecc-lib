@@ -56,72 +56,80 @@ namespace avdecc_lib
                 virtual ~avb_interface_descriptor_imp();
 
                 /**
-                 * Get the descriptor type of the AVB Interface descriptor object.
+                 * Get the type of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_type() const;
 
                 /**
-                 * Get the descriptor index of the AVB Interface descriptor object.
+                 * Get the index of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_index() const;
 
                 /**
-                 * Get the name of the AVB Interface descriptor object.
+                 * Get the name of the AVB Interface. This may be user set through the use of a SET_NAME command.
+		 * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+		 * defined value being provided in a localized form via the localized descripton field. By leaving
+		 * this field blank an AVDECC Controller can determine if the user has overridden the name and can
+		 * use this name rather than the localized name.
                  */
                 uint8_t * STDCALL get_object_name();
 
                 /**
-                 * Get the localized description of the AVB Interface descriptor object.
+                 * Get the localized string reference pointing to the localized AVB Interface name.
                  */
                 uint16_t STDCALL get_localized_description();
 
                 /**
-                 * Get the MAC address of the AVB Interface descriptor object.
+                 * Get the MAC address of the interface.
                  */
                 uint8_t * STDCALL get_mac_addr();
 
                 /**
-                 * Get the interface flags of the AVB Interface descriptor object.
+                 * Get the flags describing the features of the interface.
+		 * 
+		 * \return 1 if the interface supports the grandmaster functionality.
+		 *	   2 if the interface supports the functionality.
+		 *	   3 if the interface supports the "Stream Reservation Protocol (SRP)" functionality.
                  */
                 uint16_t STDCALL get_interface_flags();
 
                 /**
-                 * Get the clock identity of the AVB Interface descriptor object.
+                 * Get the clock identity of the interface.
                  */
                 uint64_t STDCALL get_clock_identity();
 
                 /**
-                 * Get the priority1 of the AVB Interface descriptor object.
+                 * Get the priority1 field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
                  */
                 uint32_t STDCALL get_priority1();
 
                 /**
-                 * Get the clock class of the AVB Interface descriptor object.
+                 * Get the clock class field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
                  */
                 uint32_t STDCALL get_clock_class();
 
                 /**
-                 * Get the offset scaled log variance of the AVB Interface descriptor object.
+                 * Get the offset scaled log variance field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
                  */
                 uint16_t STDCALL get_offset_scaled_log_variance();
 
                 /**
-                 * Get the clock accuracy of the AVB Interface descriptor object.
+                 * Get the clock accuracy field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
                  */
                 uint32_t STDCALL get_clock_accuracy();
 
                 /**
-                 * Get the priority2 of the AVB Interface descriptor object.
+                 * Get the priority2 field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
                  */
                 uint32_t STDCALL get_priority2();
 
                 /**
-                 * Get the domain number of the AVB Interface descriptor object.
+                 * Get the domain number field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
                  */
                 uint32_t STDCALL get_domain_number();
 
                 /**
-                 * Get the log sync interval of the AVB Interface descriptor object.
+                 * Get the log sync interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
                  */
                 uint32_t STDCALL get_log_sync_interval();
         };

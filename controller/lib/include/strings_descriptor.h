@@ -25,6 +25,7 @@
  * strings_descriptor.h
  *
  * Public Strings descriptor interface class
+ * The Strings descriptor describes the localized strings.
  */
 
 #pragma once
@@ -41,7 +42,7 @@ namespace avdecc_lib
         {
         public:
                 /**
-                 * \return The corresponding string of the Strings descriptor object.
+                 * \return The corresponding localized string of the Strings descriptor.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_string_by_index(uint32_t string_index) = 0;
         };

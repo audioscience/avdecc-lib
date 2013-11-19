@@ -39,7 +39,7 @@ namespace avdecc_lib
 
                 if(desc_strings_read_returned < 0)
                 {
-                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_strings_read error");
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "strings_desc_read error");
                         assert(desc_strings_read_returned >= 0);
                 }
         }

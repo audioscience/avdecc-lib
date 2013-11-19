@@ -44,7 +44,7 @@ namespace avdecc_lib
 
                 if(config_desc_read_returned < 0)
                 {
-                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_config_read error");
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "config_desc_read error");
                         assert(config_desc_read_returned >= 0);
                 }
 
@@ -83,7 +83,6 @@ namespace avdecc_lib
 
         uint16_t STDCALL configuration_descriptor_imp::get_descriptor_index() const
         {
-                assert(config_desc.descriptor_index == 0);
                 return config_desc.descriptor_index;
         }
 

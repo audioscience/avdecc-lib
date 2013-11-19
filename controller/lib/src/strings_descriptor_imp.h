@@ -56,17 +56,17 @@ namespace avdecc_lib
                 virtual ~strings_descriptor_imp();
 
                 /**
-                 * Get the descriptor type of the Strings descriptor object.
+                 * Get the type of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_type() const;
 
                 /**
-                 * Get the descriptor index of the Strings descriptor object.
+                 * Get the index of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_index() const;
 
                 /**
-                 * Get the corresponding string of the Strings descriptor object.
+                 * Get the corresponding localized string of the Strings descriptor.
                  */
                 uint8_t * STDCALL get_string_by_index(uint32_t string_index);
         };

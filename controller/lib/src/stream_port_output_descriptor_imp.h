@@ -56,52 +56,61 @@ namespace avdecc_lib
                 virtual ~stream_port_output_descriptor_imp();
 
                 /**
-                 * Get the descriptor type of the Stream Port Output descriptor object.
+                 * Get the type of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_type() const;
 
                 /**
-                 * Get the descriptor index of the Stream Port Output descriptor object.
+                 * Get the index of the descriptor.
                  */
                 uint16_t STDCALL get_descriptor_index() const;
 
                 /**
-                 * Get the clock domain index of the Stream Port Output descriptor object.
+                 * Get the descriptor index of the Clock Domain descriptor describing the clock domain for the port.
                  */
                 uint16_t STDCALL get_clock_domain_index();
 
                 /**
-                 * Get the port flags of the Stream Port Output descriptor object.
+                 * The flags describing the capabilities or features of the port.
+		 *
+		 * \return 1 (Clock Sync Source) if the port can be used as a clock synchronization source.
+		 *	   2 (Async Sample Rate Conv) if the port has an asynchronous sample rate converter
+		 *	     to convert sample rates between another clock domain and the Unit's.
+		 *	   3 (Sync Sample Rate Conv) if the port has a synchronous sample rate converter
+		 *	     to convert between sample rates in the same clock domain.
                  */
                 uint16_t STDCALL get_port_flags();
 
                 /**
-                 * Get the number of controls of the Stream Port Output descriptor object.
+                 * Get the number of controls within the port.
                  */
                 uint16_t STDCALL get_number_of_controls();
 
                 /**
-                 * Get the base control of the Stream Port Output descriptor object.
+                 * Get the index of the first Control descriptor.
                  */
                 uint16_t STDCALL get_base_control();
 
                 /**
-                 * Get the number of clusters of the Stream Port Output descriptor object.
+                 * Get the number of clusters within the port. This corresponds to the number of Audio Cluster,
+		 * Video Cluster, and Sensor Cluster descriptors which represent these clusters.
                  */
                 uint16_t STDCALL get_number_of_clusters();
 
                 /**
-                 * Get the base cluster of the Stream Port Output descriptor object.
+                 * Get the index of the first Audio Cluster, Video Cluster, or Sensor Cluster descriptor
+		 * describing the clusters within the port.
                  */
                 uint16_t STDCALL get_base_cluster();
 
                 /**
-                 * Get the number of maps of the Stream Port Output descriptor object.
+                 * Get the number of map descriptors used to define the mapping between the stream and the port.
                  */
                 uint16_t STDCALL get_number_of_maps();
 
                 /**
-                 * Get the base map of the Stream Port Output descriptor object.
+                 * Get the index of the first Audio Map, Video Map, or Sensor Map, descriptor which defines
+		 * the mappling between the stream and the port.
                  */
                 uint16_t STDCALL get_base_map();
         };

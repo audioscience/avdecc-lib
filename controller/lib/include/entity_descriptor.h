@@ -25,6 +25,9 @@
  * entity_descriptor.h
  *
  * Public Entity descriptor interface class
+ * The Entity descriptor describes the highest level of the AVDECC Entity. It repeats some of the information
+ * contained within the ADP advertise for the AVDECC Entity as well as the information required to read the
+ * rest of the descriptors from the AVDECC Entity.
  */
 
 #pragma once
@@ -43,107 +46,110 @@ namespace avdecc_lib
         {
         public:
                 /**
-                 * \return The id of the Entity descriptor object.
+                 * \return The Entity ID of the AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_entity_id() = 0;
 
                 /**
-                 * \return The vendor id of the Entity descriptor object.
+                 * \return The vendor id of the AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_vendor_id() = 0;
 
                 /**
-                 * \return The model id of the Entity descriptor object.
+                 * \return The AVDECC Entity model id for the AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_entity_model_id() = 0;
 
                 /**
-                 * \return The capabilities of the Entity descriptor object.
+                 * \return The capabilities of the AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_entity_capabilities() = 0;
 
                 /**
-                 * \return The Talker Stream Sources of the Entity descriptor object.
+                 * \return The number of Output Streams the AVDECC Entity has. This is also the number
+		 *	   of STREAM_OUTPUT descriptors the AVDECC Entity has for Output Streams.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_talker_stream_sources() = 0;
 
                 /**
-                 * \return The Talker capabilities of the Entity descriptor object.
+                 * \return The AVDECC Talker capabilities of the AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_talker_capabilities() = 0;
 
                 /**
-                 * \return The Listener Stream Sinks of the Entity descriptor object.
+                 * \return The number of Input Streams the AVDECC Entity has. This is also the number
+		 *	   of STREAM_INPUT descriptors the AVDECC Entity has for Input Streams.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_listener_stream_sinks() = 0;
 
                 /**
-                 * \return The Listener capabilities of the Entity descriptor object.
+                 * \return The AVDECC Listener capabilities of the AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_listener_capabilities() = 0;
 
                 /**
-                 * \return The Controller capabilities of the Entity descriptor object.
+                 * \return The AVDECC Controller capabilities of the AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_controller_capabilities() = 0;
 
                 /**
-                 * \return The available index of the Entity descriptor object.
+                 * \return The available index of the AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_available_index() = 0;
 
                 /**
-                 * \return The association id of the Entity descriptor object.
+                 * \return The association ID for the AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_association_id() = 0;
 
                 /**
-                 * \return The name of the Entity descriptor object.
+                 * \return The name of the AVDECC Entity. This may be user set through the use of a SET_NAME command.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_entity_name() = 0;
 
                 /**
-                 * \return The vendor name string of the Entity descriptor object.
+                 * \return The localized string reference pointing to the localized vendor name.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_vendor_name_string() = 0;
 
                 /**
-                 * \return The model name string of the Entity descriptor object.
+                 * \return The localized string reference pointing to the localized model name.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_model_name_string() = 0;
 
                 /**
-                 * \return The firmware version of the Entity descriptor object.
+                 * \return The firmware version of the AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_firmware_version() = 0;
 
                 /**
-                 * \return The group name of the Entity descriptor object.
+                 * \return The group name of the AVDECC Entity. This may be user set through the use of a SET_NAME command.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_group_name() = 0;
 
                 /**
-                 * \return The serial number of the Entity descriptor object.
+                 * \return The serial number of the AVDECC Entity.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_serial_number() = 0;
 
                 /**
-                 * \return The configurations count of the Entity descriptor object.
+                 * \return The number of Configurations the device has. A device is required to have at least 1 Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_configurations_count() = 0;
 
                 /**
-                 * \return The current Configuration of the Entity descriptor object.
+                 * \return The index of the currently set Configuration.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_current_configuration() = 0;
 
                 /**
                  * \return The number of Configuration descriptors.
+		 * \see get_configurations_count()
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_config_desc_count() = 0;
 
                 /**
-                 * \return The corresponding Configuration descriptor object by index.
+                 * \return The corresponding Configuration descriptorby index.
                  */
                 AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index) = 0;
 
