@@ -38,85 +38,85 @@
 
 namespace avdecc_lib
 {
-        class inflight
+    class inflight
+    {
+    private:
+        unsigned int start_timer_count;
+        struct jdksavdecc_frame inflight_cmd_frame;
+        bool notification_flag;
+        unsigned int inflight_timeout;
+        timer flight_timer;
+
+    public:
+        /* following 2 are public for compare prediate classes */
+        uint16_t seq_id;
+        void *notification_id;
+
+        inflight(
+            struct jdksavdecc_frame *frame,
+            uint16_t sequence,
+            unsigned int timeout_ms,
+            void *notify_id,
+            bool notify_flag)
+            : seq_id(sequence), notification_id(notify_id), notification_flag(notify_flag),
+              inflight_timeout(timeout_ms), start_timer_count(0)
         {
-        private:
-                unsigned int start_timer_count;
-                struct jdksavdecc_frame inflight_cmd_frame;
-                bool notification_flag;
-                unsigned int inflight_timeout;
-                timer flight_timer;
-
-        public:
-                /* following 2 are public for compare prediate classes */
-                uint16_t seq_id;
-                void *notification_id;
-
-                inflight(
-                        struct jdksavdecc_frame *frame,
-                        uint16_t sequence,
-                        unsigned int timeout_ms,
-                        void *notify_id,
-                        bool notify_flag)
-                        : seq_id(sequence), notification_id(notify_id), notification_flag(notify_flag),
-                          inflight_timeout(timeout_ms), start_timer_count(0)
-                {
-                        inflight_cmd_frame = *frame;
-                };
-
-                ~inflight() {};
-
-                void start_timer()
-                {
-                        flight_timer.start(inflight_timeout);
-                };
-                void *notify_id()
-                {
-                        return notification_id;
-                };
-                bool timeout()
-                {
-                        return flight_timer.timeout();
-                };
-                bool notify_flag()
-                {
-                        return notification_flag;
-                }
-                bool retried()
-                {
-                        return start_timer_count >= 2;
-                };
+            inflight_cmd_frame = *frame;
         };
 
-        /*
-         * Class for use in STL find_if() call to find matching sequence ID.
-         */
-        class SeqIdComp
-        {
-        public:
-                SeqIdComp(uint16_t i) : v(i) { }
-                inline bool operator()(const inflight & m) const
-                {
-                        return m.seq_id == v;
-                }
-        private:
-                uint16_t v;
-        };
+        ~inflight() {};
 
-        /*
-         * Class for use in STL find_if() call to find matching notification ID.
-         */
-        class NotificationComp
+        void start_timer()
         {
-        public:
-                NotificationComp(void * p) : v(p) { }
-                inline bool operator()(const inflight & m) const
-                {
-                        return m.notification_id == v;
-                }
-        private:
-                void * v;
+            flight_timer.start(inflight_timeout);
         };
+        void *notify_id()
+        {
+            return notification_id;
+        };
+        bool timeout()
+        {
+            return flight_timer.timeout();
+        };
+        bool notify_flag()
+        {
+            return notification_flag;
+        }
+        bool retried()
+        {
+            return start_timer_count >= 2;
+        };
+    };
+
+    /*
+     * Class for use in STL find_if() call to find matching sequence ID.
+     */
+    class SeqIdComp
+    {
+    public:
+        SeqIdComp(uint16_t i) : v(i) { }
+        inline bool operator()(const inflight & m) const
+        {
+            return m.seq_id == v;
+        }
+    private:
+        uint16_t v;
+    };
+
+    /*
+     * Class for use in STL find_if() call to find matching notification ID.
+     */
+    class NotificationComp
+    {
+    public:
+        NotificationComp(void * p) : v(p) { }
+        inline bool operator()(const inflight & m) const
+        {
+            return m.notification_id == v;
+        }
+    private:
+        void * v;
+    };
 }
 
 #endif

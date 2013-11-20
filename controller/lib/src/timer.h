@@ -37,29 +37,29 @@
 
 namespace avdecc_lib
 {
-        class timer
-        {
-        private:
-                bool running;
-                bool elapsed;
-                uint32_t count;
-                avdecc_lib_os::aTimestamp start_time;
+    class timer
+    {
+    private:
+        bool running;
+        bool elapsed;
+        uint32_t count;
+        avdecc_lib_os::aTimestamp start_time;
 
-        public:
-                timer();
+    public:
+        timer();
 
-                ~timer();
+        ~timer();
 
-                avdecc_lib_os::aTimestamp clk_monotonic(void);
+        avdecc_lib_os::aTimestamp clk_monotonic(void);
 
-                uint32_t clk_convert_to_ms(avdecc_lib_os::aTimestamp timestamp);
+        uint32_t clk_convert_to_ms(avdecc_lib_os::aTimestamp timestamp);
 
-                void start(int duration_ms);
+        void start(int duration_ms);
 
-                void stop();
+        void stop();
 
-                bool timeout();
-        };
+        bool timeout();
+    };
 }
 
 #endif

@@ -37,49 +37,49 @@
 
 namespace avdecc_lib
 {
-        class log_imp : public virtual log
+    class log_imp : public virtual log
+    {
+    private:
+        enum events
         {
-        private:
-                enum events
-                {
-                        LOG_EVENT,
-                        KILL_EVENT
-                };
-
-                LPTHREAD_START_ROUTINE thread;
-                HANDLE h_thread;
-                DWORD thread_id;
-                HANDLE poll_events[2];
-
-        public:
-                log_imp();
-
-                virtual ~log_imp();
-
-        private:
-                /**
-                 * Create and initialize post_log_msg thread, event, and semaphore.
-                 */
-                int logging_thread_init();
-
-                /**
-                 * Start of the post_log_msg thread used for post_log_msg purposes.
-                 */
-                static DWORD WINAPI proc_logging_thread(LPVOID lpParam);
-
-                /**
-                 * A member function called to start the logging thread processing.
-                 */
-                int proc_logging_thread_callback();
-
-        public:
-                /**
-                 * Release sempahore so that log callback function is called.
-                 */
-                void post_log_event();
+            LOG_EVENT,
+            KILL_EVENT
         };
 
-        extern log_imp *log_imp_ref;
+        LPTHREAD_START_ROUTINE thread;
+        HANDLE h_thread;
+        DWORD thread_id;
+        HANDLE poll_events[2];
+
+    public:
+        log_imp();
+
+        virtual ~log_imp();
+
+    private:
+        /**
+         * Create and initialize post_log_msg thread, event, and semaphore.
+         */
+        int logging_thread_init();
+
+        /**
+         * Start of the post_log_msg thread used for post_log_msg purposes.
+         */
+        static DWORD WINAPI proc_logging_thread(LPVOID lpParam);
+
+        /**
+         * A member function called to start the logging thread processing.
+         */
+        int proc_logging_thread_callback();
+
+    public:
+        /**
+         * Release sempahore so that log callback function is called.
+         */
+        void post_log_event();
+    };
+
+    extern log_imp *log_imp_ref;
 }
 
 #endif

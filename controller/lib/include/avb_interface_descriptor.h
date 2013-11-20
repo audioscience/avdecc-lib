@@ -40,78 +40,78 @@
 
 namespace avdecc_lib
 {
-        class avb_interface_descriptor : public virtual descriptor_base
-        {
-        public:
-                /**
-                 * \return The MAC address of the interface.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_mac_addr() = 0;
+    class avb_interface_descriptor : public virtual descriptor_base
+    {
+    public:
+        /**
+         * \return The MAC address of the interface.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_mac_addr() = 0;
 
-                /**
-                 * The flags describing the features of the interface.
-		 * 
-		 * \return 1 (GPTP Grandmaster Supported) if the interface supports the grandmaster functionality. \n
-		 *	   2 (GPTP Supported) if the interface supports the functionality. \n
-		 *	   4 (SRP Supported) if the interface supports the "Stream Reservation Protocol (SRP)" functionality.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_interface_flags() = 0;
+        /**
+         * The flags describing the features of the interface.
+         *
+         * \return 1 (GPTP Grandmaster Supported) if the interface supports the grandmaster functionality. \n
+         *	   2 (GPTP Supported) if the interface supports the functionality. \n
+         *	   4 (SRP Supported) if the interface supports the "Stream Reservation Protocol (SRP)" functionality.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_interface_flags() = 0;
 
-                /**
-                 * \return The clock identity of the interface.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_clock_identity() = 0;
+        /**
+         * \return The clock identity of the interface.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_clock_identity() = 0;
 
-                /**
-                 * \return The priority1 field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_priority1() = 0;
+        /**
+         * \return The priority1 field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_priority1() = 0;
 
-                /**
-                 * \return The clock class field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_clock_class() = 0;
+        /**
+         * \return The clock class field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_clock_class() = 0;
 
-                /**
-                 * \return The offset scaled log variance field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_offset_scaled_log_variance() = 0;
+        /**
+         * \return The offset scaled log variance field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_offset_scaled_log_variance() = 0;
 
-                /**
-                 * \return The clock accuracy field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_clock_accuracy() = 0;
+        /**
+         * \return The clock accuracy field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_clock_accuracy() = 0;
 
-                /**
-                 * \return The priority2 field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_priority2() = 0;
+        /**
+         * \return The priority2 field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_priority2() = 0;
 
-                /**
-                 * \return The domain number field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_domain_number() = 0;
+        /**
+         * \return The domain number field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_domain_number() = 0;
 
-                /**
-                 * Get the current log sync interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_log_sync_interval() = 0;
+        /**
+         * Get the current log sync interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_log_sync_interval() = 0;
 
-		/**
-                 * Get the current log announce interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_log_announce_interval() = 0;
-		
-		/**
-                 * Get the current log pdelay interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_log_pdelay_interval() = 0;
-		
-		/**
-                 * Get the port number field as used by the functionality of the AVB Interface if supported, 0 otherwise.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_port_number() = 0; 
-        };
+        /**
+         * Get the current log announce interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_log_announce_interval() = 0;
+
+        /**
+         * Get the current log pdelay interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_log_pdelay_interval() = 0;
+
+        /**
+         * Get the port number field as used by the functionality of the AVB Interface if supported, 0 otherwise.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_port_number() = 0;
+    };
 }
 
 #endif
