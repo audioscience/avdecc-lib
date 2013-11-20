@@ -25,6 +25,11 @@
  * audio_map_descriptor.h
  *
  * Public Audio Map descriptor interface class
+ * The Audio Map descriptor describes a static mapping between an audio stream's channels
+ * and an audio cluster's channels for streams and stream ports which are located in the
+ * same clock domain. An AVDECC Entity which supports dynamic mappings, that is mappings
+ * which can be changed at runtime by an AVDECC Controller, does not use Audio Map
+ * descriptors, but instead provides their mappings via the GET_AUDIO_MAP command.
  */
 
 #pragma once
@@ -37,19 +42,21 @@
 
 namespace avdecc_lib
 {
-	class audio_map_descriptor : public virtual descriptor_base
-	{
-	public:
-		/**
-		 * Get the mappings offset of the Audio Map descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_mappings_offset() = 0;
+        class audio_map_descriptor : public virtual descriptor_base
+        {
+        public:
+                /**
+                 * \return The offset from the start of the descriptor for the first octet of the mapping stream channel 0 string.
+		 *         This field is 8 for this version of AEM.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_mappings_offset() = 0;
 
-		/**
-		 * Get the number of mappings of the Audio Map descriptor object.
-		 */
-		AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_mappings() = 0;
-	};
+                /**
+                 * \return The number of channel mappings within the Audio Map. The maximum value
+		 *	   of this field is 62 for this version of AEM.
+                 */
+                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_mappings() = 0;
+        };
 }
 
 #endif

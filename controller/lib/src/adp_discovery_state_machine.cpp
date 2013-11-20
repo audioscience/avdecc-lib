@@ -39,153 +39,153 @@
 
 namespace avdecc_lib
 {
-	adp_discovery_state_machine *adp_discovery_state_machine_ref = new adp_discovery_state_machine(); // To have one ADP Discovery State Machine for all end stations
+        adp_discovery_state_machine *adp_discovery_state_machine_ref = new adp_discovery_state_machine(); // To have one ADP Discovery State Machine for all end stations
 
-	uint16_t adp_discovery_state_machine::adp_seq_id = 0x0;
+        uint16_t adp_discovery_state_machine::adp_seq_id = 0x0;
 
-	adp_discovery_state_machine::adp_discovery_state_machine()
-	{
-		discovery_state_machine_vars.rcvd_avail = false;
-		discovery_state_machine_vars.rcvd_departing = false;
-		discovery_state_machine_vars.do_discover = false;
-		discovery_state_machine_vars.do_terminate = false;
-	}
+        adp_discovery_state_machine::adp_discovery_state_machine()
+        {
+                discovery_state_machine_vars.rcvd_avail = false;
+                discovery_state_machine_vars.rcvd_departing = false;
+                discovery_state_machine_vars.do_discover = false;
+                discovery_state_machine_vars.do_terminate = false;
+        }
 
-	adp_discovery_state_machine::~adp_discovery_state_machine() {}
+        adp_discovery_state_machine::~adp_discovery_state_machine() {}
 
-	int adp_discovery_state_machine::adp_discovery_perform_discover(uint64_t entity_id)
-	{
-		discovery_state_machine_vars.do_discover = true;
-		discovery_state_machine_vars.discover_id = entity_id;
-		return 0;
-	}
+        int adp_discovery_state_machine::adp_discovery_perform_discover(uint64_t entity_id)
+        {
+                discovery_state_machine_vars.do_discover = true;
+                discovery_state_machine_vars.discover_id = entity_id;
+                return 0;
+        }
 
-	int adp_discovery_state_machine::adp_discovery_tx_discover(struct jdksavdecc_frame *ether_frame)
-	{
-		int send_frame_returned;
-		send_frame_returned = net_interface_ref->send_frame(ether_frame->payload, ether_frame->length); // Send the frame with message information
+        int adp_discovery_state_machine::adp_discovery_tx_discover(struct jdksavdecc_frame *ether_frame)
+        {
+                int send_frame_returned;
+                send_frame_returned = net_interface_ref->send_frame(ether_frame->payload, ether_frame->length); // Send the frame with message information
 
-		if(send_frame_returned < 0)
-		{
-			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "netif_send_frame error");
-			assert(send_frame_returned >= 0);
-		}
+                if(send_frame_returned < 0)
+                {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "netif_send_frame error");
+                        assert(send_frame_returned >= 0);
+                }
 
-		return 0;
-	}
+                return 0;
+        }
 
-	bool adp_discovery_state_machine::adp_discovery_have_entity(uint64_t entity_id, uint32_t *entity_index)
-	{
-		for(uint32_t index_i = 0; index_i < discovery_state_machine_vars.entities_vector.size(); index_i++)
-		{
-			if(discovery_state_machine_vars.entities_vector.at(index_i).entity_id == entity_id)
-			{
-				*entity_index = index_i;
-				return true;
-			}
-		}
+        bool adp_discovery_state_machine::adp_discovery_have_entity(uint64_t entity_id, uint32_t *entity_index)
+        {
+                for(uint32_t index_i = 0; index_i < discovery_state_machine_vars.entities_vector.size(); index_i++)
+                {
+                        if(discovery_state_machine_vars.entities_vector.at(index_i).entity_id == entity_id)
+                        {
+                                *entity_index = index_i;
+                                return true;
+                        }
+                }
 
-		return false;
-	}
+                return false;
+        }
 
-	int adp_discovery_state_machine::adp_discovery_update_entity_timeout(uint32_t entity_index, uint32_t timeout_ms)
-	{
-		discovery_state_machine_vars.entities_vector.at(entity_index).timer_ref.start(timeout_ms);
-		return 0;
-	}
+        int adp_discovery_state_machine::adp_discovery_update_entity_timeout(uint32_t entity_index, uint32_t timeout_ms)
+        {
+                discovery_state_machine_vars.entities_vector.at(entity_index).timer_ref.start(timeout_ms);
+                return 0;
+        }
 
-	int adp_discovery_state_machine::adp_discovery_add_entity(struct adp_discovery_state_machine_entities new_entity)
-	{
-		discovery_state_machine_vars.entities_vector.push_back(new_entity);
-		return 0;
-	}
+        int adp_discovery_state_machine::adp_discovery_add_entity(struct adp_discovery_state_machine_entities new_entity)
+        {
+                discovery_state_machine_vars.entities_vector.push_back(new_entity);
+                return 0;
+        }
 
-	int adp_discovery_state_machine::adp_discovery_remove_entity(uint32_t entity_index)
-	{
-		discovery_state_machine_vars.entities_vector.erase(discovery_state_machine_vars.entities_vector.begin() + entity_index);
-		return 0;
-	}
+        int adp_discovery_state_machine::adp_discovery_remove_entity(uint32_t entity_index)
+        {
+                discovery_state_machine_vars.entities_vector.erase(discovery_state_machine_vars.entities_vector.begin() + entity_index);
+                return 0;
+        }
 
-	void adp_discovery_state_machine::adp_discovery_state_waiting(const uint8_t *frame, uint16_t frame_len)
-	{
-		if(discovery_state_machine_vars.do_discover)
-		{
-			adp_discovery_state_discover();
-		}
+        void adp_discovery_state_machine::adp_discovery_state_waiting(const uint8_t *frame, uint16_t frame_len)
+        {
+                if(discovery_state_machine_vars.do_discover)
+                {
+                        adp_discovery_state_discover();
+                }
 
-		else if(discovery_state_machine_vars.rcvd_avail)
-		{
-			adp_discovery_state_avail(frame, frame_len);
-		}
+                else if(discovery_state_machine_vars.rcvd_avail)
+                {
+                        adp_discovery_state_avail(frame, frame_len);
+                }
 
-		else if(discovery_state_machine_vars.rcvd_departing)
-		{
-			//adp_discovery_state_departing();
-		}
-		else {}
-	}
+                else if(discovery_state_machine_vars.rcvd_departing)
+                {
+                        //adp_discovery_state_departing();
+                }
+                else {}
+        }
 
-	int adp_discovery_state_machine::adp_discovery_state_discover()
-	{
-		struct jdksavdecc_frame ether_frame;
-		adp::ether_frame_init(&ether_frame);
-		adp::common_hdr_init(&ether_frame, NULL);
-		adp_discovery_tx_discover(&ether_frame);
-		discovery_state_machine_vars.do_discover = false;
+        int adp_discovery_state_machine::adp_discovery_state_discover()
+        {
+                struct jdksavdecc_frame ether_frame;
+                adp::ether_frame_init(&ether_frame);
+                adp::common_hdr_init(&ether_frame, NULL);
+                adp_discovery_tx_discover(&ether_frame);
+                discovery_state_machine_vars.do_discover = false;
 
-		return 0;
-	}
+                return 0;
+        }
 
-	int adp_discovery_state_machine::adp_discovery_state_avail(const uint8_t *frame, uint16_t frame_len)
-	{
-		struct jdksavdecc_adpdu_common_control_header adp_hdr;
-		uint64_t entity_guid;
-		uint32_t entity_index;
+        int adp_discovery_state_machine::adp_discovery_state_avail(const uint8_t *frame, uint16_t frame_len)
+        {
+                struct jdksavdecc_adpdu_common_control_header adp_hdr;
+                uint64_t entity_guid;
+                uint32_t entity_index;
 
-		entity_guid = jdksavdecc_uint64_get(frame, adp::ETHER_HDR_SIZE + adp::PROTOCOL_HDR_SIZE);
-		jdksavdecc_adpdu_common_control_header_read(&adp_hdr, frame, adp::ETHER_HDR_SIZE, frame_len);
+                entity_guid = jdksavdecc_uint64_get(frame, adp::ETHER_HDR_SIZE + adp::PROTOCOL_HDR_SIZE);
+                jdksavdecc_adpdu_common_control_header_read(&adp_hdr, frame, adp::ETHER_HDR_SIZE, frame_len);
 
-		if(adp_discovery_have_entity(entity_guid, &entity_index))
-		{
-			adp_discovery_update_entity_timeout(entity_index, adp_hdr.valid_time*2*1000);
-		}
-		else
-		{
-			struct adp_discovery_state_machine_entities entity;
-			entity.entity_id = entity_guid;
-			entity.timer_ref.start(adp_hdr.valid_time*2*1000);
-			adp_discovery_add_entity(entity);
-			notification_imp_ref->post_notification_msg(END_STATION_CONNECTED, entity_guid, 0, 0, 0, 0);
-		}
+                if(adp_discovery_have_entity(entity_guid, &entity_index))
+                {
+                        adp_discovery_update_entity_timeout(entity_index, adp_hdr.valid_time*2*1000);
+                }
+                else
+                {
+                        struct adp_discovery_state_machine_entities entity;
+                        entity.entity_id = entity_guid;
+                        entity.timer_ref.start(adp_hdr.valid_time*2*1000);
+                        adp_discovery_add_entity(entity);
+                        notification_imp_ref->post_notification_msg(END_STATION_CONNECTED, entity_guid, 0, 0, 0, 0);
+                }
 
-		discovery_state_machine_vars.rcvd_avail = false;
-		return 0;
-	}
+                discovery_state_machine_vars.rcvd_avail = false;
+                return 0;
+        }
 
-	//void adp_discovery_state_machine::adp_discovery_state_departing()
-	//{
-	//
-	//}
+        //void adp_discovery_state_machine::adp_discovery_state_departing()
+        //{
+        //
+        //}
 
-	int adp_discovery_state_machine::adp_discovery_state_timeout(uint32_t entity_index)
-	{
-		adp_discovery_remove_entity(entity_index);
-		return 0;
-	}
+        int adp_discovery_state_machine::adp_discovery_state_timeout(uint32_t entity_index)
+        {
+                adp_discovery_remove_entity(entity_index);
+                return 0;
+        }
 
-	bool adp_discovery_state_machine::adp_discovery_tick(uint64_t &end_station_guid)
-	{
-		for(uint32_t index_i = 0; index_i < discovery_state_machine_vars.entities_vector.size(); index_i++)
-		{
-			if(discovery_state_machine_vars.entities_vector.at(index_i).timer_ref.timeout())
-			{
-				end_station_guid = discovery_state_machine_vars.entities_vector.at(index_i).entity_id;
-				adp_discovery_state_timeout(index_i);
-				notification_imp_ref->post_notification_msg(END_STATION_DISCONNECTED, end_station_guid, 0, 0, 0, 0);
-				return true;
-			}
-		}
+        bool adp_discovery_state_machine::adp_discovery_tick(uint64_t &end_station_guid)
+        {
+                for(uint32_t index_i = 0; index_i < discovery_state_machine_vars.entities_vector.size(); index_i++)
+                {
+                        if(discovery_state_machine_vars.entities_vector.at(index_i).timer_ref.timeout())
+                        {
+                                end_station_guid = discovery_state_machine_vars.entities_vector.at(index_i).entity_id;
+                                adp_discovery_state_timeout(index_i);
+                                notification_imp_ref->post_notification_msg(END_STATION_DISCONNECTED, end_station_guid, 0, 0, 0, 0);
+                                return true;
+                        }
+                }
 
-		return false;
-	}
+                return false;
+        }
 }

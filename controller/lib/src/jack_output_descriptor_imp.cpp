@@ -33,75 +33,75 @@
 
 namespace avdecc_lib
 {
-	jack_output_descriptor_imp::jack_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
-	{
-		desc_jack_read_returned = jdksavdecc_descriptor_jack_read(&jack_output_desc, frame, pos, frame_len);
+        jack_output_descriptor_imp::jack_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+        {
+                desc_jack_read_returned = jdksavdecc_descriptor_jack_read(&jack_output_desc, frame, pos, frame_len);
 
-		if(desc_jack_read_returned < 0)
-		{
-			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_jack_output_read error");
-			assert(desc_jack_read_returned >= 0);
-		}
+                if(desc_jack_read_returned < 0)
+                {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "jack_output_desc_read error");
+                        assert(desc_jack_read_returned >= 0);
+                }
 
-		jack_flags_init();
-	}
+                jack_flags_init();
+        }
 
-	jack_output_descriptor_imp::~jack_output_descriptor_imp() {}
+        jack_output_descriptor_imp::~jack_output_descriptor_imp() {}
 
-	void jack_output_descriptor_imp::jack_flags_init()
-	{
-		jack_flags.clock_sync_source = jack_output_desc.jack_flags >> 1 & 0x01;
-		jack_flags.captive = jack_output_desc.jack_flags >> 2 & 0x01;
-	}
+        void jack_output_descriptor_imp::jack_flags_init()
+        {
+                jack_flags.clock_sync_source = jack_output_desc.jack_flags >> 1 & 0x01;
+                jack_flags.captive = jack_output_desc.jack_flags >> 2 & 0x01;
+        }
 
-	uint16_t STDCALL jack_output_descriptor_imp::get_descriptor_type()
-	{
-		assert(jack_output_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT);
-		return jack_output_desc.descriptor_type;
-	}
+        uint16_t STDCALL jack_output_descriptor_imp::get_descriptor_type() const
+        {
+                assert(jack_output_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT);
+                return jack_output_desc.descriptor_type;
+        }
 
-	uint16_t STDCALL jack_output_descriptor_imp::get_descriptor_index() const
-	{
-		return jack_output_desc.descriptor_index;
-	}
+        uint16_t STDCALL jack_output_descriptor_imp::get_descriptor_index() const
+        {
+                return jack_output_desc.descriptor_index;
+        }
 
-	uint8_t * STDCALL jack_output_descriptor_imp::get_object_name()
-	{
-		return jack_output_desc.object_name.value;
-	}
+        uint8_t * STDCALL jack_output_descriptor_imp::get_object_name()
+        {
+                return jack_output_desc.object_name.value;
+        }
 
-	uint16_t STDCALL jack_output_descriptor_imp::get_localized_description()
-	{
-		return jack_output_desc.localized_description;
-	}
+        uint16_t STDCALL jack_output_descriptor_imp::get_localized_description()
+        {
+                return jack_output_desc.localized_description;
+        }
 
-	uint16_t STDCALL jack_output_descriptor_imp::get_jack_flags()
-	{
-		return jack_output_desc.jack_flags;
-	}
+        uint16_t STDCALL jack_output_descriptor_imp::get_jack_flags()
+        {
+                return jack_output_desc.jack_flags;
+        }
 
-	uint16_t STDCALL jack_output_descriptor_imp::get_jack_flag_clock_sync_source()
-	{
-		return jack_flags.clock_sync_source;
-	}
+        uint16_t STDCALL jack_output_descriptor_imp::get_jack_flag_clock_sync_source()
+        {
+                return jack_flags.clock_sync_source;
+        }
 
-	uint16_t STDCALL jack_output_descriptor_imp::get_captive()
-	{
-		return jack_flags.captive;
-	}
+        uint16_t STDCALL jack_output_descriptor_imp::get_captive()
+        {
+                return jack_flags.captive;
+        }
 
-	uint16_t STDCALL jack_output_descriptor_imp::get_jack_type()
-	{
-		return jack_output_desc.jack_type;
-	}
+        uint16_t STDCALL jack_output_descriptor_imp::get_jack_type()
+        {
+                return jack_output_desc.jack_type;
+        }
 
-	uint16_t STDCALL jack_output_descriptor_imp::get_number_of_controls()
-	{
-		return jack_output_desc.number_of_controls;
-	}
+        uint16_t STDCALL jack_output_descriptor_imp::get_number_of_controls()
+        {
+                return jack_output_desc.number_of_controls;
+        }
 
-	uint16_t STDCALL jack_output_descriptor_imp::get_base_control()
-	{
-		return jack_output_desc.base_control;
-	}
+        uint16_t STDCALL jack_output_descriptor_imp::get_base_control()
+        {
+                return jack_output_desc.base_control;
+        }
 }

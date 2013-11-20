@@ -33,42 +33,42 @@
 
 namespace avdecc_lib
 {
-	locale_descriptor_imp::locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
-	{
-		desc_locale_read_returned = jdksavdecc_descriptor_locale_read(&locale_desc, frame, pos, frame_len);
+        locale_descriptor_imp::locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+        {
+                desc_locale_read_returned = jdksavdecc_descriptor_locale_read(&locale_desc, frame, pos, frame_len);
 
-		if(desc_locale_read_returned < 0)
-		{
-			log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "desc_locale_read error");
-			assert(desc_locale_read_returned >= 0);
-		}
-	}
+                if(desc_locale_read_returned < 0)
+                {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "locale_desc_read error");
+                        assert(desc_locale_read_returned >= 0);
+                }
+        }
 
-	locale_descriptor_imp::~locale_descriptor_imp() {}
+        locale_descriptor_imp::~locale_descriptor_imp() {}
 
-	uint16_t STDCALL locale_descriptor_imp::get_descriptor_type()
-	{
-		assert(locale_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_LOCALE);
-		return locale_desc.descriptor_type;
-	}
+        uint16_t STDCALL locale_descriptor_imp::get_descriptor_type() const
+        {
+                assert(locale_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_LOCALE);
+                return locale_desc.descriptor_type;
+        }
 
-	uint16_t STDCALL locale_descriptor_imp::get_descriptor_index() const
-	{
-		return locale_desc.descriptor_index;
-	}
+        uint16_t STDCALL locale_descriptor_imp::get_descriptor_index() const
+        {
+                return locale_desc.descriptor_index;
+        }
 
-	uint8_t * STDCALL locale_descriptor_imp::get_locale_identifier()
-	{
-		return locale_desc.locale_identifier.value;
-	}
+        uint8_t * STDCALL locale_descriptor_imp::get_locale_identifier()
+        {
+                return locale_desc.locale_identifier.value;
+        }
 
-	uint16_t STDCALL locale_descriptor_imp::get_number_of_strings()
-	{
-		return locale_desc.number_of_strings;
-	}
+        uint16_t STDCALL locale_descriptor_imp::get_number_of_strings()
+        {
+                return locale_desc.number_of_strings;
+        }
 
-	uint16_t STDCALL locale_descriptor_imp::get_base_strings()
-	{
-		return locale_desc.base_strings;
-	}
+        uint16_t STDCALL locale_descriptor_imp::get_base_strings()
+        {
+                return locale_desc.base_strings;
+        }
 }

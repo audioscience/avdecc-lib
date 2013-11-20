@@ -1,6 +1,6 @@
 style=ansi
 
-indent=tab=8
+indent=spaces=8
 
 indent-namespaces
 

@@ -32,131 +32,133 @@
 #define _AVDECC_CONTROLLER_LIB_SYSTEM_LAYER2_MULTITHREADED_CALLBACK_H_
 
 #include "system.h"
+#include "timer.h"
 
 namespace avdecc_lib
 {
-	class system_layer2_multithreaded_callback : public virtual system
-	{
-	private:
-		struct poll_thread_data
-		{
-			uint8_t *frame;
-			uint16_t frame_len;
-			void *notification_id;
-			uint32_t notification_flag;
-		};
+        class system_layer2_multithreaded_callback : public virtual system
+        {
+        private:
+                struct poll_thread_data
+                {
+                        uint8_t *frame;
+                        uint16_t frame_len;
+                        void *notification_id;
+                        uint32_t notification_flag;
+                };
 
-		struct thread_creation
-		{
-			LPTHREAD_START_ROUTINE thread;
-			HANDLE handle;
-			DWORD id;
-			HANDLE kill_sem;
-		};
+                struct thread_creation
+                {
+                        LPTHREAD_START_ROUTINE thread;
+                        HANDLE handle;
+                        DWORD id;
+                        HANDLE kill_sem;
+                };
 
-		struct msg_poll
-		{
-			struct thread_creation queue_thread;
-			system_message_queue *rx_queue;
-			system_message_queue *tx_queue;
-			HANDLE timeout_event;
-		};
+                struct msg_poll
+                {
+                        struct thread_creation queue_thread;
+                        system_message_queue *rx_queue;
+                        system_message_queue *tx_queue;
+                        HANDLE timeout_event;
+                };
 
-		enum wpcap_events
-		{
-		        WPCAP_TIMEOUT,
-		        WPCAP_RX_PACKET,
-		        WPCAP_TX_PACKET,
-		        KILL_ALL,
-		        NUM_OF_EVENTS
-		};
+                enum wpcap_events
+                {
+                        WPCAP_TIMEOUT,
+                        WPCAP_RX_PACKET,
+                        WPCAP_TX_PACKET,
+                        KILL_ALL,
+                        NUM_OF_EVENTS
+                };
 
-		struct msg_poll poll_rx;
-		struct msg_poll poll_tx;
-		struct thread_creation poll_thread;
-		HANDLE poll_events_array[NUM_OF_EVENTS];
-		HANDLE waiting_sem;
+                struct msg_poll poll_rx;
+                struct msg_poll poll_tx;
+                struct thread_creation poll_thread;
+                HANDLE poll_events_array[NUM_OF_EVENTS];
+                HANDLE waiting_sem;
 
-		bool is_waiting;
-		bool queue_is_waiting;
-		void *waiting_notification_id;
-		int resp_status_for_cmd;
+                bool is_waiting;
+                bool queue_is_waiting;
+                void *waiting_notification_id;
+                int resp_status_for_cmd;
+                timer tick_timer; // A tick timer that is always running
 
-	public:
-		/**
-		 * A constructor for system_layer2_multithreaded_callback used for constructing an object with network interface, notification, and post_log_msg callback functions.
-		 */
-		system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj);
+        public:
+                /**
+                 * A constructor for system_layer2_multithreaded_callback used for constructing an object with network interface, notification, and post_log_msg callback functions.
+                 */
+                system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj);
 
-		virtual ~system_layer2_multithreaded_callback();
+                virtual ~system_layer2_multithreaded_callback();
 
-		/**
-		 * Call destructor for Controller used for destroying objects
-		 */
-		void STDCALL destroy();
+                /**
+                 * Call destructor for Controller used for destroying objects
+                 */
+                void STDCALL destroy();
 
-		/**
-		 * Store the frame to be sent in a queue.
-		 */
-		int queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len);
+                /**
+                 * Store the frame to be sent in a queue.
+                 */
+                int queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len);
 
-		/**
-		 * Set a waiting flag for the command sent.
-		 */
-		int STDCALL set_wait_for_next_cmd(void *notification_id);
+                /**
+                 * Set a waiting flag for the command sent.
+                 */
+                int STDCALL set_wait_for_next_cmd(void *notification_id);
 
-		/**
-		 * Wait for the response packet with the corrsponding notification id to be received.
-		 */
-		int STDCALL get_last_resp_status();
+                /**
+                 * Wait for the response packet with the corrsponding notification id to be received.
+                 */
+                int STDCALL get_last_resp_status();
 
-	private:
-		/**
-		 * Start of the packet capture thread used for capturing packets.
-		 */
-		static DWORD WINAPI proc_wpcap_thread(LPVOID lpParam);
+        private:
+                /**
+                 * Start of the packet capture thread used for capturing packets.
+                 */
+                static DWORD WINAPI proc_wpcap_thread(LPVOID lpParam);
 
-		/**
-		 * A member function called to start the wpcap thread processing.
-		 */
-		int proc_wpcap_thread_callback();
+                /**
+                 * A member function called to start the wpcap thread processing.
+                 */
+                int proc_wpcap_thread_callback();
 
-		/**
-		 * Start of the polling thread used for polling events.
-		 */
-		static DWORD WINAPI proc_poll_thread(LPVOID lpParam);
+                /**
+                 * Start of the polling thread used for polling events.
+                 */
+                static DWORD WINAPI proc_poll_thread(LPVOID lpParam);
 
-		/**
-		 * A member function called to start the poll thread processing.
-		 */
-		int proc_poll_thread_callback();
+                /**
+                 * A member function called to start the poll thread processing.
+                 */
+                int proc_poll_thread_callback();
 
-		/**
-		 * Create and initialize threads, events, and semaphores for wpcap thread.
-		 */
-		int init_wpcap_thread();
+                /**
+                 * Create and initialize threads, events, and semaphores for wpcap thread.
+                 */
+                int init_wpcap_thread();
 
-		/**
-		 * Create and initialize threads, events, and semaphores for poll thread.
-		 */
-		int init_poll_thread();
+                /**
+                 * Create and initialize threads, events, and semaphores for poll thread.
+                 */
+                int init_poll_thread();
 
-		/**
-		 * Execute poll events.
-		 */
-		int poll_single();
+                /**
+                 * Execute poll events.
+                 */
+                int poll_single();
 
-	public:
-		/**
-		 * Start point of the system process, which calls the thread initialization function.
-		 */
-		int STDCALL process_start();
+        public:
+                /**
+                 * Start point of the system process, which calls the thread initialization function.
+                 */
+                int STDCALL process_start();
 
-		/**
-		 * End point of the system process, which terminates the threads.
-		 */
-		int STDCALL process_close();
-	};
+                /**
+                 * End point of the system process, which terminates the threads.
+                 */
+                int STDCALL process_close();
+        };
 }
 
 #endif

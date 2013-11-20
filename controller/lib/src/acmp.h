@@ -35,80 +35,80 @@
 
 namespace avdecc_lib
 {
-	class acmp
-	{
+        class acmp
+        {
 
-	public:
-		uint16_t seq_id; // sequence id inserted in ACMP commands
+        public:
+                uint16_t seq_id; // sequence id inserted in ACMP commands
 
-		acmp();
-		~acmp();
+                acmp();
+                ~acmp();
 
-		/**
-		 * Transmit an ACMP Command.
-		 */
-		void tx_cmd(	void *notification_id,
-		                bool notification_flag,
-		                struct jdksavdecc_frame *ether_frame,
-		                bool resend);
+                /**
+                 * Transmit an ACMP Command.
+                 */
+                void tx_cmd(	void *notification_id,
+                                bool notification_flag,
+                                struct jdksavdecc_frame *ether_frame,
+                                bool resend);
 
-		/**
-		 * Handle the receipt and processing of a received response for a command sent.
-		 */
-		int process_resp(	void *&notification_id,
-		                        struct jdksavdecc_frame *ether_frame);
+                /**
+                 * Handle the receipt and processing of a received response for a command sent.
+                 */
+                int process_resp(	void *&notification_id,
+                                        struct jdksavdecc_frame *ether_frame);
 
-		/**
-		 * Check timeout for the inflight commands.
-		 */
-		void tick();
+                /**
+                 * Check timeout for the inflight commands.
+                 */
+                void tick();
 
-		/**
-		 * Update inflight command for the response received.
-		 */
-		int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame);
+                /**
+                 * Update inflight command for the response received.
+                 */
+                int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame);
 
-		/**
-		 * Call notification or post_log_msg callback function for the command sent or response received.
-		 */
-		int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
+                /**
+                 * Call notification or post_log_msg callback function for the command sent or response received.
+                 */
+                int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
 
-		/**
-		 * Check if the command with the corresponding sequence id is already in the inflight command vector.
-		 */
-		bool find_inflight_cmd_by_seq_id(uint16_t seq_id, int *inflight_index);
+                /**
+                 * Check if the command with the corresponding sequence id is already in the inflight command vector.
+                 */
+                bool find_inflight_cmd_by_seq_id(uint16_t seq_id, int *inflight_index);
 
-		/**
-		 * Check if the command with the corresponding notification id is already in the inflight command vector.
-		 */
-		bool notification_id_is_inflight(void *notification_id);
+                /**
+                 * Check if the command with the corresponding notification id is already in the inflight command vector.
+                 */
+                bool notification_id_is_inflight(void *notification_id);
 
-		/**
-		 * Remove the command from the inflight command vector.
-		 */
-		int remove_inflight_cmd(uint32_t inflight_cmd_index);
+                /**
+                 * Remove the command from the inflight command vector.
+                 */
+                int remove_inflight_cmd(uint32_t inflight_cmd_index);
 
-	private:
-		std::vector<inflight> inflight_cmds;
+        private:
+                std::vector<inflight> inflight_cmds;
 
-		/**
-		 * State machine TIMEOUT operation.
-		 */
-		void state_TIMEOUT(inflight &inflight_command);
+                /**
+                 * State machine TIMEOUT operation.
+                 */
+                void state_TIMEOUT(inflight &inflight_command);
 
-		/**
-		 * State machine COMMAND operation.
-		 */
-		void state_COMMAND(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
+                /**
+                 * State machine COMMAND operation.
+                 */
+                void state_COMMAND(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
 
-		/**
-		 * State machine RESPONSE operation
-		 */
-		void acmp::state_RESPONSE(void *&notification_id, struct jdksavdecc_frame *ether_frame);
+                /**
+                 * State machine RESPONSE operation
+                 */
+                void acmp::state_RESPONSE(void *&notification_id, struct jdksavdecc_frame *ether_frame);
 
-	};
+        };
 
-	extern acmp *acmp;
+        extern acmp *acmp;
 }
 
 #endif
