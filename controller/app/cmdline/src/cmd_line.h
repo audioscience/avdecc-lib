@@ -149,12 +149,12 @@ public:
     /**
      * Display all the available outstreams for all End Stations that can connect with the instreams.
      */
-    int cmd_connect(uint32_t dest_end_station_index, uint16_t dest_desc_index);
+    int cmd_connect(uint32_t instream_end_station_index, uint16_t instream_desc_index);
 
     /**
      * Connect an instream to an outstream.
      */
-    int cmd_connect(uint32_t dest_end_station_index, uint16_t dest_desc_index, uint32_t src_end_station_index, uint16_t src_desc_index);
+    int cmd_connect_rx(uint32_t instream_end_station_index, uint16_t instream_desc_index, uint32_t outstream_end_station_index, uint16_t outstream_desc_index);
 
     /**
      * Display all the ACMP connections that can be disconnected.
@@ -164,7 +164,7 @@ public:
     /**
      * Disconnect an instream from an outstream.
      */
-    int cmd_disconnect(uint32_t dest_end_station_index, uint16_t dest_desc_index);
+    int cmd_disconnect(uint32_t instream_end_station_index, uint16_t instream_desc_index);
 
     /**
      * Send an ACQUIRE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.

@@ -556,7 +556,7 @@ int avdecc_cmd_line::cmd_view_media_clock()
                         desc_index = stream_input_desc->get_descriptor_index();
 
                         std::cout << std::setw(8) << i << std::setw(5) << "" << std::setw(20) << desc_obj_name <<
-                                  "  " << std::setw(18) << utility->desc_value_to_name(desc_type_value) <<
+                                  "  " << std::setw(18) << utility->aem_desc_value_to_name(desc_type_value) <<
                                   "  " << std::setw(16) << std::dec << desc_index << std::endl;
                     }
                 }
@@ -575,7 +575,7 @@ int avdecc_cmd_line::cmd_view_media_clock()
                         desc_index = stream_output_desc->get_descriptor_index();
 
                         std::cout << std::setw(8) << i << std::setw(5) << "" << std::setw(20) << desc_obj_name <<
-                                  "  " << std::setw(18) << std::hex << utility->desc_value_to_name(desc_type_value) <<
+                                  "  " << std::setw(18) << std::hex << utility->aem_desc_value_to_name(desc_type_value) <<
                                   "  " << std::setw(16) << std::dec << desc_index << std::endl;
                     }
                 }
@@ -647,7 +647,7 @@ void avdecc_cmd_line::print_desc_type_index_name_row(avdecc_lib::descriptor_base
 {
     const uint8_t localized_string_max_index = 7;
 
-    std::cout << std::setw(20) << utility->desc_value_to_name(desc.get_descriptor_type());
+    std::cout << std::setw(20) << utility->aem_desc_value_to_name(desc.get_descriptor_type());
     std::cout << "   "<<  std::setw(16) << std::dec << desc.get_descriptor_index();
 
     uint8_t localized_desc_index = (desc.get_localized_description()) & 0x7; // The 3 bit index subfield defining the index of the string within the STRINGS descriptor
@@ -690,14 +690,14 @@ int avdecc_cmd_line::cmd_view_all()
         {
             case avdecc_lib::AEM_DESC_ENTITY:
                 {
-                    std::cout << std::setw(20) << std::hex << utility->desc_value_to_name(entity_desc_ref->get_descriptor_type());
+                    std::cout << std::setw(20) << std::hex << utility->aem_desc_value_to_name(entity_desc_ref->get_descriptor_type());
                     std::cout << "   " << std::setw(16) << std::dec << entity_desc_ref->get_descriptor_index();
                     std::cout << "   " << std::setw(20) << std::hex << entity_desc_ref->get_entity_name() << std::endl;
                 }
 
             case avdecc_lib::AEM_DESC_CONFIGURATION:
                 {
-                    std::cout << std::setw(20) << utility->desc_value_to_name(config_desc_ref->get_descriptor_type());
+                    std::cout << std::setw(20) << utility->aem_desc_value_to_name(config_desc_ref->get_descriptor_type());
                     std::cout << "   " << std::setw(16) << std::dec << config_desc_ref->get_descriptor_index();
                     std::cout << "   " << std::setw(20) << std::hex << config_desc_ref->get_object_name() << std::endl;
                     std::cout << "\nTop Level Descriptors" << std::endl;
@@ -756,7 +756,7 @@ int avdecc_cmd_line::cmd_view_all()
                 for(int j = 0; j < config_desc_ref->get_locale_desc_count(); j++)
                 {
                     avdecc_lib::locale_descriptor *locale_def_ref = config_desc_ref->get_locale_desc_by_index(j);
-                    std::cout << std::setw(20) << utility->desc_value_to_name(locale_desc_ref->get_descriptor_type());
+                    std::cout << std::setw(20) << utility->aem_desc_value_to_name(locale_desc_ref->get_descriptor_type());
                     std::cout << "   "<<  std::setw(16) << std::hex << locale_desc_ref->get_descriptor_index();
                     std::cout << "   " << std::setw(20) << std::hex << locale_desc_ref->get_locale_identifier() << std::endl;
                 }
@@ -825,7 +825,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
     {
         case avdecc_lib::AEM_DESC_ENTITY:
             {
-                desc_name = utility->desc_value_to_name(entity_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(entity_desc_ref->get_descriptor_type());
                 desc_index = entity_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -834,7 +834,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
 
         case avdecc_lib::AEM_DESC_CONFIGURATION:
             {
-                desc_name = utility->desc_value_to_name(config_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(config_desc_ref->get_descriptor_type());
                 desc_index = config_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -845,7 +845,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_audio_unit_desc_count(); j++)
             {
                 avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = config_desc_ref->get_audio_unit_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(audio_unit_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(audio_unit_desc_ref->get_descriptor_type());
                 desc_index = audio_unit_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -857,7 +857,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_stream_input_desc_count(); j++)
             {
                 avdecc_lib::stream_input_descriptor *stream_input_desc_ref = config_desc_ref->get_stream_input_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(stream_input_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(stream_input_desc_ref->get_descriptor_type());
                 desc_index = stream_input_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -868,7 +868,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_stream_output_desc_count(); j++)
             {
                 avdecc_lib::stream_output_descriptor *stream_output_desc_ref = config_desc_ref->get_stream_output_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(stream_output_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(stream_output_desc_ref->get_descriptor_type());
                 desc_index = stream_output_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -879,7 +879,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_jack_input_desc_count(); j++)
             {
                 avdecc_lib::jack_input_descriptor *jack_input_desc_ref = config_desc_ref->get_jack_input_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(jack_input_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(jack_input_desc_ref->get_descriptor_type());
                 desc_index = jack_input_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -890,7 +890,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_jack_output_desc_count(); j++)
             {
                 avdecc_lib::jack_output_descriptor *jack_output_desc_ref = config_desc_ref->get_jack_output_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(jack_output_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(jack_output_desc_ref->get_descriptor_type());
                 desc_index = jack_output_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -901,7 +901,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_avb_interface_desc_count(); j++)
             {
                 avdecc_lib::avb_interface_descriptor *avb_interface_desc_ref = config_desc_ref->get_avb_interface_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(avb_interface_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(avb_interface_desc_ref->get_descriptor_type());
                 desc_index = avb_interface_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -912,7 +912,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_clock_source_desc_count(); j++)
             {
                 avdecc_lib::clock_source_descriptor *clk_src_desc_ref = config_desc_ref->get_clock_source_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(clk_src_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(clk_src_desc_ref->get_descriptor_type());
                 desc_index = clk_src_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -923,7 +923,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_locale_desc_count(); j++)
             {
                 avdecc_lib::locale_descriptor *locale_def_ref = config_desc_ref->get_locale_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(locale_def_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(locale_def_ref->get_descriptor_type());
                 desc_index = locale_def_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -934,7 +934,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_strings_desc_count(); j++)
             {
                 avdecc_lib::strings_descriptor *strings_desc_ref = config_desc_ref->get_strings_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(strings_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(strings_desc_ref->get_descriptor_type());
                 desc_index = strings_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -945,7 +945,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_stream_port_input_desc_count(); j++)
             {
                 avdecc_lib::stream_port_input_descriptor *stream_port_input_desc_ref = config_desc_ref->get_stream_port_input_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(stream_port_input_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(stream_port_input_desc_ref->get_descriptor_type());
                 desc_index = stream_port_input_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -956,7 +956,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_stream_port_output_desc_count(); j++)
             {
                 avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref = config_desc_ref->get_stream_port_output_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(stream_port_output_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(stream_port_output_desc_ref->get_descriptor_type());
                 desc_index = stream_port_output_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -967,7 +967,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_audio_cluster_desc_count(); j++)
             {
                 avdecc_lib::audio_cluster_descriptor *audio_cluster_desc_ref = config_desc_ref->get_audio_cluster_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(audio_cluster_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(audio_cluster_desc_ref->get_descriptor_type());
                 desc_index = audio_cluster_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -978,7 +978,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_audio_map_desc_count(); j++)
             {
                 avdecc_lib::audio_map_descriptor *audio_map_desc_ref = config_desc_ref->get_audio_map_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(audio_map_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(audio_map_desc_ref->get_descriptor_type());
                 desc_index = audio_map_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -989,7 +989,7 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
             for(int j = 0; j < config_desc_ref->get_clock_domain_desc_count(); j++)
             {
                 avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = config_desc_ref->get_clock_domain_desc_by_index(j);
-                desc_name = utility->desc_value_to_name(clk_domain_desc_ref->get_descriptor_type());
+                desc_name = utility->aem_desc_value_to_name(clk_domain_desc_ref->get_descriptor_type());
                 desc_index = clk_domain_desc_ref->get_descriptor_index();
 
                 std::cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1004,9 +1004,9 @@ int avdecc_cmd_line::cmd_view_details(uint32_t end_station_index)
 
 int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
 {
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
 
-    std::cout << "\ndescriptor_type: " << utility->desc_value_to_name(desc_type_value);
+    std::cout << "\ndescriptor_type: " << utility->aem_desc_value_to_name(desc_type_value);
     std::cout << "\ndescriptor_index: " << std::dec << desc_index;
 
     switch(desc_type_value)
@@ -1064,7 +1064,7 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
                             desc_count_from_config = config_desc_ref->get_desc_count_from_config_by_index(index_i);
 
                             std::cout << "\tdesc_type = 0x" << std::hex << desc_type_from_config << " (" <<
-                                      utility->desc_value_to_name(desc_type_from_config) << ")" << std::endl;
+                                      utility->aem_desc_value_to_name(desc_type_from_config) << ")" << std::endl;
                             std::cout << "\tdesc_count = " << std::dec << desc_count_from_config << std::endl;
                         }
                     }
@@ -1386,7 +1386,7 @@ int avdecc_cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_in
 
 int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_index)
 {
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     int status = -1;
     intptr_t cmd_notification_id = 0;
 
@@ -1397,7 +1397,7 @@ int avdecc_cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_in
         controller_ref->get_end_station_by_index(current_end_station)->send_read_desc_cmd((void *)cmd_notification_id, desc_type_value, desc_index);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
     }
     else
@@ -1426,7 +1426,7 @@ int avdecc_cmd_line::cmd_connect()
 
         for(uint32_t index_j = 0; index_j < stream_input_desc_count; index_j++)
         {
-            // bool is_instream_connected = check_acmp_instream_connection(dest_end_station_guid, dest_desc_index);
+            // bool is_instream_connected = check_acmp_instream_connection(dest_end_station_guid, instream_desc_index);
             // if(!is_instream_connected)
             //{
             desc_desc_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_input_desc_by_index(index_j)->get_object_name();
@@ -1441,10 +1441,10 @@ int avdecc_cmd_line::cmd_connect()
     return 0;
 }
 
-int avdecc_cmd_line::cmd_connect(uint32_t dest_end_station_index, uint16_t dest_desc_index)
+int avdecc_cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream_desc_index)
 {
-    bool is_instream_valid = (dest_end_station_index < (controller_ref->get_end_station_count())) &&
-                             (dest_desc_index < (controller_ref->get_config_desc_by_index(dest_end_station_index, current_entity, current_config)->get_stream_input_desc_count()));
+    bool is_instream_valid = (instream_end_station_index < (controller_ref->get_end_station_count())) &&
+                             (instream_desc_index < (controller_ref->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_input_desc_count()));
 
     if(is_instream_valid)
     {
@@ -1458,14 +1458,14 @@ int avdecc_cmd_line::cmd_connect(uint32_t dest_end_station_index, uint16_t dest_
 
         for(uint32_t index_i = 0; index_i < controller_ref->get_end_station_count(); index_i++)
         {
-            if(index_i != dest_end_station_index)
+            if(index_i != instream_end_station_index)
             {
                 src_end_station_name = controller_ref->get_end_station_by_index(index_i)->get_entity_desc_by_index(current_entity)->get_entity_name();
                 stream_output_desc_count = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_count();
 
                 for(uint32_t index_j = 0; index_j < stream_output_desc_count; index_j++)
                 {
-                    // bool is_connected = check_acmp_connection(dest_end_station_index, dest_desc_index, src_end_station_guid, src_desc_index);
+                    // bool is_connected = check_acmp_connection(instream_end_station_index, instream_desc_index, src_end_station_guid, outstream_desc_index);
                     // if(!is_connected)
                     //{
                     src_desc_name = controller_ref->get_config_desc_by_index(index_i, current_entity, current_config)->get_stream_output_desc_by_index(index_j)->get_object_name();
@@ -1486,23 +1486,35 @@ int avdecc_cmd_line::cmd_connect(uint32_t dest_end_station_index, uint16_t dest_
     return 0;
 }
 
-int avdecc_cmd_line::cmd_connect(uint32_t dest_end_station_index, uint16_t dest_desc_index, uint32_t src_end_station_index, uint16_t src_desc_index)
+int avdecc_cmd_line::cmd_connect_rx(uint32_t instream_end_station_index, uint16_t instream_desc_index, uint32_t outstream_end_station_index, uint16_t outstream_desc_index)
 {
-    bool is_connect_valid = (dest_end_station_index != src_end_station_index) && (dest_end_station_index < (controller_ref->get_end_station_count())) &&
-                            (dest_desc_index < (controller_ref->get_config_desc_by_index(dest_end_station_index, current_entity, current_config)->get_stream_input_desc_count())) &&
-                            (src_end_station_index < (controller_ref->get_end_station_count())) &&
-                            (src_desc_index < (controller_ref->get_config_desc_by_index(dest_end_station_index, current_entity, current_config)->get_stream_output_desc_count()));
+    bool is_connect_valid = (instream_end_station_index != outstream_end_station_index) && (instream_end_station_index < (controller_ref->get_end_station_count())) &&
+                            (instream_desc_index < (controller_ref->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_input_desc_count())) &&
+                            (outstream_end_station_index < (controller_ref->get_end_station_count())) &&
+                            (outstream_desc_index < (controller_ref->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_output_desc_count()));
 
-    // bool is_connected = check_acmp_connection(dest_end_station_index, dest_desc_index, src_end_station_guid, src_desc_index);
+    // bool is_connected = check_acmp_connection(instream_end_station_index, instream_desc_index, src_end_station_guid, outstream_desc_index);
 
-    //if(is_connect_valid && !is_connected)
-    //{
-    //	make_acmp_connection(dest_end_station_guid, dest_desc_index, src_end_station_guid, src_desc_index);
-    //}
-    //else
-    //{
-    //	std::cout << "Invalid Connection" << std::endl;
-    //}
+    if(is_connect_valid)
+    {
+	int status = -1;
+	intptr_t cmd_notification_id = 0;
+	uint64_t talker_guid;
+
+	cmd_notification_id = get_next_notification_id();
+	system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
+	avdecc_lib::stream_input_descriptor *instream = controller_ref->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_input_desc_by_index(instream_desc_index);
+	talker_guid = controller_ref->get_end_station_by_index(outstream_end_station_index)->get_entity_desc_by_index(current_entity)->get_entity_id();
+
+        instream->send_connect_rx_cmd((void *)cmd_notification_id, talker_guid, outstream_desc_index);
+	status = system_ref->get_last_resp_status();
+
+	std::cout << "\nStatus: " << utility->acmp_cmd_status_value_to_name(status) << std::endl;
+    }
+    else
+    {
+    	std::cout << "Invalid ACMP Connection" << std::endl;
+    }
 
     return 0;
 }
@@ -1522,13 +1534,13 @@ int avdecc_cmd_line::cmd_disconnect()
 
         for(uint32_t index_j = 0; index_j < stream_input_desc_count; index_j++)
         {
-            //uint32_t src_end_station_index;
-            //uint16_t src_desc_index;
+            //uint32_t outstream_end_station_index;
+            //uint16_t outstream_desc_index;
 
-            // bool is_connected = check_acmp_connection(dest_end_station_index, dest_desc_index, src_end_station_guid, src_desc_index);
+            // bool is_connected = check_acmp_connection(instream_end_station_index, instream_desc_index, src_end_station_guid, outstream_desc_index);
             // if(is_connected)
             //{
-            //	std::cout << std::setw(4) << index_i <<  "  " << index_j << src_end_station_index << "  " << src_desc_index <<std::endl;
+            //	std::cout << std::setw(4) << index_i <<  "  " << index_j << outstream_end_station_index << "  " << outstream_desc_index <<std::endl;
             //}
         }
     }
@@ -1536,7 +1548,7 @@ int avdecc_cmd_line::cmd_disconnect()
     return 0;
 }
 
-int avdecc_cmd_line::cmd_disconnect(uint32_t dest_end_station_index, uint16_t dest_desc_index)
+int avdecc_cmd_line::cmd_disconnect(uint32_t instream_end_station_index, uint16_t instream_desc_index)
 {
     uint32_t stream_output_desc_count = 0;
 
@@ -1549,13 +1561,13 @@ int avdecc_cmd_line::cmd_disconnect(uint32_t dest_end_station_index, uint16_t de
 
         for(uint32_t index_j = 0; index_j < stream_output_desc_count; index_j++)
         {
-            //uint32_t src_end_station_index;
-            //uint16_t src_desc_index;
+            //uint32_t outstream_end_station_index;
+            //uint16_t outstream_desc_index;
 
-            // bool is_connected = check_acmp_connection(dest_end_station_index, dest_desc_index, src_end_station_guid, src_desc_index);
-            // if(is_connected && (index_j == src_desc_index))
+            // bool is_connected = check_acmp_connection(instream_end_station_index, instream_desc_index, src_end_station_guid, outstream_desc_index);
+            // if(is_connected && (index_j == outstream_desc_index))
             //{
-            //	make_acmp_disconnection(dest_end_station_guid, dest_desc_index, src_end_station_guid, src_desc_index);
+            //	make_acmp_disconnection(dest_end_station_guid, instream_desc_index, src_end_station_guid, outstream_desc_index);
             //}
         }
     }
@@ -1565,7 +1577,7 @@ int avdecc_cmd_line::cmd_disconnect(uint32_t dest_end_station_index, uint16_t de
 
 int avdecc_cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
 {
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     uint32_t flag_id = 0;
     int status = -1;
     intptr_t cmd_notification_id = 0;
@@ -1596,7 +1608,7 @@ int avdecc_cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_
         entity_desc_ref->send_acquire_entity_cmd((void *)cmd_notification_id, flag_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         return 1;
     }
@@ -1608,7 +1620,7 @@ int avdecc_cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_
         stream_input_desc_ref->send_acquire_entity_cmd((void *)notification_id, flag_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         return 1;
     }
@@ -1620,7 +1632,7 @@ int avdecc_cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_
         stream_output_desc_ref->send_get_stream_format_cmd((void *)notification_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         return 1;
     }
@@ -1639,7 +1651,7 @@ int avdecc_cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_nam
     int status = -1;
     intptr_t cmd_notification_id;
 
-    desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
 
     if(flag_name == "lock")
     {
@@ -1663,7 +1675,7 @@ int avdecc_cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_nam
         entity_desc_ref->send_lock_entity_cmd((void *)cmd_notification_id, flag_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         return 1;
     }
@@ -1683,7 +1695,7 @@ int avdecc_cmd_line::cmd_entity_avail()
     controller_ref->get_end_station_by_index(current_end_station)->send_entity_avail_cmd((void *)cmd_notification_id);
     status = system_ref->get_last_resp_status();
 
-    std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+    std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
     return 0;
 }
@@ -1697,14 +1709,14 @@ int avdecc_cmd_line::cmd_controller_avail()
     controller_ref->send_controller_avail_cmd((void *)cmd_notification_id, current_end_station);
     status = system_ref->get_last_resp_status();
 
-    std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+    std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
     return 0;
 }
 
 int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, std::string new_stream_format_name)
 {
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     uint64_t stream_format_value = utility->ieee1722_format_name_to_value(new_stream_format_name.c_str());
     int status = -1;
     intptr_t cmd_notification_id = 0;
@@ -1718,7 +1730,7 @@ int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_
         stream_input_desc_ref->send_set_stream_format_cmd((void *)cmd_notification_id, stream_format_value);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         stream_format = utility->ieee1722_format_value_to_name(stream_input_desc_ref->set_stream_format_stream_format());
         if(stream_format == "UNKNOWN")
@@ -1740,7 +1752,7 @@ int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_
         stream_output_desc_ref->send_set_stream_format_cmd((void *)cmd_notification_id, stream_format_value);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         stream_format = utility->ieee1722_format_value_to_name(stream_output_desc_ref->set_stream_format_stream_format());
         if(stream_format == "UNKNOWN")
@@ -1763,7 +1775,7 @@ int avdecc_cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_
 
 int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_index)
 {
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     int status = -1;
     intptr_t cmd_notification_id = 0;
     std::string stream_format;
@@ -1776,7 +1788,7 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
         stream_input_desc_ref->send_get_stream_format_cmd((void *)cmd_notification_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         stream_format = utility->ieee1722_format_value_to_name(stream_input_desc_ref->get_stream_format_stream_format());
         if(stream_format == "UNKNOWN")
@@ -1798,7 +1810,7 @@ int avdecc_cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_
         stream_output_desc_ref->send_get_stream_format_cmd((void *)cmd_notification_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         stream_format = utility->ieee1722_format_value_to_name(stream_output_desc_ref->get_stream_format_stream_format());
         if(stream_format == "UNKNOWN")
@@ -1829,7 +1841,7 @@ int avdecc_cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_in
 
 int avdecc_cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
 {
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     int status = -1;
     intptr_t cmd_notification_id = 0;
 
@@ -1841,7 +1853,7 @@ int avdecc_cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_in
         stream_input_desc_ref->send_get_stream_info_cmd((void *)notification_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         return 1;
     }
@@ -1853,7 +1865,7 @@ int avdecc_cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_in
         stream_output_desc_ref->send_get_stream_info_cmd((void *)notification_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         return 1;
     }
@@ -1881,7 +1893,7 @@ int avdecc_cmd_line::cmd_get_name(std::string desc_name, uint16_t desc_index, ui
 
 int avdecc_cmd_line::cmd_set_sampling_rate(std::string desc_name, uint16_t desc_index, uint32_t new_sampling_rate)
 {
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     int status = -1;
     intptr_t cmd_notification_id = 0;
 
@@ -1893,7 +1905,7 @@ int avdecc_cmd_line::cmd_set_sampling_rate(std::string desc_name, uint16_t desc_
         audio_unit_desc_ref->send_set_sampling_rate_cmd((void *)notification_id, new_sampling_rate);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
         std::cout << "Sampling rate: " << std::dec << audio_unit_desc_ref->set_sampling_rate_sampling_rate();
 
         return 1;
@@ -1919,7 +1931,7 @@ int avdecc_cmd_line::cmd_set_sampling_rate(std::string desc_name, uint16_t desc_
 
 int avdecc_cmd_line::cmd_get_sampling_rate(std::string desc_name, uint16_t desc_index)
 {
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     int status = -1;
     intptr_t cmd_notification_id = 0;
 
@@ -1931,7 +1943,7 @@ int avdecc_cmd_line::cmd_get_sampling_rate(std::string desc_name, uint16_t desc_
         audio_unit_desc_ref->send_get_sampling_rate_cmd((void *)notification_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
         std::cout << "Sampling rate: " << std::dec << audio_unit_desc_ref->get_sampling_rate_sampling_rate();
 
         return 1;
@@ -1957,7 +1969,7 @@ int avdecc_cmd_line::cmd_get_sampling_rate(std::string desc_name, uint16_t desc_
 
 int avdecc_cmd_line::cmd_set_clock_source(std::string desc_name, uint16_t desc_index, uint16_t new_clk_src_index)
 {
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     int status = -1;
     intptr_t cmd_notification_id = get_next_notification_id();
 
@@ -1966,7 +1978,7 @@ int avdecc_cmd_line::cmd_set_clock_source(std::string desc_name, uint16_t desc_i
     clk_domain_desc_ref->send_set_clock_source_cmd((void *)notification_id, new_clk_src_index);
     status = system_ref->get_last_resp_status();
 
-    std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+    std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
     std::cout << "Sampling rate: 0x" << std::dec << clk_domain_desc_ref->set_clock_source_clock_source_index();
 
     return 0;
@@ -1980,7 +1992,7 @@ uint32_t avdecc_cmd_line::get_next_notification_id()
 int avdecc_cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_index)
 {
     intptr_t cmd_notification_id = get_next_notification_id();
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     uint16_t clk_src_index = 0;
     int status = -1;
 
@@ -1990,7 +2002,7 @@ int avdecc_cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_i
     status = system_ref->get_last_resp_status();
     clk_src_index = clk_domain_desc_ref->get_clock_source_clock_source_index();
 
-    std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+    std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
     std::cout << "Clock source : 0x" << std::dec << clk_domain_desc_ref->get_clock_source_by_index(clk_src_index);
 
     return 0;
@@ -1998,7 +2010,7 @@ int avdecc_cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_i
 
 int avdecc_cmd_line::cmd_start_streaming(std::string desc_name, uint16_t desc_index)
 {
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     int status = -1;
     intptr_t cmd_notification_id = 0;
 
@@ -2010,7 +2022,7 @@ int avdecc_cmd_line::cmd_start_streaming(std::string desc_name, uint16_t desc_in
         stream_input_desc_ref->send_start_streaming_cmd((void *)notification_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         return 1;
     }
@@ -2022,7 +2034,7 @@ int avdecc_cmd_line::cmd_start_streaming(std::string desc_name, uint16_t desc_in
         stream_output_desc_ref->send_start_streaming_cmd((void *)notification_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         return 1;
     }
@@ -2035,7 +2047,7 @@ int avdecc_cmd_line::cmd_start_streaming(std::string desc_name, uint16_t desc_in
 
 int avdecc_cmd_line::cmd_stop_streaming(std::string desc_name, uint16_t desc_index)
 {
-    uint16_t desc_type_value = utility->desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     int status = -1;
     intptr_t cmd_notification_id = 0;
 
@@ -2047,7 +2059,7 @@ int avdecc_cmd_line::cmd_stop_streaming(std::string desc_name, uint16_t desc_ind
         stream_input_desc_ref->send_stop_streaming_cmd((void *)notification_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         return 1;
     }
@@ -2059,7 +2071,7 @@ int avdecc_cmd_line::cmd_stop_streaming(std::string desc_name, uint16_t desc_ind
         stream_output_desc_ref->send_stop_streaming_cmd((void *)notification_id);
         status = system_ref->get_last_resp_status();
 
-        std::cout << "\nStatus: " << utility->cmd_status_value_to_name(status) << std::endl;
+        std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
 
         return 1;
     }
