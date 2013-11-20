@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-    class stream_port_input_descriptor_imp : public virtual stream_port_input_descriptor, public virtual descriptor_base_imp
+    class stream_port_input_descriptor_imp : public stream_port_input_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_stream_port stream_port_input_desc; // Structure containing the stream_port_input_desc fields

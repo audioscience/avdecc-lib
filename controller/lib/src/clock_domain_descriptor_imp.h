@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-    class clock_domain_descriptor_imp : public virtual clock_domain_descriptor, public virtual descriptor_base_imp
+    class clock_domain_descriptor_imp : public clock_domain_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_clock_domain clock_domain_desc; // Store the Clock Domain Descriptor fields

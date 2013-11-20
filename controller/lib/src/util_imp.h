@@ -50,27 +50,32 @@ namespace avdecc_lib
         /**
          * Convert command value to its corresponding command name.
          */
-        const char * STDCALL cmd_value_to_name(uint16_t cmd_value);
+        const char * STDCALL aem_cmd_value_to_name(uint16_t cmd_value);
 
         /**
          * Convert command name to its corresponding command value.
          */
-        uint16_t STDCALL cmd_name_to_value(const char *cmd_name);
+        uint16_t STDCALL aem_cmd_name_to_value(const char *cmd_name);
 
         /**
          * Convert descriptor value to its corresponding descriptor name.
          */
-        const char * STDCALL desc_value_to_name(uint16_t desc_value);
+        const char * STDCALL aem_desc_value_to_name(uint16_t desc_value);
 
         /**
          * Convert descriptor name to its corresponding descriptor value.
          */
-        uint16_t STDCALL desc_name_to_value(const char *desc_name);
+        uint16_t STDCALL aem_desc_name_to_value(const char *desc_name);
 
         /**
-         * Convert command status value to its corresponding command status name.
+         * Convert AEM command status value to its corresponding command status name.
          */
-        const char * STDCALL cmd_status_value_to_name(uint16_t cmd_status_value);
+        const char * STDCALL aem_cmd_status_value_to_name(uint16_t aem_cmd_status_value);
+
+        /**
+         * Convert ACMP command status value to its corresponding command status name.
+         */
+        const char * STDCALL acmp_cmd_status_value_to_name(uint16_t acmp_cmd_status_value);
 
         /**
          * Convert notification value to its corresponding notification name.

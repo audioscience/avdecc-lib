@@ -50,7 +50,7 @@
 
 namespace avdecc_lib
 {
-    class configuration_descriptor_imp : public virtual configuration_descriptor, public virtual descriptor_base_imp
+    class configuration_descriptor_imp : public configuration_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_configuration config_desc; // Structure containing the config_desc fields

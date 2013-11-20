@@ -160,24 +160,47 @@ namespace avdecc_lib
 
     enum aem_cmds_status
     {
-        STATUS_SUCCESS = 0, ///< The AVDECC Entity successfully performed the command and has valid results
-        STATUS_NOT_IMPLEMENTED = 1, ///< The AVDECC Entity does not support the command type
-        STATUS_NO_SUCH_DESCRIPTOR = 2, ///< A descriptor with the descriptor type and index does not exist
-        STATUS_ENTITY_LOCKED = 3, ///< The AVDECC Entity has been locked by another AVDECC Controller
-        STATUS_ENTITY_ACQUIRED = 4, ///< The AVDECC Entity has been acquired by another AVDECC Controller
-        STATUS_NOT_AUTHENTICATED = 5, ///< The AVDECC Controller is not authenticated with the AVDECC Entity
-        STATUS_AUTHENTICATION_DISABLED = 6, ///< The AVDECC Controller is trying to use an authentication command when authentication is not enabled on the AVDECC Entity
-        STATUS_BAD_ARGUMENTS = 7, ///< One or more of the values in the fields of the frame were deemed to be bad by the AVDECC Entity
-        STATUS_NO_RESOURCES = 8, ///< The AVDECC Entity cannot complete the command because it does not have the resources to support it
-        STATUS_IN_PROGRESS = 9, ///< The AVDECC Entity is processing the command and will send a second response at a later time with the result of the command
-        STATUS_ENTITY_MISBEHAVING = 10, ///< The AVDECC Entity is generating an internal error while trying to process the command
-        STATUS_NOT_SUPPORTED = 11, ///< The command is implemented, but the target of the command is not supported
-        STATUS_STREAM_IS_RUNNING = 12, ///< The stream is currently streaming and the command is one which cannot be executed on a streaming stream
+	AEM_STATUS_SUCCESS = 0, ///< The AVDECC Entity successfully performed the command and has valid results
+        AEM_STATUS_NOT_IMPLEMENTED = 1, ///< The AVDECC Entity does not support the command type
+        AEM_STATUS_NO_SUCH_DESCRIPTOR = 2, ///< A descriptor with the descriptor type and index does not exist
+        AEM_STATUS_ENTITY_LOCKED = 3, ///< The AVDECC Entity has been locked by another AVDECC Controller
+        AEM_STATUS_ENTITY_ACQUIRED = 4, ///< The AVDECC Entity has been acquired by another AVDECC Controller
+        AEM_STATUS_NOT_AUTHENTICATED = 5, ///< The AVDECC Controller is not authenticated with the AVDECC Entity
+        AEM_STATUS_AUTHENTICATION_DISABLED = 6, ///< The AVDECC Controller is trying to use an authentication command when authentication is not enabled on the AVDECC Entity
+        AEM_STATUS_BAD_ARGUMENTS = 7, ///< One or more of the values in the fields of the frame were deemed to be bad by the AVDECC Entity
+        AEM_STATUS_NO_RESOURCES = 8, ///< The AVDECC Entity cannot complete the command because it does not have the resources to support it
+        AEM_STATUS_IN_PROGRESS = 9, ///< The AVDECC Entity is processing the command and will send a second response at a later time with the result of the command
+        AEM_STATUS_ENTITY_MISBEHAVING = 10, ///< The AVDECC Entity is generating an internal error while trying to process the command
+        AEM_STATUS_NOT_SUPPORTED = 11, ///< The command is implemented, but the target of the command is not supported
+        AEM_STATUS_STREAM_IS_RUNNING = 12, ///< The stream is currently streaming and the command is one which cannot be executed on a streaming stream
         TOTAL_NUM_OF_AEM_CMDS_STATUS = 13,  ///< The total number of AEM commands status currently supported in the 1722.1 specification
         AVDECC_LIB_STATUS_INVALID = 1023, ///< AVDECC library specific status, not part of the 1722.1 specification
-        ///< The response received has a subtype different from the subtype of the command sent
+					  ///< The response received has a subtype different from the subtype of the command sent
         AVDECC_LIB_STATUS_TICK_TIMEOUT = 1024 ///< AVDECC library specific status, not part of the 1722.1 specification
-                                         ///< The response is not received within the timeout period after re-sending a command
+					      ///< The response is not received within the timeout period after re-sending a command
+    };
+
+    enum acmp_cmds_status
+    {
+        ACMP_STATUS_SUCCESS = 0,
+	ACMP_STATUS_LISTENER_UNKNOWN_ID = 1,
+	ACMP_STATUS_TALKER_UNKNOWN_ID = 2,
+	ACMP_STATUS_TALKER_DEST_MAC_FAIL = 3,
+	ACMP_STATUS_TALKER_NO_STREAM_INDEX = 4,
+	ACMP_STATUS_TALKER_NO_BANDWIDTH = 5,
+	ACMP_STATUS_TALKER_EXCLUSIVE = 6,
+	ACMP_STATUS_LISTENER_TALKER_TIMEOUT = 7,
+	ACMP_STATUS_LISTENER_EXCLUSIVE = 8,
+	ACMP_STATUS_STATE_UNAVAILABLE = 9,
+	ACMP_STATUS_NOT_CONNECTED  = 10,
+	ACMP_STATUS_NO_SUCH_CONNECTION = 11,
+	ACMP_STATUS_COULD_NOT_SEND_MESSAGE = 12,
+	ACMP_STATUS_TALKER_MISBEHAVING = 13,
+	ACMP_STATUS_LISTENER_MISBEHAVING = 14,
+	ACMP_STATUS_CONTROLLER_NOT_AUTHORIZED = 15,
+	ACMP_STATUS_INCOMPATIBLE_REQUEST = 16,
+	ACMP_STATUS_LISTENER_INVALID_CONNECTION = 17,
+        TOTAL_NUM_OF_ACMP_CMDS_STATUS = 18,  ///< The total number of AEM commands status currently supported in the 1722.1 specification
     };
 
     enum aem_cmd_waiting
@@ -189,13 +212,21 @@ namespace avdecc_lib
     enum frame_lengths
     {
         ADP_FRAME_LEN = 82, ///< Length of ADP packet is 82 bytes
-        AECP_FRAME_LEN = 64, ///< Length of AECP packet is 64 bytes
+	ACMP_FRAME_LEN = 70, ///< Length of ACMP packet is 64 bytes
+        AECP_FRAME_LEN = 64 ///< Length of AECP packet is 64 bytes
     };
 
     enum timeouts
     {
         NETIF_READ_TIMEOUT_MS = 100, ///< The network interface has a 100 milliseconds timeout in capturing ADP packets
-        AVDECC_MSG_TIMEOUT = 250,  ///< AVDECC messages have a 250 milliseconds timeout
+        AVDECC_MSG_TIMEOUT_MS = 250,  ///< AVDECC messages have a 250 milliseconds timeout
+	ACMP_CONNECT_TX_COMMAND_TIMEOUT_MS = 2000,
+        ACMP_DISCONNECT_TX_COMMAND_TIMEOUT_MS = 200,
+        ACMP_GET_TX_STATE_COMMAND_TIMEOUT_MS = 200,
+        ACMP_CONNECT_RX_COMMAND_TIMEOUT_MS = 4500,
+        ACMP_DISCONNECT_RX_COMMAND_TIMEOUT_MS = 500,
+        ACMP_GET_RX_STATE_COMMAND_TIMEOUT_MS = 200,
+        ACMP_GET_TX_CONNECTION_COMMAND_TIMEOUT_MS = 200
     };
 
     enum notifications /// Notifications for the AVDECC library implementation, not part of the 1722.1 specification

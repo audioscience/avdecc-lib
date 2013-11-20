@@ -78,7 +78,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int descriptor_base_imp::default_send_acquire_entity_cmd(descriptor_base_imp *descriptor_base_imp_ref, void *notification_id, uint32_t acquire_entity_flag)
+    int descriptor_base_imp::default_send_acquire_entity_cmd(descriptor_base_imp *desc_base_imp_ref, void *notification_id, uint32_t acquire_entity_flag)
     {
         struct jdksavdecc_frame *ether_frame;
         struct jdksavdecc_aem_command_acquire_entity aem_cmd_acquire_entity;
@@ -93,8 +93,8 @@ namespace avdecc_lib
         /****************************** AECP Message Specific Data ******************************/
         aem_cmd_acquire_entity.aem_acquire_flags = acquire_entity_flag;
         jdksavdecc_eui64_init(&aem_cmd_acquire_entity.owner_entity_id);
-        aem_cmd_acquire_entity.descriptor_type = descriptor_base_imp_ref->get_descriptor_type();
-        aem_cmd_acquire_entity.descriptor_index = descriptor_base_imp_ref->get_descriptor_index();
+        aem_cmd_acquire_entity.descriptor_type = desc_base_imp_ref->get_descriptor_type();
+        aem_cmd_acquire_entity.descriptor_index = desc_base_imp_ref->get_descriptor_index();
 
         /***************************** Fill frame payload with AECP data and send the frame ***********************/
         aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
@@ -117,10 +117,11 @@ namespace avdecc_lib
         return 0;
     }
 
-    int descriptor_base_imp::default_proc_acquire_entity_resp(
-        struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp,
-        void *&notification_id,
-        const uint8_t *frame, uint16_t frame_len, int &status)
+    int descriptor_base_imp::default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp,
+							      void *&notification_id,
+							      const uint8_t *frame,
+							      uint16_t frame_len,
+							      int &status)
     {
         struct jdksavdecc_frame *ether_frame;
         int aem_cmd_acquire_entity_resp_returned;
@@ -205,8 +206,11 @@ namespace avdecc_lib
         return 0;
     }
 
-    int descriptor_base_imp::default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp, void *&notification_id,
-                                                           const uint8_t *frame, uint16_t frame_len, int &status)
+    int descriptor_base_imp::default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp,
+						           void *&notification_id,
+                                                           const uint8_t *frame,
+							   uint16_t frame_len,
+							   int &status)
     {
         struct jdksavdecc_frame *ether_frame;
         int aem_cmd_lock_entity_resp_returned = 0;

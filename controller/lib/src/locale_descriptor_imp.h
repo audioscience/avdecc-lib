@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-    class locale_descriptor_imp : public virtual locale_descriptor, public virtual descriptor_base_imp
+    class locale_descriptor_imp : public locale_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_locale locale_desc; // Structure containing the locale_desc fields

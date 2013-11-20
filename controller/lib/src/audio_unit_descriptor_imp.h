@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-    class audio_unit_descriptor_imp : public virtual audio_unit_descriptor, public virtual descriptor_base_imp
+    class audio_unit_descriptor_imp : public audio_unit_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_audio audio_unit_desc; // Structure containing the audio_unit_desc fields

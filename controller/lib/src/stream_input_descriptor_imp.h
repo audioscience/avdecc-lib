@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-    class stream_input_descriptor_imp : public virtual stream_input_descriptor, public virtual descriptor_base_imp
+    class stream_input_descriptor_imp : public stream_input_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_stream stream_input_desc; // Structure containing the stream_input_desc fields
@@ -372,6 +372,19 @@ namespace avdecc_lib
          * Process a START_STREAMING response for the START_STREAMING command.
          */
         int proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+
+	/**
+         * Send a CONNECT_RX command with a notification id to connect Listener sink stream.
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         */
+        int STDCALL send_connect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id);
+
+        /**
+         * Process a CONNECT_RX response for the CONNECT_RX command.
+         */
+        int proc_connect_rx_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+
     };
 }
 

@@ -164,9 +164,14 @@ namespace avdecc_lib
         int proc_entity_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
         /**
-         * Process response received for the corresponding command.
+         * Process response received for the corresponding AEM command.
          */
-        int proc_rcvd_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_rcvd_aem_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+
+	/**
+         * Process response received for the corresponding ACMP command.
+         */
+        int proc_rcvd_acmp_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
     };
 }
 

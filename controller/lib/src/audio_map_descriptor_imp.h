@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-    class audio_map_descriptor_imp : public virtual audio_map_descriptor, public virtual descriptor_base_imp
+    class audio_map_descriptor_imp : public audio_map_descriptor, public virtual descriptor_base_imp
     {
 
     private:

@@ -47,27 +47,32 @@ namespace avdecc_lib
         /**
          * Convert command value to its corresponding command name.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL cmd_value_to_name(uint16_t cmd_value) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL aem_cmd_value_to_name(uint16_t cmd_value) = 0;
 
         /**
          * Convert command name to its corresponding command value.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL cmd_name_to_value(const char *cmd_name) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL aem_cmd_name_to_value(const char *cmd_name) = 0;
 
         /**
          * Convert descriptor value to its corresponding descriptor name.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL desc_value_to_name(uint16_t desc_value) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL aem_desc_value_to_name(uint16_t desc_value) = 0;
 
         /**
          * Convert descriptor name to its corresponding descriptor value.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL desc_name_to_value(const char *desc_name) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL aem_desc_name_to_value(const char *desc_name) = 0;
 
         /**
-         * Convert command status value to its corresponding command status name.
+         * Convert AEM command status value to its corresponding command status name.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL cmd_status_value_to_name(uint16_t cmd_status_value) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL aem_cmd_status_value_to_name(uint16_t aem_cmd_status_value) = 0;
+
+        /**
+         * Convert ACMP command status value to its corresponding command status name.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL acmp_cmd_status_value_to_name(uint16_t acmp_cmd_status_value) = 0;
 
         /**
          * Convert notification value to its corresponding notification name.

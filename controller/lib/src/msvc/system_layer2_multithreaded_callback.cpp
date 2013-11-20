@@ -261,7 +261,7 @@ namespace avdecc_lib
         int status = 0;
 
         //adp_discovery_state_machine_ref->set_do_discover(true); // Send ENTITY_DISCOVER message
-        //adp_discovery_state_machine_ref->adp_discovery_state_waiting(NULL);
+        //adp_discovery_state_machine_ref->state_waiting(NULL);
 
         dwEvent = WaitForMultipleObjects(poll_count, poll_events_array, FALSE, INFINITE);
 

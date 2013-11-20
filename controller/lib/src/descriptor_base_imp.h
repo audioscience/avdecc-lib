@@ -86,13 +86,16 @@ namespace avdecc_lib
          * \param notification_id A void pointer to the unique identifier associated with the command.
          * \param acquire_entity_flag The flag to be set for the command. Valid flags are 0, 1 (PERSISTENT), and 0x80000000 (RELEASE).
          */
-        int default_send_acquire_entity_cmd(descriptor_base_imp *descriptor_base_imp_ref, void *notification_id, uint32_t acquire_entity_flag);
+        int default_send_acquire_entity_cmd(descriptor_base_imp *desc_base_imp_ref, void *notification_id, uint32_t acquire_entity_flag);
 
         /**
          * Process a ACQURE_ENTITY response for the ACQURE_ENTITY command.
          */
-        int default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp, void *&notification_id,
-                                             const uint8_t *frame, uint16_t frame_len, int &status);
+        int default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp,
+					     void *&notification_id,
+                                             const uint8_t *frame,
+					     uint16_t frame_len,
+					     int &status);
 
         /**
          * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
@@ -115,8 +118,11 @@ namespace avdecc_lib
         /**
          * Process a LOCK ENTITY response for the LOCK ENTITY command.
          */
-        int default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp, void *&notification_id,
-                                          const uint8_t *frame, uint16_t frame_len, int &status);
+        int default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp,
+					  void *&notification_id,
+                                          const uint8_t *frame,
+					  uint16_t frame_len,
+					  int &status);
 
         /**
          * Send a SET_NAME command to change the value of a name field within a descriptor. For descriptors with multiple names, this

@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-    class strings_descriptor_imp : public virtual strings_descriptor, public virtual descriptor_base_imp
+    class strings_descriptor_imp : public strings_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_strings strings_desc; // Structure containing the strings_desc fields

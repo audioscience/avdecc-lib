@@ -93,9 +93,9 @@ namespace avdecc_lib
 
     char * STDCALL net_interface_imp::get_dev_desc_by_index(uint32_t dev_index)
     {
-        uint32_t index_i;
+        uint32_t i;
 
-        for(dev = all_devs, index_i = 0; (index_i < dev_index) && (dev_index < total_devs); dev = dev->next, index_i++); // Get the selected interface
+        for(dev = all_devs, i = 0; (i < dev_index) && (dev_index < total_devs); dev = dev->next, i++); // Get the selected interface
 
         if(!dev->description)
         {
@@ -204,12 +204,12 @@ namespace avdecc_lib
 
         ether_type_string[0] = 0;
 
-        for(uint32_t index_i = 0; index_i < count; index_i++)
+        for(uint32_t i = 0; i < count; i++)
         {
-            sprintf(ether_type_single, "ether proto 0x%04x", ether_type[index_i]);
+            sprintf(ether_type_single, "ether proto 0x%04x", ether_type[i]);
             strcat(ether_type_string, ether_type_single);
 
-            if((index_i + 1) < count)
+            if((i + 1) < count)
             {
                 strcat(ether_type_string, " or ");
             }

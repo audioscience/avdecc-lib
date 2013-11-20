@@ -33,6 +33,7 @@
 #include "log_imp.h"
 #include "util_imp.h"
 #include "adp.h"
+#include "acmp.h"
 #include "aecp.h"
 #include "aem_controller_state_machine.h"
 #include "system_tx_queue.h"
@@ -220,19 +221,21 @@ namespace avdecc_lib
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
 
         bool store_descriptor = false;
-        if(status == avdecc_lib::STATUS_SUCCESS)
+        if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
             switch(desc_type)
             {
                 case JDKSAVDECC_DESCRIPTOR_ENTITY:
                     store_descriptor = true;
                     break;
+
                 case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
                     if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() == 0)
                     {
                         store_descriptor = true;
                     }
                     break;
+
                 default:
                     if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
                     {
@@ -259,6 +262,7 @@ namespace avdecc_lib
 
                 case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
                     entity_desc_vec.at(current_entity_desc)->store_config_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+		  
                     read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_STARTING;
                     break;
 
@@ -461,7 +465,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int end_station_imp::proc_rcvd_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int end_station_imp::proc_rcvd_aem_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
         uint16_t cmd_type;
         uint16_t desc_type;
@@ -873,6 +877,29 @@ namespace avdecc_lib
 
             default:
                 notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, cmd_type, 0, 0, 0);
+                break;
+        }
+
+        return 0;
+    }
+
+    int end_station_imp::proc_rcvd_acmp_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    {
+        uint8_t msg_type = jdksavdecc_uint8_get(frame, adp::ETHER_HDR_SIZE);
+        uint16_t desc_type;
+        uint16_t desc_index;
+
+        switch(msg_type)
+        {
+            case JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_COMMAND:
+                {
+                  
+                }
+
+                break;
+
+            default:
+                notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, msg_type, 0, 0, 0);
                 break;
         }
 

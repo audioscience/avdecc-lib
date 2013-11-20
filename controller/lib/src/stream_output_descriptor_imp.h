@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-    class stream_output_descriptor_imp : public virtual stream_output_descriptor, public virtual descriptor_base_imp
+    class stream_output_descriptor_imp : public stream_output_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_stream stream_output_desc; // Structure containing the stream_output_desc fields

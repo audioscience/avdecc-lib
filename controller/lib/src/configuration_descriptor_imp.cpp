@@ -112,7 +112,7 @@ namespace avdecc_lib
     {
         uint16_t offset = 0x0;
 
-        for(uint32_t index_i = 0; index_i < get_descriptor_counts_count(); index_i++)
+        for(uint32_t i = 0; i < get_descriptor_counts_count(); i++)
         {
             desc_type_vec.push_back(jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + pos + offset));
             offset += 0x4;
@@ -123,7 +123,7 @@ namespace avdecc_lib
     {
         uint16_t offset = 0x2;
 
-        for(uint32_t index_i = 0; index_i < get_descriptor_counts_count(); index_i++)
+        for(uint32_t i = 0; i < get_descriptor_counts_count(); i++)
         {
             desc_count_vec.push_back(jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + pos + offset));
             offset += 0x4;
@@ -134,11 +134,11 @@ namespace avdecc_lib
     {
         int desc_index;
 
-        for(uint32_t index_i = 0; index_i < desc_type_vec.size(); index_i++)
+        for(uint32_t i = 0; i < desc_type_vec.size(); i++)
         {
-            if(desc_type_vec.at(index_i) == desc_type)
+            if(desc_type_vec.at(i) == desc_type)
             {
-                desc_index = index_i;
+                desc_index = i;
 
                 if(desc_count_index < desc_count_vec.at(desc_index))
                 {

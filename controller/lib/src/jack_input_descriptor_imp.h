@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-    class jack_input_descriptor_imp : public virtual jack_input_descriptor, public virtual descriptor_base_imp
+    class jack_input_descriptor_imp : public jack_input_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_jack jack_input_desc; // Structure containing the jack_input_desc fields

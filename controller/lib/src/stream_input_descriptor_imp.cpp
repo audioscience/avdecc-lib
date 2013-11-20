@@ -35,6 +35,7 @@
 #include "aecp.h"
 #include "end_station_imp.h"
 #include "system_tx_queue.h"
+#include "acmp.h"
 #include "aem_controller_state_machine.h"
 #include "stream_input_descriptor_imp.h"
 
@@ -629,6 +630,78 @@ namespace avdecc_lib
         u_field = aem_cmd_get_stream_info_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
+
+        free(ether_frame);
+        return 0;
+    }
+
+    int STDCALL stream_input_descriptor_imp::send_connect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id)
+    {
+        struct jdksavdecc_frame *ether_frame;
+	struct jdksavdecc_acmpdu acmp_cmd_connect_rx;
+	int acmp_cmd_connect_rx_returned;
+	uint64_t listerner_guid = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_id();
+
+        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+
+        /******************************************* ACMP Common Data *******************************************/
+        acmp_cmd_connect_rx.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+	jdksavdecc_uint64_write(talker_guid, &acmp_cmd_connect_rx.talker_entity_id, 0, sizeof(uint64_t));
+	jdksavdecc_uint64_write(listerner_guid, &acmp_cmd_connect_rx.listener_entity_id, 0, sizeof(uint64_t));
+	acmp_cmd_connect_rx.talker_unique_id = talker_unique_id;
+	acmp_cmd_connect_rx.listener_unique_id = get_descriptor_index();
+	jdksavdecc_eui48_init(&acmp_cmd_connect_rx.stream_dest_mac);
+	acmp_cmd_connect_rx.connection_count = 0;
+        // Fill acmpdu.sequence_id in AEM Controller State Machine
+	acmp_cmd_connect_rx.flags = 0;
+	acmp_cmd_connect_rx.stream_vlan_id = 0;
+
+        /************************** Fill frame payload with AECP data and send the frame ***************************/
+        acmp::ether_frame_init(base_end_station_imp_ref, ether_frame);
+        acmp_cmd_connect_rx_returned = jdksavdecc_acmpdu_write(&acmp_cmd_connect_rx,
+                                                               ether_frame->payload,
+                                                               aecp::CMD_POS,
+                                                               sizeof(ether_frame->payload));
+
+        if(acmp_cmd_connect_rx_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "cmd_connect_rx_write error\n");
+            assert(acmp_cmd_connect_rx_returned >= 0);
+            return -1;
+        }
+
+        acmp::common_hdr_init(JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_COMMAND, ether_frame);
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+
+        free(ether_frame);
+        return 0;
+    }
+
+    int stream_input_descriptor_imp::proc_connect_rx_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    {
+        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_acmpdu acmp_cmd_connect_rx_resp;
+        int acmp_cmd_connect_rx_resp_returned;
+        uint32_t msg_type;
+
+        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        memcpy(ether_frame->payload, frame, frame_len);
+        acmp_cmd_connect_rx_resp_returned = jdksavdecc_acmpdu_read(&acmp_cmd_connect_rx_resp,
+                                                                   frame,
+                                                                   aecp::CMD_POS,
+                                                                   frame_len);
+
+        if(acmp_cmd_connect_rx_resp_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "acmp_cmd_connect_rx_read error");
+            assert(acmp_cmd_connect_rx_resp_returned >= 0);
+            return -1;
+        }
+
+	msg_type = acmp_cmd_connect_rx_resp.header.message_type;
+        status = acmp_cmd_connect_rx_resp.header.status;
+
+	acmp_ref->state_resp(notification_id, msg_type, ether_frame);
 
         free(ether_frame);
         return 0;

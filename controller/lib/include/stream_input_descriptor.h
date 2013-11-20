@@ -268,6 +268,13 @@ namespace avdecc_lib
          * \param notification_id A void pointer to the unique identifier associated with the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_stop_streaming_cmd(void *notification_id) = 0;
+
+	/**
+         * Send a CONNECT_RX command with a notification id to connect Listener sink stream.
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_connect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id) = 0;
     };
 }
 

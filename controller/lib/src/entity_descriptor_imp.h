@@ -37,7 +37,7 @@
 
 namespace avdecc_lib
 {
-    class entity_descriptor_imp : public virtual entity_descriptor, public virtual descriptor_base_imp
+    class entity_descriptor_imp : public entity_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_entity entity_desc; // Structure containing the entity_desc fields

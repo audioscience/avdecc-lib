@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-    class clock_source_descriptor_imp : public virtual clock_source_descriptor, public virtual descriptor_base_imp
+    class clock_source_descriptor_imp : public clock_source_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_clock_source clock_source_desc; // Structure containing the clock_source_desc fields

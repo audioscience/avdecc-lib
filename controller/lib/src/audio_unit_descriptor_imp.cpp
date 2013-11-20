@@ -68,7 +68,7 @@ namespace avdecc_lib
         uint16_t offset = 0x0;
         uint32_t sampling_rate = 0x0;
 
-        for(uint32_t index_i = 0; index_i < get_sampling_rates_count(); index_i++)
+        for(uint32_t i = 0; i < get_sampling_rates_count(); i++)
         {
             sampling_rate = jdksavdecc_uint32_get(frame, aecp::READ_DESC_POS + get_sampling_rates_offset() + offset);
             sample_rates_vec.push_back(sampling_rate);

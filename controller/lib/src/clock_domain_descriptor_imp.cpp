@@ -98,7 +98,7 @@ namespace avdecc_lib
     {
         uint16_t offset = 0x0;
 
-        for(uint32_t index_i = 0; index_i < get_clock_sources_count(); index_i++)
+        for(uint32_t i = 0; i < get_clock_sources_count(); i++)
         {
             clk_src_vec.push_back(jdksavdecc_uint16_get(frame, get_clock_sources_offset() + pos + offset));
             offset += 0x2;

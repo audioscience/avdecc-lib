@@ -67,11 +67,10 @@ namespace avdecc_lib
 
             inflight_cmd.notification_id = notification_id;
             inflight_cmd.notification_flag = notification_flag;
-            inflight_cmd.timer_ref.start(AVDECC_MSG_TIMEOUT); // Start the timer
+            inflight_cmd.inflight_timer.start(AVDECC_MSG_TIMEOUT_MS); // Start the timer
             inflight_cmd.retried = false;
             memcpy(&inflight_cmd.inflight_cmd_frame, ether_frame, sizeof(struct jdksavdecc_frame));
             inflight_cmds_vec.push_back(inflight_cmd);  // Add the inflight command to the inflight command vector
-
         }
         else
         {
@@ -80,7 +79,7 @@ namespace avdecc_lib
 
             if(is_inflight)
             {
-                inflight_cmds_vec.at(inflight_index).timer_ref.start(AVDECC_MSG_TIMEOUT);
+                inflight_cmds_vec.at(inflight_index).inflight_timer.start(AVDECC_MSG_TIMEOUT_MS);
                 inflight_cmds_vec.at(inflight_index).retried = true;
             }
         }
@@ -156,22 +155,25 @@ namespace avdecc_lib
             utility->convert_eui48_to_uint64(jdksavdecc_eui64_get(ether_frame->payload, 0).value, dest_addr_resp);
         }
 
-        if(do_cmd)
-        {
-            state_send_cmd(notification_id, notification_flag, ether_frame);
-        }
-        else if(rcvd_unsolicited_resp && dest_addr_resp == my_entity_id)
-        {
-            state_rcvd_unsolicited(notification_id, ether_frame);
-        }
-        else if(rcvd_normal_resp && dest_addr_resp == my_entity_id)
-        {
-            state_rcvd_resp(notification_id, ether_frame);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid AEM Controller State Machine state");
-        }
+	if(!do_terminate)
+	{
+		if(do_cmd)
+		{
+		    state_send_cmd(notification_id, notification_flag, ether_frame);
+		}
+		else if(rcvd_unsolicited_resp && dest_addr_resp == my_entity_id)
+		{
+		    state_rcvd_unsolicited(notification_id, ether_frame);
+		}
+		else if(rcvd_normal_resp && dest_addr_resp == my_entity_id)
+		{
+		    state_rcvd_resp(notification_id, ether_frame);
+		}
+		else
+		{
+		    log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid AEM Controller State Machine state");
+		}
+	}
     }
 
     void aem_controller_state_machine::state_send_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame)
@@ -194,11 +196,11 @@ namespace avdecc_lib
 
     void aem_controller_state_machine::tick()
     {
-        for(uint32_t index_i = 0; index_i < inflight_cmds_vec.size(); index_i++)
+        for(uint32_t i = 0; i < inflight_cmds_vec.size(); i++)
         {
-            if(inflight_cmds_vec.at(index_i).timer_ref.timeout())
+            if(inflight_cmds_vec.at(i).inflight_timer.timeout())
             {
-                timeout(index_i);
+                timeout(i);
             }
         }
     }
@@ -313,7 +315,7 @@ namespace avdecc_lib
                 break;
 
             default:
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "NO_MATCH_FOUND for %s", utility->cmd_value_to_name(cmd_type));
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "NO_MATCH_FOUND for %s", utility->aem_cmd_value_to_name(cmd_type));
                 break;
         }
 
@@ -331,8 +333,8 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "COMMAND_SENT, 0x%llx, %s, %s, %d, %d",
                                       jdksavdecc_uint64_get(frame, aecp::TARGET_GUID_POS),
-                                      utility->cmd_value_to_name(cmd_type),
-                                      utility->desc_value_to_name(desc_type),
+                                      utility->aem_cmd_value_to_name(cmd_type),
+                                      utility->aem_desc_value_to_name(desc_type),
                                       desc_index,
                                       jdksavdecc_uint16_get(frame, aecp::SEQ_ID_POS));
         }
@@ -341,8 +343,8 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d",
                                       jdksavdecc_uint64_get(frame, aecp::TARGET_GUID_POS),
-                                      utility->cmd_value_to_name(cmd_type),
-                                      utility->desc_value_to_name(desc_type),
+                                      utility->aem_cmd_value_to_name(cmd_type),
+                                      utility->aem_desc_value_to_name(desc_type),
                                       desc_index,
                                       jdksavdecc_uint16_get(frame, aecp::SEQ_ID_POS));
         }
@@ -352,11 +354,11 @@ namespace avdecc_lib
 
     bool aem_controller_state_machine::find_inflight_cmd_by_seq_id(uint16_t seq_id, int *inflight_index)
     {
-        for(uint32_t index_i = 0; index_i < inflight_cmds_vec.size(); index_i++)
+        for(uint32_t i = 0; i < inflight_cmds_vec.size(); i++)
         {
-            if((inflight_cmds_vec.at(index_i).seq_id == seq_id))
+            if((inflight_cmds_vec.at(i).seq_id == seq_id))
             {
-                *inflight_index = index_i;
+                *inflight_index = i;
                 return true;
             }
         }
@@ -364,11 +366,11 @@ namespace avdecc_lib
         return false;
     }
 
-    bool aem_controller_state_machine::find_inflight_cmd_by_notification_id(void *notification_id)
+    bool aem_controller_state_machine::is_inflight_cmd_with_notification_id(void *notification_id)
     {
-        for(uint32_t index_i = 0; index_i < inflight_cmds_vec.size(); index_i++)
+        for(uint32_t i = 0; i < inflight_cmds_vec.size(); i++)
         {
-            if((inflight_cmds_vec.at(index_i).notification_id == notification_id))
+            if((inflight_cmds_vec.at(i).notification_id == notification_id))
             {
                 return true;
             }
