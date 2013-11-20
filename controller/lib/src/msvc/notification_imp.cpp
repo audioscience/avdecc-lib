@@ -32,76 +32,76 @@
 
 namespace avdecc_lib
 {
-        notification_imp *notification_imp_ref = new notification_imp();
+    notification_imp *notification_imp_ref = new notification_imp();
 
-        notification_imp::notification_imp()
+    notification_imp::notification_imp()
+    {
+        notification_thread_init(); // Start notification thread
+    }
+
+    notification_imp::~notification_imp() {}
+
+    int notification_imp::notification_thread_init()
+    {
+        poll_events[NOTIFICATION_EVENT] = CreateSemaphore(NULL, 0, 32767, NULL);
+        poll_events[KILL_EVENT] = CreateEvent(NULL, FALSE, FALSE, NULL);
+
+        h_thread = CreateThread(NULL, // Default security descriptor
+                                0, // Default stack size
+                                proc_notification_thread, // Point to the start address of the thread
+                                this, // Data to be passed to the thread
+                                0, // Flag controlling the creation of the thread
+                                &thread_id // Thread identifier
+                               );
+
+        if (h_thread == NULL)
         {
-                notification_thread_init(); // Start notification thread
+            exit(EXIT_FAILURE);
         }
 
-        notification_imp::~notification_imp() {}
+        return 0;
+    }
 
-        int notification_imp::notification_thread_init()
+    DWORD WINAPI notification_imp::proc_notification_thread(LPVOID lpParam)
+    {
+        return reinterpret_cast<notification_imp *>(lpParam)->proc_notification_thread_callback();
+    }
+
+    int notification_imp::proc_notification_thread_callback()
+    {
+        DWORD dwEvent;
+
+        while (true)
         {
-                poll_events[NOTIFICATION_EVENT] = CreateSemaphore(NULL, 0, 32767, NULL);
-                poll_events[KILL_EVENT] = CreateEvent(NULL, FALSE, FALSE, NULL);
+            dwEvent = WaitForMultipleObjects(2, poll_events, FALSE, INFINITE);
 
-                h_thread = CreateThread(NULL, // Default security descriptor
-                                        0, // Default stack size
-                                        proc_notification_thread, // Point to the start address of the thread
-                                        this, // Data to be passed to the thread
-                                        0, // Flag controlling the creation of the thread
-                                        &thread_id // Thread identifier
-                                       );
-
-                if (h_thread == NULL)
+            if(dwEvent == (WAIT_OBJECT_0 + NOTIFICATION_EVENT))
+            {
+                if((write_index - read_index) > 0)
                 {
-                        exit(EXIT_FAILURE);
+                    notification_callback(user_obj,
+                                          notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_type,
+                                          notification_buf[read_index % NOTIFICATION_BUF_COUNT].guid,
+                                          notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
+                                          notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
+                                          notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
+                                          notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id
+                                         ); // Call callback function
+                    read_index++;
                 }
-
-                return 0;
+            }
+            else
+            {
+                SetEvent(poll_events[KILL_EVENT]);
+                break;
+            }
         }
 
-        DWORD WINAPI notification_imp::proc_notification_thread(LPVOID lpParam)
-        {
-                return reinterpret_cast<notification_imp *>(lpParam)->proc_notification_thread_callback();
-        }
+        return 0;
+    }
 
-        int notification_imp::proc_notification_thread_callback()
-        {
-                DWORD dwEvent;
-
-                while (true)
-                {
-                        dwEvent = WaitForMultipleObjects(2, poll_events, FALSE, INFINITE);
-
-                        if(dwEvent == (WAIT_OBJECT_0 + NOTIFICATION_EVENT))
-                        {
-                                if((write_index - read_index) > 0)
-                                {
-                                        notification_callback(user_obj,
-                                                              notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_type,
-                                                              notification_buf[read_index % NOTIFICATION_BUF_COUNT].guid,
-                                                              notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
-                                                              notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
-                                                              notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
-                                                              notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id
-                                                             ); // Call callback function
-                                        read_index++;
-                                }
-                        }
-                        else
-                        {
-                                SetEvent(poll_events[KILL_EVENT]);
-                                break;
-                        }
-                }
-
-                return 0;
-        }
-
-        void notification_imp::post_log_event()
-        {
-                ReleaseSemaphore(poll_events[NOTIFICATION_EVENT], 1, NULL);
-        }
+    void notification_imp::post_log_event()
+    {
+        ReleaseSemaphore(poll_events[NOTIFICATION_EVENT], 1, NULL);
+    }
 }

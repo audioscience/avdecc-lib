@@ -36,99 +36,100 @@
 
 namespace avdecc_lib
 {
-        class audio_cluster_descriptor_imp : public virtual audio_cluster_descriptor, public virtual descriptor_base_imp
-        {
-        private:
-                struct jdksavdecc_descriptor_audio_cluster audio_cluster_desc; // Structure containing the audio_cluster_desc fields
-                int audio_cluster_desc_read_returned; // Status of extracting Audio Cluster descriptor information from a network buffer
-        public:
-                /**
-                 * Constructor for Audio Cluster descriptor object.
-                 *
-                 * \param end_station_obj A pointer to the base End Station object.
-                 * \param frame The raw memory that contains the descriptor information to read from.
-                 * \param pos The position offset to read the descriptor fields from.
-                 * \param frame_len The memory buffer length of the descriptor frame.
-                 */
-                audio_cluster_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+    class audio_cluster_descriptor_imp : public audio_cluster_descriptor, public virtual descriptor_base_imp
+    {
+    private:
+        struct jdksavdecc_descriptor_audio_cluster audio_cluster_desc; // Structure containing the audio_cluster_desc fields
+        int audio_cluster_desc_read_returned; // Status of extracting Audio Cluster descriptor information from a network buffer
 
-                virtual ~audio_cluster_descriptor_imp();
+    public:
+        /**
+         * Constructor for Audio Cluster descriptor object.
+         *
+         * \param end_station_obj A pointer to the base End Station object.
+         * \param frame The raw memory that contains the descriptor information to read from.
+         * \param pos The position offset to read the descriptor fields from.
+         * \param frame_len The memory buffer length of the descriptor frame.
+         */
+        audio_cluster_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
-                /**
-                 * Get the type of the descriptor.
-                 */
-                uint16_t STDCALL get_descriptor_type() const;
+        virtual ~audio_cluster_descriptor_imp();
 
-                /**
-                 * Get the index of the descriptor.
-                 */
-                uint16_t STDCALL get_descriptor_index() const;
+        /**
+         * Get the type of the descriptor.
+         */
+        uint16_t STDCALL get_descriptor_type() const;
 
-                /**
-                 * Get the name of the Audio Cluster. This may be user set through the use of a SET_NAME command.
-		 * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
-		 * defined value being provided in a localized form via the localized descripton field. By leaving
-		 * this field blank an AVDECC Controller can determine if the user has overridden the name and can
-		 * use this name rather than the localized name.
-                 */
-                uint8_t * STDCALL get_object_name();
+        /**
+         * Get the index of the descriptor.
+         */
+        uint16_t STDCALL get_descriptor_index() const;
 
-                /**
-                 * Get the localized string reference pointing to the localized Audio Cluster name.
-                 */
-                uint16_t STDCALL get_localized_description();
+        /**
+         * Get the name of the Audio Cluster. This may be user set through the use of a SET_NAME command.
+         * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+         * defined value being provided in a localized form via the localized descripton field. By leaving
+         * this field blank an AVDECC Controller can determine if the user has overridden the name and can
+         * use this name rather than the localized name.
+         */
+        uint8_t * STDCALL get_object_name();
 
-                /**
-                 * Get the descriptor type for the signal source of the cluster.
-                 */
-                uint16_t STDCALL get_signal_type();
+        /**
+         * Get the localized string reference pointing to the localized Audio Cluster name.
+         */
+        uint16_t STDCALL get_localized_description();
 
-                /**
-                 * Get the descriptor index for the signal source of the cluster.
-                 */
-                uint16_t STDCALL get_signal_index();
+        /**
+         * Get the descriptor type for the signal source of the cluster.
+         */
+        uint16_t STDCALL get_signal_type();
 
-                /**
-                 * Get the index of the output of the signal source of the cluster. For a signal type of
-		 * Signal Splitter or Signal Demultiplexer, this is which output of the object it is
-		 * being source from, for a signal type of Matrix, this is the column the signal is
-		 * from, and for any other signal type this is 0.
-                 */
-                uint16_t STDCALL get_signal_output();
+        /**
+         * Get the descriptor index for the signal source of the cluster.
+         */
+        uint16_t STDCALL get_signal_index();
 
-                /**
-                 * Get the latency in nanoseconds between the timing reference plane and the opposite end
-		 * of the currently selected signal path. This does not include any latency added by a
-		 * delay control. The path latency is used to inform smart Controllers of the extra 
-		 * latency to get the samples to the output, so that output across multiple entries
-		 * can be sample aligned.
-                 */
-                uint32_t STDCALL get_path_latency();
+        /**
+         * Get the index of the output of the signal source of the cluster. For a signal type of
+         * Signal Splitter or Signal Demultiplexer, this is which output of the object it is
+         * being source from, for a signal type of Matrix, this is the column the signal is
+         * from, and for any other signal type this is 0.
+         */
+        uint16_t STDCALL get_signal_output();
 
-                /**
-                 * Get the block latency of the Audio Cluster. For an Aduio Cluster attached to a Stream Port Input,
-		 * this is the latency in nanoseconds between the reference plane and the output of the cluster. For
-		 * an Audio Cluster attached to a Stream Port Output, this is the latency in nanoseconds between the
-		 * output of the previous block's output and the reference plane. The previous block is the object
-		 * identified by the signal type and signal index fields.
-                 */
-                uint32_t STDCALL get_block_latency();
+        /**
+         * Get the latency in nanoseconds between the timing reference plane and the opposite end
+         * of the currently selected signal path. This does not include any latency added by a
+         * delay control. The path latency is used to inform smart Controllers of the extra
+         * latency to get the samples to the output, so that output across multiple entries
+         * can be sample aligned.
+         */
+        uint32_t STDCALL get_path_latency();
 
-                /**
-                 * Get the number of channels within the cluster.
-                 */
-                uint16_t STDCALL get_channel_count();
+        /**
+         * Get the block latency of the Audio Cluster. For an Aduio Cluster attached to a Stream Port Input,
+         * this is the latency in nanoseconds between the reference plane and the output of the cluster. For
+         * an Audio Cluster attached to a Stream Port Output, this is the latency in nanoseconds between the
+         * output of the previous block's output and the reference plane. The previous block is the object
+         * identified by the signal type and signal index fields.
+         */
+        uint32_t STDCALL get_block_latency();
 
-                /**
-                 * The format for each channel of this cluster, all channels within the cluster have the same format.
-		 *
-		 * \return 0x00 (IEC 60958) for IEC 60958 encoded Audio Cluster. \n
-		 *	   0x40 (MBLA) for Multi-bit Linear Audio. \n
-		 *	   0x80 (MIDI) for MIDI data. \n
-		 *	   0x88 (SMPTE) for SMPTE data. \n
-                 */
-                uint8_t STDCALL get_format();
-        };
+        /**
+         * Get the number of channels within the cluster.
+         */
+        uint16_t STDCALL get_channel_count();
+
+        /**
+         * The format for each channel of this cluster, all channels within the cluster have the same format.
+         *
+         * \return 0x00 (IEC 60958) for IEC 60958 encoded Audio Cluster. \n
+       	 *	   0x40 (MBLA) for Multi-bit Linear Audio. \n
+         *	   0x80 (MIDI) for MIDI data. \n
+         *	   0x88 (SMPTE) for SMPTE data. \n
+         */
+        uint8_t STDCALL get_format();
+    };
 }
 
 #endif

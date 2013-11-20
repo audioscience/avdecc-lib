@@ -33,62 +33,62 @@
 
 namespace avdecc_lib
 {
-        clock_source_descriptor_imp::clock_source_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    clock_source_descriptor_imp::clock_source_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    {
+        desc_clock_source_read_returned = jdksavdecc_descriptor_clock_source_read(&clock_source_desc, frame, pos, frame_len);
+
+        if(desc_clock_source_read_returned < 0)
         {
-                desc_clock_source_read_returned = jdksavdecc_descriptor_clock_source_read(&clock_source_desc, frame, pos, frame_len);
-
-                if(desc_clock_source_read_returned < 0)
-                {
-                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "clock_source_desc_read error");
-                        assert(desc_clock_source_read_returned >= 0);
-                }
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "clock_source_desc_read error");
+            assert(desc_clock_source_read_returned >= 0);
         }
+    }
 
-        clock_source_descriptor_imp::~clock_source_descriptor_imp() {}
+    clock_source_descriptor_imp::~clock_source_descriptor_imp() {}
 
-        uint16_t STDCALL clock_source_descriptor_imp::get_descriptor_type() const
-        {
-                assert(clock_source_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE);
-                return clock_source_desc.descriptor_type;
-        }
+    uint16_t STDCALL clock_source_descriptor_imp::get_descriptor_type() const
+    {
+        assert(clock_source_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE);
+        return clock_source_desc.descriptor_type;
+    }
 
-        uint16_t STDCALL clock_source_descriptor_imp::get_descriptor_index() const
-        {
-                return clock_source_desc.descriptor_index;
-        }
+    uint16_t STDCALL clock_source_descriptor_imp::get_descriptor_index() const
+    {
+        return clock_source_desc.descriptor_index;
+    }
 
-        uint8_t * STDCALL clock_source_descriptor_imp::get_object_name()
-        {
-                return clock_source_desc.object_name.value;
-        }
+    uint8_t * STDCALL clock_source_descriptor_imp::get_object_name()
+    {
+        return clock_source_desc.object_name.value;
+    }
 
-        uint16_t STDCALL clock_source_descriptor_imp::get_localized_description ()
-        {
-                return clock_source_desc.localized_description;
-        }
+    uint16_t STDCALL clock_source_descriptor_imp::get_localized_description ()
+    {
+        return clock_source_desc.localized_description;
+    }
 
-        uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_flags()
-        {
-                return clock_source_desc.clock_source_flags;
-        }
+    uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_flags()
+    {
+        return clock_source_desc.clock_source_flags;
+    }
 
-        uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_type()
-        {
-                return clock_source_desc.clock_source_type;
-        }
+    uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_type()
+    {
+        return clock_source_desc.clock_source_type;
+    }
 
-        uint64_t STDCALL clock_source_descriptor_imp::get_clock_source_identifier()
-        {
-                return jdksavdecc_uint64_get(&clock_source_desc.clock_source_identifier, 0);
-        }
+    uint64_t STDCALL clock_source_descriptor_imp::get_clock_source_identifier()
+    {
+        return jdksavdecc_uint64_get(&clock_source_desc.clock_source_identifier, 0);
+    }
 
-        uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_location_type()
-        {
-                return clock_source_desc.clock_source_location_type;
-        }
+    uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_location_type()
+    {
+        return clock_source_desc.clock_source_location_type;
+    }
 
-        uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_location_index()
-        {
-                return clock_source_desc.clock_source_location_index;
-        }
+    uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_location_index()
+    {
+        return clock_source_desc.clock_source_location_index;
+    }
 }

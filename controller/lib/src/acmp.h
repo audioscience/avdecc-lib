@@ -31,84 +31,86 @@
 #ifndef _AVDECC_CONTROLLER_LIB_ACMP_H_
 #define _AVDECC_CONTROLLER_LIB_ACMP_H_
 
+#include "jdksavdecc_acmp_controller.h"
 #include "inflight.h"
 
 namespace avdecc_lib
 {
-        class acmp
-        {
+    class end_station;
 
-        public:
-                uint16_t seq_id; // sequence id inserted in ACMP commands
+    class acmp
+    {
+    private:
+	    uint16_t acmp_seq_id; // The sequence id used for identifying the ACMP command that a response is for
+	    std::vector<inflight> inflight_cmds;
 
-                acmp();
-                ~acmp();
+    public:
+        acmp();
 
-                /**
-                 * Transmit an ACMP Command.
-                 */
-                void tx_cmd(	void *notification_id,
-                                bool notification_flag,
-                                struct jdksavdecc_frame *ether_frame,
-                                bool resend);
+        ~acmp();
 
-                /**
-                 * Handle the receipt and processing of a received response for a command sent.
-                 */
-                int process_resp(	void *&notification_id,
-                                        struct jdksavdecc_frame *ether_frame);
+	/**
+         * Process the Command state of the ACMP Controller State Machine.
+         */
+        int state_command(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
 
-                /**
-                 * Check timeout for the inflight commands.
-                 */
-                void tick();
+        /**
+         * Process the Response state of the ACMP Controller State Machine.
+         */
+        int state_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *ether_frame);
 
-                /**
-                 * Update inflight command for the response received.
-                 */
-                int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame);
+        /**
+         * Check timeout for the inflight commands.
+         */
+        void tick();
+        /**
+         * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
+         */
+	static int acmp::ether_frame_init(end_station *end_station, struct jdksavdecc_frame *ether_frame);
 
-                /**
-                 * Call notification or post_log_msg callback function for the command sent or response received.
-                 */
-                int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
+        /**
+         * Initialize and fill Ethernet frame payload with 1722 ACMP Header information.
+         */
+        static void common_hdr_init(uint32_t msg_type, struct jdksavdecc_frame *ether_frame);
 
-                /**
-                 * Check if the command with the corresponding sequence id is already in the inflight command vector.
-                 */
-                bool find_inflight_cmd_by_seq_id(uint16_t seq_id, int *inflight_index);
+    private:
+        /**
+         * Transmit an ACMP Command.
+         */
+        int tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame, bool resend);
 
-                /**
-                 * Check if the command with the corresponding notification id is already in the inflight command vector.
-                 */
-                bool notification_id_is_inflight(void *notification_id);
+        /**
+         * Handle the receipt and processing of a received response for a command sent.
+         */
+        int proc_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *ether_frame);
 
-                /**
-                 * Remove the command from the inflight command vector.
-                 */
-                int remove_inflight_cmd(uint32_t inflight_cmd_index);
+        /**
+         * Update inflight command for the response received.
+         */
+        int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame);
 
-        private:
-                std::vector<inflight> inflight_cmds;
+        /**
+         * Call notification or post_log_msg callback function for the command sent or response received.
+         */
+        int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
 
-                /**
-                 * State machine TIMEOUT operation.
-                 */
-                void state_TIMEOUT(inflight &inflight_command);
+        /**
+         * Check if the command with the corresponding sequence id is already in the inflight command vector.
+         */
+        bool find_inflight_cmd_by_seq_id(uint16_t seq_id, int *inflight_index);
 
-                /**
-                 * State machine COMMAND operation.
-                 */
-                void state_COMMAND(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
+        /**
+         * Check if the command with the corresponding notification id is already in the inflight command vector.
+         */
+        bool is_inflight_cmd_with_notification_id(void *notification_id);
 
-                /**
-                 * State machine RESPONSE operation
-                 */
-                void acmp::state_RESPONSE(void *&notification_id, struct jdksavdecc_frame *ether_frame);
+        /**
+         * Process the Timeout state of the ACMP Controller State Machine.
+         */
+        void state_timeout(uint32_t inflight_cmd_index);
+    };
 
-        };
-
-        extern acmp *acmp;
+    extern acmp *acmp_ref;
 }
 
 #endif
