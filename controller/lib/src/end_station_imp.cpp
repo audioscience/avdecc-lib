@@ -363,11 +363,14 @@ namespace avdecc_lib
 
                         if(desc_type_index_from_config >= total_num_of_desc)
                         {
-                            uint16_t num_of_string_desc = config_desc_imp_ref->get_locale_desc_by_index(0)->get_number_of_strings();
-
-                            for(int i = 0; i < num_of_string_desc; i++)
+                            if(config_desc_imp_ref->get_locale_desc_by_index(0)) // Check if Locale descriptor is present in the top level descriptor
                             {
-                                read_desc_init(JDKSAVDECC_DESCRIPTOR_STRINGS, i); // Send a READ_DESCRIPTOR command for the STRINGS descriptor as part of the End Station initialization
+                                uint16_t num_of_string_desc = config_desc_imp_ref->get_locale_desc_by_index(0)->get_number_of_strings();
+
+                                for(int i = 0; i < num_of_string_desc; i++)
+                                {
+                                    read_desc_init(JDKSAVDECC_DESCRIPTOR_STRINGS, i); // Send a READ_DESCRIPTOR command for the STRINGS descriptor as part of the End Station initialization
+                                }
                             }
 
                             read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_DONE;
@@ -886,15 +889,15 @@ namespace avdecc_lib
         return 0;
     }
 
-    int end_station_imp::proc_rcvd_acmp_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int end_station_imp::proc_rcvd_acmp_resp(uint32_t msg_type, void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
-        uint8_t msg_type = jdksavdecc_uint8_get(frame, ETHER_HDR_SIZE);
-        uint16_t desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
+        uint16_t desc_index = 0;
 
         switch(msg_type)
         {
             case JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE:
                 {
+                        desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
                         stream_input_descriptor_imp *stream_input_desc_imp_ref;
                         stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 

@@ -39,8 +39,8 @@
 #include "system_tx_queue.h"
 #include "end_station_imp.h"
 #include "adp_discovery_state_machine.h"
-#include "aem_controller_state_machine.h"
 #include "acmp.h"
+#include "aem_controller_state_machine.h"
 #include "controller_imp.h"
 
 namespace avdecc_lib
@@ -55,7 +55,7 @@ namespace avdecc_lib
         net_interface_ref = dynamic_cast<net_interface_imp *>(netif);
         if(!net_interface_ref)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived net_interface_imp to base net_interface error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base net_interface to derived net_interface_imp error");
         }
 
         controller_imp_ref = new controller_imp(notification_callback, log_callback);
@@ -77,6 +77,9 @@ namespace avdecc_lib
             delete end_station_vec.at(end_station_vec_index);
         }
 
+        delete adp_discovery_state_machine_ref;
+        delete acmp_ref;
+        delete aem_controller_state_machine_ref;
         delete controller_imp_ref;
     }
 
@@ -169,7 +172,10 @@ namespace avdecc_lib
 
     bool STDCALL controller_imp::is_inflight_cmd_with_notification_id(void *notification_id)
     {
-        return aem_controller_state_machine_ref->is_inflight_cmd_with_notification_id(notification_id);
+        bool is_inflight_cmd = ((aem_controller_state_machine_ref->is_inflight_cmd_with_notification_id(notification_id)) ||
+                                (acmp_ref->is_inflight_cmd_with_notification_id(notification_id)));
+
+        return is_inflight_cmd;
     }
 
     void STDCALL controller_imp::set_logging_level(int32_t new_log_level)
@@ -319,23 +325,34 @@ namespace avdecc_lib
                         int found_end_station_index = -1;
                         bool found_acmp_in_end_station = false;
                         uint64_t entity_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE), 0);
+                        uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
 
-                        for(uint32_t i = 0; i < end_station_vec.size(); i++)
+                        if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
+                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
+                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
+                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
+                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
+                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))
                         {
-                            if(end_station_vec.at(i)->get_adp()->get_entity_entity_id() == entity_guid)
+                            for(uint32_t i = 0; i < end_station_vec.size(); i++)
                             {
-                                found_acmp_in_end_station = true;
-                                found_end_station_index = i;
+                                if(end_station_vec.at(i)->get_adp()->get_entity_entity_id() == entity_guid)
+                                {
+                                    found_acmp_in_end_station = true;
+                                    found_end_station_index = i;
+                                }
                             }
                         }
 
                         if(found_acmp_in_end_station)
                         {
-                            end_station_vec.at(found_end_station_index)->proc_rcvd_acmp_resp(notification_id, frame, frame_len, status);
+                            end_station_vec.at(found_end_station_index)->proc_rcvd_acmp_resp(msg_type, notification_id, frame, frame_len, status);
+                            is_notification_id_valid = true;
                         }
                         else
                         {
-                            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Invalid ACMP response packet");
+                            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Wait for correct ACMP response packet.");
+                            status = AVDECC_LIB_STATUS_INVALID;
                         }
                     }
 

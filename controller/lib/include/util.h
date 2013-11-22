@@ -45,12 +45,12 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual void STDCALL destroy() = 0;
 
         /**
-         * Convert command value to its corresponding command name.
+         * Convert command value to its corresponding AEM command name.
          */
         AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL aem_cmd_value_to_name(uint16_t cmd_value) = 0;
 
         /**
-         * Convert command name to its corresponding command value.
+         * Convert AEM command name to its corresponding command value.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL aem_cmd_name_to_value(const char *cmd_name) = 0;
 
@@ -70,6 +70,16 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL aem_cmd_status_value_to_name(uint16_t aem_cmd_status_value) = 0;
 
         /**
+         * Convert command value to its corresponding ACMP command name.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL acmp_cmd_value_to_name(uint16_t cmd_value) = 0;
+
+        /**
+         * Convert ACMP command name to its corresponding command value.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL acmp_cmd_name_to_value(const char *cmd_name) = 0;
+
+        /**
          * Convert ACMP command status value to its corresponding command status name.
          */
         AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL acmp_cmd_status_value_to_name(uint16_t acmp_cmd_status_value) = 0;
@@ -85,6 +95,11 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value) = 0;
 
         /**
+         * Get the timeout for the corresponding ACMP command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL acmp_cmd_to_timeout(const uint32_t acmp_cmd) = 0;
+
+        /**
          * Convert IEEE1722 format name to value.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL ieee1722_format_name_to_value(const char *format_name) = 0;
@@ -93,6 +108,11 @@ namespace avdecc_lib
          * Convert IEEE1722 format value to name.
          */
         AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL ieee1722_format_value_to_name(uint64_t format_value) = 0;
+
+        /**
+         * Convert End Station MAC address to a short string.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL end_station_mac_to_string(uint64_t end_station_mac) = 0;
     };
 
     /**

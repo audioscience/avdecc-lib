@@ -72,6 +72,11 @@ namespace avdecc_lib
          */
         static void common_hdr_init(uint32_t msg_type, struct jdksavdecc_frame *ether_frame);
 
+        /**
+         * Check if the command with the corresponding notification id is already in the inflight command vector.
+         */
+        bool is_inflight_cmd_with_notification_id(void *notification_id);
+
     private:
         /**
          * Process the Timeout state of the ACMP Controller State Machine.
@@ -97,16 +102,6 @@ namespace avdecc_lib
          * Call notification or post_log_msg callback function for the command sent or response received.
          */
         int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
-
-        /**
-         * Check if the command with the corresponding sequence id is already in the inflight command vector.
-         */
-        bool find_inflight_cmd_by_seq_id(uint16_t seq_id, int *inflight_index);
-
-        /**
-         * Check if the command with the corresponding notification id is already in the inflight command vector.
-         */
-        bool is_inflight_cmd_with_notification_id(void *notification_id);
     };
 
     extern acmp *acmp_ref;

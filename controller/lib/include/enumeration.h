@@ -175,32 +175,54 @@ namespace avdecc_lib
         AEM_STATUS_STREAM_IS_RUNNING = 12, ///< The stream is currently streaming and the command is one which cannot be executed on a streaming stream
         TOTAL_NUM_OF_AEM_CMDS_STATUS = 13,  ///< The total number of AEM commands status currently supported in the 1722.1 specification
         AVDECC_LIB_STATUS_INVALID = 1023, ///< AVDECC library specific status, not part of the 1722.1 specification
-        ///< The response received has a subtype different from the subtype of the command sent
+                                          ///< The response received has a subtype different from the subtype of the command sent
         AVDECC_LIB_STATUS_TICK_TIMEOUT = 1024 ///< AVDECC library specific status, not part of the 1722.1 specification
                                          ///< The response is not received within the timeout period after re-sending a command
     };
 
+    enum acmp_cmds_values /// The command codes values for ACMP commands
+    {
+        CONNECT_TX_COMMAND,
+        CONNECT_TX_RESPONSE,
+        DISCONNECT_TX_COMMAND,
+        DISCONNECT_TX_RESPONSE,
+        GET_TX_STATE_COMMAND,
+        GET_TX_STATE_RESPONSE,
+        CONNECT_RX_COMMAND,
+        CONNECT_RX_RESPONSE,
+        DISCONNECT_RX_COMMAND,
+        DISCONNECT_RX_RESPONSE,
+        GET_RX_STATE_COMMAND,
+        GET_RX_STATE_RESPONSE,
+        GET_TX_CONNECTION_COMMAND,
+        GET_TX_CONNECTION_RESPONSE,
+        TOTAL_NUM_OF_ACMP_CMDS = 14, ///< The total number of ACMP commands currently supported in the 1722.1 specification
+        AEM_ACMP_ERROR = 0xffff
+    };
+
     enum acmp_cmds_status
     {
-        ACMP_STATUS_SUCCESS = 0,
-        ACMP_STATUS_LISTENER_UNKNOWN_ID = 1,
-        ACMP_STATUS_TALKER_UNKNOWN_ID = 2,
-        ACMP_STATUS_TALKER_DEST_MAC_FAIL = 3,
-        ACMP_STATUS_TALKER_NO_STREAM_INDEX = 4,
-        ACMP_STATUS_TALKER_NO_BANDWIDTH = 5,
-        ACMP_STATUS_TALKER_EXCLUSIVE = 6,
-        ACMP_STATUS_LISTENER_TALKER_TIMEOUT = 7,
-        ACMP_STATUS_LISTENER_EXCLUSIVE = 8,
-        ACMP_STATUS_STATE_UNAVAILABLE = 9,
-        ACMP_STATUS_NOT_CONNECTED  = 10,
-        ACMP_STATUS_NO_SUCH_CONNECTION = 11,
-        ACMP_STATUS_COULD_NOT_SEND_MESSAGE = 12,
-        ACMP_STATUS_TALKER_MISBEHAVING = 13,
-        ACMP_STATUS_LISTENER_MISBEHAVING = 14,
-        ACMP_STATUS_CONTROLLER_NOT_AUTHORIZED = 15,
-        ACMP_STATUS_INCOMPATIBLE_REQUEST = 16,
-        ACMP_STATUS_LISTENER_INVALID_CONNECTION = 17,
-        TOTAL_NUM_OF_ACMP_CMDS_STATUS = 18,  ///< The total number of AEM commands status currently supported in the 1722.1 specification
+        ACMP_STATUS_SUCCESS = 0, ///< Command executed successfully
+        ACMP_STATUS_LISTENER_UNKNOWN_ID = 1, ///< Listener does not have the specified unique identifier
+        ACMP_STATUS_TALKER_UNKNOWN_ID = 2, ///< Talker does not have the specified unique identifier
+        ACMP_STATUS_TALKER_DEST_MAC_FAIL = 3, ///< Talker could not allocate a destination MAC for the steam
+        ACMP_STATUS_TALKER_NO_STREAM_INDEX = 4, ///< Talker does not have an available stream index for the stream
+        ACMP_STATUS_TALKER_NO_BANDWIDTH = 5, ///< Talker could not allocate bandwidth for the stream
+        ACMP_STATUS_TALKER_EXCLUSIVE = 6, ///< Talker already has an established stream and only supports one listener 
+        ACMP_STATUS_LISTENER_TALKER_TIMEOUT = 7, ///< Listener had timeout for all retries when trying to send command to Talker
+        ACMP_STATUS_LISTENER_EXCLUSIVE = 8, ///< Listener already has an established connection to a stream
+        ACMP_STATUS_STATE_UNAVAILABLE = 9, ///< Could not get the state from the AVDECC Entity
+        ACMP_STATUS_NOT_CONNECTED  = 10, ///< Trying to disconnect when not connected or not connected to the Talker specified
+        ACMP_STATUS_NO_SUCH_CONNECTION = 11, ///< Trying to obtain connection info for an Talker connection which does not exist
+        ACMP_STATUS_COULD_NOT_SEND_MESSAGE = 12, ///< Listener failed to send the message to the Talker
+        ACMP_STATUS_TALKER_MISBEHAVING = 13, ///< Talker was unable to complete the command because an internal error occurred
+        ACMP_STATUS_LISTENER_MISBEHAVING = 14, ///< Listener was unable to complete the command because an internal error occurred
+        ACMP_STATUS_RESERVED = 15, // Reserved field for new status
+        ACMP_STATUS_CONTROLLER_NOT_AUTHORIZED = 16, ///< The AVDECC Controller with the specified Entity ID is not authorized to change stream connections
+        ACMP_STATUS_INCOMPATIBLE_REQUEST = 17, ///< Listener is trying to connect a Talker that is already streaming with a different traffic class, etc, or
+                                               ///< does not support the request traffic class
+        ACMP_STATUS_LISTENER_INVALID_CONNECTION = 18,
+        TOTAL_NUM_OF_ACMP_CMDS_STATUS = 19,  ///< The total number of AEM commands status currently supported in the 1722.1 specification
     };
 
     enum aem_cmd_waiting
@@ -225,7 +247,7 @@ namespace avdecc_lib
     enum frame_lengths
     {
         ADP_FRAME_LEN = 82, ///< Length of ADP packet is 82 bytes
-        ACMP_FRAME_LEN = 70, ///< Length of ACMP packet is 64 bytes
+        ACMP_FRAME_LEN = 70, ///< Length of ACMP packet is 70 bytes
         AECP_FRAME_LEN = 64 ///< Length of AECP packet is 64 bytes
     };
 
@@ -240,6 +262,11 @@ namespace avdecc_lib
         ACMP_DISCONNECT_RX_COMMAND_TIMEOUT_MS = 500,
         ACMP_GET_RX_STATE_COMMAND_TIMEOUT_MS = 200,
         ACMP_GET_TX_CONNECTION_COMMAND_TIMEOUT_MS = 200
+    };
+
+    enum flags
+    {
+        CMD_LOOKUP_FLAG = 100 // Check if the command is an ACMP or AEM command
     };
 
     enum notifications /// Notifications for the AVDECC library implementation, not part of the 1722.1 specification

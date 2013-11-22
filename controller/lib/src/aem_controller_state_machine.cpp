@@ -123,9 +123,9 @@ namespace avdecc_lib
 
     void aem_controller_state_machine::timeout(uint32_t inflight_cmd_index)
     {
-        bool is_retry = inflight_cmds_vec.at(inflight_cmd_index).retried;
+        bool is_retried = inflight_cmds_vec.at(inflight_cmd_index).retried;
 
-        if(is_retry)
+        if(is_retried)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
             inflight_cmds_vec.erase(inflight_cmds_vec.begin() + inflight_cmd_index);

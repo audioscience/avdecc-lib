@@ -765,7 +765,7 @@ namespace avdecc_lib
 
         if(acmp_cmd_disconnect_rx_resp_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "acmp_cmd_connect_rx_read error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "acmp_cmd_disconnect_rx_read error");
             assert(acmp_cmd_disconnect_rx_resp_returned >= 0);
             return -1;
         }
