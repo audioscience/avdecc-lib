@@ -124,9 +124,9 @@ namespace avdecc_lib
          * The format for each channel of this cluster, all channels within the cluster have the same format.
          *
          * \return 0x00 (IEC 60958) for IEC 60958 encoded Audio Cluster. \n
-       	 *	   0x40 (MBLA) for Multi-bit Linear Audio. \n
-         *	   0x80 (MIDI) for MIDI data. \n
-         *	   0x88 (SMPTE) for SMPTE data. \n
+         *	       0x40 (MBLA) for Multi-bit Linear Audio. \n
+         *	       0x80 (MIDI) for MIDI data. \n
+         *	       0x88 (SMPTE) for SMPTE data.
          */
         uint8_t STDCALL get_format();
     };

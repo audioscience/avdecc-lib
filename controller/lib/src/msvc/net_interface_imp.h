@@ -40,7 +40,7 @@
 
 namespace avdecc_lib
 {
-    class net_interface_imp : public virtual net_interface
+    class net_interface_imp : public net_interface
     {
     private:
         pcap_if_t *all_devs;
@@ -56,7 +56,7 @@ namespace avdecc_lib
     public:
         net_interface_imp();
 
-        virtual ~net_interface_imp();
+        ~net_interface_imp();
 
         /**
          * Call destructor for Network Interface used for destroying objects

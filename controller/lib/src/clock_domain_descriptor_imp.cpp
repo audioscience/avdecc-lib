@@ -151,7 +151,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -221,7 +221,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);

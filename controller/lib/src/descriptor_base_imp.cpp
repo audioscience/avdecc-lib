@@ -66,6 +66,16 @@ namespace avdecc_lib
         return 0;
     }
 
+    uint16_t STDCALL descriptor_base_imp::get_localized_description()
+    {
+        return 0;
+    }
+
+    uint8_t * STDCALL descriptor_base_imp::get_object_name()
+    {
+        return NULL;
+    }
+
     int STDCALL descriptor_base_imp::send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag)
     {
 
@@ -110,7 +120,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -118,10 +128,10 @@ namespace avdecc_lib
     }
 
     int descriptor_base_imp::default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp,
-							      void *&notification_id,
-							      const uint8_t *frame,
-							      uint16_t frame_len,
-							      int &status)
+                                                              void *&notification_id,
+                                                              const uint8_t *frame,
+                                                              uint16_t frame_len,
+                                                              int &status)
     {
         struct jdksavdecc_frame *ether_frame;
         int aem_cmd_acquire_entity_resp_returned;
@@ -199,7 +209,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -207,10 +217,10 @@ namespace avdecc_lib
     }
 
     int descriptor_base_imp::default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp,
-						           void *&notification_id,
+                                                           void *&notification_id,
                                                            const uint8_t *frame,
-							   uint16_t frame_len,
-							   int &status)
+                                                           uint16_t frame_len,
+                                                           int &status)
     {
         struct jdksavdecc_frame *ether_frame;
         int aem_cmd_lock_entity_resp_returned = 0;
@@ -268,15 +278,5 @@ namespace avdecc_lib
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_NAME response.");
 
         return 0;
-    }
-
-    uint16_t STDCALL descriptor_base_imp::get_localized_description()
-    {
-        return 0;
-    }
-
-    uint8_t * STDCALL descriptor_base_imp::get_object_name()
-    {
-        return NULL;
     }
 }

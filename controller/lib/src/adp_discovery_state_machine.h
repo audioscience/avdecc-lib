@@ -48,7 +48,7 @@ namespace avdecc_lib
         bool rcvd_departing;
         bool do_discover;
         uint64_t discover_id;
-	bool do_terminate;
+        bool do_terminate;
         std::vector<struct entities> entities_vec;
 
     public:
@@ -58,14 +58,14 @@ namespace avdecc_lib
 
         ~adp_discovery_state_machine();
 
-	/**
-         * Process the Waiting state of the ADP Discovery State Machine.
-         */
+        /**
+             * Process the Waiting state of the ADP Discovery State Machine.
+             */
         void state_waiting(const uint8_t *frame, uint16_t frame_len);
 
-	/**
-         * Get the rcvd_avail field from the adp_discovery_state_machine_vars structure.
-         */
+        /**
+             * Get the rcvd_avail field from the adp_discovery_state_machine_vars structure.
+             */
         inline bool get_rcvd_avail()
         {
             return rcvd_avail;
@@ -134,9 +134,9 @@ namespace avdecc_lib
 
     private:
         /**
-         * The perform discover event is used to trigger an AVDECC Entity discovery search to search 
-	 * for all AVDECC Entities or to the Entity ID of an AVDECC Entity to search for.
-         */
+         * The perform discover event is used to trigger an AVDECC Entity discovery search to search
+        * for all AVDECC Entities or to the Entity ID of an AVDECC Entity to search for.
+               */
         int perform_discover(uint64_t entity_id);
 
         /**

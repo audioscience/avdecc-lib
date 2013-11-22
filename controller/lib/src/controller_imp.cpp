@@ -209,7 +209,7 @@ namespace avdecc_lib
 
         if((dest_mac_addr == net_interface_ref->get_mac()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address
         {
-            subtype = jdksavdecc_subtype_data_get_subtype(jdksavdecc_uint32_get(frame, adp::ETHER_HDR_SIZE));
+            subtype = jdksavdecc_subtype_data_get_subtype(jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE));
 
             switch(subtype)
             {
@@ -217,7 +217,7 @@ namespace avdecc_lib
                     {
                         int found_end_station_index = -1;
                         bool found_adp_in_end_station = false;
-                        uint64_t entity_guid = jdksavdecc_uint64_get(frame, adp::ETHER_HDR_SIZE + adp::PROTOCOL_HDR_SIZE);
+                        uint64_t entity_guid = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE);
 
                         //log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "ADP packet discovered.");
 
@@ -315,29 +315,29 @@ namespace avdecc_lib
                     break;
 
                 case JDKSAVDECC_SUBTYPE_ACMP:
-		    {
-		        int found_end_station_index = -1;
-			bool found_acmp_in_end_station = false;
-			uint64_t entity_guid = jdksavdecc_uint64_get(frame, aecp::TARGET_GUID_POS);
+                    {
+                        int found_end_station_index = -1;
+                        bool found_acmp_in_end_station = false;
+                        uint64_t entity_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE), 0);
 
-			for(uint32_t i = 0; i < end_station_vec.size(); i++)
+                        for(uint32_t i = 0; i < end_station_vec.size(); i++)
                         {
                             if(end_station_vec.at(i)->get_adp()->get_entity_entity_id() == entity_guid)
                             {
-				found_acmp_in_end_station = true;
+                                found_acmp_in_end_station = true;
                                 found_end_station_index = i;
                             }
                         }
 
-			if(found_acmp_in_end_station)
-			{
-			    end_station_vec.at(found_end_station_index)->proc_rcvd_aem_resp(notification_id, frame, frame_len, status);
-			}
+                        if(found_acmp_in_end_station)
+                        {
+                            end_station_vec.at(found_end_station_index)->proc_rcvd_acmp_resp(notification_id, frame, frame_len, status);
+                        }
                         else
                         {
                             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Invalid ACMP response packet");
                         }
-		    }
+                    }
 
                     break;
 
@@ -350,27 +350,27 @@ namespace avdecc_lib
 
     void controller_imp::tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t frame_len)
     {
-	uint32_t subtype = jdksavdecc_subtype_data_get_subtype(jdksavdecc_uint32_get(frame, adp::ETHER_HDR_SIZE));
+        uint32_t subtype = jdksavdecc_subtype_data_get_subtype(jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE));
         struct jdksavdecc_frame packet_frame;
 
         packet_frame.length = frame_len;
         memcpy(packet_frame.payload, frame, frame_len);
 
-	if(subtype == JDKSAVDECC_SUBTYPE_AECP)
-	{
-	     aem_controller_state_machine_ref->set_do_cmd(true);
-	     aem_controller_state_machine_ref->state_waiting(notification_id, notification_flag, &packet_frame);
-	     memcpy(frame, packet_frame.payload, frame_len);
-	}
-	else if(subtype == JDKSAVDECC_SUBTYPE_ACMP)
-	{
-	     acmp_ref->state_command(notification_id, notification_flag, &packet_frame);
-	     memcpy(frame, packet_frame.payload, frame_len);
-	}
-	else
-	{
-		log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid Subtype");
-	}
+        if(subtype == JDKSAVDECC_SUBTYPE_AECP)
+        {
+            aem_controller_state_machine_ref->set_do_cmd(true);
+            aem_controller_state_machine_ref->state_waiting(notification_id, notification_flag, &packet_frame);
+            memcpy(frame, packet_frame.payload, frame_len);
+        }
+        else if(subtype == JDKSAVDECC_SUBTYPE_ACMP)
+        {
+            acmp_ref->state_command(notification_id, notification_flag, &packet_frame);
+            memcpy(frame, packet_frame.payload, frame_len);
+        }
+        else
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid Subtype");
+        }
     }
 
     int STDCALL controller_imp::send_controller_avail_cmd(void *notification_id, uint32_t end_station_index)
@@ -399,7 +399,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::common_hdr_init(ether_frame, end_station_vec.at(end_station_index)->get_end_station_guid());
+        aecp::aecpdu_common_hdr_init(ether_frame, end_station_vec.at(end_station_index)->get_end_station_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);

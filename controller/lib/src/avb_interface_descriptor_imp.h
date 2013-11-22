@@ -88,8 +88,8 @@ namespace avdecc_lib
          * Get the flags describing the features of the interface.
          *
          * \return 1 (GPTP Grandmaster Supported) if the interface supports the grandmaster functionality. \n
-         *	   2 (GPTP Supported) if the interface supports the functionality. \n
-         *	   4 (SRP Supported) if the interface supports the "Stream Reservation Protocol (SRP)" functionality.
+         *	       2 (GPTP Supported) if the interface supports the functionality. \n
+         *	       4 (SRP Supported) if the interface supports the "Stream Reservation Protocol (SRP)" functionality.
          */
         uint16_t STDCALL get_interface_flags();
 

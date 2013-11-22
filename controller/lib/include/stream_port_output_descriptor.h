@@ -50,10 +50,10 @@ namespace avdecc_lib
          * The flags describing the capabilities or features of the port.
          *
          * \return 1 (Clock Sync Source) if the port can be used as a clock synchronization source. \n
-         *	   2 (Async Sample Rate Conv) if the port has an asynchronous sample rate converter
-         *	     to convert sample rates between another clock domain and the Unit's. \n
-         *	   3 (Sync Sample Rate Conv) if the port has a synchronous sample rate converter
-         *	     to convert between sample rates in the same clock domain.
+         *	       2 (Async Sample Rate Conv) if the port has an asynchronous sample rate converter
+         *	         to convert sample rates between another clock domain and the Unit's. \n
+         *	       3 (Sync Sample Rate Conv) if the port has a synchronous sample rate converter
+         *	         to convert between sample rates in the same clock domain.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_port_flags() = 0;
 
@@ -69,13 +69,13 @@ namespace avdecc_lib
 
         /**
          * \return The number of clusters within the port. This corresponds to the number of Audio Cluster,
-         *	   Video Cluster, and Sensor Cluster descriptors which represent these clusters.
+         *	       Video Cluster, and Sensor Cluster descriptors which represent these clusters.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_clusters() = 0;
 
         /**
          * \return The index of the first Audio Cluster, Video Cluster, or Sensor Cluster descriptor
-         *	   describing the clusters within the port.
+         *	       describing the clusters within the port.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_cluster() = 0;
 
@@ -86,7 +86,7 @@ namespace avdecc_lib
 
         /**
          * \return The index of the first Audio Map, Video Map, or Sensor Map, descriptor which defines
-         *	   the mappling between the stream and the port.
+         *	       the mappling between the stream and the port.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_map() = 0;
     };

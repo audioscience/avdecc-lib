@@ -155,25 +155,25 @@ namespace avdecc_lib
             utility->convert_eui48_to_uint64(jdksavdecc_eui64_get(ether_frame->payload, 0).value, dest_addr_resp);
         }
 
-	if(!do_terminate)
-	{
-		if(do_cmd)
-		{
-		    state_send_cmd(notification_id, notification_flag, ether_frame);
-		}
-		else if(rcvd_unsolicited_resp && dest_addr_resp == my_entity_id)
-		{
-		    state_rcvd_unsolicited(notification_id, ether_frame);
-		}
-		else if(rcvd_normal_resp && dest_addr_resp == my_entity_id)
-		{
-		    state_rcvd_resp(notification_id, ether_frame);
-		}
-		else
-		{
-		    log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid AEM Controller State Machine state");
-		}
-	}
+        if(!do_terminate)
+        {
+            if(do_cmd)
+            {
+                state_send_cmd(notification_id, notification_flag, ether_frame);
+            }
+            else if(rcvd_unsolicited_resp && dest_addr_resp == my_entity_id)
+            {
+                state_rcvd_unsolicited(notification_id, ether_frame);
+            }
+            else if(rcvd_normal_resp && dest_addr_resp == my_entity_id)
+            {
+                state_rcvd_resp(notification_id, ether_frame);
+            }
+            else
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid AEM Controller State Machine state");
+            }
+        }
     }
 
     void aem_controller_state_machine::state_send_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame)
@@ -236,11 +236,13 @@ namespace avdecc_lib
         switch(cmd_type)
         {
             case JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_acquire_entity_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_acquire_entity_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY:
+                desc_type = jdksavdecc_aem_command_lock_entity_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_lock_entity_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE:
@@ -250,68 +252,68 @@ namespace avdecc_lib
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_COMMAND_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_COMMAND_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_read_descriptor_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_read_descriptor_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_set_stream_format_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_set_stream_format_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_get_stream_format_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_get_stream_format_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_set_stream_info_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_set_stream_info_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_get_stream_info_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_get_stream_info_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_SET_NAME:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_NAME_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_NAME_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_set_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_set_name_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_GET_NAME:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_NAME_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_NAME_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_get_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_get_name_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_set_sampling_rate_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_set_sampling_rate_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_get_sampling_rate_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_get_sampling_rate_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_set_clock_source_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_set_clock_source_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_get_clock_source_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_get_clock_source_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_START_STREAMING:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_START_STREAMING_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_START_STREAMING_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_start_streaming_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_start_streaming_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_STOP_STREAMING:
-                desc_type = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_STOP_STREAMING_RESPONSE_OFFSET_DESCRIPTOR_TYPE);
-                desc_index = jdksavdecc_uint16_get(frame, adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_STOP_STREAMING_RESPONSE_OFFSET_DESCRIPTOR_INDEX);
+                desc_type = jdksavdecc_aem_command_stop_streaming_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_stop_streaming_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
                 break;
 
             default:

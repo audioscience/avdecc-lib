@@ -36,20 +36,18 @@
 
 namespace avdecc_lib
 {
-    class end_station;
-
     class acmp
     {
     private:
-	    uint16_t acmp_seq_id; // The sequence id used for identifying the ACMP command that a response is for
-	    std::vector<inflight> inflight_cmds;
+        uint16_t acmp_seq_id; // The sequence id used for identifying the ACMP command that a response is for
+        std::vector<inflight> inflight_cmds;
 
     public:
         acmp();
 
         ~acmp();
 
-	/**
+        /**
          * Process the Command state of the ACMP Controller State Machine.
          */
         int state_command(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
@@ -63,10 +61,11 @@ namespace avdecc_lib
          * Check timeout for the inflight commands.
          */
         void tick();
+
         /**
          * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
          */
-	static int acmp::ether_frame_init(end_station *end_station, struct jdksavdecc_frame *ether_frame);
+        static int ether_frame_init(struct jdksavdecc_frame *ether_frame);
 
         /**
          * Initialize and fill Ethernet frame payload with 1722 ACMP Header information.
@@ -74,6 +73,11 @@ namespace avdecc_lib
         static void common_hdr_init(uint32_t msg_type, struct jdksavdecc_frame *ether_frame);
 
     private:
+        /**
+         * Process the Timeout state of the ACMP Controller State Machine.
+         */
+        void state_timeout(uint32_t inflight_cmd_index);
+
         /**
          * Transmit an ACMP Command.
          */
@@ -103,11 +107,6 @@ namespace avdecc_lib
          * Check if the command with the corresponding notification id is already in the inflight command vector.
          */
         bool is_inflight_cmd_with_notification_id(void *notification_id);
-
-        /**
-         * Process the Timeout state of the ACMP Controller State Machine.
-         */
-        void state_timeout(uint32_t inflight_cmd_index);
     };
 
     extern acmp *acmp_ref;

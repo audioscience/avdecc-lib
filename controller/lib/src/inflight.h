@@ -41,59 +41,55 @@ namespace avdecc_lib
     class inflight
     {
     private:
-        unsigned int start_timer_count;
-        struct jdksavdecc_frame inflight_cmd_frame;
-        unsigned int inflight_timeout;
-	uint32_t notification_flag;
-        timer inflight_timer;
+        struct jdksavdecc_frame cmd_frame;
+        uint32_t cmd_notification_flag;
+        timer cmd_timer;
+        uint32_t cmd_timeout_ms;
+        uint32_t start_timer_cnt;
 
     public:
         /* following 2 are public for compare prediate classes */
-        uint16_t seq_id;
-        void *notification_id;
+        uint16_t cmd_seq_id;
+        void *cmd_notification_id;
 
         inflight(struct jdksavdecc_frame *frame,
-                 uint16_t sequence,
-                 unsigned int timeout_ms,
-                 void *notify_id,
-                 uint32_t notify_flag)
-                : seq_id(sequence), notification_id(notify_id), notification_flag(notify_flag),
-                inflight_timeout(timeout_ms), start_timer_count(0)
+                 uint16_t seq_id,
+                 void *notification_id,
+                 uint32_t notification_flag,
+                 uint32_t timeout_ms)
+                : cmd_seq_id(seq_id), cmd_notification_id(notification_id), cmd_notification_flag(notification_flag), cmd_timeout_ms(timeout_ms)
         {
-            inflight_cmd_frame = *frame;
-        };
-
-        ~inflight() {};
-
-        void start_timer()
-        {
-            inflight_timer.start(inflight_timeout);
-        };
-
-	struct jdksavdecc_frame cmd_frame()
-	{
-		return inflight_cmd_frame;
-	}
-
-        void * notify_id()
-        {
-            return notification_id;
-        };
-
-        bool timeout()
-        {
-            return inflight_timer.timeout();
-        };
-
-        uint32_t notify_flag()
-        {
-            return notification_flag;
+            cmd_frame = *frame;
+            start_timer_cnt = 0;
         }
 
-        bool retried()
+        ~inflight() {}
+
+        inline void start_timer()
         {
-            return start_timer_count >= 2;
-        };
+            start_timer_cnt++;
+            cmd_timer.start(cmd_timeout_ms);
+        }
+
+        inline struct jdksavdecc_frame frame()
+        {
+            return cmd_frame;
+        }
+
+        inline uint32_t notification_flag()
+        {
+            return cmd_notification_flag;
+        }
+
+        inline bool timeout()
+        {
+            return cmd_timer.timeout();
+        }
+
+        inline bool retried()
+        {
+            return start_timer_cnt >= 2; // The command can be resent once
+        }
     };
 
     /*
@@ -106,7 +102,7 @@ namespace avdecc_lib
 
         inline bool operator()(const inflight & m) const
         {
-            return m.seq_id == v;
+            return m.cmd_seq_id == v;
         }
 
     private:
@@ -123,7 +119,7 @@ namespace avdecc_lib
 
         inline bool operator()(const inflight & m) const
         {
-            return m.notification_id == v;
+            return m.cmd_notification_id == v;
         }
 
     private:

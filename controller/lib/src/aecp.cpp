@@ -68,19 +68,19 @@ namespace avdecc_lib
         ether_frame->length = AECP_FRAME_LEN; // Length of AECP packet is 64 bytes
 
         /*********************** Fill frame payload with Ethernet frame information ********************/
-        jdksavdecc_frame_write(ether_frame, ether_frame->payload, ether_frame_pos, adp::ETHER_HDR_SIZE);
+        jdksavdecc_frame_write(ether_frame, ether_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
 
         return 0;
     }
 
-    void aecp::common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid)
+    void aecp::aecpdu_common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid)
     {
         struct jdksavdecc_aecpdu_common_control_header aecpdu_common_ctrl_hdr;
         int aecpdu_common_ctrl_hdr_returned;
         size_t aecpdu_common_pos;
 
         /***** Offset to write the field to ****/
-        aecpdu_common_pos = adp::ETHER_HDR_SIZE;
+        aecpdu_common_pos = ETHER_HDR_SIZE;
 
         /************************************** 1722 Protocol Header **************************************/
         aecpdu_common_ctrl_hdr.cd = 1;

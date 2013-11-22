@@ -53,7 +53,7 @@ namespace avdecc_lib
 
         /**
          * \return The number of channel mappings within the Audio Map. The maximum value
-         *	   of this field is 62 for this version of AEM.
+         *	       of this field is 62 for this version of AEM.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_mappings() = 0;
     };

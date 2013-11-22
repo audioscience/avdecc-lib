@@ -54,7 +54,7 @@ namespace avdecc_lib
 
         /**
          * \return The number of Strings descriptor in this locale. This is the same value for
-         *	   all locales in an AVDECC Entity.
+         *	       all locales in an AVDECC Entity.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_strings() = 0;
 

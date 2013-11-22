@@ -29,13 +29,11 @@
 
 #include <algorithm>    // std::find_if
 #include <vector>
-
 #include "net_interface_imp.h"
 #include "util_imp.h"
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
-#include "end_station.h"
 #include "adp.h"
 #include "acmp.h"
 
@@ -56,25 +54,25 @@ namespace avdecc_lib
 
     acmp::acmp()
     {
-	acmp_seq_id = 0x0;
+        acmp_seq_id = 0x0;
     }
 
     acmp::~acmp() {}
 
-    int acmp::ether_frame_init(end_station *end_station, struct jdksavdecc_frame *ether_frame)
+    int acmp::ether_frame_init(struct jdksavdecc_frame *ether_frame)
     {
         /*** Offset to write the field to ***/
-        size_t ether_frame_pos = 0x0;
+        size_t ether_frame_pos = 0;
         jdksavdecc_frame_init(ether_frame);
 
-        /************************************************ Ethernet Frame *************************************/
+        /************************************************************* Ethernet Frame *********************************************************/
         ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
-        utility->convert_uint64_to_eui48(end_station->get_end_station_mac(), ether_frame->dest_address.value);
+        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value); // Send from the Controller MAC address
+        ether_frame->dest_address = jdksavdecc_multicast_adp_acmp; // Send to the ACMP multicast destination MAC address
         ether_frame->length = ACMP_FRAME_LEN; // Length of ACMP packet is 70 bytes
 
-        /*********************** Fill frame payload with Ethernet frame information ********************/
-        jdksavdecc_frame_write(ether_frame, ether_frame->payload, ether_frame_pos, adp::ETHER_HDR_SIZE);
+        /********************* Fill frame payload with Ethernet frame information *****************/
+        jdksavdecc_frame_write(ether_frame, ether_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
 
         return 0;
     }
@@ -86,9 +84,9 @@ namespace avdecc_lib
         size_t acmpdu_common_pos;
 
         /***** Offset to write the field to ****/
-        acmpdu_common_pos = adp::ETHER_HDR_SIZE;
+        acmpdu_common_pos = ETHER_HDR_SIZE;
 
-        /************************************** 1722 Protocol Header **************************************/
+        /******************* 1722 Protocol Header *********************/
         acmpdu_common_ctrl_hdr.cd = 1;
         acmpdu_common_ctrl_hdr.subtype = JDKSAVDECC_SUBTYPE_ACMP;
         acmpdu_common_ctrl_hdr.sv = 0;
@@ -96,13 +94,13 @@ namespace avdecc_lib
         acmpdu_common_ctrl_hdr.message_type = msg_type;
         acmpdu_common_ctrl_hdr.status = JDKSAVDECC_ACMP_STATUS_SUCCESS;
         acmpdu_common_ctrl_hdr.control_data_length = 44;
-	jdksavdecc_eui64_init(&acmpdu_common_ctrl_hdr.stream_id);
+        jdksavdecc_eui64_init(&acmpdu_common_ctrl_hdr.stream_id);
 
         /*********************** Fill frame payload with AECP Common Control Header information **********************/
         acmpdu_common_ctrl_hdr_returned = jdksavdecc_acmpdu_common_control_header_write(&acmpdu_common_ctrl_hdr,
                                                                                         ether_frame->payload,
-											acmpdu_common_pos,
-											sizeof(ether_frame->payload));
+                                                                                        acmpdu_common_pos,
+                                                                                        sizeof(ether_frame->payload));
 
         if(acmpdu_common_ctrl_hdr_returned < 0)
         {
@@ -113,42 +111,63 @@ namespace avdecc_lib
 
     int acmp::state_command(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame)
     {
-	    return tx_cmd(notification_id, notification_flag, ether_frame, false);
+        return tx_cmd(notification_id, notification_flag, ether_frame, false);
     }
 
     int acmp::state_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *ether_frame)
     {
-	    return proc_resp(notification_id, msg_type, ether_frame);
+        return proc_resp(notification_id, msg_type, ether_frame);
+    }
+
+    void acmp::state_timeout(uint32_t inflight_cmd_index)
+    {
+        bool is_retry = inflight_cmds.at(inflight_cmd_index).retried();
+
+        if(is_retry)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
+            inflight_cmds.erase(inflight_cmds.begin() + inflight_cmd_index);
+            printf("\n>");
+        }
+        else
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
+                                      "Resend the command with sequence id = %d",
+                                      inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
+
+            tx_cmd(inflight_cmds.at(inflight_cmd_index).cmd_notification_id,
+                   inflight_cmds.at(inflight_cmd_index).notification_flag(),
+                   &inflight_cmds.at(inflight_cmd_index).frame(),
+                   true);
+        }
     }
 
     int acmp::tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame, bool resend)
     {
-        int inflight_index;
-        bool is_inflight;
         int send_frame_returned;
 
         if(!resend)
         {
             uint16_t this_seq_id = acmp_seq_id;
 
-	    jdksavdecc_acmpdu_set_sequence_id(acmp_seq_id++, ether_frame->payload, adp::ETHER_HDR_SIZE);
+            jdksavdecc_acmpdu_set_sequence_id(acmp_seq_id++, ether_frame->payload, ETHER_HDR_SIZE);
 
             uint8_t msg_type_timeout_lookup = 0;
-            uint8_t msg_type = jdksavdecc_uint8_get(ether_frame->payload, adp::ETHER_HDR_SIZE + 1);
+            uint8_t msg_type = jdksavdecc_uint8_get(ether_frame->payload, ETHER_HDR_SIZE + 1);
 
             msg_type_timeout_lookup = msg_type / 2; // Commands are spaced by 2 in ACMP msg_type space, so can compress the lookup table
             if(msg_type_timeout_lookup > 6)
-	    {
+            {
                 msg_type = 6;
-	    }
-	
-	    int timeout_ms = acmp_timeouts_ms[msg_type];
+            }
+
+            int timeout_ms = acmp_timeouts_ms[msg_type];
 
             inflight in_flight = inflight(ether_frame,
                                           acmp_seq_id,
-                                          timeout_ms,
                                           notification_id,
-                                          notification_flag);
+                                          notification_flag,
+                                          timeout_ms);
 
             in_flight.start_timer();
             inflight_cmds.push_back(in_flight);
@@ -171,19 +190,19 @@ namespace avdecc_lib
             (*j).start_timer();
         }
 
-	return 0;
+        return 0;
     }
 
     int acmp::proc_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *ether_frame)
     {
-	uint16_t seq_id = jdksavdecc_acmpdu_get_sequence_id(ether_frame->payload, adp::ETHER_HDR_SIZE);
+        uint16_t seq_id = jdksavdecc_acmpdu_get_sequence_id(ether_frame->payload, ETHER_HDR_SIZE);
         int inflight_index = 0;
         uint32_t notification_flag = 0;
 
         if(find_inflight_cmd_by_seq_id(seq_id, &inflight_index))
         {
-            notification_id = inflight_cmds.at(inflight_index).notification_id;
-	    notification_flag = inflight_cmds.at(inflight_index).notify_flag();
+            notification_id = inflight_cmds.at(inflight_index).cmd_notification_id;
+            notification_flag = inflight_cmds.at(inflight_index).notification_flag();
             callback(notification_id, notification_flag, ether_frame->payload);
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command Success");
             inflight_cmds.erase(inflight_cmds.begin() + inflight_index);
@@ -196,9 +215,9 @@ namespace avdecc_lib
 
     void acmp::tick()
     {
-       for(uint32_t i = 0; i < inflight_cmds.size(); i++)
+        for(uint32_t i = 0; i < inflight_cmds.size(); i++)
         {
-	    if(inflight_cmds.at(i).timeout())
+            if(inflight_cmds.at(i).timeout())
             {
                 state_timeout(i);
             }
@@ -209,7 +228,7 @@ namespace avdecc_lib
     {
         for(uint32_t i = 0; i < inflight_cmds.size(); i++)
         {
-            if((inflight_cmds.at(i).seq_id == seq_id))
+            if((inflight_cmds.at(i).cmd_seq_id == seq_id))
             {
                 *inflight_index = i;
                 return true;
@@ -223,7 +242,7 @@ namespace avdecc_lib
     {
         for(uint32_t i = 0; i < inflight_cmds.size(); i++)
         {
-            if((inflight_cmds.at(i).notification_id == notification_id))
+            if((inflight_cmds.at(i).cmd_notification_id == notification_id))
             {
                 return true;
             }
@@ -237,26 +256,4 @@ namespace avdecc_lib
         return 0;
     }
 
-    void acmp::state_timeout(uint32_t inflight_cmd_index)
-    {
-        bool is_retry = inflight_cmds.at(inflight_cmd_index).retried();
-
-        if(is_retry)
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
-            inflight_cmds.erase(inflight_cmds.begin() + inflight_cmd_index);
-            printf("\n>");
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
-                                      "Resend the command with sequence id = %d",
-                                      inflight_cmds.at(inflight_cmd_index).seq_id);
-
-            tx_cmd(inflight_cmds.at(inflight_cmd_index).notification_id,
-                   inflight_cmds.at(inflight_cmd_index).notification_flag,
-                   &inflight_cmds.at(inflight_cmd_index).cmd_frame(),
-                   true);
-        }
-    }
 };

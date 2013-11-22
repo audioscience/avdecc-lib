@@ -95,7 +95,6 @@ namespace avdecc_lib
          */
         static struct jdksavdecc_eui64 get_controller_guid();
 
-
         /**
          * Initialize and fill Ethernet frame payload with Ethernet frame information for ADP messages.
          */
@@ -104,7 +103,7 @@ namespace avdecc_lib
         /**
          * Initialize and fill Ethernet frame payload with 1722 ADP Header information.
          */
-        static void common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid);
+        static void adpdu_common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid);
 
         /**
          * Get the header field of the ADP object.

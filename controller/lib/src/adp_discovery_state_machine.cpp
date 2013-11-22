@@ -109,29 +109,29 @@ namespace avdecc_lib
 
     void adp_discovery_state_machine::state_waiting(const uint8_t *frame, uint16_t frame_len)
     {
-	if(!do_terminate)
-	{
-		if(do_discover)
-		{
-		    state_discover();
-		}
-		else if(rcvd_avail)
-		{
-		    state_avail(frame, frame_len);
-		}
-		else if(rcvd_departing)
-		{
-		    state_departing();
-		}
-		else {}
-	}
+        if(!do_terminate)
+        {
+            if(do_discover)
+            {
+                state_discover();
+            }
+            else if(rcvd_avail)
+            {
+                state_avail(frame, frame_len);
+            }
+            else if(rcvd_departing)
+            {
+                state_departing();
+            }
+            else {}
+        }
     }
 
     int adp_discovery_state_machine::state_discover()
     {
         struct jdksavdecc_frame ether_frame;
         adp::ether_frame_init(&ether_frame);
-        adp::common_hdr_init(&ether_frame, NULL);
+        adp::adpdu_common_hdr_init(&ether_frame, NULL);
         tx_discover(&ether_frame);
         do_discover = false;
 
@@ -144,8 +144,8 @@ namespace avdecc_lib
         uint64_t entity_guid;
         uint32_t entity_index;
 
-        entity_guid = jdksavdecc_uint64_get(frame, adp::ETHER_HDR_SIZE + adp::PROTOCOL_HDR_SIZE);
-        jdksavdecc_adpdu_common_control_header_read(&adp_hdr, frame, adp::ETHER_HDR_SIZE, frame_len);
+        entity_guid = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE);
+        jdksavdecc_adpdu_common_control_header_read(&adp_hdr, frame, ETHER_HDR_SIZE, frame_len);
 
         if(have_entity(entity_guid, &entity_index))
         {
@@ -166,9 +166,9 @@ namespace avdecc_lib
 
     int adp_discovery_state_machine::state_departing()
     {
-	log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "state_departing is not implemented.");
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "state_departing is not implemented.");
 
-	return 0;
+        return 0;
     }
 
     int adp_discovery_state_machine::state_timeout(uint32_t entity_index)

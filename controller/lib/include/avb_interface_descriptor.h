@@ -51,9 +51,9 @@ namespace avdecc_lib
         /**
          * The flags describing the features of the interface.
          *
-         * \return 1 (GPTP Grandmaster Supported) if the interface supports the grandmaster functionality. \n
-         *	   2 (GPTP Supported) if the interface supports the functionality. \n
-         *	   4 (SRP Supported) if the interface supports the "Stream Reservation Protocol (SRP)" functionality.
+         * \return 1 (GPTP Grandmaster Supported) if the interface supports the grandmaster functionality.
+         * \return 2 (GPTP Supported) if the interface supports the functionality.
+         * \return 4 (SRP Supported) if the interface supports the "Stream Reservation Protocol (SRP)" functionality.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_interface_flags() = 0;
 
@@ -93,22 +93,22 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_domain_number() = 0;
 
         /**
-         * Get the current log sync interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         * \return The current log sync interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_log_sync_interval() = 0;
 
         /**
-         * Get the current log announce interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         * \return The current log announce interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_log_announce_interval() = 0;
 
         /**
-         * Get the current log pdelay interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         * \return The current log pdelay interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_log_pdelay_interval() = 0;
 
         /**
-         * Get the port number field as used by the functionality of the AVB Interface if supported, 0 otherwise.
+         * \return The port number field as used by the functionality of the AVB Interface if supported, 0 otherwise.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_port_number() = 0;
     };
