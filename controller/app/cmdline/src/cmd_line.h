@@ -22,7 +22,7 @@
  */
 
 /**
- * avdecc_cmd_line.h
+ * cmd_line.h
  *
  * AVDECC Controller command line processing class
  */
@@ -41,13 +41,13 @@
 #include "locale_descriptor.h"
 #include "strings_descriptor.h"
 
-class avdecc_cmd_line
+class cmd_line
 {
 private:
     avdecc_lib::net_interface *netif_ref;
     avdecc_lib::system *system_ref;
     avdecc_lib::controller *controller_ref;
-    avdecc_lib::util *utility;
+    
 
     uint32_t current_end_station;
     uint16_t current_entity;
@@ -57,23 +57,24 @@ private:
     std::vector<cmd_line_help *> cmd_line_help_vec;
 
 public:
+    static avdecc_lib::util *utility;
     static std::string log_path;
 
     /**
-     * An empty constructor for avdecc_cmd_line
+     * An empty constructor for cmd_line
      */
-    avdecc_cmd_line();
+    cmd_line();
 
     /**
-     * Constructor for avdecc_cmd_line used for constructing an object with notification and log callback functions.
+     * Constructor for cmd_line used for constructing an object with notification and log callback functions.
      */
-    avdecc_cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
+    cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
                     void (*log_callback) (void *, int32_t, const char *, int32_t));
 
     /**
-     * Destructor for avdecc_cmd_line used for destroying objects
+     * Destructor for cmd_line used for destroying objects
      */
-    ~avdecc_cmd_line();
+    ~cmd_line();
 
 private:
     int print_interfaces_and_select();
@@ -152,9 +153,36 @@ public:
     int cmd_connect(uint32_t instream_end_station_index, uint16_t instream_desc_index);
 
     /**
-     * Connect an instream to an outstream.
+     * Send a GET_TX_STATE command to get Talker source stream connection state.
      */
-    int cmd_connect_rx(uint32_t instream_end_station_index, uint16_t instream_desc_index, uint32_t outstream_end_station_index, uint16_t outstream_desc_index);
+    int cmd_get_tx_state(uint32_t instream_end_station_index,
+                         uint16_t instream_desc_index,
+                         uint32_t outstream_end_station_index,
+                         uint16_t outstream_desc_index);
+
+    /**
+     * Send a CONNECT_RX command to connect Listener sink stream.
+     */
+    int cmd_connect_rx(uint32_t instream_end_station_index,
+                       uint16_t instream_desc_index,
+                       uint32_t outstream_end_station_index,
+                       uint16_t outstream_desc_index);
+
+    /**
+     * Send a CONNECT_RX command to disconnect Listener sink stream.
+     */
+    int cmd_disconnect_rx(uint32_t instream_end_station_index,
+                          uint16_t instream_desc_index,
+                          uint32_t outstream_end_station_index,
+                          uint16_t outstream_desc_index);
+
+    /**
+     * Send a GET_RX_STATE command to get Listener sink stream connection state.
+     */
+    int cmd_get_rx_state(uint32_t instream_end_station_index,
+                         uint16_t instream_desc_index,
+                         uint32_t outstream_end_station_index,
+                         uint16_t outstream_desc_index);
 
     /**
      * Display all the ACMP connections that can be disconnected.
