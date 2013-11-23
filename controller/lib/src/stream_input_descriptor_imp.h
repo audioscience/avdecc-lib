@@ -373,10 +373,18 @@ namespace avdecc_lib
          */
         int proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
-	/**
+        /**
          * Send a CONNECT_RX command with a notification id to connect Listener sink stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
+         * \param talker_guid The Talker Entity ID used to identify the AVDECC Talker being targed by
+         *                    the command. In the case of Talker commands, this is the AVDECC Entity
+         *                    receiving the command. In the case of Listener commands, this is the
+         *                    AVDECC Entity that any Talker command is to be sent to. This field is
+         *                    either the Entity ID of the AVDECC Entity being targets to or 0.
+         * \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
+         *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
+         *                         this corresponds to the id of the Stream Output descriptor.
          */
         int STDCALL send_connect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id);
 
@@ -384,6 +392,66 @@ namespace avdecc_lib
          * Process a CONNECT_RX response for the CONNECT_RX command.
          */
         int proc_connect_rx_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+
+        /**
+         * Send a DISCONNECT_RX command with a notification id to disconnect Listener sink stream.
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         * \param talker_guid The Talker Entity ID used to identify the AVDECC Talker being targed by
+         *                    the command. In the case of Talker commands, this is the AVDECC Entity
+         *                    receiving the command. In the case of Listener commands, this is the
+         *                    AVDECC Entity that any Talker command is to be sent to. This field is
+         *                    either the Entity ID of the AVDECC Entity being targets to or 0.
+         * \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
+         *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
+         *                         this corresponds to the id of the Stream Output descriptor.
+         */
+        int STDCALL send_disconnect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id);
+
+        /**
+         * Process a DISCONNECT_RX response for the DISCONNECT_RX command.
+         */
+        int proc_disconnect_rx_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+
+        /**
+         * Send a GET_RX_STATE command with a notification id to get Listener sink stream connection state.
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         * \param talker_guid The Talker Entity ID used to identify the AVDECC Talker being targed by
+         *                    the command. In the case of Talker commands, this is the AVDECC Entity
+         *                    receiving the command. In the case of Listener commands, this is the
+         *                    AVDECC Entity that any Talker command is to be sent to. This field is
+         *                    either the Entity ID of the AVDECC Entity being targets to or 0.
+         * \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
+         *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
+         *                         this corresponds to the id of the Stream Output descriptor.
+         */
+        int STDCALL send_get_rx_state_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id);
+
+        /**
+         * Process a GET_RX_STATE response for the GET_RX_STATE command.
+         */
+        int proc_get_rx_state_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+
+        /**
+         * Send a GET_TX_CONNECTION command with a notification id to get a specific Talker connection information.
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         * \param talker_guid The Talker Entity ID used to identify the AVDECC Talker being targed by
+         *                    the command. In the case of Talker commands, this is the AVDECC Entity
+         *                    receiving the command. In the case of Listener commands, this is the
+         *                    AVDECC Entity that any Talker command is to be sent to. This field is
+         *                    either the Entity ID of the AVDECC Entity being targets to or 0.
+         * \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
+         *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
+         *                         this corresponds to the id of the Stream Output descriptor.
+         */
+        int STDCALL send_get_tx_connection_cmd(void *notification_id, uint64_t listener_guid, uint16_t listener_unique_id);
+
+        /**
+         * Process a GET_TX_CONNECTION response for the GET_TX_CONNECTION command.
+         */
+        int proc_get_tx_connection_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
     };
 }

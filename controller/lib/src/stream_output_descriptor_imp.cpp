@@ -35,6 +35,7 @@
 #include "aecp.h"
 #include "end_station_imp.h"
 #include "system_tx_queue.h"
+#include "acmp.h"
 #include "aem_controller_state_machine.h"
 #include "stream_output_descriptor_imp.h"
 
@@ -306,7 +307,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -375,7 +376,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -458,7 +459,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -527,7 +528,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -596,7 +597,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -630,6 +631,150 @@ namespace avdecc_lib
         u_field = aem_cmd_get_stream_info_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
+
+        free(ether_frame);
+        return 0;
+    }
+
+    int STDCALL stream_output_descriptor_imp::send_get_tx_state_cmd(void *notification_id, uint64_t listener_guid, uint16_t listener_unique_id)
+    {
+        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_acmpdu acmp_cmd_get_tx_state;
+        int acmp_cmd_get_tx_state_returned;
+        uint64_t talker_guid = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_id();
+
+        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+
+        /******************************************* ACMP Common Data *******************************************/
+        acmp_cmd_get_tx_state.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        jdksavdecc_uint64_write(talker_guid, &acmp_cmd_get_tx_state.talker_entity_id, 0, sizeof(uint64_t));
+        jdksavdecc_uint64_write(listener_guid, &acmp_cmd_get_tx_state.listener_entity_id, 0, sizeof(uint64_t));
+        acmp_cmd_get_tx_state.talker_unique_id = get_descriptor_index();
+        acmp_cmd_get_tx_state.listener_unique_id = listener_unique_id;
+        jdksavdecc_eui48_init(&acmp_cmd_get_tx_state.stream_dest_mac);
+        acmp_cmd_get_tx_state.connection_count = 0;
+        // Fill acmp_cmd_get_tx_state.sequence_id in AEM Controller State Machine
+        acmp_cmd_get_tx_state.flags = 0;
+        acmp_cmd_get_tx_state.stream_vlan_id = 0;
+
+        /************************** Fill frame payload with AECP data and send the frame ***************************/
+        acmp::ether_frame_init(ether_frame);
+        acmp_cmd_get_tx_state_returned = jdksavdecc_acmpdu_write(&acmp_cmd_get_tx_state,
+                                                                  ether_frame->payload,
+                                                                  aecp::CMD_POS,
+                                                                  sizeof(ether_frame->payload));
+
+        if(acmp_cmd_get_tx_state_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "cmd_get_tx_state_write error\n");
+            assert(acmp_cmd_get_tx_state_returned >= 0);
+            return -1;
+        }
+
+        acmp::common_hdr_init(JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_COMMAND, ether_frame);
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+
+        free(ether_frame);
+        return 0;
+    }
+
+    int stream_output_descriptor_imp::proc_get_tx_state_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    {
+        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_acmpdu acmp_cmd_get_tx_state_resp;
+        int acmp_cmd_get_tx_state_resp_returned;
+        uint32_t msg_type;
+
+        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        memcpy(ether_frame->payload, frame, frame_len);
+        acmp_cmd_get_tx_state_resp_returned = jdksavdecc_acmpdu_read(&acmp_cmd_get_tx_state_resp,
+                                                                     frame,
+                                                                     aecp::CMD_POS,
+                                                                     frame_len);
+
+        if(acmp_cmd_get_tx_state_resp_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "acmp_cmd_get_tx_state_read error");
+            assert(acmp_cmd_get_tx_state_resp_returned >= 0);
+            return -1;
+        }
+
+        msg_type = acmp_cmd_get_tx_state_resp.header.message_type;
+        status = acmp_cmd_get_tx_state_resp.header.status;
+
+        acmp_ref->state_resp(notification_id, msg_type, ether_frame);
+
+        free(ether_frame);
+        return 0;
+    }
+
+    int STDCALL stream_output_descriptor_imp::send_get_tx_connection_cmd(void *notification_id, uint64_t listener_guid, uint16_t listener_unique_id)
+    {
+        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_acmpdu acmp_cmd_get_tx_connection;
+        int acmp_cmd_get_tx_connection_returned;
+        uint64_t talker_guid = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_id();
+
+        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+
+        /******************************************* ACMP Common Data *******************************************/
+        acmp_cmd_get_tx_connection.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        jdksavdecc_uint64_write(talker_guid, &acmp_cmd_get_tx_connection.talker_entity_id, 0, sizeof(uint64_t));
+        jdksavdecc_uint64_write(listener_guid, &acmp_cmd_get_tx_connection.listener_entity_id, 0, sizeof(uint64_t));
+        acmp_cmd_get_tx_connection.talker_unique_id = get_descriptor_index();
+        acmp_cmd_get_tx_connection.listener_unique_id = listener_unique_id;
+        jdksavdecc_eui48_init(&acmp_cmd_get_tx_connection.stream_dest_mac);
+        acmp_cmd_get_tx_connection.connection_count = 0;
+        // Fill acmp_cmd_get_tx_connection.sequence_id in AEM Controller State Machine
+        acmp_cmd_get_tx_connection.flags = 0;
+        acmp_cmd_get_tx_connection.stream_vlan_id = 0;
+
+        /************************** Fill frame payload with AECP data and send the frame ***************************/
+        acmp::ether_frame_init(ether_frame);
+        acmp_cmd_get_tx_connection_returned = jdksavdecc_acmpdu_write(&acmp_cmd_get_tx_connection,
+                                                               ether_frame->payload,
+                                                               aecp::CMD_POS,
+                                                               sizeof(ether_frame->payload));
+
+        if(acmp_cmd_get_tx_connection_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "cmd_get_tx_connection_write error\n");
+            assert(acmp_cmd_get_tx_connection_returned >= 0);
+            return -1;
+        }
+
+        acmp::common_hdr_init(JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_COMMAND, ether_frame);
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+
+        free(ether_frame);
+        return 0;
+    }
+
+    int stream_output_descriptor_imp::proc_get_tx_connection_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    {
+        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_acmpdu acmp_cmd_get_tx_connection_resp;
+        int acmp_cmd_get_tx_connection_resp_returned;
+        uint32_t msg_type;
+
+        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        memcpy(ether_frame->payload, frame, frame_len);
+        acmp_cmd_get_tx_connection_resp_returned = jdksavdecc_acmpdu_read(&acmp_cmd_get_tx_connection_resp,
+                                                                          frame,
+                                                                          aecp::CMD_POS,
+                                                                          frame_len);
+
+        if(acmp_cmd_get_tx_connection_resp_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "acmp_cmd_get_tx_connection_read error");
+            assert(acmp_cmd_get_tx_connection_resp_returned >= 0);
+            return -1;
+        }
+
+        msg_type = acmp_cmd_get_tx_connection_resp.header.message_type;
+        status = acmp_cmd_get_tx_connection_resp.header.status;
+
+        acmp_ref->state_resp(notification_id, msg_type, ether_frame);
 
         free(ether_frame);
         return 0;

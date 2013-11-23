@@ -48,12 +48,12 @@ namespace avdecc_lib
     public:
         enum aem_fields_offsets
         {
-            CMD_POS = adp::ETHER_HDR_SIZE,
-            MSG_TYPE_POS = adp::ETHER_HDR_SIZE + 1,
-            TARGET_GUID_POS = adp::ETHER_HDR_SIZE + adp::PROTOCOL_HDR_SIZE,
-            SEQ_ID_POS = adp::ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN + JDKSAVDECC_AECPDU_AEM_OFFSET_SEQUENCE_ID,
-            CMD_TYPE_POS = adp::ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN + JDKSAVDECC_AECPDU_AEM_OFFSET_COMMAND_TYPE,
-            READ_DESC_POS = adp::ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN
+            CMD_POS = ETHER_HDR_SIZE,
+            MSG_TYPE_POS = ETHER_HDR_SIZE + 1,
+            TARGET_GUID_POS = ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE,
+            SEQ_ID_POS = ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN + JDKSAVDECC_AECPDU_AEM_OFFSET_SEQUENCE_ID,
+            CMD_TYPE_POS = ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN + JDKSAVDECC_AECPDU_AEM_OFFSET_COMMAND_TYPE,
+            READ_DESC_POS = ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN
         };
 
         /**
@@ -72,7 +72,7 @@ namespace avdecc_lib
         /**
          * Initialize and fill Ethernet frame payload with 1722 AECP Header information.
          */
-        static void common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid);
+        static void aecpdu_common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid);
 
         /**
          * Get the header field of the AECP object.

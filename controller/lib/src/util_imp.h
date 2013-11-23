@@ -48,12 +48,12 @@ namespace avdecc_lib
         void STDCALL destroy();
 
         /**
-         * Convert command value to its corresponding command name.
+         * Convert command value to its corresponding AEM command name.
          */
         const char * STDCALL aem_cmd_value_to_name(uint16_t cmd_value);
 
         /**
-         * Convert command name to its corresponding command value.
+         * Convert AEM command name to its corresponding command value.
          */
         uint16_t STDCALL aem_cmd_name_to_value(const char *cmd_name);
 
@@ -73,6 +73,16 @@ namespace avdecc_lib
         const char * STDCALL aem_cmd_status_value_to_name(uint16_t aem_cmd_status_value);
 
         /**
+         * Convert command value to its corresponding ACMP command name.
+         */
+        const char * STDCALL acmp_cmd_value_to_name(uint16_t cmd_value);
+
+        /**
+         * Convert ACMP command name to its corresponding command value.
+         */
+        uint16_t STDCALL acmp_cmd_name_to_value(const char *cmd_name);
+
+        /**
          * Convert ACMP command status value to its corresponding command status name.
          */
         const char * STDCALL acmp_cmd_status_value_to_name(uint16_t acmp_cmd_status_value);
@@ -88,6 +98,11 @@ namespace avdecc_lib
         const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value);
 
         /**
+         * Get the timeout for the corresponding ACMP command.
+         */
+        uint32_t STDCALL acmp_cmd_to_timeout(const uint32_t acmp_cmd);
+
+        /**
           * Convert IEEE1722 format name to value.
           */
         uint64_t STDCALL ieee1722_format_name_to_value(const char *format_name);
@@ -96,6 +111,11 @@ namespace avdecc_lib
          * Convert IEEE1722 format value to name.
          */
         const char * STDCALL ieee1722_format_value_to_name(uint64_t format_value);
+
+        /**
+         * Convert End Station MAC address to a short string.
+         */
+        const char * STDCALL end_station_mac_to_string(uint64_t end_station_mac);
 
         /**
          * Convert an uint64_t value to eui48.

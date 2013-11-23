@@ -80,11 +80,10 @@ namespace avdecc_lib
         size_t ether_frame_pos = 0x0;
         jdksavdecc_frame_init(ether_frame);
 
-        /*************************************** Ethernet Frame ***************************************/
+        /*********************************************************** Ethernet Frame ***********************************************************/
         ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
-        //		ether_frame->src_address = src_mac_addr;
-        //		ether_frame->dest_address = get_dest_addr();
+        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value); // Send from the Controller MAC address
+        ether_frame->dest_address = jdksavdecc_multicast_adp_acmp; // Send to the ADP multicast destination MAC address
         ether_frame->length = ADP_FRAME_LEN; // Length of ADP packet is 82 bytes
 
         /********************* Fill frame payload with Ethernet frame information *****************/
@@ -93,7 +92,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    void adp::common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid)
+    void adp::adpdu_common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid)
     {
         struct jdksavdecc_adpdu_common_control_header adpdu_common_ctrl_hdr;
         int adpdu_common_ctrl_hdr_returned;

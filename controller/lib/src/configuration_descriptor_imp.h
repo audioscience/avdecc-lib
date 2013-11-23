@@ -74,16 +74,6 @@ namespace avdecc_lib
         std::vector<audio_map_descriptor_imp *> audio_map_desc_vec; // Store a list of Audio Map descriptor class objects
         std::vector<clock_domain_descriptor_imp *> clock_domain_desc_vec; // Store a list of Clock Domain descriptor class objects
 
-        /**
-         * Initialize the descriptor type vector with descriptor types present in the current Configuration.
-         */
-        void desc_type_vec_init(const uint8_t *frame, size_t pos);
-
-        /**
-         * Initialize the descriptor count vector with the number of the corresponding type of descriptor present in the current Configuration.
-         */
-        void desc_count_vec_init(const uint8_t *frame, size_t pos);
-
     public:
         /**
          * Constructor for Configuration descriptor object.
@@ -356,6 +346,17 @@ namespace avdecc_lib
          * Get the corresponding CLOCK DOMAIN descriptor by index.
          */
         clock_domain_descriptor * STDCALL get_clock_domain_desc_by_index(uint32_t clock_domain_desc_index);
+
+    private:
+        /**
+         * Initialize the descriptor type vector with descriptor types present in the current Configuration.
+         */
+        void desc_type_vec_init(const uint8_t *frame, size_t pos);
+
+        /**
+         * Initialize the descriptor count vector with the number of the corresponding type of descriptor present in the current Configuration.
+         */
+        void desc_count_vec_init(const uint8_t *frame, size_t pos);
     };
 }
 

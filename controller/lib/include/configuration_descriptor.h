@@ -65,7 +65,7 @@ namespace avdecc_lib
 
         /**
          * \return The offset to read the counts of the top level descriptor from the start of the descriptor.
-         *	   This field is set to 74 for this version of AEM.
+         *	       This field is set to 74 for this version of AEM.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_counts_offset() = 0;
 

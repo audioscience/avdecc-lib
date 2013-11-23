@@ -76,11 +76,11 @@ namespace avdecc_lib
 
         /**
          * Get the name of the Clock Domain. This may be user set through the use of a SET_NAME command.
-        * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
-        	 * defined value being provided in a localized form via the localized descripton field. By leaving
-        	 * this field blank an AVDECC Controller can determine if the user has overridden the name and can
-        	 * use this name rather than the localized name.
-                      */
+         * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+         * defined value being provided in a localized form via the localized descripton field. By leaving
+         * this field blank an AVDECC Controller can determine if the user has overridden the name and can
+         * use this name rather than the localized name.
+         */
         uint8_t * STDCALL get_object_name();
 
         /**
@@ -90,20 +90,20 @@ namespace avdecc_lib
 
         /**
          * Get the descriptor index of the Clock Source descriptor describing the current Clock Source
-        * for the Clock Domain.
-                      */
+         * for the Clock Domain.
+         */
         uint16_t STDCALL get_clock_source_index();
 
         /**
-        * Get the offset to the clock sources field from the start of the descriptor.
-        	 * This is 76 for this version of AEM.
-                      */
+         * Get the offset to the clock sources field from the start of the descriptor.
+         * This is 76 for this version of AEM.
+         */
         uint16_t STDCALL get_clock_sources_offset();
 
         /**
          * Get the number of clock source indexes in the clock sources field. The maximum value for this field
-        * is 249 for this version of AEM.
-                      */
+         * is 249 for this version of AEM.
+         */
         uint16_t STDCALL get_clock_sources_count();
 
         /**

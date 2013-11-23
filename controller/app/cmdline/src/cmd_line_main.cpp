@@ -45,22 +45,34 @@ using namespace std;
 extern "C" void notification_callback(void *user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
                                       uint16_t desc_type, uint16_t desc_index, void *notification_id)
 {
-    avdecc_lib::util *utility = avdecc_lib::create_util();
-
     if(notification_type == avdecc_lib::COMMAND_TIMEOUT || notification_type == avdecc_lib::RESPONSE_RECEIVED)
     {
+        std::string cmd_name;
+        std::string desc_name;
+
+        if(cmd_type < 100)
+        {
+            cmd_name = cmd_line::utility->aem_cmd_value_to_name(cmd_type);
+            desc_name = cmd_line::utility->aem_desc_value_to_name(desc_type);
+        }
+        else
+        {
+            cmd_name = cmd_line::utility->acmp_cmd_value_to_name(cmd_type - avdecc_lib::CMD_LOOKUP_FLAG);
+            desc_name = "NULL";
+        }
+
         printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %p)\n",
-               utility->notification_value_to_name(notification_type),
+               cmd_line::utility->notification_value_to_name(notification_type),
                guid,
-               utility->aem_cmd_value_to_name(cmd_type),
-               utility->aem_desc_value_to_name(desc_type),
+               cmd_name,
+               desc_name,
                desc_index,
                notification_id);
     }
     else
     {
         printf("\n[NOTIFICATION] (%s, 0x%llx, %d, %d, %d, %p)\n",
-               utility->notification_value_to_name(notification_type),
+               cmd_line::utility->notification_value_to_name(notification_type),
                guid,
                cmd_type,
                desc_type,
@@ -71,14 +83,12 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
 
 extern "C" void log_callback(void *user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms)
 {
-    avdecc_lib::util *utility = avdecc_lib::create_util();
-
-    printf("\n[LOG] %s (%s)\n", utility->logging_level_value_to_name(log_level), log_msg);
+    printf("\n[LOG] %s (%s)\n", cmd_line::utility->logging_level_value_to_name(log_level), log_msg);
 }
 
 int main()
 {
-    avdecc_cmd_line *avdecc_cmd_line_ref = new avdecc_cmd_line(notification_callback, log_callback);
+    cmd_line *avdecc_cmd_line_ref = new cmd_line(notification_callback, log_callback);
 
     std::vector<std::string> input_argv;
     size_t pos = 0;
@@ -213,7 +223,7 @@ int main()
         {
             if(input_argv.size() == 2)
             {
-                std::string file = avdecc_cmd_line::log_path + input_argv.at(1) + ".txt";
+                std::string file = cmd_line::log_path + input_argv.at(1) + ".txt";
                 try
                 {
                     ofstream_ref.open(file);
@@ -361,23 +371,23 @@ int main()
                     avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
                 }
             }
-	    else if((input_argv.size() == 6) && (input_argv.at(1) == "rx"))
-	    {
-	        uint32_t instream_end_station_index = 0x0;
+            else if(input_argv.size() == 5)
+            {
+                uint32_t instream_end_station_index = 0x0;
                 uint16_t instream_desc_index = 0x0;
-		uint32_t outstream_end_station_index;
-		uint16_t outstream_desc_index;
+                uint32_t outstream_end_station_index;
+                uint16_t outstream_desc_index;
 
-                if(((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)) &&
+                if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
+                   ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)) &&
                    ((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
-                   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)) &&
-                   ((input_argv.at(5) == "0") || (atoi(input_argv.at(5).c_str()) != 0)))
+                   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
-                    instream_end_station_index = (uint32_t)atoi(input_argv.at(2).c_str());
-                    instream_desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
-		    outstream_end_station_index = (uint32_t)atoi(input_argv.at(4).c_str());
-		    outstream_desc_index = (uint16_t)atoi(input_argv.at(5).c_str());
+                    instream_end_station_index = (uint32_t)atoi(input_argv.at(1).c_str());
+                    instream_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
+                    outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
+                    outstream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
                 }
 
                 if(is_input_valid)
@@ -388,10 +398,8 @@ int main()
                 {
                     std::cout << "Invalid Command" << std::endl;
                     avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
-                }	
-
-
-	    }
+                }
+            }
             else
             {
                 std::cout << "Invalid Command\n" << std::endl;
@@ -420,6 +428,35 @@ int main()
                 if(is_input_valid)
                 {
                     avdecc_cmd_line_ref->cmd_disconnect(instream_end_station_index, instream_desc_index);
+                }
+                else
+                {
+                    std::cout << "Invalid Command" << std::endl;
+                    avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+                }
+            }
+            else if(input_argv.size() == 5)
+            {
+                uint32_t instream_end_station_index = 0x0;
+                uint16_t instream_desc_index = 0x0;
+                uint32_t outstream_end_station_index;
+                uint16_t outstream_desc_index;
+
+                if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
+                   ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)) &&
+                   ((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
+                {
+                    is_input_valid = true;
+                    instream_end_station_index = (uint32_t)atoi(input_argv.at(1).c_str());
+                    instream_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
+                    outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
+                    outstream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
+                }
+
+                if(is_input_valid)
+                {
+                    avdecc_cmd_line_ref->cmd_disconnect_rx(instream_end_station_index, instream_desc_index, outstream_end_station_index, outstream_desc_index);
                 }
                 else
                 {

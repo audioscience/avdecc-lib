@@ -67,7 +67,7 @@ namespace avdecc_lib
 
         /**
          * \return The number of Output Streams the AVDECC Entity has. This is also the number
-         *	   of STREAM_OUTPUT descriptors the AVDECC Entity has for Output Streams.
+         *	       of STREAM_OUTPUT descriptors the AVDECC Entity has for Output Streams.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_talker_stream_sources() = 0;
 
@@ -78,7 +78,7 @@ namespace avdecc_lib
 
         /**
          * \return The number of Input Streams the AVDECC Entity has. This is also the number
-         *	   of STREAM_INPUT descriptors the AVDECC Entity has for Input Streams.
+         *         of STREAM_INPUT descriptors the AVDECC Entity has for Input Streams.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_listener_stream_sinks() = 0;
 

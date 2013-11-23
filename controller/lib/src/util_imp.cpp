@@ -172,26 +172,45 @@ namespace avdecc_lib
         "AEM_STATUS_STREAM_IS_RUNNING",
     };
 
+    const char *acmp_cmds_names[] =
+    {
+        "CONNECT_TX_COMMAND",
+        "CONNECT_TX_RESPONSE",
+        "DISCONNECT_TX_COMMAND",
+        "DISCONNECT_TX_RESPONSE",
+        "GET_TX_STATE_COMMAND",
+        "GET_TX_STATE_RESPONSE",
+        "CONNECT_RX_COMMAND",
+        "CONNECT_RX_RESPONSE",
+        "DISCONNECT_RX_COMMAND",
+        "DISCONNECT_RX_RESPONSE",
+        "GET_RX_STATE_COMMAND",
+        "GET_RX_STATE_RESPONSE",
+        "GET_TX_CONNECTION_COMMAND",
+        "GET_TX_CONNECTION_RESPONSE",
+    };
+
     const char *acmp_cmds_status_names[] =
     {
         "ACMP_STATUS_SUCCESS",
-	"ACMP_STATUS_LISTENER_UNKNOWN_ID",
-	"ACMP_STATUS_TALKER_UNKNOWN_ID",
-	"ACMP_STATUS_TALKER_DEST_MAC_FAIL",
-	"ACMP_STATUS_TALKER_NO_STREAM_INDEX",
-	"ACMP_STATUS_TALKER_NO_BANDWIDTH",
-	"ACMP_STATUS_TALKER_EXCLUSIVE",
-	"ACMP_STATUS_LISTENER_TALKER_TIMEOUT",
-	"ACMP_STATUS_LISTENER_EXCLUSIVE",
-	"ACMP_STATUS_STATE_UNAVAILABLE",
-	"ACMP_STATUS_NOT_CONNECTED",
-	"ACMP_STATUS_NO_SUCH_CONNECTION",
-	"ACMP_STATUS_COULD_NOT_SEND_MESSAGE",
-	"ACMP_STATUS_TALKER_MISBEHAVING",
-	"ACMP_STATUS_LISTENER_MISBEHAVING",
-	"ACMP_STATUS_CONTROLLER_NOT_AUTHORIZED",
-	"ACMP_STATUS_INCOMPATIBLE_REQUEST",
-	"ACMP_STATUS_LISTENER_INVALID_CONNECTION",
+        "ACMP_STATUS_LISTENER_UNKNOWN_ID",
+        "ACMP_STATUS_TALKER_UNKNOWN_ID",
+        "ACMP_STATUS_TALKER_DEST_MAC_FAIL",
+        "ACMP_STATUS_TALKER_NO_STREAM_INDEX",
+        "ACMP_STATUS_TALKER_NO_BANDWIDTH",
+        "ACMP_STATUS_TALKER_EXCLUSIVE",
+        "ACMP_STATUS_LISTENER_TALKER_TIMEOUT",
+        "ACMP_STATUS_LISTENER_EXCLUSIVE",
+        "ACMP_STATUS_STATE_UNAVAILABLE",
+        "ACMP_STATUS_NOT_CONNECTED",
+        "ACMP_STATUS_NO_SUCH_CONNECTION",
+        "ACMP_STATUS_COULD_NOT_SEND_MESSAGE",
+        "ACMP_STATUS_TALKER_MISBEHAVING",
+        "ACMP_STATUS_LISTENER_MISBEHAVING",
+        "ACMP_STATUS_RESERVED",
+        "ACMP_STATUS_CONTROLLER_NOT_AUTHORIZED",
+        "ACMP_STATUS_INCOMPATIBLE_REQUEST",
+        "ACMP_STATUS_LISTENER_INVALID_CONNECTION",
     };
 
     const char *notification_names[] =
@@ -213,6 +232,24 @@ namespace avdecc_lib
         "LOGGING_LEVEL_VERBOSE"
     };
 
+    struct acmp_command_and_timeout
+    {
+        uint32_t cmd;
+        uint32_t timeout_ms;
+    };
+
+    struct acmp_command_and_timeout acmp_command_and_timeout_table[] =
+    {
+        {CONNECT_TX_COMMAND, ACMP_CONNECT_TX_COMMAND_TIMEOUT_MS},
+        {DISCONNECT_TX_COMMAND, ACMP_DISCONNECT_TX_COMMAND_TIMEOUT_MS},
+        {GET_TX_STATE_COMMAND, ACMP_GET_TX_STATE_COMMAND_TIMEOUT_MS},
+        {CONNECT_RX_COMMAND, ACMP_CONNECT_RX_COMMAND_TIMEOUT_MS},
+        {DISCONNECT_RX_COMMAND, ACMP_DISCONNECT_RX_COMMAND_TIMEOUT_MS},
+        {GET_RX_STATE_COMMAND, ACMP_GET_RX_STATE_COMMAND_TIMEOUT_MS},
+        {GET_TX_CONNECTION_COMMAND, ACMP_GET_TX_CONNECTION_COMMAND_TIMEOUT_MS},
+        {AEM_ACMP_ERROR, 0xffff}
+    };
+
     struct ieee1722_format
     {
         uint64_t fmt;
@@ -221,9 +258,9 @@ namespace avdecc_lib
 
     struct ieee1722_format ieee1722_format_table[] =
     {
-        {UINT64_C(0x00a0020140000100), "IEC61883_AM824_MBLA_48KHZ_1CH"},
-        {UINT64_C(0x00a0020240000200), "IEC61883_AM824_MBLA_48KHZ_2CH"},
-        {UINT64_C(0x0000000000000000), "UNKNOWN"},
+        {UINT64_C(0x00a0020140000100), "1CH"}, // IEC61883_AM824_MBLA_48KHZ_1CH
+        {UINT64_C(0x00a0020240000200), "2CH"}, // IEC61883_AM824_MBLA_48KHZ_2CH
+        {UINT64_C(0x0000000000000000), "UNKNOWN"}
     };
 
     util_imp *utility = new util_imp();
@@ -264,7 +301,7 @@ namespace avdecc_lib
 
         for(uint32_t i = 0; i < TOTAL_NUM_OF_AEM_CMDS; i++)
         {
-            if(cmd_name_string.compare(aem_cmds_names[i]) == 0)
+            if(cmd_name_string == aem_cmds_names[i])
             {
                 return i;
             }
@@ -319,11 +356,39 @@ namespace avdecc_lib
         return "UNKNOWN";
     }
 
+    const char * STDCALL util_imp::acmp_cmd_value_to_name(uint16_t cmd_value)
+    {
+        if(cmd_value < TOTAL_NUM_OF_ACMP_CMDS)
+        {
+            return acmp_cmds_names[cmd_value];
+        }
+
+        return "UNKNOWN";
+    }
+
+    uint16_t STDCALL util_imp::acmp_cmd_name_to_value(const char *cmd_name)
+    {
+        std::string cmd_name_string;
+        cmd_name_string = cmd_name;
+
+        std::transform(cmd_name_string.begin(), cmd_name_string.end(), cmd_name_string.begin(), ::toupper);
+
+        for(uint32_t i = 0; i < TOTAL_NUM_OF_ACMP_CMDS; i++)
+        {
+            if(cmd_name_string == acmp_cmds_names[i])
+            {
+                return i;
+            }
+        }
+
+        return (uint16_t)AEM_CMD_ERROR;
+    }
+
     const char * STDCALL util_imp::acmp_cmd_status_value_to_name(uint16_t acmp_cmd_status_value)
     {
         if(acmp_cmd_status_value < TOTAL_NUM_OF_ACMP_CMDS_STATUS)
         {
-            return aem_cmds_status_names[acmp_cmd_status_value];
+            return acmp_cmds_status_names[acmp_cmd_status_value];
         }
 
         return "UNKNOWN";
@@ -347,6 +412,23 @@ namespace avdecc_lib
         }
 
         return "UNKNOWN";
+    }
+
+    uint32_t STDCALL util_imp::acmp_cmd_to_timeout(const uint32_t acmp_cmd)
+    {
+        struct acmp_command_and_timeout *p = &acmp_command_and_timeout_table[0];
+
+        while(p->cmd != AEM_ACMP_ERROR)
+        {
+            if(p->cmd == acmp_cmd)
+            {
+                return p->timeout_ms;
+            }
+
+            p++;
+        }
+
+        return (uint32_t)0xffff;
     }
 
     uint64_t STDCALL util_imp::ieee1722_format_name_to_value(const char *format_name)
@@ -380,6 +462,24 @@ namespace avdecc_lib
             p++;
         }
 
+        return "UNKNOWN";
+    }
+
+    const char * STDCALL util_imp::end_station_mac_to_string(uint64_t end_station_mac)
+    {
+        if(end_station_mac == 0x00000050c24edb3c) // AVBX HPX Mode device MAC address
+        {
+            return " (...b3c)";
+        }
+        else if(end_station_mac == 0x0000001cf700021b) // Hono 4.4M device MAC address
+        {
+            return " (...21b)";
+        }
+        else if(end_station_mac == 0x000000229700400b) // XMOS AVB Endpoint device MAC address
+        {
+            return " (...00b)";
+        }
+        
         return "UNKNOWN";
     }
 
