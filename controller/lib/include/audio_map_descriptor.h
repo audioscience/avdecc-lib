@@ -42,21 +42,21 @@
 
 namespace avdecc_lib
 {
-        class audio_map_descriptor : public virtual descriptor_base
-        {
-        public:
-                /**
-                 * \return The offset from the start of the descriptor for the first octet of the mapping stream channel 0 string.
-		 *         This field is 8 for this version of AEM.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_mappings_offset() = 0;
+    class audio_map_descriptor : public virtual descriptor_base
+    {
+    public:
+        /**
+         * \return The offset from the start of the descriptor for the first octet of the mapping stream channel 0 string.
+         *         This field is 8 for this version of AEM.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_mappings_offset() = 0;
 
-                /**
-                 * \return The number of channel mappings within the Audio Map. The maximum value
-		 *	   of this field is 62 for this version of AEM.
-                 */
-                AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_mappings() = 0;
-        };
+        /**
+         * \return The number of channel mappings within the Audio Map. The maximum value
+         *	       of this field is 62 for this version of AEM.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_mappings() = 0;
+    };
 }
 
 #endif

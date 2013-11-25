@@ -43,86 +43,87 @@
 
 namespace avdecc_lib
 {
-	struct ipheader;
-	struct udpheade;
-	
-	class net_interface_imp : public net_interface
-	{
-	private:
-		enum econsts {
-			SIZEOF_BUFFER = 2048
-		};
+    struct ipheader;
+    struct udpheade;
 
-		std::vector<std::string> ifnames;
+    class net_interface_imp : public net_interface
+    {
+    private:
+        enum econsts
+        {
+            SIZEOF_BUFFER = 2048
+        };
 
-		uint32_t total_devs;
-		uint32_t interface_num; // The interface selected
-		struct ipheader *ip_hdr_store;
-		struct udpheader *udp_hdr_store;
-		int rawsock;
-		int ifindex;
-		uint16_t ethertype;
-		uint64_t mac;
-		uint8_t buf[SIZEOF_BUFFER];
-		uint8_t rx_buf[SIZEOF_BUFFER];
+        std::vector<std::string> ifnames;
 
-		int getifindex(int rawsock, const char *iface);
-		int setpromiscuous(int rawsock, int ifindex);
+        uint32_t total_devs;
+        uint32_t interface_num; // The interface selected
+        struct ipheader *ip_hdr_store;
+        struct udpheader *udp_hdr_store;
+        int rawsock;
+        int ifindex;
+        uint16_t ethertype;
+        uint64_t mac;
+        uint8_t buf[SIZEOF_BUFFER];
+        uint8_t rx_buf[SIZEOF_BUFFER];
 
-	public:
-		/**
-		 * An empty constructor for net_interface_imp
-		 */
-		net_interface_imp();
+        int getifindex(int rawsock, const char *iface);
+        int setpromiscuous(int rawsock, int ifindex);
 
-		/**
-		 * Destructor for net_interface_imp used for destroying objects
-		 */
-		virtual ~net_interface_imp();
+    public:
+        /**
+         * An empty constructor for net_interface_imp
+         */
+        net_interface_imp();
+
+        /**
+         * Destructor for net_interface_imp used for destroying objects
+         */
+        virtual ~net_interface_imp();
 
 
-		void STDCALL destroy();
+        void STDCALL destroy();
 
-		/**
-		 * Count the number of devices.
-		 */
-		uint32_t STDCALL devs_count();
+        /**
+         * Count the number of devices.
+         */
+        uint32_t STDCALL devs_count();
 
-		/**
-		 * Get the MAC address of the network interface.
-		 */
-		uint64_t get_mac();
+        /**
+         * Get the MAC address of the network interface.
+         */
+        uint64_t get_mac();
 
-		/**
-		 * Get network interface description by index.
-		 */
-		char * STDCALL get_dev_desc_by_index(uint32_t dev_index);
+        /**
+         * Get network interface description by index.
+         */
+        char * STDCALL get_dev_desc_by_index(uint32_t dev_index);
 
-		/**
-		 * Select network interface by number.
-		 */
-		int STDCALL select_interface_by_num(uint32_t interface_num);
+        /**
+         * Select network interface by number.
+         */
+        int STDCALL select_interface_by_num(uint32_t interface_num);
 
-		/**
-		 * Update the Ethernet type for the network interface.
-		 */
-		int set_capture_ether_type(uint16_t *ether_type, uint32_t count);
+        /**
+         * Update the Ethernet type for the network interface.
+         */
+        int set_capture_ether_type(uint16_t *ether_type, uint32_t count);
 
-		/**
-		 * Capture a network packet.
-		 */
-		int STDCALL capture_frame(const uint8_t **frame, uint16_t *mem_buf_len);
+        /**
+         * Capture a network packet.
+         */
+        int STDCALL capture_frame(const uint8_t **frame, uint16_t *mem_buf_len);
 
-		/**
-		 * Send a network packet.
-		 */
-		int send_frame(uint8_t *frame, uint16_t mem_buf_len);
+        /**
+         * Send a network packet.
+         */
+        int send_frame(uint8_t *frame, uint16_t mem_buf_len);
 
-		int get_fd();
+        int get_fd();
 
-	};
+    };
 
-	extern net_interface_imp *net_interface_ref;
+    extern net_interface_imp *net_interface_ref;
 }
 
 #endif

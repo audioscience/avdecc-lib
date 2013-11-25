@@ -34,31 +34,31 @@
 class cmd_line_help
 {
 private:
-        std::string command;
-        std::string description;
+    std::string command;
+    std::string description;
 
 public:
-        cmd_line_help();
+    cmd_line_help();
 
-        /**
-         * Constructor for cmd_line_help used for constructing an object with a command and description.
-         */
-        cmd_line_help(const std::string cmd, const std::string desc);
+    /**
+     * Constructor for cmd_line_help used for constructing an object with a command and description.
+     */
+    cmd_line_help(const std::string cmd, const std::string desc);
 
-        /**
-         * Destructor for cmd_line_help used for destroying objects
-         */
-        ~cmd_line_help();
+    /**
+     * Destructor for cmd_line_help used for destroying objects
+     */
+    ~cmd_line_help();
 
-        /**
-         * Get the command name.
-         */
-        const std::string get_command();
+    /**
+     * Get the command name.
+     */
+    const std::string get_command();
 
-        /**
-         * Get the command description.
-         */
-        const std::string get_description();
+    /**
+     * Get the command description.
+     */
+    const std::string get_description();
 };
 
 #endif
