@@ -196,13 +196,39 @@ void cmd_line::cmd_line_help_init()
 
     cmd_line_help_vec.push_back(new cmd_line_help("disconnect",
 
-                                                  "disconnect\n" \
-                                                  "Display all the ACMP connections that can be disconnected.\n\n"
-                                                  "disconnect [d_e_s_i] [d_d_i]\n" \
-                                                  "Disconnect an instream from an outstream.\n\n" \
+                                                  "disconnect [d_e_s_i] [d_d_i] [s_e_s_i] [s_d_i]\n" \
+                                                  "Send a CONNECT_RX command to disconnect Listener sink stream.\n\n" \
                                                   "\nParameters"
                                                   "\n\t d_e_s_i stands for destination End Station index and is an integer." \
                                                   "\n\t d_d_i stands for destination descriptor index and is an integer."
+                                                  "\n\t s_e_s_i stands for source End Station index and is an integer. " \
+                                                  "\n\t s_d_i stands for source descriptor index and is an integer."
+                                                 ));
+
+    cmd_line_help_vec.push_back(new cmd_line_help("get tx state",
+
+                                                  "get tx state [s_e_s_i] [s_d_i]\n" \
+                                                  "Send a GET_TX_STATE command to get Talker source stream connection state.\n\n"
+                                                  "\nParameters"
+                                                  "\n\t s_e_s_i stands for source End Station index and is an integer. " \
+                                                  "\n\t s_d_i stands for source descriptor index and is an integer."
+                                                 ));
+
+    cmd_line_help_vec.push_back(new cmd_line_help("get rx state",
+
+                                                  "get rx state [d_e_s_i] [d_d_i]\n" \
+                                                  "Send a GET_RX_STATE command to get Listener sink stream connection state.\n\n"
+                                                  "\nParameters"
+                                                  "\n\t d_e_s_i stands for destination End Station index and is an integer." \
+                                                  "\n\t d_d_i stands for destination descriptor index and is an integer."
+                                                 ));
+
+    cmd_line_help_vec.push_back(new cmd_line_help("get tx connection",
+
+                                                  "get tx connection [s_e_s_i] [s_d_i]\n" \
+                                                  "Send a GET_TX_CONNECTION command with a notification id to get a specific\n" \
+                                                  "Talker connection information.\n\n"
+                                                  "\nParameters"
                                                   "\n\t s_e_s_i stands for source End Station index and is an integer. " \
                                                   "\n\t s_d_i stands for source descriptor index and is an integer."
                                                  ));
@@ -1486,7 +1512,7 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
 
                 for(uint32_t j = 0; j < stream_output_desc_count; j++)
                 {
-                    uint8_t *src_desc_name = controller_ref->get_config_desc_by_index(i, current_entity, current_config)->get_stream_output_desc_by_index(j)->get_object_name();
+                    src_desc_name = controller_ref->get_config_desc_by_index(i, current_entity, current_config)->get_stream_output_desc_by_index(j)->get_object_name();
                     format = controller_ref->get_config_desc_by_index(i, current_entity, current_config)->get_stream_output_desc_by_index(j)->get_current_format();
 
                     std::cout << std::setw(5) << i << std::setw(20) << outstream_end_station_name << utility->end_station_mac_to_string(end_station_mac) << "   " <<
@@ -1503,28 +1529,20 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
     return 0;
 }
 
-int cmd_line::cmd_get_tx_state(uint32_t instream_end_station_index,
-                                      uint16_t instream_desc_index,
-                                      uint32_t outstream_end_station_index,
-                                      uint16_t outstream_desc_index)
+int cmd_line::cmd_get_tx_state(uint32_t outstream_end_station_index, uint16_t outstream_desc_index)
 {
-    bool is_valid = (instream_end_station_index != outstream_end_station_index) && (instream_end_station_index < (controller_ref->get_end_station_count())) &&
-                        (instream_desc_index < (controller_ref->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_input_desc_count())) &&
-                        (outstream_end_station_index < (controller_ref->get_end_station_count())) &&
-                        (outstream_desc_index < (controller_ref->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_output_desc_count()));
+    bool is_valid = (outstream_end_station_index < (controller_ref->get_end_station_count())) &&
+                    (outstream_desc_index < (controller_ref->get_config_desc_by_index(outstream_end_station_index, current_entity, current_config)->get_stream_output_desc_count()));
 
     if(is_valid)
     {
         int status = -1;
         intptr_t cmd_notification_id = 0;
-        uint64_t talker_guid;
 
         cmd_notification_id = get_next_notification_id();
         system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
-        avdecc_lib::stream_input_descriptor *instream = controller_ref->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_input_desc_by_index(instream_desc_index);
-        talker_guid = controller_ref->get_end_station_by_index(outstream_end_station_index)->get_entity_desc_by_index(current_entity)->get_entity_id();
-
-        instream->send_connect_rx_cmd((void *)cmd_notification_id, talker_guid, outstream_desc_index);
+        avdecc_lib::stream_output_descriptor *outstream = controller_ref->get_config_desc_by_index(outstream_end_station_index, current_entity, current_config)->get_stream_output_desc_by_index(outstream_desc_index);
+        outstream->send_get_tx_state_cmd((void *)cmd_notification_id);
         status = system_ref->get_last_resp_status();
 
         std::cout << "\nStatus: " << utility->acmp_cmd_status_value_to_name(status) << std::endl;
@@ -1572,9 +1590,9 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
 }
 
 int cmd_line::cmd_disconnect_rx(uint32_t instream_end_station_index,
-                                       uint16_t instream_desc_index,
-                                       uint32_t outstream_end_station_index,
-                                       uint16_t outstream_desc_index)
+                                uint16_t instream_desc_index,
+                                uint32_t outstream_end_station_index,
+                                uint16_t outstream_desc_index)
 {
     bool is_valid = true;
 
@@ -1602,28 +1620,21 @@ int cmd_line::cmd_disconnect_rx(uint32_t instream_end_station_index,
     return 0;
 }
 
-int cmd_line::cmd_get_rx_state(uint32_t instream_end_station_index,
-                                      uint16_t instream_desc_index,
-                                      uint32_t outstream_end_station_index,
-                                      uint16_t outstream_desc_index)
+int cmd_line::cmd_get_rx_state(uint32_t instream_end_station_index, uint16_t instream_desc_index)
 {
-    bool is_valid = (instream_end_station_index != outstream_end_station_index) && (instream_end_station_index < (controller_ref->get_end_station_count())) &&
-                        (instream_desc_index < (controller_ref->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_input_desc_count())) &&
-                        (outstream_end_station_index < (controller_ref->get_end_station_count())) &&
-                        (outstream_desc_index < (controller_ref->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_output_desc_count()));
-
-    if(is_valid)
+    bool is_valid = (instream_end_station_index < (controller_ref->get_end_station_count())) &&
+                    (instream_desc_index < (controller_ref->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_input_desc_count()));
+              
+    if(true)
     {
         int status = -1;
         intptr_t cmd_notification_id = 0;
-        uint64_t talker_guid;
 
         cmd_notification_id = get_next_notification_id();
         system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *instream = controller_ref->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_input_desc_by_index(instream_desc_index);
-        talker_guid = controller_ref->get_end_station_by_index(outstream_end_station_index)->get_entity_desc_by_index(current_entity)->get_entity_id();
 
-        instream->send_get_rx_state_cmd((void *)cmd_notification_id, talker_guid, outstream_desc_index);
+        instream->send_get_rx_state_cmd((void *)cmd_notification_id);
         status = system_ref->get_last_resp_status();
 
         std::cout << "\nStatus: " << utility->acmp_cmd_status_value_to_name(status) << std::endl;
@@ -1636,57 +1647,27 @@ int cmd_line::cmd_get_rx_state(uint32_t instream_end_station_index,
     return 0;
 }
 
-int cmd_line::cmd_disconnect()
+int cmd_line::cmd_get_tx_connection(uint32_t outstream_end_station_index, uint16_t outstream_desc_index)
 {
-    uint32_t stream_input_desc_count = 0;
-    uint32_t stream_output_desc_count = 0;
+    bool is_valid = (outstream_end_station_index < (controller_ref->get_end_station_count())) &&
+                    (outstream_desc_index < (controller_ref->get_config_desc_by_index(outstream_end_station_index, current_entity, current_config)->get_stream_output_desc_count()));
 
-    std::cout << "\n" << "End Station" << "  " << "Instream" << "  "<< "End Station" << "  " << "Outstream" << std::endl;
-    std::cout << "------------------------------------------------------------------------------" << std::endl;
-
-    for(uint32_t i = 0; i < controller_ref->get_end_station_count(); i++)
+    if(is_valid)
     {
-        stream_input_desc_count = controller_ref->get_config_desc_by_index(i, current_entity, current_config)->get_stream_input_desc_count();
-        stream_output_desc_count = controller_ref->get_config_desc_by_index(i, current_entity, current_config)->get_stream_output_desc_count();
+        int status = -1;
+        intptr_t cmd_notification_id = 0;
 
-        for(uint32_t j = 0; j < stream_input_desc_count; j++)
-        {
-            //uint32_t outstream_end_station_index;
-            //uint16_t outstream_desc_index;
+        cmd_notification_id = get_next_notification_id();
+        system_ref->set_wait_for_next_cmd((void *)cmd_notification_id);
+        avdecc_lib::stream_output_descriptor *outstream = controller_ref->get_config_desc_by_index(outstream_end_station_index, current_entity, current_config)->get_stream_output_desc_by_index(outstream_desc_index);
+        outstream->send_get_tx_connection_cmd((void *)cmd_notification_id, 0, 0);
+        status = system_ref->get_last_resp_status();
 
-            // bool is_valid = check_acmp_connection(instream_end_station_index, instream_desc_index, src_end_station_guid, outstream_desc_index);
-            // if(is_valid)
-            //{
-            //	std::cout << std::setw(4) << i <<  "  " << j << outstream_end_station_index << "  " << outstream_desc_index <<std::endl;
-            //}
-        }
+        std::cout << "\nStatus: " << utility->acmp_cmd_status_value_to_name(status) << std::endl;
     }
-
-    return 0;
-}
-
-int cmd_line::cmd_disconnect(uint32_t instream_end_station_index, uint16_t instream_desc_index)
-{
-    uint32_t stream_output_desc_count = 0;
-
-    std::cout << "\n" << "End Station" << "  " << "Instream" << "  "<< "End Station" << "  " << "Outstream" << std::endl;
-    std::cout << "------------------------------------------------------------------------------" << std::endl;
-
-    for(uint32_t i = 0; i < controller_ref->get_end_station_count(); i++)
+    else
     {
-        stream_output_desc_count = controller_ref->get_config_desc_by_index(i, current_entity, current_config)->get_stream_output_desc_count();
-
-        for(uint32_t j = 0; j < stream_output_desc_count; j++)
-        {
-            //uint32_t outstream_end_station_index;
-            //uint16_t outstream_desc_index;
-
-            // bool is_valid = check_acmp_connection(instream_end_station_index, instream_desc_index, src_end_station_guid, outstream_desc_index);
-            // if(is_valid && (j == outstream_desc_index))
-            //{
-            //	make_acmp_disconnection(dest_end_station_guid, instream_desc_index, src_end_station_guid, outstream_desc_index);
-            //}
-        }
+        std::cout << "Invalid GET Talker Connection State" << std::endl;
     }
 
     return 0;

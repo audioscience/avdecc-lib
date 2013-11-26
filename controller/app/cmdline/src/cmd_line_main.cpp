@@ -47,17 +47,17 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
 {
     if(notification_type == avdecc_lib::COMMAND_TIMEOUT || notification_type == avdecc_lib::RESPONSE_RECEIVED)
     {
-        std::string cmd_name;
-        std::string desc_name;
+        const char *cmd_name;
+        const char *desc_name;
 
-        if(cmd_type < 100)
+        if(cmd_type < avdecc_lib::CMD_LOOKUP)
         {
             cmd_name = cmd_line::utility->aem_cmd_value_to_name(cmd_type);
             desc_name = cmd_line::utility->aem_desc_value_to_name(desc_type);
         }
         else
         {
-            cmd_name = cmd_line::utility->acmp_cmd_value_to_name(cmd_type - avdecc_lib::CMD_LOOKUP_FLAG);
+            cmd_name = cmd_line::utility->acmp_cmd_value_to_name(cmd_type - avdecc_lib::CMD_LOOKUP);
             desc_name = "NULL";
         }
 
@@ -408,34 +408,7 @@ int main()
         }
         else if(input_argv.at(0) == "disconnect")
         {
-            if(input_argv.size() == 1)
-            {
-                avdecc_cmd_line_ref->cmd_disconnect();
-            }
-            else if(input_argv.size() == 3)
-            {
-                uint32_t instream_end_station_index = 0x0;
-                uint16_t instream_desc_index = 0x0;
-
-                if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
-                   ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)))
-                {
-                    is_input_valid = true;
-                    instream_end_station_index = (uint16_t)atoi(input_argv.at(1).c_str());
-                    instream_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
-                }
-
-                if(is_input_valid)
-                {
-                    avdecc_cmd_line_ref->cmd_disconnect(instream_end_station_index, instream_desc_index);
-                }
-                else
-                {
-                    std::cout << "Invalid Command" << std::endl;
-                    avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
-                }
-            }
-            else if(input_argv.size() == 5)
+            if(input_argv.size() == 5)
             {
                 uint32_t instream_end_station_index = 0x0;
                 uint16_t instream_desc_index = 0x0;
@@ -860,6 +833,75 @@ int main()
                     avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
                 }
             }
+            else if((input_argv.size() == 5) && (input_argv.at(1) == "tx") && (input_argv.at(2) == "state"))
+            {
+                uint32_t outstream_end_station_index = 0x0;
+                uint16_t outstream_desc_index = 0x0;
+
+                if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
+                   (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
+                {
+                    is_input_valid = true;
+                    outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
+                    outstream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
+                }
+
+                if(is_input_valid)
+                {
+                    avdecc_cmd_line_ref->cmd_get_tx_state(outstream_end_station_index, outstream_desc_index);
+                }
+                else
+                {
+                    std::cout << "Invalid Command" << std::endl;
+                    avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1) + " " + input_argv.at(2));
+                }
+            }
+            else if((input_argv.size() == 5) && (input_argv.at(1) == "rx") && (input_argv.at(2) == "state"))
+            {
+                uint32_t instream_end_station_index = 0x0;
+                uint16_t instream_desc_index = 0x0;
+
+                if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
+                   (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
+                {
+                    is_input_valid = true;
+                    instream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
+                    instream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
+                }
+
+                if(is_input_valid)
+                {
+                        avdecc_cmd_line_ref->cmd_get_rx_state(instream_end_station_index, instream_desc_index);
+                }
+                else
+                {
+                    std::cout << "Invalid Command" << std::endl;
+                    avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1) + " " + input_argv.at(2));
+                }
+            }
+            else if((input_argv.size() == 5) && (input_argv.at(1) == "tx") && (input_argv.at(2) == "connection"))
+            {
+                uint32_t outstream_end_station_index = 0x0;
+                uint16_t outstream_desc_index = 0x0;
+
+                if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
+                   (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
+                {
+                    is_input_valid = true;
+                    outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
+                    outstream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
+                }
+
+                if(is_input_valid)
+                {
+                    avdecc_cmd_line_ref->cmd_get_tx_connection(outstream_end_station_index, outstream_desc_index);
+                }
+                else
+                {
+                    std::cout << "Invalid Command" << std::endl;
+                    avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1) + " " + input_argv.at(2));
+                }
+            }
             else
             {
                 std::cout << "Invalid Command\n" << std::endl;
@@ -1004,7 +1046,6 @@ int main()
     }
 
     ofstream_ref.close();
-
     delete avdecc_cmd_line_ref;
     return 0;
 }
