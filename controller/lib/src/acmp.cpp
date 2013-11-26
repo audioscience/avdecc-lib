@@ -123,10 +123,11 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "Resend the command with sequence id = %d",
                                       inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
+            struct jdksavdecc_frame frame = inflight_cmds.at(inflight_cmd_index).frame();
 
             tx_cmd(inflight_cmds.at(inflight_cmd_index).cmd_notification_id,
                    inflight_cmds.at(inflight_cmd_index).notification_flag(),
-                   &inflight_cmds.at(inflight_cmd_index).frame(),
+                   &frame,
                    true);
         }
     }
