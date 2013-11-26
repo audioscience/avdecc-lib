@@ -112,7 +112,6 @@ namespace avdecc_lib
             notification_id = inflight_cmds_vec.at(inflight_index).notification_id;
             notification_flag = inflight_cmds_vec.at(inflight_index).notification_flag;
             callback(notification_id, notification_flag, ether_frame->payload);
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command Success");
             inflight_cmds_vec.erase(inflight_cmds_vec.begin() + inflight_index);
 
             return 1;

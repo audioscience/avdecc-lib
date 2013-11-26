@@ -66,14 +66,34 @@ namespace avdecc_lib
         return 0;
     }
 
+    uint8_t * STDCALL descriptor_base_imp::get_object_name()
+    {
+        return NULL;
+    }
+
     uint16_t STDCALL descriptor_base_imp::get_localized_description()
     {
         return 0;
     }
 
-    uint8_t * STDCALL descriptor_base_imp::get_object_name()
+    uint32_t STDCALL descriptor_base_imp::acquire_entity_flags()
     {
-        return NULL;
+        return 0;
+    }
+
+    uint64_t STDCALL descriptor_base_imp::acquire_entity_owner_entity_id()
+    {
+        return 0;
+    }
+
+    uint32_t STDCALL descriptor_base_imp::lock_entity_flags()
+    {
+        return 0;
+    }
+
+    uint64_t STDCALL descriptor_base_imp::lock_entity_locked_entity_id()
+    {
+        return 0;
     }
 
     int STDCALL descriptor_base_imp::send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag)

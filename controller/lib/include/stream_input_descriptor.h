@@ -203,7 +203,7 @@ namespace avdecc_lib
          * \return The stream info stream destination MAC of a stream after sending a GET_STREAM_info command and
          *	       receiving a response back for the command.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_stream_info_stream_dest_mac() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_stream_dest_mac() = 0;
 
         /**
          * \return The stream info MSRP failure code of a stream after sending a GET_STREAM_info command and
@@ -218,45 +218,45 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_msrp_failure_bridge_id() = 0;
 
         /**
-         * Get the stream id field used to identify and transfer the associated stream ID where suitable 
+         * \return The stream id field used to identify and transfer the associated stream ID where suitable 
          * after sending a GET_RX_STATE command and receiving a response back for the command.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_rx_state_stream_id() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_rx_state_stream_id() = 0;
 
         /**
-         * Get the Talker unique ID used to uniquely identify the stream source of the AVDECC Talker 
+         * \return The Talker unique ID used to uniquely identify the stream source of the AVDECC Talker 
          * after sending a GET_RX_STATE command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_talker_unique_id() = 0;
 
         /**
-         * Get Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener   
+         * \return The Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener   
          * after sending a GET_RX_STATE command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_listener_unique_id() = 0;
 
         /**
-         * Get the stream destination MAC address used to convey the destination MAC address for a stream
+         * \return The stream destination MAC address used to convey the destination MAC address for a stream
          * from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
          * sending a GET_RX_STATE command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_rx_state_stream_dest_mac() = 0;
 
         /**
-         * Get connection count used by the state commands to return the number of connections an AVDECC Talker
+         * \return The connection count used by the state commands to return the number of connections an AVDECC Talker
          * thinks it has on its stream source after sending a GET_RX_STATE command and receiving a response
          * back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_connection_count() = 0;
 
         /**
-         * Get the flags used to indicate attributes of the connection or saved state after sending a GET_RX_STATE
+         * \return The flags used to indicate attributes of the connection or saved state after sending a GET_RX_STATE
          * command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_flags() = 0;
 
         /**
-         * Get stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
+         * \return The stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
          * or from either to the AVDECC Controller after sending a GET_RX_STATE command and receiving a response
          * back for the command.
          */
@@ -267,6 +267,11 @@ namespace avdecc_lib
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          * \param new_stream_format The stream format field is set to the new stream format.
+         *
+         * The new stream format can be retrieved by calling the set_stream_format_stream_format function after successfully
+         * receiving a response back for the SET_STREAM_FORMAT command sent.
+         *
+         * \see set_stream_format_stream_format()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_format_cmd(void *notification_id, uint64_t new_stream_format) = 0;
 
@@ -274,6 +279,11 @@ namespace avdecc_lib
          * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * The stream format can be retrieved by calling the get_stream_format_stream_format function after successfully
+         * receiving a response back for the GET_STREAM_FORMAT command sent.
+         *
+         * \see get_stream_format_stream_format()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_format_cmd(void *notification_id) = 0;
 
@@ -290,6 +300,13 @@ namespace avdecc_lib
          * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * The stream information can be retrieved by calling the following functions after successfully
+         * receiving a response back for the GET_STREAM_INFO command sent.
+         *
+         * \see get_stream_info_flags(), get_stream_info_stream_format(), get_stream_info_stream_id(),
+         *      get_stream_info_msrp_accumulated_latency(), get_stream_info_stream_dest_mac(),
+         *      get_stream_info_msrp_failure_code(), get_stream_info_msrp_failure_bridge_id()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void *notification_id) = 0;
 

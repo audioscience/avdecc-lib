@@ -259,9 +259,12 @@ namespace avdecc_lib
         return aem_cmd_get_stream_info_resp.msrp_accumulated_latency;
     }
 
-    uint8_t * STDCALL stream_output_descriptor_imp::get_stream_info_stream_dest_mac()
+    uint64_t STDCALL stream_output_descriptor_imp::get_stream_info_stream_dest_mac()
     {
-        return aem_cmd_get_stream_info_resp.stream_dest_mac.value;
+        uint64_t stream_dest_mac;
+        utility->convert_eui48_to_uint64(aem_cmd_get_stream_info_resp.stream_dest_mac.value, stream_dest_mac);
+
+        return stream_dest_mac;
     }
 
     uint8_t STDCALL stream_output_descriptor_imp::get_stream_info_msrp_failure_code()
@@ -279,9 +282,9 @@ namespace avdecc_lib
         return stream_flags.clock_sync_source;
     }
 
-    uint8_t * STDCALL stream_output_descriptor_imp::get_tx_state_stream_id()
+    uint64_t STDCALL stream_output_descriptor_imp::get_tx_state_stream_id()
     {
-        return acmp_cmd_get_tx_state_resp.header.stream_id.value;
+        return jdksavdecc_uint64_get(&acmp_cmd_get_tx_state_resp.header.stream_id, 0);
     }
 
     uint8_t * STDCALL stream_output_descriptor_imp::get_tx_state_stream_dest_mac()
@@ -299,9 +302,9 @@ namespace avdecc_lib
         return acmp_cmd_get_tx_state_resp.stream_vlan_id;
     }
     
-    uint8_t * STDCALL stream_output_descriptor_imp::get_tx_connection_stream_id()
+    uint64_t STDCALL stream_output_descriptor_imp::get_tx_connection_stream_id()
     {
-        return acmp_cmd_get_tx_connection_resp.header.stream_id.value;
+        return jdksavdecc_uint64_get(&acmp_cmd_get_tx_connection_resp.header.stream_id, 0);
     }
 
     uint16_t STDCALL stream_output_descriptor_imp::get_tx_connection_talker_unique_id()

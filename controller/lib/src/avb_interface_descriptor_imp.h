@@ -82,7 +82,7 @@ namespace avdecc_lib
         /**
          * Get the MAC address of the interface.
          */
-        uint8_t * STDCALL get_mac_addr();
+        uint64_t STDCALL get_mac_addr();
 
         /**
          * Get the flags describing the features of the interface.

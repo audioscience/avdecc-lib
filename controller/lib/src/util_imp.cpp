@@ -27,6 +27,7 @@
  * Utility implementation
  */
 
+#include <sstream>
 #include <string>
 #include <algorithm>
 #include "enumeration.h"
@@ -467,20 +468,14 @@ namespace avdecc_lib
 
     const char * STDCALL util_imp::end_station_mac_to_string(uint64_t end_station_mac)
     {
-        if(end_station_mac == 0x00000050c24edb3c) // AVBX HPX Mode device MAC address
-        {
-            return " (...b3c)";
-        }
-        else if(end_station_mac == 0x0000001cf700021b) // Hono 4.4M device MAC address
-        {
-            return " (...21b)";
-        }
-        else if(end_station_mac == 0x000000229700400b) // XMOS AVB Endpoint device MAC address
-        {
-            return " (...00b)";
-        }
-        
-        return "UNKNOWN";
+        static std::string mac_substring;
+        std::stringstream mac_to_string;
+
+        mac_to_string << std::hex << end_station_mac;
+        mac_substring = " (" + (mac_to_string.str().substr(mac_to_string.str().length()-4, 2) + ":" +
+                                            mac_to_string.str().substr(mac_to_string.str().length()-2, 2)) + ")";
+
+        return mac_substring.c_str(); 
     }
 
     void util_imp::convert_uint64_to_eui48(const uint64_t value, uint8_t new_value[6])

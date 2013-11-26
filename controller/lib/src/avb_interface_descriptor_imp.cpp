@@ -29,6 +29,7 @@
 
 #include "enumeration.h"
 #include "log_imp.h"
+#include "util_imp.h"
 #include "avb_interface_descriptor_imp.h"
 
 namespace avdecc_lib
@@ -67,9 +68,12 @@ namespace avdecc_lib
         return avb_interface_desc.localized_description;
     }
 
-    uint8_t * STDCALL avb_interface_descriptor_imp::get_mac_addr()
+    uint64_t STDCALL avb_interface_descriptor_imp::get_mac_addr()
     {
-        return avb_interface_desc.mac_address.value;
+        uint64_t mac_addr;
+        utility->convert_eui48_to_uint64(avb_interface_desc.mac_address.value, mac_addr);
+
+        return mac_addr;
     }
 
     uint16_t STDCALL avb_interface_descriptor_imp::get_interface_flags()
