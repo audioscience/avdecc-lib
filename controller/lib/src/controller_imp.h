@@ -33,7 +33,7 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.3.6"
+#define AVDECC_CONTROLLER_VERSION "v0.3.7"
 
 namespace avdecc_lib
 {
@@ -89,7 +89,7 @@ namespace avdecc_lib
         /**
          * Check if the command with the corresponding notification id is in the inflight list.
          */
-        bool STDCALL is_inflight_cmd_with_notification_id(void *notification_id);
+        bool is_inflight_cmd_with_notification_id(void *notification_id);
 
         /**
          * Update the base log level for messages to be logged by the post_log_msg callback.

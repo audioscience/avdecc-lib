@@ -218,12 +218,6 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_sampling_rate_by_index(uint32_t sampling_rate_index) = 0;
 
         /**
-         * \return The offset to the sample rates field from the start of the descriptor.
-         *	       This field is 144 for this version of AEM.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_sampling_rates_offset() = 0;
-
-        /**
          * \return The number of sample rates. The maximum value is 91 for this version of AEM.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_sampling_rates_count() = 0;

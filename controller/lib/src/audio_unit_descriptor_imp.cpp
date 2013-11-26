@@ -266,7 +266,7 @@ namespace avdecc_lib
         return sample_rates_vec.at(sampling_rate_index);
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_sampling_rates_offset()
+    uint16_t audio_unit_descriptor_imp::get_sampling_rates_offset()
     {
         return audio_unit_desc.sampling_rates_offset;
     }

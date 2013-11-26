@@ -34,6 +34,7 @@
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
+#include "inflight.h"
 #include "adp.h"
 #include "acmp.h"
 

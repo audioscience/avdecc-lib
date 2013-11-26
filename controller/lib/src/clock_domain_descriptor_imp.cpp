@@ -82,7 +82,7 @@ namespace avdecc_lib
         return clock_domain_desc.clock_source_index;
     }
 
-    uint16_t STDCALL clock_domain_descriptor_imp::get_clock_sources_offset()
+    uint16_t clock_domain_descriptor_imp::get_clock_sources_offset()
     {
         assert(clock_domain_desc.clock_sources_offset == 76);
         return clock_domain_desc.clock_sources_offset;

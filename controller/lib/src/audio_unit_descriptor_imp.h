@@ -269,7 +269,7 @@ namespace avdecc_lib
          * Get the offset to the sample rates field from the start of the descriptor.
          * This field is 144 for this version of AEM.
          */
-        uint16_t STDCALL get_sampling_rates_offset();
+        uint16_t get_sampling_rates_offset();
 
         /**
          * Get the number of sample rates. The maximum value is 91 for this version of AEM.

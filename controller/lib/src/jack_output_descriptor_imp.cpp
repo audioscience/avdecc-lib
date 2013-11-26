@@ -85,7 +85,7 @@ namespace avdecc_lib
         return jack_flags.clock_sync_source;
     }
 
-    uint16_t STDCALL jack_output_descriptor_imp::get_captive()
+    uint16_t STDCALL jack_output_descriptor_imp::get_jack_flag_captive()
     {
         return jack_flags.captive;
     }

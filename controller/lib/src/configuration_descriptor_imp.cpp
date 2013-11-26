@@ -102,7 +102,7 @@ namespace avdecc_lib
         return config_desc.descriptor_counts_count;
     }
 
-    uint16_t STDCALL configuration_descriptor_imp::get_descriptor_counts_offset()
+    uint16_t configuration_descriptor_imp::get_descriptor_counts_offset()
     {
         assert(config_desc.descriptor_counts_offset == 74);
         return config_desc.descriptor_counts_offset;

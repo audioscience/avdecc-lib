@@ -31,6 +31,7 @@
 #ifndef _AVDECC_CONTROLLER_LIB_STREAM_OUTPUT_DESCRIPTOR_IMP_H_
 #define _AVDECC_CONTROLLER_LIB_STREAM_OUTPUT_DESCRIPTOR_IMP_H_
 
+#include "jdksavdecc_acmp_controller.h"
 #include "descriptor_base_imp.h"
 #include "stream_output_descriptor.h"
 
@@ -61,6 +62,9 @@ namespace avdecc_lib
         struct jdksavdecc_aem_command_get_stream_format_response aem_cmd_get_stream_format_resp; // Store the response received after sending a GET_STREAM_FORMAT command.
         struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp; // Store the response received after sending a SET_STREAM_INFO command.
         struct jdksavdecc_aem_command_get_stream_info_response aem_cmd_get_stream_info_resp; // Store the response received after sending a GET_STREAM_INFO command.
+
+        struct jdksavdecc_acmpdu acmp_cmd_get_tx_state_resp; // Store the response received after sending a GET_TX_STATE command.
+        struct jdksavdecc_acmpdu acmp_cmd_get_tx_connection_resp; // Store the response received after sending a GET_TX_CONNECTION command.
 
     public:
         /**
@@ -175,7 +179,7 @@ namespace avdecc_lib
          * Get the offset from the start of the descriptor for the first octet of the formats.
          * This field is 132 for this version of AEM.
          */
-        uint16_t STDCALL get_formats_offset();
+        uint16_t get_formats_offset();
 
         /**
          * Get the number of formats supported by this audio stream. The maximum value
@@ -292,6 +296,72 @@ namespace avdecc_lib
          * Check if the Clock Sync Source flag is set.
          */
         bool is_clock_sync_source_set();
+
+        /**
+         * Get the stream id field used to identify and transfer the associated stream ID where suitable 
+         * after sending a GET_TX_STATE command and receiving a response back for the command.
+         */
+        uint8_t * STDCALL get_tx_state_stream_id();
+
+        /**
+         * Get the stream destination MAC address used to convey the destination MAC address for a stream
+         * from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
+         * sending a GET_TX_STATE command and receiving a response back for the command.
+         */
+        uint8_t * STDCALL get_tx_state_stream_dest_mac();
+
+        /**
+         * Get connection count used by the state commands to return the number of connections an AVDECC Talker
+         * thinks it has on its stream source after sending a GET_TX_STATE command and receiving a response
+         * back for the command.
+         */
+        uint16_t STDCALL get_tx_state_connection_count();
+
+        /**
+         * Get stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
+         * or from either to the AVDECC Controller after sending a GET_TX_STATE command and receiving a response
+         * back for the command.
+         */
+        uint16_t STDCALL get_tx_state_stream_vlan_id();
+
+        /**
+         * Get the stream id field used to identify and transfer the associated stream ID where suitable 
+         * after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+         */
+        uint8_t * STDCALL get_tx_connection_stream_id();
+
+        /**
+         * Get the Talker unique ID used to uniquely identify the stream source of the AVDECC Talker 
+         * after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+         */
+        uint16_t STDCALL get_tx_connection_talker_unique_id();
+
+        /**
+         * Get Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener   
+         * after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+         */
+        uint16_t STDCALL get_tx_connection_listener_unique_id();
+
+        /**
+         * Get the stream destination MAC address used to convey the destination MAC address for a stream
+         * from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
+         * sending a GET_TX_CONNECTION command and receiving a response back for the command.
+         */
+        uint8_t * STDCALL get_tx_connection_stream_dest_mac();
+
+        /**
+         * Get connection count used by the state commands to return the number of connections an AVDECC Talker
+         * thinks it has on its stream source after sending a GET_TX_CONNECTION command and receiving a response
+         * back for the command.
+         */
+        uint16_t STDCALL get_tx_connection_connection_count();
+
+        /**
+         * Get stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
+         * or from either to the AVDECC Controller after sending a GET_TX_CONNECTION command and receiving a response
+         * back for the command.
+         */
+        uint16_t STDCALL get_tx_connection_stream_vlan_id();
 
         /**
          * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.

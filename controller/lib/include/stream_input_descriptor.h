@@ -107,12 +107,6 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_current_format() = 0;
 
         /**
-         * \return The offset from the start of the descriptor for the first octet of the formats.
-         *	       This field is 132 for this version of AEM.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_formats_offset() = 0;
-
-        /**
          * \return The number of formats supported by this audio stream. The maximum value
          *	       for this field is 47 for this version of AEM.
          */
@@ -223,19 +217,50 @@ namespace avdecc_lib
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_msrp_failure_bridge_id() = 0;
 
-        AVDECC_CONTROLLER_LIB32_API virtual struct jdksavdecc_eui64 STDCALL connect_rx_stream_id() = 0;
+        /**
+         * Get the stream id field used to identify and transfer the associated stream ID where suitable 
+         * after sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_rx_state_stream_id() = 0;
 
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL connect_rx_talker_unique_id() = 0;
+        /**
+         * Get the Talker unique ID used to uniquely identify the stream source of the AVDECC Talker 
+         * after sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_talker_unique_id() = 0;
 
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL connect_rx_listener_unique_id() = 0;
+        /**
+         * Get Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener   
+         * after sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_listener_unique_id() = 0;
 
-        AVDECC_CONTROLLER_LIB32_API virtual struct jdksavdecc_eui48 STDCALL connect_rx_stream_dest_mac() = 0;
+        /**
+         * Get the stream destination MAC address used to convey the destination MAC address for a stream
+         * from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
+         * sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_rx_state_stream_dest_mac() = 0;
 
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL connect_rx_connection_count() = 0;
+        /**
+         * Get connection count used by the state commands to return the number of connections an AVDECC Talker
+         * thinks it has on its stream source after sending a GET_RX_STATE command and receiving a response
+         * back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_connection_count() = 0;
 
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL connect_rx_flags() = 0;
+        /**
+         * Get the flags used to indicate attributes of the connection or saved state after sending a GET_RX_STATE
+         * command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_flags() = 0;
 
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL connect_rx_stream_vlan_id() = 0;
+        /**
+         * Get stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
+         * or from either to the AVDECC Controller after sending a GET_RX_STATE command and receiving a response
+         * back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_stream_vlan_id() = 0;
 
         /**
          * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.

@@ -52,12 +52,6 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_index() = 0;
 
         /**
-         * \return The offset to the clock sources field from the start of the descriptor.
-         *	       This is 76 for this version of AEM.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_sources_offset() = 0;
-
-        /**
          * \return The number of clock source indexes in the clock sources field. The maximum value for this field
          *	       is 249 for this version of AEM.
          */

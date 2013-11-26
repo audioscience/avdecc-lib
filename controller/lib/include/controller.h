@@ -73,13 +73,6 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_guid(uint64_t end_station_guid, uint16_t entity_index, uint16_t config_index) = 0;
 
         /**
-         * \return True, if the command with the notification id is in the inflight list.
-         *
-         * \param notification_id A void pointer to the unique identifier associated with the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL is_inflight_cmd_with_notification_id(void *notification_id) = 0;
-
-        /**
          * Update the base log level for messages to be logged by the post_log_msg callback.
          */
         AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_logging_level(int32_t new_log_level) = 0;

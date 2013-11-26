@@ -98,7 +98,7 @@ namespace avdecc_lib
          * Get the offset to the clock sources field from the start of the descriptor.
          * This is 76 for this version of AEM.
          */
-        uint16_t STDCALL get_clock_sources_offset();
+        uint16_t get_clock_sources_offset();
 
         /**
          * Get the number of clock source indexes in the clock sources field. The maximum value for this field

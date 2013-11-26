@@ -63,13 +63,6 @@ namespace avdecc_lib
 
         virtual ~jack_input_descriptor_imp();
 
-    private:
-        /**
-         * Store the jack flags componenets of the Jack Input descriptor object in a vector.
-         */
-        void jack_flags_init();
-
-    public:
         /**
          * Get the type of the descriptor.
          */
@@ -108,7 +101,7 @@ namespace avdecc_lib
          * Check if the jack connection is hardwired, cannot be disconnected and
          * may be physically within the device's structure.
          */
-        uint16_t STDCALL get_captive();
+        uint16_t STDCALL get_jack_flag_captive();
 
         /**
          * Get the type of the jack.
@@ -124,6 +117,12 @@ namespace avdecc_lib
          * Get the index of the first Control descriptor.
          */
         uint16_t STDCALL get_base_control();
+    
+    private:
+        /**
+         * Store the jack flags componenets of the Jack Input descriptor object in a vector.
+         */
+        void jack_flags_init();
     };
 }
 

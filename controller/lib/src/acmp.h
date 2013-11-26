@@ -32,10 +32,11 @@
 #define _AVDECC_CONTROLLER_LIB_ACMP_H_
 
 #include "jdksavdecc_acmp_controller.h"
-#include "inflight.h"
 
 namespace avdecc_lib
 {
+    class inflight;
+
     class acmp
     {
     private:

@@ -180,7 +180,7 @@ namespace avdecc_lib
          * Get the offset from the start of the descriptor for the first octet of the formats.
          * This field is 132 for this version of AEM.
          */
-        uint16_t STDCALL get_formats_offset();
+        uint16_t get_formats_offset();
 
         /**
          * Get the number of formats supported by this audio stream. The maximum value
@@ -299,6 +299,51 @@ namespace avdecc_lib
         bool is_clock_sync_source_set();
 
         /**
+         * Get the stream id field used to identify and transfer the associated stream ID where suitable 
+         * after sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        uint8_t * STDCALL get_rx_state_stream_id();
+
+        /**
+         * Get the Talker unique ID used to uniquely identify the stream source of the AVDECC Talker 
+         * after sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        uint16_t STDCALL get_rx_state_talker_unique_id();
+
+        /**
+         * Get Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener   
+         * after sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        uint16_t STDCALL get_rx_state_listener_unique_id();
+
+        /**
+         * Get the stream destination MAC address used to convey the destination MAC address for a stream
+         * from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
+         * sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        uint8_t * STDCALL get_rx_state_stream_dest_mac();
+
+        /**
+         * Get connection count used by the state commands to return the number of connections an AVDECC Talker
+         * thinks it has on its stream source after sending a GET_RX_STATE command and receiving a response
+         * back for the command.
+         */
+        uint16_t STDCALL get_rx_state_connection_count();
+
+        /**
+         * Get the flags used to indicate attributes of the connection or saved state after sending a GET_RX_STATE
+         * command and receiving a response back for the command.
+         */
+        uint16_t STDCALL get_rx_state_flags();
+
+        /**
+         * Get stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
+         * or from either to the AVDECC Controller after sending a GET_RX_STATE command and receiving a response
+         * back for the command.
+         */
+        uint16_t STDCALL get_rx_state_stream_vlan_id();
+
+        /**
          * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
@@ -377,20 +422,6 @@ namespace avdecc_lib
          * Process a START_STREAMING response for the START_STREAMING command.
          */
         int proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
-
-        struct jdksavdecc_eui64 STDCALL connect_rx_stream_id();
-
-        uint16_t STDCALL connect_rx_talker_unique_id();
-
-        uint16_t STDCALL connect_rx_listener_unique_id();
-
-        struct jdksavdecc_eui48 STDCALL connect_rx_stream_dest_mac();
-
-        uint16_t STDCALL connect_rx_connection_count();
-
-        uint16_t STDCALL connect_rx_flags();
-
-        uint16_t STDCALL connect_rx_stream_vlan_id();
 
         /**
          * Send a CONNECT_RX command with a notification id to connect Listener sink stream.

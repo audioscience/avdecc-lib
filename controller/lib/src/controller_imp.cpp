@@ -170,7 +170,7 @@ namespace avdecc_lib
         return NULL;
     }
 
-    bool STDCALL controller_imp::is_inflight_cmd_with_notification_id(void *notification_id)
+    bool controller_imp::is_inflight_cmd_with_notification_id(void *notification_id)
     {
         bool is_inflight_cmd = ((aem_controller_state_machine_ref->is_inflight_cmd_with_notification_id(notification_id)) ||
                                 (acmp_ref->is_inflight_cmd_with_notification_id(notification_id)));

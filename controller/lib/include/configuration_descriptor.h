@@ -64,12 +64,6 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_counts_count() = 0;
 
         /**
-         * \return The offset to read the counts of the top level descriptor from the start of the descriptor.
-         *	       This field is set to 74 for this version of AEM.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_counts_offset() = 0;
-
-        /**
          * \return The top level descriptor present in the Configuration descriptor.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_desc_type_from_config_by_index(int desc_index) = 0;
