@@ -233,24 +233,24 @@ namespace avdecc_lib
 
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
-                                                        msg_type + CMD_LOOKUP_FLAG,
+                                                        msg_type + CMD_LOOKUP,
                                                         NULL,
                                                         NULL,
                                                         notification_id);
         }
         else if((notification_flag == CMD_WITH_NOTIFICATION) &&
                 ((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
-                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
-                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
-                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE)))
+                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
+                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
+                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE)))
         {
-            //end_station_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE), 0);
-            //notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
-            //                                            end_station_guid,
-            //                                            (uint16_t)msg_type + CMD_LOOKUP_FLAG,
-            //                                            NULL,
-            //                                            NULL,
-            //                                            notification_id);
+            end_station_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE), 0);
+            notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
+                                                        end_station_guid,
+                                                        (uint16_t)msg_type + CMD_LOOKUP,
+                                                        NULL,
+                                                        NULL,
+                                                        notification_id);
         }
         else if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))

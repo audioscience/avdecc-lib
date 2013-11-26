@@ -324,24 +324,33 @@ namespace avdecc_lib
                     {
                         int found_end_station_index = -1;
                         bool found_acmp_in_end_station = false;
+<<<<<<< HEAD
                         struct jdksavdecc_eui64 _entity_id = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
                         uint64_t entity_guid = jdksavdecc_uint64_get(&_entity_id, 0);
+=======
+                        uint64_t entity_guid = 0;
+>>>>>>> controller:lib: Updated implementation for GET_RX_STATE, GET_TX_STATE, and
                         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
 
-                        if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
-                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
-                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
-                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
-                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
+
+                        if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) || 
                            (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))
                         {
-                            for(uint32_t i = 0; i < end_station_vec.size(); i++)
+                            entity_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE), 0);
+                        }
+                        else if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
+                                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
+                                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE))
+                        {
+                            entity_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE), 0);
+                        }
+
+                        for(uint32_t i = 0; i < end_station_vec.size(); i++)
+                        {
+                            if(end_station_vec.at(i)->get_adp()->get_entity_entity_id() == entity_guid)
                             {
-                                if(end_station_vec.at(i)->get_adp()->get_entity_entity_id() == entity_guid)
-                                {
-                                    found_acmp_in_end_station = true;
-                                    found_end_station_index = i;
-                                }
+                                found_acmp_in_end_station = true;
+                                found_end_station_index = i;
                             }
                         }
 

@@ -635,6 +635,41 @@ namespace avdecc_lib
         return 0;
     }
 
+    struct jdksavdecc_eui64 STDCALL stream_input_descriptor_imp::connect_rx_stream_id()
+    {
+        return acmp_cmd_get_rx_state_resp.header.stream_id;
+    }
+
+    uint16_t STDCALL stream_input_descriptor_imp::connect_rx_talker_unique_id()
+    {
+        return acmp_cmd_get_rx_state_resp.talker_unique_id;
+    }
+
+    uint16_t STDCALL stream_input_descriptor_imp::connect_rx_listener_unique_id()
+    {
+        return acmp_cmd_get_rx_state_resp.listener_unique_id;
+    }
+
+    struct jdksavdecc_eui48 STDCALL stream_input_descriptor_imp::connect_rx_stream_dest_mac()
+    {
+        return acmp_cmd_get_rx_state_resp.stream_dest_mac;
+    }
+
+    uint16_t STDCALL stream_input_descriptor_imp::connect_rx_connection_count()
+    {
+        return acmp_cmd_get_rx_state_resp.connection_count;
+    }
+
+    uint16_t STDCALL stream_input_descriptor_imp::connect_rx_flags()
+    {
+        return acmp_cmd_get_rx_state_resp.flags;
+    }
+
+    uint16_t STDCALL stream_input_descriptor_imp::connect_rx_stream_vlan_id()
+    {
+        return acmp_cmd_get_rx_state_resp.stream_vlan_id;
+    }
+
     int STDCALL stream_input_descriptor_imp::send_connect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id)
     {
         struct jdksavdecc_frame *ether_frame;
@@ -680,7 +715,6 @@ namespace avdecc_lib
     int stream_input_descriptor_imp::proc_connect_rx_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
         struct jdksavdecc_frame *ether_frame;
-        struct jdksavdecc_acmpdu acmp_cmd_connect_rx_resp;
         int acmp_cmd_connect_rx_resp_returned;
         uint32_t msg_type;
 
@@ -752,7 +786,6 @@ namespace avdecc_lib
     int stream_input_descriptor_imp::proc_disconnect_rx_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
         struct jdksavdecc_frame *ether_frame;
-        struct jdksavdecc_acmpdu acmp_cmd_disconnect_rx_resp;
         int acmp_cmd_disconnect_rx_resp_returned;
         uint32_t msg_type;
 
@@ -779,7 +812,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int STDCALL stream_input_descriptor_imp::send_get_rx_state_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id)
+    int STDCALL stream_input_descriptor_imp::send_get_rx_state_cmd(void *notification_id)
     {
         struct jdksavdecc_frame *ether_frame;
         struct jdksavdecc_acmpdu acmp_cmd_get_rx_state;
@@ -790,9 +823,9 @@ namespace avdecc_lib
 
         /******************************************* ACMP Common Data *******************************************/
         acmp_cmd_get_rx_state.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
-        jdksavdecc_uint64_write(talker_guid, &acmp_cmd_get_rx_state.talker_entity_id, 0, sizeof(uint64_t));
+        jdksavdecc_eui64_init(&acmp_cmd_get_rx_state.talker_entity_id);
         jdksavdecc_uint64_write(listener_guid, &acmp_cmd_get_rx_state.listener_entity_id, 0, sizeof(uint64_t));
-        acmp_cmd_get_rx_state.talker_unique_id = talker_unique_id;
+        acmp_cmd_get_rx_state.talker_unique_id = 0;
         acmp_cmd_get_rx_state.listener_unique_id = get_descriptor_index();
         jdksavdecc_eui48_init(&acmp_cmd_get_rx_state.stream_dest_mac);
         acmp_cmd_get_rx_state.connection_count = 0;
@@ -824,7 +857,6 @@ namespace avdecc_lib
     int stream_input_descriptor_imp::proc_get_rx_state_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
         struct jdksavdecc_frame *ether_frame;
-        struct jdksavdecc_acmpdu acmp_cmd_get_rx_state_resp;
         int acmp_cmd_get_rx_state_resp_returned;
         uint32_t msg_type;
 

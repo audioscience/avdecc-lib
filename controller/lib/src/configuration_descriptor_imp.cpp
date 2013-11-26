@@ -173,7 +173,6 @@ namespace avdecc_lib
             delete *it;
             desc_vec.erase(it);
             desc_vec.insert(it, d);
-
         }
         else
         {

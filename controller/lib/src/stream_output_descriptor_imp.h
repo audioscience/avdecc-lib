@@ -386,7 +386,7 @@ namespace avdecc_lib
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
          *                         this corresponds to the id of the Stream Output descriptor.
          */
-        int STDCALL send_get_tx_state_cmd(void *notification_id, uint64_t listener_guid, uint16_t listener_unique_id);
+        int STDCALL send_get_tx_state_cmd(void *notification_id);
 
         /**
          * Process a GET_TX_STATE response for the GET_TX_STATE command.

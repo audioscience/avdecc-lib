@@ -223,6 +223,20 @@ namespace avdecc_lib
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_msrp_failure_bridge_id() = 0;
 
+        AVDECC_CONTROLLER_LIB32_API virtual struct jdksavdecc_eui64 STDCALL connect_rx_stream_id() = 0;
+
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL connect_rx_talker_unique_id() = 0;
+
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL connect_rx_listener_unique_id() = 0;
+
+        AVDECC_CONTROLLER_LIB32_API virtual struct jdksavdecc_eui48 STDCALL connect_rx_stream_dest_mac() = 0;
+
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL connect_rx_connection_count() = 0;
+
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL connect_rx_flags() = 0;
+
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL connect_rx_stream_vlan_id() = 0;
+
         /**
          * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
          *
@@ -312,7 +326,7 @@ namespace avdecc_lib
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
          *                         this corresponds to the id of the Stream Output descriptor.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_rx_state_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_rx_state_cmd(void *notification_id) = 0;
     };
 }
 
