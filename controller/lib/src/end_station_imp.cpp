@@ -76,7 +76,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    char STDCALL end_station_imp::get_connection_status()
+    const char STDCALL end_station_imp::get_connection_status() const
     {
         return end_station_connection_status;
     }

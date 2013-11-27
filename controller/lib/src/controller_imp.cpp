@@ -71,15 +71,14 @@ namespace avdecc_lib
 
     controller_imp::~controller_imp()
     {
-        for(uint32_t end_station_vec_index = 0; end_station_vec_index < end_station_vec.size(); end_station_vec_index++)
+        for(uint32_t end_station_index = 0; end_station_index < end_station_vec.size(); end_station_index++)
         {
-            delete end_station_vec.at(end_station_vec_index);
+            delete end_station_vec.at(end_station_index);
         }
 
         delete adp_discovery_state_machine_ref;
         delete acmp_ref;
         delete aem_controller_state_machine_ref;
-        delete controller_imp_ref;
     }
 
     void STDCALL controller_imp::destroy()
@@ -87,7 +86,7 @@ namespace avdecc_lib
         delete this;
     }
 
-    const char * STDCALL controller_imp::get_version()
+    const char * STDCALL controller_imp::get_version() const
     {
         return AVDECC_CONTROLLER_VERSION;
     }
@@ -102,7 +101,7 @@ namespace avdecc_lib
         return end_station_vec.at(end_station_index);
     }
 
-    bool controller_imp::find_end_station_by_guid(uint64_t entity_guid, uint32_t &end_station_index)
+    bool controller_imp::is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index)
     {
         uint64_t end_station_guid;
 
@@ -199,7 +198,7 @@ namespace avdecc_lib
         aem_controller_state_machine_ref->tick();
 
         if(adp_discovery_state_machine_ref->adp_discovery_tick(end_station_guid) &&
-           find_end_station_by_guid(end_station_guid, disconnected_end_station_index))
+           is_end_station_found_by_guid(end_station_guid, disconnected_end_station_index))
         {
             end_station_vec.at(disconnected_end_station_index)->set_disconnected();
         }

@@ -80,13 +80,6 @@ namespace avdecc_lib
 
         virtual ~stream_input_descriptor_imp();
 
-    private:
-        /**
-         * Store the stream flags componenets of the Stream Output descriptor object in a vector.
-         */
-        void stream_flags_init();
-
-    public:
         /**
          * Get the type of the descriptor.
          */
@@ -499,6 +492,12 @@ namespace avdecc_lib
          * Process a GET_RX_STATE response for the GET_RX_STATE command.
          */
         int proc_get_rx_state_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+
+    private:
+        /**
+         * Store the stream flags componenets of the Stream Output descriptor object in a vector.
+         */
+        void stream_flags_init();
     };
 }
 

@@ -50,7 +50,7 @@ namespace avdecc_lib
         /**
          * \return The current AVDECC Controller build release version.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_version() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_version() const = 0;
 
         /**
          * \return The total number of End Stations connected.

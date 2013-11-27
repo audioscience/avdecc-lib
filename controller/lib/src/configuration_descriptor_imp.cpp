@@ -33,8 +33,8 @@
 #include "enumeration.h"
 #include "log_imp.h"
 #include "end_station_imp.h"
-#include "configuration_descriptor_imp.h"
 #include "descriptor_base_imp.h"
+#include "configuration_descriptor_imp.h"
 
 namespace avdecc_lib
 {
@@ -69,7 +69,8 @@ namespace avdecc_lib
         std::for_each(clock_source_desc_vec.begin(), clock_source_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(locale_desc_vec.begin(), locale_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(strings_desc_vec.begin(), strings_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(strings_desc_vec.begin(), strings_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+        std::for_each(stream_port_input_desc_vec.begin(), stream_port_input_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+        std::for_each(stream_port_output_desc_vec.begin(), stream_port_output_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(audio_cluster_desc_vec.begin(), audio_cluster_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(audio_map_desc_vec.begin(), audio_map_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(clock_domain_desc_vec.begin(), clock_domain_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);

@@ -81,7 +81,6 @@ cmd_line::~cmd_line()
 {
     system_ref->process_close();
     system_ref->destroy();
-    controller_ref->destroy();
     utility->destroy();
 }
 

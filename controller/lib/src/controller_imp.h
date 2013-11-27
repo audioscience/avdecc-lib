@@ -40,7 +40,7 @@ namespace avdecc_lib
     class controller_imp : public virtual controller
     {
     private:
-        std::vector<end_station_imp *> end_station_vec; // Store a list of End Station class objects
+        std::vector<end_station_imp *> end_station_vec; // Store a list of End Station objects
 
     public:
         /**
@@ -59,7 +59,7 @@ namespace avdecc_lib
         /**
          * Get the current build release version.
          */
-        const char * STDCALL get_version();
+        const char * STDCALL get_version() const;
 
         /**
          * Get the total number of End Stations connected
@@ -74,7 +74,7 @@ namespace avdecc_lib
         /**
          * Check if the corresponding End Station with the GUID exist.
          */
-        bool find_end_station_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
+        bool is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
 
         /**
          * Get the corresponding Configuration descriptor by index.

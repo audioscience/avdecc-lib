@@ -96,7 +96,7 @@ namespace avdecc_lib
         /**
          * Get the status of the End Station connection.
          */
-        char STDCALL get_connection_status();
+        const char STDCALL get_connection_status() const;
 
         /**
          * Change the End Station connection status to connected.

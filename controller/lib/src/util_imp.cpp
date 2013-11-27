@@ -273,10 +273,7 @@ namespace avdecc_lib
 
     util_imp::util_imp() {}
 
-    util_imp::~util_imp()
-    {
-        delete utility;
-    }
+    util_imp::~util_imp() {}
 
     void STDCALL util_imp::destroy()
     {
