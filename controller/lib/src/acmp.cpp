@@ -29,11 +29,13 @@
 
 #include <algorithm>    // std::find_if
 #include <vector>
+#include "jdksavdecc_acmp_controller.h"
 #include "net_interface_imp.h"
 #include "util_imp.h"
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
+#include "inflight.h"
 #include "adp.h"
 #include "acmp.h"
 
@@ -116,7 +118,6 @@ namespace avdecc_lib
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
             inflight_cmds.erase(inflight_cmds.begin() + inflight_cmd_index);
-            printf("\n>");
         }
         else
         {
@@ -124,7 +125,6 @@ namespace avdecc_lib
                                       "Resend the command with sequence id = %d",
                                       inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
             struct jdksavdecc_frame frame = inflight_cmds.at(inflight_cmd_index).frame();
-
             tx_cmd(inflight_cmds.at(inflight_cmd_index).cmd_notification_id,
                    inflight_cmds.at(inflight_cmd_index).notification_flag(),
                    &frame,
@@ -233,24 +233,25 @@ namespace avdecc_lib
 
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
-                                                        msg_type + CMD_LOOKUP_FLAG,
+                                                        msg_type + CMD_LOOKUP,
                                                         NULL,
                                                         NULL,
                                                         notification_id);
         }
         else if((notification_flag == CMD_WITH_NOTIFICATION) &&
                 ((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
-                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
-                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
-                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE)))
+                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
+                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
+                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE)))
         {
-            //end_station_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE), 0);
-            //notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
-            //                                            end_station_guid,
-            //                                            (uint16_t)msg_type + CMD_LOOKUP_FLAG,
-            //                                            NULL,
-            //                                            NULL,
-            //                                            notification_id);
+            struct jdksavdecc_eui64 _end_station_guid = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
+            end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
+            notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
+                                                        end_station_guid,
+                                                        (uint16_t)msg_type + CMD_LOOKUP,
+                                                        NULL,
+                                                        NULL,
+                                                        notification_id);
         }
         else if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))

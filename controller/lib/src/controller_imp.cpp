@@ -35,7 +35,6 @@
 #include "log_imp.h"
 #include "util_imp.h"
 #include "adp.h"
-#include "aecp.h"
 #include "system_tx_queue.h"
 #include "end_station_imp.h"
 #include "adp_discovery_state_machine.h"
@@ -72,15 +71,14 @@ namespace avdecc_lib
 
     controller_imp::~controller_imp()
     {
-        for(uint32_t end_station_vec_index = 0; end_station_vec_index < end_station_vec.size(); end_station_vec_index++)
+        for(uint32_t end_station_index = 0; end_station_index < end_station_vec.size(); end_station_index++)
         {
-            delete end_station_vec.at(end_station_vec_index);
+            delete end_station_vec.at(end_station_index);
         }
 
         delete adp_discovery_state_machine_ref;
         delete acmp_ref;
         delete aem_controller_state_machine_ref;
-        delete controller_imp_ref;
     }
 
     void STDCALL controller_imp::destroy()
@@ -88,7 +86,7 @@ namespace avdecc_lib
         delete this;
     }
 
-    const char * STDCALL controller_imp::get_version()
+    const char * STDCALL controller_imp::get_version() const
     {
         return AVDECC_CONTROLLER_VERSION;
     }
@@ -103,13 +101,13 @@ namespace avdecc_lib
         return end_station_vec.at(end_station_index);
     }
 
-    bool controller_imp::find_end_station_by_guid(uint64_t entity_guid, uint32_t &end_station_index)
+    bool controller_imp::is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index)
     {
         uint64_t end_station_guid;
 
         for(uint32_t i = 0; i < end_station_vec.size(); i++)
         {
-            end_station_guid = end_station_vec.at(i)->get_end_station_guid();
+            end_station_guid = end_station_vec.at(i)->get_guid();
 
             if(end_station_guid == entity_guid)
             {
@@ -146,7 +144,7 @@ namespace avdecc_lib
     {
         for(uint32_t i = 0; i < end_station_vec.size(); i++)
         {
-            uint64_t end_station_guid = end_station_vec.at(i)->get_end_station_guid();
+            uint64_t end_station_guid = end_station_vec.at(i)->get_guid();
 
             if(end_station_guid == entity_guid)
             {
@@ -170,7 +168,7 @@ namespace avdecc_lib
         return NULL;
     }
 
-    bool STDCALL controller_imp::is_inflight_cmd_with_notification_id(void *notification_id)
+    bool controller_imp::is_inflight_cmd_with_notification_id(void *notification_id)
     {
         bool is_inflight_cmd = ((aem_controller_state_machine_ref->is_inflight_cmd_with_notification_id(notification_id)) ||
                                 (acmp_ref->is_inflight_cmd_with_notification_id(notification_id)));
@@ -200,7 +198,7 @@ namespace avdecc_lib
         aem_controller_state_machine_ref->tick();
 
         if(adp_discovery_state_machine_ref->adp_discovery_tick(end_station_guid) &&
-           find_end_station_by_guid(end_station_guid, disconnected_end_station_index))
+           is_end_station_found_by_guid(end_station_guid, disconnected_end_station_index))
         {
             end_station_vec.at(disconnected_end_station_index)->set_disconnected();
         }
@@ -209,13 +207,11 @@ namespace avdecc_lib
     void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t frame_len, int &status)
     {
         uint64_t dest_mac_addr;
-        uint32_t subtype;
-
         utility->convert_eui48_to_uint64(frame, dest_mac_addr);
 
         if((dest_mac_addr == net_interface_ref->get_mac()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address
         {
-            subtype = jdksavdecc_subtype_data_get_subtype(jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE));
+            uint32_t subtype = jdksavdecc_subtype_data_get_subtype(jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE));
 
             switch(subtype)
             {
@@ -278,9 +274,9 @@ namespace avdecc_lib
                     {
                         int found_end_station_index = -1;
                         bool found_aecp_in_end_station = false;
-                        uint8_t msg_type = jdksavdecc_uint8_get(frame, aecp::MSG_TYPE_POS);
-                        uint64_t entity_guid = jdksavdecc_uint64_get(frame, aecp::TARGET_GUID_POS);
-                        uint16_t seq_id = jdksavdecc_uint16_get(frame, aecp::SEQ_ID_POS);
+                        uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
+                        uint64_t entity_guid = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE);
+                        uint16_t seq_id = jdksavdecc_aecpdu_aem_get_sequence_id(frame, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
 
                         /**
                          * Check if an AECP object is already in the system. If yes, process response for the AECP packet.
@@ -299,7 +295,7 @@ namespace avdecc_lib
 
                         if(found_aecp_in_end_station)
                         {
-                            uint16_t cmd_type = jdksavdecc_uint16_get(frame, aecp::CMD_TYPE_POS);
+                            uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
 
                             if(cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
                             {
@@ -324,24 +320,29 @@ namespace avdecc_lib
                     {
                         int found_end_station_index = -1;
                         bool found_acmp_in_end_station = false;
-                        struct jdksavdecc_eui64 _entity_id = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
-                        uint64_t entity_guid = jdksavdecc_uint64_get(&_entity_id, 0);
+                        uint64_t entity_guid = 0;
                         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
 
-                        if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
-                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
-                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
-                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
-                           (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
+                        if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) || 
                            (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))
                         {
-                            for(uint32_t i = 0; i < end_station_vec.size(); i++)
+                            struct jdksavdecc_eui64 _entity_guid = jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE);
+                            entity_guid = jdksavdecc_uint64_get(&_entity_guid, 0);
+                        }
+                        else if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
+                                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
+                                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE))
+                        {
+                            struct jdksavdecc_eui64 _entity_guid = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
+                            entity_guid = jdksavdecc_uint64_get(&_entity_guid, 0);
+                        }
+
+                        for(uint32_t i = 0; i < end_station_vec.size(); i++)
+                        {
+                            if(end_station_vec.at(i)->get_adp()->get_entity_entity_id() == entity_guid) // Check if it is a Talker GUID or Listener GUID
                             {
-                                if(end_station_vec.at(i)->get_adp()->get_entity_entity_id() == entity_guid)
-                                {
-                                    found_acmp_in_end_station = true;
-                                    found_end_station_index = i;
-                                }
+                                found_acmp_in_end_station = true;
+                                found_end_station_index = i;
                             }
                         }
 
@@ -376,8 +377,7 @@ namespace avdecc_lib
 
         if(subtype == JDKSAVDECC_SUBTYPE_AECP)
         {
-            aem_controller_state_machine_ref->set_do_cmd(true);
-            aem_controller_state_machine_ref->state_waiting(notification_id, notification_flag, &packet_frame);
+            aem_controller_state_machine_ref->state_send_cmd(notification_id, notification_flag, &packet_frame);
             memcpy(frame, packet_frame.payload, frame_len);
         }
         else if(subtype == JDKSAVDECC_SUBTYPE_ACMP)
@@ -404,10 +404,10 @@ namespace avdecc_lib
         aem_cmd_controller_avail.command_type = JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE;
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
-        aecp::ether_frame_init(end_station_vec.at(end_station_index), ether_frame);
+        aem_controller_state_machine::ether_frame_init(end_station_vec.at(end_station_index)->get_mac(), ether_frame);
         aem_cmd_controller_avail_returned = jdksavdecc_aem_command_controller_available_write(&aem_cmd_controller_avail,
                                                                                               ether_frame->payload,
-                                                                                              aecp::CMD_POS,
+                                                                                              ETHER_HDR_SIZE,
                                                                                               sizeof(ether_frame->payload));
 
         if(aem_cmd_controller_avail_returned < 0)
@@ -417,7 +417,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::aecpdu_common_hdr_init(ether_frame, end_station_vec.at(end_station_index)->get_end_station_guid());
+        aem_controller_state_machine::common_hdr_init(ether_frame, end_station_vec.at(end_station_index)->get_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -437,7 +437,7 @@ namespace avdecc_lib
 
         aem_cmd_controller_avail_resp_returned = jdksavdecc_aem_command_controller_available_response_read(&aem_cmd_controller_avail_resp,
                                                                                                            frame,
-                                                                                                           aecp::CMD_POS,
+                                                                                                           ETHER_HDR_SIZE,
                                                                                                            frame_len);
 
         if(aem_cmd_controller_avail_resp_returned < 0)

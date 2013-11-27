@@ -266,7 +266,7 @@ namespace avdecc_lib
 
     enum flags
     {
-        CMD_LOOKUP_FLAG = 100 // Check if the command is an ACMP or AEM command
+        CMD_LOOKUP = 1024 // Check if the command is an ACMP or AEM command
     };
 
     enum notifications /// Notifications for the AVDECC library implementation, not part of the 1722.1 specification

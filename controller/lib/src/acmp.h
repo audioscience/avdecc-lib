@@ -31,11 +31,10 @@
 #ifndef _AVDECC_CONTROLLER_LIB_ACMP_H_
 #define _AVDECC_CONTROLLER_LIB_ACMP_H_
 
-#include "jdksavdecc_acmp_controller.h"
-#include "inflight.h"
-
 namespace avdecc_lib
 {
+    class inflight;
+
     class acmp
     {
     private:
@@ -46,6 +45,16 @@ namespace avdecc_lib
         acmp();
 
         ~acmp();
+
+        /**
+         * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
+         */
+        static int ether_frame_init(struct jdksavdecc_frame *ether_frame);
+
+        /**
+         * Initialize and fill Ethernet frame payload with 1722 ACMP Header information.
+         */
+        static void common_hdr_init(uint32_t msg_type, struct jdksavdecc_frame *ether_frame);
 
         /**
          * Process the Command state of the ACMP Controller State Machine.
@@ -63,14 +72,9 @@ namespace avdecc_lib
         void tick();
 
         /**
-         * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
+         * Update inflight command for the response received.
          */
-        static int ether_frame_init(struct jdksavdecc_frame *ether_frame);
-
-        /**
-         * Initialize and fill Ethernet frame payload with 1722 ACMP Header information.
-         */
-        static void common_hdr_init(uint32_t msg_type, struct jdksavdecc_frame *ether_frame);
+        int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame);
 
         /**
          * Check if the command with the corresponding notification id is already in the inflight command vector.
@@ -92,11 +96,6 @@ namespace avdecc_lib
          * Handle the receipt and processing of a received response for a command sent.
          */
         int proc_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *ether_frame);
-
-        /**
-         * Update inflight command for the response received.
-         */
-        int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame);
 
         /**
          * Call notification or post_log_msg callback function for the command sent or response received.

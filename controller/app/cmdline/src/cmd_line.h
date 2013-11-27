@@ -155,10 +155,7 @@ public:
     /**
      * Send a GET_TX_STATE command to get Talker source stream connection state.
      */
-    int cmd_get_tx_state(uint32_t instream_end_station_index,
-                         uint16_t instream_desc_index,
-                         uint32_t outstream_end_station_index,
-                         uint16_t outstream_desc_index);
+    int cmd_get_tx_state(uint32_t outstream_end_station_index, uint16_t outstream_desc_index);
 
     /**
      * Send a CONNECT_RX command to connect Listener sink stream.
@@ -179,20 +176,12 @@ public:
     /**
      * Send a GET_RX_STATE command to get Listener sink stream connection state.
      */
-    int cmd_get_rx_state(uint32_t instream_end_station_index,
-                         uint16_t instream_desc_index,
-                         uint32_t outstream_end_station_index,
-                         uint16_t outstream_desc_index);
+    int cmd_get_rx_state(uint32_t instream_end_station_index, uint16_t instream_desc_index);
 
     /**
-     * Display all the ACMP connections that can be disconnected.
+     * Send a GET_TX_CONNECTION command with a notification id to get a specific Talker connection information.
      */
-    int cmd_disconnect();
-
-    /**
-     * Disconnect an instream from an outstream.
-     */
-    int cmd_disconnect(uint32_t instream_end_station_index, uint16_t instream_desc_index);
+    int cmd_get_tx_connection(uint32_t outstream_end_station_index, uint16_t outstream_desc_index);
 
     /**
      * Send an ACQUIRE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.

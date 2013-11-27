@@ -120,7 +120,7 @@ namespace avdecc_lib
          * Get the offset to read the counts of the top level descriptor from the start of the descriptor.
          * This field is set to 74 for this version of AEM.
          */
-        uint16_t STDCALL get_descriptor_counts_offset();
+        uint16_t get_descriptor_counts_offset();
 
         /**
          * Store Audio Unit descriptor object.

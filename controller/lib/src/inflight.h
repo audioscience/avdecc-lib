@@ -31,6 +31,8 @@
 #ifndef _AVDECC_CONTROLLER_LIB_INFLIGHT_H_
 #define _AVDECC_CONTROLLER_LIB_INFLIGHT_H_
 
+#include <iostream>
+#include <vector>
 #include "jdksavdecc_util.h"
 #include "jdksavdecc_pdu.h"
 
@@ -97,6 +99,9 @@ namespace avdecc_lib
      */
     class SeqIdComp
     {
+    private:
+        uint16_t v;
+
     public:
         SeqIdComp(uint16_t i) : v(i) { }
 
@@ -104,9 +109,6 @@ namespace avdecc_lib
         {
             return m.cmd_seq_id == v;
         }
-
-    private:
-        uint16_t v;
     };
 
     /*
@@ -114,6 +116,9 @@ namespace avdecc_lib
      */
     class NotificationComp
     {
+    private:
+        void * v;
+
     public:
         NotificationComp(void * p) : v(p) { }
 
@@ -121,9 +126,6 @@ namespace avdecc_lib
         {
             return m.cmd_notification_id == v;
         }
-
-    private:
-        void * v;
     };
 }
 

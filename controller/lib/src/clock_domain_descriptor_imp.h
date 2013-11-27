@@ -98,7 +98,7 @@ namespace avdecc_lib
          * Get the offset to the clock sources field from the start of the descriptor.
          * This is 76 for this version of AEM.
          */
-        uint16_t STDCALL get_clock_sources_offset();
+        uint16_t get_clock_sources_offset();
 
         /**
          * Get the number of clock source indexes in the clock sources field. The maximum value for this field
@@ -125,6 +125,14 @@ namespace avdecc_lib
 
         /**
          * Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         * \param new_clk_src_index The clock source index field is set to the new clock source index.
+         *
+         * The new clock source index can be retrieved by calling the following function after successfully
+         * receiving a response back for the SET_CLOCK_SOURCE command sent.
+         *
+         * \see set_clock_source_clock_source_index()
          */
         int STDCALL send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index);
 
@@ -135,6 +143,13 @@ namespace avdecc_lib
 
         /**
          * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * The clock source index can be retrieved by calling the following function after successfully
+         * receiving a response back for the GET_CLOCK_SOURCE command sent.
+         *
+         * \see get_clock_source_clock_source_index()
          */
         int STDCALL send_get_clock_source_cmd(void *notification_id);
 

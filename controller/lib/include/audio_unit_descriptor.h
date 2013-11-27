@@ -218,12 +218,6 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_sampling_rate_by_index(uint32_t sampling_rate_index) = 0;
 
         /**
-         * \return The offset to the sample rates field from the start of the descriptor.
-         *	       This field is 144 for this version of AEM.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_sampling_rates_offset() = 0;
-
-        /**
          * \return The number of sample rates. The maximum value is 91 for this version of AEM.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_sampling_rates_count() = 0;
@@ -245,6 +239,11 @@ namespace avdecc_lib
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          * \param new_sampling_rate The sampling rate field is set to the new sampling rate.
+         *
+         * The new sampling rates can be retrieved by calling the following function after successfully
+         * receiving a response back for the SET_SAMPLING_RATE command sent.
+         *
+         * \see set_sampling_rate_sampling_rate()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_sampling_rate_cmd(void *notification_id, uint32_t new_sampling_rate) = 0;
 
@@ -252,6 +251,11 @@ namespace avdecc_lib
          * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * The sampling rates can be retrieved by calling the following function after successfully
+         * receiving a response back for the GET_SAMPLING_RATE command sent.
+         *
+         * \see get_sampling_rate_sampling_rate()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_sampling_rate_cmd(void *notification_id) = 0;
     };

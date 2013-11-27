@@ -58,7 +58,7 @@ namespace avdecc_lib
         return audio_map_desc.descriptor_index;
     }
 
-    uint16_t STDCALL audio_map_descriptor_imp::get_mappings_offset()
+    uint16_t audio_map_descriptor_imp::get_mappings_offset()
     {
         assert(audio_map_desc.mappings_offset == 8);
         return audio_map_desc.mappings_offset;

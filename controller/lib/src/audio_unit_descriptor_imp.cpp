@@ -31,7 +31,6 @@
 #include "enumeration.h"
 #include "log_imp.h"
 #include "adp.h"
-#include "aecp.h"
 #include "end_station_imp.h"
 #include "system_tx_queue.h"
 #include "aem_controller_state_machine.h"
@@ -70,7 +69,7 @@ namespace avdecc_lib
 
         for(uint32_t i = 0; i < get_sampling_rates_count(); i++)
         {
-            sampling_rate = jdksavdecc_uint32_get(frame, aecp::READ_DESC_POS + get_sampling_rates_offset() + offset);
+            sampling_rate = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN + get_sampling_rates_offset() + offset);
             sample_rates_vec.push_back(sampling_rate);
             offset += 0x4;
         }
@@ -266,7 +265,7 @@ namespace avdecc_lib
         return sample_rates_vec.at(sampling_rate_index);
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_sampling_rates_offset()
+    uint16_t audio_unit_descriptor_imp::get_sampling_rates_offset()
     {
         return audio_unit_desc.sampling_rates_offset;
     }
@@ -305,10 +304,10 @@ namespace avdecc_lib
         aem_cmd_set_sampling_rate.sampling_rate = new_sampling_rate;
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
-        aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
+        aem_controller_state_machine::ether_frame_init(base_end_station_imp_ref->get_mac(), ether_frame);
         aem_cmd_set_sampling_rate_returned = jdksavdecc_aem_command_set_sampling_rate_write(&aem_cmd_set_sampling_rate,
                                                                                             ether_frame->payload,
-                                                                                            aecp::CMD_POS,
+                                                                                            ETHER_HDR_SIZE,
                                                                                             sizeof(ether_frame->payload));
 
         if(aem_cmd_set_sampling_rate_returned < 0)
@@ -318,7 +317,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aem_controller_state_machine::common_hdr_init(ether_frame, base_end_station_imp_ref->get_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -338,7 +337,7 @@ namespace avdecc_lib
 
         aem_cmd_set_sampling_rate_resp_returned = jdksavdecc_aem_command_set_sampling_rate_response_read(&aem_cmd_set_sampling_rate_resp,
                                                                                                          frame,
-                                                                                                         aecp::CMD_POS,
+                                                                                                         ETHER_HDR_SIZE,
                                                                                                          frame_len);
 
         if(aem_cmd_set_sampling_rate_resp_returned < 0)
@@ -375,10 +374,10 @@ namespace avdecc_lib
         aem_cmd_get_sampling_rate.descriptor_index = get_descriptor_index();
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
-        aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
+        aem_controller_state_machine::ether_frame_init(base_end_station_imp_ref->get_mac(), ether_frame);
         aem_cmd_get_sampling_rate_returned = jdksavdecc_aem_command_get_sampling_rate_write(&aem_cmd_get_sampling_rate,
                                                                                             ether_frame->payload,
-                                                                                            aecp::CMD_POS,
+                                                                                            ETHER_HDR_SIZE,
                                                                                             sizeof(ether_frame->payload));
 
         if(aem_cmd_get_sampling_rate_returned < 0)
@@ -388,7 +387,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aem_controller_state_machine::common_hdr_init(ether_frame, base_end_station_imp_ref->get_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -408,7 +407,7 @@ namespace avdecc_lib
 
         aem_cmd_get_sampling_rate_resp_returned = jdksavdecc_aem_command_get_sampling_rate_response_read(&aem_cmd_get_sampling_rate_resp,
                                                                                                          frame,
-                                                                                                         aecp::CMD_POS,
+                                                                                                         ETHER_HDR_SIZE,
                                                                                                          frame_len);
 
         if(aem_cmd_get_sampling_rate_resp_returned < 0)

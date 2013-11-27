@@ -96,7 +96,7 @@ namespace avdecc_lib
         /**
          * Get the status of the End Station connection.
          */
-        char STDCALL get_connection_status();
+        const char STDCALL get_connection_status() const;
 
         /**
          * Change the End Station connection status to connected.
@@ -111,12 +111,12 @@ namespace avdecc_lib
         /**
          * Get the GUID of the End Station.
          */
-        uint64_t STDCALL get_end_station_guid();
+        uint64_t STDCALL get_guid();
 
         /**
          * Get the source MAC address of the End Station.
          */
-        uint64_t STDCALL get_end_station_mac();
+        uint64_t STDCALL get_mac();
 
         /**
          * Get the ADP associated with the End Station.

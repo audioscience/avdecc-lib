@@ -112,7 +112,27 @@ namespace avdecc_lib
          */
         int STDCALL get_last_resp_status();
 
+        /**
+         * Start point of the system process, which calls the thread initialization function.
+         */
+        int STDCALL process_start();
+
+        /**
+         * End point of the system process, which terminates the threads.
+         */
+        int STDCALL process_close();
+
     private:
+        /**
+         * Create and initialize threads, events, and semaphores for wpcap thread.
+         */
+        int init_wpcap_thread();
+
+        /**
+         * Create and initialize threads, events, and semaphores for poll thread.
+         */
+        int init_poll_thread();
+
         /**
          * Start of the packet capture thread used for capturing packets.
          */
@@ -134,30 +154,9 @@ namespace avdecc_lib
         int proc_poll_thread_callback();
 
         /**
-         * Create and initialize threads, events, and semaphores for wpcap thread.
-         */
-        int init_wpcap_thread();
-
-        /**
-         * Create and initialize threads, events, and semaphores for poll thread.
-         */
-        int init_poll_thread();
-
-        /**
          * Execute poll events.
          */
         int poll_single();
-
-    public:
-        /**
-         * Start point of the system process, which calls the thread initialization function.
-         */
-        int STDCALL process_start();
-
-        /**
-         * End point of the system process, which terminates the threads.
-         */
-        int STDCALL process_close();
     };
 }
 

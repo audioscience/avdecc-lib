@@ -188,6 +188,26 @@ namespace avdecc_lib
         return NULL;
     }
 
+    uint32_t STDCALL entity_descriptor_imp::acquire_entity_flags()
+    {
+        return aem_cmd_acquire_entity_resp.aem_acquire_flags;
+    }
+
+    uint64_t STDCALL entity_descriptor_imp::acquire_entity_owner_entity_id()
+    {
+        return jdksavdecc_uint64_get(&aem_cmd_acquire_entity_resp.owner_entity_id, 0);
+    }
+
+    uint32_t STDCALL entity_descriptor_imp::lock_entity_flags()
+    {
+        return aem_cmd_lock_entity_resp.aem_lock_flags;
+    }
+
+    uint64_t STDCALL entity_descriptor_imp::lock_entity_locked_entity_id()
+    {
+        return jdksavdecc_uint64_get(&aem_cmd_lock_entity_resp.locked_entity_id, 0);
+    }
+
     int STDCALL entity_descriptor_imp::send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag)
     {
         return default_send_acquire_entity_cmd(this, notification_id, acquire_entity_flag);
