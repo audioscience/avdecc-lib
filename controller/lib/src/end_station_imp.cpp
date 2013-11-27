@@ -34,7 +34,6 @@
 #include "util_imp.h"
 #include "adp.h"
 #include "acmp.h"
-#include "aecp.h"
 #include "aem_controller_state_machine.h"
 #include "system_tx_queue.h"
 #include "end_station_imp.h"
@@ -92,12 +91,12 @@ namespace avdecc_lib
         end_station_connection_status = 'D';
     }
 
-    uint64_t STDCALL end_station_imp::get_end_station_guid()
+    uint64_t STDCALL end_station_imp::get_guid()
     {
         return end_station_guid;
     }
 
-    uint64_t STDCALL end_station_imp::get_end_station_mac()
+    uint64_t STDCALL end_station_imp::get_mac()
     {
         return end_station_mac;
     }
@@ -157,10 +156,10 @@ namespace avdecc_lib
         aem_command_read_desc.descriptor_index = desc_index;
 
         /*************************** Fill frame payload with AECP data and send the frame **************************/
-        aecp::ether_frame_init(this, ether_frame);
+        aem_controller_state_machine::ether_frame_init(end_station_mac, ether_frame);
         aem_command_read_desc_returned = jdksavdecc_aem_command_read_descriptor_write(&aem_command_read_desc,
                                                                                       ether_frame->payload,
-                                                                                      aecp::CMD_POS,
+                                                                                      ETHER_HDR_SIZE,
                                                                                       sizeof(ether_frame->payload));
 
         if(aem_command_read_desc_returned < 0)
@@ -170,7 +169,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::aecpdu_common_hdr_init(ether_frame, end_station_guid);
+        aem_controller_state_machine::common_hdr_init(ether_frame, end_station_guid);
         system_queue_tx(notification_id, notification_flag, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -252,7 +251,7 @@ namespace avdecc_lib
                 case JDKSAVDECC_DESCRIPTOR_ENTITY:
                     if(entity_desc_vec.size() == 0)
                     {
-                        entity_desc_vec.push_back(new entity_descriptor_imp(this, frame, aecp::READ_DESC_POS, frame_len));
+                        entity_desc_vec.push_back(new entity_descriptor_imp(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len));
                         current_config_desc = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_current_configuration();
                         uint16_t desc_type = JDKSAVDECC_DESCRIPTOR_CONFIGURATION;
                         uint16_t desc_index = 0x0;
@@ -261,64 +260,64 @@ namespace avdecc_lib
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
-                    entity_desc_vec.at(current_entity_desc)->store_config_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    entity_desc_vec.at(current_entity_desc)->store_config_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_STARTING;
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
-                    config_desc_imp_ref->store_audio_unit_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_audio_unit_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STREAM_INPUT:
-                    config_desc_imp_ref->store_stream_input_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_stream_input_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT:
-                    config_desc_imp_ref->store_stream_output_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_stream_output_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_JACK_INPUT:
-                    config_desc_imp_ref->store_jack_input_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_jack_input_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT:
-                    config_desc_imp_ref->store_jack_output_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_jack_output_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE:
-                    config_desc_imp_ref->store_avb_interface_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_avb_interface_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE:
-                    config_desc_imp_ref->store_clock_source_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_clock_source_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_LOCALE:
-                    config_desc_imp_ref->store_locale_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_locale_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STRINGS:
-                    config_desc_imp_ref->store_strings_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_strings_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
-                    config_desc_imp_ref->store_stream_port_input_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_stream_port_input_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
-                    config_desc_imp_ref->store_stream_port_output_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_stream_port_output_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
-                    config_desc_imp_ref->store_audio_cluster_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_audio_cluster_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_AUDIO_MAP:
-                    config_desc_imp_ref->store_audio_map_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_audio_map_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN:
-                    config_desc_imp_ref->store_clock_domain_desc(this, frame, aecp::READ_DESC_POS, frame_len);
+                    config_desc_imp_ref->store_clock_domain_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
                     break;
 
                 default:
@@ -414,10 +413,10 @@ namespace avdecc_lib
         aem_cmd_entity_avail.command_type = JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE;
 
         /**************************** Fill frame payload with AECP data and send the frame *************************/
-        aecp::ether_frame_init(this, ether_frame);
+        aem_controller_state_machine::ether_frame_init(end_station_mac, ether_frame);
         aem_cmd_entity_avail_returned = jdksavdecc_aem_command_entity_available_write(&aem_cmd_entity_avail,
                                                                                       ether_frame->payload,
-                                                                                      aecp::CMD_POS,
+                                                                                      ETHER_HDR_SIZE,
                                                                                       sizeof(ether_frame->payload));
 
         if(aem_cmd_entity_avail_returned < 0)
@@ -427,7 +426,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::aecpdu_common_hdr_init(ether_frame, end_station_guid);
+        aem_controller_state_machine::common_hdr_init(ether_frame, end_station_guid);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -447,7 +446,7 @@ namespace avdecc_lib
 
         aem_cmd_entity_avail_resp_returned = jdksavdecc_aem_command_entity_available_response_read(&aem_cmd_entity_avail_resp,
                                                                                                    frame,
-                                                                                                   aecp::CMD_POS,
+                                                                                                   ETHER_HDR_SIZE,
                                                                                                    frame_len);
 
         if(aem_cmd_entity_avail_resp_returned < 0)
@@ -472,7 +471,7 @@ namespace avdecc_lib
         uint16_t cmd_type;
         uint16_t desc_type;
         uint16_t desc_index;
-        cmd_type = jdksavdecc_uint16_get(frame, aecp::CMD_TYPE_POS);
+        cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
 
         switch(cmd_type)
         {

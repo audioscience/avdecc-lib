@@ -45,20 +45,6 @@ namespace avdecc_lib
         int adpdu_read_returned; // Status of extracting ADPDU information from a network buffer
 
     public:
-        enum ether_hdr_info
-        {
-            SRC_MAC_SIZE = 6,
-            DEST_MAC_SIZE = 6,
-            ETHER_PROTOCOL_SIZE = 2,
-            ETHER_HDR_SIZE = SRC_MAC_SIZE + DEST_MAC_SIZE + ETHER_PROTOCOL_SIZE, // The header size of the Ethernet frame = dest mac + src mac + ether protocol sizes
-
-        };
-
-        enum protocol_hdr_info
-        {
-            PROTOCOL_HDR_SIZE = 4 // The Protocol Header size
-        };
-
         /**
          * Constructor for ADP used for constructing an object with a base pointer and memory buffer length.
          */

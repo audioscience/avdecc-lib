@@ -52,12 +52,12 @@ namespace avdecc_lib
         /**
          * \return The GUID of the End Station.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_end_station_guid() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_guid() = 0;
 
         /**
          * \return The source MAC address of the End Station.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_end_station_mac() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_mac() = 0;
 
         /**
          * \return The number of Entity descriptors for this End Station.

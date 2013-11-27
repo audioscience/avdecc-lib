@@ -47,6 +47,16 @@ namespace avdecc_lib
         ~aem_controller_state_machine();
 
         /**
+         * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
+         */
+        static int ether_frame_init(uint64_t end_station_mac, struct jdksavdecc_frame *ether_frame);
+
+        /**
+         * Initialize and fill Ethernet frame payload with 1722 AECP Header information.
+         */
+        static void common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid);
+
+        /**
          * Process the Send Command state of the AEM Controller State Machine.
          */
         int state_send_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);

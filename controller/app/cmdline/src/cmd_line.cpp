@@ -529,14 +529,14 @@ int cmd_line::cmd_list()
 
         if (endstn)
         {
-            uint64_t end_station_guid = endstn->get_end_station_guid();
+            uint64_t end_station_guid = endstn->get_guid();
             avdecc_lib::entity_descriptor *ent_desc = endstn->get_entity_desc_by_index(current_entity);
             char *end_station_name;
             if (ent_desc)
             {
                 end_station_name = (char *)ent_desc->get_entity_name();
             }
-            uint64_t end_station_mac = endstn->get_end_station_mac();
+            uint64_t end_station_mac = endstn->get_mac();
             std::cout << endstn->get_connection_status()
                       << std::setw(10) << std::dec << i << "  |  "
                       << std::setw(20) << std::hex << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
@@ -1444,7 +1444,7 @@ int cmd_line::cmd_connect()
 
     for(uint32_t i = 0; i < controller_ref->get_end_station_count(); i++)
     {
-        end_station_mac = controller_ref->get_end_station_by_index(i)->get_end_station_mac();
+        end_station_mac = controller_ref->get_end_station_by_index(i)->get_mac();
         instream_end_station_name = controller_ref->get_end_station_by_index(i)->get_entity_desc_by_index(current_entity)->get_entity_name();
         stream_input_desc_count = controller_ref->get_config_desc_by_index(i, current_entity, current_config)->get_stream_input_desc_count();
 
@@ -1463,7 +1463,7 @@ int cmd_line::cmd_connect()
 
         for(uint32_t i = 0; i < controller_ref->get_end_station_count(); i++)
         {
-                end_station_mac = controller_ref->get_end_station_by_index(i)->get_end_station_mac();
+                end_station_mac = controller_ref->get_end_station_by_index(i)->get_mac();
                 outstream_end_station_name = controller_ref->get_end_station_by_index(i)->get_entity_desc_by_index(current_entity)->get_entity_name();
                 stream_output_desc_count = controller_ref->get_config_desc_by_index(i, current_entity, current_config)->get_stream_output_desc_count();
 
@@ -1500,7 +1500,7 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
         {
             if(i != instream_end_station_index)
             {
-                end_station_mac = controller_ref->get_end_station_by_index(i)->get_end_station_mac();
+                end_station_mac = controller_ref->get_end_station_by_index(i)->get_mac();
                 outstream_end_station_name = controller_ref->get_end_station_by_index(i)->get_entity_desc_by_index(current_entity)->get_entity_name();
                 stream_output_desc_count = controller_ref->get_config_desc_by_index(i, current_entity, current_config)->get_stream_output_desc_count();
 

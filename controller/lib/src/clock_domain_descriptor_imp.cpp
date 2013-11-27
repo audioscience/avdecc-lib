@@ -31,7 +31,6 @@
 #include "enumeration.h"
 #include "log_imp.h"
 #include "adp.h"
-#include "aecp.h"
 #include "end_station_imp.h"
 #include "system_tx_queue.h"
 #include "aem_controller_state_machine.h"
@@ -138,10 +137,10 @@ namespace avdecc_lib
         aem_cmd_set_clk_src.clock_source_index = new_clk_src_index;
 
         /**************************** Fill frame payload with AECP data and send the frame ************************/
-        aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
+        aem_controller_state_machine::ether_frame_init(base_end_station_imp_ref->get_mac(), ether_frame);
         aem_cmd_set_clk_src_returned = jdksavdecc_aem_command_set_clock_source_write(&aem_cmd_set_clk_src,
                                                                                      ether_frame->payload,
-                                                                                     aecp::CMD_POS,
+                                                                                     ETHER_HDR_SIZE,
                                                                                      sizeof(ether_frame->payload));
 
         if(aem_cmd_set_clk_src_returned < 0)
@@ -151,7 +150,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aem_controller_state_machine::common_hdr_init(ether_frame, base_end_station_imp_ref->get_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -171,7 +170,7 @@ namespace avdecc_lib
 
         aem_cmd_set_clk_src_resp_returned = jdksavdecc_aem_command_set_clock_source_response_read(&aem_cmd_set_clk_src_resp,
                                                                                                   frame,
-                                                                                                  aecp::CMD_POS,
+                                                                                                  ETHER_HDR_SIZE,
                                                                                                   frame_len);
 
         if(aem_cmd_set_clk_src_resp_returned < 0)
@@ -208,10 +207,10 @@ namespace avdecc_lib
         aem_cmd_get_clk_src.descriptor_index = get_descriptor_index();
 
         /***************************** Fill frame payload with AECP data and send the frame ***********************/
-        aecp::ether_frame_init(base_end_station_imp_ref, ether_frame);
+        aem_controller_state_machine::ether_frame_init(base_end_station_imp_ref->get_mac(), ether_frame);
         aem_cmd_get_clk_src_returned = jdksavdecc_aem_command_get_clock_source_write(&aem_cmd_get_clk_src,
                                                                                      ether_frame->payload,
-                                                                                     aecp::CMD_POS,
+                                                                                     ETHER_HDR_SIZE,
                                                                                      sizeof(ether_frame->payload));
 
         if(aem_cmd_get_clk_src_returned < 0)
@@ -221,7 +220,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp::aecpdu_common_hdr_init(ether_frame, base_end_station_imp_ref->get_end_station_guid());
+        aem_controller_state_machine::common_hdr_init(ether_frame, base_end_station_imp_ref->get_guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
 
         free(ether_frame);
@@ -240,7 +239,7 @@ namespace avdecc_lib
 
         aem_cmd_get_clk_src_resp_returned = jdksavdecc_aem_command_get_clock_source_response_read(&aem_cmd_get_clk_src_resp,
                                                                                                   frame,
-                                                                                                  aecp::CMD_POS,
+                                                                                                  ETHER_HDR_SIZE,
                                                                                                   frame_len);
 
         if(aem_cmd_get_clk_src_resp_returned < 0)

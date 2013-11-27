@@ -64,8 +64,8 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
         printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %p)\n",
                cmd_line::utility->notification_value_to_name(notification_type),
                guid,
-               cmd_name.c_str(),
-               desc_name.c_str(),
+               cmd_name,
+               desc_name,
                desc_index,
                notification_id);
     }

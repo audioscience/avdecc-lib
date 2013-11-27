@@ -46,16 +46,6 @@ namespace avdecc_lib
         int aecpdu_aem_read_returned; // Status of extracting AECPDU information from a network buffer
 
     public:
-        enum aem_fields_offsets
-        {
-            CMD_POS = ETHER_HDR_SIZE,
-            MSG_TYPE_POS = ETHER_HDR_SIZE + 1,
-            TARGET_GUID_POS = ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE,
-            SEQ_ID_POS = ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN + JDKSAVDECC_AECPDU_AEM_OFFSET_SEQUENCE_ID,
-            CMD_TYPE_POS = ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN + JDKSAVDECC_AECPDU_AEM_OFFSET_COMMAND_TYPE,
-            READ_DESC_POS = ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN
-        };
-
         /**
          * Constructor for aecp used for constructing an object with a base pointer, position offest,
          * and memory buffer length.

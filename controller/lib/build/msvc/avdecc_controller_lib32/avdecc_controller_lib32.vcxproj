@@ -111,7 +111,6 @@
     <ClInclude Include="..\..\..\src\acmp.h" />
     <ClInclude Include="..\..\..\src\adp.h" />
     <ClInclude Include="..\..\..\src\adp_discovery_state_machine.h" />
-    <ClInclude Include="..\..\..\src\aecp.h" />
     <ClInclude Include="..\..\..\src\aem_controller_state_machine.h" />
     <ClInclude Include="..\..\..\src\audio_cluster_descriptor_imp.h" />
     <ClInclude Include="..\..\..\src\audio_map_descriptor_imp.h" />
@@ -150,7 +149,6 @@
     <ClCompile Include="..\..\..\src\acmp.cpp" />
     <ClCompile Include="..\..\..\src\adp.cpp" />
     <ClCompile Include="..\..\..\src\adp_discovery_state_machine.cpp" />
-    <ClCompile Include="..\..\..\src\aecp.cpp" />
     <ClCompile Include="..\..\..\src\aem_controller_state_machine.cpp" />
     <ClCompile Include="..\..\..\src\audio_cluster_descriptor_imp.cpp" />
     <ClCompile Include="..\..\..\src\audio_map_descriptor_imp.cpp" />

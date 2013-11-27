@@ -125,7 +125,6 @@ namespace avdecc_lib
                                       "Resend the command with sequence id = %d",
                                       inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
             struct jdksavdecc_frame frame = inflight_cmds.at(inflight_cmd_index).frame();
-
             tx_cmd(inflight_cmds.at(inflight_cmd_index).cmd_notification_id,
                    inflight_cmds.at(inflight_cmd_index).notification_flag(),
                    &frame,
@@ -245,7 +244,8 @@ namespace avdecc_lib
                  (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
                  (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE)))
         {
-            end_station_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE), 0);
+            struct jdksavdecc_eui64 _end_station_guid = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
+            end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
                                                         (uint16_t)msg_type + CMD_LOOKUP,

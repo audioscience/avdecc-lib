@@ -43,8 +43,8 @@ namespace avdecc_lib
         int desc_audio_read_returned; // Status of extracting AUDIO_UNIT descriptor information from a network buffer
 
         std::vector<uint32_t> sample_rates_vec; // Store sample rates information
-        struct jdksavdecc_aem_command_set_sampling_rate_response aem_cmd_set_sampling_rate_resp;
-        struct jdksavdecc_aem_command_get_sampling_rate_response aem_cmd_get_sampling_rate_resp;
+        struct jdksavdecc_aem_command_set_sampling_rate_response aem_cmd_set_sampling_rate_resp; // Store the response received after sending a SET_SAMPLING_RATE command.
+        struct jdksavdecc_aem_command_get_sampling_rate_response aem_cmd_get_sampling_rate_resp; // Store the response received after sending a GET_SAMPLING_RATE command.
 
     public:
         /**
@@ -59,13 +59,6 @@ namespace avdecc_lib
 
         virtual ~audio_unit_descriptor_imp();
 
-    private:
-        /**
-         * Store the sampling rates of the Audio Unit in a vector.
-         */
-        void sampling_rates_init(const uint8_t *frame);
-
-    public:
         /**
          * Get the type of the descriptor.
          */
@@ -325,6 +318,12 @@ namespace avdecc_lib
          * to the current sampling rate of the port or unit in the response.
          */
         int proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+
+    private:
+        /**
+         * Store the sampling rates of the Audio Unit in a vector.
+         */
+        void sampling_rates_init(const uint8_t *frame);
     };
 }
 
