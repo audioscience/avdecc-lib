@@ -321,7 +321,7 @@ namespace avdecc_lib
          * from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
          * sending a GET_RX_STATE command and receiving a response back for the command.
          */
-        uint8_t * STDCALL get_rx_state_stream_dest_mac();
+        uint64_t STDCALL get_rx_state_stream_dest_mac();
 
         /**
          * Get the connection count used by the state commands to return the number of connections an AVDECC Talker

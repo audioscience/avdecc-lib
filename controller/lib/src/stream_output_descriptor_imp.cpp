@@ -287,9 +287,12 @@ namespace avdecc_lib
         return jdksavdecc_uint64_get(&acmp_cmd_get_tx_state_resp.header.stream_id, 0);
     }
 
-    uint8_t * STDCALL stream_output_descriptor_imp::get_tx_state_stream_dest_mac()
+    uint64_t STDCALL stream_output_descriptor_imp::get_tx_state_stream_dest_mac()
     {
-        return acmp_cmd_get_tx_state_resp.stream_dest_mac.value;
+        uint64_t stream_dest_mac;
+        utility->convert_eui48_to_uint64(aem_cmd_get_stream_info_resp.stream_dest_mac.value, stream_dest_mac);
+
+        return stream_dest_mac;
     }
 
     uint16_t STDCALL stream_output_descriptor_imp::get_tx_state_connection_count()
@@ -317,9 +320,12 @@ namespace avdecc_lib
         return acmp_cmd_get_tx_connection_resp.listener_unique_id;
     }
 
-    uint8_t * STDCALL stream_output_descriptor_imp::get_tx_connection_stream_dest_mac()
+    uint64_t STDCALL stream_output_descriptor_imp::get_tx_connection_stream_dest_mac()
     {
-        return acmp_cmd_get_tx_connection_resp.stream_dest_mac.value;
+        uint64_t stream_dest_mac;
+        utility->convert_eui48_to_uint64(aem_cmd_get_stream_info_resp.stream_dest_mac.value, stream_dest_mac);
+
+        return stream_dest_mac;
     }
 
     uint16_t STDCALL stream_output_descriptor_imp::get_tx_connection_connection_count()

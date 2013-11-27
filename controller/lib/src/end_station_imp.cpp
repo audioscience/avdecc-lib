@@ -262,7 +262,6 @@ namespace avdecc_lib
 
                 case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
                     entity_desc_vec.at(current_entity_desc)->store_config_desc(this, frame, aecp::READ_DESC_POS, frame_len);
-
                     read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_STARTING;
                     break;
 

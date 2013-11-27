@@ -295,9 +295,12 @@ namespace avdecc_lib
         return acmp_cmd_get_rx_state_resp.listener_unique_id;
     }
 
-    uint8_t * STDCALL stream_input_descriptor_imp::get_rx_state_stream_dest_mac()
+    uint64_t STDCALL stream_input_descriptor_imp::get_rx_state_stream_dest_mac()
     {
-        return acmp_cmd_get_rx_state_resp.stream_dest_mac.value;
+        uint64_t stream_dest_mac;
+        utility->convert_eui48_to_uint64(acmp_cmd_get_rx_state_resp.stream_dest_mac.value, stream_dest_mac); 
+
+        return stream_dest_mac;
     }
 
     uint16_t STDCALL stream_input_descriptor_imp::get_rx_state_connection_count()

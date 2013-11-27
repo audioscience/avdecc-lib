@@ -29,6 +29,7 @@
 
 #include <algorithm>    // std::find_if
 #include <vector>
+#include "jdksavdecc_acmp_controller.h"
 #include "net_interface_imp.h"
 #include "util_imp.h"
 #include "enumeration.h"
@@ -117,7 +118,6 @@ namespace avdecc_lib
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
             inflight_cmds.erase(inflight_cmds.begin() + inflight_cmd_index);
-            printf("\n>");
         }
         else
         {

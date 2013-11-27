@@ -94,11 +94,6 @@ namespace avdecc_lib
         }
     };
 
-    bool operator== (const inflight &inflgt_cmd, const uint16_t seq_id)
-    {
-        return inflgt_cmd.cmd_seq_id == seq_id;
-    }
-
     /*
      * Class for use in STL find_if() call to find matching sequence ID.
      */

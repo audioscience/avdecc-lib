@@ -385,8 +385,7 @@ namespace avdecc_lib
 
         if(subtype == JDKSAVDECC_SUBTYPE_AECP)
         {
-            aem_controller_state_machine_ref->set_do_cmd(true);
-            aem_controller_state_machine_ref->state_waiting(notification_id, notification_flag, &packet_frame);
+            aem_controller_state_machine_ref->state_send_cmd(notification_id, notification_flag, &packet_frame);
             memcpy(frame, packet_frame.payload, frame_len);
         }
         else if(subtype == JDKSAVDECC_SUBTYPE_ACMP)
