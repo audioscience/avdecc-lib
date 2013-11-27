@@ -324,7 +324,8 @@ namespace avdecc_lib
                     {
                         int found_end_station_index = -1;
                         bool found_acmp_in_end_station = false;
-                        uint64_t entity_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE), 0);
+                        struct jdksavdecc_eui64 _entity_id = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
+                        uint64_t entity_guid = jdksavdecc_uint64_get(&_entity_id, 0);
                         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
 
                         if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||

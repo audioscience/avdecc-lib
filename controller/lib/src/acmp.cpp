@@ -123,10 +123,11 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "Resend the command with sequence id = %d",
                                       inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
+            struct jdksavdecc_frame frame = inflight_cmds.at(inflight_cmd_index).frame();
 
             tx_cmd(inflight_cmds.at(inflight_cmd_index).cmd_notification_id,
                    inflight_cmds.at(inflight_cmd_index).notification_flag(),
-                   &inflight_cmds.at(inflight_cmd_index).frame(),
+                   &frame,
                    true);
         }
     }
@@ -227,7 +228,8 @@ namespace avdecc_lib
            ((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
             (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE)))
         {
-            end_station_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE), 0);
+            struct jdksavdecc_eui64 _end_station_guid = jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE);
+            end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
 
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
@@ -253,7 +255,8 @@ namespace avdecc_lib
         else if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))
         {
-            end_station_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE), 0);
+            struct jdksavdecc_eui64 _end_station_guid = jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE);
+            end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %d",
                                       end_station_guid,
@@ -264,7 +267,8 @@ namespace avdecc_lib
         }
         else
         {
-            end_station_guid = jdksavdecc_uint64_get(&jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE), 0);
+            struct jdksavdecc_eui64 _end_station_guid = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
+            end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "COMMAND_SENT, 0x%llx, %s, %s, %s, %d",
                                       end_station_guid,
