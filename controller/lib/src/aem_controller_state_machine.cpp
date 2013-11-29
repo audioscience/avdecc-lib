@@ -188,13 +188,14 @@ namespace avdecc_lib
         }
         else
         {
+            struct jdksavdecc_frame frame = inflight_cmds_vec.at(inflight_cmd_index).frame();
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "Resend the command with sequence id = %d",
                                       inflight_cmds_vec.at(inflight_cmd_index).cmd_seq_id);
 
             tx_cmd(inflight_cmds_vec.at(inflight_cmd_index).cmd_notification_id,
                    inflight_cmds_vec.at(inflight_cmd_index).notification_flag(),
-                   &inflight_cmds_vec.at(inflight_cmd_index).frame(),
+                   &frame,
                    true);
         }
     }
@@ -235,6 +236,7 @@ namespace avdecc_lib
         uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN); //jdksavdecc_uint16_get(frame, aecp::CMD_TYPE_POS);
         uint16_t desc_type = 0;
         uint16_t desc_index = 0;
+        jdksavdecc_eui64 id;
 
         switch(cmd_type)
         {
@@ -324,10 +326,11 @@ namespace avdecc_lib
             break;
         }
 
+        id = jdksavdecc_common_control_header_get_stream_id(frame, ETHER_HDR_SIZE);
         if((notification_flag == CMD_WITH_NOTIFICATION) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE))
         {
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
-                                                        jdksavdecc_uint64_get(&jdksavdecc_common_control_header_get_stream_id(frame, ETHER_HDR_SIZE), 0),
+                                                        jdksavdecc_uint64_get(&id, 0),
                                                         cmd_type,
                                                         desc_type,
                                                         desc_index,
@@ -337,7 +340,7 @@ namespace avdecc_lib
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "COMMAND_SENT, 0x%llx, %s, %s, %d, %d",
-                                      jdksavdecc_uint64_get(&jdksavdecc_common_control_header_get_stream_id(frame, ETHER_HDR_SIZE), 0),
+                                      jdksavdecc_uint64_get(&id, 0),
                                       utility->aem_cmd_value_to_name(cmd_type),
                                       utility->aem_desc_value_to_name(desc_type),
                                       desc_index,
@@ -347,7 +350,7 @@ namespace avdecc_lib
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d",
-                                      jdksavdecc_uint64_get(&jdksavdecc_common_control_header_get_stream_id(frame, ETHER_HDR_SIZE), 0),
+                                      jdksavdecc_uint64_get(&id, 0),
                                       utility->aem_cmd_value_to_name(cmd_type),
                                       utility->aem_desc_value_to_name(desc_type),
                                       desc_index,
