@@ -44,30 +44,30 @@ namespace avdecc_lib
 
     aem_controller_state_machine::aem_controller_state_machine()
     {
-        aecp_seq_id = 0x0;
+        aecp_seq_id = 0;
     }
 
     aem_controller_state_machine::~aem_controller_state_machine() {}
 
-    int aem_controller_state_machine::ether_frame_init(uint64_t end_station_mac, struct jdksavdecc_frame *ether_frame)
+    int aem_controller_state_machine::ether_frame_init(uint64_t end_station_mac, struct jdksavdecc_frame *cmd_frame)
     {
         /*** Offset to write the field to ***/
-        size_t ether_frame_pos = 0x0;
-        jdksavdecc_frame_init(ether_frame);
+        size_t ether_frame_pos = 0;
+        jdksavdecc_frame_init(cmd_frame);
 
         /**************************************** Ethernet Frame **************************************/
-        ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
-        utility->convert_uint64_to_eui48(end_station_mac, ether_frame->dest_address.value);
-        ether_frame->length = AECP_FRAME_LEN; // Length of AECP packet is 64 bytes
+        cmd_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
+        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), cmd_frame->src_address.value);
+        utility->convert_uint64_to_eui48(end_station_mac, cmd_frame->dest_address.value);
+        cmd_frame->length = AECP_FRAME_LEN; // Length of AECP packet is 64 bytes
 
         /******************** Fill frame payload with Ethernet frame information ******************/
-        jdksavdecc_frame_write(ether_frame, ether_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
+        jdksavdecc_frame_write(cmd_frame, cmd_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
 
         return 0;
     }
 
-    void aem_controller_state_machine::common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid)
+    void aem_controller_state_machine::common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_guid)
     {
         struct jdksavdecc_aecpdu_common_control_header aecpdu_common_ctrl_hdr;
         int aecpdu_common_ctrl_hdr_returned;
@@ -85,9 +85,9 @@ namespace avdecc_lib
 
         /*********************** Fill frame payload with AECP Common Control Header information **********************/
         aecpdu_common_ctrl_hdr_returned = jdksavdecc_aecpdu_common_control_header_write(&aecpdu_common_ctrl_hdr,
-                                                                                        ether_frame->payload,
+                                                                                        cmd_frame->payload,
                                                                                         aecpdu_common_pos,
-                                                                                        sizeof(ether_frame->payload));
+                                                                                        sizeof(cmd_frame->payload));
 
         if(aecpdu_common_ctrl_hdr_returned < 0)
         {
@@ -96,7 +96,7 @@ namespace avdecc_lib
         }
     }
 
-    int aem_controller_state_machine::tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame, bool resend)
+    int aem_controller_state_machine::tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *cmd_frame, bool resend)
     {
         int send_frame_returned;
 
@@ -104,29 +104,29 @@ namespace avdecc_lib
         {
             uint16_t current_seq_id = aecp_seq_id;
 
-            jdksavdecc_aecpdu_common_set_sequence_id(aecp_seq_id++, ether_frame->payload, ETHER_HDR_SIZE);
-            inflight in_flight = inflight(ether_frame,
+            jdksavdecc_aecpdu_common_set_sequence_id(aecp_seq_id++, cmd_frame->payload, ETHER_HDR_SIZE);
+            inflight in_flight = inflight(cmd_frame,
                                           current_seq_id,
                                           notification_id,
                                           notification_flag,
                                           AVDECC_MSG_TIMEOUT_MS);
             in_flight.start_timer();
-            inflight_cmds_vec.push_back(in_flight);
+            inflight_cmds.push_back(in_flight);
         }
 
-        send_frame_returned = net_interface_ref->send_frame(ether_frame->payload, ether_frame->length);
+        send_frame_returned = net_interface_ref->send_frame(cmd_frame->payload, cmd_frame->length);
         if(send_frame_returned < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "netif_send_frame error");
             assert(send_frame_returned >= 0);
         }
 
-        callback(notification_id, notification_flag, ether_frame->payload);
+        callback(notification_id, notification_flag, cmd_frame->payload);
 
         std::vector<inflight>::iterator j =
-            std::find_if(inflight_cmds_vec.begin(), inflight_cmds_vec.end(), SeqIdComp(aecp_seq_id));
+            std::find_if(inflight_cmds.begin(), inflight_cmds.end(), SeqIdComp(aecp_seq_id));
 
-        if(j != inflight_cmds_vec.end()) // found?
+        if(j != inflight_cmds.end()) // found?
         {
             j->start_timer();
         }
@@ -134,92 +134,98 @@ namespace avdecc_lib
         return 0;
     }
 
-    int aem_controller_state_machine::proc_unsolicited(void *&notification_id, struct jdksavdecc_frame *ether_frame)
+    int aem_controller_state_machine::proc_unsolicited(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "proc_unsolicited is not implemented.");
 
         return 0;
     }
 
-    int aem_controller_state_machine::proc_resp(void *&notification_id, struct jdksavdecc_frame *ether_frame)
+    int aem_controller_state_machine::proc_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
     {
-        uint16_t seq_id = jdksavdecc_aecpdu_common_get_sequence_id(ether_frame->payload, ETHER_HDR_SIZE);
+        uint16_t seq_id = jdksavdecc_aecpdu_common_get_sequence_id(cmd_frame->payload, ETHER_HDR_SIZE);
         int inflight_index = 0;
         uint32_t notification_flag = 0;
 
         std::vector<inflight>::iterator j =
-            std::find_if(inflight_cmds_vec.begin(), inflight_cmds_vec.end(), SeqIdComp(seq_id));
+            std::find_if(inflight_cmds.begin(), inflight_cmds.end(), SeqIdComp(seq_id));
 
-        if(j != inflight_cmds_vec.end()) // found?
+        if(j != inflight_cmds.end()) // found?
         {
             notification_id = j->cmd_notification_id;
             notification_flag = j->notification_flag();
-            callback(notification_id, notification_flag, ether_frame->payload);
-            inflight_cmds_vec.erase(inflight_cmds_vec.begin() + inflight_index);
+            callback(notification_id, notification_flag, cmd_frame->payload);
+            inflight_cmds.erase(inflight_cmds.begin() + inflight_index);
             return 1;
         }
 
         return -1;
     }
 
-    int aem_controller_state_machine::state_send_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame)
+    int aem_controller_state_machine::state_send_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *cmd_frame)
     {
-       return tx_cmd(notification_id, notification_flag, ether_frame, false);
+       return tx_cmd(notification_id, notification_flag, cmd_frame, false);
     }
 
-    int aem_controller_state_machine::state_rcvd_unsolicited(void *&notification_id, struct jdksavdecc_frame *ether_frame)
+    int aem_controller_state_machine::state_rcvd_unsolicited(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
     {
-       return proc_unsolicited(notification_id, ether_frame);
+       return proc_unsolicited(notification_id, cmd_frame);
     }
 
-    int aem_controller_state_machine::state_rcvd_resp(void *&notification_id, struct jdksavdecc_frame *ether_frame)
+    int aem_controller_state_machine::state_rcvd_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
     {
-       return proc_resp(notification_id, ether_frame);
+       return proc_resp(notification_id, cmd_frame);
     }
 
     void aem_controller_state_machine::state_timeout(uint32_t inflight_cmd_index)
     {
-        bool is_retried = inflight_cmds_vec.at(inflight_cmd_index).retried();
+        bool is_retried = inflight_cmds.at(inflight_cmd_index).retried();
 
         if(is_retried)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
-            inflight_cmds_vec.erase(inflight_cmds_vec.begin() + inflight_cmd_index);
+            inflight_cmds.erase(inflight_cmds.begin() + inflight_cmd_index);
         }
         else
         {
             struct jdksavdecc_frame frame = inflight_cmds_vec.at(inflight_cmd_index).frame();
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "Resend the command with sequence id = %d",
-                                      inflight_cmds_vec.at(inflight_cmd_index).cmd_seq_id);
+                                      inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
 
+<<<<<<< HEAD
             tx_cmd(inflight_cmds_vec.at(inflight_cmd_index).cmd_notification_id,
                    inflight_cmds_vec.at(inflight_cmd_index).notification_flag(),
                    &frame,
+=======
+            tx_cmd(inflight_cmds.at(inflight_cmd_index).cmd_notification_id,
+                   inflight_cmds.at(inflight_cmd_index).notification_flag(),
+                   &inflight_cmds.at(inflight_cmd_index).frame(),
+>>>>>>> controller:lib: Changed acmp class into acmp_controller_state_machine
                    true);
         }
     }
 
     void aem_controller_state_machine::tick()
     {
-        for(uint32_t i = 0; i < inflight_cmds_vec.size(); i++)
+        for(uint32_t i = 0; i < inflight_cmds.size(); i++)
         {
-            if(inflight_cmds_vec.at(i).timeout())
+            if(inflight_cmds.at(i).timeout())
             {
                 state_timeout(i);
             }
         }
     }
 
-    int aem_controller_state_machine::update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame)
+    int aem_controller_state_machine::update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *cmd_frame)
     {
         if(msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE && u_field == false)
         {
-            state_rcvd_resp(notification_id, ether_frame);
+            state_rcvd_resp(notification_id, cmd_frame);
         }
         else if(msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE && u_field == true)
         {
-            state_rcvd_unsolicited(notification_id, ether_frame);
+            state_rcvd_unsolicited(notification_id, cmd_frame);
         }
         else
         {
@@ -363,9 +369,9 @@ namespace avdecc_lib
     bool aem_controller_state_machine::is_inflight_cmd_with_notification_id(void *notification_id)
     {
        std::vector<inflight>::iterator j =
-            std::find_if(inflight_cmds_vec.begin(), inflight_cmds_vec.end(), NotificationComp(notification_id));
+            std::find_if(inflight_cmds.begin(), inflight_cmds.end(), NotificationComp(notification_id));
 
-        if(j != inflight_cmds_vec.end()) // found?
+        if(j != inflight_cmds.end()) // found?
         {
             return true;
         }

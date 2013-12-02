@@ -64,8 +64,8 @@ namespace avdecc_lib
 
     void audio_unit_descriptor_imp::sampling_rates_init(const uint8_t *frame)
     {
-        uint16_t offset = 0x0;
-        uint32_t sampling_rate = 0x0;
+        uint16_t offset = 0;
+        uint32_t sampling_rate = 0;
 
         for(uint32_t i = 0; i < get_sampling_rates_count(); i++)
         {
@@ -288,10 +288,10 @@ namespace avdecc_lib
 
     int STDCALL audio_unit_descriptor_imp::send_set_sampling_rate_cmd(void *notification_id, uint32_t new_sampling_rate)
     {
-        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_set_sampling_rate aem_cmd_set_sampling_rate;
         int aem_cmd_set_sampling_rate_returned;
-        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************* AECP Common Data **********************************************/
         aem_cmd_set_sampling_rate.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
@@ -304,11 +304,11 @@ namespace avdecc_lib
         aem_cmd_set_sampling_rate.sampling_rate = new_sampling_rate;
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
-        aem_controller_state_machine::ether_frame_init(base_end_station_imp_ref->get_mac(), ether_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);
         aem_cmd_set_sampling_rate_returned = jdksavdecc_aem_command_set_sampling_rate_write(&aem_cmd_set_sampling_rate,
-                                                                                            ether_frame->payload,
+                                                                                            cmd_frame->payload,
                                                                                             ETHER_HDR_SIZE,
-                                                                                            sizeof(ether_frame->payload));
+                                                                                            sizeof(cmd_frame->payload));
 
         if(aem_cmd_set_sampling_rate_returned < 0)
         {
@@ -317,23 +317,23 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine::common_hdr_init(ether_frame, base_end_station_imp_ref->get_guid());
-        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->get_guid());
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
-        free(ether_frame);
+        free(cmd_frame);
         return 0;
 
     }
 
     int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
-        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_frame *cmd_frame;
         int aem_cmd_set_sampling_rate_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
-        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
-        memcpy(ether_frame->payload, frame, frame_len);
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        memcpy(cmd_frame->payload, frame, frame_len);
 
         aem_cmd_set_sampling_rate_resp_returned = jdksavdecc_aem_command_set_sampling_rate_response_read(&aem_cmd_set_sampling_rate_resp,
                                                                                                          frame,
@@ -351,18 +351,18 @@ namespace avdecc_lib
         status = aem_cmd_set_sampling_rate_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_set_sampling_rate_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
+        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
-        free(ether_frame);
+        free(cmd_frame);
         return 0;
     }
 
     int STDCALL audio_unit_descriptor_imp::send_get_sampling_rate_cmd(void *notification_id)
     {
-        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_get_sampling_rate aem_cmd_get_sampling_rate;
         int aem_cmd_get_sampling_rate_returned;
-        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *********************************************/
         aem_cmd_get_sampling_rate.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
@@ -374,11 +374,11 @@ namespace avdecc_lib
         aem_cmd_get_sampling_rate.descriptor_index = get_descriptor_index();
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
-        aem_controller_state_machine::ether_frame_init(base_end_station_imp_ref->get_mac(), ether_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);
         aem_cmd_get_sampling_rate_returned = jdksavdecc_aem_command_get_sampling_rate_write(&aem_cmd_get_sampling_rate,
-                                                                                            ether_frame->payload,
+                                                                                            cmd_frame->payload,
                                                                                             ETHER_HDR_SIZE,
-                                                                                            sizeof(ether_frame->payload));
+                                                                                            sizeof(cmd_frame->payload));
 
         if(aem_cmd_get_sampling_rate_returned < 0)
         {
@@ -387,23 +387,23 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine::common_hdr_init(ether_frame, base_end_station_imp_ref->get_guid());
-        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->get_guid());
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
-        free(ether_frame);
+        free(cmd_frame);
         return 0;
     }
 
 
     int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
-        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_frame *cmd_frame;
         int aem_cmd_get_sampling_rate_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
-        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
-        memcpy(ether_frame->payload, frame, frame_len);
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        memcpy(cmd_frame->payload, frame, frame_len);
 
         aem_cmd_get_sampling_rate_resp_returned = jdksavdecc_aem_command_get_sampling_rate_response_read(&aem_cmd_get_sampling_rate_resp,
                                                                                                          frame,
@@ -421,9 +421,9 @@ namespace avdecc_lib
         status = aem_cmd_get_sampling_rate_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_get_sampling_rate_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
+        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
-        free(ether_frame);
+        free(cmd_frame);
         return 0;
     }
 }

@@ -22,59 +22,54 @@
  */
 
 /**
- * acmp.h
+ * acmp_controller_state_machine.h
  *
- * AVDECC Connection Management Protocol functions and state machine
+ * AVDECC Connection Management Protocol Controller State Machine class
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_ACMP_H_
-#define _AVDECC_CONTROLLER_LIB_ACMP_H_
+#ifndef _AVDECC_CONTROLLER_LIB_ACMP_CONTROLLER_STATE_MACHINE_H_
+#define _AVDECC_CONTROLLER_LIB_ACMP_CONTROLLER_STATE_MACHINE_H_
 
 namespace avdecc_lib
 {
     class inflight;
 
-    class acmp
+    class acmp_controller_state_machine
     {
     private:
         uint16_t acmp_seq_id; // The sequence id used for identifying the ACMP command that a response is for
         std::vector<inflight> inflight_cmds;
 
     public:
-        acmp();
+        acmp_controller_state_machine();
 
-        ~acmp();
+        ~acmp_controller_state_machine();
 
         /**
          * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
          */
-        static int ether_frame_init(struct jdksavdecc_frame *ether_frame);
+        int ether_frame_init(struct jdksavdecc_frame *cmd_frame);
 
         /**
          * Initialize and fill Ethernet frame payload with 1722 ACMP Header information.
          */
-        static void common_hdr_init(uint32_t msg_type, struct jdksavdecc_frame *ether_frame);
+        void common_hdr_init(uint32_t msg_type, struct jdksavdecc_frame *cmd_frame);
 
         /**
          * Process the Command state of the ACMP Controller State Machine.
          */
-        int state_command(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame);
+        int state_command(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *cmd_frame);
 
         /**
          * Process the Response state of the ACMP Controller State Machine.
          */
-        int state_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *ether_frame);
+        int state_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *cmd_frame);
 
         /**
          * Check timeout for the inflight commands.
          */
         void tick();
-
-        /**
-         * Update inflight command for the response received.
-         */
-        int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame);
 
         /**
          * Check if the command with the corresponding notification id is already in the inflight command vector.
@@ -90,12 +85,12 @@ namespace avdecc_lib
         /**
          * Transmit an ACMP Command.
          */
-        int tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame, bool resend);
+        int tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *cmd_frame, bool resend);
 
         /**
          * Handle the receipt and processing of a received response for a command sent.
          */
-        int proc_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *ether_frame);
+        int proc_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *cmd_frame);
 
         /**
          * Call notification or post_log_msg callback function for the command sent or response received.
@@ -103,7 +98,7 @@ namespace avdecc_lib
         int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
     };
 
-    extern acmp *acmp_ref;
+    extern acmp_controller_state_machine *acmp_controller_state_machine_ref;
 }
 
 #endif

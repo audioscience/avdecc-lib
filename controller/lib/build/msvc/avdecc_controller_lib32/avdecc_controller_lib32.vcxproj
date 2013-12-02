@@ -108,7 +108,7 @@
     <ClInclude Include="..\..\..\include\strings_descriptor.h" />
     <ClInclude Include="..\..\..\include\system.h" />
     <ClInclude Include="..\..\..\include\util.h" />
-    <ClInclude Include="..\..\..\src\acmp.h" />
+    <ClInclude Include="..\..\..\src\acmp_controller_state_machine.h" />
     <ClInclude Include="..\..\..\src\adp.h" />
     <ClInclude Include="..\..\..\src\adp_discovery_state_machine.h" />
     <ClInclude Include="..\..\..\src\aem_controller_state_machine.h" />
@@ -146,7 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\..\jdksavdecc-c\src\jdksavdecc_pdu.c" />
-    <ClCompile Include="..\..\..\src\acmp.cpp" />
+    <ClCompile Include="..\..\..\src\acmp_controller_state_machine.cpp" />
     <ClCompile Include="..\..\..\src\adp.cpp" />
     <ClCompile Include="..\..\..\src\adp_discovery_state_machine.cpp" />
     <ClCompile Include="..\..\..\src\aem_controller_state_machine.cpp" />

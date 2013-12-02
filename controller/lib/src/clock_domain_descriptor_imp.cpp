@@ -95,7 +95,7 @@ namespace avdecc_lib
 
     void clock_domain_descriptor_imp::store_clock_sources(const uint8_t *frame, size_t pos)
     {
-        uint16_t offset = 0x0;
+        uint16_t offset = 0;
 
         for(uint32_t i = 0; i < get_clock_sources_count(); i++)
         {
@@ -121,10 +121,10 @@ namespace avdecc_lib
 
     int STDCALL clock_domain_descriptor_imp::send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index)
     {
-        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_set_clock_source aem_cmd_set_clk_src;
         int aem_cmd_set_clk_src_returned;
-        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /***************************************** AECP Common Data ******************************************/
         aem_cmd_set_clk_src.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
@@ -137,11 +137,11 @@ namespace avdecc_lib
         aem_cmd_set_clk_src.clock_source_index = new_clk_src_index;
 
         /**************************** Fill frame payload with AECP data and send the frame ************************/
-        aem_controller_state_machine::ether_frame_init(base_end_station_imp_ref->get_mac(), ether_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);
         aem_cmd_set_clk_src_returned = jdksavdecc_aem_command_set_clock_source_write(&aem_cmd_set_clk_src,
-                                                                                     ether_frame->payload,
+                                                                                     cmd_frame->payload,
                                                                                      ETHER_HDR_SIZE,
-                                                                                     sizeof(ether_frame->payload));
+                                                                                     sizeof(cmd_frame->payload));
 
         if(aem_cmd_set_clk_src_returned < 0)
         {
@@ -150,23 +150,23 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine::common_hdr_init(ether_frame, base_end_station_imp_ref->get_guid());
-        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->get_guid());
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
-        free(ether_frame);
+        free(cmd_frame);
         return 0;
 
     }
 
     int clock_domain_descriptor_imp::proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
-        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_frame *cmd_frame;
         int aem_cmd_set_clk_src_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
-        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
-        memcpy(ether_frame->payload, frame, frame_len);
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        memcpy(cmd_frame->payload, frame, frame_len);
 
         aem_cmd_set_clk_src_resp_returned = jdksavdecc_aem_command_set_clock_source_response_read(&aem_cmd_set_clk_src_resp,
                                                                                                   frame,
@@ -184,18 +184,18 @@ namespace avdecc_lib
         status = aem_cmd_set_clk_src_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_set_clk_src_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
+        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
-        free(ether_frame);
+        free(cmd_frame);
         return 0;
     }
 
     int STDCALL clock_domain_descriptor_imp::send_get_clock_source_cmd(void *notification_id)
     {
-        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_get_clock_source aem_cmd_get_clk_src;
         int aem_cmd_get_clk_src_returned;
-        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /***************************************** AECP Common Data ******************************************/
         aem_cmd_get_clk_src.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
@@ -207,11 +207,11 @@ namespace avdecc_lib
         aem_cmd_get_clk_src.descriptor_index = get_descriptor_index();
 
         /***************************** Fill frame payload with AECP data and send the frame ***********************/
-        aem_controller_state_machine::ether_frame_init(base_end_station_imp_ref->get_mac(), ether_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);
         aem_cmd_get_clk_src_returned = jdksavdecc_aem_command_get_clock_source_write(&aem_cmd_get_clk_src,
-                                                                                     ether_frame->payload,
+                                                                                     cmd_frame->payload,
                                                                                      ETHER_HDR_SIZE,
-                                                                                     sizeof(ether_frame->payload));
+                                                                                     sizeof(cmd_frame->payload));
 
         if(aem_cmd_get_clk_src_returned < 0)
         {
@@ -220,22 +220,22 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine::common_hdr_init(ether_frame, base_end_station_imp_ref->get_guid());
-        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->get_guid());
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
-        free(ether_frame);
+        free(cmd_frame);
         return 0;
     }
 
     int clock_domain_descriptor_imp::proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
-        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_frame *cmd_frame;
         int aem_cmd_get_clk_src_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
-        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
-        memcpy(ether_frame->payload, frame, frame_len);
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        memcpy(cmd_frame->payload, frame, frame_len);
 
         aem_cmd_get_clk_src_resp_returned = jdksavdecc_aem_command_get_clock_source_response_read(&aem_cmd_get_clk_src_resp,
                                                                                                   frame,
@@ -253,9 +253,9 @@ namespace avdecc_lib
         status = aem_cmd_get_clk_src_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_get_clk_src_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
+        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
-        free(ether_frame);
+        free(cmd_frame);
         return 0;
     }
 }

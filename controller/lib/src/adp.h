@@ -38,7 +38,7 @@ namespace avdecc_lib
     class adp
     {
     private:
-        struct jdksavdecc_frame ether_frame; // Structure containing the Ethernet Frame fields
+        struct jdksavdecc_frame cmd_frame; // Structure containing the Ethernet Frame fields
         struct jdksavdecc_adpdu adpdu; // Structure containing the ADPDU fields
         uint8_t *adp_frame; // Point to a raw memory buffer to read from
         int frame_read_returned; // Status of extracting Ethernet Frame information from a network buffer
@@ -51,13 +51,13 @@ namespace avdecc_lib
         adp(const uint8_t *frame, size_t frame_len);
 
         ~adp();
-
+        
         /**
          * Get the Ethernet type of the ADP packet.
          */
         inline uint16_t get_ethernet_type()
         {
-            return ether_frame.ethertype;
+            return cmd_frame.ethertype;
         }
 
         /**
@@ -65,31 +65,21 @@ namespace avdecc_lib
          */
         inline struct jdksavdecc_eui48 get_src_addr()
         {
-            return ether_frame.src_address;
+            return cmd_frame.src_address;
         }
 
         /**
-         * Get the destination of the ADP packet.
+         * Get the destination address of the ADP packet.
          */
         inline struct jdksavdecc_eui48 get_dest_addr()
         {
-            return ether_frame.dest_address;
+            return cmd_frame.dest_address;
         }
 
         /**
          * Get the Controller GUID of the AVDECC Entity sending the command.
          */
         static struct jdksavdecc_eui64 get_controller_guid();
-
-        /**
-         * Initialize and fill Ethernet frame payload with Ethernet frame information for ADP messages.
-         */
-        static int ether_frame_init(struct jdksavdecc_frame *ether_frame);
-
-        /**
-         * Initialize and fill Ethernet frame payload with 1722 ADP Header information.
-         */
-        static void adpdu_common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid);
 
         /**
          * Get the header field of the ADP object.
@@ -104,7 +94,8 @@ namespace avdecc_lib
          */
         inline uint64_t get_entity_entity_id()
         {
-            return jdksavdecc_uint64_get(&adpdu.header.entity_id, 0);
+            struct jdksavdecc_eui64 entity_guid = adpdu.header.entity_id;
+            return jdksavdecc_uint64_get(&entity_guid, 0);
         }
 
         /**

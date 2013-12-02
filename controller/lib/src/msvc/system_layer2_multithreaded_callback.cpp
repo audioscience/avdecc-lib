@@ -258,8 +258,7 @@ namespace avdecc_lib
         DWORD poll_count = sizeof(poll_events_array) / sizeof(HANDLE);
         int status = 0;
 
-        //adp_discovery_state_machine_ref->set_do_discover(true); // Send ENTITY_DISCOVER message
-        //adp_discovery_state_machine_ref->state_waiting(NULL);
+        //adp_discovery_state_machine_ref->state_discover(NULL); // Send ENTITY_DISCOVER message
 
         dwEvent = WaitForMultipleObjects(poll_count, poll_events_array, FALSE, INFINITE);
 

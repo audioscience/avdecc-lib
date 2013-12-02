@@ -33,7 +33,7 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.3.9"
+#define AVDECC_CONTROLLER_VERSION "v0.4.1"
 
 namespace avdecc_lib
 {
