@@ -55,7 +55,7 @@ namespace avdecc_lib
          * Check if the jack connection is hardwired, cannot be disconnected and
          * may be physically within the device's structure.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_captive() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_jack_flag_captive() = 0;
 
         /**
          * \return The type of the jack.

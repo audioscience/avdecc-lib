@@ -107,12 +107,6 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_current_format() = 0;
 
         /**
-         * \return The offset from the start of the descriptor for the first octet of the formats.
-         *	       This field is 132 for this version of AEM.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_formats_offset() = 0;
-
-        /**
          * \return The number of formats supported by this audio stream. The maximum value
          *	       for this field is 47 for this version of AEM.
          */
@@ -209,7 +203,7 @@ namespace avdecc_lib
          * \return The stream info stream destination MAC of a stream after sending a GET_STREAM_info command and
          *	       receiving a response back for the command.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_stream_info_stream_dest_mac() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_stream_dest_mac() = 0;
 
         /**
          * \return The stream info MSRP failure code of a stream after sending a GET_STREAM_info command and
@@ -224,10 +218,81 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_msrp_failure_bridge_id() = 0;
 
         /**
+         * \return The stream id field used to identify and transfer the associated stream ID where suitable 
+         * after sending a GET_TX_STATE command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_state_stream_id() = 0;
+
+        /**
+         * \return The stream destination MAC address used to convey the destination MAC address for a stream
+         *         from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
+         *         sending a GET_TX_STATE command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_state_stream_dest_mac() = 0;
+
+        /**
+         * \return The connection count used by the state commands to return the number of connections an AVDECC Talker
+         *         thinks it has on its stream source after sending a GET_TX_STATE command and receiving a response
+         *         back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_state_connection_count() = 0;
+
+        /**
+         * \return The stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
+         *         or from either to the AVDECC Controller after sending a GET_TX_STATE command and receiving a response
+         *         back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_state_stream_vlan_id() = 0;
+
+        /**
+         * \return The stream id field used to identify and transfer the associated stream ID where suitable 
+         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_connection_stream_id() = 0;
+
+        /**
+         * \return The Talker unique ID used to uniquely identify the stream source of the AVDECC Talker 
+         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_talker_unique_id() = 0;
+
+        /**
+         * \return The Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener   
+         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_listener_unique_id() = 0;
+
+        /**
+         * \return The stream destination MAC address used to convey the destination MAC address for a stream
+         *         from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
+         *         sending a GET_TX_CONNECTION command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_connection_stream_dest_mac() = 0;
+
+        /**
+         * \return The connection count used by the state commands to return the number of connections an AVDECC Talker
+         *         thinks it has on its stream source after sending a GET_TX_CONNECTION command and receiving a response
+         *         back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_connection_count() = 0;
+
+        /**
+         * \return The stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
+         *         or from either to the AVDECC Controller after sending a GET_TX_CONNECTION command and receiving a response
+         *         back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_stream_vlan_id() = 0;
+
+        /**
          * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          * \param new_stream_format The stream format field is set to the new stream format.
+         *
+         * The new stream format can be retrieved by calling the set_stream_format_stream_format function after successfully
+         * receiving a response back for the SET_STREAM_FORMAT command sent.
+         *
+         * \see set_stream_format_stream_format()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_format_cmd(void *notification_id, uint64_t new_stream_format) = 0;
 
@@ -235,6 +300,11 @@ namespace avdecc_lib
          * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * The stream format can be retrieved by calling the get_stream_format_stream_format function after successfully
+         * receiving a response back for the GET_STREAM_FORMAT command sent.
+         *
+         * \see get_stream_format_stream_format()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_format_cmd(void *notification_id) = 0;
 
@@ -251,6 +321,13 @@ namespace avdecc_lib
          * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * The stream information can be retrieved by calling the following functions after successfully
+         * receiving a response back for the GET_STREAM_INFO command sent.
+         *
+         * \see get_stream_info_flags(), get_stream_info_stream_format(), get_stream_info_stream_id(),
+         *      get_stream_info_msrp_accumulated_latency(), get_stream_info_stream_dest_mac(),
+         *      get_stream_info_msrp_failure_code(), get_stream_info_msrp_failure_bridge_id()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void *notification_id) = 0;
 
@@ -282,7 +359,7 @@ namespace avdecc_lib
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
          *                         this corresponds to the id of the Stream Output descriptor.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_tx_state_cmd(void *notification_id, uint64_t listener_guid, uint16_t listener_unique_id) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_tx_state_cmd(void *notification_id) = 0;
 
         /**
          * Send a GET_TX_CONNECTION command with a notification id to get a specific Talker connection information.

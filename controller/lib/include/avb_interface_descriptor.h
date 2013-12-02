@@ -46,7 +46,7 @@ namespace avdecc_lib
         /**
          * \return The MAC address of the interface.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_mac_addr() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_mac_addr() = 0;
 
         /**
          * The flags describing the features of the interface.

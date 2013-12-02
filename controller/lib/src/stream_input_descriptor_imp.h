@@ -31,6 +31,7 @@
 #ifndef _AVDECC_CONTROLLER_LIB_STREAM_INPUT_DESCRIPTOR_IMP_H_
 #define _AVDECC_CONTROLLER_LIB_STREAM_INPUT_DESCRIPTOR_IMP_H_
 
+#include "jdksavdecc_acmp_controller.h"
 #include "descriptor_base_imp.h"
 #include "stream_input_descriptor.h"
 
@@ -62,6 +63,10 @@ namespace avdecc_lib
         struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp; // Store the response received after sending a SET_STREAM_INFO command.
         struct jdksavdecc_aem_command_get_stream_info_response aem_cmd_get_stream_info_resp; // Store the response received after sending a GET_STREAM_INFO command.
 
+        struct jdksavdecc_acmpdu acmp_cmd_connect_rx_resp; // Store the response received after sending a CONNECT_RX command.
+        struct jdksavdecc_acmpdu acmp_cmd_disconnect_rx_resp; // Store the response received after sending a DISCONNECT_RX command.
+        struct jdksavdecc_acmpdu acmp_cmd_get_rx_state_resp; // Store the response received after sending a GET_RX_STATE command.
+
     public:
         /**
          * Constructor for Stream Input descriptor object.
@@ -75,13 +80,6 @@ namespace avdecc_lib
 
         virtual ~stream_input_descriptor_imp();
 
-    private:
-        /**
-         * Store the stream flags componenets of the Stream Output descriptor object in a vector.
-         */
-        void stream_flags_init();
-
-    public:
         /**
          * Get the type of the descriptor.
          */
@@ -175,7 +173,7 @@ namespace avdecc_lib
          * Get the offset from the start of the descriptor for the first octet of the formats.
          * This field is 132 for this version of AEM.
          */
-        uint16_t STDCALL get_formats_offset();
+        uint16_t get_formats_offset();
 
         /**
          * Get the number of formats supported by this audio stream. The maximum value
@@ -274,16 +272,16 @@ namespace avdecc_lib
          * Get the stream dest mac of a stream after sending a GET_STREAM_info command and
          * receiving a response back for the command.
          */
-        uint8_t * STDCALL get_stream_info_stream_dest_mac();
+        uint64_t STDCALL get_stream_info_stream_dest_mac();
 
         /**
-         * Get the stream info MSRP failure code of a stream after sending a GET_STREAM_info command and
+         * \return The stream info MSRP failure code of a stream after sending a GET_STREAM_info command and
          * receiving a response back for the command.
          */
         uint8_t STDCALL get_stream_info_msrp_failure_code();
 
         /**
-         * Get the stream info MSRP failure bridge id of a stream after sending a GET_STREAM_info command and
+         * \return The stream info MSRP failure bridge id of a stream after sending a GET_STREAM_info command and
          * receiving a response back for the command.
          */
         uint64_t STDCALL get_stream_info_msrp_failure_bridge_id();
@@ -294,10 +292,60 @@ namespace avdecc_lib
         bool is_clock_sync_source_set();
 
         /**
+         * Get the stream id field used to identify and transfer the associated stream ID where suitable 
+         * after sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        uint64_t STDCALL get_rx_state_stream_id();
+
+        /**
+         * Get the Talker unique ID used to uniquely identify the stream source of the AVDECC Talker 
+         * after sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        uint16_t STDCALL get_rx_state_talker_unique_id();
+
+        /**
+         * Get the Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener   
+         * after sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        uint16_t STDCALL get_rx_state_listener_unique_id();
+
+        /**
+         * Get the stream destination MAC address used to convey the destination MAC address for a stream
+         * from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
+         * sending a GET_RX_STATE command and receiving a response back for the command.
+         */
+        uint64_t STDCALL get_rx_state_stream_dest_mac();
+
+        /**
+         * Get the connection count used by the state commands to return the number of connections an AVDECC Talker
+         * thinks it has on its stream source after sending a GET_RX_STATE command and receiving a response
+         * back for the command.
+         */
+        uint16_t STDCALL get_rx_state_connection_count();
+
+        /**
+         * Get the flags used to indicate attributes of the connection or saved state after sending a GET_RX_STATE
+         * command and receiving a response back for the command.
+         */
+        uint16_t STDCALL get_rx_state_flags();
+
+        /**
+         * Get the stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
+         * or from either to the AVDECC Controller after sending a GET_RX_STATE command and receiving a response
+         * back for the command.
+         */
+        uint16_t STDCALL get_rx_state_stream_vlan_id();
+
+        /**
          * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          * \param new_stream_format The stream format field is set to the new stream format.
+         *
+         * The new stream format can be retrieved by calling the set_stream_format_stream_format function after successfully
+         * receiving a response back for the SET_STREAM_FORMAT command sent.
+         *
+         * \see set_stream_format_stream_format()
          */
         int STDCALL send_set_stream_format_cmd(void *notification_id, uint64_t new_stream_format);
 
@@ -312,6 +360,11 @@ namespace avdecc_lib
          * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * The stream format can be retrieved by calling the get_stream_format_stream_format function after successfully
+         * receiving a response back for the GET_STREAM_FORMAT command sent.
+         *
+         * \see get_stream_format_stream_format()
          */
         int STDCALL send_get_stream_format_cmd(void *notification_id);
 
@@ -340,6 +393,13 @@ namespace avdecc_lib
          * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * The stream information can be retrieved by calling the following functions after successfully
+         * receiving a response back for the GET_STREAM_INFO command sent.
+         *
+         * \see get_stream_info_flags(), get_stream_info_stream_format(), get_stream_info_stream_id(),
+         *      get_stream_info_msrp_accumulated_latency(), get_stream_info_stream_dest_mac(),
+         *      get_stream_info_msrp_failure_code(), get_stream_info_msrp_failure_bridge_id()
          */
         int STDCALL send_get_stream_info_cmd(void *notification_id);
 
@@ -426,33 +486,18 @@ namespace avdecc_lib
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
          *                         this corresponds to the id of the Stream Output descriptor.
          */
-        int STDCALL send_get_rx_state_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id);
+        int STDCALL send_get_rx_state_cmd(void *notification_id);
 
         /**
          * Process a GET_RX_STATE response for the GET_RX_STATE command.
          */
         int proc_get_rx_state_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
+    private:
         /**
-         * Send a GET_TX_CONNECTION command with a notification id to get a specific Talker connection information.
-         *
-         * \param notification_id A void pointer to the unique identifier associated with the command.
-         * \param talker_guid The Talker Entity ID used to identify the AVDECC Talker being targed by
-         *                    the command. In the case of Talker commands, this is the AVDECC Entity
-         *                    receiving the command. In the case of Listener commands, this is the
-         *                    AVDECC Entity that any Talker command is to be sent to. This field is
-         *                    either the Entity ID of the AVDECC Entity being targets to or 0.
-         * \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
-         *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
-         *                         this corresponds to the id of the Stream Output descriptor.
+         * Store the stream flags componenets of the Stream Output descriptor object in a vector.
          */
-        int STDCALL send_get_tx_connection_cmd(void *notification_id, uint64_t listener_guid, uint16_t listener_unique_id);
-
-        /**
-         * Process a GET_TX_CONNECTION response for the GET_TX_CONNECTION command.
-         */
-        int proc_get_tx_connection_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
-
+        void stream_flags_init();
     };
 }
 

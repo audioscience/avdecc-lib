@@ -20,7 +20,10 @@ although multiple threads are used to queue operations to be performed by the si
 The library supports notification events (callbacks) that are triggered on the success (or failure) of a command. 
 It is up to the application to process the notifications in a useful manner. Asynchronous descriptor updates from an
 end station are also supported. A descriptor notification does not have data about the updated descriptor values embedded
-in it. Instead the AVDECC application should query the descriptor class to obtain the updated values. 
+in it. Instead the AVDECC application should query the descriptor class to obtain the updated values.
+
+Operations that "fetch" details or status of an endstation store the response for later readback by the controller application.
+An example of this would be the AEM send_get_stream_info_cmd() operation whose response is stored in the appropriate stream input object in avdecc-lib. Functions get_stream_info_msrp_accumulated_latency(), get_stream_info_msrp_failure_code() and others can then be used to readback fields of the response.
 
 Users developing 1722.1 end stations and controllers are encouraged to add new descriptors to this library as required.
 The library provides an easy entry point for adding and a testing a completely new 1722.1 descriptor without having
@@ -86,13 +89,18 @@ Object hierarchy
 Building
 --------
 
+All build environments require
+
+1. jdksavdecc-c git repository from <https://github.com/jdkoftinoff/jdksavdecc-c>
+2. checkout of branch TBD from jdksavdecc-c.
+
+
 ### Windows ###
 	
 Prerequisites
 
 1. MSVC 2010 or later
-2. jdksavdecc-c git repository from <https://github.com/jdkoftinoff/jdksavdecc-c>
-3. winpcap development package from <http://www.winpcap.org/devel.htm>
+2. winpcap development package from <http://www.winpcap.org/devel.htm>
 
 The following environment variables must be defined:
 * WPCAP_DIR the directory where WinPcap is installed
@@ -100,7 +108,15 @@ The following environment variables must be defined:
 
 ### Linux ###
 
+Prerequisites
+
+1. gcc development environment
+2. shell environment variable set to point to the location where jdksavdecc-c is installed, e.g. JDKSAVDECC_DIR=/home/user/dev/jdksavdecc-c
+
+### OSX ###
+
 ToDo
+
 
 Operations
 ==========
@@ -268,12 +284,7 @@ REMOVE_SENSOR_MAPPINGS | P4 | | |
 #### ToDo ####
 * need to work through P1 priorities above
 * add linux and OSX builds
-* get ACMP working
 
-#### Done ####
-* cmd line help needs to be split up into it's own txt file, or a simple .h file.
-* add format helper functions
-* add timer to system class to make sure tick isn't held off
 
 Release Notes
 =============

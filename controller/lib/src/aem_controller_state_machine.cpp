@@ -27,14 +27,15 @@
  * AVDECC Entity Model Controller State Machine implementation
  */
 
+#include <algorithm>
 #include <vector>
+#include "jdksavdecc_aem_command.h"
 #include "net_interface_imp.h"
 #include "util_imp.h"
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
-#include "adp.h"
-#include "aecp.h"
+#include "inflight.h"
 #include "aem_controller_state_machine.h"
 
 namespace avdecc_lib
@@ -44,44 +45,73 @@ namespace avdecc_lib
     aem_controller_state_machine::aem_controller_state_machine()
     {
         aecp_seq_id = 0x0;
-        rcvd_normal_resp = false;
-        rcvd_unsolicited_resp = false;
-        do_cmd = false;
-        do_terminate = false;
     }
 
     aem_controller_state_machine::~aem_controller_state_machine() {}
 
-    void aem_controller_state_machine::tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame, bool resend)
+    int aem_controller_state_machine::ether_frame_init(uint64_t end_station_mac, struct jdksavdecc_frame *ether_frame)
     {
-        int inflight_index;
-        bool is_inflight;
+        /*** Offset to write the field to ***/
+        size_t ether_frame_pos = 0x0;
+        jdksavdecc_frame_init(ether_frame);
+
+        /**************************************** Ethernet Frame **************************************/
+        ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
+        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
+        utility->convert_uint64_to_eui48(end_station_mac, ether_frame->dest_address.value);
+        ether_frame->length = AECP_FRAME_LEN; // Length of AECP packet is 64 bytes
+
+        /******************** Fill frame payload with Ethernet frame information ******************/
+        jdksavdecc_frame_write(ether_frame, ether_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
+
+        return 0;
+    }
+
+    void aem_controller_state_machine::common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid)
+    {
+        struct jdksavdecc_aecpdu_common_control_header aecpdu_common_ctrl_hdr;
+        int aecpdu_common_ctrl_hdr_returned;
+        size_t aecpdu_common_pos = ETHER_HDR_SIZE; // Offset to write the field to
+
+        /************************************** 1722 Protocol Header **************************************/
+        aecpdu_common_ctrl_hdr.cd = 1;
+        aecpdu_common_ctrl_hdr.subtype = JDKSAVDECC_SUBTYPE_AECP;
+        aecpdu_common_ctrl_hdr.sv = 0;
+        aecpdu_common_ctrl_hdr.version = 0;
+        aecpdu_common_ctrl_hdr.message_type = JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND;
+        aecpdu_common_ctrl_hdr.status = JDKSAVDECC_AEM_STATUS_SUCCESS;
+        aecpdu_common_ctrl_hdr.control_data_length = 20;
+        jdksavdecc_uint64_write(target_guid, &aecpdu_common_ctrl_hdr.target_entity_id, 0, sizeof(uint64_t));
+
+        /*********************** Fill frame payload with AECP Common Control Header information **********************/
+        aecpdu_common_ctrl_hdr_returned = jdksavdecc_aecpdu_common_control_header_write(&aecpdu_common_ctrl_hdr,
+                                                                                        ether_frame->payload,
+                                                                                        aecpdu_common_pos,
+                                                                                        sizeof(ether_frame->payload));
+
+        if(aecpdu_common_ctrl_hdr_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "common_hdr_init error");
+            assert(aecpdu_common_ctrl_hdr_returned >= 0);
+        }
+    }
+
+    int aem_controller_state_machine::tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame, bool resend)
+    {
         int send_frame_returned;
 
         if (!resend)
         {
-            struct inflight_cmd_data inflight_cmd;
-            inflight_cmd.seq_id = aecp_seq_id;
+            uint16_t current_seq_id = aecp_seq_id;
 
-            jdksavdecc_uint16_set(aecp_seq_id++, ether_frame->payload, aecp::SEQ_ID_POS);
-
-            inflight_cmd.notification_id = notification_id;
-            inflight_cmd.notification_flag = notification_flag;
-            inflight_cmd.inflight_timer.start(AVDECC_MSG_TIMEOUT_MS); // Start the timer
-            inflight_cmd.retried = false;
-            memcpy(&inflight_cmd.inflight_cmd_frame, ether_frame, sizeof(struct jdksavdecc_frame));
-            inflight_cmds_vec.push_back(inflight_cmd);  // Add the inflight command to the inflight command vector
-        }
-        else
-        {
-            uint16_t seq_id = jdksavdecc_uint16_get(ether_frame->payload, aecp::SEQ_ID_POS);
-            is_inflight = find_inflight_cmd_by_seq_id(seq_id, &inflight_index); // Check if the command is inflight
-
-            if(is_inflight)
-            {
-                inflight_cmds_vec.at(inflight_index).inflight_timer.start(AVDECC_MSG_TIMEOUT_MS);
-                inflight_cmds_vec.at(inflight_index).retried = true;
-            }
+            jdksavdecc_aecpdu_common_set_sequence_id(aecp_seq_id++, ether_frame->payload, ETHER_HDR_SIZE);
+            inflight in_flight = inflight(ether_frame,
+                                          current_seq_id,
+                                          notification_id,
+                                          notification_flag,
+                                          AVDECC_MSG_TIMEOUT_MS);
+            in_flight.start_timer();
+            inflight_cmds_vec.push_back(in_flight);
         }
 
         send_frame_returned = net_interface_ref->send_frame(ether_frame->payload, ether_frame->length);
@@ -92,6 +122,16 @@ namespace avdecc_lib
         }
 
         callback(notification_id, notification_flag, ether_frame->payload);
+
+        std::vector<inflight>::iterator j =
+            std::find_if(inflight_cmds_vec.begin(), inflight_cmds_vec.end(), SeqIdComp(aecp_seq_id));
+
+        if(j != inflight_cmds_vec.end()) // found?
+        {
+            j->start_timer();
+        }
+
+        return 0;
     }
 
     int aem_controller_state_machine::proc_unsolicited(void *&notification_id, struct jdksavdecc_frame *ether_frame)
@@ -103,119 +143,83 @@ namespace avdecc_lib
 
     int aem_controller_state_machine::proc_resp(void *&notification_id, struct jdksavdecc_frame *ether_frame)
     {
-        uint16_t seq_id = jdksavdecc_uint16_get(ether_frame->payload, aecp::SEQ_ID_POS);
+        uint16_t seq_id = jdksavdecc_aecpdu_common_get_sequence_id(ether_frame->payload, ETHER_HDR_SIZE);
         int inflight_index = 0;
         uint32_t notification_flag = 0;
 
-        if(find_inflight_cmd_by_seq_id(seq_id, &inflight_index))
-        {
-            notification_id = inflight_cmds_vec.at(inflight_index).notification_id;
-            notification_flag = inflight_cmds_vec.at(inflight_index).notification_flag;
-            callback(notification_id, notification_flag, ether_frame->payload);
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command Success");
-            inflight_cmds_vec.erase(inflight_cmds_vec.begin() + inflight_index);
+        std::vector<inflight>::iterator j =
+            std::find_if(inflight_cmds_vec.begin(), inflight_cmds_vec.end(), SeqIdComp(seq_id));
 
+        if(j != inflight_cmds_vec.end()) // found?
+        {
+            notification_id = j->cmd_notification_id;
+            notification_flag = j->notification_flag();
+            callback(notification_id, notification_flag, ether_frame->payload);
+            inflight_cmds_vec.erase(inflight_cmds_vec.begin() + inflight_index);
             return 1;
         }
 
         return -1;
     }
 
-    void aem_controller_state_machine::timeout(uint32_t inflight_cmd_index)
+    int aem_controller_state_machine::state_send_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame)
     {
-        bool is_retried = inflight_cmds_vec.at(inflight_cmd_index).retried;
+       return tx_cmd(notification_id, notification_flag, ether_frame, false);
+    }
+
+    int aem_controller_state_machine::state_rcvd_unsolicited(void *&notification_id, struct jdksavdecc_frame *ether_frame)
+    {
+       return proc_unsolicited(notification_id, ether_frame);
+    }
+
+    int aem_controller_state_machine::state_rcvd_resp(void *&notification_id, struct jdksavdecc_frame *ether_frame)
+    {
+       return proc_resp(notification_id, ether_frame);
+    }
+
+    void aem_controller_state_machine::state_timeout(uint32_t inflight_cmd_index)
+    {
+        bool is_retried = inflight_cmds_vec.at(inflight_cmd_index).retried();
 
         if(is_retried)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
             inflight_cmds_vec.erase(inflight_cmds_vec.begin() + inflight_cmd_index);
-            printf("\n>");
         }
         else
         {
+            struct jdksavdecc_frame frame = inflight_cmds_vec.at(inflight_cmd_index).frame();
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "Resend the command with sequence id = %d",
-                                      inflight_cmds_vec.at(inflight_cmd_index).seq_id);
+                                      inflight_cmds_vec.at(inflight_cmd_index).cmd_seq_id);
 
-            tx_cmd(inflight_cmds_vec.at(inflight_cmd_index).notification_id,
-                   inflight_cmds_vec.at(inflight_cmd_index).notification_flag,
-                   &inflight_cmds_vec.at(inflight_cmd_index).inflight_cmd_frame,
+            tx_cmd(inflight_cmds_vec.at(inflight_cmd_index).cmd_notification_id,
+                   inflight_cmds_vec.at(inflight_cmd_index).notification_flag(),
+                   &frame,
                    true);
         }
-    }
-
-    void aem_controller_state_machine::state_waiting(void *&notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame)
-    {
-        uint64_t my_entity_id = 0;
-        uint64_t dest_addr_resp = 0;
-
-        if(net_interface_ref != NULL)
-        {
-            my_entity_id = net_interface_ref->get_mac();
-            utility->convert_eui48_to_uint64(jdksavdecc_eui64_get(ether_frame->payload, 0).value, dest_addr_resp);
-        }
-
-        if(!do_terminate)
-        {
-            if(do_cmd)
-            {
-                state_send_cmd(notification_id, notification_flag, ether_frame);
-            }
-            else if(rcvd_unsolicited_resp && dest_addr_resp == my_entity_id)
-            {
-                state_rcvd_unsolicited(notification_id, ether_frame);
-            }
-            else if(rcvd_normal_resp && dest_addr_resp == my_entity_id)
-            {
-                state_rcvd_resp(notification_id, ether_frame);
-            }
-            else
-            {
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid AEM Controller State Machine state");
-            }
-        }
-    }
-
-    void aem_controller_state_machine::state_send_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *ether_frame)
-    {
-        tx_cmd(notification_id, notification_flag, ether_frame, false);
-        do_cmd = false;
-    }
-
-    void aem_controller_state_machine::state_rcvd_unsolicited(void *&notification_id, struct jdksavdecc_frame *ether_frame)
-    {
-        proc_unsolicited(notification_id, ether_frame);
-        rcvd_unsolicited_resp = false;
-    }
-
-    void aem_controller_state_machine::state_rcvd_resp(void *&notification_id, struct jdksavdecc_frame *ether_frame)
-    {
-        proc_resp(notification_id, ether_frame);
-        rcvd_normal_resp = false;
     }
 
     void aem_controller_state_machine::tick()
     {
         for(uint32_t i = 0; i < inflight_cmds_vec.size(); i++)
         {
-            if(inflight_cmds_vec.at(i).inflight_timer.timeout())
+            if(inflight_cmds_vec.at(i).timeout())
             {
-                timeout(i);
+                state_timeout(i);
             }
         }
     }
 
     int aem_controller_state_machine::update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *ether_frame)
     {
-        if(msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE && u_field == true)
+        if(msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE && u_field == false)
         {
-            rcvd_unsolicited_resp = true;
-            state_waiting(notification_id, NULL, ether_frame);
+            state_rcvd_resp(notification_id, ether_frame);
         }
-        else if(msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE && u_field == false)
+        else if(msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE && u_field == true)
         {
-            rcvd_normal_resp = true;
-            state_waiting(notification_id, NULL, ether_frame);
+            state_rcvd_unsolicited(notification_id, ether_frame);
         }
         else
         {
@@ -228,103 +232,105 @@ namespace avdecc_lib
 
     int aem_controller_state_machine::callback(void *notification_id, uint32_t notification_flag, uint8_t *frame)
     {
-        uint8_t msg_type = jdksavdecc_uint8_get(frame, aecp::MSG_TYPE_POS);
-        uint16_t cmd_type = jdksavdecc_uint16_get(frame, aecp::CMD_TYPE_POS);
+        uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
+        uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN); //jdksavdecc_uint16_get(frame, aecp::CMD_TYPE_POS);
         uint16_t desc_type = 0;
         uint16_t desc_index = 0;
+        jdksavdecc_eui64 id;
 
         switch(cmd_type)
         {
-            case JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY:
-                desc_type = jdksavdecc_aem_command_acquire_entity_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_acquire_entity_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY:
+            desc_type = jdksavdecc_aem_command_acquire_entity_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_acquire_entity_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY:
-                desc_type = jdksavdecc_aem_command_lock_entity_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_lock_entity_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY:
+            desc_type = jdksavdecc_aem_command_lock_entity_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_lock_entity_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE:
-                break;
+        case JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE:
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE:
-                break;
+        case JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE:
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR:
-                desc_type = jdksavdecc_aem_command_read_descriptor_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_read_descriptor_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR:
+            desc_type = jdksavdecc_aem_command_read_descriptor_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_read_descriptor_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT:
-                desc_type = jdksavdecc_aem_command_set_stream_format_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_set_stream_format_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT:
+            desc_type = jdksavdecc_aem_command_set_stream_format_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_set_stream_format_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT:
-                desc_type = jdksavdecc_aem_command_get_stream_format_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_get_stream_format_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT:
+            desc_type = jdksavdecc_aem_command_get_stream_format_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_get_stream_format_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO:
-                desc_type = jdksavdecc_aem_command_set_stream_info_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_set_stream_info_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO:
+            desc_type = jdksavdecc_aem_command_set_stream_info_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_set_stream_info_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO:
-                desc_type = jdksavdecc_aem_command_get_stream_info_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_get_stream_info_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO:
+            desc_type = jdksavdecc_aem_command_get_stream_info_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_get_stream_info_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_SET_NAME:
-                desc_type = jdksavdecc_aem_command_set_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_set_name_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_SET_NAME:
+            desc_type = jdksavdecc_aem_command_set_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_set_name_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_GET_NAME:
-                desc_type = jdksavdecc_aem_command_get_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_get_name_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_GET_NAME:
+            desc_type = jdksavdecc_aem_command_get_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_get_name_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE:
-                desc_type = jdksavdecc_aem_command_set_sampling_rate_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_set_sampling_rate_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE:
+            desc_type = jdksavdecc_aem_command_set_sampling_rate_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_set_sampling_rate_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE:
-                desc_type = jdksavdecc_aem_command_get_sampling_rate_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_get_sampling_rate_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE:
+            desc_type = jdksavdecc_aem_command_get_sampling_rate_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_get_sampling_rate_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE:
-                desc_type = jdksavdecc_aem_command_set_clock_source_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_set_clock_source_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE:
+            desc_type = jdksavdecc_aem_command_set_clock_source_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_set_clock_source_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE:
-                desc_type = jdksavdecc_aem_command_get_clock_source_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_get_clock_source_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE:
+            desc_type = jdksavdecc_aem_command_get_clock_source_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_get_clock_source_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_START_STREAMING:
-                desc_type = jdksavdecc_aem_command_start_streaming_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_start_streaming_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_START_STREAMING:
+            desc_type = jdksavdecc_aem_command_start_streaming_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_start_streaming_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            case JDKSAVDECC_AEM_COMMAND_STOP_STREAMING:
-                desc_type = jdksavdecc_aem_command_stop_streaming_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                desc_index = jdksavdecc_aem_command_stop_streaming_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                break;
+        case JDKSAVDECC_AEM_COMMAND_STOP_STREAMING:
+            desc_type = jdksavdecc_aem_command_stop_streaming_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_stop_streaming_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
 
-            default:
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "NO_MATCH_FOUND for %s", utility->aem_cmd_value_to_name(cmd_type));
-                break;
+        default:
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "NO_MATCH_FOUND for %s", utility->aem_cmd_value_to_name(cmd_type));
+            break;
         }
 
+        id = jdksavdecc_common_control_header_get_stream_id(frame, ETHER_HDR_SIZE);
         if((notification_flag == CMD_WITH_NOTIFICATION) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE))
         {
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
-                                                        jdksavdecc_uint64_get(frame, aecp::TARGET_GUID_POS),
+                                                        jdksavdecc_uint64_get(&id, 0),
                                                         cmd_type,
                                                         desc_type,
                                                         desc_index,
@@ -334,48 +340,34 @@ namespace avdecc_lib
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "COMMAND_SENT, 0x%llx, %s, %s, %d, %d",
-                                      jdksavdecc_uint64_get(frame, aecp::TARGET_GUID_POS),
+                                      jdksavdecc_uint64_get(&id, 0),
                                       utility->aem_cmd_value_to_name(cmd_type),
                                       utility->aem_desc_value_to_name(desc_type),
                                       desc_index,
-                                      jdksavdecc_uint16_get(frame, aecp::SEQ_ID_POS));
+                                      jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE));
         }
         else if((notification_flag == CMD_WITHOUT_NOTIFICATION) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE))
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d",
-                                      jdksavdecc_uint64_get(frame, aecp::TARGET_GUID_POS),
+                                      jdksavdecc_uint64_get(&id, 0),
                                       utility->aem_cmd_value_to_name(cmd_type),
                                       utility->aem_desc_value_to_name(desc_type),
                                       desc_index,
-                                      jdksavdecc_uint16_get(frame, aecp::SEQ_ID_POS));
+                                      jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE));
         }
 
         return 0;
     }
 
-    bool aem_controller_state_machine::find_inflight_cmd_by_seq_id(uint16_t seq_id, int *inflight_index)
-    {
-        for(uint32_t i = 0; i < inflight_cmds_vec.size(); i++)
-        {
-            if((inflight_cmds_vec.at(i).seq_id == seq_id))
-            {
-                *inflight_index = i;
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     bool aem_controller_state_machine::is_inflight_cmd_with_notification_id(void *notification_id)
     {
-        for(uint32_t i = 0; i < inflight_cmds_vec.size(); i++)
+       std::vector<inflight>::iterator j =
+            std::find_if(inflight_cmds_vec.begin(), inflight_cmds_vec.end(), NotificationComp(notification_id));
+
+        if(j != inflight_cmds_vec.end()) // found?
         {
-            if((inflight_cmds_vec.at(i).notification_id == notification_id))
-            {
-                return true;
-            }
+            return true;
         }
 
         return false;

@@ -71,6 +71,40 @@ namespace avdecc_lib
         virtual uint16_t STDCALL get_descriptor_index() const;
 
         /**
+         * Get the name of the descriptor object. This may be user set through the use of a SET_NAME command.
+         * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+         * defined value being provided in a localized form via the localized descripton field. By leaving
+         * this field blank an AVDECC Controller can determine if the user has overridden the name and can
+         * use this name rather than the localized name.
+         */
+        virtual uint8_t * STDCALL get_object_name();
+
+        /**
+         * Get the localized string reference pointing to the localized descriptor name.
+         */
+        virtual uint16_t STDCALL get_localized_description();
+
+        /**
+         * Get the flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
+         */
+        virtual uint32_t STDCALL acquire_entity_flags();
+
+        /**
+         * Get the owner id after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
+         */
+        virtual uint64_t STDCALL acquire_entity_owner_entity_id();
+
+        /**
+         * Get the flags after sending a LOCK_ENTITY command and receiving a response back for the command.
+         */
+        virtual uint32_t STDCALL lock_entity_flags();
+
+        /**
+         * Get the locked entity id after sending a LOCK_ENTITY command and receiving a response back for the command.
+         */
+        virtual uint64_t STDCALL lock_entity_locked_entity_id();
+
+        /**
          * Send a ACQURE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
          */
         virtual int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag);
@@ -158,20 +192,6 @@ namespace avdecc_lib
          * Process a GET_NAME response for the GET_NAME command.
          */
         virtual int proc_get_name_resp(uint8_t *base_pointer, uint16_t frame_len);
-
-        /**
-         * \return The localized string reference pointing to the localized descriptor name.
-         */
-        virtual uint16_t STDCALL get_localized_description();
-
-        /**
-         * \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
-         *	   The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
-         *	   defined value being provided in a localized form via the localized descripton field. By leaving
-         *	   this field blank an AVDECC Controller can determine if the user has overridden the name and can
-         *	   use this name rather than the localized name.
-         */
-        virtual uint8_t * STDCALL get_object_name();
     };
 
     bool operator== (const descriptor_base_imp &n1, const descriptor_base_imp &n2);

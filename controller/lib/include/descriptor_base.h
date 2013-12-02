@@ -65,18 +65,49 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
 
         /**
+         * Get the flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL acquire_entity_flags() = 0;
+
+        /**
+         * Get the owner id after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL acquire_entity_owner_entity_id() = 0;
+
+        /**
+         * Get the flags after sending a LOCK_ENTITY command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL lock_entity_flags() = 0;
+
+        /**
+         * Get the locked entity id after sending a LOCK_ENTITY command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL lock_entity_locked_entity_id() = 0;
+
+        /**
          * Send a ACQURE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          * \param acquire_entity_flag The flag to be set for the command. Valid flags are 0, 1 (PERSISTENT), and 0x80000000 (RELEASE).
+         *
+         * The flags and owner id can be retrieved by calling the following function after successfully
+         * receiving a response back for the ACQURE_ENTITY command sent.
+         *
+         * \see acquire_entity_flags(), acquire_entity_owner_entity_id()
+         *
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag) = 0;
 
         /**
-         * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
+         * Send a LOCK_ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          * \param lock_entity_flag The flag to be set for the command. Valid flags are 0 and 1 (UNLOCK).
+         *
+         * The flags and locked entity id can be retrieved by calling the following function after successfully
+         * receiving a response back for the LOCK_ENTITY command sent.
+         *
+         * \see lock_entity_flags(), lock_entity_locked_entity_id()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag) = 0;
 

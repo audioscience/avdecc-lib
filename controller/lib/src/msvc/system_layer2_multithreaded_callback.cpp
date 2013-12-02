@@ -86,7 +86,6 @@ namespace avdecc_lib
         delete poll_tx.tx_queue;
         delete netif_obj_in_system;
         delete controller_obj_in_system;
-        delete local_system;
     }
 
     void STDCALL system_layer2_multithreaded_callback::destroy()
@@ -278,10 +277,10 @@ namespace avdecc_lib
                     bool is_waiting_completed = false;
 
                     controller_obj_in_system->rx_packet_event(thread_data.notification_id,
-                                                                  is_notification_id_valid,
-                                                                  thread_data.frame,
-                                                                  thread_data.frame_len,
-                                                                  status);
+                                                              is_notification_id_valid,
+                                                              thread_data.frame,
+                                                              thread_data.frame_len,
+                                                              status);
 
                     is_waiting_completed = is_waiting && (!controller_obj_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
                                            is_notification_id_valid && (waiting_notification_id == thread_data.notification_id);
@@ -335,11 +334,12 @@ namespace avdecc_lib
     {
         LONG previous;
 
-        ReleaseSemaphore(poll_rx.queue_thread.kill_sem, 1, &previous); // Send kill events to threads
-        ReleaseSemaphore(poll_thread.kill_sem, 1, &previous); // Send kill events to threads
+        /**************** Send kill events to threads ****************/
+        ReleaseSemaphore(poll_rx.queue_thread.kill_sem, 1, &previous);
+        ReleaseSemaphore(poll_thread.kill_sem, 1, &previous);
 
-        while ((WaitForSingleObject(poll_rx.queue_thread.handle, 0) != WAIT_OBJECT_0) ||
-               (WaitForSingleObject(poll_thread.handle, 0) != WAIT_OBJECT_0)) // Wait for thread termination
+        while((WaitForSingleObject(poll_rx.queue_thread.handle, 0) != WAIT_OBJECT_0) ||
+              (WaitForSingleObject(poll_thread.handle, 0) != WAIT_OBJECT_0)) // Wait for thread termination
         {
             Sleep(100);
         }

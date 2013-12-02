@@ -69,7 +69,7 @@ namespace avdecc_lib
          * Get the offset from the start of the descriptor for the first octet of the mapping stream channel 0 string.
          * This field is 8 for this version of AEM.
          */
-        uint16_t STDCALL get_mappings_offset();
+        uint16_t get_mappings_offset();
 
         /**
          * Get the number of channel mappings within the Audio Map. The maximum value
