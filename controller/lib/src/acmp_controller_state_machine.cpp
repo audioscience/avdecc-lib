@@ -152,6 +152,17 @@ namespace avdecc_lib
             in_flight.start_timer();
             inflight_cmds.push_back(in_flight);
         }
+        else
+        {
+            uint16_t resend_with_seq_id = jdksavdecc_acmpdu_get_sequence_id(cmd_frame->payload, ETHER_HDR_SIZE);
+            std::vector<inflight>::iterator j =
+                std::find_if(inflight_cmds.begin(), inflight_cmds.end(), SeqIdComp(resend_with_seq_id));
+
+            if(j != inflight_cmds.end()) // found?
+            {
+                (*j).start_timer();
+            }
+        }
 
         send_frame_returned = net_interface_ref->send_frame(cmd_frame->payload, cmd_frame->length);
         if(send_frame_returned < 0)
@@ -161,14 +172,6 @@ namespace avdecc_lib
         }
 
         callback(notification_id, notification_flag, cmd_frame->payload);
-
-        std::vector<inflight>::iterator j =
-            std::find_if(inflight_cmds.begin(), inflight_cmds.end(), SeqIdComp(acmp_seq_id));
-
-        if(j != inflight_cmds.end()) // found?
-        {
-            (*j).start_timer();
-        }
 
         return 0;
     }

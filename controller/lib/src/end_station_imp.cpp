@@ -345,7 +345,6 @@ namespace avdecc_lib
                         read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING;
                     }
                 }
-
                 break;
 
             case READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING:
@@ -389,7 +388,6 @@ namespace avdecc_lib
                         read_desc_init(desc_type_from_config, desc_count_index_from_config);
                     }
                 }
-
                 break;
 
             case READ_TOP_LEVEL_DESC_IN_CONFIG_DONE:
@@ -741,7 +739,6 @@ namespace avdecc_lib
                         {
                             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base audio_unit_descriptor to derived audio_unit_descriptor_imp error");
                         }
-
                     }
                 }
                 break;
@@ -764,7 +761,6 @@ namespace avdecc_lib
                         {
                             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base audio_unit_descriptor to derived audio_unit_descriptor_imp error");
                         }
-
                     }
                 }
                 break;
@@ -973,7 +969,7 @@ namespace avdecc_lib
 
                         if(stream_output_desc_imp_ref)
                         {
-                            stream_output_desc_imp_ref->proc_get_tx_state_resp(notification_id, frame, frame_len, status);
+                            stream_output_desc_imp_ref->proc_get_tx_connection_resp(notification_id, frame, frame_len, status);
                         }
                         else
                         {
@@ -983,7 +979,6 @@ namespace avdecc_lib
 
                 break;
 
-                break;
             default:
                 notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, msg_type, 0, 0, 0);
                 break;

@@ -127,10 +127,10 @@ namespace avdecc_lib
 
         if(is_valid)
         {
-            configuration_descriptor * config_desc_ref;
-            config_desc_ref = end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
+            configuration_descriptor * configuration;
+            configuration = end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
 
-            return config_desc_ref;
+            return configuration;
         }
         else
         {
@@ -153,10 +153,10 @@ namespace avdecc_lib
 
                 if(is_valid)
                 {
-                    configuration_descriptor * config_desc_ref;
-                    config_desc_ref = end_station_vec.at(i)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
+                    configuration_descriptor * configuration;
+                    configuration = end_station_vec.at(i)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
 
-                    return config_desc_ref;
+                    return configuration;
                 }
                 else
                 {

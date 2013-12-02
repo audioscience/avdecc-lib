@@ -319,7 +319,7 @@ namespace avdecc_lib
             if(is_waiting_completed)
             {
                 is_waiting = false;
-                resp_status_for_cmd = AVDECC_LIB_STATUS_TICK_TIMEOUT;
+                //resp_status_for_cmd = AVDECC_LIB_STATUS_TICK_TIMEOUT;
                 ReleaseSemaphore(waiting_sem, 1, NULL);
             }
 

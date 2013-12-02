@@ -338,7 +338,7 @@ namespace avdecc_lib
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
          *                         this corresponds to the id of the Stream Output descriptor.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_connect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_connect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id, uint16_t flags) = 0;
 
         /**
          * Send a DISCONNECT_RX command with a notification id to disconnect Listener sink stream.

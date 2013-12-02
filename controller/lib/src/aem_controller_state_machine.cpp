@@ -113,6 +113,17 @@ namespace avdecc_lib
             in_flight.start_timer();
             inflight_cmds.push_back(in_flight);
         }
+        else
+        {
+            uint16_t resend_with_seq_id = jdksavdecc_aecpdu_common_get_sequence_id(cmd_frame->payload, ETHER_HDR_SIZE);
+            std::vector<inflight>::iterator j =
+            std::find_if(inflight_cmds.begin(), inflight_cmds.end(), SeqIdComp(resend_with_seq_id));
+
+            if(j != inflight_cmds.end()) // found?
+            {
+                j->start_timer();
+            }
+        }
 
         send_frame_returned = net_interface_ref->send_frame(cmd_frame->payload, cmd_frame->length);
         if(send_frame_returned < 0)
@@ -122,14 +133,6 @@ namespace avdecc_lib
         }
 
         callback(notification_id, notification_flag, cmd_frame->payload);
-
-        std::vector<inflight>::iterator j =
-            std::find_if(inflight_cmds.begin(), inflight_cmds.end(), SeqIdComp(aecp_seq_id));
-
-        if(j != inflight_cmds.end()) // found?
-        {
-            j->start_timer();
-        }
 
         return 0;
     }
@@ -188,20 +191,16 @@ namespace avdecc_lib
         }
         else
         {
-            struct jdksavdecc_frame frame = inflight_cmds_vec.at(inflight_cmd_index).frame();
+            struct jdksavdecc_frame frame = inflight_cmds.at(inflight_cmd_index).frame();
+            uint32_t notification_flag = inflight_cmds.at(inflight_cmd_index).notification_flag();
+
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "Resend the command with sequence id = %d",
                                       inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
 
-<<<<<<< HEAD
-            tx_cmd(inflight_cmds_vec.at(inflight_cmd_index).cmd_notification_id,
-                   inflight_cmds_vec.at(inflight_cmd_index).notification_flag(),
-                   &frame,
-=======
             tx_cmd(inflight_cmds.at(inflight_cmd_index).cmd_notification_id,
-                   inflight_cmds.at(inflight_cmd_index).notification_flag(),
-                   &inflight_cmds.at(inflight_cmd_index).frame(),
->>>>>>> controller:lib: Changed acmp class into acmp_controller_state_machine
+                   notification_flag,
+                   &frame,
                    true);
         }
     }
