@@ -50,20 +50,21 @@ namespace avdecc_lib
         enum read_top_level_desc_in_config_states
         {
             READ_TOP_LEVEL_DESC_IN_CONFIG_IDLE,
-            READ_TOP_LEVEL_DESC_IN_CONFIG_STARTING,
             READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING,
             READ_TOP_LEVEL_DESC_IN_CONFIG_DONE
         };
 
         enum read_top_level_desc_in_config_states read_top_level_desc_in_config_state; // States used for processing the top level descriptors present in the Configuration descriptor.
 
-        uint16_t desc_type_from_config; // The top level descriptor type  present in the Configuration Descriptor
-        uint16_t desc_type_index_from_config; // The top level descriptor type index present in the Configuration Descriptor
-        uint16_t desc_count_from_config; // The top level descriptor count present in the Configuration Descriptor
-        uint16_t desc_count_index_from_config; // The top level descriptor count index present in the Configuration Descriptor
+        uint16_t desc_type_from_config; // The top level descriptor type present in the Configuration descriptor
+        uint16_t desc_type_index_from_config; // The top level descriptor type index present in the Configuration descriptor
+        uint16_t desc_count_from_config; // The top level descriptor count present in the Configuration descriptor
+        uint16_t desc_count_index_from_config; // The top level descriptor count index present in the Configuration descriptor
+        uint32_t read_desc_count; // A counter for the number of READ_DESCRIPTOR commands sent used to match up with the number of responses for these commands
+        bool read_desc_done; // Send READ_DESCRIPTOR command for Strings descriptor
 
         adp *adp_ref; // ADP associated with the End Station
-        std::vector<entity_descriptor_imp *> entity_desc_vec; // Store a list of Entity descriptor class objects
+        std::vector<entity_descriptor_imp *> entity_desc_vec; // Store a list of Entity descriptor objects
 
     public:
         /**
