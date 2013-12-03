@@ -289,7 +289,7 @@ namespace avdecc_lib
     uint64_t STDCALL stream_output_descriptor_imp::get_tx_state_stream_dest_mac()
     {
         uint64_t stream_dest_mac;
-        utility->convert_eui48_to_uint64(aem_cmd_get_stream_info_resp.stream_dest_mac.value, stream_dest_mac);
+        utility->convert_eui48_to_uint64(acmp_cmd_get_tx_state_resp.stream_dest_mac.value, stream_dest_mac);
 
         return stream_dest_mac;
     }
@@ -322,7 +322,7 @@ namespace avdecc_lib
     uint64_t STDCALL stream_output_descriptor_imp::get_tx_connection_stream_dest_mac()
     {
         uint64_t stream_dest_mac;
-        utility->convert_eui48_to_uint64(aem_cmd_get_stream_info_resp.stream_dest_mac.value, stream_dest_mac);
+        utility->convert_eui48_to_uint64(acmp_cmd_get_tx_connection_resp.stream_dest_mac.value, stream_dest_mac);
 
         return stream_dest_mac;
     }
