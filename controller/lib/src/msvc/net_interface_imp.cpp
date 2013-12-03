@@ -250,7 +250,7 @@ namespace avdecc_lib
 
         if(error > 0 )
         {
-            ether_frame = *frame;
+            cmd_frame = *frame;
             *frame_len = (uint16_t)header->len;
             return 1;
         }

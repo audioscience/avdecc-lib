@@ -224,19 +224,19 @@ Status
 
 Command/Response | Priority | Implemented | Tested |
 -----------------|----------|-------------|--------|
-ACQUIRE_ENTITY | P1 | Y | |
-LOCK_ENTITY | P1 | Y | |
-ENTITY_AVAILABLE | P1 | Y | |
-CONTROLLER_AVAILABLE | P1 | Y | |
+ACQUIRE_ENTITY | P1 | Y | Y |
+LOCK_ENTITY | P1 | Y | Y |
+ENTITY_AVAILABLE | P1 | Y | Y |
+CONTROLLER_AVAILABLE | P1 | Y | Y |
 READ_DESCRIPTOR | P1 | Y | Y |
-SET_STREAM_FORMAT | P1 | Y | |
+SET_STREAM_FORMAT | P1 | Y | Y |
 GET_STREAM_FORMAT | P1 | Y | Y |
 SET_STREAM_INFO | P1 | | |
 GET_STREAM_INFO | P1 | Y | Y |
-SET_SAMPLING_RATE | P1 | Y | |
+SET_SAMPLING_RATE | P1 | Y | Y |
 GET_SAMPLING_RATE | P1 | Y | Y |
-SET_CLOCK_SOURCE | P1 | Y | |
-GET_CLOCK_SOURCE | P1 | Y | Y|
+SET_CLOCK_SOURCE | P1 | Y | Y |
+GET_CLOCK_SOURCE | P1 | Y | Y| 
 START_STREAMING | P1 | Y | |
 STOP_STREAMING | P1 | Y | |
 SET_CONFIGURATION | P2 | | |

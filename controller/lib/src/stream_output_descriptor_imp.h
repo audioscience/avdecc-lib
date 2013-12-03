@@ -381,7 +381,7 @@ namespace avdecc_lib
          * the current value, that is it contains the new stream format if the command succeeds or the old stream
          * format if it fails.
          */
-        int proc_set_stream_format_resp(void *notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
         /**
          * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
@@ -414,7 +414,7 @@ namespace avdecc_lib
         /**
          * Process a SET_STREAM_INFO response for the SET_STREAM_INFO command.
          */
-        int proc_set_stream_info_resp(void *notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
         /**
          * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.

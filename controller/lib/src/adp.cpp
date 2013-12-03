@@ -42,7 +42,7 @@ namespace avdecc_lib
         adp_frame = (uint8_t *)malloc(frame_len * sizeof(uint8_t));
         memcpy(adp_frame, frame, frame_len);
 
-        frame_read_returned = jdksavdecc_frame_read(&ether_frame, adp_frame, 0x0, frame_len);
+        frame_read_returned = jdksavdecc_frame_read(&cmd_frame, adp_frame, 0, frame_len);
 
         if(frame_read_returned < 0)
         {
@@ -72,51 +72,5 @@ namespace avdecc_lib
                    (net_interface_ref->get_mac() & UINT64_C(0xFFFFFF));
 
         return jdksavdecc_eui64_get(&mac_guid, 0);
-    }
-
-    int adp::ether_frame_init(struct jdksavdecc_frame *ether_frame)
-    {
-        /*** Offset to write the field to ***/
-        size_t ether_frame_pos = 0x0;
-        jdksavdecc_frame_init(ether_frame);
-
-        /*********************************************************** Ethernet Frame ***********************************************************/
-        ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value); // Send from the Controller MAC address
-        ether_frame->dest_address = jdksavdecc_multicast_adp_acmp; // Send to the ADP multicast destination MAC address
-        ether_frame->length = ADP_FRAME_LEN; // Length of ADP packet is 82 bytes
-
-        /********************* Fill frame payload with Ethernet frame information *****************/
-        jdksavdecc_frame_write(ether_frame, ether_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
-
-        return 0;
-    }
-
-    void adp::adpdu_common_hdr_init(struct jdksavdecc_frame *ether_frame, uint64_t target_guid)
-    {
-        struct jdksavdecc_adpdu_common_control_header adpdu_common_ctrl_hdr;
-        int adpdu_common_ctrl_hdr_returned;
-
-        /********************************** 1722 Protocol Header ***********************************/
-        adpdu_common_ctrl_hdr.cd = 1;
-        adpdu_common_ctrl_hdr.subtype = JDKSAVDECC_SUBTYPE_ADP;
-        adpdu_common_ctrl_hdr.sv = 0;
-        adpdu_common_ctrl_hdr.version = 0;
-        adpdu_common_ctrl_hdr.message_type = 2;
-        adpdu_common_ctrl_hdr.valid_time = 0;
-        adpdu_common_ctrl_hdr.control_data_length = 56;
-        jdksavdecc_uint64_write(target_guid, &adpdu_common_ctrl_hdr.entity_id, 0, sizeof(uint64_t));
-
-        /********************* Fill frame payload with AECP Common Control Header information **********************/
-        adpdu_common_ctrl_hdr_returned = jdksavdecc_adpdu_common_control_header_write(&adpdu_common_ctrl_hdr,
-                                                                                      ether_frame->payload,
-                                                                                      ETHER_HDR_SIZE,
-                                                                                      sizeof(ether_frame->payload));
-
-        if(adpdu_common_ctrl_hdr_returned < 0)
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
-            assert(adpdu_common_ctrl_hdr_returned >= 0);
-        }
     }
 }

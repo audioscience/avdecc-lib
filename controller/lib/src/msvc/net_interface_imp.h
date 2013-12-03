@@ -50,7 +50,7 @@ namespace avdecc_lib
         uint32_t interface_num; // The interface selected
         pcap_t *pcap_interface;
         char err_buf[PCAP_ERRBUF_SIZE];
-        const u_char *ether_frame;
+        const u_char *cmd_frame;
         uint8_t tx_frame[1500];	// Ethernet frame used to send packets
 
     public:

@@ -258,8 +258,7 @@ namespace avdecc_lib
         DWORD poll_count = sizeof(poll_events_array) / sizeof(HANDLE);
         int status = 0;
 
-        //adp_discovery_state_machine_ref->set_do_discover(true); // Send ENTITY_DISCOVER message
-        //adp_discovery_state_machine_ref->state_waiting(NULL);
+        //adp_discovery_state_machine_ref->state_discover(NULL); // Send ENTITY_DISCOVER message
 
         dwEvent = WaitForMultipleObjects(poll_count, poll_events_array, FALSE, INFINITE);
 
@@ -320,7 +319,7 @@ namespace avdecc_lib
             if(is_waiting_completed)
             {
                 is_waiting = false;
-                resp_status_for_cmd = AVDECC_LIB_STATUS_TICK_TIMEOUT;
+                //resp_status_for_cmd = AVDECC_LIB_STATUS_TICK_TIMEOUT;
                 ReleaseSemaphore(waiting_sem, 1, NULL);
             }
 

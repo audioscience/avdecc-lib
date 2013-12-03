@@ -111,7 +111,7 @@ namespace avdecc_lib
 
     void configuration_descriptor_imp::desc_type_vec_init(const uint8_t *frame, size_t pos)
     {
-        uint16_t offset = 0x0;
+        uint16_t offset = 0;
 
         for(uint32_t i = 0; i < get_descriptor_counts_count(); i++)
         {
