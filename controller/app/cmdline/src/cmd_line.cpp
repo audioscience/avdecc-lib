@@ -1501,7 +1501,7 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
 
         for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
         {
-            if(i != instream_end_station_index)
+            if(i == instream_end_station_index)
             {
                 end_station_mac = controller_obj->get_end_station_by_index(i)->get_mac();
                 outstream_end_station_name = controller_obj->get_end_station_by_index(i)->get_entity_desc_by_index(current_entity)->get_entity_name();
@@ -1549,7 +1549,7 @@ int cmd_line::cmd_get_tx_state(uint32_t outstream_end_station_index, uint16_t ou
             std::cout << "\nstream_id = 0x" << std::hex << outstream->get_tx_state_stream_id();
             std::cout << "\nstream_dest_mac = 0x" << std::hex << outstream->get_tx_state_stream_dest_mac();
             std::cout << "\nconnection_count = " << std::dec << outstream->get_tx_state_connection_count();
-            std::cout << "\nstream_vlan_id = " << std::dec << outstream->get_tx_state_stream_vlan_id();
+            std::cout << "\nstream_vlan_id = " << std::dec << outstream->get_tx_state_stream_vlan_id() << std::endl;
         }
     }
     else
@@ -1691,7 +1691,7 @@ int cmd_line::cmd_get_rx_state(uint32_t instream_end_station_index, uint16_t ins
             std::cout << "\nstream_dest_mac = 0x" << std::hex << instream->get_rx_state_stream_dest_mac();
             std::cout << "\nconnection_count = " << std::dec << instream->get_rx_state_connection_count();
             std::cout << "\nflags = " << std::dec << instream->get_rx_state_flags();
-            std::cout << "\nstream_vlan_id = " << std::dec << instream->get_rx_state_stream_vlan_id();
+            std::cout << "\nstream_vlan_id = " << std::dec << instream->get_rx_state_stream_vlan_id() << std::endl;
         }
     }
     else
@@ -1723,11 +1723,11 @@ int cmd_line::cmd_get_tx_connection(uint32_t outstream_end_station_index, uint16
         if(status == avdecc_lib::ACMP_STATUS_SUCCESS)
         {
             std::cout << "\nstream_id = 0x" << std::hex << outstream->get_tx_connection_stream_id();
-            std::cout << "\ntalker_unique_id = " << std::dec <<  std::dec << outstream->get_tx_connection_talker_unique_id();
+            std::cout << "\nlistener_entity_id = 0x" << std::hex << outstream->get_tx_connection_listener_entity_id();
             std::cout << "\nlistener_unique_id = " << std::dec << outstream->get_tx_connection_listener_unique_id();
             std::cout << "\nstream_dest_mac = 0x" << std::hex << outstream->get_tx_connection_stream_dest_mac();
             std::cout << "\nconnection_count = " << std::dec << outstream->get_tx_connection_connection_count();
-            std::cout << "\nstream_vlan_id = " << std::dec << outstream->get_tx_connection_stream_vlan_id();
+            std::cout << "\nstream_vlan_id = " << std::dec << outstream->get_tx_connection_stream_vlan_id() << std::endl;
         }
     }
     else
