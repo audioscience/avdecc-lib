@@ -40,7 +40,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_stream_port stream_port_output_desc; // Structure containing the stream_port_output_desc fields
-        int stream_port_output_desc_read_returned; // Status of extracting Configuration descriptor information from a network buffer
+        int stream_port_output_desc_read_returned; // Status of extracting Stream Port Output descriptor information from a network buffer
 
     public:
         /**

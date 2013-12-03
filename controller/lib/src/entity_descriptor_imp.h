@@ -42,7 +42,7 @@ namespace avdecc_lib
     private:
         struct jdksavdecc_descriptor_entity entity_desc; // Structure containing the entity_desc fields
         int desc_entity_read_returned; // Status of extracting ENTITY descriptor information from a network buffer
-        std::vector<configuration_descriptor_imp *> config_desc_vec; // Store a list of Configuration descriptor class objects
+        std::vector<configuration_descriptor_imp *> config_desc_vec; // Store a list of Configuration descriptor objects
 
         struct jdksavdecc_aem_command_acquire_entity_response aem_cmd_acquire_entity_resp; // Store the response received after sending a ACQUIRE_ENTITY command.
         struct jdksavdecc_aem_command_lock_entity_response aem_cmd_lock_entity_resp; // Store the response received after sending a LOCK_ENTITY command.
