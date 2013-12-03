@@ -263,6 +263,12 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_listener_unique_id() = 0;
 
         /**
+         * \return The Listener entity ID of the stream sink of the AVDECC Talker   
+         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_connection_listener_entity_id() = 0;
+
+        /**
          * \return The stream destination MAC address used to convey the destination MAC address for a stream
          *         from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
          *         sending a GET_TX_CONNECTION command and receiving a response back for the command.

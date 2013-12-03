@@ -337,6 +337,12 @@ namespace avdecc_lib
         return acmp_cmd_get_tx_connection_resp.stream_vlan_id;
     }
 
+    uint64_t STDCALL stream_output_descriptor_imp::get_tx_connection_listener_entity_id()
+    {
+        return jdksavdecc_uint64_get(&acmp_cmd_get_tx_connection_resp.listener_entity_id, 0);
+    }
+
+
     int STDCALL stream_output_descriptor_imp::send_set_stream_format_cmd(void *notification_id, uint64_t new_stream_format)
     {
         struct jdksavdecc_frame *cmd_frame;
