@@ -57,10 +57,22 @@ namespace avdecc_lib
 
         enum read_top_level_desc_in_config_states read_top_level_desc_in_config_state; // States used for processing the top level descriptors present in the Configuration descriptor.
 
+        enum read_desc_in_audio_unit_states
+        {
+            READ_DESC_IN_AUDIO_UNIT_IDLE,
+            READ_DESC_IN_AUDIO_UNIT_STARTING,
+            READ_DESC_IN_AUDIO_UNIT_RUNNING,
+            READ_DESC_IN_AUDIO_UNIT_DONE
+        };
+
+        enum read_desc_in_audio_unit_states read_desc_in_audio_unit_state; 
+
         uint16_t desc_type_from_config; // The top level descriptor type  present in the Configuration Descriptor
         uint16_t desc_type_index_from_config; // The top level descriptor type index present in the Configuration Descriptor
         uint16_t desc_count_from_config; // The top level descriptor count present in the Configuration Descriptor
         uint16_t desc_count_index_from_config; // The top level descriptor count index present in the Configuration Descriptor
+
+        uint16_t desc_type_index_from_audio_unit;
 
         adp *adp_ref; // ADP associated with the End Station
         std::vector<entity_descriptor_imp *> entity_desc_vec; // Store a list of Entity descriptor class objects

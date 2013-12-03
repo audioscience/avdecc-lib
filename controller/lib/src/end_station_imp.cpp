@@ -50,6 +50,8 @@ namespace avdecc_lib
         desc_count_from_config = 0;
         desc_count_index_from_config = 0;
         read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_IDLE;
+        read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_IDLE;
+        desc_type_index_from_audio_unit = JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT;
         adp_ref = new adp(frame, frame_len);
         end_station_guid = adp_ref->get_entity_entity_id();
         utility->convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
@@ -266,6 +268,7 @@ namespace avdecc_lib
 
                 case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
                     config_desc_imp_ref->store_audio_unit_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_RUNNING;
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STREAM_INPUT:
@@ -391,6 +394,62 @@ namespace avdecc_lib
                 break;
 
             case READ_TOP_LEVEL_DESC_IN_CONFIG_DONE:
+                break;
+        }
+
+        switch(read_desc_in_audio_unit_state)
+        {
+            case READ_DESC_IN_AUDIO_UNIT_IDLE:
+                break;
+
+            case READ_DESC_IN_AUDIO_UNIT_STARTING:
+                read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_RUNNING;
+                break;
+
+            case READ_DESC_IN_AUDIO_UNIT_RUNNING:
+            {
+                audio_unit_descriptor_imp *audio_unit_desc_imp_ref = 
+                            dynamic_cast<audio_unit_descriptor_imp *>(entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_audio_unit_desc_by_index(0));
+                // TODO: Handle multiple audio units
+
+                if (!audio_unit_desc_imp_ref) assert(audio_unit_desc_imp_ref == NULL);
+
+                switch(desc_type_index_from_audio_unit)
+                {
+                    case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
+                    {
+                        uint16_t num_desc = audio_unit_desc_imp_ref->get_number_of_stream_input_ports();
+                        uint16_t base_desc = audio_unit_desc_imp_ref->get_base_stream_input_port();
+                        if (num_desc)
+                        {
+                            for(int i = base_desc; i < base_desc+num_desc; i++)
+                            {
+                                read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT, i); 
+                            }
+                        }
+                        desc_type_index_from_audio_unit++;
+                        break;
+                    }
+                    case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
+                    {
+                        uint16_t num_desc = audio_unit_desc_imp_ref->get_number_of_stream_output_ports();
+                        uint16_t base_desc = audio_unit_desc_imp_ref->get_base_stream_output_port();
+                        if (num_desc)
+                        {
+                            for(int i = base_desc; i < base_desc+num_desc; i++)
+                            {
+                                read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT, i); 
+                            }
+                        }
+                        read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_DONE;
+                        break;
+                    }
+                }
+
+            }
+            break;
+
+            case READ_DESC_IN_AUDIO_UNIT_DONE:
                 break;
         }
 
