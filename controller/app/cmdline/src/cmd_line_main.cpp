@@ -189,9 +189,9 @@ int main()
             }
             else if(input_argv.size() == 4)
             {
-                uint32_t new_end_station = 0x0;
-                uint16_t new_entity = 0x0;
-                uint16_t new_config = 0x0;
+                uint32_t new_end_station = 0;
+                uint16_t new_entity = 0;
+                uint16_t new_config = 0;
 
                 if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
                    ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)) &&
@@ -282,7 +282,7 @@ int main()
             }
             else if((input_argv.size() == 3) && (input_argv.at(1) == "details"))
             {
-                uint16_t end_station_index = 0x0;
+                uint16_t end_station_index = 0;
 
                 if((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0))
                 {
@@ -310,7 +310,7 @@ int main()
             }
             else if((input_argv.size() == 4) && input_argv.at(1) == "descriptor")
             {
-                uint16_t desc_index = 0x0;
+                uint16_t desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
                 {
@@ -350,8 +350,8 @@ int main()
             }
             else if(input_argv.size() == 3)
             {
-                uint32_t instream_end_station_index = 0x0;
-                uint16_t instream_desc_index = 0x0;
+                uint32_t instream_end_station_index = 0;
+                uint16_t instream_desc_index = 0;
 
                 if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
                    ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)))
@@ -371,12 +371,12 @@ int main()
                     avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
                 }
             }
-            else if(input_argv.size() == 5)
+            else if(input_argv.size() == 6)
             {
-                uint32_t instream_end_station_index = 0x0;
-                uint16_t instream_desc_index = 0x0;
-                uint32_t outstream_end_station_index;
-                uint16_t outstream_desc_index;
+                uint32_t instream_end_station_index = 0;
+                uint16_t instream_desc_index = 0;
+                uint32_t outstream_end_station_index = 0;
+                uint16_t outstream_desc_index = 0;
 
                 if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
                    ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)) &&
@@ -392,7 +392,11 @@ int main()
 
                 if(is_input_valid)
                 {
-                    avdecc_cmd_line_ref->cmd_connect_rx(instream_end_station_index, instream_desc_index, outstream_end_station_index, outstream_desc_index);
+                    avdecc_cmd_line_ref->cmd_connect_rx(instream_end_station_index,
+                                                        instream_desc_index,
+                                                        outstream_end_station_index,
+                                                        outstream_desc_index,
+                                                        input_argv.at(5));
                 }
                 else
                 {
@@ -410,8 +414,8 @@ int main()
         {
             if(input_argv.size() == 5)
             {
-                uint32_t instream_end_station_index = 0x0;
-                uint16_t instream_desc_index = 0x0;
+                uint32_t instream_end_station_index = 0;
+                uint16_t instream_desc_index = 0;
                 uint32_t outstream_end_station_index;
                 uint16_t outstream_desc_index;
 
@@ -447,7 +451,7 @@ int main()
         {
             if(input_argv.size() == 5 && input_argv.at(1) == "entity")
             {
-                uint16_t desc_index = 0x0;
+                uint16_t desc_index = 0;
 
                 if((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
                 {
@@ -475,7 +479,7 @@ int main()
         {
             if(input_argv.size() == 5 && input_argv.at(1) == "entity")
             {
-                uint16_t desc_index = 0x0;
+                uint16_t desc_index = 0;
 
                 if((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
                 {
@@ -528,7 +532,7 @@ int main()
         {
             if(input_argv.size() == 4 && input_argv.at(1) == "descriptor")
             {
-                uint16_t desc_index = 0x0;
+                uint16_t desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
                 {
@@ -556,7 +560,7 @@ int main()
         {
             if((input_argv.size() == 5) && (input_argv.at(1) == "stream_format"))
             {
-                uint16_t desc_index = 0x0;
+                uint16_t desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
                 {
@@ -584,7 +588,7 @@ int main()
             else if((input_argv.size() == 6) && (input_argv.at(1) == "stream_info"))
             {
                 uint16_t desc_index = 0;
-                uint64_t stream_info_field_value = 0x0;
+                uint64_t stream_info_field_value = 0;
 
                 if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
                    ((input_argv.at(5) == "0") || (atoi(input_argv.at(5).c_str()) != 0)))
@@ -606,8 +610,8 @@ int main()
             }
             else if((input_argv.size() == 6) && (input_argv.at(1) == "name"))
             {
-                uint16_t desc_index = 0x0;
-                uint16_t name_index = 0x0;
+                uint16_t desc_index = 0;
+                uint16_t name_index = 0;
 
                 if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
                    ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
@@ -629,8 +633,8 @@ int main()
             }
             else if((input_argv.size() == 5) && (input_argv.at(1) == "sampling_rate"))
             {
-                uint16_t desc_index = 0x0;
-                uint32_t new_sampling_rate = 0x0;
+                uint16_t desc_index = 0;
+                uint32_t new_sampling_rate = 0;
 
                 if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
                    ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
@@ -659,8 +663,8 @@ int main()
             }
             else if((input_argv.size() == 5) && (input_argv.at(1) == "clock_source"))
             {
-                uint16_t desc_index = 0x0;
-                uint16_t new_clk_src_index = 0x0;
+                uint16_t desc_index = 0;
+                uint16_t new_clk_src_index = 0;
 
                 if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
                    ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
@@ -697,7 +701,7 @@ int main()
         {
             if((input_argv.size() == 4) && (input_argv.at(1) == "stream_format"))
             {
-                uint16_t desc_index = 0x0;
+                uint16_t desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
                 {
@@ -724,7 +728,7 @@ int main()
             }
             else if((input_argv.size() == 4) && (input_argv.at(1) == "stream_info"))
             {
-                uint16_t desc_index = 0x0;
+                uint16_t desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
                 {
@@ -751,8 +755,8 @@ int main()
             }
             else if((input_argv.size() == 5) && (input_argv.at(1) == "name"))
             {
-                uint16_t desc_index = 0x0;
-                uint16_t name_index = 0x0;
+                uint16_t desc_index = 0;
+                uint16_t name_index = 0;
 
                 if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
                    ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
@@ -781,7 +785,7 @@ int main()
             }
             else if((input_argv.size() == 4) && (input_argv.at(1) == "sampling_rate"))
             {
-                uint16_t desc_index = 0x0;
+                uint16_t desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
                 {
@@ -808,7 +812,7 @@ int main()
             }
             else if((input_argv.size() == 4) && (input_argv.at(1) == "clock_source"))
             {
-                uint16_t desc_index = 0x0;
+                uint16_t desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
                 {
@@ -835,8 +839,8 @@ int main()
             }
             else if((input_argv.size() == 5) && (input_argv.at(1) == "tx") && (input_argv.at(2) == "state"))
             {
-                uint32_t outstream_end_station_index = 0x0;
-                uint16_t outstream_desc_index = 0x0;
+                uint32_t outstream_end_station_index = 0;
+                uint16_t outstream_desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
                    (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
@@ -858,8 +862,8 @@ int main()
             }
             else if((input_argv.size() == 5) && (input_argv.at(1) == "rx") && (input_argv.at(2) == "state"))
             {
-                uint32_t instream_end_station_index = 0x0;
-                uint16_t instream_desc_index = 0x0;
+                uint32_t instream_end_station_index = 0;
+                uint16_t instream_desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
                    (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
@@ -881,8 +885,8 @@ int main()
             }
             else if((input_argv.size() == 5) && (input_argv.at(1) == "tx") && (input_argv.at(2) == "connection"))
             {
-                uint32_t outstream_end_station_index = 0x0;
-                uint16_t outstream_desc_index = 0x0;
+                uint32_t outstream_end_station_index = 0;
+                uint16_t outstream_desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
                    (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
@@ -912,7 +916,7 @@ int main()
         {
             if((input_argv.size() == 4) && (input_argv.at(1) == "streaming"))
             {
-                uint16_t desc_index = 0x0;
+                uint16_t desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
                 {
@@ -947,7 +951,7 @@ int main()
         {
             if((input_argv.size() == 4) && (input_argv.at(1) == "streaming"))
             {
-                uint16_t desc_index = 0x0;
+                uint16_t desc_index = 0;
 
                 if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0))
                 {

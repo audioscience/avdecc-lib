@@ -44,9 +44,9 @@
 class cmd_line
 {
 private:
-    avdecc_lib::net_interface *netif_ref;
-    avdecc_lib::system *system_ref;
-    avdecc_lib::controller *controller_ref;
+    avdecc_lib::net_interface *netif;
+    avdecc_lib::system *sys;
+    avdecc_lib::controller *controller_obj;
     
 
     uint32_t current_end_station;
@@ -60,20 +60,14 @@ public:
     static avdecc_lib::util *utility;
     static std::string log_path;
 
-    /**
-     * An empty constructor for cmd_line
-     */
     cmd_line();
 
     /**
      * Constructor for cmd_line used for constructing an object with notification and log callback functions.
      */
     cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
-                    void (*log_callback) (void *, int32_t, const char *, int32_t));
+             void (*log_callback) (void *, int32_t, const char *, int32_t));
 
-    /**
-     * Destructor for cmd_line used for destroying objects
-     */
     ~cmd_line();
 
 private:
@@ -163,7 +157,8 @@ public:
     int cmd_connect_rx(uint32_t instream_end_station_index,
                        uint16_t instream_desc_index,
                        uint32_t outstream_end_station_index,
-                       uint16_t outstream_desc_index);
+                       uint16_t outstream_desc_index,
+                       std::string flags);
 
     /**
      * Send a CONNECT_RX command to disconnect Listener sink stream.

@@ -44,105 +44,54 @@ namespace avdecc_lib
             timer inflight_timer;
         };
 
-        bool rcvd_avail;
-        bool rcvd_departing;
-        bool do_discover;
-        uint64_t discover_id;
-        bool do_terminate;
         std::vector<struct entities> entities_vec;
 
     public:
-        static uint16_t adp_seq_id; // The sequence id used for identifying the ADP command that a response is for
-
         adp_discovery_state_machine();
 
         ~adp_discovery_state_machine();
 
         /**
-             * Process the Waiting state of the ADP Discovery State Machine.
-             */
-        void state_waiting(const uint8_t *frame, uint16_t frame_len);
-
-        /**
-             * Get the rcvd_avail field from the adp_discovery_state_machine_vars structure.
-             */
-        inline bool get_rcvd_avail()
-        {
-            return rcvd_avail;
-        }
-
-        /**
-         * Update the rcvd_avail field in the adp_discovery_state_machine_vars structure.
+         * Initialize and fill Ethernet frame payload with Ethernet frame information for ADP messages.
          */
-        inline void set_rcvd_avail(bool new_rcvd_avail)
-        {
-            rcvd_avail = new_rcvd_avail;
-        }
+        int ether_frame_init(struct jdksavdecc_frame *cmd_frame);
 
         /**
-         * Get the rcvd_departing field from the adp_discovery_state_machine_vars structure.
+         * Initialize and fill Ethernet frame payload with 1722 ADP Header information.
          */
-        inline bool get_rcvd_departing()
-        {
-            return rcvd_departing;
-        }
+        void common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_guid);   
 
         /**
-         * Update the rcvd_departing field in the adp_discovery_state_machine_vars structure.
+         * Process the Discover state of the ADP Discovery State Machine.
          */
-        inline void set_rcvd_departing(bool new_rcvd_departing)
-        {
-            rcvd_departing = new_rcvd_departing;
-        }
+        int state_discover(uint64_t discover_id);
 
         /**
-         * Get the do_discover field from the adp_discovery_state_machine_vars structure.
+         * Process the Available state of the ADP Discovery State Machine.
          */
-        inline bool get_do_discover()
-        {
-            return do_discover;
-        }
+        int state_avail(const uint8_t *frame, uint16_t frame_len);
 
         /**
-         * Update the do_discover field in the adp_discovery_state_machine_vars structure.
+         * Process the Departing state of the ADP Discovery State Machine.
          */
-        inline void set_do_discover(bool new_do_discover)
-        {
-            do_discover = new_do_discover;
-        }
-
-        /**
-         * Get the do_terminate field from the adp_discovery_state_machine_vars structure.
-         */
-        inline bool get_do_terminate()
-        {
-            return do_terminate;
-        }
-
-        /**
-         * Update the do_terminate field in the adp_discovery_state_machine_vars structure.
-         */
-        inline void set_do_terminate(bool new_do_terminate)
-        {
-            do_terminate = new_do_terminate;
-        }
+        int state_departing();
 
         /**
          * Check timeout for the end stations.
          */
-        bool adp_discovery_tick(uint64_t &end_station_guid);
+        bool tick(uint64_t &end_station_guid);
 
     private:
         /**
          * The perform discover event is used to trigger an AVDECC Entity discovery search to search
-        * for all AVDECC Entities or to the Entity ID of an AVDECC Entity to search for.
-               */
+         * for all AVDECC Entities or to the Entity ID of an AVDECC Entity to search for.
+         */
         int perform_discover(uint64_t entity_id);
 
         /**
          * Transmit an ENTITY_DISCOVER message.
          */
-        int tx_discover(struct jdksavdecc_frame *ether_frame);
+        int tx_discover(struct jdksavdecc_frame *cmd_frame);
 
         /**
          * Check if an AVDECC Entity is present in the entities variable.
@@ -163,21 +112,6 @@ namespace avdecc_lib
          * Remove an Entity record form the entities variable.
          */
         int remove_entity(uint32_t entity_index);
-
-        /**
-         * Process the Discover state of the ADP Discovery State Machine.
-         */
-        int state_discover();
-
-        /**
-         * Process the Available state of the ADP Discovery State Machine.
-         */
-        int state_avail(const uint8_t *frame, uint16_t frame_len);
-
-        /**
-         * Process the Departing state of the ADP Discovery State Machine.
-         */
-        int state_departing();
 
         /**
          * Process the Timeout state of the ADP Discovery State Machine.

@@ -38,7 +38,7 @@
 #include "system_tx_queue.h"
 #include "end_station_imp.h"
 #include "adp_discovery_state_machine.h"
-#include "acmp.h"
+#include "acmp_controller_state_machine.h"
 #include "aem_controller_state_machine.h"
 #include "controller_imp.h"
 
@@ -77,7 +77,7 @@ namespace avdecc_lib
         }
 
         delete adp_discovery_state_machine_ref;
-        delete acmp_ref;
+        delete acmp_controller_state_machine_ref;
         delete aem_controller_state_machine_ref;
     }
 
@@ -127,10 +127,10 @@ namespace avdecc_lib
 
         if(is_valid)
         {
-            configuration_descriptor * config_desc_ref;
-            config_desc_ref = end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
+            configuration_descriptor * configuration;
+            configuration = end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
 
-            return config_desc_ref;
+            return configuration;
         }
         else
         {
@@ -153,10 +153,10 @@ namespace avdecc_lib
 
                 if(is_valid)
                 {
-                    configuration_descriptor * config_desc_ref;
-                    config_desc_ref = end_station_vec.at(i)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
+                    configuration_descriptor * configuration;
+                    configuration = end_station_vec.at(i)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
 
-                    return config_desc_ref;
+                    return configuration;
                 }
                 else
                 {
@@ -171,7 +171,7 @@ namespace avdecc_lib
     bool controller_imp::is_inflight_cmd_with_notification_id(void *notification_id)
     {
         bool is_inflight_cmd = ((aem_controller_state_machine_ref->is_inflight_cmd_with_notification_id(notification_id)) ||
-                                (acmp_ref->is_inflight_cmd_with_notification_id(notification_id)));
+                                (acmp_controller_state_machine_ref->is_inflight_cmd_with_notification_id(notification_id)));
 
         return is_inflight_cmd;
     }
@@ -197,7 +197,7 @@ namespace avdecc_lib
         uint32_t disconnected_end_station_index;
         aem_controller_state_machine_ref->tick();
 
-        if(adp_discovery_state_machine_ref->adp_discovery_tick(end_station_guid) &&
+        if(adp_discovery_state_machine_ref->tick(end_station_guid) &&
            is_end_station_found_by_guid(end_station_guid, disconnected_end_station_index))
         {
             end_station_vec.at(disconnected_end_station_index)->set_disconnected();
@@ -236,12 +236,11 @@ namespace avdecc_lib
                             }
                         }
 
-                        if(entity_guid != 0x0)
+                        if(entity_guid != 0)
                         {
                             if(!found_adp_in_end_station)
                             {
-                                adp_discovery_state_machine_ref->set_rcvd_avail(true);
-                                adp_discovery_state_machine_ref->state_waiting(frame, frame_len);
+                                adp_discovery_state_machine_ref->state_avail(frame, frame_len);
                                 end_station_vec.push_back(new end_station_imp(frame, frame_len));
                                 end_station_vec.at(end_station_vec.size() - 1)->set_connected();
                             }
@@ -250,19 +249,17 @@ namespace avdecc_lib
                                 if(end_station_vec.at(found_end_station_index)->get_connection_status() == 'D')
                                 {
                                     end_station_vec.at(found_end_station_index)->set_connected();
-                                    adp_discovery_state_machine_ref->set_rcvd_avail(true);
-                                    adp_discovery_state_machine_ref->state_waiting(frame, frame_len);
+                                    adp_discovery_state_machine_ref->state_avail(frame, frame_len);
                                 }
                                 else
                                 {
-                                    adp_discovery_state_machine_ref->set_rcvd_avail(true);
-                                    adp_discovery_state_machine_ref->state_waiting(frame, frame_len);
+                                    adp_discovery_state_machine_ref->state_avail(frame, frame_len);
                                 }
                             }
                         }
                         else
                         {
-                            //log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Entity GUID is 0x0");
+                            //log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Entity GUID is 0.");
                         }
 
                         status = AVDECC_LIB_STATUS_INVALID;
@@ -378,12 +375,12 @@ namespace avdecc_lib
         if(subtype == JDKSAVDECC_SUBTYPE_AECP)
         {
             aem_controller_state_machine_ref->state_send_cmd(notification_id, notification_flag, &packet_frame);
-            memcpy(frame, packet_frame.payload, frame_len);
+            memcpy(frame, packet_frame.payload, frame_len); // Get the updated frame with sequence id
         }
         else if(subtype == JDKSAVDECC_SUBTYPE_ACMP)
         {
-            acmp_ref->state_command(notification_id, notification_flag, &packet_frame);
-            memcpy(frame, packet_frame.payload, frame_len);
+            acmp_controller_state_machine_ref->state_command(notification_id, notification_flag, &packet_frame);
+            memcpy(frame, packet_frame.payload, frame_len); // Get the updated frame with sequence id
         }
         else
         {
@@ -393,10 +390,10 @@ namespace avdecc_lib
 
     int STDCALL controller_imp::send_controller_avail_cmd(void *notification_id, uint32_t end_station_index)
     {
-        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_controller_available aem_cmd_controller_avail;
         int aem_cmd_controller_avail_returned;
-        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /*************************************************** AECP Common Data **************************************************/
         aem_cmd_controller_avail.controller_entity_id = end_station_vec.at(end_station_index)->get_adp()->get_controller_guid();
@@ -404,11 +401,11 @@ namespace avdecc_lib
         aem_cmd_controller_avail.command_type = JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE;
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
-        aem_controller_state_machine::ether_frame_init(end_station_vec.at(end_station_index)->get_mac(), ether_frame);
+        aem_controller_state_machine_ref->ether_frame_init(end_station_vec.at(end_station_index)->get_mac(), cmd_frame);
         aem_cmd_controller_avail_returned = jdksavdecc_aem_command_controller_available_write(&aem_cmd_controller_avail,
-                                                                                              ether_frame->payload,
+                                                                                              cmd_frame->payload,
                                                                                               ETHER_HDR_SIZE,
-                                                                                              sizeof(ether_frame->payload));
+                                                                                              sizeof(cmd_frame->payload));
 
         if(aem_cmd_controller_avail_returned < 0)
         {
@@ -417,23 +414,23 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine::common_hdr_init(ether_frame, end_station_vec.at(end_station_index)->get_guid());
-        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, ether_frame->payload, ether_frame->length);
+        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, end_station_vec.at(end_station_index)->get_guid());
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
-        free(ether_frame);
+        free(cmd_frame);
         return 0;
     }
 
     int controller_imp::proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
-        struct jdksavdecc_frame *ether_frame;
+        struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_controller_available_response aem_cmd_controller_avail_resp;
         int aem_cmd_controller_avail_resp_returned = 0;
         uint32_t msg_type = 0;
         bool u_field = false;
 
-        ether_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
-        memcpy(ether_frame->payload, frame, frame_len);
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        memcpy(cmd_frame->payload, frame, frame_len);
 
         aem_cmd_controller_avail_resp_returned = jdksavdecc_aem_command_controller_available_response_read(&aem_cmd_controller_avail_resp,
                                                                                                            frame,
@@ -451,9 +448,9 @@ namespace avdecc_lib
         status = aem_cmd_controller_avail_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_controller_avail_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, ether_frame);
+        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
-        free(ether_frame);
+        free(cmd_frame);
         return 0;
     }
 }

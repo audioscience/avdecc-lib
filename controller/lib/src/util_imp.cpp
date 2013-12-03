@@ -435,6 +435,7 @@ namespace avdecc_lib
 
         while(p->str != "UNKNOWN")
         {
+
             if(strcmp(p->str, format_name) == 0)
             {
                 return p->fmt;
@@ -469,8 +470,8 @@ namespace avdecc_lib
         std::stringstream mac_to_string;
 
         mac_to_string << std::hex << end_station_mac;
-        mac_substring = " (" + (mac_to_string.str().substr(mac_to_string.str().length()-4, 2) + ":" +
-                                            mac_to_string.str().substr(mac_to_string.str().length()-2, 2)) + ")";
+        mac_substring = " [" + (mac_to_string.str().substr(mac_to_string.str().length()-4, 2) + ":" +
+                                            mac_to_string.str().substr(mac_to_string.str().length()-2, 2)) + "]";
 
         return mac_substring.c_str(); 
     }

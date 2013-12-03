@@ -354,7 +354,7 @@ namespace avdecc_lib
          * the current value, that is it contains the new stream format if the command succeeds or the old stream
          * format if it fails.
          */
-        int proc_set_stream_format_resp(void *notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
         /**
          * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
@@ -387,7 +387,7 @@ namespace avdecc_lib
         /**
          * Process a SET_STREAM_INFO response for the SET_STREAM_INFO command.
          */
-        int proc_set_stream_info_resp(void *notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
         /**
          * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
@@ -446,7 +446,7 @@ namespace avdecc_lib
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
          *                         this corresponds to the id of the Stream Output descriptor.
          */
-        int STDCALL send_connect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id);
+        int STDCALL send_connect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id, uint16_t flags);
 
         /**
          * Process a CONNECT_RX response for the CONNECT_RX command.
