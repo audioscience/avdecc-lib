@@ -559,8 +559,6 @@ int cmd_line::cmd_view_media_clock()
     uint8_t *desc_obj_name;
     uint16_t desc_type_value = 0;
     uint16_t desc_index = 0;
-    uint32_t stream_input_desc_count = 0;
-    uint32_t stream_output_desc_count = 0;
     bool is_clock_sync_source_set = false;
 
     std::cout << "\n" << "End Station" << "  " << std::setw(20) << "Descriptor Name" << "  " <<
@@ -697,7 +695,8 @@ int cmd_line::cmd_view_all()
 
     for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
     {
-        std::cout << "\nEnd Station: " << i << " (" << controller_obj->get_end_station_by_index(i)->get_entity_desc_by_index(current_entity)->entity_name() << ")" << std::endl;
+        obj_name = controller_obj->get_end_station_by_index(i)->get_entity_desc_by_index(current_entity)->entity_name();
+        std::cout << "\nEnd Station: " << i << " (" << obj_name << ")" << std::endl;
         std::cout << std::setw(20) << "Descriptor Type" << "   " << std::setw(16)  <<  "Descriptor Index" << "   " << std::setw(20) << "Descriptor Name" << std::endl;
         std::cout << "------------------------------------------------------------------------------" << std::endl;
 
@@ -787,8 +786,8 @@ int cmd_line::cmd_view_all()
                 {
                     avdecc_lib::locale_descriptor *locale_def_ref = configuration->get_locale_desc_by_index(j);
                     std::cout << std::setw(20) << utility->aem_desc_value_to_name(locale->descriptor_type());
-                    std::cout << "   "<<  std::setw(16) << std::hex << locale->descriptor_index();
-                    std::cout << "   " << std::setw(20) << std::hex << locale->locale_identifier() << std::endl;
+                    std::cout << "   "<<  std::setw(16) << std::hex << locale_def_ref->descriptor_index();
+                    std::cout << "   " << std::setw(20) << std::hex << locale_def_ref->locale_identifier() << std::endl;
                 }
 
                 //case avdecc_lib::AEM_DESC_STRINGS:
@@ -842,7 +841,6 @@ int cmd_line::cmd_view_all()
 
 int cmd_line::cmd_view_details(uint32_t end_station_index)
 {
-    uint8_t *obj_name = NULL;
     std::string desc_name;
     uint16_t desc_index;
     avdecc_lib::entity_descriptor *entity = controller_obj->get_end_station_by_index(end_station_index)->get_entity_desc_by_index(current_entity);
@@ -1081,7 +1079,6 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                     uint16_t desc_counts_count = configuration->descriptor_counts_count();
                     uint16_t desc_type_from_config = 0;
                     uint16_t desc_count_from_config = 0;
-                    uint16_t offset = 0;
 
                     if(desc_counts_count > 0)
                     {
@@ -2014,7 +2011,7 @@ int cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
         cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
-        stream_input_desc_ref->send_get_stream_info_cmd((void *)notification_id);
+        stream_input_desc_ref->send_get_stream_info_cmd((void *)cmd_notification_id);
         status = sys->get_last_resp_status();
 
         std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
@@ -2066,7 +2063,7 @@ int cmd_line::cmd_set_sampling_rate(std::string desc_name, uint16_t desc_index, 
         cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_audio_unit_desc_by_index(desc_index);
-        audio_unit_desc_ref->send_set_sampling_rate_cmd((void *)notification_id, new_sampling_rate);
+        audio_unit_desc_ref->send_set_sampling_rate_cmd((void *)cmd_notification_id, new_sampling_rate);
         status = sys->get_last_resp_status();
 
         std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
@@ -2102,9 +2099,9 @@ int cmd_line::cmd_get_sampling_rate(std::string desc_name, uint16_t desc_index)
     if(desc_type_value == avdecc_lib::AEM_DESC_AUDIO_UNIT)
     {
         cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd((void *)notification_id);
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_audio_unit_desc_by_index(desc_index);
-        audio_unit_desc_ref->send_get_sampling_rate_cmd((void *)notification_id);
+        audio_unit_desc_ref->send_get_sampling_rate_cmd((void *)cmd_notification_id);
         status = sys->get_last_resp_status();
 
         std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
@@ -2137,9 +2134,9 @@ int cmd_line::cmd_set_clock_source(std::string desc_name, uint16_t desc_index, u
     int status = -1;
     intptr_t cmd_notification_id = get_next_notification_id();
 
-    sys->set_wait_for_next_cmd((void *)notification_id);
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_clock_domain_desc_by_index(desc_index);
-    clk_domain_desc_ref->send_set_clock_source_cmd((void *)notification_id, new_clk_src_index);
+    clk_domain_desc_ref->send_set_clock_source_cmd((void *)cmd_notification_id, new_clk_src_index);
     status = sys->get_last_resp_status();
 
     std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
@@ -2162,7 +2159,7 @@ int cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_index)
 
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_clock_domain_desc_by_index(desc_index);
-    clk_domain_desc_ref->send_get_clock_source_cmd((void *)notification_id);
+    clk_domain_desc_ref->send_get_clock_source_cmd((void *)cmd_notification_id);
     status = sys->get_last_resp_status();
     clk_src_index = clk_domain_desc_ref->get_clock_source_clock_source_index();
 
@@ -2183,7 +2180,7 @@ int cmd_line::cmd_start_streaming(std::string desc_name, uint16_t desc_index)
         cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
-        stream_input_desc_ref->send_start_streaming_cmd((void *)notification_id);
+        stream_input_desc_ref->send_start_streaming_cmd((void *)cmd_notification_id);
         status = sys->get_last_resp_status();
 
         std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
@@ -2193,9 +2190,9 @@ int cmd_line::cmd_start_streaming(std::string desc_name, uint16_t desc_index)
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
     {
         cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd((void *)notification_id);
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
-        stream_output_desc_ref->send_start_streaming_cmd((void *)notification_id);
+        stream_output_desc_ref->send_start_streaming_cmd((void *)cmd_notification_id);
         status = sys->get_last_resp_status();
 
         std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
@@ -2220,7 +2217,7 @@ int cmd_line::cmd_stop_streaming(std::string desc_name, uint16_t desc_index)
         cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_input_desc_by_index(desc_index);
-        stream_input_desc_ref->send_stop_streaming_cmd((void *)notification_id);
+        stream_input_desc_ref->send_stop_streaming_cmd((void *)cmd_notification_id);
         status = sys->get_last_resp_status();
 
         std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
@@ -2230,9 +2227,9 @@ int cmd_line::cmd_stop_streaming(std::string desc_name, uint16_t desc_index)
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
     {
         cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd((void *)notification_id);
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
-        stream_output_desc_ref->send_stop_streaming_cmd((void *)notification_id);
+        stream_output_desc_ref->send_stop_streaming_cmd((void *)cmd_notification_id);
         status = sys->get_last_resp_status();
 
         std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;

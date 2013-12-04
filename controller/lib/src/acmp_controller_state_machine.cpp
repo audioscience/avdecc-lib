@@ -237,8 +237,8 @@ namespace avdecc_lib
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
                                                         msg_type + CMD_LOOKUP,
-                                                        NULL,
-                                                        NULL,
+                                                        0,
+                                                        0,
                                                         notification_id);
         }
         else if((notification_flag == CMD_WITH_NOTIFICATION) &&
@@ -252,8 +252,8 @@ namespace avdecc_lib
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
                                                         (uint16_t)msg_type + CMD_LOOKUP,
-                                                        NULL,
-                                                        NULL,
+                                                        0,
+                                                        0,
                                                         notification_id);
         }
         else if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||

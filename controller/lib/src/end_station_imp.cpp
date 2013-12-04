@@ -404,8 +404,8 @@ namespace avdecc_lib
                 {
                     case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
                     {
-                        uint16_t num_desc = audio_unit_desc_imp_ref->get_number_of_stream_input_ports();
-                        uint16_t base_desc = audio_unit_desc_imp_ref->get_base_stream_input_port();
+                        uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_input_ports();
+                        uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_input_port();
                         if (num_desc)
                         {
                             for(int i = base_desc; i < base_desc+num_desc; i++)
@@ -418,8 +418,8 @@ namespace avdecc_lib
                     }
                     case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
                     {
-                        uint16_t num_desc = audio_unit_desc_imp_ref->get_number_of_stream_output_ports();
-                        uint16_t base_desc = audio_unit_desc_imp_ref->get_base_stream_output_port();
+                        uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_output_ports();
+                        uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_output_port();
                         if (num_desc)
                         {
                             for(int i = base_desc; i < base_desc+num_desc; i++)

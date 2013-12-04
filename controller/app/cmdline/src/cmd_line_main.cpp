@@ -842,8 +842,8 @@ int main()
                 uint32_t outstream_end_station_index = 0;
                 uint16_t outstream_desc_index = 0;
 
-                if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
-                   (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
+                if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
                     outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
@@ -865,8 +865,8 @@ int main()
                 uint32_t instream_end_station_index = 0;
                 uint16_t instream_desc_index = 0;
 
-                if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
-                   (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
+                if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
                     instream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
@@ -888,8 +888,8 @@ int main()
                 uint32_t outstream_end_station_index = 0;
                 uint16_t outstream_desc_index = 0;
 
-                if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
-                   (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
+                if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
                     outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());

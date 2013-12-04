@@ -136,7 +136,7 @@ namespace avdecc_lib
         aem_cmd_set_clk_src.descriptor_index = descriptor_index();
         aem_cmd_set_clk_src.clock_source_index = new_clk_src_index;
 
-        /**************************** Fill frame payload with AECP data and send the frame ************************/
+        /*************************** Fill frame payload with AECP data and send the frame ***********************/
         aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);
         aem_cmd_set_clk_src_returned = jdksavdecc_aem_command_set_clock_source_write(&aem_cmd_set_clk_src,
                                                                                      cmd_frame->payload,
