@@ -164,26 +164,29 @@ namespace avdecc_lib
     template <class T>
     static void add_or_replace_descriptor_and_sort(T *d, std::vector<T *> &desc_vec)
     {
-        typename std::vector<T*>::const_iterator it;
-        if ((it = std::find_if(desc_vec.begin(), desc_vec.end(), [d](T const* n)
-    {
-        return *d == *n;
-    })) != desc_vec.end())
+        typename std::vector<T*>::iterator it;
+
+        it = std::find_if(
+            desc_vec.begin(),
+            desc_vec.end(),
+            [d](T const* n){return *d == *n;}
+            );
+
+        if (it != desc_vec.end())
         {
             // If the descriptor was found, delete the old and add the new in its place
             delete *it;
-            desc_vec.erase(it);
+            it = desc_vec.erase(it);
             desc_vec.insert(it, d);
         }
         else
         {
             // Insert the descriptor in the list and sort by descriptor ID
             desc_vec.push_back(d);
-            std::sort(desc_vec.begin(), desc_vec.end(),
-                      [](T const* a, T const* b)
-            {
-                return *a < *b;
-            });
+            std::sort(
+                desc_vec.begin(),
+                desc_vec.end(),
+                [](T const* a, T const* b){return *a < *b;});
         }
     }
 

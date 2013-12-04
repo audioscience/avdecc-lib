@@ -30,6 +30,7 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+#include <string.h>
 #include "enumeration.h"
 #include "util_imp.h"
 
@@ -433,7 +434,7 @@ namespace avdecc_lib
     {
         struct ieee1722_format *p = &ieee1722_format_table[0];
 
-        while(p->str != "UNKNOWN")
+        while(p->fmt != UINT64_C(0x0000000000000000))
         {
 
             if(strcmp(p->str, format_name) == 0)

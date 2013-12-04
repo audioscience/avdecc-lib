@@ -30,9 +30,11 @@ EXTRA_CXXFLAGS += -Wall -ansi -g -std=c++0x -D__linux__
 
 OBJS =  adp.o \
 	adp_discovery_state_machine.o \
-	aecp.o \
+	acmp_controller_state_machine.o \
 	aem_controller_state_machine.o \
 	audio_unit_descriptor_imp.o \
+	audio_cluster_descriptor_imp.o \
+	audio_map_descriptor_imp.o \
 	avb_interface_descriptor_imp.o \
 	clock_domain_descriptor_imp.o \
 	clock_source_descriptor_imp.o \
@@ -46,6 +48,8 @@ OBJS =  adp.o \
 	locale_descriptor_imp.o \
 	stream_input_descriptor_imp.o \
 	stream_output_descriptor_imp.o \
+	stream_port_input_descriptor_imp.o \
+	stream_port_output_descriptor_imp.o \
 	strings_descriptor_imp.o \
 	timer.o \
 	util_imp.o \
