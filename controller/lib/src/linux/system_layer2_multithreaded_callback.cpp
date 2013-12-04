@@ -98,6 +98,7 @@ namespace avdecc_lib
         instance = this;
         netif_obj_in_system = dynamic_cast<net_interface_imp *>(netif);
         controller_ref_in_system = dynamic_cast<controller_imp *>(controller_obj);
+        pipe(tx_pipe);
 
         queue_is_waiting = false;
 
