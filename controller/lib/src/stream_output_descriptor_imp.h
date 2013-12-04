@@ -364,6 +364,12 @@ namespace avdecc_lib
         uint16_t STDCALL get_tx_connection_stream_vlan_id();
 
         /**
+         * Get the Listener entity ID of the stream sink of the AVDECC Talker   
+         * after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+         */
+        uint64_t STDCALL get_tx_connection_listener_entity_id();
+
+        /**
          * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.

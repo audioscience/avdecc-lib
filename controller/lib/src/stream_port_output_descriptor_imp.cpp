@@ -48,7 +48,7 @@ namespace avdecc_lib
 
     uint16_t STDCALL stream_port_output_descriptor_imp::get_descriptor_type() const
     {
-        assert(stream_port_output_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT);
+        assert(stream_port_output_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT);
         return stream_port_output_desc.descriptor_type;
     }
 
