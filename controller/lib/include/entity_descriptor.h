@@ -24,8 +24,8 @@
 /**
  * entity_descriptor.h
  *
- * Public Entity descriptor interface class
- * The Entity descriptor describes the highest level of the AVDECC Entity. It repeats some of the information
+ * Public ENTITY descriptor interface class
+ * The ENTITY descriptor describes the highest level of the AVDECC Entity. It repeats some of the information
  * contained within the ADP advertise for the AVDECC Entity as well as the information required to read the
  * rest of the descriptors from the AVDECC Entity.
  */
@@ -159,7 +159,7 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_config_cmd() = 0;
 
         /**
-         * Send a GET_CONFIGURATION command to \return The current configuration of the AVDECC Entity.
+         * Send a GET_CONFIGURATION command to get the current configuration of the AVDECC Entity.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_config_cmd() = 0;
     };

@@ -95,12 +95,12 @@ namespace avdecc_lib
         end_station_connection_status = 'D';
     }
 
-    uint64_t STDCALL end_station_imp::get_guid()
+    uint64_t STDCALL end_station_imp::guid()
     {
         return end_station_guid;
     }
 
-    uint64_t STDCALL end_station_imp::get_mac()
+    uint64_t STDCALL end_station_imp::mac()
     {
         return end_station_mac;
     }
@@ -110,7 +110,7 @@ namespace avdecc_lib
         return adp_ref;
     }
 
-    uint32_t STDCALL end_station_imp::get_entity_desc_count()
+    uint32_t STDCALL end_station_imp::entity_desc_count()
     {
         return entity_desc_vec.size();
     }
@@ -159,7 +159,7 @@ namespace avdecc_lib
         aem_command_read_desc.descriptor_type = desc_type;
         aem_command_read_desc.descriptor_index = desc_index;
 
-        /*************************** Fill frame payload with AECP data and send the frame **************************/
+        /************************** Fill frame payload with AECP data and send the frame *************************/
         aem_controller_state_machine_ref->ether_frame_init(end_station_mac, cmd_frame);
         aem_command_read_desc_returned = jdksavdecc_aem_command_read_descriptor_write(&aem_command_read_desc,
                                                                                       cmd_frame->payload,
@@ -378,6 +378,7 @@ namespace avdecc_lib
                         }
 
                         read_desc_done = true;
+                        notification_imp_ref->post_notification_msg(END_STATION_INITIALIZATION_COMPLETED, end_station_guid, 0, 0, 0, NULL);
                     }
                 }
                 break;        
@@ -410,7 +411,8 @@ namespace avdecc_lib
                         {
                             for(int i = base_desc; i < base_desc+num_desc; i++)
                             {
-                                read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT, i); 
+                                read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT, i);
+                                read_desc_count++;
                             }
                         }
                         desc_type_index_from_audio_unit++;
@@ -424,14 +426,14 @@ namespace avdecc_lib
                         {
                             for(int i = base_desc; i < base_desc+num_desc; i++)
                             {
-                                read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT, i); 
+                                read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT, i);
+                                read_desc_count++;
                             }
                         }
                         read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_DONE;
                         break;
                     }
                 }
-
             }
             break;
 

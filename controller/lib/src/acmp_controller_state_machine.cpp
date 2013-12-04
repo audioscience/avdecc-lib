@@ -58,7 +58,7 @@ namespace avdecc_lib
 
         /************************************************************ Ethernet Frame ********************************************************/
         cmd_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), cmd_frame->src_address.value); // Send from the Controller MAC address
+        utility->convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value); // Send from the Controller MAC address
         cmd_frame->dest_address = jdksavdecc_multicast_adp_acmp; // Send to the ACMP multicast destination MAC address
         cmd_frame->length = ACMP_FRAME_LEN; // Length of ACMP packet is 70 bytes
 
@@ -116,7 +116,8 @@ namespace avdecc_lib
 
         if(is_retried)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Timeout for command with sequence id = %d",
+                                      inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
             inflight_cmds.erase(inflight_cmds.begin() + inflight_cmd_index);
         }
         else

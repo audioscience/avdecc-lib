@@ -100,7 +100,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    void notification_imp::post_log_event()
+    void notification_imp::post_notification_event()
     {
         ReleaseSemaphore(poll_events[NOTIFICATION_EVENT], 1, NULL);
     }

@@ -76,7 +76,7 @@ namespace avdecc_lib
         /**
          * Release sempahore so that notification callback function is called.
          */
-        virtual void post_log_event() = 0;
+        virtual void post_notification_event() = 0;
 
         /**
          * Change the notification callback function to a new post_notification_msg callback function.
@@ -86,7 +86,7 @@ namespace avdecc_lib
         /**
          * Get the number of missed notifications that exceeds the notification buffer count.
          */
-        uint32_t get_missed_notification_event_count();
+        uint32_t missed_notification_event_count();
     };
 }
 

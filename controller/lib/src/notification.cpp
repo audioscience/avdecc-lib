@@ -60,7 +60,7 @@ namespace avdecc_lib
 
         if(notification_type == NO_MATCH_FOUND || notification_type == END_STATION_CONNECTED ||
            notification_type == END_STATION_DISCONNECTED || notification_type == COMMAND_TIMEOUT ||
-           notification_type == RESPONSE_RECEIVED)
+           notification_type == RESPONSE_RECEIVED || notification_type == END_STATION_INITIALIZATION_COMPLETED)
         {
             index = InterlockedExchangeAdd(&write_index, 1);
             notification_buf[index % NOTIFICATION_BUF_COUNT].notification_type = notification_type;
@@ -70,7 +70,7 @@ namespace avdecc_lib
             notification_buf[index % NOTIFICATION_BUF_COUNT].desc_index = desc_index;
             notification_buf[index % NOTIFICATION_BUF_COUNT].notification_id = notification_id;
 
-            post_log_event();
+            post_notification_event();
         }
     }
 
@@ -80,7 +80,7 @@ namespace avdecc_lib
         user_obj = p;
     }
 
-    uint32_t notification::get_missed_notification_event_count()
+    uint32_t notification::missed_notification_event_count()
     {
         return missed_notification_event_cnt;
     }

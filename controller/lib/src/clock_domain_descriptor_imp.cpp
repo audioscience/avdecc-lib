@@ -137,7 +137,7 @@ namespace avdecc_lib
         aem_cmd_set_clk_src.clock_source_index = new_clk_src_index;
 
         /*************************** Fill frame payload with AECP data and send the frame ***********************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
         aem_cmd_set_clk_src_returned = jdksavdecc_aem_command_set_clock_source_write(&aem_cmd_set_clk_src,
                                                                                      cmd_frame->payload,
                                                                                      ETHER_HDR_SIZE,
@@ -150,7 +150,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->get_guid());
+        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);
@@ -207,7 +207,7 @@ namespace avdecc_lib
         aem_cmd_get_clk_src.descriptor_index = descriptor_index();
 
         /***************************** Fill frame payload with AECP data and send the frame ***********************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
         aem_cmd_get_clk_src_returned = jdksavdecc_aem_command_get_clock_source_write(&aem_cmd_get_clk_src,
                                                                                      cmd_frame->payload,
                                                                                      ETHER_HDR_SIZE,
@@ -220,7 +220,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->get_guid());
+        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);

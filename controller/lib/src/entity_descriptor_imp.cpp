@@ -24,7 +24,7 @@
 /**
  * entity_descriptor_imp.cpp
  *
- * Entity descriptor implementation
+ * ENTITY descriptor implementation
  */
 
 #include <vector>

@@ -57,7 +57,7 @@ namespace avdecc_lib
 
         /**************************************** Ethernet Frame **************************************/
         cmd_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), cmd_frame->src_address.value);
+        utility->convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value);
         utility->convert_uint64_to_eui48(end_station_mac, cmd_frame->dest_address.value);
         cmd_frame->length = AECP_FRAME_LEN; // Length of AECP packet is 64 bytes
 
@@ -186,7 +186,8 @@ namespace avdecc_lib
 
         if(is_retried)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Timeout for command with sequence id = %d",
+                                      inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
             inflight_cmds.erase(inflight_cmds.begin() + inflight_cmd_index);
         }
         else
@@ -239,6 +240,7 @@ namespace avdecc_lib
     {
         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
         uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN); //jdksavdecc_uint16_get(frame, aecp::CMD_TYPE_POS);
+        uint32_t status = jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE);
         uint16_t desc_type = 0;
         uint16_t desc_index = 0;
         jdksavdecc_eui64 id;
@@ -354,12 +356,13 @@ namespace avdecc_lib
         else if((notification_flag == CMD_WITHOUT_NOTIFICATION) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE))
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
-                                      "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d",
+                                      "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
                                       jdksavdecc_uint64_get(&id, 0),
                                       utility->aem_cmd_value_to_name(cmd_type),
                                       utility->aem_desc_value_to_name(desc_type),
                                       desc_index,
-                                      jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE));
+                                      jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
+                                      utility->aem_cmd_status_value_to_name(status));
         }
 
         return 0;
