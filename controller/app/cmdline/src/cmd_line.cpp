@@ -69,6 +69,7 @@ cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uin
     controller_obj = avdecc_lib::create_controller(netif, notification_callback, log_callback);
     sys = avdecc_lib::create_system(avdecc_lib::system::LAYER2_MULTITHREADED_CALLBACK, netif, controller_obj);
     utility = avdecc_lib::create_util();
+    //controller_obj->set_logging_level(avdecc_lib::LOGGING_LEVEL_DEBUG);
 
     std::cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
     std::cout << "(c) AudioScience, Inc. 2013\n"<< std::endl;
@@ -142,7 +143,10 @@ void cmd_line::cmd_line_help_init()
                                                   "log level [n_l_l]\n" \
                                                   "Update the base log level for messages to be logged by the logging callback.\n\n" \
                                                   "\nParameters" \
-                                                  "\n\t n_l_l stands for new log level and is an integer." \
+                                                  "\n\t n_l_l stands for new log level and is an integer.\n\n" \
+                                                  "Valid log levels are 0 - LOGGING_LEVEL_ERROR, 1 - LOGGING_LEVEL_WARNING,\n" \
+                                                  "2 - LOGGING_LEVEL_NOTICE, 3 - LOGGING_LEVEL_INFO, 4 - LOGGING_LEVEL_DEBUG\n" \
+                                                  "5 - LOGGING_LEVEL_VERBOSE."
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("view all",
@@ -162,7 +166,7 @@ void cmd_line::cmd_line_help_init()
                                                   "view desc [e_s_i]\n" \
                                                   "Display all the descriptors with details in the end station.\n\n" \
                                                   "\nParameters"
-                                                  "\n\t e_s_i stands for End Station index and is an integer." \
+                                                  "\n\t e_s_i stands for End Station index and is an integer.\n\n" \
                                                   "To see a list of valid End Stations, enter \"list\" command."
                                                  ));
 
@@ -382,48 +386,48 @@ void cmd_line::cmd_line_help_init()
 
     cmd_line_help_vec.push_back(new cmd_line_help("start streaming",
 
-    					      "start streaming [d_t] [d_i]\n" \
-    					      "Send a START_STREAMING command to start streaming on a previously connected\n" \
-    					      "stream that was connected via ACMP or has previously been stopped with the\n" \
-    					      "STOP_STREAMING command.\n\n" \
-    					      "\nParameters" \
-    					      "\n\t d_t stands for descriptor type and is a string." \
-    					      "\n\t d_i stands for descriptor index and is an integer.\n\n"
-    					      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
-    					      ));
+    					                          "start streaming [d_t] [d_i]\n" \
+    					                          "Send a START_STREAMING command to start streaming on a previously connected\n" \
+    					                          "stream that was connected via ACMP or has previously been stopped with the\n" \
+    					                          "STOP_STREAMING command.\n\n" \
+    					                          "\nParameters" \
+    					                          "\n\t d_t stands for descriptor type and is a string." \
+    					                          "\n\t d_i stands for descriptor index and is an integer.\n\n"
+    					                          "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
+    					                          ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("stop streaming",
 
-    					      "stop streaming [d_t] [d_i]\n" \
-    					      "Send a STOP_STREAMING command to stop a connected stream for streaming media.\n\n" \
-    					      "\nParameters" \
-    					      "\n\t d_t stands for descriptor type and is a string." \
-    					      "\n\t d_i standsfor descriptor index and is an integer.\n\n"
-    					      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
-    					      ));
+    					                          "stop streaming [d_t] [d_i]\n" \
+    					                          "Send a STOP_STREAMING command to stop a connected stream for streaming media.\n\n" \
+    					                          "\nParameters" \
+    					                          "\n\t d_t stands for descriptor type and is a string." \
+    					                          "\n\t d_i standsfor descriptor index and is an integer.\n\n"
+    					                          "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
+    					                          ));
 
     //cmd_line_help_vec.push_back(new cmd_line_help("set name",
 
-    //					      "set name [d_t] [d_i] [ni] [n]\n" \
-    //					      "Send a SET_NAME command to change the value of a name field within a descriptor" \
-    //					      "using the current setting.\n\n"
-    //					      "\nParameters" \
-    //					      "\n\t d_t stands for descriptor type and is a string." \
-    //					      "\n\t d_i stands for descriptor index and is an integer." \
-    //					      "\n\t ni stands for name index and is an integer." \
-    //					      "\n\t n stands for name and is a string."
-    //					      ));
+    //					                          "set name [d_t] [d_i] [ni] [n]\n" \
+    //					                          "Send a SET_NAME command to change the value of a name field within a descriptor" \
+    //					                          "using the current setting.\n\n"
+    //					                          "\nParameters" \
+    //					                          "\n\t d_t stands for descriptor type and is a string." \
+    //					                          "\n\t d_i stands for descriptor index and is an integer." \
+    //					                          "\n\t ni stands for name index and is an integer." \
+    //					                          "\n\t n stands for name and is a string."
+    //					                          ));
 
     //cmd_line_help_vec.push_back(new cmd_line_help("get name",
 
-    //					      "get name [d_t] [d_i] [ni]\n" \
-    //					      "Send a GET_NAME command to fetch the value of a name field within a descriptor" \
-    //					      "using the current setting.\n\n"
-    //				              "\nParameters" \
-    //					      "\n\t d_t stands for descriptor type and is a string." \
-    //					      "\n\t d_i stands for descriptor index and is an integer." \
-    //					      "\n\t ni stands for name index and is an integer."
-    //					      ));
+    //					                          "get name [d_t] [d_i] [ni]\n" \
+    //					                          "Send a GET_NAME command to fetch the value of a name field within a descriptor" \
+    //					                          "using the current setting.\n\n"
+    //				                                  "\nParameters" \
+    //					                          "\n\t d_t stands for descriptor type and is a string." \
+    //					                          "\n\t d_i stands for descriptor index and is an integer." \
+    //					                          "\n\t ni stands for name index and is an integer."
+    //					                          ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("path",
 
@@ -532,14 +536,14 @@ int cmd_line::cmd_list()
 
         if (endstn)
         {
-            uint64_t end_station_guid = endstn->get_guid();
+            uint64_t end_station_guid = endstn->guid();
             avdecc_lib::entity_descriptor *ent_desc = endstn->get_entity_desc_by_index(current_entity);
             char *end_station_name;
             if (ent_desc)
             {
                 end_station_name = (char *)ent_desc->entity_name();
             }
-            uint64_t end_station_mac = endstn->get_mac();
+            uint64_t end_station_mac = endstn->mac();
             std::cout << endstn->get_connection_status()
                       << std::setw(10) << std::dec << i << "  |  "
                       << std::setw(20) << std::hex << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
@@ -1444,7 +1448,7 @@ int cmd_line::cmd_connect()
 
     for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
     {
-        end_station_mac = controller_obj->get_end_station_by_index(i)->get_mac();
+        end_station_mac = controller_obj->get_end_station_by_index(i)->mac();
         instream_end_station_name = controller_obj->get_end_station_by_index(i)->get_entity_desc_by_index(current_entity)->entity_name();
         stream_input_desc_count = controller_obj->get_config_desc_by_index(i, current_entity, current_config)->stream_input_desc_count();
 
@@ -1463,7 +1467,7 @@ int cmd_line::cmd_connect()
 
         for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
         {
-                end_station_mac = controller_obj->get_end_station_by_index(i)->get_mac();
+                end_station_mac = controller_obj->get_end_station_by_index(i)->mac();
                 outstream_end_station_name = controller_obj->get_end_station_by_index(i)->get_entity_desc_by_index(current_entity)->entity_name();
                 stream_output_desc_count = controller_obj->get_config_desc_by_index(i, current_entity, current_config)->stream_output_desc_count();
 
@@ -1500,7 +1504,7 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
         {
             if(i == instream_end_station_index)
             {
-                end_station_mac = controller_obj->get_end_station_by_index(i)->get_mac();
+                end_station_mac = controller_obj->get_end_station_by_index(i)->mac();
                 outstream_end_station_name = controller_obj->get_end_station_by_index(i)->get_entity_desc_by_index(current_entity)->entity_name();
                 stream_output_desc_count = controller_obj->get_config_desc_by_index(i, current_entity, current_config)->stream_output_desc_count();
 
@@ -2257,7 +2261,7 @@ int cmd_line::cmd_path(std::string new_log_path)
 bool cmd_line::is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config)
 {
     bool is_setting_valid = (end_station < controller_obj->get_end_station_count()) &&
-                            (entity < controller_obj->get_end_station_by_index(end_station)->get_entity_desc_count()) &&
+                            (entity < controller_obj->get_end_station_by_index(end_station)->entity_desc_count()) &&
                             (config == controller_obj->get_end_station_by_index(end_station)->get_entity_desc_by_index(entity)->current_configuration());
 
     return is_setting_valid;

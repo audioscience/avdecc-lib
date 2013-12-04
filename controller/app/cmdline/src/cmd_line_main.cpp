@@ -223,25 +223,33 @@ int main()
         {
             if(input_argv.size() == 2)
             {
-                std::string file = cmd_line::log_path + input_argv.at(1) + ".txt";
-                try
+                if(input_argv.at(1) == "level")
                 {
-                    ofstream_ref.open(file);
-                    ofstream_ref.good();
-                    std::cout.rdbuf(ofstream_ref.rdbuf());
-                    is_output_redirected = true;
+                    std::cout << "Invalid Command\n" << std::endl;
+                    avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
                 }
-                catch(std::ofstream::failure e)
+                else
                 {
-                    std::cerr << "\nofstream exception";
-                    exit(EXIT_FAILURE);
+                    std::string file = cmd_line::log_path + input_argv.at(1) + ".txt";
+                    try
+                    {
+                        ofstream_ref.open(file);
+                        ofstream_ref.good();
+                        std::cout.rdbuf(ofstream_ref.rdbuf());
+                        is_output_redirected = true;
+                    }
+                    catch(std::ofstream::failure e)
+                    {
+                        std::cerr << "\nofstream exception";
+                        exit(EXIT_FAILURE);
+                    }
                 }
             }
             else if((input_argv.size() == 3) && (input_argv.at(1) == "level"))
             {
                 uint32_t new_log_level;
 
-                if((input_argv.at(2) == "0") || (atoi(input_argv.at(1).c_str()) != 0))
+                if((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0))
                 {
                     is_input_valid = true;
                     new_log_level = (uint16_t)atoi(input_argv.at(2).c_str());
