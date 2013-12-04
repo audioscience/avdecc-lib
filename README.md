@@ -7,26 +7,27 @@ Simple C++ library for implementing IEEE1722.1 (AVB Device Enumeration, Discover
 Introduction
 ------------
 
-This library aims to simplify development of an AVDECC controller based on the IEEE1722.1 specification.
-It provides a simple c++ object interface to 1722.1 objects and implements device discovery and enumeration
+This library aims to simplify development of an AVDECC Controller based on the IEEE1722.1 specification.
+It provides a simple C++ object interface to 1722.1 objects and implements device discovery and enumeration
 as a background process.
 
 The repository contains source to build a Windows DLL or a Linux library and a command line application for
 exercising the library.
 
 The overall philosophy of AVDECC LIB is to implement a thin layer of commands that allow an application to
-discover and control AVDECC capable end stations. The internal operations of the library are designed to be single threaded,
+discover and control AVDECC capable End Stations. The internal operations of the library are designed to be single threaded,
 although multiple threads are used to queue operations to be performed by the single threaded "engine" portion of the library.
 The library supports notification events (callbacks) that are triggered on the success (or failure) of a command. 
 It is up to the application to process the notifications in a useful manner. Asynchronous descriptor updates from an
-end station are also supported. A descriptor notification does not have data about the updated descriptor values embedded
+End Station are also supported. A descriptor notification does not have data about the updated descriptor values embedded
 in it. Instead the AVDECC application should query the descriptor class to obtain the updated values.
 
-Operations that "fetch" details or status of an endstation store the response for later readback by the controller application.
-An example of this would be the AEM send_get_stream_info_cmd() operation whose response is stored in the appropriate stream input object in avdecc-lib. Functions get_stream_info_msrp_accumulated_latency(), get_stream_info_msrp_failure_code() and others can then be used to readback fields of the response.
+Operations that "fetch" details or status of an End Station store the response for later readback by the controller application.
+An example of this would be the AEM send_get_stream_info_cmd() operation whose response is stored in the appropriate stream input object in avdecc-lib.
+Functions get_stream_info_msrp_accumulated_latency(), get_stream_info_msrp_failure_code() and others can then be used to readback fields of the response.
 
 Users developing 1722.1 end stations and controllers are encouraged to add new descriptors to this library as required.
-The library provides an easy entry point for adding and a testing a completely new 1722.1 descriptor without having
+The library provides an easy entry point for adding and testing a completely new 1722.1 descriptor without having
 to develop a complete controller side 1722.1 software stack.
 
 
@@ -34,7 +35,7 @@ Acknowledgements
 ----------------
 
 Special thanks are owed to Jeff Koftinoff for creating and releasing public source for 1722.1 packet processing in
-the jdksavdecc-c library and for comments and advice freely given during the development of this library. This c++
+the jdksavdecc-c library and for comments and advice freely given during the development of this library. This C++
 library is a rather thin wrapper around functions already present in the jdksavdecc-c library.
 
 
@@ -80,10 +81,10 @@ Object hierarchy
 					Audio Unit[1..N]
 					Stream Input[1..N]
 					Stream Output[1..N]
-					AVB Interface[1..N]
-					Clock Source[1..N]
 					Jack Input[1..N]
 					Jack Output[1..N]
+					AVB Interface[1..N]
+					Clock Source[1..N]
 					Clock Domain[1..N]
 	
 Building
@@ -124,8 +125,8 @@ Operations
 AVDECC End Station Discovery
 ----------------------------
 
-When the AVDECC system receives a AVDECC advertise message from an end station, it proceeds to
-enumerate the end station's complete object model, if it hasn't done so already. Upon completion
+When the AVDECC system receives an AVDECC advertise message from an End Station, it proceeds to
+enumerate the End Station's complete object model, if it has not done so already. Upon completion
 of the enumeration process, a notification message is sent to the application.
 
 AVDECC AEM descriptor reads
@@ -160,19 +161,19 @@ sequence is to wait for the callback to complete in-line, ie:
 	notify_id++;
 
 The above examples place an uint32_t notify_id in a "void *" container. If the application writer is careful about
-object creation and destruction, they may choose to place a c++ (or other language) object in the notify_id field.
+object creation and destruction, they may choose to place a C++ (or other language) object in the notify_id field.
 
 Callbacks
 ---------
 
-The following callback functions should be supplied. If NULL is passed in for the callback function, not callbacks will be invoked.
+The following callback functions should be supplied. If NULL is passed in for the callback function, no callbacks will be invoked.
 
 	void log_callback(void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms);
 	void notification_callback(void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id);
 
 When a controller internal thread calls the log_callback function that was invoked at controller create time,
 the log_user_obj pointer that was passed in at that time is returned in the callback. The calling application
-code use this void pointer to store a c++ class if that was helpful to the structure of the calling application.
+code use this void pointer to store a C++ class if that was helpful to the structure of the calling application.
 The log_callback is called with log_level values of:
 * ERROR
 * WARNING
@@ -184,14 +185,11 @@ The log_callback is called with log_level values of:
 Like the log_callback function the notification callback returns a void "user" pointers as the first field in the callback.
 The notification_callback is called with notification_type values of:
 * NO MATCH FOUND
-* END STATION DISCOVERED
 * END STATION CONNECTED
 * END STATION DISCONNECTED,
-* COMMAND SENT
 * COMMAND TIMEOUT
-* COMMAND RESENT
-* COMMAND SUCCESS
 * RESPONSE RECEIVED
+* END_STATION_INITIALIZATION_COMPLETED
 
 Source code style
 -----------------
@@ -237,8 +235,8 @@ SET_SAMPLING_RATE | P1 | Y | Y |
 GET_SAMPLING_RATE | P1 | Y | Y |
 SET_CLOCK_SOURCE | P1 | Y | Y |
 GET_CLOCK_SOURCE | P1 | Y | Y| 
-START_STREAMING | P1 | Y | |
-STOP_STREAMING | P1 | Y | |
+START_STREAMING | P1 | Y | Y |
+STOP_STREAMING | P1 | Y | Y |
 SET_CONFIGURATION | P2 | | |
 GET_CONFIGURATION | P2 | | |
 SET_CONTROL | P2 | | |
