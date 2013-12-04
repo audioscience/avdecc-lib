@@ -41,7 +41,7 @@ namespace avdecc_lib
         if(desc_avb_interface_read_returned < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "avb_interface_desc_read error");
-            assert(desc_avb_interface_read_returned >= 0);
+           // assert(desc_avb_interface_read_returned >= 0);
         }
     }
 
@@ -49,7 +49,7 @@ namespace avdecc_lib
 
     uint16_t STDCALL avb_interface_descriptor_imp::descriptor_type() const
     {
-        assert(avb_interface_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE);
+        //assert(avb_interface_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE);
         return avb_interface_desc.descriptor_type;
     }
 

@@ -54,7 +54,7 @@ namespace avdecc_lib
 
         /********************************************************** Ethernet Frame **********************************************************/
         cmd_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), cmd_frame->src_address.value); // Send from the Controller MAC address
+        utility->convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value); // Send from the Controller MAC address
         cmd_frame->dest_address = jdksavdecc_multicast_adp_acmp; // Send to the ADP multicast destination MAC address
         cmd_frame->length = ADP_FRAME_LEN; // Length of ADP packet is 82 bytes
 

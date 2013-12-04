@@ -217,7 +217,7 @@ namespace avdecc_lib
         ACMP_STATUS_COULD_NOT_SEND_MESSAGE = 12, ///< Listener failed to send the message to the Talker
         ACMP_STATUS_TALKER_MISBEHAVING = 13, ///< Talker was unable to complete the command because an internal error occurred
         ACMP_STATUS_LISTENER_MISBEHAVING = 14, ///< Listener was unable to complete the command because an internal error occurred
-        ACMP_STATUS_RESERVED = 15, // Reserved field for new status
+        ACMP_STATUS_RESERVED = 15, ///< Reserved field for new status
         ACMP_STATUS_CONTROLLER_NOT_AUTHORIZED = 16, ///< The AVDECC Controller with the specified Entity ID is not authorized to change stream connections
         ACMP_STATUS_INCOMPATIBLE_REQUEST = 17, ///< Listener is trying to connect a Talker that is already streaming with a different traffic class, etc, or
                                                ///< does not support the request traffic class
@@ -236,12 +236,12 @@ namespace avdecc_lib
         SRC_MAC_SIZE = 6,
         DEST_MAC_SIZE = 6,
         ETHER_PROTOCOL_SIZE = 2,
-        ETHER_HDR_SIZE = SRC_MAC_SIZE + DEST_MAC_SIZE + ETHER_PROTOCOL_SIZE, // The header size of the Ethernet frame = dest mac + src mac + ether protocol sizes
+        ETHER_HDR_SIZE = SRC_MAC_SIZE + DEST_MAC_SIZE + ETHER_PROTOCOL_SIZE, ///<  The header size of the Ethernet frame = dest mac + src mac + ether protocol sizes
     };
 
     enum protocol_hdr_info
     {
-        PROTOCOL_HDR_SIZE = 4 // The Protocol Header size
+        PROTOCOL_HDR_SIZE = 4 ///<  The Protocol Header size
     };
 
     enum frame_lengths
@@ -266,7 +266,7 @@ namespace avdecc_lib
 
     enum flags
     {
-        CMD_LOOKUP = 1024 // Check if the command is an ACMP or AEM command
+        CMD_LOOKUP = 1024 ///<  Check if the command is an ACMP or AEM command
     };
 
     enum notifications /// Notifications for the AVDECC library implementation, not part of the 1722.1 specification
@@ -276,7 +276,8 @@ namespace avdecc_lib
         END_STATION_DISCONNECTED = 2, ///< An AVDECC End Station is disconnected
         COMMAND_TIMEOUT = 3, ///< A command is sent, but the response is not received within a timeout period
         RESPONSE_RECEIVED = 4, ///< A response is received after sending a command
-        TOTAL_NUM_OF_NOTIFICATIONS = 5
+        END_STATION_INITIALIZATION_COMPLETED = 5, ///< An AVDECC End Station has finished internal READ_DESCRIPTOR processing for all top level descriptors
+        TOTAL_NUM_OF_NOTIFICATIONS = 6
     };
 
     enum logging_levels

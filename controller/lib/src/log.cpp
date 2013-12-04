@@ -55,7 +55,7 @@ namespace avdecc_lib
 
     void log::post_log_msg(int32_t level, const char *fmt,...)
     {
-        if (level >= log_level)
+        if (level <= log_level)
         {
             va_list arglist;
             uint32_t index;
@@ -82,7 +82,7 @@ namespace avdecc_lib
         user_obj = p;
     }
 
-    uint32_t log::get_missed_log_event_count()
+    uint32_t log::missed_log_event_count()
     {
         return missed_log_event_cnt;
     }

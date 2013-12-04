@@ -24,7 +24,7 @@
 /**
  * entity_descriptor_imp.h
  *
- * Entity descriptor implementation class
+ * ENTITY descriptor implementation class
  */
 
 #pragma once
@@ -49,7 +49,7 @@ namespace avdecc_lib
 
     public:
         /**
-         * Constructor for Entity descriptor object.
+         * Constructor for ENTITY descriptor object.
          *
          * \param end_station_obj A pointer to the base End Station object.
          * \param frame The raw memory that contains the descriptor information to read from.
