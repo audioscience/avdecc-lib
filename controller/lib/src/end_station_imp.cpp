@@ -50,7 +50,8 @@ namespace avdecc_lib
         desc_count_from_config = 0;
         desc_count_index_from_config = 0;
         read_desc_count = 0;
-        read_desc_done = false;
+        read_strings_desc_done = false;
+        read_stream_port_desc_done = false;
         read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_IDLE;
         read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_IDLE;
         desc_type_index_from_audio_unit = JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT;
@@ -365,7 +366,7 @@ namespace avdecc_lib
                 break;
 
             case READ_TOP_LEVEL_DESC_IN_CONFIG_DONE:
-                if(!read_desc_done)
+                if(!read_strings_desc_done)
                 {
                     if(config_desc_imp_ref->get_locale_desc_by_index(0)) // Check if LOCALE descriptor is present in the top level descriptor
                     {
@@ -377,68 +378,72 @@ namespace avdecc_lib
                             read_desc_count++;
                         }
 
-                        read_desc_done = true;
-                        notification_imp_ref->post_notification_msg(END_STATION_INITIALIZATION_COMPLETED, end_station_guid, 0, 0, 0, NULL);
+                        read_strings_desc_done = true;
                     }
                 }
                 break;        
         }
 
-        switch(read_desc_in_audio_unit_state)
+        if(read_strings_desc_done && !read_stream_port_desc_done)
         {
-            case READ_DESC_IN_AUDIO_UNIT_IDLE:
-                break;
-
-            case READ_DESC_IN_AUDIO_UNIT_STARTING:
-                read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_RUNNING;
-                break;
-
-            case READ_DESC_IN_AUDIO_UNIT_RUNNING:
+            switch(read_desc_in_audio_unit_state)
             {
-                audio_unit_descriptor_imp *audio_unit_desc_imp_ref = 
-                            dynamic_cast<audio_unit_descriptor_imp *>(entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_audio_unit_desc_by_index(0));
-                // TODO: Handle multiple audio units
+                case READ_DESC_IN_AUDIO_UNIT_IDLE:
+                    break;
 
-                if (!audio_unit_desc_imp_ref) assert(audio_unit_desc_imp_ref == NULL);
+                case READ_DESC_IN_AUDIO_UNIT_STARTING:
+                    read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_RUNNING;
+                    break;
 
-                switch(desc_type_index_from_audio_unit)
+                case READ_DESC_IN_AUDIO_UNIT_RUNNING:
                 {
-                    case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
+                    audio_unit_descriptor_imp *audio_unit_desc_imp_ref = 
+                                dynamic_cast<audio_unit_descriptor_imp *>(entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_audio_unit_desc_by_index(0));
+                    // TODO: Handle multiple audio units
+
+                    if (!audio_unit_desc_imp_ref) assert(audio_unit_desc_imp_ref == NULL);
+
+                    switch(desc_type_index_from_audio_unit)
                     {
-                        uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_input_ports();
-                        uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_input_port();
-                        if (num_desc)
+                        case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
                         {
-                            for(int i = base_desc; i < base_desc+num_desc; i++)
+                            uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_input_ports();
+                            uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_input_port();
+                            if (num_desc)
                             {
-                                read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT, i);
-                                read_desc_count++;
+                                for(int i = base_desc; i < base_desc+num_desc; i++)
+                                {
+                                    read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT, i);
+                                    read_desc_count++;
+                                }
                             }
+                            desc_type_index_from_audio_unit++;
+                            break;
                         }
-                        desc_type_index_from_audio_unit++;
-                        break;
-                    }
-                    case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
-                    {
-                        uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_output_ports();
-                        uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_output_port();
-                        if (num_desc)
+                        case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
                         {
-                            for(int i = base_desc; i < base_desc+num_desc; i++)
+                            uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_output_ports();
+                            uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_output_port();
+                            if (num_desc)
                             {
-                                read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT, i);
-                                read_desc_count++;
+                                for(int i = base_desc; i < base_desc+num_desc; i++)
+                                {
+                                    read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT, i);
+                                    read_desc_count++;
+                                }
                             }
+                            read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_DONE;
+                            break;
                         }
-                        read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_DONE;
-                        break;
                     }
                 }
-            }
-            break;
-
-            case READ_DESC_IN_AUDIO_UNIT_DONE:
                 break;
+
+                case READ_DESC_IN_AUDIO_UNIT_DONE:
+                    read_stream_port_desc_done = true;
+                    notification_imp_ref->post_notification_msg(END_STATION_INITIALIZATION_COMPLETED, end_station_guid, 0, 0, 0, NULL);
+                    break;
+            }
         }
 
         free(cmd_frame);

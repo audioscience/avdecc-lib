@@ -112,12 +112,23 @@ namespace avdecc_lib
 
     void acmp_controller_state_machine::state_timeout(uint32_t inflight_cmd_index)
     {
+        struct jdksavdecc_frame frame = inflight_cmds.at(inflight_cmd_index).frame();
         bool is_retried = inflight_cmds.at(inflight_cmd_index).retried();
 
         if(is_retried)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Timeout for command with sequence id = %d",
+            struct jdksavdecc_eui64 _end_station_guid = jdksavdecc_acmpdu_get_listener_entity_id(frame.payload, ETHER_HDR_SIZE);
+            uint64_t end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
+            uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame.payload, ETHER_HDR_SIZE);
+
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
+                                      "Command Timeout, 0x%llx, %s, %s, %s, %d",
+                                      end_station_guid,
+                                      utility->acmp_cmd_value_to_name(msg_type),
+                                      "NULL",
+                                      "NULL",
                                       inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
+
             inflight_cmds.erase(inflight_cmds.begin() + inflight_cmd_index);
         }
         else
@@ -125,7 +136,7 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "Resend the command with sequence id = %d",
                                       inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
-            struct jdksavdecc_frame frame = inflight_cmds.at(inflight_cmd_index).frame();
+           
             tx_cmd(inflight_cmds.at(inflight_cmd_index).cmd_notification_id,
                    inflight_cmds.at(inflight_cmd_index).notification_flag(),
                    &frame,

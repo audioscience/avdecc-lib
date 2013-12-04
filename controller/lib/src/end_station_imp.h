@@ -72,7 +72,8 @@ namespace avdecc_lib
         uint16_t desc_count_index_from_config; // The top level descriptor count index present in the CONFIGURATION descriptor
 
         uint32_t read_desc_count; // A counter for the number of READ_DESCRIPTOR commands sent used to match up with the number of responses for these commands
-        bool read_desc_done; // Send READ_DESCRIPTOR command for Strings descriptor
+        bool read_strings_desc_done; // Send READ_DESCRIPTOR command for STRINGS descriptor
+        bool read_stream_port_desc_done; // Send READ_DESCRIPTOR command for STREAM_PORT_INPUT and STREAM_PORT_OUTPUT descriptors
 
         uint16_t desc_type_index_from_audio_unit;
 
