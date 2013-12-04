@@ -24,7 +24,7 @@
 /**
  * configuration_descriptor_imp.cpp
  *
- * Configuration descriptor implementation
+ * CONFIGURATION descriptor implementation
  */
 
 #include <iostream>
@@ -76,34 +76,34 @@ namespace avdecc_lib
         std::for_each(clock_domain_desc_vec.begin(), clock_domain_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
     }
 
-    uint16_t STDCALL configuration_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL configuration_descriptor_imp::descriptor_type() const
     {
         assert(config_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_CONFIGURATION);
         return config_desc.descriptor_type;
     }
 
-    uint16_t STDCALL configuration_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL configuration_descriptor_imp::descriptor_index() const
     {
         return config_desc.descriptor_index;
     }
 
-    uint8_t * STDCALL configuration_descriptor_imp::get_object_name()
+    uint8_t * STDCALL configuration_descriptor_imp::object_name()
     {
         return config_desc.object_name.value;
     }
 
-    uint16_t STDCALL configuration_descriptor_imp::get_localized_description()
+    uint16_t STDCALL configuration_descriptor_imp::localized_description()
     {
         return config_desc.localized_description;
     }
 
-    uint16_t STDCALL configuration_descriptor_imp::get_descriptor_counts_count()
+    uint16_t STDCALL configuration_descriptor_imp::descriptor_counts_count()
     {
         assert(config_desc.descriptor_counts_count <= 108);
         return config_desc.descriptor_counts_count;
     }
 
-    uint16_t configuration_descriptor_imp::get_descriptor_counts_offset()
+    uint16_t configuration_descriptor_imp::descriptor_counts_offset()
     {
         assert(config_desc.descriptor_counts_offset == 74);
         return config_desc.descriptor_counts_offset;
@@ -113,9 +113,9 @@ namespace avdecc_lib
     {
         uint16_t offset = 0;
 
-        for(uint32_t i = 0; i < get_descriptor_counts_count(); i++)
+        for(uint32_t i = 0; i < descriptor_counts_count(); i++)
         {
-            desc_type_vec.push_back(jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + pos + offset));
+            desc_type_vec.push_back(jdksavdecc_uint16_get(frame, descriptor_counts_offset() + pos + offset));
             offset += 0x4;
         }
     }
@@ -124,9 +124,9 @@ namespace avdecc_lib
     {
         uint16_t offset = 0x2;
 
-        for(uint32_t i = 0; i < get_descriptor_counts_count(); i++)
+        for(uint32_t i = 0; i < descriptor_counts_count(); i++)
         {
-            desc_count_vec.push_back(jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + pos + offset));
+            desc_count_vec.push_back(jdksavdecc_uint16_get(frame, descriptor_counts_offset() + pos + offset));
             offset += 0x4;
         }
     }
@@ -272,71 +272,71 @@ namespace avdecc_lib
         add_or_replace_descriptor_and_sort(d, clock_domain_desc_vec);
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_audio_unit_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::audio_unit_desc_count()
     {
         return audio_unit_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_stream_input_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::stream_input_desc_count()
     {
         return stream_input_desc_vec.size();
     }
-    uint32_t STDCALL configuration_descriptor_imp::get_stream_output_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::stream_output_desc_count()
     {
         return stream_output_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_jack_input_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::jack_input_desc_count()
     {
         return jack_input_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_jack_output_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::jack_output_desc_count()
     {
         return jack_output_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_avb_interface_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::avb_interface_desc_count()
     {
         return avb_interface_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_clock_source_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::clock_source_desc_count()
     {
         return clock_source_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_locale_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::locale_desc_count()
     {
         return locale_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_strings_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::strings_desc_count()
     {
         return strings_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_stream_port_input_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::stream_port_input_desc_count()
     {
         return stream_port_input_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_stream_port_output_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::stream_port_output_desc_count()
     {
         return stream_port_output_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_audio_cluster_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::audio_cluster_desc_count()
     {
         return audio_cluster_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_audio_map_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::audio_map_desc_count()
     {
         return audio_map_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_clock_domain_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::clock_domain_desc_count()
     {
         return clock_domain_desc_vec.size();
     }

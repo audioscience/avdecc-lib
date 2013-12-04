@@ -54,110 +54,110 @@ namespace avdecc_lib
         }
     }
 
-    uint16_t STDCALL entity_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL entity_descriptor_imp::descriptor_type() const
     {
         assert(entity_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_ENTITY);
         return entity_desc.descriptor_type;
     }
 
-    uint16_t STDCALL entity_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL entity_descriptor_imp::descriptor_index() const
     {
         assert(entity_desc.descriptor_index == 0);
         return entity_desc.descriptor_index;
     }
 
-    uint64_t STDCALL entity_descriptor_imp::get_entity_id()
+    uint64_t STDCALL entity_descriptor_imp::entity_id()
     {
         return jdksavdecc_uint64_get(&entity_desc.entity_entity_id, 0);
     }
 
-    uint32_t STDCALL entity_descriptor_imp::get_vendor_id()
+    uint32_t STDCALL entity_descriptor_imp::vendor_id()
     {
         return entity_desc.vendor_id;
     }
 
-    uint32_t STDCALL entity_descriptor_imp::get_entity_model_id()
+    uint32_t STDCALL entity_descriptor_imp::entity_model_id()
     {
         return entity_desc.entity_model_id;
     }
 
-    uint32_t STDCALL entity_descriptor_imp::get_entity_capabilities()
+    uint32_t STDCALL entity_descriptor_imp::entity_capabilities()
     {
         return entity_desc.entity_capabilities;
     }
 
-    uint16_t STDCALL entity_descriptor_imp::get_talker_stream_sources()
+    uint16_t STDCALL entity_descriptor_imp::talker_stream_sources()
     {
         return entity_desc.talker_stream_sources;
     }
 
-    uint16_t STDCALL entity_descriptor_imp::get_talker_capabilities()
+    uint16_t STDCALL entity_descriptor_imp::talker_capabilities()
     {
         return entity_desc.talker_capabilities;
     }
 
-    uint16_t STDCALL entity_descriptor_imp::get_listener_stream_sinks()
+    uint16_t STDCALL entity_descriptor_imp::listener_stream_sinks()
     {
         return entity_desc.listener_stream_sinks;
     }
 
-    uint16_t STDCALL entity_descriptor_imp::get_listener_capabilities()
+    uint16_t STDCALL entity_descriptor_imp::listener_capabilities()
     {
         return entity_desc.listener_capabilities;
     }
 
-    uint32_t STDCALL entity_descriptor_imp::get_controller_capabilities()
+    uint32_t STDCALL entity_descriptor_imp::controller_capabilities()
     {
         return entity_desc.controller_capabilities;
     }
 
-    uint32_t STDCALL entity_descriptor_imp::get_available_index()
+    uint32_t STDCALL entity_descriptor_imp::available_index()
     {
         return entity_desc.available_index;
     }
 
-    uint64_t STDCALL entity_descriptor_imp::get_association_id()
+    uint64_t STDCALL entity_descriptor_imp::association_id()
     {
         return jdksavdecc_uint64_get(&entity_desc.association_id, 0);
     }
 
-    uint8_t * STDCALL entity_descriptor_imp::get_entity_name()
+    uint8_t * STDCALL entity_descriptor_imp::entity_name()
     {
         return entity_desc.entity_name.value;
     }
 
-    uint16_t STDCALL entity_descriptor_imp::get_vendor_name_string()
+    uint16_t STDCALL entity_descriptor_imp::vendor_name_string()
     {
         return entity_desc.vendor_name_string;
     }
 
-    uint16_t STDCALL entity_descriptor_imp::get_model_name_string()
+    uint16_t STDCALL entity_descriptor_imp::model_name_string()
     {
         return entity_desc.model_name_string;
     }
 
-    uint8_t * STDCALL entity_descriptor_imp::get_firmware_version()
+    uint8_t * STDCALL entity_descriptor_imp::firmware_version()
     {
         return entity_desc.firmware_version.value;
     }
 
-    uint8_t * STDCALL entity_descriptor_imp::get_group_name()
+    uint8_t * STDCALL entity_descriptor_imp::group_name()
     {
         return entity_desc.group_name.value;
     }
 
-    uint8_t * STDCALL entity_descriptor_imp::get_serial_number()
+    uint8_t * STDCALL entity_descriptor_imp::serial_number()
     {
         return entity_desc.serial_number.value;
     }
 
-    uint16_t STDCALL entity_descriptor_imp::get_configurations_count()
+    uint16_t STDCALL entity_descriptor_imp::configurations_count()
     {
         assert(entity_desc.configurations_count >= 1);
         return entity_desc.configurations_count;
     }
 
-    uint16_t STDCALL entity_descriptor_imp::get_current_configuration()
+    uint16_t STDCALL entity_descriptor_imp::current_configuration()
     {
         return entity_desc.current_configuration;
     }
@@ -167,7 +167,7 @@ namespace avdecc_lib
         config_desc_vec.push_back(new configuration_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
-    uint32_t STDCALL entity_descriptor_imp::get_config_desc_count()
+    uint32_t STDCALL entity_descriptor_imp::config_desc_count()
     {
         return config_desc_vec.size();
     }

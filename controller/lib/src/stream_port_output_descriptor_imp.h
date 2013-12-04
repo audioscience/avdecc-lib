@@ -58,61 +58,61 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
-         * Get the descriptor index of the Clock Domain descriptor describing the clock domain for the port.
+         * Get the descriptor index of the CLOCK DOMAIN descriptor describing the CLOCK DOMAIN for the port.
          */
-        uint16_t STDCALL get_clock_domain_index();
+        uint16_t STDCALL clock_domain_index();
 
         /**
          * The flags describing the capabilities or features of the port.
          *
          * \return 1 (Clock Sync Source) if the port can be used as a clock synchronization source. \n
          *	       2 (Async Sample Rate Conv) if the port has an asynchronous sample rate converter
-         *	         to convert sample rates between another clock domain and the Unit's. \n
+         *	         to convert sample rates between another CLOCK DOMAIN and the Unit's. \n
          *	       3 (Sync Sample Rate Conv) if the port has a synchronous sample rate converter
-         *	         to convert between sample rates in the same clock domain.
+         *	         to convert between sample rates in the same CLOCK DOMAIN.
          */
-        uint16_t STDCALL get_port_flags();
+        uint16_t STDCALL port_flags();
 
         /**
          * Get the number of controls within the port.
          */
-        uint16_t STDCALL get_number_of_controls();
+        uint16_t STDCALL number_of_controls();
 
         /**
          * Get the index of the first Control descriptor.
          */
-        uint16_t STDCALL get_base_control();
+        uint16_t STDCALL base_control();
 
         /**
          * Get the number of clusters within the port. This corresponds to the number of Audio Cluster,
          * Video Cluster, and Sensor Cluster descriptors which represent these clusters.
          */
-        uint16_t STDCALL get_number_of_clusters();
+        uint16_t STDCALL number_of_clusters();
 
         /**
          * Get the index of the first Audio Cluster, Video Cluster, or Sensor Cluster descriptor
          * describing the clusters within the port.
          */
-        uint16_t STDCALL get_base_cluster();
+        uint16_t STDCALL base_cluster();
 
         /**
          * Get the number of map descriptors used to define the mapping between the stream and the port.
          */
-        uint16_t STDCALL get_number_of_maps();
+        uint16_t STDCALL number_of_maps();
 
         /**
          * Get the index of the first Audio Map, Video Map, or Sensor Map, descriptor which defines
          * the mappling between the stream and the port.
          */
-        uint16_t STDCALL get_base_map();
+        uint16_t STDCALL base_map();
     };
 }
 

@@ -47,30 +47,30 @@ namespace avdecc_lib
 
     bool operator== (const descriptor_base_imp &n1, const descriptor_base_imp &n2)
     {
-        return n1.get_descriptor_index() == n2.get_descriptor_index();
+        return n1.descriptor_index() == n2.descriptor_index();
     }
 
     bool operator< (const descriptor_base_imp &n1, const descriptor_base_imp &n2)
     {
-        return n1.get_descriptor_index() < n2.get_descriptor_index();
+        return n1.descriptor_index() < n2.descriptor_index();
     }
 
-    uint16_t STDCALL descriptor_base_imp::get_descriptor_type() const
+    uint16_t STDCALL descriptor_base_imp::descriptor_type() const
     {
         return 0;
     }
 
-    uint16_t STDCALL descriptor_base_imp::get_descriptor_index() const
+    uint16_t STDCALL descriptor_base_imp::descriptor_index() const
     {
         return 0;
     }
 
-    uint8_t * STDCALL descriptor_base_imp::get_object_name()
+    uint8_t * STDCALL descriptor_base_imp::object_name()
     {
         return NULL;
     }
 
-    uint16_t STDCALL descriptor_base_imp::get_localized_description()
+    uint16_t STDCALL descriptor_base_imp::localized_description()
     {
         return 0;
     }
@@ -122,8 +122,8 @@ namespace avdecc_lib
         /****************************** AECP Message Specific Data ******************************/
         aem_cmd_acquire_entity.aem_acquire_flags = acquire_entity_flag;
         jdksavdecc_eui64_init(&aem_cmd_acquire_entity.owner_entity_id);
-        aem_cmd_acquire_entity.descriptor_type = desc_base_imp_ref->get_descriptor_type();
-        aem_cmd_acquire_entity.descriptor_index = desc_base_imp_ref->get_descriptor_index();
+        aem_cmd_acquire_entity.descriptor_type = desc_base_imp_ref->descriptor_type();
+        aem_cmd_acquire_entity.descriptor_index = desc_base_imp_ref->descriptor_index();
 
         /***************************** Fill frame payload with AECP data and send the frame ***********************/
         aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);
@@ -211,8 +211,8 @@ namespace avdecc_lib
         /****************************** AECP Message Specific Data ****************************/
         aem_cmd_lock_entity.aem_lock_flags = lock_entity_flag;
         jdksavdecc_eui64_init(&aem_cmd_lock_entity.locked_entity_id);
-        aem_cmd_lock_entity.descriptor_type = descriptor_base_imp_ref->get_descriptor_type();
-        aem_cmd_lock_entity.descriptor_index = descriptor_base_imp_ref->get_descriptor_index();
+        aem_cmd_lock_entity.descriptor_type = descriptor_base_imp_ref->descriptor_type();
+        aem_cmd_lock_entity.descriptor_index = descriptor_base_imp_ref->descriptor_index();
 
         /**************************** Fill frame payload with AECP data and send the frame **********************/
         aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);

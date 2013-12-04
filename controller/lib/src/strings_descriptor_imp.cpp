@@ -46,13 +46,13 @@ namespace avdecc_lib
 
     strings_descriptor_imp::~strings_descriptor_imp() {}
 
-    uint16_t STDCALL strings_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL strings_descriptor_imp::descriptor_type() const
     {
         assert(strings_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_STRINGS);
         return strings_desc.descriptor_type;
     }
 
-    uint16_t STDCALL strings_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL strings_descriptor_imp::descriptor_index() const
     {
         return strings_desc.descriptor_index;
     }

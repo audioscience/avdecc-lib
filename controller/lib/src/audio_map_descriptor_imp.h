@@ -58,24 +58,24 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
          * Get the offset from the start of the descriptor for the first octet of the mapping stream channel 0 string.
          * This field is 8 for this version of AEM.
          */
-        uint16_t get_mappings_offset();
+        uint16_t mappings_offset();
 
         /**
          * Get the number of channel mappings within the Audio Map. The maximum value
          * of this field is 62 for this version of AEM.
          */
-        uint16_t STDCALL get_number_of_mappings();
+        uint16_t STDCALL number_of_mappings();
     };
 }
 

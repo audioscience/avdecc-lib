@@ -24,7 +24,7 @@
 /**
  * avb_interface_descriptor_imp.h
  *
- * AVB Interface descriptor implementation class
+ * AVB INTERFACE descriptor implementation class
  */
 
 #pragma once
@@ -40,11 +40,11 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_avb_interface avb_interface_desc; // Structure containing the avb_interface_desc fields
-        int desc_avb_interface_read_returned; // Status of extracting AVB Interface descriptor information from a network buffer
+        int desc_avb_interface_read_returned; // Status of extracting AVB INTERFACE descriptor information from a network buffer
 
     public:
         /**
-         * Constructor for AVB Interface descriptor object.
+         * Constructor for AVB INTERFACE descriptor object.
          *
          * \param end_station_obj A pointer to the base End Station object.
          * \param frame The raw memory that contains the descriptor information to read from.
@@ -58,31 +58,31 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
-         * Get the name of the AVB Interface. This may be user set through the use of a SET_NAME command.
+         * Get the name of the AVB INTERFACE. This may be user set through the use of a SET_NAME command.
          * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
          * defined value being provided in a localized form via the localized descripton field. By leaving
          * this field blank an AVDECC Controller can determine if the user has overridden the name and can
          * use this name rather than the localized name.
          */
-        uint8_t * STDCALL get_object_name();
+        uint8_t * STDCALL object_name();
 
         /**
-         * Get the localized string reference pointing to the localized AVB Interface name.
+         * Get the localized string reference pointing to the localized AVB INTERFACE name.
          */
-        uint16_t STDCALL get_localized_description();
+        uint16_t STDCALL localized_description();
 
         /**
          * Get the MAC address of the interface.
          */
-        uint64_t STDCALL get_mac_addr();
+        uint64_t STDCALL mac_addr();
 
         /**
          * Get the flags describing the features of the interface.
@@ -91,62 +91,62 @@ namespace avdecc_lib
          *	       2 (GPTP Supported) if the interface supports the functionality. \n
          *	       4 (SRP Supported) if the interface supports the "Stream Reservation Protocol (SRP)" functionality.
          */
-        uint16_t STDCALL get_interface_flags();
+        uint16_t STDCALL interface_flags();
 
         /**
          * Get the clock identity of the interface.
          */
-        uint64_t STDCALL get_clock_identity();
+        uint64_t STDCALL clock_identity();
 
         /**
-         * Get the priority1 field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
+         * Get the priority1 field of the grandmaster functionality of the AVB INTERFACE if supported, 0xff otherwise.
          */
-        uint8_t STDCALL get_priority1();
+        uint8_t STDCALL priority1();
 
         /**
-         * Get the clock class field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
+         * Get the clock class field of the grandmaster functionality of the AVB INTERFACE if supported, 0xff otherwise.
          */
-        uint8_t STDCALL get_clock_class();
+        uint8_t STDCALL clock_class();
 
         /**
-         * Get the offset scaled log variance field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         * Get the offset scaled log variance field of the grandmaster functionality of the AVB INTERFACE if supported, 0 otherwise.
          */
-        uint16_t STDCALL get_offset_scaled_log_variance();
+        uint16_t STDCALL offset_scaled_log_variance();
 
         /**
-         * Get the clock accuracy field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
+         * Get the clock accuracy field of the grandmaster functionality of the AVB INTERFACE if supported, 0xff otherwise.
          */
-        uint8_t STDCALL get_clock_accuracy();
+        uint8_t STDCALL clock_accuracy();
 
         /**
-         * Get the priority2 field of the grandmaster functionality of the AVB Interface if supported, 0xff otherwise.
+         * Get the priority2 field of the grandmaster functionality of the AVB INTERFACE if supported, 0xff otherwise.
          */
-        uint8_t STDCALL get_priority2();
+        uint8_t STDCALL priority2();
 
         /**
-         * Get the domain number field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         * Get the domain number field of the grandmaster functionality of the AVB INTERFACE if supported, 0 otherwise.
          */
-        uint8_t STDCALL get_domain_number();
+        uint8_t STDCALL domain_number();
 
         /**
-         * Get the current log sync interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         * Get the current log sync interval field of the grandmaster functionality of the AVB INTERFACE if supported, 0 otherwise.
          */
-        uint8_t STDCALL get_log_sync_interval();
+        uint8_t STDCALL log_sync_interval();
 
         /**
-         * Get the current log announce interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         * Get the current log announce interval field of the grandmaster functionality of the AVB INTERFACE if supported, 0 otherwise.
          */
-        uint8_t STDCALL get_log_announce_interval();
+        uint8_t STDCALL log_announce_interval();
 
         /**
-         * Get the current log pdelay interval field of the grandmaster functionality of the AVB Interface if supported, 0 otherwise.
+         * Get the current log pdelay interval field of the grandmaster functionality of the AVB INTERFACE if supported, 0 otherwise.
          */
-        uint8_t STDCALL get_log_pdelay_interval();
+        uint8_t STDCALL log_pdelay_interval();
 
         /**
-         * Get the port number field as used by the functionality of the AVB Interface if supported, 0 otherwise.
+         * Get the port number field as used by the functionality of the AVB INTERFACE if supported, 0 otherwise.
          */
-        uint16_t STDCALL get_port_number();
+        uint16_t STDCALL port_number();
     };
 }
 

@@ -24,7 +24,7 @@
 /**
  * locale_descriptor_imp.h
  *
- * Locale descriptor implementation class
+ * LOCALE descriptor implementation class
  */
 
 #pragma once
@@ -40,11 +40,11 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_locale locale_desc; // Structure containing the locale_desc fields
-        int desc_locale_read_returned; // Status of extracting Locale descriptor information from a network buffer
+        int desc_locale_read_returned; // Status of extracting LOCALE descriptor information from a network buffer
 
     public:
         /**
-         * Constructor for Locale descriptor object.
+         * Constructor for LOCALE descriptor object.
          *
          * \param end_station_obj A pointer to the base End Station object.
          * \param frame The raw memory that contains the descriptor information to read from.
@@ -58,32 +58,32 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
-         * Get the identifier of the Locale. The identifier is a UTF-8 string that
+         * Get the identifier of the LOCALE. The identifier is a UTF-8 string that
          * contains one to three components such as a language code, a region code,
          * or a variant code, separated by the dash character. Examples of valid
-         * locale identifiers are en-US for English in the US, en-AU for English in
+         * LOCALE identifiers are en-US for English in the US, en-AU for English in
          * Australia, and fr-CA for French in Canada.
          */
-        uint8_t * STDCALL get_locale_identifier();
+        uint8_t * STDCALL locale_identifier();
 
         /**
-         * Get the number of Strings descriptor in this locale. This is the same value for
+         * Get the number of Strings descriptor in this LOCALE. This is the same value for
          * all locales in an AVDECC Entity.
          */
-        uint16_t STDCALL get_number_of_strings();
+        uint16_t STDCALL number_of_strings();
 
         /**
-         * Get the descriptor index of the first Strings descriptor for this Locale.
+         * Get the descriptor index of the first Strings descriptor for this LOCALE.
          */
-        uint16_t STDCALL get_base_strings();
+        uint16_t STDCALL base_strings();
     };
 }
 

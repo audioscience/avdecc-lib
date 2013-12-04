@@ -58,12 +58,12 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
          * Get the corresponding localized string of the Strings descriptor.

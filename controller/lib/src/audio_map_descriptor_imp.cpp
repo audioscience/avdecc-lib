@@ -47,24 +47,24 @@ namespace avdecc_lib
 
     audio_map_descriptor_imp::~audio_map_descriptor_imp() {}
 
-    uint16_t STDCALL audio_map_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL audio_map_descriptor_imp::descriptor_type() const
     {
         assert(audio_map_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AUDIO_MAP);
         return audio_map_desc.descriptor_type;
     }
 
-    uint16_t STDCALL audio_map_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL audio_map_descriptor_imp::descriptor_index() const
     {
         return audio_map_desc.descriptor_index;
     }
 
-    uint16_t audio_map_descriptor_imp::get_mappings_offset()
+    uint16_t audio_map_descriptor_imp::mappings_offset()
     {
         assert(audio_map_desc.mappings_offset == 8);
         return audio_map_desc.mappings_offset;
     }
 
-    uint16_t STDCALL audio_map_descriptor_imp::get_number_of_mappings()
+    uint16_t STDCALL audio_map_descriptor_imp::number_of_mappings()
     {
         assert(audio_map_desc.number_of_mappings == 62);
         return audio_map_desc.number_of_mappings;

@@ -63,12 +63,12 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        virtual uint16_t STDCALL get_descriptor_type() const;
+        virtual uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        virtual uint16_t STDCALL get_descriptor_index() const;
+        virtual uint16_t STDCALL descriptor_index() const;
 
         /**
          * Get the name of the descriptor object. This may be user set through the use of a SET_NAME command.
@@ -77,12 +77,12 @@ namespace avdecc_lib
          * this field blank an AVDECC Controller can determine if the user has overridden the name and can
          * use this name rather than the localized name.
          */
-        virtual uint8_t * STDCALL get_object_name();
+        virtual uint8_t * STDCALL object_name();
 
         /**
          * Get the localized string reference pointing to the localized descriptor name.
          */
-        virtual uint16_t STDCALL get_localized_description();
+        virtual uint16_t STDCALL localized_description();
 
         /**
          * Get the flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.

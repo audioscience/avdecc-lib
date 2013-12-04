@@ -24,7 +24,7 @@
 /**
  * audio_unit_descriptor_imp.cpp
  *
- * Audio Unit descriptor implementation
+ * AUDIO UNIT descriptor implementation
  */
 
 #include <vector>
@@ -56,7 +56,7 @@ namespace avdecc_lib
 
     audio_unit_descriptor_imp::~audio_unit_descriptor_imp() {}
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL audio_unit_descriptor_imp::descriptor_type() const
     {
         assert(audio_unit_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT);
         return audio_unit_desc.descriptor_type;
@@ -67,195 +67,195 @@ namespace avdecc_lib
         uint16_t offset = 0;
         uint32_t sampling_rate = 0;
 
-        for(uint32_t i = 0; i < get_sampling_rates_count(); i++)
+        for(uint32_t i = 0; i < sampling_rates_count(); i++)
         {
-            sampling_rate = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN + get_sampling_rates_offset() + offset);
+            sampling_rate = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN + sampling_rates_offset() + offset);
             sample_rates_vec.push_back(sampling_rate);
             offset += 0x4;
         }
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL audio_unit_descriptor_imp::descriptor_index() const
     {
         return audio_unit_desc.descriptor_index;
     }
 
-    uint8_t * STDCALL audio_unit_descriptor_imp::get_object_name()
+    uint8_t * STDCALL audio_unit_descriptor_imp::object_name()
     {
         return audio_unit_desc.object_name.value;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_localized_description()
+    uint16_t STDCALL audio_unit_descriptor_imp::localized_description()
     {
         return audio_unit_desc.localized_description;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_clock_domain_index()
+    uint16_t STDCALL audio_unit_descriptor_imp::clock_domain_index()
     {
         return audio_unit_desc.clock_domain_index;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_stream_input_ports()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_stream_input_ports()
     {
         return audio_unit_desc.number_of_stream_input_ports;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_stream_input_port()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_stream_input_port()
     {
         return audio_unit_desc.base_stream_input_port;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_stream_output_ports()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_stream_output_ports()
     {
         return audio_unit_desc.number_of_stream_output_ports;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_stream_output_port()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_stream_output_port()
     {
         return audio_unit_desc.base_stream_output_port;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_external_input_ports()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_external_input_ports()
     {
         return audio_unit_desc.number_of_external_input_ports;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_external_input_port()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_external_input_port()
     {
         return audio_unit_desc.base_external_input_port;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_external_output_ports()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_external_output_ports()
     {
         return audio_unit_desc.number_of_external_output_ports;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_external_output_port()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_external_output_port()
     {
         return audio_unit_desc.base_external_output_port;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_internal_input_ports()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_internal_input_ports()
     {
         return audio_unit_desc.number_of_internal_input_ports;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_internal_input_port()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_internal_input_port()
     {
         return audio_unit_desc.base_internal_input_port;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_internal_output_ports()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_internal_output_ports()
     {
         return audio_unit_desc.number_of_internal_output_ports;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_internal_output_port()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_internal_output_port()
     {
         return audio_unit_desc.base_internal_output_port;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_controls()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_controls()
     {
         return audio_unit_desc.number_of_controls;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_control()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_control()
     {
         return audio_unit_desc.base_control;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_signal_selectors()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_signal_selectors()
     {
         return audio_unit_desc.number_of_signal_selectors;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_signal_selector()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_signal_selector()
     {
         return audio_unit_desc.base_signal_selector;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_mixers()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_mixers()
     {
         return audio_unit_desc.number_of_mixers;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_mixer()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_mixer()
     {
         return audio_unit_desc.base_mixer;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_matrices()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_matrices()
     {
         return audio_unit_desc.number_of_matrices;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_matrix()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_matrix()
     {
         return audio_unit_desc.base_matrix;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_splitters()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_splitters()
     {
         return audio_unit_desc.number_of_splitters;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_splitter()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_splitter()
     {
         return audio_unit_desc.base_splitter;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_combiners()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_combiners()
     {
         return audio_unit_desc.number_of_combiners;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_combiner()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_combiner()
     {
         return audio_unit_desc.base_combiner;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_demultiplexers()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_demultiplexers()
     {
         return audio_unit_desc.number_of_demultiplexers;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_demultiplexer()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_demultiplexer()
     {
         return audio_unit_desc.base_demultiplexer;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_multiplexers()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_multiplexers()
     {
         return audio_unit_desc.number_of_multiplexers;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_multiplexer()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_multiplexer()
     {
         return audio_unit_desc.base_multiplexer;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_transcoders()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_transcoders()
     {
         return audio_unit_desc.number_of_transcoders;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_transcoder()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_transcoder()
     {
         return audio_unit_desc.base_transcoder;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_number_of_control_blocks()
+    uint16_t STDCALL audio_unit_descriptor_imp::number_of_control_blocks()
     {
         return audio_unit_desc.number_of_control_blocks;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_base_control_block()
+    uint16_t STDCALL audio_unit_descriptor_imp::base_control_block()
     {
         return audio_unit_desc.base_control_block;
     }
 
-    uint32_t STDCALL audio_unit_descriptor_imp::get_current_sampling_rate()
+    uint32_t STDCALL audio_unit_descriptor_imp::current_sampling_rate()
     {
         return audio_unit_desc.current_sampling_rate;
     }
@@ -265,12 +265,12 @@ namespace avdecc_lib
         return sample_rates_vec.at(sampling_rate_index);
     }
 
-    uint16_t audio_unit_descriptor_imp::get_sampling_rates_offset()
+    uint16_t audio_unit_descriptor_imp::sampling_rates_offset()
     {
         return audio_unit_desc.sampling_rates_offset;
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::get_sampling_rates_count()
+    uint16_t STDCALL audio_unit_descriptor_imp::sampling_rates_count()
     {
         return audio_unit_desc.sampling_rates_count;
     }
@@ -299,8 +299,8 @@ namespace avdecc_lib
         aem_cmd_set_sampling_rate.command_type = JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE;
 
         /******************** AECP Message Specific Data *******************/
-        aem_cmd_set_sampling_rate.descriptor_type = get_descriptor_type();
-        aem_cmd_set_sampling_rate.descriptor_index = get_descriptor_index();
+        aem_cmd_set_sampling_rate.descriptor_type = descriptor_type();
+        aem_cmd_set_sampling_rate.descriptor_index = descriptor_index();
         aem_cmd_set_sampling_rate.sampling_rate = new_sampling_rate;
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
@@ -370,8 +370,8 @@ namespace avdecc_lib
         aem_cmd_get_sampling_rate.command_type = JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE;
 
         /******************* AECP Message Specific Data ********************/
-        aem_cmd_get_sampling_rate.descriptor_type = get_descriptor_type();
-        aem_cmd_get_sampling_rate.descriptor_index = get_descriptor_index();
+        aem_cmd_get_sampling_rate.descriptor_type = descriptor_type();
+        aem_cmd_get_sampling_rate.descriptor_index = descriptor_index();
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
         aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);

@@ -24,7 +24,7 @@
 /**
  * locale_descriptor_imp.cpp
  *
- * Locale descriptor implementation
+ * LOCALE descriptor implementation
  */
 
 #include "enumeration.h"
@@ -46,28 +46,28 @@ namespace avdecc_lib
 
     locale_descriptor_imp::~locale_descriptor_imp() {}
 
-    uint16_t STDCALL locale_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL locale_descriptor_imp::descriptor_type() const
     {
         assert(locale_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_LOCALE);
         return locale_desc.descriptor_type;
     }
 
-    uint16_t STDCALL locale_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL locale_descriptor_imp::descriptor_index() const
     {
         return locale_desc.descriptor_index;
     }
 
-    uint8_t * STDCALL locale_descriptor_imp::get_locale_identifier()
+    uint8_t * STDCALL locale_descriptor_imp::locale_identifier()
     {
         return locale_desc.locale_identifier.value;
     }
 
-    uint16_t STDCALL locale_descriptor_imp::get_number_of_strings()
+    uint16_t STDCALL locale_descriptor_imp::number_of_strings()
     {
         return locale_desc.number_of_strings;
     }
 
-    uint16_t STDCALL locale_descriptor_imp::get_base_strings()
+    uint16_t STDCALL locale_descriptor_imp::base_strings()
     {
         return locale_desc.base_strings;
     }
