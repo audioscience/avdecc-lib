@@ -33,7 +33,7 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.4.3"
+#define AVDECC_CONTROLLER_VERSION "v0.4.6"
 
 namespace avdecc_lib
 {
@@ -77,12 +77,12 @@ namespace avdecc_lib
         bool is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
 
         /**
-         * Get the corresponding Configuration descriptor by index.
+         * Get the corresponding CONFIGURATION descriptor by index.
          */
         configuration_descriptor * STDCALL get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index);
 
         /**
-         * Get the corresponding Configuration descriptor by GUID.
+         * Get the corresponding CONFIGURATION descriptor by GUID.
          */
         configuration_descriptor * STDCALL get_config_desc_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index);
 

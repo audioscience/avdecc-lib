@@ -46,48 +46,48 @@ namespace avdecc_lib
 
     clock_source_descriptor_imp::~clock_source_descriptor_imp() {}
 
-    uint16_t STDCALL clock_source_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL clock_source_descriptor_imp::descriptor_type() const
     {
         assert(clock_source_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE);
         return clock_source_desc.descriptor_type;
     }
 
-    uint16_t STDCALL clock_source_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL clock_source_descriptor_imp::descriptor_index() const
     {
         return clock_source_desc.descriptor_index;
     }
 
-    uint8_t * STDCALL clock_source_descriptor_imp::get_object_name()
+    uint8_t * STDCALL clock_source_descriptor_imp::object_name()
     {
         return clock_source_desc.object_name.value;
     }
 
-    uint16_t STDCALL clock_source_descriptor_imp::get_localized_description ()
+    uint16_t STDCALL clock_source_descriptor_imp::localized_description()
     {
         return clock_source_desc.localized_description;
     }
 
-    uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_flags()
+    uint16_t STDCALL clock_source_descriptor_imp::clock_source_flags()
     {
         return clock_source_desc.clock_source_flags;
     }
 
-    uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_type()
+    uint16_t STDCALL clock_source_descriptor_imp::clock_source_type()
     {
         return clock_source_desc.clock_source_type;
     }
 
-    uint64_t STDCALL clock_source_descriptor_imp::get_clock_source_identifier()
+    uint64_t STDCALL clock_source_descriptor_imp::clock_source_identifier()
     {
         return jdksavdecc_uint64_get(&clock_source_desc.clock_source_identifier, 0);
     }
 
-    uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_location_type()
+    uint16_t STDCALL clock_source_descriptor_imp::clock_source_location_type()
     {
         return clock_source_desc.clock_source_location_type;
     }
 
-    uint16_t STDCALL clock_source_descriptor_imp::get_clock_source_location_index()
+    uint16_t STDCALL clock_source_descriptor_imp::clock_source_location_index()
     {
         return clock_source_desc.clock_source_location_index;
     }

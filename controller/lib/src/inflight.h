@@ -54,7 +54,7 @@ namespace avdecc_lib
                  void *notification_id,
                  uint32_t notification_flag,
                  uint32_t timeout_ms)
-                : cmd_seq_id(seq_id), cmd_notification_flag(notification_flag), cmd_notification_id(notification_id), cmd_timeout_ms(timeout_ms)
+                : cmd_seq_id(seq_id), cmd_notification_id(notification_id), cmd_notification_flag(notification_flag), cmd_timeout_ms(timeout_ms)
         {
             cmd_frame = *frame;
             start_timer_cnt = 0;

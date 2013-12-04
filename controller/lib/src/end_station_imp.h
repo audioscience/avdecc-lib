@@ -45,7 +45,7 @@ namespace avdecc_lib
         uint64_t end_station_mac; // The source MAC address of the End Station
         char end_station_connection_status; // The connection status of an End Station
         uint16_t current_entity_desc; // The Entity descriptor associated with the End Station
-        uint16_t current_config_desc; // The Configuration descriptor associated with the Entity descriptor in the same End Station
+        uint16_t current_config_desc; // The CONFIGURATION descriptor associated with the Entity descriptor in the same End Station
 
         enum read_top_level_desc_in_config_states
         {
@@ -54,7 +54,7 @@ namespace avdecc_lib
             READ_TOP_LEVEL_DESC_IN_CONFIG_DONE
         };
 
-        enum read_top_level_desc_in_config_states read_top_level_desc_in_config_state; // States used for processing the top level descriptors present in the Configuration descriptor.
+        enum read_top_level_desc_in_config_states read_top_level_desc_in_config_state; // States used for processing the top level descriptors present in the CONFIGURATION descriptor.
 
         enum read_desc_in_audio_unit_states
         {
@@ -66,13 +66,13 @@ namespace avdecc_lib
 
         enum read_desc_in_audio_unit_states read_desc_in_audio_unit_state; 
 
-        uint16_t desc_type_from_config; // The top level descriptor type  present in the Configuration Descriptor
-        uint16_t desc_type_index_from_config; // The top level descriptor type index present in the Configuration Descriptor
-        uint16_t desc_count_from_config; // The top level descriptor count present in the Configuration Descriptor
-        uint16_t desc_count_index_from_config; // The top level descriptor count index present in the Configuration Descriptor
+        uint16_t desc_type_from_config; // The top level descriptor type present in the CONFIGURATION descriptor
+        uint16_t desc_type_index_from_config; // The top level descriptor type index present in the CONFIGURATION descriptor
+        uint16_t desc_count_from_config; // The top level descriptor count present in the CONFIGURATION descriptor
+        uint16_t desc_count_index_from_config; // The top level descriptor count index present in the CONFIGURATION descriptor
+
         uint32_t read_desc_count; // A counter for the number of READ_DESCRIPTOR commands sent used to match up with the number of responses for these commands
         bool read_desc_done; // Send READ_DESCRIPTOR command for Strings descriptor
-
 
         uint16_t desc_type_index_from_audio_unit;
 

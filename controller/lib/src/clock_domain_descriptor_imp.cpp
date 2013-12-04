@@ -24,7 +24,7 @@
 /**
  * clock_domain_descriptor_imp.cpp
  *
- * Clock Domain descriptor implementation
+ * CLOCK DOMAIN descriptor implementation
  */
 
 #include <vector>
@@ -55,39 +55,39 @@ namespace avdecc_lib
 
     clock_domain_descriptor_imp::~clock_domain_descriptor_imp() {}
 
-    uint16_t STDCALL clock_domain_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL clock_domain_descriptor_imp::descriptor_type() const
     {
         assert(clock_domain_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN);
         return clock_domain_desc.descriptor_type;
     }
 
-    uint16_t STDCALL clock_domain_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL clock_domain_descriptor_imp::descriptor_index() const
     {
         return clock_domain_desc.descriptor_index;
     }
 
-    uint8_t * STDCALL clock_domain_descriptor_imp::get_object_name()
+    uint8_t * STDCALL clock_domain_descriptor_imp::object_name()
     {
         return clock_domain_desc.object_name.value;
     }
 
-    uint16_t STDCALL clock_domain_descriptor_imp::get_localized_description()
+    uint16_t STDCALL clock_domain_descriptor_imp::localized_description()
     {
         return clock_domain_desc.localized_description;
     }
 
-    uint16_t STDCALL clock_domain_descriptor_imp::get_clock_source_index()
+    uint16_t STDCALL clock_domain_descriptor_imp::clock_source_index()
     {
         return clock_domain_desc.clock_source_index;
     }
 
-    uint16_t clock_domain_descriptor_imp::get_clock_sources_offset()
+    uint16_t clock_domain_descriptor_imp::clock_sources_offset()
     {
         assert(clock_domain_desc.clock_sources_offset == 76);
         return clock_domain_desc.clock_sources_offset;
     }
 
-    uint16_t STDCALL clock_domain_descriptor_imp::get_clock_sources_count()
+    uint16_t STDCALL clock_domain_descriptor_imp::clock_sources_count()
     {
         assert(clock_domain_desc.clock_sources_count <= 249);
         return clock_domain_desc.clock_sources_count;
@@ -97,9 +97,9 @@ namespace avdecc_lib
     {
         uint16_t offset = 0;
 
-        for(uint32_t i = 0; i < get_clock_sources_count(); i++)
+        for(uint32_t i = 0; i < clock_sources_count(); i++)
         {
-            clk_src_vec.push_back(jdksavdecc_uint16_get(frame, get_clock_sources_offset() + pos + offset));
+            clk_src_vec.push_back(jdksavdecc_uint16_get(frame, clock_sources_offset() + pos + offset));
             offset += 0x2;
         }
     }
@@ -132,11 +132,11 @@ namespace avdecc_lib
         aem_cmd_set_clk_src.command_type = JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE;
 
         /***************** AECP Message Specific Data ****************/
-        aem_cmd_set_clk_src.descriptor_type = get_descriptor_type();
-        aem_cmd_set_clk_src.descriptor_index = get_descriptor_index();
+        aem_cmd_set_clk_src.descriptor_type = descriptor_type();
+        aem_cmd_set_clk_src.descriptor_index = descriptor_index();
         aem_cmd_set_clk_src.clock_source_index = new_clk_src_index;
 
-        /**************************** Fill frame payload with AECP data and send the frame ************************/
+        /*************************** Fill frame payload with AECP data and send the frame ***********************/
         aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);
         aem_cmd_set_clk_src_returned = jdksavdecc_aem_command_set_clock_source_write(&aem_cmd_set_clk_src,
                                                                                      cmd_frame->payload,
@@ -203,8 +203,8 @@ namespace avdecc_lib
         aem_cmd_get_clk_src.command_type = JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE;
 
         /****************** AECP Message Specific Data ***************/
-        aem_cmd_get_clk_src.descriptor_type = get_descriptor_type();
-        aem_cmd_get_clk_src.descriptor_index = get_descriptor_index();
+        aem_cmd_get_clk_src.descriptor_type = descriptor_type();
+        aem_cmd_get_clk_src.descriptor_index = descriptor_index();
 
         /***************************** Fill frame payload with AECP data and send the frame ***********************/
         aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);

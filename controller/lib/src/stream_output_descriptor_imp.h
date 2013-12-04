@@ -24,7 +24,7 @@
 /**
  * stream_output_descriptor_imp.h
  *
- * Stream Output descriptor implementation class
+ * STREAM OUTPUT descriptor implementation class
  */
 
 #pragma once
@@ -41,7 +41,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_stream stream_output_desc; // Structure containing the stream_output_desc fields
-        int stream_output_desc_read_returned; // Status of extracting Stream Output descriptor information from a network buffer
+        int stream_output_desc_read_returned; // Status of extracting STREAM OUTPUT descriptor information from a network buffer
 
         struct stream_output_desc_stream_flags
         {
@@ -57,7 +57,7 @@ namespace avdecc_lib
             bool tertiary_back_up_valid;
         };
 
-        struct stream_output_desc_stream_flags stream_flags;
+        struct stream_output_desc_stream_flags stream_output_flags;
         struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp; // Store the response received after sending a SET_STREAM_FORMAT command.
         struct jdksavdecc_aem_command_get_stream_format_response aem_cmd_get_stream_format_resp; // Store the response received after sending a GET_STREAM_FORMAT command.
         struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp; // Store the response received after sending a SET_STREAM_INFO command.
@@ -68,7 +68,7 @@ namespace avdecc_lib
 
     public:
         /**
-         * Constructor for Stream Output descriptor object.
+         * Constructor for STREAM OUTPUT descriptor object.
          *
          * \param end_station_obj A pointer to the base End Station object.
          * \param frame The raw memory that contains the descriptor information to read from.
@@ -81,7 +81,7 @@ namespace avdecc_lib
 
     private:
         /**
-         * Store the stream flags components of the Stream Output descriptor object in a vector.
+         * Store the stream flags components of the STREAM OUTPUT descriptor object in a vector.
          */
         void stream_flags_init();
 
@@ -89,154 +89,154 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
-         * Get the name of the Stream Output. This may be user set through the use of a SET_NAME command.
+         * Get the name of the STREAM OUTPUT. This may be user set through the use of a SET_NAME command.
          * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
          * defined value being provided in a localized form via the localized descripton field. By leaving
          * this field blank an AVDECC Controller can determine if the user has overridden the name and can
          * use this name rather than the localized name.
          */
-        uint8_t * STDCALL get_object_name();
+        uint8_t * STDCALL object_name();
 
         /**
-         * Get the localized string reference pointing to the localized Stream Output name.
+         * Get the localized string reference pointing to the localized STREAM OUTPUT name.
          */
-        uint16_t STDCALL get_localized_description();
+        uint16_t STDCALL localized_description();
 
         /**
-         * Get the descriptor index of the Clock Domain descriptor providing the media clock for the stream.
+         * Get the descriptor index of the CLOCK DOMAIN descriptor providing the media clock for the stream.
          */
-        uint16_t STDCALL get_clock_domain_index();
+        uint16_t STDCALL clock_domain_index();
 
         /**
          * Get the flags describing the capabilities or features of the stream.
          */
-        uint16_t STDCALL get_stream_flags();
+        uint16_t STDCALL stream_flags();
 
         /**
          * Check if the stream can be used as a clock synchronization source.
          */
-        bool STDCALL get_stream_flags_clock_sync_source();
+        bool STDCALL stream_flags_clock_sync_source();
 
         /**
          * Check if the stream supports streaming at Class A.
          */
-        bool STDCALL get_stream_flags_class_a();
+        bool STDCALL stream_flags_class_a();
 
         /**
          * Check if the stream supports streaming at Class B.
          */
-        bool STDCALL get_stream_flags_class_b();
+        bool STDCALL stream_flags_class_b();
 
         /**
          * Check if the stream supports streaming with encrypted PDUs.
          */
-        bool STDCALL get_stream_flags_supports_encrypted();
+        bool STDCALL stream_flags_supports_encrypted();
 
         /**
          * Check if the primary backup AVDECC Talker's Entity ID and primary backup AVDECC Talker's Unique ID are supported.
          */
-        bool STDCALL get_stream_flags_primary_backup_supported();
+        bool STDCALL stream_flags_primary_backup_supported();
 
         /**
          * Check if the primary backup AVDECC Talker's Entity ID and primary backup AVDECC Talker's Unique ID are valid.
          */
-        bool STDCALL get_stream_flags_primary_backup_valid();
+        bool STDCALL stream_flags_primary_backup_valid();
 
         /**
          * Check if the secondary backup AVDECC Talker's Entity ID and secondary backup AVDECC Talker's Unique ID are supported.
          */
-        bool STDCALL get_stream_flags_secondary_backup_supported();
+        bool STDCALL stream_flags_secondary_backup_supported();
 
         /**
          * Check if the secondary backup AVDECC Talker's Entity ID and secondary backup AVDECC Talker's Unique ID are valid.
          */
-        bool STDCALL get_stream_flags_secondary_backup_valid();
+        bool STDCALL stream_flags_secondary_backup_valid();
 
         /**
          * Check if the tertiary backup AVDECC Talker's Entity ID and tertiary backup AVDECC Talker's Unique ID are supported.
          */
-        bool STDCALL get_stream_flags_tertiary_backup_supported();
+        bool STDCALL stream_flags_tertiary_backup_supported();
 
         /**
          * Check if the tertiary backup AVDECC Talker's Entity ID and tertiary backup AVDECC Talker's Unique ID are valid.
          */
-        bool STDCALL get_stream_flags_tertiary_back_up_valid();
+        bool STDCALL stream_flags_tertiary_back_up_valid();
 
         /**
          * Get the current format of the stream.
          */
-        const char * STDCALL get_current_format();
+        const char * STDCALL current_format();
 
         /**
          * Get the offset from the start of the descriptor for the first octet of the formats.
          * This field is 132 for this version of AEM.
          */
-        uint16_t get_formats_offset();
+        uint16_t formats_offset();
 
         /**
          * Get the number of formats supported by this audio stream. The maximum value
          * for this field is 47 for this version of AEM.
          */
-        uint16_t STDCALL get_number_of_formats();
+        uint16_t STDCALL number_of_formats();
 
         /**
          * Get the primary backup AVDECC Talker's Entity ID.
          */
-        uint64_t STDCALL get_backup_talker_entity_id_0();
+        uint64_t STDCALL backup_talker_entity_id_0();
 
         /**
          * Get the primary backup AVDECC Talker's Unique ID.
          */
-        uint16_t STDCALL get_backup_talker_unique_0();
+        uint16_t STDCALL backup_talker_unique_0();
 
         /**
          * Get the secondary backup AVDECC Talker's Entity ID.
          */
-        uint64_t STDCALL get_backup_talker_entity_id_1();
+        uint64_t STDCALL backup_talker_entity_id_1();
 
         /**
          * Get the secondary backup AVDECC Talker's Unique ID.
          */
-        uint16_t STDCALL get_backup_talker_unique_1();
+        uint16_t STDCALL backup_talker_unique_1();
 
         /**
          * Get the tertiary backup AVDECC Talker's Entity ID.
          */
-        uint64_t STDCALL get_backup_talker_entity_id_2();
+        uint64_t STDCALL backup_talker_entity_id_2();
 
         /**
          * Get the tertiary backup AVDECC Talker's Unique ID.
          */
-        uint16_t STDCALL get_backup_talker_unique_2();
+        uint16_t STDCALL backup_talker_unique_2();
 
         /**
          * Get the Entity ID of the AVDECC Talker that this stream is backing up.
          */
-        uint64_t STDCALL get_backedup_talker_entity_id();
+        uint64_t STDCALL backedup_talker_entity_id();
 
         /**
          * Get the Unique ID of the AVDECC Talker that this stream is backing up.
          */
-        uint16_t STDCALL get_backedup_talker_unique();
+        uint16_t STDCALL backedup_talker_unique();
 
         /**
-         * Get the descriptor index of the AVB Interface descriptor from which this stream
+         * Get the descriptor index of the AVB INTERFACE descriptor from which this stream
          * is sourced or to which it is sinked.
          */
-        uint16_t STDCALL get_avb_interface_index();
+        uint16_t STDCALL avb_interface_index();
 
         /**
          * Get the length in nanoseconds of the MAC's egress buffer size.
          */
-        uint32_t STDCALL get_buffer_length();
+        uint32_t STDCALL buffer_length();
 
         /**
          * Get the stream format of a stream after sending a SET_STREAM_FORMAT command and
@@ -477,7 +477,7 @@ namespace avdecc_lib
          *                    either the Entity ID of the AVDECC Entity being targets to or 0.
          * \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
-         *                         this corresponds to the id of the Stream Output descriptor.
+         *                         this corresponds to the id of the STREAM OUTPUT descriptor.
          */
         int STDCALL send_get_tx_state_cmd(void *notification_id);
 
@@ -497,7 +497,7 @@ namespace avdecc_lib
          *                    either the Entity ID of the AVDECC Entity being targets to or 0.
          * \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
-         *                         this corresponds to the id of the Stream Output descriptor.
+         *                         this corresponds to the id of the STREAM OUTPUT descriptor.
          */
         int STDCALL send_get_tx_connection_cmd(void *notification_id, uint64_t listener_guid, uint16_t listener_unique_id);
 

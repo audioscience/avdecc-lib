@@ -155,7 +155,7 @@ namespace avdecc_lib
 
         /******************************************************** AECP Message Specific Data ********************************************************/
         aem_command_read_desc.configuration_index = (desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) ?
-                                                    0 : entity_desc_vec.at(current_entity_desc)->get_current_configuration();
+                                                    0 : entity_desc_vec.at(current_entity_desc)->current_configuration();
         aem_command_read_desc.descriptor_type = desc_type;
         aem_command_read_desc.descriptor_index = desc_index;
 
@@ -191,7 +191,7 @@ namespace avdecc_lib
         uint16_t desc_index;
         configuration_descriptor_imp *config_desc_imp_ref = NULL;
 
-        if(entity_desc_vec.size() >= 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
+        if(entity_desc_vec.size() >= 1 && entity_desc_vec.at(current_entity_desc)->config_desc_count() >= 1)
         {
             config_desc_imp_ref = dynamic_cast<configuration_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc));
 
@@ -233,14 +233,14 @@ namespace avdecc_lib
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
-                    if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() == 0)
+                    if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->config_desc_count() == 0)
                     {
                         store_descriptor = true;
                     }
                     break;
 
                 default:
-                    if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
+                    if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->config_desc_count() >= 1)
                     {
                         store_descriptor = true;
                         read_desc_count--;
@@ -257,7 +257,7 @@ namespace avdecc_lib
                     if(entity_desc_vec.size() == 0)
                     {
                         entity_desc_vec.push_back(new entity_descriptor_imp(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len));
-                        current_config_desc = entity_desc_vec.at(current_entity_desc)->get_current_configuration();
+                        current_config_desc = entity_desc_vec.at(current_entity_desc)->current_configuration();
                         uint16_t desc_type = JDKSAVDECC_DESCRIPTOR_CONFIGURATION;
                         uint16_t desc_index = 0;
                         read_desc_init(desc_type, desc_index);
@@ -333,7 +333,7 @@ namespace avdecc_lib
         }
 
         /*
-         * A state machine that iterates through the top level descriptors present in the Configuration descriptor.
+         * A state machine that iterates through the top level descriptors present in the CONFIGURATION descriptor.
          */
         switch(read_top_level_desc_in_config_state)
         {
@@ -344,7 +344,7 @@ namespace avdecc_lib
                 {
                     if(read_desc_count == 0)
                     {
-                        uint16_t total_num_of_desc = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_descriptor_counts_count();
+                        uint16_t total_num_of_desc = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->descriptor_counts_count();
                         uint16_t desc_count = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_desc_count_from_config_by_index(desc_type_index_from_config);
                         desc_type_from_config = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_desc_type_from_config_by_index(desc_type_index_from_config);
 
@@ -367,9 +367,9 @@ namespace avdecc_lib
             case READ_TOP_LEVEL_DESC_IN_CONFIG_DONE:
                 if(!read_desc_done)
                 {
-                    if(config_desc_imp_ref->get_locale_desc_by_index(0)) // Check if Locale descriptor is present in the top level descriptor
+                    if(config_desc_imp_ref->get_locale_desc_by_index(0)) // Check if LOCALE descriptor is present in the top level descriptor
                     {
-                        uint16_t num_of_string_desc = config_desc_imp_ref->get_locale_desc_by_index(0)->get_number_of_strings();
+                        uint16_t num_of_string_desc = config_desc_imp_ref->get_locale_desc_by_index(0)->number_of_strings();
 
                         for(int i = 0; i < num_of_string_desc; i++)
                         {
@@ -404,8 +404,8 @@ namespace avdecc_lib
                 {
                     case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
                     {
-                        uint16_t num_desc = audio_unit_desc_imp_ref->get_number_of_stream_input_ports();
-                        uint16_t base_desc = audio_unit_desc_imp_ref->get_base_stream_input_port();
+                        uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_input_ports();
+                        uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_input_port();
                         if (num_desc)
                         {
                             for(int i = base_desc; i < base_desc+num_desc; i++)
@@ -418,8 +418,8 @@ namespace avdecc_lib
                     }
                     case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
                     {
-                        uint16_t num_desc = audio_unit_desc_imp_ref->get_number_of_stream_output_ports();
-                        uint16_t base_desc = audio_unit_desc_imp_ref->get_base_stream_output_port();
+                        uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_output_ports();
+                        uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_output_port();
                         if (num_desc)
                         {
                             for(int i = base_desc; i < base_desc+num_desc; i++)

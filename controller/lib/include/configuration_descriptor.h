@@ -24,8 +24,8 @@
 /**
  * configuration_descriptor.h
  *
- * Public Configuration descriptor interface class
- * The Configuration descriptor describes an AVDECC Entity model for a particular setup of the
+ * Public CONFIGURATION descriptor interface class
+ * The CONFIGURATION descriptor describes an AVDECC Entity model for a particular setup of the
  * AVDECC Entity. The descriptor tells the AVDECC Controller how many of each of the top level
  * descriptors are present in the Configuration.
  */
@@ -61,92 +61,92 @@ namespace avdecc_lib
         /**
          * \return The number of descriptor counts. The maximum value for this field is 108 for this version of AEM.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_counts_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL descriptor_counts_count() = 0;
 
         /**
-         * \return The top level descriptor present in the Configuration descriptor.
+         * \return The top level descriptor present in the CONFIGURATION descriptor.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_desc_type_from_config_by_index(int desc_index) = 0;
 
         /**
-         * \return The count of the top level descriptor present in the Configuration descriptor.
+         * \return The count of the top level descriptor present in the CONFIGURATION descriptor.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_desc_count_from_config_by_index(int desc_index) = 0;
 
         /**
-         * \return True if the descriptor type and descriptor count index are valid and present in the current Configuration.
+         * \return True if the descriptor type and descriptor count index are valid and present in the current configuration.
          */
         AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL are_desc_type_and_index_in_config(int desc_type, int desc_count_index) = 0;
 
         /**
-         * \return The number of Audio Unit descriptors present in the current Configuration.
+         * \return The number of AUDIO UNIT descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_audio_unit_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL audio_unit_desc_count() = 0;
 
         /**
-         * \return The number of Stream Input descriptors present in the current Configuration.
+         * \return The number of STREAM INPUT descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_input_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL stream_input_desc_count() = 0;
 
         /**
-         * \return The number of Stream Output descriptors present in the current Configuration.
+         * \return The number of STREAM OUTPUT descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_output_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL stream_output_desc_count() = 0;
 
         /**
-         * \return The number of Jack Input descriptors present in the current Configuration.
+         * \return The number of JACK INPUT descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_jack_input_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL jack_input_desc_count() = 0;
 
         /**
-         * \return The number of Jack Output descriptors present in the current Configuration.
+         * \return The number of JACK OUTPUT descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_jack_output_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL jack_output_desc_count() = 0;
 
         /**
-         * \return The number of AVB Interface descriptors present in the current Configuration.
+         * \return The number of AVB INTERFACE descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_avb_interface_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL avb_interface_desc_count() = 0;
 
         /**
-         * \return The number of Clock Source descriptors present in the current Configuration.
+         * \return The number of CLOCK SOURCE descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_clock_source_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL clock_source_desc_count() = 0;
 
         /**
-         * \return The number of Locale descriptors present in the current Configuration.
+         * \return The number of LOCALE descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_locale_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL locale_desc_count() = 0;
 
         /**
-         * \return The number of Strings descriptors present in the current Configuration.
+         * \return The number of Strings descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_strings_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL strings_desc_count() = 0;
 
         /**
-         * \return The number of Stream Port Input descriptors present in the current Configuration.
+         * \return The number of Stream Port Input descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_port_input_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL stream_port_input_desc_count() = 0;
 
         /**
-         * \return The number of Stream Port Output descriptors present in the current Configuration.
+         * \return The number of Stream Port Output descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_port_output_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL stream_port_output_desc_count() = 0;
 
         /**
-         * \return The number of Audio Cluster descriptors present in the current Configuration.
+         * \return The number of Audio Cluster descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_audio_cluster_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL audio_cluster_desc_count() = 0;
 
         /**
-         * \return The number of Audio Map descriptors present in the current Configuration.
+         * \return The number of Audio Map descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_audio_map_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL audio_map_desc_count() = 0;
 
         /**
-         * \return The number of Clock Domain descriptors present in the current Configuration.
+         * \return The number of CLOCK DOMAIN descriptors present in the current configuration.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_clock_domain_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL clock_domain_desc_count() = 0;
 
         /**
          * \return The corresponding AUDIO UNIT descriptor by index.

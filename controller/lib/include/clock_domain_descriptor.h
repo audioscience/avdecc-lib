@@ -24,11 +24,11 @@
 /**
  * clock_domain_descriptor.h
  *
- * Public Clock Domain descriptor interface class
- * The Clock Domain descriptor describes a source of a common clock signal within an
+ * Public CLOCK DOMAIN descriptor interface class
+ * The CLOCK DOMAIN descriptor describes a source of a common clock signal within an
  * AVDECC Entity. This could be the output from a PLL, which can be locked to a
- * number of sources or a clock signal generator. The Clock Domain allows for the
- * selection of the Clock Source of the domain and determines what the valid
+ * number of sources or a clock signal generator. The CLOCK DOMAIN allows for the
+ * selection of the CLOCK SOURCE of the domain and determines what the valid
  * sources are for the domain.
  */
 
@@ -46,41 +46,41 @@ namespace avdecc_lib
     {
     public:
         /**
-         * \return The descriptor index of the Clock Source descriptor describing the current Clock Source
-         *	       for the Clock Domain.
+         * \return The descriptor index of the CLOCK SOURCE descriptor describing the current CLOCK SOURCE
+         *	       for the CLOCK DOMAIN.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_index() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_source_index() = 0;
 
         /**
-         * \return The number of clock source indexes in the clock sources field. The maximum value for this field
+         * \return The number of CLOCK SOURCE indexes in the clock sources field. The maximum value for this field
          *	       is 249 for this version of AEM.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_sources_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_sources_count() = 0;
 
         /**
-         * \return The corresponding Clock Sources by index present in the Clock Domain.
+         * \return The corresponding Clock Sources by index present in the CLOCK DOMAIN.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_by_index(uint32_t clk_src_index) = 0;
 
         /**
-         * \return The clock source index of the requested Clock Domain after sending a
+         * \return The CLOCK SOURCE index of the requested CLOCK DOMAIN after sending a
          *	       SET_CLOCK_SOURCE command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL set_clock_source_clock_source_index() = 0;
 
         /**
-         * \return The clock source index of the requested Clock Domain after sending a
+         * \return The CLOCK SOURCE index of the requested CLOCK DOMAIN after sending a
          *	       GET_CLOCK_SOURCE command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_clock_source_index() = 0;
 
         /**
-         * Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.
+         * Send a SET_CLOCK_SOURCE command to change the CLOCK SOURCE of a CLOCK DOMAIN.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
-         * \param new_clk_src_index The clock source index field is set to the new clock source index.
+         * \param new_clk_src_index The CLOCK SOURCE index field is set to the new CLOCK SOURCE index.
          *
-         * The new clock source index can be retrieved by calling the following function after successfully
+         * The new CLOCK SOURCE index can be retrieved by calling the following function after successfully
          * receiving a response back for the SET_CLOCK_SOURCE command sent.
          *
          * \see set_clock_source_clock_source_index()
@@ -88,11 +88,11 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index) = 0;
 
         /**
-         * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
+         * Send a GET_CLOCK_SOURCE command to get the current CLOCK SOURCE of a CLOCK DOMAIN.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          *
-         * The clock source index can be retrieved by calling the following function after successfully
+         * The CLOCK SOURCE index can be retrieved by calling the following function after successfully
          * receiving a response back for the GET_CLOCK_SOURCE command sent.
          *
          * \see get_clock_source_clock_source_index()

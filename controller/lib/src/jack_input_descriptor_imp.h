@@ -24,7 +24,7 @@
 /**
  * jack_input_descriptor_imp.h
  *
- * Jack Input descriptor implementation class
+ * JACK INPUT descriptor implementation class
  */
 
 #pragma once
@@ -40,7 +40,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_jack jack_input_desc; // Structure containing the jack_input_desc fields
-        int desc_jack_input_read_returned; // Status of extracting Jack Input descriptor information from a network buffer
+        int desc_jack_input_read_returned; // Status of extracting JACK INPUT descriptor information from a network buffer
 
         struct jack_input_desc_jack_flags
         {
@@ -48,11 +48,11 @@ namespace avdecc_lib
             bool captive;
         };
 
-        struct jack_input_desc_jack_flags jack_flags;
+        struct jack_input_desc_jack_flags jack_input_flags;
 
     public:
         /**
-         * Constructor for Jack Input descriptor object.
+         * Constructor for JACK INPUT descriptor object.
          *
          * \param end_station_obj A pointer to the base End Station object.
          * \param frame The raw memory that contains the descriptor information to read from.
@@ -66,61 +66,61 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
-         * Get the name of the Jack Input. This may be user set through the use of a SET_NAME command.
+         * Get the name of the JACK INPUT. This may be user set through the use of a SET_NAME command.
          * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
          * defined value being provided in a localized form via the localized descripton field. By leaving
          * this field blank an AVDECC Controller can determine if the user has overridden the name and can
          * use this name rather than the localized name.
          */
-        uint8_t * STDCALL get_object_name();
+        uint8_t * STDCALL object_name();
 
         /**
-         * Get the localized string reference pointing to the localized Jack Input name.
+         * Get the localized string reference pointing to the localized JACK INPUT name.
          */
-        uint16_t STDCALL get_localized_description();
+        uint16_t STDCALL localized_description();
 
         /**
          * Get the flags describing the capabilities or features of the Jack.
          */
-        uint16_t STDCALL get_jack_flags();
+        uint16_t STDCALL jack_flags();
 
         /**
          * Check if the jack can be used as a clock synchronization source.
          */
-        uint16_t STDCALL get_jack_flag_clock_sync_source();
+        uint16_t STDCALL jack_flag_clock_sync_source();
 
         /**
          * Check if the jack connection is hardwired, cannot be disconnected and
          * may be physically within the device's structure.
          */
-        uint16_t STDCALL get_jack_flag_captive();
+        uint16_t STDCALL jack_flag_captive();
 
         /**
          * Get the type of the jack.
          */
-        uint16_t STDCALL get_jack_type();
+        uint16_t STDCALL jack_type();
 
         /**
          * Get the number of controls within this jack.
          */
-        uint16_t STDCALL get_number_of_controls();
+        uint16_t STDCALL number_of_controls();
 
         /**
          * Get the index of the first Control descriptor.
          */
-        uint16_t STDCALL get_base_control();
+        uint16_t STDCALL base_control();
     
     private:
         /**
-         * Store the jack flags componenets of the Jack Input descriptor object in a vector.
+         * Store the jack flags componenets of the JACK INPUT descriptor object in a vector.
          */
         void jack_flags_init();
     };

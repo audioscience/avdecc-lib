@@ -123,7 +123,7 @@ namespace avdecc_lib
     {
         bool is_valid = ((end_station_index < end_station_vec.size()) &&
                          (entity_index < end_station_vec.at(end_station_index)->get_entity_desc_count()) &&
-                         (config_index < end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_configurations_count()));
+                         (config_index < end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->configurations_count()));
 
         if(is_valid)
         {
@@ -149,7 +149,7 @@ namespace avdecc_lib
             if(end_station_guid == entity_guid)
             {
                 bool is_valid = ((entity_index < end_station_vec.at(i)->get_entity_desc_count()) &&
-                                 (config_index < end_station_vec.at(i)->get_entity_desc_by_index(entity_index)->get_configurations_count()));
+                                 (config_index < end_station_vec.at(i)->get_entity_desc_by_index(entity_index)->configurations_count()));
 
                 if(is_valid)
                 {
@@ -273,7 +273,6 @@ namespace avdecc_lib
                         bool found_aecp_in_end_station = false;
                         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
                         uint64_t entity_guid = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE);
-                        uint16_t seq_id = jdksavdecc_aecpdu_aem_get_sequence_id(frame, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
 
                         /**
                          * Check if an AECP object is already in the system. If yes, process response for the AECP packet.

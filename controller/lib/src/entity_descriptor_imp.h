@@ -42,7 +42,7 @@ namespace avdecc_lib
     private:
         struct jdksavdecc_descriptor_entity entity_desc; // Structure containing the entity_desc fields
         int desc_entity_read_returned; // Status of extracting ENTITY descriptor information from a network buffer
-        std::vector<configuration_descriptor_imp *> config_desc_vec; // Store a list of Configuration descriptor objects
+        std::vector<configuration_descriptor_imp *> config_desc_vec; // Store a list of CONFIGURATION descriptor objects
 
         struct jdksavdecc_aem_command_acquire_entity_response aem_cmd_acquire_entity_resp; // Store the response received after sending a ACQUIRE_ENTITY command.
         struct jdksavdecc_aem_command_lock_entity_response aem_cmd_lock_entity_resp; // Store the response received after sending a LOCK_ENTITY command.
@@ -63,120 +63,120 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor. This is always set to 0 as
          * there is only ever one in an AVDECC Entity.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
          * Get the Entity ID of the AVDECC Entity.
          */
-        uint64_t STDCALL get_entity_id();
+        uint64_t STDCALL entity_id();
 
         /**
          * Get the vendor id of the AVDECC Entity.
          */
-        uint32_t STDCALL get_vendor_id();
+        uint32_t STDCALL vendor_id();
 
         /**
          * Get the AVDECC Entity model id for the AVDECC Entity.
          */
-        uint32_t STDCALL get_entity_model_id();
+        uint32_t STDCALL entity_model_id();
 
         /**
          * Get the capabilities of the AVDECC Entity.
          */
-        uint32_t STDCALL get_entity_capabilities();
+        uint32_t STDCALL entity_capabilities();
 
         /**
          * Get the number of Output Streams the AVDECC Entity has. This is also the number
          * of STREAM_OUTPUT descriptors the AVDECC Entity has for Output Streams.
          */
-        uint16_t STDCALL get_talker_stream_sources();
+        uint16_t STDCALL talker_stream_sources();
 
         /**
          * Get the AVDECC Talker capabilities of the AVDECC Entity.
          */
-        uint16_t STDCALL get_talker_capabilities();
+        uint16_t STDCALL talker_capabilities();
 
         /**
          * Get the number of Input Streams the AVDECC Entity has. This is also the number
          * of STREAM_INPUT descriptors the AVDECC Entity has for Input Streams.
          */
-        uint16_t STDCALL get_listener_stream_sinks();
+        uint16_t STDCALL listener_stream_sinks();
 
         /**
          * Get the AVDECC Listener capabilities of the AVDECC Entity.
          */
-        uint16_t STDCALL get_listener_capabilities();
+        uint16_t STDCALL listener_capabilities();
 
         /**
          * Get the AVDECC Controller capabilities of the AVDECC Entity.
          */
-        uint32_t STDCALL get_controller_capabilities();
+        uint32_t STDCALL controller_capabilities();
 
         /**
          * Get the available index of the AVDECC Entity.
          */
-        uint32_t STDCALL get_available_index();
+        uint32_t STDCALL available_index();
 
         /**
          * Get the association ID for the AVDECC Entity.
          */
-        uint64_t STDCALL get_association_id();
+        uint64_t STDCALL association_id();
 
         /**
          * Get the name of the AVDECC Entity. This may be user set through the use of a SET_NAME command.
          */
-        uint8_t * STDCALL get_entity_name();
+        uint8_t * STDCALL entity_name();
 
         /**
          * Get the localized string reference pointing to the localized vendor name.
          */
-        uint16_t STDCALL get_vendor_name_string();
+        uint16_t STDCALL vendor_name_string();
 
         /**
          * Get the localized string reference pointing to the localized model name.
          */
-        uint16_t STDCALL get_model_name_string();
+        uint16_t STDCALL model_name_string();
 
         /**
          * Get the firmware version of the AVDECC Entity.
          */
-        uint8_t * STDCALL get_firmware_version();
+        uint8_t * STDCALL firmware_version();
 
         /**
          * Get the group name of the AVDECC Entity. This may be user set through the use of a SET_NAME command.
          */
-        uint8_t * STDCALL get_group_name();
+        uint8_t * STDCALL group_name();
 
         /**
          * Get the serial number of the AVDECC Entity.
          */
-        uint8_t * STDCALL get_serial_number();
+        uint8_t * STDCALL serial_number();
 
         /**
          * Get the number of Configurations the device has. A device is required to have at least 1 Configuration.
          */
-        uint16_t STDCALL get_configurations_count();
+        uint16_t STDCALL configurations_count();
 
         /**
          * Get the index of the currently set Configuration.
          */
-        uint16_t STDCALL get_current_configuration();
+        uint16_t STDCALL current_configuration();
 
         /**
-         * Store Configuration descriptor object.
+         * Store CONFIGURATION descriptor object.
          */
         void store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
         /**
          * Get the number of Configuration descriptors.
          */
-        uint32_t STDCALL get_config_desc_count();
+        uint32_t STDCALL config_desc_count();
 
         /**
          * Get the corresponding Configuration descriptorby index.

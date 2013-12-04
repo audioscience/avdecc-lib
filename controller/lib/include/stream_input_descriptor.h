@@ -24,8 +24,8 @@
 /**
  * stream_input_descriptor.h
  *
- * Public Stream Input descriptor interface
- * The Stream Input descriptor describes a sourced or sinked stream.
+ * Public STREAM INPUT descriptor interface
+ * The STREAM INPUT descriptor describes a sourced or sinked stream.
  */
 
 #pragma once
@@ -42,126 +42,126 @@ namespace avdecc_lib
     {
     public:
         /**
-         * \return The descriptor index of the Clock Domain descriptor providing the media clock for the stream.
+         * \return The descriptor index of the CLOCK DOMAIN descriptor providing the media clock for the stream.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_domain_index() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_domain_index() = 0;
 
         /**
          * \return The flags describing the capabilities or features of the stream.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_stream_flags() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL stream_flags() = 0;
 
         /**
          * \return True if the stream can be used as a clock synchronization source.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_clock_sync_source() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_clock_sync_source() = 0;
 
         /**
          * \return True if the stream supports streaming at Class A.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_class_a() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_class_a() = 0;
 
         /**
          * \return True if the stream supports streaming at Class B.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_class_b() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_class_b() = 0;
 
         /**
          * \return True if the stream supports streaming with encrypted PDUs.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_supports_encrypted() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_supports_encrypted() = 0;
 
         /**
          * \return True if the primary backup AVDECC Talker's Entity ID and primary backup AVDECC Talker's Unique ID are supported.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_primary_backup_supported() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_primary_backup_supported() = 0;
 
         /**
          * \return True if the primary backup AVDECC Talker's Entity ID and primary backup AVDECC Talker's Unique ID are valid.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_primary_backup_valid() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_primary_backup_valid() = 0;
 
         /**
          * \return True if the secondary backup AVDECC Talker's Entity ID and secondary backup AVDECC Talker's Unique ID are supported.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_secondary_backup_supported() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_secondary_backup_supported() = 0;
 
         /**
          * \return True if the secondary backup AVDECC Talker's Entity ID and secondary backup AVDECC Talker's Unique ID are valid.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_secondary_backup_valid() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_secondary_backup_valid() = 0;
 
         /**
          * \return True if the tertiary backup AVDECC Talker's Entity ID and tertiary backup AVDECC Talker's Unique ID are supported.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_tertiary_backup_supported() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_tertiary_backup_supported() = 0;
 
         /**
          * \return True if the tertiary backup AVDECC Talker's Entity ID and tertiary backup AVDECC Talker's Unique ID are valid.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_flags_tertiary_back_up_valid() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_tertiary_back_up_valid() = 0;
 
         /**
          * \return The current format of the stream.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_current_format() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL current_format() = 0;
 
         /**
          * \return The number of formats supported by this audio stream. The maximum value
          *	       for this field is 47 for this version of AEM.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_formats() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_formats() = 0;
 
         /**
          * \return The primary backup AVDECC Talker's Entity ID.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backup_talker_entity_id_0() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL backup_talker_entity_id_0() = 0;
 
         /**
          * \return The primary backup AVDECC Talker's Unique ID.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backup_talker_unique_0() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL backup_talker_unique_0() = 0;
 
         /**
          * \return The secondary backup AVDECC Talker's Entity ID.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backup_talker_entity_id_1() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL backup_talker_entity_id_1() = 0;
 
         /**
          * \return The secondary backup AVDECC Talker's Unique ID.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backup_talker_unique_1() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL backup_talker_unique_1() = 0;
 
         /**
          * \return The tertiary backup AVDECC Talker's Entity ID.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backup_talker_entity_id_2() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL backup_talker_entity_id_2() = 0;
 
         /**
          * \return The tertiary backup AVDECC Talker's Unique ID.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backup_talker_unique_2() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL backup_talker_unique_2() = 0;
 
         /**
          * \return The Entity ID of the AVDECC Talker that this stream is backing up.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_backedup_talker_entity_id() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL backedup_talker_entity_id() = 0;
 
         /**
          * \return The Unique ID of the AVDECC Talker that this stream is backing up.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_backedup_talker_unique() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL backedup_talker_unique() = 0;
 
         /**
-         * \return The descriptor index of the AVB Interface descriptor from which this stream
+         * \return The descriptor index of the AVB INTERFACE descriptor from which this stream
          *	       is sourced or to which it is sinked.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_avb_interface_index() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL avb_interface_index() = 0;
 
         /**
          * \return The length in nanoseconds of the MAC's ingress buffer size.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_buffer_length() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL buffer_length() = 0;
 
         /**
          * \return The stream format of a stream after sending a SET_STREAM_FORMAT command and
@@ -336,7 +336,7 @@ namespace avdecc_lib
          *                    either the Entity ID of the AVDECC Entity being targets to or 0.
          * \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
-         *                         this corresponds to the id of the Stream Output descriptor.
+         *                         this corresponds to the id of the STREAM OUTPUT descriptor.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_connect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id, uint16_t flags) = 0;
 
@@ -351,7 +351,7 @@ namespace avdecc_lib
          *                    either the Entity ID of the AVDECC Entity being targets to or 0.
          * \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
-         *                         this corresponds to the id of the Stream Output descriptor.
+         *                         this corresponds to the id of the STREAM OUTPUT descriptor.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_disconnect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id) = 0;
 
@@ -366,7 +366,7 @@ namespace avdecc_lib
          *                    either the Entity ID of the AVDECC Entity being targets to or 0.
          * \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
-         *                         this corresponds to the id of the Stream Output descriptor.
+         *                         this corresponds to the id of the STREAM OUTPUT descriptor.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_rx_state_cmd(void *notification_id) = 0;
     };

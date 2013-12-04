@@ -436,7 +436,6 @@ namespace avdecc_lib
 
         while(p->fmt != UINT64_C(0x0000000000000000))
         {
-
             if(strcmp(p->str, format_name) == 0)
             {
                 return p->fmt;
@@ -472,7 +471,7 @@ namespace avdecc_lib
 
         mac_to_string << std::hex << end_station_mac;
         mac_substring = " [" + (mac_to_string.str().substr(mac_to_string.str().length()-4, 2) + ":" +
-                                            mac_to_string.str().substr(mac_to_string.str().length()-2, 2)) + "]";
+                        mac_to_string.str().substr(mac_to_string.str().length()-2, 2)) + "]";
 
         return mac_substring.c_str(); 
     }
