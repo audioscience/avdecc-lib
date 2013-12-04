@@ -49,6 +49,8 @@ namespace avdecc_lib
         desc_type_index_from_config = 0;
         desc_count_from_config = 0;
         desc_count_index_from_config = 0;
+        read_desc_count = 0;
+        read_desc_done = false;
         read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_IDLE;
         read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_IDLE;
         desc_type_index_from_audio_unit = JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT;
@@ -241,6 +243,7 @@ namespace avdecc_lib
                     if(entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->get_config_desc_count() >= 1)
                     {
                         store_descriptor = true;
+                        read_desc_count--;
                     }
                     break;
             }
@@ -254,7 +257,7 @@ namespace avdecc_lib
                     if(entity_desc_vec.size() == 0)
                     {
                         entity_desc_vec.push_back(new entity_descriptor_imp(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len));
-                        current_config_desc = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_current_configuration();
+                        current_config_desc = entity_desc_vec.at(current_entity_desc)->get_current_configuration();
                         uint16_t desc_type = JDKSAVDECC_DESCRIPTOR_CONFIGURATION;
                         uint16_t desc_index = 0;
                         read_desc_init(desc_type, desc_index);
@@ -263,7 +266,7 @@ namespace avdecc_lib
 
                 case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
                     entity_desc_vec.at(current_entity_desc)->store_config_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
-                    read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_STARTING;
+                    read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING;
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
@@ -337,64 +340,47 @@ namespace avdecc_lib
             case READ_TOP_LEVEL_DESC_IN_CONFIG_IDLE:
                 break;
 
-            case READ_TOP_LEVEL_DESC_IN_CONFIG_STARTING:
-                {
-                    uint16_t desc_count = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_desc_count_from_config_by_index(desc_type_index_from_config);
-                    desc_type_from_config = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_desc_type_from_config_by_index(desc_type_index_from_config);
-
-                    if(desc_count_index_from_config < desc_count)
-                    {
-                        read_desc_init(desc_type_from_config, desc_count_index_from_config);
-                        read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING;
-                    }
-                }
-                break;
-
             case READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING:
                 {
-                    uint16_t desc_count = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_desc_count_from_config_by_index(desc_type_index_from_config);
-                    desc_count_index_from_config++;
-
-                    if(desc_count_index_from_config >= desc_count)
+                    if(read_desc_count == 0)
                     {
-                        uint16_t total_num_of_desc = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_descriptor_counts_count();
-                        desc_type_index_from_config++;
-                        desc_count_index_from_config = 0;
+                        uint16_t total_num_of_desc = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_descriptor_counts_count();
+                        uint16_t desc_count = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_desc_count_from_config_by_index(desc_type_index_from_config);
+                        desc_type_from_config = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_desc_type_from_config_by_index(desc_type_index_from_config);
 
+                        for(int desc_count_index = 0; desc_count_index < desc_count; desc_count_index++)
+                        {
+                            read_desc_init(desc_type_from_config, desc_count_index);
+                            read_desc_count++;
+                        }
+
+                        desc_type_index_from_config++;
+    
                         if(desc_type_index_from_config >= total_num_of_desc)
                         {
-                            if(config_desc_imp_ref->get_locale_desc_by_index(0)) // Check if Locale descriptor is present in the top level descriptor
-                            {
-                                uint16_t num_of_string_desc = config_desc_imp_ref->get_locale_desc_by_index(0)->get_number_of_strings();
-
-                                for(int i = 0; i < num_of_string_desc; i++)
-                                {
-                                    read_desc_init(JDKSAVDECC_DESCRIPTOR_STRINGS, i); // Send a READ_DESCRIPTOR command for the STRINGS descriptor as part of the End Station initialization
-                                }
-                            }
-
                             read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_DONE;
                         }
-                        else
-                        {
-                            desc_count = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_desc_count_from_config_by_index(desc_type_index_from_config);
-
-                            if(desc_count_index_from_config < desc_count)
-                            {
-                                desc_type_from_config = entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_desc_type_from_config_by_index(desc_type_index_from_config);
-                                read_desc_init(desc_type_from_config, desc_count_index_from_config);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        read_desc_init(desc_type_from_config, desc_count_index_from_config);
                     }
                 }
                 break;
 
             case READ_TOP_LEVEL_DESC_IN_CONFIG_DONE:
-                break;
+                if(!read_desc_done)
+                {
+                    if(config_desc_imp_ref->get_locale_desc_by_index(0)) // Check if Locale descriptor is present in the top level descriptor
+                    {
+                        uint16_t num_of_string_desc = config_desc_imp_ref->get_locale_desc_by_index(0)->get_number_of_strings();
+
+                        for(int i = 0; i < num_of_string_desc; i++)
+                        {
+                            read_desc_init(JDKSAVDECC_DESCRIPTOR_STRINGS, i); // Send a READ_DESCRIPTOR command for the STRINGS descriptor as part of the End Station initialization
+                            read_desc_count++;
+                        }
+
+                        read_desc_done = true;
+                    }
+                }
+                break;        
         }
 
         switch(read_desc_in_audio_unit_state)
