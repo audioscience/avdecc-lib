@@ -30,7 +30,7 @@ EXTRA_CXXFLAGS += -Wall -ansi -g -std=c++0x -D__linux__
 
 OBJS =  adp.o \
 	adp_discovery_state_machine.o \
-	acmp.o \
+	acmp_controller_state_machine.o \
 	aem_controller_state_machine.o \
 	audio_unit_descriptor_imp.o \
 	audio_cluster_descriptor_imp.o \
