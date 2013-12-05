@@ -237,6 +237,7 @@ namespace avdecc_lib
     {
         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
         uint16_t seq_id = jdksavdecc_acmpdu_get_sequence_id(frame, ETHER_HDR_SIZE);
+        uint32_t status = jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE);
         uint64_t end_station_guid;
 
         if((notification_flag == CMD_WITH_NOTIFICATION) &&
@@ -251,7 +252,13 @@ namespace avdecc_lib
                                                         msg_type + CMD_LOOKUP,
                                                         0,
                                                         0,
+                                                        status,
                                                         notification_id);
+
+            if(status != ACMP_STATUS_SUCCESS)
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Status: %s", utility->acmp_cmd_status_value_to_name(status));
+            }
         }
         else if((notification_flag == CMD_WITH_NOTIFICATION) &&
                 ((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
@@ -266,7 +273,20 @@ namespace avdecc_lib
                                                         (uint16_t)msg_type + CMD_LOOKUP,
                                                         0,
                                                         0,
+                                                        status,
                                                         notification_id);
+
+            if(status != ACMP_STATUS_SUCCESS)
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
+                                          "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %s, %d",
+                                          end_station_guid,
+                                          utility->acmp_cmd_value_to_name(msg_type),
+                                          "NULL",
+                                          "NULL",  
+                                          utility->aem_cmd_status_value_to_name(status),
+                                          seq_id);
+            }
         }
         else if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))
@@ -274,11 +294,12 @@ namespace avdecc_lib
             struct jdksavdecc_eui64 _end_station_guid = jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE);
             end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
-                                      "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %d",
+                                      "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %s, %d",
                                       end_station_guid,
                                       utility->acmp_cmd_value_to_name(msg_type),
                                       "NULL",
-                                      "NULL",    
+                                      "NULL",  
+                                      utility->aem_cmd_status_value_to_name(status),
                                       seq_id);
         }
         else
@@ -286,11 +307,12 @@ namespace avdecc_lib
             struct jdksavdecc_eui64 _end_station_guid = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
             end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
-                                      "COMMAND_SENT, 0x%llx, %s, %s, %s, %d",
+                                      "COMMAND_SENT, 0x%llx, %s, %s, %s, %s, %d",
                                       end_station_guid,
                                       utility->acmp_cmd_value_to_name(msg_type),
                                       "NULL",
                                       "NULL",
+                                      utility->aem_cmd_status_value_to_name(status),
                                       seq_id);
         }
 

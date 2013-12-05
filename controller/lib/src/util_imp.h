@@ -70,7 +70,7 @@ namespace avdecc_lib
         /**
          * Convert AEM command status value to its corresponding command status name.
          */
-        const char * STDCALL aem_cmd_status_value_to_name(uint16_t aem_cmd_status_value);
+        const char * STDCALL aem_cmd_status_value_to_name(uint32_t aem_cmd_status_value);
 
         /**
          * Convert command value to its corresponding ACMP command name.
@@ -85,7 +85,7 @@ namespace avdecc_lib
         /**
          * Convert ACMP command status value to its corresponding command status name.
          */
-        const char * STDCALL acmp_cmd_status_value_to_name(uint16_t acmp_cmd_status_value);
+        const char * STDCALL acmp_cmd_status_value_to_name(uint32_t acmp_cmd_status_value);
 
         /**
          * Convert notification value to its corresponding notification name.

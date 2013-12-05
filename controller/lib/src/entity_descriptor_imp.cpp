@@ -41,7 +41,7 @@ namespace avdecc_lib
 
         if(desc_entity_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "entity_desc_read error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, entity_desc_read error", end_station_obj->guid());
             assert(desc_entity_read_returned >= 0);
         }
     }
@@ -235,9 +235,23 @@ namespace avdecc_lib
         return 0;
     }
 
-    int STDCALL entity_descriptor_imp::send_get_config_cmd()
+    int entity_descriptor_imp::proc_set_config_resp()
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION response.");
+
+        return 0;
+    }
+
+    int STDCALL entity_descriptor_imp::send_get_config_cmd()
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_CONFIGURATION command.");
+
+        return 0;
+    }
+
+    int entity_descriptor_imp::proc_get_config_resp()
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_CONFIGURATION response.");
 
         return 0;
     }

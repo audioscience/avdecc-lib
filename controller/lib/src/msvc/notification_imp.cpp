@@ -85,6 +85,7 @@ namespace avdecc_lib
                                           notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
                                           notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
                                           notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
+                                          notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_status,
                                           notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id
                                          ); // Call callback function
                     read_index++;

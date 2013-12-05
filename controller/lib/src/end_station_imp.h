@@ -56,6 +56,15 @@ namespace avdecc_lib
 
         enum read_top_level_desc_in_config_states read_top_level_desc_in_config_state; // States used for processing the top level descriptors present in the CONFIGURATION descriptor.
 
+        enum read_desc_in_locale_states
+        {
+            READ_DESC_IN_LOCALE_IDLE,
+            READ_DESC_IN_LOCALE_RUNNING,
+            READ_DESC_IN_LOCALE_DONE
+        };
+
+        enum read_desc_in_locale_states read_desc_in_locale_state;
+
         enum read_desc_in_audio_unit_states
         {
             READ_DESC_IN_AUDIO_UNIT_IDLE,
@@ -66,16 +75,39 @@ namespace avdecc_lib
 
         enum read_desc_in_audio_unit_states read_desc_in_audio_unit_state; 
 
+        enum read_desc_in_stream_port_input_states
+        {
+            READ_DESC_IN_STREAM_PORT_INPUT_IDLE,
+            READ_DESC_IN_STREAM_PORT_INPUT_RUNNING,
+            READ_DESC_IN_STREAM_PORT_INPUT_DONE
+        };
+
+        enum read_desc_in_stream_port_input_states read_desc_in_stream_port_input_state;
+
+        enum read_desc_in_stream_port_output_states
+        {
+            READ_DESC_IN_STREAM_PORT_OUTPUT_IDLE,
+            READ_DESC_IN_STREAM_PORT_OUTPUT_RUNNING,
+            READ_DESC_IN_STREAM_PORT_OUTPUT_DONE
+        };
+
+        enum read_desc_in_stream_port_output_states read_desc_in_stream_port_output_state;
+
         uint16_t desc_type_from_config; // The top level descriptor type present in the CONFIGURATION descriptor
         uint16_t desc_type_index_from_config; // The top level descriptor type index present in the CONFIGURATION descriptor
         uint16_t desc_count_from_config; // The top level descriptor count present in the CONFIGURATION descriptor
         uint16_t desc_count_index_from_config; // The top level descriptor count index present in the CONFIGURATION descriptor
 
         uint32_t read_desc_count; // A counter for the number of READ_DESCRIPTOR commands sent used to match up with the number of responses for these commands
-        bool read_strings_desc_done; // Send READ_DESCRIPTOR command for STRINGS descriptor
-        bool read_stream_port_desc_done; // Send READ_DESCRIPTOR command for STREAM_PORT_INPUT and STREAM_PORT_OUTPUT descriptors
+        bool read_top_level_desc_done; // Send READ_DESCRIPTOR command for each top level descriptor present in the CONFIGURATION descriptor
+        bool read_desc_in_locale_done; // Send READ_DESCRIPTOR command for STRINGS descriptor
+        bool read_desc_in_audio_unit_done; // Send READ_DESCRIPTOR command for STREAM_PORT_INPUT and STREAM_PORT_OUTPUT descriptors
+        bool read_desc_in_stream_port_input_done; // Send READ_DESCRIPTOR command for AUDIO_CLUSTER, AUDIO_MAP, and CONTROL descriptors
+        bool read_desc_in_stream_port_output_done; // Send READ_DESCRIPTOR command for AUDIO_CLUSTER, AUDIO_MAP, and CONTROL descriptors
 
         uint16_t desc_type_index_from_audio_unit;
+        uint16_t desc_type_index_from_stream_port_input;
+        uint16_t desc_type_index_from_stream_port_output;
 
         adp *adp_ref; // ADP associated with the End Station
         std::vector<entity_descriptor_imp *> entity_desc_vec; // Store a list of ENTITY descriptor objects

@@ -33,7 +33,7 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.4.6"
+#define AVDECC_CONTROLLER_VERSION "v0.4.7"
 
 namespace avdecc_lib
 {
@@ -46,7 +46,7 @@ namespace avdecc_lib
         /**
          * A constructor for controller_imp used for constructing an object with notification, and post_log_msg callback functions.
          */
-        controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
+        controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
                        void (*log_callback) (void *, int32_t, const char *, int32_t));
 
         virtual ~controller_imp();

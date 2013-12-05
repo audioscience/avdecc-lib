@@ -34,7 +34,7 @@
 namespace avdecc_lib
 {
     extern "C" void default_notification(void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
-                                         uint16_t desc_type, uint16_t desc_index, void *notification_id) {}
+                                         uint16_t desc_type, uint16_t desc_index, uint32_t status, void *notification_id) {}
 
     notification::notification()
     {
@@ -48,7 +48,7 @@ namespace avdecc_lib
 
     notification::~notification() {}
 
-    void notification::post_notification_msg(int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id)
+    void notification::post_notification_msg(int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void *notification_id)
     {
         uint32_t index;
 
@@ -68,13 +68,14 @@ namespace avdecc_lib
             notification_buf[index % NOTIFICATION_BUF_COUNT].cmd_type = cmd_type;
             notification_buf[index % NOTIFICATION_BUF_COUNT].desc_type = desc_type;
             notification_buf[index % NOTIFICATION_BUF_COUNT].desc_index = desc_index;
+            notification_buf[index % NOTIFICATION_BUF_COUNT].cmd_status = cmd_status;
             notification_buf[index % NOTIFICATION_BUF_COUNT].notification_id = notification_id;
 
             post_notification_event();
         }
     }
 
-    void notification::set_notification_callback(void (*new_notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *), void *p)
+    void notification::set_notification_callback(void (*new_notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *), void *p)
     {
         notification_callback = new_notification_callback;
         user_obj = p;

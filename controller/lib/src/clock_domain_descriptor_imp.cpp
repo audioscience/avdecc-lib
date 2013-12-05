@@ -44,7 +44,7 @@ namespace avdecc_lib
 
         if(desc_clock_domain_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "clock_domain_desc_read error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, clock_domain_desc_read error", end_station_obj->guid());
             assert(desc_clock_domain_read_returned >= 0);
         }
 

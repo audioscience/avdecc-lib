@@ -29,6 +29,7 @@
 
 #include "enumeration.h"
 #include "log_imp.h"
+#include "end_station_imp.h"
 #include "jack_output_descriptor_imp.h"
 
 namespace avdecc_lib
@@ -39,7 +40,7 @@ namespace avdecc_lib
 
         if(desc_jack_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "jack_output_desc_read error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, jack_output_desc_read error", end_station_obj->guid());
             assert(desc_jack_read_returned >= 0);
         }
 
