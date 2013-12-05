@@ -2148,7 +2148,7 @@ int cmd_line::cmd_set_clock_source(std::string desc_name, uint16_t desc_index, u
     status = sys->get_last_resp_status();
 
     std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
-    std::cout << "Sampling rate: 0x" << std::dec << clk_domain_desc_ref->set_clock_source_clock_source_index();
+    std::cout << "Clock source index : " << std::dec << clk_domain_desc_ref->set_clock_source_clock_source_index();
 
     return 0;
 }
@@ -2171,7 +2171,7 @@ int cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_index)
     clk_src_index = clk_domain_desc_ref->get_clock_source_clock_source_index();
 
     std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
-    std::cout << "Clock source : 0x" << std::dec << clk_domain_desc_ref->get_clock_source_by_index(clk_src_index);
+    std::cout << "Clock source index : " << std::dec << clk_domain_desc_ref->get_clock_source_by_index(clk_src_index);
 
     return 0;
 }
