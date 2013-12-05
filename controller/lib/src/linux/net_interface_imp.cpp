@@ -155,7 +155,7 @@ namespace avdecc_lib
         return total_devs;
     }
 
-    uint64_t net_interface_imp::get_mac()
+    uint64_t net_interface_imp::mac_addr()
     {
         return mac;
     }
