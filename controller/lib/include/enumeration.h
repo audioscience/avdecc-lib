@@ -276,7 +276,7 @@ namespace avdecc_lib
         END_STATION_DISCONNECTED = 2, ///< An AVDECC End Station is disconnected
         COMMAND_TIMEOUT = 3, ///< A command is sent, but the response is not received within a timeout period
         RESPONSE_RECEIVED = 4, ///< A response is received after sending a command
-        END_STATION_INITIALIZATION_COMPLETED = 5, ///< An AVDECC End Station has finished internal READ_DESCRIPTOR processing for all top level descriptors
+        END_STATION_READ_COMPLETED = 5, ///< An AVDECC End Station has finished internal READ_DESCRIPTOR processing for all top level descriptors
         TOTAL_NUM_OF_NOTIFICATIONS = 6
     };
 

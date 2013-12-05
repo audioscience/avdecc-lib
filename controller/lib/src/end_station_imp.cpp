@@ -482,7 +482,6 @@ namespace avdecc_lib
 
                 case READ_DESC_IN_AUDIO_UNIT_DONE:
                     read_desc_in_audio_unit_done = true;
-                   // notification_imp_ref->post_notification_msg(END_STATION_INITIALIZATION_COMPLETED, end_station_guid, 0, 0, 0, NULL);
                     break;
             }
         }
@@ -656,6 +655,7 @@ namespace avdecc_lib
                                         }
 
                                         read_desc_in_stream_port_output_state = READ_DESC_IN_STREAM_PORT_OUTPUT_DONE;
+                                        notification_imp_ref->post_notification_msg(END_STATION_READ_COMPLETED, end_station_guid, 0, 0, 0, 0, NULL);
                                     }
                                 }
                             break;
