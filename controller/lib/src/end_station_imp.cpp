@@ -49,12 +49,21 @@ namespace avdecc_lib
         desc_type_index_from_config = 0;
         desc_count_from_config = 0;
         desc_count_index_from_config = 0;
-        read_desc_count = 0;
-        read_strings_desc_done = false;
-        read_stream_port_desc_done = false;
         read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_IDLE;
+        read_desc_in_locale_state = READ_DESC_IN_LOCALE_IDLE;
         read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_IDLE;
+        read_desc_in_stream_port_input_state = READ_DESC_IN_STREAM_PORT_INPUT_IDLE;
+        read_desc_in_stream_port_output_state = READ_DESC_IN_STREAM_PORT_OUTPUT_IDLE;
+        read_desc_count = 0;
+        read_top_level_desc_done = false;
+        read_desc_in_locale_done = false;
+        read_desc_in_audio_unit_done = false;
+        read_desc_in_stream_port_input_done = false;
+        read_desc_in_stream_port_output_done = false;
         desc_type_index_from_audio_unit = JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT;
+        desc_type_index_from_stream_port_input = JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER;
+        desc_type_index_from_stream_port_output = JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER;
+
         adp_ref = new adp(frame, frame_len);
         end_station_guid = adp_ref->get_entity_entity_id();
         utility->convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
@@ -189,7 +198,6 @@ namespace avdecc_lib
         uint32_t msg_type;
         bool u_field;
         uint16_t desc_type;
-        //uint16_t desc_index;
         configuration_descriptor_imp *config_desc_imp_ref = NULL;
 
         if(entity_desc_vec.size() >= 1 && entity_desc_vec.at(current_entity_desc)->config_desc_count() >= 1)
@@ -220,7 +228,6 @@ namespace avdecc_lib
         status = aem_cmd_read_desc_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_read_desc_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
         desc_type = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR);
-        //desc_index = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR + 2);
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
@@ -249,6 +256,10 @@ namespace avdecc_lib
                     break;
             }
         }
+        else
+        {
+            read_desc_count--;
+        }
 
         if(store_descriptor)
         {
@@ -259,9 +270,7 @@ namespace avdecc_lib
                     {
                         entity_desc_vec.push_back(new entity_descriptor_imp(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len));
                         current_config_desc = entity_desc_vec.at(current_entity_desc)->current_configuration();
-                        uint16_t desc_type = JDKSAVDECC_DESCRIPTOR_CONFIGURATION;
-                        uint16_t desc_index = 0;
-                        read_desc_init(desc_type, desc_index);
+                        read_desc_init(JDKSAVDECC_DESCRIPTOR_CONFIGURATION, 0); // Send READ_DESCRIPTOR command for CONFIGURATION descriptor to get the setup for the AVDECC Entity
                     }
                     break;
 
@@ -309,10 +318,12 @@ namespace avdecc_lib
 
                 case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
                     config_desc_imp_ref->store_stream_port_input_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    read_desc_in_stream_port_input_state = READ_DESC_IN_STREAM_PORT_INPUT_RUNNING;
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
                     config_desc_imp_ref->store_stream_port_output_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    read_desc_in_stream_port_output_state = READ_DESC_IN_STREAM_PORT_OUTPUT_RUNNING;
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
@@ -366,25 +377,47 @@ namespace avdecc_lib
                 break;
 
             case READ_TOP_LEVEL_DESC_IN_CONFIG_DONE:
-                if(!read_strings_desc_done)
+                if(!read_top_level_desc_done)
                 {
-                    if(config_desc_imp_ref->get_locale_desc_by_index(0)) // Check if LOCALE descriptor is present in the top level descriptor
-                    {
-                        uint16_t num_of_string_desc = config_desc_imp_ref->get_locale_desc_by_index(0)->number_of_strings();
-
-                        for(int i = 0; i < num_of_string_desc; i++)
-                        {
-                            read_desc_init(JDKSAVDECC_DESCRIPTOR_STRINGS, i); // Send a READ_DESCRIPTOR command for the STRINGS descriptor as part of the End Station initialization
-                            read_desc_count++;
-                        }
-
-                        read_strings_desc_done = true;
-                    }
+                    read_desc_in_locale_state = READ_DESC_IN_LOCALE_RUNNING;
+                    read_top_level_desc_done = true;
                 }
                 break;        
         }
 
-        if(read_strings_desc_done && !read_stream_port_desc_done)
+        if(read_top_level_desc_done)
+        {
+            switch(read_desc_in_locale_state)
+            {
+                case READ_DESC_IN_LOCALE_IDLE:
+                    break;
+            
+                case READ_DESC_IN_LOCALE_RUNNING:
+                    {
+                        if(read_desc_count == 0)
+                        {
+                            if(config_desc_imp_ref->get_locale_desc_by_index(0)) // Check if LOCALE descriptor is present in the top level descriptor
+                            {
+                                uint16_t num_of_string_desc = config_desc_imp_ref->get_locale_desc_by_index(0)->number_of_strings();
+                                for(int i = 0; i < num_of_string_desc; i++)
+                                {
+                                    read_desc_init(JDKSAVDECC_DESCRIPTOR_STRINGS, i); // Send a READ_DESCRIPTOR command for the STRINGS descriptor as part of the End Station initialization
+                                    read_desc_count++;
+                                }
+
+                                read_desc_in_locale_state = READ_DESC_IN_LOCALE_DONE;
+                            }
+                        }
+                    }
+                    break;
+
+                case READ_DESC_IN_LOCALE_DONE:
+                    read_desc_in_locale_done = true;
+                    break;        
+            }
+        }
+
+        if(read_desc_in_locale_done)
         {
             switch(read_desc_in_audio_unit_state)
             {
@@ -398,7 +431,7 @@ namespace avdecc_lib
                 case READ_DESC_IN_AUDIO_UNIT_RUNNING:
                 {
                     audio_unit_descriptor_imp *audio_unit_desc_imp_ref = 
-                                dynamic_cast<audio_unit_descriptor_imp *>(entity_desc_vec.at(entity_desc_vec.size() - 1)->get_config_desc_by_index(current_config_desc)->get_audio_unit_desc_by_index(0));
+                                dynamic_cast<audio_unit_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_audio_unit_desc_by_index(0));
                     // TODO: Handle multiple audio units
 
                     if (!audio_unit_desc_imp_ref) assert(audio_unit_desc_imp_ref == NULL);
@@ -407,42 +440,232 @@ namespace avdecc_lib
                     {
                         case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
                         {
-                            uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_input_ports();
-                            uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_input_port();
-                            if (num_desc)
+                            if(read_desc_count == 0)
                             {
-                                for(int i = base_desc; i < base_desc+num_desc; i++)
+                                uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_input_ports();
+                                uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_input_port();
+                                if (num_desc)
                                 {
-                                    read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT, i);
-                                    read_desc_count++;
+                                    for(int i = base_desc; i < base_desc+num_desc; i++)
+                                    {
+                                        read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT, i);
+                                        read_desc_count++;
+                                    }
                                 }
+
+                                desc_type_index_from_audio_unit = JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT;
                             }
-                            desc_type_index_from_audio_unit++;
-                            break;
                         }
+                        break;
+                        
                         case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
                         {
-                            uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_output_ports();
-                            uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_output_port();
-                            if (num_desc)
+                            if(read_desc_count == 0)
                             {
-                                for(int i = base_desc; i < base_desc+num_desc; i++)
+                                uint16_t num_desc = audio_unit_desc_imp_ref->number_of_stream_output_ports();
+                                uint16_t base_desc = audio_unit_desc_imp_ref->base_stream_output_port();
+                                if (num_desc)
                                 {
-                                    read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT, i);
-                                    read_desc_count++;
+                                    for(int i = base_desc; i < base_desc+num_desc; i++)
+                                    {
+                                        read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT, i);
+                                        read_desc_count++;
+                                    }
                                 }
+                                read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_DONE;
                             }
-                            read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_DONE;
-                            break;
                         }
+                        break;
                     }
                 }
                 break;
 
                 case READ_DESC_IN_AUDIO_UNIT_DONE:
-                    read_stream_port_desc_done = true;
-                    notification_imp_ref->post_notification_msg(END_STATION_INITIALIZATION_COMPLETED, end_station_guid, 0, 0, 0, NULL);
+                    read_desc_in_audio_unit_done = true;
                     break;
+            }
+        }
+
+        if(read_desc_in_audio_unit_done)
+        {
+            switch(read_desc_in_stream_port_input_state)
+            {
+                case READ_DESC_IN_STREAM_PORT_INPUT_IDLE:
+                    break;
+
+                case READ_DESC_IN_STREAM_PORT_INPUT_RUNNING:
+                    {
+                        stream_port_input_descriptor_imp *stream_port_input_desc_imp_ref = 
+                            dynamic_cast<stream_port_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_port_input_desc_by_index(0));
+
+                        if(!stream_port_input_desc_imp_ref)
+                        {
+                            assert(stream_port_input_desc_imp_ref == NULL);
+                        }
+
+                        switch(desc_type_index_from_stream_port_input)
+                        {
+                            case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
+                                {
+                                    if(read_desc_count == 0)
+                                    {
+                                        uint16_t num_desc = stream_port_input_desc_imp_ref->number_of_clusters();
+                                        uint16_t base_desc = stream_port_input_desc_imp_ref->base_cluster();
+
+                                        if(num_desc)
+                                        {
+                                            for(int i = 0; i < base_desc + num_desc; i++)
+                                            {
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER, i);
+                                                read_desc_count++;
+                                            }
+                                        }
+
+                                        desc_type_index_from_stream_port_input = JDKSAVDECC_DESCRIPTOR_AUDIO_MAP;
+                                    }
+                                }
+                                break;
+
+                            case JDKSAVDECC_DESCRIPTOR_AUDIO_MAP:
+                                {
+                                    if(read_desc_count == 0)
+                                    {
+                                        uint16_t num_desc = stream_port_input_desc_imp_ref->number_of_maps();
+                                        uint16_t base_desc = stream_port_input_desc_imp_ref->base_map();
+
+                                        if(num_desc)
+                                        {
+                                            for(int i = 0; i < base_desc + num_desc; i++)
+                                            {
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_MAP, i);
+                                                read_desc_count++;
+                                            }
+                                        }
+
+                                        desc_type_index_from_stream_port_input = JDKSAVDECC_DESCRIPTOR_CONTROL;
+                                    }
+                                }
+                            break;
+
+                            case JDKSAVDECC_DESCRIPTOR_CONTROL:
+                                {
+                                    if(read_desc_count == 0)
+                                    {
+                                        uint16_t num_desc = stream_port_input_desc_imp_ref->number_of_controls();
+                                        uint16_t base_desc = stream_port_input_desc_imp_ref->base_control();
+
+                                        if(num_desc)
+                                        {
+                                            for(int i = 0; i < base_desc + num_desc; i++)
+                                            {
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_CONTROL, i);
+                                                read_desc_count++;
+                                            }
+                                        }
+
+                                        read_desc_in_stream_port_input_state = READ_DESC_IN_STREAM_PORT_INPUT_DONE;
+                                    }
+                                }
+                            break;
+                        }
+                    }
+                    break;
+
+                case READ_DESC_IN_STREAM_PORT_INPUT_DONE:
+                    read_desc_in_stream_port_input_done = true;
+                    break;        
+            }
+        }
+
+        if(read_desc_in_stream_port_input_done)
+        {
+            switch(read_desc_in_stream_port_output_state)
+            {
+                case READ_DESC_IN_STREAM_PORT_OUTPUT_IDLE:
+                    break;
+
+                case READ_DESC_IN_STREAM_PORT_OUTPUT_RUNNING:
+                    {
+                        stream_port_output_descriptor_imp *stream_port_output_desc_imp_ref = 
+                            dynamic_cast<stream_port_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_port_output_desc_by_index(0));
+
+                        if(!stream_port_output_desc_imp_ref)
+                        {
+                            assert(stream_port_output_desc_imp_ref == NULL);
+                        }
+
+                        switch(desc_type_index_from_stream_port_output)
+                        {
+                            case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
+                                {
+                                    if(read_desc_count == 0)
+                                    {
+                                        uint16_t num_desc = stream_port_output_desc_imp_ref->number_of_clusters();
+                                        uint16_t base_desc = stream_port_output_desc_imp_ref->base_cluster();
+
+                                        if(num_desc)
+                                        {
+                                            for(int i = 0; i < base_desc + num_desc; i++)
+                                            {
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER, i);
+                                                read_desc_count++;
+                                            }
+                                        }
+
+                                        desc_type_index_from_stream_port_output = JDKSAVDECC_DESCRIPTOR_AUDIO_MAP;
+                                    }
+                                }
+                                break;
+
+                            case JDKSAVDECC_DESCRIPTOR_AUDIO_MAP:
+                                {
+                                    if(read_desc_count == 0)
+                                    {
+                                        uint16_t num_desc = stream_port_output_desc_imp_ref->number_of_maps();
+                                        uint16_t base_desc = stream_port_output_desc_imp_ref->base_map();
+
+                                        if(num_desc)
+                                        {
+                                            for(int i = 0; i < base_desc + num_desc; i++)
+                                            {
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_MAP, i);
+                                                read_desc_count++;
+                                            }
+                                        }
+
+                                        desc_type_index_from_stream_port_output = JDKSAVDECC_DESCRIPTOR_CONTROL;
+                                    }
+                                }
+                            break;
+
+                            case JDKSAVDECC_DESCRIPTOR_CONTROL:
+                                {
+                                    if(read_desc_count == 0)
+                                    {
+                                        uint16_t num_desc = stream_port_output_desc_imp_ref->number_of_controls();
+                                        uint16_t base_desc = stream_port_output_desc_imp_ref->base_control();
+
+                                        if(num_desc)
+                                        {
+                                            for(int i = 0; i < base_desc + num_desc; i++)
+                                            {
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_CONTROL, i);
+                                                read_desc_count++;
+                                            }
+                                        }
+
+                                        read_desc_in_stream_port_output_state = READ_DESC_IN_STREAM_PORT_OUTPUT_DONE;
+                                        notification_imp_ref->post_notification_msg(END_STATION_READ_COMPLETED, end_station_guid, 0, 0, 0, 0, NULL);
+                                    }
+                                }
+                            break;
+                        }
+                    }
+                    break;
+
+                case READ_DESC_IN_STREAM_PORT_OUTPUT_DONE:
+                    read_desc_in_stream_port_output_done = true;
+                    break;        
             }
         }
 
@@ -532,8 +755,8 @@ namespace avdecc_lib
 
                     if(desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY)
                     {
-                        entity_descriptor_imp *entity_desc_imp_ref;
-                        entity_desc_imp_ref = dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
+                        entity_descriptor_imp *entity_desc_imp_ref =
+                            dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
 
                         if(entity_desc_imp_ref)
                         {
@@ -546,8 +769,8 @@ namespace avdecc_lib
                     }
                     else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
                     {
-                        stream_input_descriptor_imp *stream_input_desc_imp_ref;
-                        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+                        stream_input_descriptor_imp *stream_input_desc_imp_ref =
+                            dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 
                         if(stream_input_desc_imp_ref)
                         {
@@ -560,8 +783,8 @@ namespace avdecc_lib
                     }
                     else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
                     {
-                        stream_output_descriptor_imp *stream_output_desc_imp_ref;
-                        stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+                        stream_output_descriptor_imp *stream_output_desc_imp_ref =
+                            dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
 
                         if(stream_output_desc_imp_ref)
                         {
@@ -587,8 +810,8 @@ namespace avdecc_lib
 
                     if(desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY)
                     {
-                        entity_descriptor_imp *entity_desc_imp_ref;
-                        entity_desc_imp_ref = dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
+                        entity_descriptor_imp *entity_desc_imp_ref =
+                            dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
 
                         if(entity_desc_imp_ref)
                         {
@@ -601,8 +824,8 @@ namespace avdecc_lib
                     }
                     else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
                     {
-                        stream_input_descriptor_imp *stream_input_desc_imp_ref;
-                        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+                        stream_input_descriptor_imp *stream_input_desc_imp_ref =
+                            dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 
                         if(stream_input_desc_imp_ref)
                         {
@@ -615,8 +838,8 @@ namespace avdecc_lib
                     }
                     else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
                     {
-                        stream_output_descriptor_imp *stream_output_desc_imp_ref;
-                        stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+                        stream_output_descriptor_imp *stream_output_desc_imp_ref =
+                            dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
 
                         if(stream_output_desc_imp_ref)
                         {
@@ -650,8 +873,8 @@ namespace avdecc_lib
 
                     if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
                     {
-                        stream_input_descriptor_imp *stream_input_desc_imp_ref;
-                        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+                        stream_input_descriptor_imp *stream_input_desc_imp_ref =
+                            dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 
                         if(stream_input_desc_imp_ref)
                         {
@@ -664,8 +887,8 @@ namespace avdecc_lib
                     }
                     else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
                     {
-                        stream_output_descriptor_imp *stream_output_desc_imp_ref;
-                        stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+                        stream_output_descriptor_imp *stream_output_desc_imp_ref =
+                            dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
 
                         if(stream_output_desc_imp_ref)
                         {
@@ -687,8 +910,8 @@ namespace avdecc_lib
 
                     if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
                     {
-                        stream_input_descriptor_imp *stream_input_desc_imp_ref;
-                        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+                        stream_input_descriptor_imp *stream_input_desc_imp_ref =
+                            dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 
                         if(stream_input_desc_imp_ref)
                         {
@@ -701,8 +924,8 @@ namespace avdecc_lib
                     }
                     else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
                     {
-                        stream_output_descriptor_imp *stream_output_desc_imp_ref;
-                        stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+                        stream_output_descriptor_imp *stream_output_desc_imp_ref =
+                            dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
 
                         if(stream_output_desc_imp_ref)
                         {
@@ -730,8 +953,8 @@ namespace avdecc_lib
 
                 if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
                 {
-                    stream_input_descriptor_imp *stream_input_desc_imp_ref;
-                    stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+                    stream_input_descriptor_imp *stream_input_desc_imp_ref =
+                        dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 
                     if(stream_input_desc_imp_ref)
                     {
@@ -744,8 +967,8 @@ namespace avdecc_lib
                 }
                 else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
                 {
-                    stream_output_descriptor_imp *stream_output_desc_imp_ref;
-                    stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+                    stream_output_descriptor_imp *stream_output_desc_imp_ref =
+                        dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
 
                     if(stream_output_desc_imp_ref)
                     {
@@ -780,8 +1003,8 @@ namespace avdecc_lib
 
                     if(desc_type == JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT)
                     {
-                        audio_unit_descriptor_imp *audio_unit_desc_imp_ref;
-                        audio_unit_desc_imp_ref = dynamic_cast<audio_unit_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_audio_unit_desc_by_index(desc_index));
+                        audio_unit_descriptor_imp *audio_unit_desc_imp_ref =
+                            dynamic_cast<audio_unit_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_audio_unit_desc_by_index(desc_index));
 
                         if(audio_unit_desc_imp_ref)
                         {
@@ -802,8 +1025,8 @@ namespace avdecc_lib
 
                     if(desc_type == JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT)
                     {
-                        audio_unit_descriptor_imp *audio_unit_desc_imp_ref;
-                        audio_unit_desc_imp_ref = dynamic_cast<audio_unit_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_audio_unit_desc_by_index(desc_index));
+                        audio_unit_descriptor_imp *audio_unit_desc_imp_ref =
+                            dynamic_cast<audio_unit_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_audio_unit_desc_by_index(desc_index));
 
                         if(audio_unit_desc_imp_ref)
                         {
@@ -822,8 +1045,8 @@ namespace avdecc_lib
                     desc_type = jdksavdecc_aem_command_set_clock_source_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
                     desc_index = jdksavdecc_aem_command_set_clock_source_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
 
-                    clock_domain_descriptor_imp *clock_domain_desc_imp_ref;
-                    clock_domain_desc_imp_ref = dynamic_cast<clock_domain_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_clock_domain_desc_by_index(desc_index));
+                    clock_domain_descriptor_imp *clock_domain_desc_imp_ref =
+                        dynamic_cast<clock_domain_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_clock_domain_desc_by_index(desc_index));
 
                     if(clock_domain_desc_imp_ref)
                     {
@@ -841,8 +1064,8 @@ namespace avdecc_lib
                     desc_type = jdksavdecc_aem_command_get_clock_source_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
                     desc_index = jdksavdecc_aem_command_get_clock_source_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
 
-                    clock_domain_descriptor_imp *clock_domain_desc_imp_ref;
-                    clock_domain_desc_imp_ref = dynamic_cast<clock_domain_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_clock_domain_desc_by_index(desc_index));
+                    clock_domain_descriptor_imp *clock_domain_desc_imp_ref =
+                        dynamic_cast<clock_domain_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_clock_domain_desc_by_index(desc_index));
 
                     if(clock_domain_desc_imp_ref)
                     {
@@ -862,8 +1085,8 @@ namespace avdecc_lib
 
                     if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
                     {
-                        stream_input_descriptor_imp *stream_input_desc_imp_ref;
-                        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+                        stream_input_descriptor_imp *stream_input_desc_imp_ref =
+                            dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 
                         if(stream_input_desc_imp_ref)
                         {
@@ -876,8 +1099,8 @@ namespace avdecc_lib
                     }
                     else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
                     {
-                        stream_output_descriptor_imp *stream_output_desc_imp_ref;
-                        stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+                        stream_output_descriptor_imp *stream_output_desc_imp_ref =
+                            dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
 
                         if(stream_output_desc_imp_ref)
                         {
@@ -898,8 +1121,8 @@ namespace avdecc_lib
 
                     if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
                     {
-                        stream_input_descriptor_imp *stream_input_desc_imp_ref;
-                        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+                        stream_input_descriptor_imp *stream_input_desc_imp_ref =
+                            dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 
                         if(stream_input_desc_imp_ref)
                         {
@@ -912,8 +1135,8 @@ namespace avdecc_lib
                     }
                     else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
                     {
-                        stream_output_descriptor_imp *stream_output_desc_imp_ref;
-                        stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+                        stream_output_descriptor_imp *stream_output_desc_imp_ref =
+                            dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
 
                         if(stream_output_desc_imp_ref)
                         {
@@ -928,7 +1151,7 @@ namespace avdecc_lib
                 break;
 
             default:
-                notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, cmd_type, 0, 0, 0);
+                notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, cmd_type, 0, 0, 0, 0);
                 break;
         }
 
@@ -1032,7 +1255,7 @@ namespace avdecc_lib
                 break;
 
             default:
-                notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, msg_type, 0, 0, 0);
+                notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, msg_type, 0, 0, 0, 0);
                 break;
         }
 

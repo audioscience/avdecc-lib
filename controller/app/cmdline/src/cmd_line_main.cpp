@@ -43,17 +43,20 @@
 using namespace std;
 
 extern "C" void notification_callback(void *user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
-                                      uint16_t desc_type, uint16_t desc_index, void *notification_id)
+                                      uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status,
+                                      void *notification_id)
 {
     if(notification_type == avdecc_lib::COMMAND_TIMEOUT || notification_type == avdecc_lib::RESPONSE_RECEIVED)
     {
         const char *cmd_name;
         const char *desc_name;
+        const char *cmd_status_name;
 
         if(cmd_type < avdecc_lib::CMD_LOOKUP)
         {
             cmd_name = cmd_line::utility->aem_cmd_value_to_name(cmd_type);
             desc_name = cmd_line::utility->aem_desc_value_to_name(desc_type);
+            cmd_status_name = cmd_line::utility->aem_cmd_status_value_to_name(cmd_status);
         }
         else
         {
@@ -61,22 +64,24 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
             desc_name = "NULL";
         }
 
-        printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %p)\n",
+        printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %s, %p)\n",
                cmd_line::utility->notification_value_to_name(notification_type),
                guid,
                cmd_name,
                desc_name,
                desc_index,
+               cmd_status_name,
                notification_id);
     }
     else
     {
-        printf("\n[NOTIFICATION] (%s, 0x%llx, %d, %d, %d, %p)\n",
+        printf("\n[NOTIFICATION] (%s, 0x%llx, %d, %d, %d, %d, %p)\n",
                cmd_line::utility->notification_value_to_name(notification_type),
                guid,
                cmd_type,
                desc_type,
                desc_index,
+               cmd_status,
                notification_id);
     }
 }

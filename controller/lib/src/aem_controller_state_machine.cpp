@@ -351,7 +351,20 @@ namespace avdecc_lib
                                                         cmd_type,
                                                         desc_type,
                                                         desc_index,
+                                                        status,
                                                         notification_id);
+
+            if(status != AEM_STATUS_SUCCESS)
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
+                                          "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
+                                          jdksavdecc_uint64_get(&id, 0),
+                                          utility->aem_cmd_value_to_name(cmd_type),
+                                          utility->aem_desc_value_to_name(desc_type),
+                                          desc_index,
+                                          jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
+                                          utility->aem_cmd_status_value_to_name(status));
+            }
         }
         else if(((notification_flag == CMD_WITH_NOTIFICATION) || (notification_flag == CMD_WITHOUT_NOTIFICATION)) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND))
         {
@@ -365,14 +378,28 @@ namespace avdecc_lib
         }
         else if((notification_flag == CMD_WITHOUT_NOTIFICATION) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE))
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
-                                      "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
-                                      jdksavdecc_uint64_get(&id, 0),
-                                      utility->aem_cmd_value_to_name(cmd_type),
-                                      utility->aem_desc_value_to_name(desc_type),
-                                      desc_index,
-                                      jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
-                                      utility->aem_cmd_status_value_to_name(status));
+            if(status == AEM_STATUS_SUCCESS)
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
+                                          "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
+                                          jdksavdecc_uint64_get(&id, 0),
+                                          utility->aem_cmd_value_to_name(cmd_type),
+                                          utility->aem_desc_value_to_name(desc_type),
+                                          desc_index,
+                                          jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
+                                          utility->aem_cmd_status_value_to_name(status));
+            }
+            else
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
+                                          "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
+                                          jdksavdecc_uint64_get(&id, 0),
+                                          utility->aem_cmd_value_to_name(cmd_type),
+                                          utility->aem_desc_value_to_name(desc_type),
+                                          desc_index,
+                                          jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
+                                          utility->aem_cmd_status_value_to_name(status));
+            }
         }
 
         return 0;

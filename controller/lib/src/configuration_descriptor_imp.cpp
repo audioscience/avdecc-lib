@@ -44,7 +44,7 @@ namespace avdecc_lib
 
         if(config_desc_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "config_desc_read error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, config_desc_read error", end_station_obj->guid());
             assert(config_desc_read_returned >= 0);
         }
 
@@ -351,7 +351,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_audio_unit_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_audio_unit_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -367,7 +367,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_input_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_input_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -383,7 +383,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_output_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_output_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -399,7 +399,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_jack_input_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_jack_input_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -415,7 +415,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_jack_output_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_jack_output_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -431,7 +431,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_avb_interface_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_avb_interface_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -447,7 +447,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_clock_source_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_clock_source_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -463,7 +463,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_locale_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_locale_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -479,7 +479,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_strings_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_strings_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -495,7 +495,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_port_input_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_port_input_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -511,7 +511,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_port_output_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_port_output_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -527,7 +527,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_audio_cluster_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_audio_cluster_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -543,7 +543,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_audio_map_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_audio_map_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -559,7 +559,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_clock_domain_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_clock_domain_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;

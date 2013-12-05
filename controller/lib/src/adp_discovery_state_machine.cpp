@@ -172,7 +172,7 @@ namespace avdecc_lib
             entity.entity_id = entity_guid;
             entity.inflight_timer.start(adp_hdr.valid_time * 2 * 1000); // Valid time period is between 2 and 62 seconds
             add_entity(entity);
-            notification_imp_ref->post_notification_msg(END_STATION_CONNECTED, entity_guid, 0, 0, 0, 0);
+            notification_imp_ref->post_notification_msg(END_STATION_CONNECTED, entity_guid, 0, 0, 0, 0, 0);
         }
 
         return 0;
@@ -198,7 +198,7 @@ namespace avdecc_lib
             {
                 end_station_guid = entities_vec.at(i).entity_id;
                 state_timeout(i);
-                notification_imp_ref->post_notification_msg(END_STATION_DISCONNECTED, end_station_guid, 0, 0, 0, 0);
+                notification_imp_ref->post_notification_msg(END_STATION_DISCONNECTED, end_station_guid, 0, 0, 0, 0, 0);
                 return true;
             }
         }

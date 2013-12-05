@@ -222,7 +222,7 @@ namespace avdecc_lib
         "END_STATION_DISCONNECTED",
         "COMMAND_TIMEOUT",
         "RESPONSE_RECEIVED",
-        "END_STATION_INITIALIZATION_COMPLETED"
+        "END_STATION_READ_COMPLETED"
     };
 
     const char *logging_level_names[] =
@@ -338,7 +338,7 @@ namespace avdecc_lib
         return (uint16_t)AEM_DESC_ERROR;
     }
 
-    const char * STDCALL util_imp::aem_cmd_status_value_to_name(uint16_t aem_cmd_status_value)
+    const char * STDCALL util_imp::aem_cmd_status_value_to_name(uint32_t aem_cmd_status_value)
     {
         if(aem_cmd_status_value < TOTAL_NUM_OF_AEM_CMDS_STATUS)
         {
@@ -384,7 +384,7 @@ namespace avdecc_lib
         return (uint16_t)AEM_CMD_ERROR;
     }
 
-    const char * STDCALL util_imp::acmp_cmd_status_value_to_name(uint16_t acmp_cmd_status_value)
+    const char * STDCALL util_imp::acmp_cmd_status_value_to_name(uint32_t acmp_cmd_status_value)
     {
         if(acmp_cmd_status_value < TOTAL_NUM_OF_ACMP_CMDS_STATUS)
         {

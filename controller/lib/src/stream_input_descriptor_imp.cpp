@@ -46,7 +46,7 @@ namespace avdecc_lib
 
         if(stream_input_desc_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "stream_input_desc_read error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, stream_input_desc_read error", end_station_obj->guid());
             assert(stream_input_desc_read_returned >= 0);
         }
 
@@ -482,11 +482,11 @@ namespace avdecc_lib
         // Fill aem_cmd_get_stream_info.sequence_id in AEM Controller State Machine
         aem_cmd_get_stream_info.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO;
 
-        /******************** AECP Message Specific Data *****************/
+        /****************** AECP Message Specific Data ***************/
         aem_cmd_get_stream_info.descriptor_type = descriptor_type();
         aem_cmd_get_stream_info.descriptor_index = descriptor_index();
 
-        /************************** Fill frame payload with AECP data and send the frame *****************************/
+        /************************** Fill frame payload with AECP data and send the frame ***************************/
         aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
         aem_cmd_get_stream_info_returned = jdksavdecc_aem_command_get_stream_info_write(&aem_cmd_get_stream_info,
                                                                                         cmd_frame->payload,
@@ -510,7 +510,6 @@ namespace avdecc_lib
     int stream_input_descriptor_imp::proc_get_stream_info_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        struct jdksavdecc_aem_command_get_stream_info_response aem_cmd_get_stream_info_resp;
         int aem_cmd_get_stream_info_resp_returned;
         uint32_t msg_type;
         bool u_field;

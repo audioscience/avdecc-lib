@@ -48,7 +48,7 @@ namespace avdecc_lib
     controller_imp *controller_imp_ref;
 
     controller * STDCALL create_controller(net_interface *netif,
-                                           void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
+                                           void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
                                            void (*log_callback) (void *, int32_t, const char *, int32_t))
     {
         net_interface_ref = dynamic_cast<net_interface_imp *>(netif);
@@ -62,7 +62,7 @@ namespace avdecc_lib
         return controller_imp_ref;
     }
 
-    controller_imp::controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
+    controller_imp::controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
                                    void (*log_callback) (void *, int32_t, const char *, int32_t))
     {
         notification_imp_ref->set_notification_callback(notification_callback, NULL);
