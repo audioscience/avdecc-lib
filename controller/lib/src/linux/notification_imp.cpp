@@ -58,7 +58,7 @@ namespace avdecc_lib
 
     notification_imp::~notification_imp()
     {
-        post_log_event();
+        post_notification_event();
     }
 
     int notification_imp::notification_thread_init()
@@ -86,11 +86,9 @@ namespace avdecc_lib
 
     void * notification_imp::dispatch_callbacks(void)
     {
-        int status;
-
         while (true)
         {
-            status = sem_wait(&notify_waiting);
+            sem_wait(&notify_waiting);
 
             if((write_index - read_index) > 0)
             {
@@ -113,7 +111,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    void notification_imp::post_log_event()
+    void notification_imp::post_notification_event()
     {
         sem_post(&notify_waiting);
     }

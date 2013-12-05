@@ -189,7 +189,7 @@ namespace avdecc_lib
         uint32_t msg_type;
         bool u_field;
         uint16_t desc_type;
-        uint16_t desc_index;
+        //uint16_t desc_index;
         configuration_descriptor_imp *config_desc_imp_ref = NULL;
 
         if(entity_desc_vec.size() >= 1 && entity_desc_vec.at(current_entity_desc)->config_desc_count() >= 1)
@@ -220,7 +220,7 @@ namespace avdecc_lib
         status = aem_cmd_read_desc_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_read_desc_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
         desc_type = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR);
-        desc_index = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR + 2);
+        //desc_index = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR + 2);
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 

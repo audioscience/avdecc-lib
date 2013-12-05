@@ -355,9 +355,7 @@ namespace avdecc_lib
 
     void * system_layer2_multithreaded_callback::thread_fn(void *param)
     {
-        int rc;
-
-        rc = ((system_layer2_multithreaded_callback *)param)->proc_poll_loop();
+        ((system_layer2_multithreaded_callback *)param)->proc_poll_loop();
 
         return 0;
     }
