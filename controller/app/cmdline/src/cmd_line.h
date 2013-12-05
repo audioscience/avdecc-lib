@@ -65,7 +65,7 @@ public:
     /**
      * Constructor for cmd_line used for constructing an object with notification and log callback functions.
      */
-    cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
+    cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
              void (*log_callback) (void *, int32_t, const char *, int32_t));
 
     ~cmd_line();

@@ -55,8 +55,8 @@ std::string cmd_line::log_path = "."; // Log to a file in the current working di
 
 cmd_line::cmd_line() {}
 
-cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
-                                 void (*log_callback) (void *, int32_t, const char *, int32_t))
+cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
+                   void (*log_callback) (void *, int32_t, const char *, int32_t))
 {
     current_end_station = 0;
     current_entity = 0;
@@ -69,7 +69,6 @@ cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uin
     controller_obj = avdecc_lib::create_controller(netif, notification_callback, log_callback);
     sys = avdecc_lib::create_system(avdecc_lib::system::LAYER2_MULTITHREADED_CALLBACK, netif, controller_obj);
     utility = avdecc_lib::create_util();
-    //controller_obj->set_logging_level(avdecc_lib::LOGGING_LEVEL_DEBUG);
 
     std::cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
     std::cout << "(c) AudioScience, Inc. 2013\n"<< std::endl;
@@ -2014,7 +2013,8 @@ int cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
     uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     int status = -1;
     intptr_t cmd_notification_id = 0;
-
+    std::string stream_format;
+   
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
         cmd_notification_id = get_next_notification_id();
@@ -2024,6 +2024,20 @@ int cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
         status = sys->get_last_resp_status();
 
         std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
+
+        stream_format = utility->ieee1722_format_value_to_name(stream_input_desc_ref->get_stream_info_stream_format());
+        if(stream_format == "UNKNOWN")
+        {
+            std::cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->get_stream_info_stream_format() << std::endl;
+        }
+        else
+        {
+            std::cout << "Stream format: " << stream_format << std::endl;
+        }
+
+        std::cout << "Stream ID: " << std::dec << stream_input_desc_ref->get_stream_info_stream_id() << std::endl;
+        std::cout << "MSRP Accumulated Latency: 0x" << std::dec << stream_input_desc_ref->get_stream_info_msrp_accumulated_latency() << std::endl;
+        std::cout << "Stream Destination MAC: 0x" << std::hex << stream_input_desc_ref->get_stream_info_stream_dest_mac() << std::endl;
 
         return 1;
     }
@@ -2036,6 +2050,20 @@ int cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
         status = sys->get_last_resp_status();
 
         std::cout << "\nStatus: " << utility->aem_cmd_status_value_to_name(status) << std::endl;
+
+        stream_format = utility->ieee1722_format_value_to_name(stream_output_desc_ref->get_stream_info_stream_format());
+        if(stream_format == "UNKNOWN")
+        {
+            std::cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_info_stream_format() << std::endl;
+        }
+        else
+        {
+            std::cout << "Stream format: " << stream_format << std::endl;
+        }
+
+        std::cout << "Stream ID: " << std::dec << stream_output_desc_ref->get_stream_info_stream_id() << std::endl;
+        std::cout << "MSRP Accumulated Latency: 0x" << std::dec << stream_output_desc_ref->get_stream_info_msrp_accumulated_latency() << std::endl;
+        std::cout << "Stream Destination MAC: 0x" << std::hex << stream_output_desc_ref->get_stream_info_stream_dest_mac() << std::endl;
 
         return 1;
     }
