@@ -69,11 +69,9 @@ namespace avdecc_lib
 
     void * log_imp::dispatch_callbacks(void)
     {
-        int status;
-
         while (true)
         {
-            status = sem_wait(&log_waiting);
+            sem_wait(&log_waiting);
 
             if((write_index - read_index) > 0)
             {
