@@ -67,6 +67,8 @@ $(TARGET_APP): $(OBJS) $(AVDECC_LIB)
 	@$(CXX) $(LDFLAGS) -g -lm -lrt -lpthread -o $@ $(addprefix $(BUILD_DIR)/,$(notdir $(OBJS))) $(AVDECC_LIB)
 
 clean:
+	@echo clean: avdecc-lib
+	cd ../../../../lib/build/linux; make clean
 	rm -f $(OBJS) $(TARGET_LIB) $(TARGET_APP) $(BUILD_DIR)/*.o $(DEP_DIR)/*.d
 
 CPPCHECK_DEPS1 := $(OBJS1:.o=.x)

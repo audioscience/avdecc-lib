@@ -237,21 +237,26 @@ namespace avdecc_lib
             exit(EXIT_FAILURE);
 
         }
+ 
+        int result = read(tx_pipe[PIPE_RD], t, sizeof(*t));
 
-        read(tx_pipe[PIPE_RD], t, sizeof(*t));
-
-        controller_ref_in_system->tx_packet_event(
-            t->notification_id,
-            t->notification_flag,
-            t->frame,
-            t->mem_buf_len);
-
-        if(t->notification_flag == CMD_WITH_NOTIFICATION)
+        if (result > 0)
         {
-            waiting_notification_id = t->notification_id;
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "fn_tx");
+            controller_ref_in_system->tx_packet_event(
+                t->notification_id,
+                t->notification_flag,
+                t->frame,
+                t->mem_buf_len);
+
+            if(t->notification_flag == CMD_WITH_NOTIFICATION)
+            {
+                waiting_notification_id = t->notification_id;
+            }
+
+            delete[] t->frame;
         }
 
-        delete[] t->frame;
         delete t;
 
         return 0;
