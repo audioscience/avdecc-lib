@@ -178,6 +178,9 @@ namespace avdecc_lib
         const char *ifname;
         char *s;
 
+        /* adjust interface numnber since count starts at 1 */
+        interface_num--;
+
         ifname = ifnames[interface_num].c_str();
         s = (char *)ifname;
         while(*s != ',')
