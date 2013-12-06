@@ -55,7 +55,7 @@ namespace avdecc_lib
 
     uint16_t STDCALL stream_port_output_descriptor_imp::descriptor_index() const
     {
-        assert(stream_port_output_desc.descriptor_index == 0);
+        //assert(stream_port_output_desc.descriptor_index == 0);
         return stream_port_output_desc.descriptor_index;
     }
 
