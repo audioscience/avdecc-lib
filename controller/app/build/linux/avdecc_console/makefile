@@ -64,7 +64,7 @@ $(AVDECC_LIB):
 
 $(TARGET_APP): $(OBJS) $(AVDECC_LIB)
 	@echo $(CC) linking $@
-	@$(CXX) $(LDFLAGS) -g -lm -lrt -lpthread -o $@ $(addprefix $(BUILD_DIR)/,$(notdir $(OBJS))) $(AVDECC_LIB)
+	@$(CXX) $(LDFLAGS) -g -lm -lrt -lpthread  -ledit -lcurses -o $@ $(addprefix $(BUILD_DIR)/,$(notdir $(OBJS))) $(AVDECC_LIB)
 
 clean:
 	@echo clean: avdecc-lib

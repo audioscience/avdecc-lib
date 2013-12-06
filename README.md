@@ -132,8 +132,9 @@ The following environment variables must be defined:
 
 Prerequisites
 
-1. gcc development environment
-2. shell environment variable set to point to the location where jdksavdecc-c is installed, e.g. JDKSAVDECC_DIR=/home/user/dev/jdksavdecc-c
+1. gcc development environment (v4.8 or later)
+2. libedit
+3. shell environment variable set to point to the location where jdksavdecc-c is installed, e.g. JDKSAVDECC_DIR=/home/user/dev/jdksavdecc-c
 
 ### OSX ###
 
