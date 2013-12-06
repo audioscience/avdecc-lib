@@ -187,7 +187,7 @@ object creation and destruction, they may choose to place a C++ (or other langua
 Callbacks
 ---------
 
-The following callback functions should be supplied. If NULL is passed in for the callback function, no callbacks will be invoked.
+The following callback functions should be supplied. If NULL is passed in for the callback function, no callback will be invoked.
 
 	void log_callback(void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms);
 	void notification_callback(void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, void *notification_id);
@@ -210,7 +210,7 @@ The notification_callback is called with notification_type values of:
 * END STATION DISCONNECTED,
 * COMMAND TIMEOUT
 * RESPONSE RECEIVED
-* END_STATION_INITIALIZATION_COMPLETED
+* END_STATION_READ_COMPLETED
 
 Source code style
 -----------------
