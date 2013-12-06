@@ -35,9 +35,11 @@
 #include <stdint.h>
 #include <stdexcept>
 #include "cmd_line.h"
-#ifdef __MACH__
+#if defined(__MACH__)
 #include <readline/readline.h>
 #include <readline/history.h>
+#elif defined(__linux__)
+#include <editline/readline.h>
 #endif
 
 using namespace std;
@@ -104,15 +106,16 @@ int main()
     std::streambuf *cout_buf = std::cout.rdbuf();
     bool is_output_redirected = false;
     std::string cmd_input_orig;
-#ifdef __MACH__
+#if defined(__MACH__) || defined(__linux__)
     char* input, shell_prompt[100];
 #endif
+
 
     std::cout << "\nEnter help for a list of valid commands." << std::endl;
 
     while(while_loop)
     {
-#ifdef __MACH__
+#if defined(__MACH__) || defined(__linux__)
         snprintf(shell_prompt, sizeof(shell_prompt), "$ ");
         input = readline(shell_prompt);
         if (!input)
@@ -120,7 +123,7 @@ int main()
         std::string cmd_input(input);
         cmd_input_orig = cmd_input;
         add_history(input);
-#else
+#else 
         std::string cmd_input;
         printf("\n>");
         std::getline(std::cin, cmd_input);
@@ -1069,7 +1072,7 @@ int main()
 
         is_input_valid = false;
         input_argv.clear();
-#if __MACH__
+#if defined(__MACH__) || defined(__linux__)
         free(input);
 #endif
     }
