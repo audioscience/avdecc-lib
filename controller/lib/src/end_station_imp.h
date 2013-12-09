@@ -114,7 +114,7 @@ namespace avdecc_lib
 
     public:
         /**
-         * Constructor for end_station_imp used for constructing an object with network interface , Ethernet frame
+         * Constructor for end_station_imp used for constructing an object with network interface, Ethernet frame
          * and memory buffer length information.
          */
         end_station_imp(const uint8_t *frame, size_t frame_len);

@@ -177,7 +177,7 @@ namespace avdecc_lib
         AVDECC_LIB_STATUS_INVALID = 1023, ///< AVDECC library specific status, not part of the 1722.1 specification
                                           ///< The response received has a subtype different from the subtype of the command sent
         AVDECC_LIB_STATUS_TICK_TIMEOUT = 1024 ///< AVDECC library specific status, not part of the 1722.1 specification
-                                         ///< The response is not received within the timeout period after re-sending a command
+                                              ///< The response is not received within the timeout period after re-sending a command
     };
 
     enum acmp_cmds_values /// The command codes values for ACMP commands

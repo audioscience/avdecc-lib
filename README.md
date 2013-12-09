@@ -144,6 +144,11 @@ ToDo
 Operations
 ==========
 
+AVDECC Controller version
+-------------------------
+
+The AVDECC Controller version number can be updated inside the version header file.
+
 AVDECC End Station Discovery
 ----------------------------
 
