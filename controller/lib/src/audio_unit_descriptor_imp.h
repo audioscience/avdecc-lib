@@ -24,7 +24,7 @@
 /**
  * audio_unit_descriptor_imp.h
  *
- * Audio Unit descriptor implementation class
+ * AUDIO UNIT descriptor implementation class
  */
 
 #pragma once
@@ -48,7 +48,7 @@ namespace avdecc_lib
 
     public:
         /**
-         * Constructor for Audio Unit descriptor object.
+         * Constructor for AUDIO UNIT descriptor object.
          *
          * \param end_station_obj A pointer to the base End Station object.
          * \param frame The raw memory that contains the descriptor information to read from.
@@ -62,12 +62,12 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
          * Get the name of the Audio Unit. This may be user set through the use of a SET_NAME command.
@@ -76,182 +76,182 @@ namespace avdecc_lib
          * this field blank an AVDECC Controller can determine if the user has overridden the name and can
          * use this name rather than the localized name.
          */
-        uint8_t * STDCALL get_object_name();
+        uint8_t * STDCALL object_name();
 
         /**
-         * Get the localized string reference pointing to the localized Audio Unit name.
+         * Get the localized string reference pointing to the localized AUDIO UNIT name.
          */
-        uint16_t STDCALL get_localized_description();
+        uint16_t STDCALL localized_description();
 
         /**
-         * Get the descriptor index of the Clock Domain descriptor describing the clock domain for the Audio Unit.
+         * Get the descriptor index of the CLOCK DOMAIN descriptor describing the CLOCK DOMAIN for the Audio Unit.
          */
-        uint16_t STDCALL get_clock_domain_index();
+        uint16_t STDCALL clock_domain_index();
 
         /**
          * Get the number of Input Stream Ports used by this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_stream_input_ports();
+        uint16_t STDCALL number_of_stream_input_ports();
 
         /**
          * Get the index of the first Stream Port Input descriptor.
          */
-        uint16_t STDCALL get_base_stream_input_port();
+        uint16_t STDCALL base_stream_input_port();
 
         /**
          * Get the number of Output Stream Ports used by this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_stream_output_ports();
+        uint16_t STDCALL number_of_stream_output_ports();
 
         /**
          * Get the index of the first Stream Port Output descriptor.
          */
-        uint16_t STDCALL get_base_stream_output_port();
+        uint16_t STDCALL base_stream_output_port();
 
         /**
          * Get the number of external Input Ports used by this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_external_input_ports();
+        uint16_t STDCALL number_of_external_input_ports();
 
         /**
          * Get the index of the first External Port Input descriptor.
          */
-        uint16_t STDCALL get_base_external_input_port();
+        uint16_t STDCALL base_external_input_port();
 
         /**
          * Get the number of external Output Ports used by this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_external_output_ports();
+        uint16_t STDCALL number_of_external_output_ports();
 
         /**
          * Get the index of the first External Port Output descriptor.
          */
-        uint16_t STDCALL get_base_external_output_port();
+        uint16_t STDCALL base_external_output_port();
 
         /**
          * Get the number of internal Input Ports used by this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_internal_input_ports();
+        uint16_t STDCALL number_of_internal_input_ports();
 
         /**
-         * Get the index of the first input Internal Jack Input and Internal Port Input descriptors.
+         * Get the index of the first input Internal JACK INPUT and Internal Port Input descriptors.
          */
-        uint16_t STDCALL get_base_internal_input_port();
+        uint16_t STDCALL base_internal_input_port();
 
         /**
          * Get the number of internal Output Ports used by this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_internal_output_ports();
+        uint16_t STDCALL number_of_internal_output_ports();
 
         /**
-         * Get the index of the first output Internal Jack Output and Internal Port Output descriptors.
+         * Get the index of the first output Internal JACK OUTPUT and Internal Port Output descriptors.
          */
-        uint16_t STDCALL get_base_internal_output_port();
+        uint16_t STDCALL base_internal_output_port();
 
         /**
          * Get the number of controls within this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_controls();
+        uint16_t STDCALL number_of_controls();
 
         /**
          * Get the index of the first Control descriptor.
          */
-        uint16_t STDCALL get_base_control();
+        uint16_t STDCALL base_control();
 
         /**
          * Get the number of signal selectors within this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_signal_selectors();
+        uint16_t STDCALL number_of_signal_selectors();
 
         /**
          * Get the index of the first Signal Selector descriptor.
          */
-        uint16_t STDCALL get_base_signal_selector();
+        uint16_t STDCALL base_signal_selector();
 
         /**
          * Get the number of mixers within this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_mixers();
+        uint16_t STDCALL number_of_mixers();
 
         /**
          * Get the index of the first Mixer descriptor.
          */
-        uint16_t STDCALL get_base_mixer();
+        uint16_t STDCALL base_mixer();
 
         /**
          * Get the number of matrices within this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_matrices();
+        uint16_t STDCALL number_of_matrices();
 
         /**
          * Get the index of the first Matrix descriptor.
          */
-        uint16_t STDCALL get_base_matrix();
+        uint16_t STDCALL base_matrix();
 
         /**
          * Get the number of splitters within this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_splitters();
+        uint16_t STDCALL number_of_splitters();
 
         /**
          * Get the index of the first Signal Splitter descriptor.
          */
-        uint16_t STDCALL get_base_splitter();
+        uint16_t STDCALL base_splitter();
 
         /**
          * Get the number of combiners within this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_combiners();
+        uint16_t STDCALL number_of_combiners();
 
         /**
          * Get index of the first Signal Combiner descriptor.
          */
-        uint16_t STDCALL get_base_combiner();
+        uint16_t STDCALL base_combiner();
 
         /**
          * Get the number of demultiplexers within this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_demultiplexers();
+        uint16_t STDCALL number_of_demultiplexers();
 
         /**
          * Get the index of the first Signal Demultiplexer descriptor.
          */
-        uint16_t STDCALL get_base_demultiplexer();
+        uint16_t STDCALL base_demultiplexer();
 
         /**
          * Get the number of multiplexers within this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_multiplexers();
+        uint16_t STDCALL number_of_multiplexers();
 
         /**
          * Get the index of the first Multiplexer descriptor.
          */
-        uint16_t STDCALL get_base_multiplexer();
+        uint16_t STDCALL base_multiplexer();
 
         /**
          * Get the number of transcoders within this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_transcoders();
+        uint16_t STDCALL number_of_transcoders();
 
         /**
          * Get the index of the first Signal Transcoder descriptor.
          */
-        uint16_t STDCALL get_base_transcoder();
+        uint16_t STDCALL base_transcoder();
 
         /**
          * Get the number of control blocks within this Audio Unit.
          */
-        uint16_t STDCALL get_number_of_control_blocks();
+        uint16_t STDCALL number_of_control_blocks();
 
         /**
          * Get the index of the first Control Block descriptor.
          */
-        uint16_t STDCALL get_base_control_block();
+        uint16_t STDCALL base_control_block();
 
         /**
          * Get the current sampling rate of this Audio Unit.
          */
-        uint32_t STDCALL get_current_sampling_rate();
+        uint32_t STDCALL current_sampling_rate();
 
         /**
          * Get the corresponding sampling rate by index of this Audio Unit.
@@ -262,12 +262,12 @@ namespace avdecc_lib
          * Get the offset to the sample rates field from the start of the descriptor.
          * This field is 144 for this version of AEM.
          */
-        uint16_t get_sampling_rates_offset();
+        uint16_t sampling_rates_offset();
 
         /**
          * Get the number of sample rates. The maximum value is 91 for this version of AEM.
          */
-        uint16_t STDCALL get_sampling_rates_count();
+        uint16_t STDCALL sampling_rates_count();
 
         /**
          * Get the sampling rate of a port or unit after sending a SET_SAMPLING_RATE command and
@@ -321,7 +321,7 @@ namespace avdecc_lib
 
     private:
         /**
-         * Store the sampling rates of the Audio Unit in a vector.
+         * Store the sampling rates of the AUDIO UNIT in a vector.
          */
         void sampling_rates_init(const uint8_t *frame);
     };

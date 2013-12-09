@@ -16,7 +16,7 @@ fi
 protos="0x22f0"
 spec=""
 echo "/* Code generated from ./mkbpf in this dir */"
-echo "static int ethernet_proto_bpf[4] = {"
+echo "static int ethernet_proto_bpf[1] = {"
 for single in $protos
 do
 	spec="$spec or ether proto $single"
@@ -29,11 +29,11 @@ spec="$spec or vlan 2"
 
 echo "/*"
 echo "tcpdump -d $spec"
-tcpdump -d $spec
+tcpdump -d -s0 $spec
 echo "tcpdump -dd $spec"
 echo "*/"
 echo "const struct sock_filter BPF_code[] = {"
-tcpdump -dd $spec
+tcpdump -dd -s0 $spec
 echo "};"
   
 

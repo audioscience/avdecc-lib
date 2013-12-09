@@ -48,7 +48,7 @@ namespace avdecc_lib
     controller_imp *controller_imp_ref;
 
     controller * STDCALL create_controller(net_interface *netif,
-                                           void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
+                                           void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
                                            void (*log_callback) (void *, int32_t, const char *, int32_t))
     {
         net_interface_ref = dynamic_cast<net_interface_imp *>(netif);
@@ -62,7 +62,7 @@ namespace avdecc_lib
         return controller_imp_ref;
     }
 
-    controller_imp::controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, void *),
+    controller_imp::controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
                                    void (*log_callback) (void *, int32_t, const char *, int32_t))
     {
         notification_imp_ref->set_notification_callback(notification_callback, NULL);
@@ -107,7 +107,7 @@ namespace avdecc_lib
 
         for(uint32_t i = 0; i < end_station_vec.size(); i++)
         {
-            end_station_guid = end_station_vec.at(i)->get_guid();
+            end_station_guid = end_station_vec.at(i)->guid();
 
             if(end_station_guid == entity_guid)
             {
@@ -122,8 +122,8 @@ namespace avdecc_lib
     configuration_descriptor * STDCALL controller_imp::get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index)
     {
         bool is_valid = ((end_station_index < end_station_vec.size()) &&
-                         (entity_index < end_station_vec.at(end_station_index)->get_entity_desc_count()) &&
-                         (config_index < end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->get_configurations_count()));
+                         (entity_index < end_station_vec.at(end_station_index)->entity_desc_count()) &&
+                         (config_index < end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->configurations_count()));
 
         if(is_valid)
         {
@@ -144,13 +144,11 @@ namespace avdecc_lib
     {
         for(uint32_t i = 0; i < end_station_vec.size(); i++)
         {
-            uint64_t end_station_guid = end_station_vec.at(i)->get_guid();
-
+            uint64_t end_station_guid = end_station_vec.at(i)->guid();
             if(end_station_guid == entity_guid)
             {
-                bool is_valid = ((entity_index < end_station_vec.at(i)->get_entity_desc_count()) &&
-                                 (config_index < end_station_vec.at(i)->get_entity_desc_by_index(entity_index)->get_configurations_count()));
-
+                bool is_valid = ((entity_index < end_station_vec.at(i)->entity_desc_count()) &&
+                                 (config_index < end_station_vec.at(i)->get_entity_desc_by_index(entity_index)->configurations_count()));
                 if(is_valid)
                 {
                     configuration_descriptor * configuration;
@@ -183,12 +181,12 @@ namespace avdecc_lib
 
     uint32_t STDCALL controller_imp::missed_notification_count()
     {
-        return notification_imp_ref->get_missed_notification_event_count();
+        return notification_imp_ref->missed_notification_event_count();
     }
 
     uint32_t STDCALL controller_imp::missed_log_count()
     {
-        return log_imp_ref->get_missed_log_event_count();
+        return log_imp_ref->missed_log_event_count();
     }
 
     void controller_imp::time_tick_event()
@@ -209,7 +207,7 @@ namespace avdecc_lib
         uint64_t dest_mac_addr;
         utility->convert_eui48_to_uint64(frame, dest_mac_addr);
 
-        if((dest_mac_addr == net_interface_ref->get_mac()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address
+        if((dest_mac_addr == net_interface_ref->mac_addr()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address
         {
             uint32_t subtype = jdksavdecc_subtype_data_get_subtype(jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE));
 
@@ -273,12 +271,11 @@ namespace avdecc_lib
                         bool found_aecp_in_end_station = false;
                         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
                         uint64_t entity_guid = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE);
-                        uint16_t seq_id = jdksavdecc_aecpdu_aem_get_sequence_id(frame, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
 
                         /**
                          * Check if an AECP object is already in the system. If yes, process response for the AECP packet.
                          */
-                        if((msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE) && (dest_mac_addr == net_interface_ref->get_mac()))
+                        if((msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE) && (dest_mac_addr == net_interface_ref->mac_addr()))
                         {
                             for(uint32_t i = 0; i < end_station_vec.size(); i++)
                             {
@@ -401,7 +398,7 @@ namespace avdecc_lib
         aem_cmd_controller_avail.command_type = JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE;
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
-        aem_controller_state_machine_ref->ether_frame_init(end_station_vec.at(end_station_index)->get_mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(end_station_vec.at(end_station_index)->mac(), cmd_frame);
         aem_cmd_controller_avail_returned = jdksavdecc_aem_command_controller_available_write(&aem_cmd_controller_avail,
                                                                                               cmd_frame->payload,
                                                                                               ETHER_HDR_SIZE,
@@ -414,7 +411,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, end_station_vec.at(end_station_index)->get_guid());
+        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, end_station_vec.at(end_station_index)->guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);

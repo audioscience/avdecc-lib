@@ -85,6 +85,7 @@ namespace avdecc_lib
                                           notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
                                           notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
                                           notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
+                                          notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_status,
                                           notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id
                                          ); // Call callback function
                     read_index++;
@@ -100,7 +101,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    void notification_imp::post_log_event()
+    void notification_imp::post_notification_event()
     {
         ReleaseSemaphore(poll_events[NOTIFICATION_EVENT], 1, NULL);
     }

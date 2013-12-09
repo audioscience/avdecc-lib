@@ -98,6 +98,7 @@ namespace avdecc_lib
         instance = this;
         netif_obj_in_system = dynamic_cast<net_interface_imp *>(netif);
         controller_ref_in_system = dynamic_cast<controller_imp *>(controller_obj);
+        pipe(tx_pipe);
 
         queue_is_waiting = false;
 
@@ -236,21 +237,26 @@ namespace avdecc_lib
             exit(EXIT_FAILURE);
 
         }
+ 
+        int result = read(tx_pipe[PIPE_RD], t, sizeof(*t));
 
-        read(tx_pipe[PIPE_RD], t, sizeof(*t));
-
-        controller_ref_in_system->tx_packet_event(
-            t->notification_id,
-            t->notification_flag,
-            t->frame,
-            t->mem_buf_len);
-
-        if(t->notification_flag == CMD_WITH_NOTIFICATION)
+        if (result > 0)
         {
-            waiting_notification_id = t->notification_id;
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "fn_tx");
+            controller_ref_in_system->tx_packet_event(
+                t->notification_id,
+                t->notification_flag,
+                t->frame,
+                t->mem_buf_len);
+
+            if(t->notification_flag == CMD_WITH_NOTIFICATION)
+            {
+                waiting_notification_id = t->notification_id;
+            }
+
+            delete[] t->frame;
         }
 
-        delete[] t->frame;
         delete t;
 
         return 0;
@@ -354,9 +360,7 @@ namespace avdecc_lib
 
     void * system_layer2_multithreaded_callback::thread_fn(void *param)
     {
-        int rc;
-
-        rc = ((system_layer2_multithreaded_callback *)param)->proc_poll_loop();
+        ((system_layer2_multithreaded_callback *)param)->proc_poll_loop();
 
         return 0;
     }

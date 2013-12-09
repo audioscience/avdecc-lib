@@ -58,7 +58,7 @@ namespace avdecc_lib
 
         /************************************************************ Ethernet Frame ********************************************************/
         cmd_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), cmd_frame->src_address.value); // Send from the Controller MAC address
+        utility->convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value); // Send from the Controller MAC address
         cmd_frame->dest_address = jdksavdecc_multicast_adp_acmp; // Send to the ACMP multicast destination MAC address
         cmd_frame->length = ACMP_FRAME_LEN; // Length of ACMP packet is 70 bytes
 
@@ -112,11 +112,23 @@ namespace avdecc_lib
 
     void acmp_controller_state_machine::state_timeout(uint32_t inflight_cmd_index)
     {
+        struct jdksavdecc_frame frame = inflight_cmds.at(inflight_cmd_index).frame();
         bool is_retried = inflight_cmds.at(inflight_cmd_index).retried();
 
         if(is_retried)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Command timeout");
+            struct jdksavdecc_eui64 _end_station_guid = jdksavdecc_acmpdu_get_listener_entity_id(frame.payload, ETHER_HDR_SIZE);
+            uint64_t end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
+            uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame.payload, ETHER_HDR_SIZE);
+
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
+                                      "Command Timeout, 0x%llx, %s, %s, %s, %d",
+                                      end_station_guid,
+                                      utility->acmp_cmd_value_to_name(msg_type),
+                                      "NULL",
+                                      "NULL",
+                                      inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
+
             inflight_cmds.erase(inflight_cmds.begin() + inflight_cmd_index);
         }
         else
@@ -124,7 +136,7 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "Resend the command with sequence id = %d",
                                       inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
-            struct jdksavdecc_frame frame = inflight_cmds.at(inflight_cmd_index).frame();
+           
             tx_cmd(inflight_cmds.at(inflight_cmd_index).cmd_notification_id,
                    inflight_cmds.at(inflight_cmd_index).notification_flag(),
                    &frame,
@@ -225,6 +237,7 @@ namespace avdecc_lib
     {
         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
         uint16_t seq_id = jdksavdecc_acmpdu_get_sequence_id(frame, ETHER_HDR_SIZE);
+        uint32_t status = jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE);
         uint64_t end_station_guid;
 
         if((notification_flag == CMD_WITH_NOTIFICATION) &&
@@ -237,9 +250,15 @@ namespace avdecc_lib
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
                                                         msg_type + CMD_LOOKUP,
-                                                        NULL,
-                                                        NULL,
+                                                        0,
+                                                        0,
+                                                        status,
                                                         notification_id);
+
+            if(status != ACMP_STATUS_SUCCESS)
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Status: %s", utility->acmp_cmd_status_value_to_name(status));
+            }
         }
         else if((notification_flag == CMD_WITH_NOTIFICATION) &&
                 ((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
@@ -252,9 +271,22 @@ namespace avdecc_lib
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
                                                         (uint16_t)msg_type + CMD_LOOKUP,
-                                                        NULL,
-                                                        NULL,
+                                                        0,
+                                                        0,
+                                                        status,
                                                         notification_id);
+
+            if(status != ACMP_STATUS_SUCCESS)
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
+                                          "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %s, %d",
+                                          end_station_guid,
+                                          utility->acmp_cmd_value_to_name(msg_type),
+                                          "NULL",
+                                          "NULL",  
+                                          utility->aem_cmd_status_value_to_name(status),
+                                          seq_id);
+            }
         }
         else if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))
@@ -262,11 +294,12 @@ namespace avdecc_lib
             struct jdksavdecc_eui64 _end_station_guid = jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE);
             end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
-                                      "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %d",
+                                      "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %s, %d",
                                       end_station_guid,
                                       utility->acmp_cmd_value_to_name(msg_type),
                                       "NULL",
-                                      "NULL",    
+                                      "NULL",  
+                                      utility->aem_cmd_status_value_to_name(status),
                                       seq_id);
         }
         else
@@ -274,11 +307,12 @@ namespace avdecc_lib
             struct jdksavdecc_eui64 _end_station_guid = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
             end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
-                                      "COMMAND_SENT, 0x%llx, %s, %s, %s, %d",
+                                      "COMMAND_SENT, 0x%llx, %s, %s, %s, %s, %d",
                                       end_station_guid,
                                       utility->acmp_cmd_value_to_name(msg_type),
                                       "NULL",
                                       "NULL",
+                                      utility->aem_cmd_status_value_to_name(status),
                                       seq_id);
         }
 

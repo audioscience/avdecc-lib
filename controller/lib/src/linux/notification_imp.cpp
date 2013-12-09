@@ -58,7 +58,7 @@ namespace avdecc_lib
 
     notification_imp::~notification_imp()
     {
-        post_log_event();
+        post_notification_event();
     }
 
     int notification_imp::notification_thread_init()
@@ -86,11 +86,9 @@ namespace avdecc_lib
 
     void * notification_imp::dispatch_callbacks(void)
     {
-        int status;
-
         while (true)
         {
-            status = sem_wait(&notify_waiting);
+            sem_wait(&notify_waiting);
 
             if((write_index - read_index) > 0)
             {
@@ -100,6 +98,7 @@ namespace avdecc_lib
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
+                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_status,
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id
                                      );
                 read_index++;
@@ -113,7 +112,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    void notification_imp::post_log_event()
+    void notification_imp::post_notification_event()
     {
         sem_post(&notify_waiting);
     }

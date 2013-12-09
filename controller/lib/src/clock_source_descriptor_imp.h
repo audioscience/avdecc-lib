@@ -24,7 +24,7 @@
 /**
  * clock_source_descriptor_imp.h
  *
- * Clock Source descriptor implementation class
+ * CLOCK SOURCE descriptor implementation class
  */
 
 #pragma once
@@ -40,11 +40,11 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_clock_source clock_source_desc; // Structure containing the clock_source_desc fields
-        int desc_clock_source_read_returned; // Status of extracting Clock Source descriptor information from a network buffer
+        int desc_clock_source_read_returned; // Status of extracting CLOCK SOURCE descriptor information from a network buffer
 
     public:
         /**
-         * Constructor for Clock Source descriptor object.
+         * Constructor for CLOCK SOURCE descriptor object.
          *
          * \param end_station_obj A pointer to the base End Station object.
          * \param frame The raw memory that contains the descriptor information to read from.
@@ -58,58 +58,58 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
-         * Get the name of the Clock Source. This may be user set through the use of a SET_NAME command.
+         * Get the name of the CLOCK SOURCE. This may be user set through the use of a SET_NAME command.
          * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
          * defined value being provided in a localized form via the localized descripton field. By leaving
          * this field blank an AVDECC Controller can determine if the user has overridden the name and can
          * use this name rather than the localized name.
          */
-        uint8_t * STDCALL get_object_name();
+        uint8_t * STDCALL object_name();
 
         /**
-         * Get the localized string reference pointing to the localized Clock Source name.
+         * Get the localized string reference pointing to the localized CLOCK SOURCE name.
          */
-        uint16_t STDCALL get_localized_description();
+        uint16_t STDCALL localized_description();
 
         /**
-         * The flags describing the capabilities or features of the clock source.
+         * The flags describing the capabilities or features of the CLOCK SOURCE.
          *
-         * \return 1 (Stream ID) if the Input Stream clock source is identified by the stream ID. \n
-         *	       2 (Local ID) if the Input Stream clock source is identified by it's local ID.
+         * \return 1 (Stream ID) if the Input Stream CLOCK SOURCE is identified by the stream ID. \n
+         *	       2 (Local ID) if the Input Stream CLOCK SOURCE is identified by it's local ID.
          */
-        uint16_t STDCALL get_clock_source_flags();
+        uint16_t STDCALL clock_source_flags();
 
         /**
-         * The type of clock source.
+         * The type of CLOCK SOURCE.
          *
          * \return 0 (Internal) if the clock is sourced from within the entity such as from a crystal oscillator. \n
          *	       1 (External) if the clock is sourced from an external connection on the entity via a Jack. \n
          *	       2 (Input Stream) if the clock is sourced from the media clock of an Input Stream.
          */
-        uint16_t STDCALL get_clock_source_type();
+        uint16_t STDCALL clock_source_type();
 
         /**
-         * Get the identifier of the Clock Source.
+         * Get the identifier of the CLOCK SOURCE.
          */
-        uint64_t STDCALL get_clock_source_identifier();
+        uint64_t STDCALL clock_source_identifier();
 
         /**
-         * Get the descriptor type of the object that this Clock Source is associated with.
+         * Get the descriptor type of the object that this CLOCK SOURCE is associated with.
          */
-        uint16_t STDCALL get_clock_source_location_type();
+        uint16_t STDCALL clock_source_location_type();
 
         /**
-         * Get the descriptor index of the object that this Clock Source is associated with.
+         * Get the descriptor index of the object that this CLOCK SOURCE is associated with.
          */
-        uint16_t STDCALL get_clock_source_location_index();
+        uint16_t STDCALL clock_source_location_index();
     };
 }
 

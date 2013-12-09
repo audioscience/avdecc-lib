@@ -155,7 +155,7 @@ namespace avdecc_lib
         return total_devs;
     }
 
-    uint64_t net_interface_imp::get_mac()
+    uint64_t net_interface_imp::mac_addr()
     {
         return mac;
     }
@@ -177,6 +177,9 @@ namespace avdecc_lib
         struct ifreq if_mac;
         const char *ifname;
         char *s;
+
+        /* adjust interface numnber since count starts at 1 */
+        interface_num--;
 
         ifname = ifnames[interface_num].c_str();
         s = (char *)ifname;

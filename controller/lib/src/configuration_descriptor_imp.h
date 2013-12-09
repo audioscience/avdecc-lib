@@ -24,7 +24,7 @@
 /**
  * configuration_descriptor_imp.h
  *
- * Configuration descriptor implementation class
+ * CONFIGURATION descriptor implementation class
  */
 
 #pragma once
@@ -54,29 +54,29 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_configuration config_desc; // Structure containing the config_desc fields
-        int config_desc_read_returned; // Status of extracting Configuration descriptor information from a network buffer
+        int config_desc_read_returned; // Status of extracting CONFIGURATION descriptor information from a network buffer
 
-        std::vector<uint16_t> desc_type_vec; // Store descriptor types present in the Configuration descriptor
-        std::vector<uint16_t> desc_count_vec; // Store descriptor counts present in the Configuration descriptor
+        std::vector<uint16_t> desc_type_vec; // Store descriptor types present in the CONFIGURATION descriptor
+        std::vector<uint16_t> desc_count_vec; // Store descriptor counts present in the CONFIGURATION descriptor
 
-        std::vector<audio_unit_descriptor_imp *> audio_unit_desc_vec;  // Store a list of Audio Unit descriptor objects
-        std::vector<stream_input_descriptor_imp *> stream_input_desc_vec; // Store a list of Stream Input descriptor objects
-        std::vector<stream_output_descriptor_imp *> stream_output_desc_vec; // Store a list of Stream Output descriptor objects
-        std::vector<jack_input_descriptor_imp *> jack_input_desc_vec; // Store a list of Jack Input descriptor objects
-        std::vector<jack_output_descriptor_imp *> jack_output_desc_vec; // Store a list of Jack Output descriptor objects
-        std::vector<avb_interface_descriptor_imp *> avb_interface_desc_vec; // Store a list of AVB Interface descriptor objects
-        std::vector<clock_source_descriptor_imp *> clock_source_desc_vec; // Store a list of Clock Source descriptor objects
-        std::vector<locale_descriptor_imp *> locale_desc_vec; // Store a list of Locale descriptor objects
+        std::vector<audio_unit_descriptor_imp *> audio_unit_desc_vec;  // Store a list of AUDIO UNIT descriptor objects
+        std::vector<stream_input_descriptor_imp *> stream_input_desc_vec; // Store a list of STREAM INPUT descriptor objects
+        std::vector<stream_output_descriptor_imp *> stream_output_desc_vec; // Store a list of STREAM OUTPUT descriptor objects
+        std::vector<jack_input_descriptor_imp *> jack_input_desc_vec; // Store a list of JACK INPUT descriptor objects
+        std::vector<jack_output_descriptor_imp *> jack_output_desc_vec; // Store a list of JACK OUTPUT descriptor objects
+        std::vector<avb_interface_descriptor_imp *> avb_interface_desc_vec; // Store a list of AVB INTERFACE descriptor objects
+        std::vector<clock_source_descriptor_imp *> clock_source_desc_vec; // Store a list of CLOCK SOURCE descriptor objects
+        std::vector<locale_descriptor_imp *> locale_desc_vec; // Store a list of LOCALE descriptor objects
         std::vector<strings_descriptor_imp *> strings_desc_vec; // Store a list of Strings descriptor objects
         std::vector<stream_port_input_descriptor_imp *> stream_port_input_desc_vec; // Store a list of Stream Port Input descriptor objects
         std::vector<stream_port_output_descriptor_imp *> stream_port_output_desc_vec; // Store a list of Stream Port Output descriptor objects
         std::vector<audio_cluster_descriptor_imp *> audio_cluster_desc_vec; // Store a list of Audio Cluster descriptor objects
         std::vector<audio_map_descriptor_imp *> audio_map_desc_vec; // Store a list of Audio Map descriptor objects
-        std::vector<clock_domain_descriptor_imp *> clock_domain_desc_vec; // Store a list of Clock Domain descriptor objects
+        std::vector<clock_domain_descriptor_imp *> clock_domain_desc_vec; // Store a list of CLOCK DOMAIN descriptor objects
 
     public:
         /**
-         * Constructor for Configuration descriptor object.
+         * Constructor for CONFIGURATION descriptor object.
          *
          * \param end_station_obj A pointer to the base End Station object.
          * \param frame The raw memory that contains the descriptor information to read from.
@@ -90,12 +90,12 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
          * Get the name of the Configuration. This may be user set through the use of a SET_NAME command.
@@ -104,61 +104,61 @@ namespace avdecc_lib
          * this field blank an AVDECC Controller can determine if the user has overridden the name and can
          * use this name rather than the localized name.
          */
-        uint8_t * STDCALL get_object_name();
+        uint8_t * STDCALL object_name();
 
         /**
          * Get the localized string reference pointing to the localized Configuration name.
          */
-        uint16_t STDCALL get_localized_description();
+        uint16_t STDCALL localized_description();
 
         /**
          * Get the number of descriptor counts. The maximum value for this field is 108 for this version of AEM.
          */
-        uint16_t STDCALL get_descriptor_counts_count();
+        uint16_t STDCALL descriptor_counts_count();
 
         /**
          * Get the offset to read the counts of the top level descriptor from the start of the descriptor.
          * This field is set to 74 for this version of AEM.
          */
-        uint16_t get_descriptor_counts_offset();
+        uint16_t descriptor_counts_offset();
 
         /**
-         * Store Audio Unit descriptor object.
+         * Store AUDIO UNIT descriptor object.
          */
         void store_audio_unit_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
         /**
-         * Store Stream Input descriptor object.
+         * Store STREAM INPUT descriptor object.
          */
         void store_stream_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
         /**
-         * Store Stream Output descriptor object.
+         * Store STREAM OUTPUT descriptor object.
          */
         void store_stream_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
         /**
-         * Store Jack Input descriptor object.
+         * Store JACK INPUT descriptor object.
          */
         void store_jack_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
         /**
-         * Store Jack Output descriptor object.
+         * Store JACK OUTPUT descriptor object.
          */
         void store_jack_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
         /**
-         * Store AVB Interface descriptor object.
+         * Store AVB INTERFACE descriptor object.
          */
         void store_avb_interface_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
         /**
-         * Store Clock Source descriptor object.
+         * Store CLOCK SOURCE descriptor object.
          */
         void store_clock_source_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
         /**
-         * Store Locale descriptor object.
+         * Store LOCALE descriptor object.
          */
         void store_locale_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
@@ -188,92 +188,92 @@ namespace avdecc_lib
         void store_audio_map_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
         /**
-         * Store Clock Domain descriptor object.
+         * Store CLOCK DOMAIN descriptor object.
          */
         void store_clock_domain_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
 
         /**
-         * Get the number of Audio Unit descriptors present in the current Configuration.
+         * Get the number of AUDIO UNIT descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_audio_unit_desc_count();
+        uint32_t STDCALL audio_unit_desc_count();
 
         /**
-         * Get the number of Stream Input descriptors present in the current Configuration.
+         * Get the number of STREAM INPUT descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_stream_input_desc_count();
+        uint32_t STDCALL stream_input_desc_count();
 
         /**
-         * Get the number of Stream Output descriptors present in the current Configuration.
+         * Get the number of STREAM OUTPUT descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_stream_output_desc_count();
+        uint32_t STDCALL stream_output_desc_count();
 
         /**
-         * Get the number of Jack Input descriptors present in the current Configuration.
+         * Get the number of JACK INPUT descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_jack_input_desc_count();
+        uint32_t STDCALL jack_input_desc_count();
 
         /**
-         * Get the number of Jack Output descriptors present in the current Configuration.
+         * Get the number of JACK OUTPUT descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_jack_output_desc_count();
+        uint32_t STDCALL jack_output_desc_count();
 
         /**
-         * Get the number of AVB Interface descriptors present in the current Configuration.
+         * Get the number of AVB INTERFACE descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_avb_interface_desc_count();
+        uint32_t STDCALL avb_interface_desc_count();
 
         /**
-         * Get the number of Clock Source descriptors present in the current Configuration.
+         * Get the number of CLOCK SOURCE descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_clock_source_desc_count();
+        uint32_t STDCALL clock_source_desc_count();
 
         /**
-         * Get the number of Locale descriptors present in the current Configuration.
+         * Get the number of LOCALE descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_locale_desc_count();
+        uint32_t STDCALL locale_desc_count();
 
         /**
-         * Get the number of Strings descriptors present in the current Configuration.
+         * Get the number of Strings descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_strings_desc_count();
+        uint32_t STDCALL strings_desc_count();
 
         /**
-         * Get the number of Stream Port Input descriptors present in the current Configuration.
+         * Get the number of Stream Port Input descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_stream_port_input_desc_count();
+        uint32_t STDCALL stream_port_input_desc_count();
 
         /**
-         * Get the number of Stream Port Output descriptors present in the current Configuration.
+         * Get the number of Stream Port Output descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_stream_port_output_desc_count();
+        uint32_t STDCALL stream_port_output_desc_count();
 
         /**
-         * Get the number of Audio Cluster descriptors present in the current Configuration.
+         * Get the number of Audio Cluster descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_audio_cluster_desc_count();
+        uint32_t STDCALL audio_cluster_desc_count();
 
         /**
-         * Get the number of Audio Map descriptors present in the current Configuration.
+         * Get the number of Audio Map descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_audio_map_desc_count();
+        uint32_t STDCALL audio_map_desc_count();
 
         /**
-         * Get the number of Clock Domain descriptors present in the current Configuration.
+         * Get the number of CLOCK DOMAIN descriptors present in the current configuration.
          */
-        uint32_t STDCALL get_clock_domain_desc_count();
+        uint32_t STDCALL clock_domain_desc_count();
 
         /**
-         * Get the top level descriptor present in the Configuration descriptor.
+         * Get the top level descriptor present in the CONFIGURATION descriptor.
          */
         uint16_t STDCALL get_desc_type_from_config_by_index(int desc_index);
 
         /**
-         * Get the count of the top level descriptor present in the Configuration descriptor.
+         * Get the count of the top level descriptor present in the CONFIGURATION descriptor.
          */
         uint16_t STDCALL get_desc_count_from_config_by_index(int desc_index);
 
         /**
-         * Check if the descriptor type and descriptor count index are valid and present in the current Configuration.
+         * Check if the descriptor type and descriptor count index are valid and present in the current configuration.
          */
         bool STDCALL are_desc_type_and_index_in_config(int desc_type, int desc_count_index);
 
@@ -349,12 +349,12 @@ namespace avdecc_lib
 
     private:
         /**
-         * Initialize the descriptor type vector with descriptor types present in the current Configuration.
+         * Initialize the descriptor type vector with descriptor types present in the current configuration.
          */
         void desc_type_vec_init(const uint8_t *frame, size_t pos);
 
         /**
-         * Initialize the descriptor count vector with the number of the corresponding type of descriptor present in the current Configuration.
+         * Initialize the descriptor count vector with the number of the corresponding type of descriptor present in the current configuration.
          */
         void desc_count_vec_init(const uint8_t *frame, size_t pos);
     };

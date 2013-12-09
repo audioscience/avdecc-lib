@@ -54,7 +54,7 @@ namespace avdecc_lib
 
         /********************************************************** Ethernet Frame **********************************************************/
         cmd_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), cmd_frame->src_address.value); // Send from the Controller MAC address
+        utility->convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value); // Send from the Controller MAC address
         cmd_frame->dest_address = jdksavdecc_multicast_adp_acmp; // Send to the ADP multicast destination MAC address
         cmd_frame->length = ADP_FRAME_LEN; // Length of ADP packet is 82 bytes
 
@@ -172,7 +172,7 @@ namespace avdecc_lib
             entity.entity_id = entity_guid;
             entity.inflight_timer.start(adp_hdr.valid_time * 2 * 1000); // Valid time period is between 2 and 62 seconds
             add_entity(entity);
-            notification_imp_ref->post_notification_msg(END_STATION_CONNECTED, entity_guid, 0, 0, 0, 0);
+            notification_imp_ref->post_notification_msg(END_STATION_CONNECTED, entity_guid, 0, 0, 0, 0, 0);
         }
 
         return 0;
@@ -198,7 +198,7 @@ namespace avdecc_lib
             {
                 end_station_guid = entities_vec.at(i).entity_id;
                 state_timeout(i);
-                notification_imp_ref->post_notification_msg(END_STATION_DISCONNECTED, end_station_guid, 0, 0, 0, 0);
+                notification_imp_ref->post_notification_msg(END_STATION_DISCONNECTED, end_station_guid, 0, 0, 0, 0, 0);
                 return true;
             }
         }

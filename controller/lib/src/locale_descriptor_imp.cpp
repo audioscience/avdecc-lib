@@ -24,11 +24,12 @@
 /**
  * locale_descriptor_imp.cpp
  *
- * Locale descriptor implementation
+ * LOCALE descriptor implementation
  */
 
 #include "enumeration.h"
 #include "log_imp.h"
+#include "end_station_imp.h"
 #include "locale_descriptor_imp.h"
 
 namespace avdecc_lib
@@ -39,35 +40,35 @@ namespace avdecc_lib
 
         if(desc_locale_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "locale_desc_read error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, locale_desc_read error", end_station_obj->guid());
             assert(desc_locale_read_returned >= 0);
         }
     }
 
     locale_descriptor_imp::~locale_descriptor_imp() {}
 
-    uint16_t STDCALL locale_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL locale_descriptor_imp::descriptor_type() const
     {
         assert(locale_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_LOCALE);
         return locale_desc.descriptor_type;
     }
 
-    uint16_t STDCALL locale_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL locale_descriptor_imp::descriptor_index() const
     {
         return locale_desc.descriptor_index;
     }
 
-    uint8_t * STDCALL locale_descriptor_imp::get_locale_identifier()
+    uint8_t * STDCALL locale_descriptor_imp::locale_identifier()
     {
         return locale_desc.locale_identifier.value;
     }
 
-    uint16_t STDCALL locale_descriptor_imp::get_number_of_strings()
+    uint16_t STDCALL locale_descriptor_imp::number_of_strings()
     {
         return locale_desc.number_of_strings;
     }
 
-    uint16_t STDCALL locale_descriptor_imp::get_base_strings()
+    uint16_t STDCALL locale_descriptor_imp::base_strings()
     {
         return locale_desc.base_strings;
     }

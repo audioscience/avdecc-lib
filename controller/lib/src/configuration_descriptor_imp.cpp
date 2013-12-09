@@ -24,7 +24,7 @@
 /**
  * configuration_descriptor_imp.cpp
  *
- * Configuration descriptor implementation
+ * CONFIGURATION descriptor implementation
  */
 
 #include <iostream>
@@ -44,7 +44,7 @@ namespace avdecc_lib
 
         if(config_desc_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "config_desc_read error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, config_desc_read error", end_station_obj->guid());
             assert(config_desc_read_returned >= 0);
         }
 
@@ -76,34 +76,34 @@ namespace avdecc_lib
         std::for_each(clock_domain_desc_vec.begin(), clock_domain_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
     }
 
-    uint16_t STDCALL configuration_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL configuration_descriptor_imp::descriptor_type() const
     {
         assert(config_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_CONFIGURATION);
         return config_desc.descriptor_type;
     }
 
-    uint16_t STDCALL configuration_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL configuration_descriptor_imp::descriptor_index() const
     {
         return config_desc.descriptor_index;
     }
 
-    uint8_t * STDCALL configuration_descriptor_imp::get_object_name()
+    uint8_t * STDCALL configuration_descriptor_imp::object_name()
     {
         return config_desc.object_name.value;
     }
 
-    uint16_t STDCALL configuration_descriptor_imp::get_localized_description()
+    uint16_t STDCALL configuration_descriptor_imp::localized_description()
     {
         return config_desc.localized_description;
     }
 
-    uint16_t STDCALL configuration_descriptor_imp::get_descriptor_counts_count()
+    uint16_t STDCALL configuration_descriptor_imp::descriptor_counts_count()
     {
         assert(config_desc.descriptor_counts_count <= 108);
         return config_desc.descriptor_counts_count;
     }
 
-    uint16_t configuration_descriptor_imp::get_descriptor_counts_offset()
+    uint16_t configuration_descriptor_imp::descriptor_counts_offset()
     {
         assert(config_desc.descriptor_counts_offset == 74);
         return config_desc.descriptor_counts_offset;
@@ -113,9 +113,9 @@ namespace avdecc_lib
     {
         uint16_t offset = 0;
 
-        for(uint32_t i = 0; i < get_descriptor_counts_count(); i++)
+        for(uint32_t i = 0; i < descriptor_counts_count(); i++)
         {
-            desc_type_vec.push_back(jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + pos + offset));
+            desc_type_vec.push_back(jdksavdecc_uint16_get(frame, descriptor_counts_offset() + pos + offset));
             offset += 0x4;
         }
     }
@@ -124,9 +124,9 @@ namespace avdecc_lib
     {
         uint16_t offset = 0x2;
 
-        for(uint32_t i = 0; i < get_descriptor_counts_count(); i++)
+        for(uint32_t i = 0; i < descriptor_counts_count(); i++)
         {
-            desc_count_vec.push_back(jdksavdecc_uint16_get(frame, get_descriptor_counts_offset() + pos + offset));
+            desc_count_vec.push_back(jdksavdecc_uint16_get(frame, descriptor_counts_offset() + pos + offset));
             offset += 0x4;
         }
     }
@@ -164,26 +164,29 @@ namespace avdecc_lib
     template <class T>
     static void add_or_replace_descriptor_and_sort(T *d, std::vector<T *> &desc_vec)
     {
-        typename std::vector<T*>::const_iterator it;
-        if ((it = std::find_if(desc_vec.begin(), desc_vec.end(), [d](T const* n)
-    {
-        return *d == *n;
-    })) != desc_vec.end())
+        typename std::vector<T*>::iterator it;
+
+        it = std::find_if(
+            desc_vec.begin(),
+            desc_vec.end(),
+            [d](T const* n){return *d == *n;}
+            );
+
+        if (it != desc_vec.end())
         {
             // If the descriptor was found, delete the old and add the new in its place
             delete *it;
-            desc_vec.erase(it);
+            it = desc_vec.erase(it);
             desc_vec.insert(it, d);
         }
         else
         {
             // Insert the descriptor in the list and sort by descriptor ID
             desc_vec.push_back(d);
-            std::sort(desc_vec.begin(), desc_vec.end(),
-                      [](T const* a, T const* b)
-            {
-                return *a < *b;
-            });
+            std::sort(
+                desc_vec.begin(),
+                desc_vec.end(),
+                [](T const* a, T const* b){return *a < *b;});
         }
     }
 
@@ -269,71 +272,71 @@ namespace avdecc_lib
         add_or_replace_descriptor_and_sort(d, clock_domain_desc_vec);
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_audio_unit_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::audio_unit_desc_count()
     {
         return audio_unit_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_stream_input_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::stream_input_desc_count()
     {
         return stream_input_desc_vec.size();
     }
-    uint32_t STDCALL configuration_descriptor_imp::get_stream_output_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::stream_output_desc_count()
     {
         return stream_output_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_jack_input_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::jack_input_desc_count()
     {
         return jack_input_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_jack_output_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::jack_output_desc_count()
     {
         return jack_output_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_avb_interface_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::avb_interface_desc_count()
     {
         return avb_interface_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_clock_source_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::clock_source_desc_count()
     {
         return clock_source_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_locale_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::locale_desc_count()
     {
         return locale_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_strings_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::strings_desc_count()
     {
         return strings_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_stream_port_input_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::stream_port_input_desc_count()
     {
         return stream_port_input_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_stream_port_output_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::stream_port_output_desc_count()
     {
         return stream_port_output_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_audio_cluster_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::audio_cluster_desc_count()
     {
         return audio_cluster_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_audio_map_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::audio_map_desc_count()
     {
         return audio_map_desc_vec.size();
     }
 
-    uint32_t STDCALL configuration_descriptor_imp::get_clock_domain_desc_count()
+    uint32_t STDCALL configuration_descriptor_imp::clock_domain_desc_count()
     {
         return clock_domain_desc_vec.size();
     }
@@ -348,7 +351,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_audio_unit_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_audio_unit_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -364,7 +367,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_input_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_input_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -380,7 +383,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_output_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_output_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -396,7 +399,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_jack_input_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_jack_input_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -412,7 +415,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_jack_output_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_jack_output_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -428,7 +431,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_avb_interface_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_avb_interface_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -444,7 +447,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_clock_source_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_clock_source_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -460,7 +463,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_locale_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_locale_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -476,7 +479,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_strings_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_strings_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -492,7 +495,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_port_input_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_port_input_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -508,7 +511,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_stream_port_output_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_port_output_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -524,7 +527,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_audio_cluster_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_audio_cluster_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -540,7 +543,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_audio_map_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_audio_map_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;
@@ -556,7 +559,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_clock_domain_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_clock_domain_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;

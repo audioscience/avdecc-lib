@@ -24,8 +24,8 @@
 /**
  * locale_descriptor.h
  *
- * Public Locale descriptor interface class
- * The Locale descriptor describes a localization of the immutable strings within
+ * Public LOCALE descriptor interface class
+ * The LOCALE descriptor describes a localization of the immutable strings within
  * the AVDECC Entity.
  */
 
@@ -48,20 +48,20 @@ namespace avdecc_lib
          * Examples of valid locale identifiers are en-US for English in the US, en-AU for
          * English in Australia, haw-US for Hawaiian in the US, and fr-CA for French in Canada.
          *
-         * \return The identifier of the Locale.
+         * \return The identifier of the LOCALE.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_locale_identifier() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL locale_identifier() = 0;
 
         /**
          * \return The number of Strings descriptor in this locale. This is the same value for
          *	       all locales in an AVDECC Entity.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_number_of_strings() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_strings() = 0;
 
         /**
-         * \return The descriptor index of the first Strings descriptor for this Locale.
+         * \return The descriptor index of the first Strings descriptor for this LOCALE.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_base_strings() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_strings() = 0;
     };
 }
 

@@ -88,7 +88,7 @@ namespace avdecc_lib
         /**
          * Get the number of missed logs that exceeds the log buffer count.
          */
-        virtual uint32_t get_missed_log_event_count();
+        virtual uint32_t missed_log_event_count();
     };
 }
 

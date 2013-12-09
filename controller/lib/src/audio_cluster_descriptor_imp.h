@@ -58,12 +58,12 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
          * Get the name of the Audio Cluster. This may be user set through the use of a SET_NAME command.
@@ -72,22 +72,22 @@ namespace avdecc_lib
          * this field blank an AVDECC Controller can determine if the user has overridden the name and can
          * use this name rather than the localized name.
          */
-        uint8_t * STDCALL get_object_name();
+        uint8_t * STDCALL object_name();
 
         /**
          * Get the localized string reference pointing to the localized Audio Cluster name.
          */
-        uint16_t STDCALL get_localized_description();
+        uint16_t STDCALL localized_description();
 
         /**
          * Get the descriptor type for the signal source of the cluster.
          */
-        uint16_t STDCALL get_signal_type();
+        uint16_t STDCALL signal_type();
 
         /**
          * Get the descriptor index for the signal source of the cluster.
          */
-        uint16_t STDCALL get_signal_index();
+        uint16_t STDCALL signal_index();
 
         /**
          * Get the index of the output of the signal source of the cluster. For a signal type of
@@ -95,7 +95,7 @@ namespace avdecc_lib
          * being source from, for a signal type of Matrix, this is the column the signal is
          * from, and for any other signal type this is 0.
          */
-        uint16_t STDCALL get_signal_output();
+        uint16_t STDCALL signal_output();
 
         /**
          * Get the latency in nanoseconds between the timing reference plane and the opposite end
@@ -104,7 +104,7 @@ namespace avdecc_lib
          * latency to get the samples to the output, so that output across multiple entries
          * can be sample aligned.
          */
-        uint32_t STDCALL get_path_latency();
+        uint32_t STDCALL path_latency();
 
         /**
          * Get the block latency of the Audio Cluster. For an Aduio Cluster attached to a Stream Port Input,
@@ -113,12 +113,12 @@ namespace avdecc_lib
          * output of the previous block's output and the reference plane. The previous block is the object
          * identified by the signal type and signal index fields.
          */
-        uint32_t STDCALL get_block_latency();
+        uint32_t STDCALL block_latency();
 
         /**
          * Get the number of channels within the cluster.
          */
-        uint16_t STDCALL get_channel_count();
+        uint16_t STDCALL channel_count();
 
         /**
          * The format for each channel of this cluster, all channels within the cluster have the same format.
@@ -128,7 +128,7 @@ namespace avdecc_lib
          *	       0x80 (MIDI) for MIDI data. \n
          *	       0x88 (SMPTE) for SMPTE data.
          */
-        uint8_t STDCALL get_format();
+        uint8_t STDCALL format();
     };
 }
 

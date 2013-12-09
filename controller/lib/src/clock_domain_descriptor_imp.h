@@ -24,7 +24,7 @@
 /**
  * clock_domain_descriptor_imp.h
  *
- * Clock Domain descriptor implementation class
+ * CLOCK DOMAIN descriptor implementation class
  */
 
 #pragma once
@@ -39,21 +39,21 @@ namespace avdecc_lib
     class clock_domain_descriptor_imp : public clock_domain_descriptor, public virtual descriptor_base_imp
     {
     private:
-        struct jdksavdecc_descriptor_clock_domain clock_domain_desc; // Store the Clock Domain Descriptor fields
-        int desc_clock_domain_read_returned; // Status of extracting Clock Domain descriptor information from a network buffer
+        struct jdksavdecc_descriptor_clock_domain clock_domain_desc; // Store the CLOCK DOMAIN Descriptor fields
+        int desc_clock_domain_read_returned; // Status of extracting CLOCK DOMAIN descriptor information from a network buffer
         std::vector<uint16_t> clk_src_vec; // Store clock sources in a vector
 
         struct jdksavdecc_aem_command_set_clock_source_response aem_cmd_set_clk_src_resp; // Store the response received after sending a SET_CLOCK_SOURCE command
         struct jdksavdecc_aem_command_get_clock_source_response aem_cmd_get_clk_src_resp; // Store the response received after sending a GET_CLOCK_SOURCE command
 
         /**
-        * Store the Clock Sources of the Clock Domain descriptor object.
+        * Store the Clock Sources of the CLOCK DOMAIN descriptor object.
         */
         void store_clock_sources(const uint8_t *frame, size_t pos);
 
     public:
         /**
-         * Constructor for Clock Domain descriptor object.
+         * Constructor for CLOCK DOMAIN descriptor object.
          *
          * \param end_station_obj A pointer to the base End Station object.
          * \param frame The raw memory that contains the descriptor information to read from.
@@ -67,69 +67,69 @@ namespace avdecc_lib
         /**
          * Get the type of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_type() const;
+        uint16_t STDCALL descriptor_type() const;
 
         /**
          * Get the index of the descriptor.
          */
-        uint16_t STDCALL get_descriptor_index() const;
+        uint16_t STDCALL descriptor_index() const;
 
         /**
-         * Get the name of the Clock Domain. This may be user set through the use of a SET_NAME command.
+         * Get the name of the CLOCK DOMAIN. This may be user set through the use of a SET_NAME command.
          * The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
          * defined value being provided in a localized form via the localized descripton field. By leaving
          * this field blank an AVDECC Controller can determine if the user has overridden the name and can
          * use this name rather than the localized name.
          */
-        uint8_t * STDCALL get_object_name();
+        uint8_t * STDCALL object_name();
 
         /**
-         * Get the localized string reference pointing to the localized Clock Domain name.
+         * Get the localized string reference pointing to the localized CLOCK DOMAIN name.
          */
-        uint16_t STDCALL get_localized_description();
+        uint16_t STDCALL localized_description();
 
         /**
-         * Get the descriptor index of the Clock Source descriptor describing the current Clock Source
-         * for the Clock Domain.
+         * Get the descriptor index of the CLOCK SOURCE descriptor describing the current CLOCK SOURCE
+         * for the CLOCK DOMAIN.
          */
-        uint16_t STDCALL get_clock_source_index();
+        uint16_t STDCALL clock_source_index();
 
         /**
          * Get the offset to the clock sources field from the start of the descriptor.
          * This is 76 for this version of AEM.
          */
-        uint16_t get_clock_sources_offset();
+        uint16_t clock_sources_offset();
 
         /**
-         * Get the number of clock source indexes in the clock sources field. The maximum value for this field
+         * Get the number of CLOCK SOURCE indexes in the clock sources field. The maximum value for this field
          * is 249 for this version of AEM.
          */
-        uint16_t STDCALL get_clock_sources_count();
+        uint16_t STDCALL clock_sources_count();
 
         /**
-         * Get the corresponding Clock Source by index present in the Clock Domain.
+         * Get the corresponding CLOCK SOURCE by index present in the CLOCK DOMAIN.
          */
         uint16_t STDCALL get_clock_source_by_index(uint32_t clk_src_index);
 
         /**
-         * Get the clock source index of the requested Clock Domain after sending a
+         * Get the CLOCK SOURCE index of the requested CLOCK DOMAIN after sending a
          * SET_CLOCK_SOURCE command and receiving a response back for the command.
          */
         uint16_t STDCALL set_clock_source_clock_source_index();
 
         /**
-         * Get the clock source index of the requested Clock Domain after sending a
+         * Get the CLOCK SOURCE index of the requested CLOCK DOMAIN after sending a
          * GET_CLOCK_SOURCE command and receiving a response back for the command.
          */
         uint16_t STDCALL get_clock_source_clock_source_index();
 
         /**
-         * Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.
+         * Send a SET_CLOCK_SOURCE command to change the CLOCK SOURCE of a CLOCK DOMAIN.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
-         * \param new_clk_src_index The clock source index field is set to the new clock source index.
+         * \param new_clk_src_index The CLOCK SOURCE index field is set to the new CLOCK SOURCE index.
          *
-         * The new clock source index can be retrieved by calling the following function after successfully
+         * The new CLOCK SOURCE index can be retrieved by calling the following function after successfully
          * receiving a response back for the SET_CLOCK_SOURCE command sent.
          *
          * \see set_clock_source_clock_source_index()
@@ -142,11 +142,11 @@ namespace avdecc_lib
         int proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
 
         /**
-         * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
+         * Send a GET_CLOCK_SOURCE command to get the current CLOCK SOURCE of a CLOCK DOMAIN.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          *
-         * The clock source index can be retrieved by calling the following function after successfully
+         * The CLOCK SOURCE index can be retrieved by calling the following function after successfully
          * receiving a response back for the GET_CLOCK_SOURCE command sent.
          *
          * \see get_clock_source_clock_source_index()

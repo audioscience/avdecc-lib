@@ -73,7 +73,7 @@ namespace avdecc_lib
         /**
          * Get the MAC address of the network interface.
          */
-        uint64_t get_mac();
+        uint64_t mac_addr();
 
         /**
          * Get the corresponding network interface description by index.

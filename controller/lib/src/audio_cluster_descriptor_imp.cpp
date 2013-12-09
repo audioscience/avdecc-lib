@@ -40,65 +40,65 @@ namespace avdecc_lib
 
         if(audio_cluster_desc_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "audio_cluster_desc_read error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, audio_cluster_desc_read error", end_station_obj->guid());
             assert(audio_cluster_desc_read_returned >= 0);
         }
     }
 
     audio_cluster_descriptor_imp::~audio_cluster_descriptor_imp() {}
 
-    uint16_t STDCALL audio_cluster_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL audio_cluster_descriptor_imp::descriptor_type() const
     {
         assert(audio_cluster_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER);
         return audio_cluster_desc.descriptor_type;
     }
 
-    uint16_t STDCALL audio_cluster_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL audio_cluster_descriptor_imp::descriptor_index() const
     {
         return audio_cluster_desc.descriptor_index;
     }
 
-    uint8_t * STDCALL audio_cluster_descriptor_imp::get_object_name()
+    uint8_t * STDCALL audio_cluster_descriptor_imp::object_name()
     {
         return audio_cluster_desc.object_name.value;
     }
 
-    uint16_t STDCALL audio_cluster_descriptor_imp::get_localized_description()
+    uint16_t STDCALL audio_cluster_descriptor_imp::localized_description()
     {
         return audio_cluster_desc.localized_description;
     }
 
-    uint16_t STDCALL audio_cluster_descriptor_imp::get_signal_type()
+    uint16_t STDCALL audio_cluster_descriptor_imp::signal_type()
     {
         return audio_cluster_desc.signal_type;
     }
 
-    uint16_t STDCALL audio_cluster_descriptor_imp::get_signal_index()
+    uint16_t STDCALL audio_cluster_descriptor_imp::signal_index()
     {
         return audio_cluster_desc.signal_index;
     }
 
-    uint16_t STDCALL audio_cluster_descriptor_imp::get_signal_output()
+    uint16_t STDCALL audio_cluster_descriptor_imp::signal_output()
     {
         return audio_cluster_desc.signal_output;
     }
 
-    uint32_t STDCALL audio_cluster_descriptor_imp::get_path_latency()
+    uint32_t STDCALL audio_cluster_descriptor_imp::path_latency()
     {
         return audio_cluster_desc.path_latency;
     }
 
-    uint32_t STDCALL audio_cluster_descriptor_imp::get_block_latency()
+    uint32_t STDCALL audio_cluster_descriptor_imp::block_latency()
     {
         return audio_cluster_desc.block_latency;
     }
 
-    uint16_t STDCALL audio_cluster_descriptor_imp::get_channel_count()
+    uint16_t STDCALL audio_cluster_descriptor_imp::channel_count()
     {
         return audio_cluster_desc.channel_count;
     }
 
-    uint8_t STDCALL audio_cluster_descriptor_imp::get_format()
+    uint8_t STDCALL audio_cluster_descriptor_imp::format()
     {
         return audio_cluster_desc.format;
     }

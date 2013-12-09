@@ -63,12 +63,12 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual end_station * STDCALL get_end_station_by_index(uint32_t end_station_index) = 0;
 
         /**
-         * \return The corresponding Configuration descriptor by index.
+         * \return The corresponding CONFIGURATION descriptor by index.
          */
         AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index) = 0;
 
         /**
-         * \return The corresponding Configuration descriptor by GUID.
+         * \return The corresponding CONFIGURATION descriptor by GUID.
          */
         AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_guid(uint64_t end_station_guid, uint16_t entity_index, uint16_t config_index) = 0;
 
@@ -112,7 +112,7 @@ namespace avdecc_lib
      */
     extern "C" AVDECC_CONTROLLER_LIB32_API controller * STDCALL create_controller(net_interface *netif,
                                                                                   void (*notification_callback) (void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
-                                                                                                                 uint16_t desc_type, uint16_t desc_index, void *notification_id),
+                                                                                                                 uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void *notification_id),
                                                                                   void (*log_callback) (void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms));
 }
 

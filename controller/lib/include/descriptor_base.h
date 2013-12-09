@@ -43,12 +43,12 @@ namespace avdecc_lib
         /**
          * \return The type of the descriptor.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_type() const = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL descriptor_type() const = 0;
 
         /**
          * \return The index of the descriptor.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_descriptor_index() const = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL descriptor_index() const = 0;
 
         /**
          * \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
@@ -57,30 +57,30 @@ namespace avdecc_lib
          *	   this field blank an AVDECC Controller can determine if the user has overridden the name and can
          *	   use this name rather than the localized name.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_object_name() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL object_name() = 0;
 
         /**
          * \return The localized string reference pointing to the localized descriptor name.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_localized_description() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL localized_description() = 0;
 
         /**
-         * Get the flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
+         * \return The flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL acquire_entity_flags() = 0;
 
         /**
-         * Get the owner id after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
+         * \return The owner id after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL acquire_entity_owner_entity_id() = 0;
 
         /**
-         * Get the flags after sending a LOCK_ENTITY command and receiving a response back for the command.
+         * \return The flags after sending a LOCK_ENTITY command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL lock_entity_flags() = 0;
 
         /**
-         * Get the locked entity id after sending a LOCK_ENTITY command and receiving a response back for the command.
+         * \return The locked entity id after sending a LOCK_ENTITY command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL lock_entity_locked_entity_id() = 0;
 

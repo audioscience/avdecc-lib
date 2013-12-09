@@ -24,12 +24,13 @@
 /**
  * avb_interface_descriptor_imp.cpp
  *
- * AVB Interface descriptor implementation
+ * AVB INTERFACE descriptor implementation
  */
 
 #include "enumeration.h"
 #include "log_imp.h"
 #include "util_imp.h"
+#include "end_station_imp.h"
 #include "avb_interface_descriptor_imp.h"
 
 namespace avdecc_lib
@@ -40,35 +41,35 @@ namespace avdecc_lib
 
         if(desc_avb_interface_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "avb_interface_desc_read error");
-            assert(desc_avb_interface_read_returned >= 0);
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, avb_interface_desc_read error", end_station_obj->guid());
+           // assert(desc_avb_interface_read_returned >= 0);
         }
     }
 
     avb_interface_descriptor_imp::~avb_interface_descriptor_imp() {}
 
-    uint16_t STDCALL avb_interface_descriptor_imp::get_descriptor_type() const
+    uint16_t STDCALL avb_interface_descriptor_imp::descriptor_type() const
     {
-        assert(avb_interface_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE);
+        //assert(avb_interface_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE);
         return avb_interface_desc.descriptor_type;
     }
 
-    uint16_t STDCALL avb_interface_descriptor_imp::get_descriptor_index() const
+    uint16_t STDCALL avb_interface_descriptor_imp::descriptor_index() const
     {
         return avb_interface_desc.descriptor_index;
     }
 
-    uint8_t * STDCALL avb_interface_descriptor_imp::get_object_name()
+    uint8_t * STDCALL avb_interface_descriptor_imp::object_name()
     {
         return avb_interface_desc.object_name.value;
     }
 
-    uint16_t STDCALL avb_interface_descriptor_imp::get_localized_description()
+    uint16_t STDCALL avb_interface_descriptor_imp::localized_description()
     {
         return avb_interface_desc.localized_description;
     }
 
-    uint64_t STDCALL avb_interface_descriptor_imp::get_mac_addr()
+    uint64_t STDCALL avb_interface_descriptor_imp::mac_addr()
     {
         uint64_t mac_addr;
         utility->convert_eui48_to_uint64(avb_interface_desc.mac_address.value, mac_addr);
@@ -76,62 +77,62 @@ namespace avdecc_lib
         return mac_addr;
     }
 
-    uint16_t STDCALL avb_interface_descriptor_imp::get_interface_flags()
+    uint16_t STDCALL avb_interface_descriptor_imp::interface_flags()
     {
         return avb_interface_desc.interface_flags;
     }
 
-    uint64_t STDCALL avb_interface_descriptor_imp::get_clock_identity()
+    uint64_t STDCALL avb_interface_descriptor_imp::clock_identity()
     {
         return jdksavdecc_uint64_get(&avb_interface_desc.clock_identity, 0);
     }
 
-    uint8_t STDCALL avb_interface_descriptor_imp::get_priority1()
+    uint8_t STDCALL avb_interface_descriptor_imp::priority1()
     {
         return avb_interface_desc.priority1;
     }
 
-    uint8_t STDCALL avb_interface_descriptor_imp::get_clock_class()
+    uint8_t STDCALL avb_interface_descriptor_imp::clock_class()
     {
         return avb_interface_desc.clock_class;
     }
 
-    uint16_t STDCALL avb_interface_descriptor_imp::get_offset_scaled_log_variance()
+    uint16_t STDCALL avb_interface_descriptor_imp::offset_scaled_log_variance()
     {
         return avb_interface_desc.offset_scaled_log_variance;
     }
 
-    uint8_t STDCALL avb_interface_descriptor_imp::get_clock_accuracy()
+    uint8_t STDCALL avb_interface_descriptor_imp::clock_accuracy()
     {
         return avb_interface_desc.clock_accuracy;
     }
 
-    uint8_t STDCALL avb_interface_descriptor_imp::get_priority2()
+    uint8_t STDCALL avb_interface_descriptor_imp::priority2()
     {
         return avb_interface_desc.priority2;
     }
 
-    uint8_t STDCALL avb_interface_descriptor_imp::get_domain_number()
+    uint8_t STDCALL avb_interface_descriptor_imp::domain_number()
     {
         return avb_interface_desc.domain_number;
     }
 
-    uint8_t STDCALL avb_interface_descriptor_imp::get_log_sync_interval()
+    uint8_t STDCALL avb_interface_descriptor_imp::log_sync_interval()
     {
         return avb_interface_desc.log_sync_interval;
     }
 
-    uint8_t STDCALL avb_interface_descriptor_imp::get_log_announce_interval()
+    uint8_t STDCALL avb_interface_descriptor_imp::log_announce_interval()
     {
         return avb_interface_desc.log_announce_interval;
     }
 
-    uint8_t STDCALL avb_interface_descriptor_imp::get_log_pdelay_interval()
+    uint8_t STDCALL avb_interface_descriptor_imp::log_pdelay_interval()
     {
         return avb_interface_desc.log_pdelay_interval;
     }
 
-    uint16_t STDCALL avb_interface_descriptor_imp::get_port_number()
+    uint16_t STDCALL avb_interface_descriptor_imp::port_number()
     {
         return avb_interface_desc.port_number;
     }

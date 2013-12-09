@@ -47,30 +47,30 @@ namespace avdecc_lib
 
     bool operator== (const descriptor_base_imp &n1, const descriptor_base_imp &n2)
     {
-        return n1.get_descriptor_index() == n2.get_descriptor_index();
+        return n1.descriptor_index() == n2.descriptor_index();
     }
 
     bool operator< (const descriptor_base_imp &n1, const descriptor_base_imp &n2)
     {
-        return n1.get_descriptor_index() < n2.get_descriptor_index();
+        return n1.descriptor_index() < n2.descriptor_index();
     }
 
-    uint16_t STDCALL descriptor_base_imp::get_descriptor_type() const
+    uint16_t STDCALL descriptor_base_imp::descriptor_type() const
     {
         return 0;
     }
 
-    uint16_t STDCALL descriptor_base_imp::get_descriptor_index() const
+    uint16_t STDCALL descriptor_base_imp::descriptor_index() const
     {
         return 0;
     }
 
-    uint8_t * STDCALL descriptor_base_imp::get_object_name()
+    uint8_t * STDCALL descriptor_base_imp::object_name()
     {
         return NULL;
     }
 
-    uint16_t STDCALL descriptor_base_imp::get_localized_description()
+    uint16_t STDCALL descriptor_base_imp::localized_description()
     {
         return 0;
     }
@@ -97,13 +97,13 @@ namespace avdecc_lib
 
     int STDCALL descriptor_base_imp::send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag)
     {
-
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override send_acquire_entity_cmd.\n");
         return 0;
     }
 
     int descriptor_base_imp::proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
-
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override proc_acquire_entity_resp.\n");
         return 0;
     }
 
@@ -119,14 +119,14 @@ namespace avdecc_lib
         // Fill aem_cmd_acquire_entity.sequence_id in AEM Controller State Machine
         aem_cmd_acquire_entity.command_type = JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY;
 
-        /****************************** AECP Message Specific Data ******************************/
+        /************************* AECP Message Specific Data **************************/
         aem_cmd_acquire_entity.aem_acquire_flags = acquire_entity_flag;
         jdksavdecc_eui64_init(&aem_cmd_acquire_entity.owner_entity_id);
-        aem_cmd_acquire_entity.descriptor_type = desc_base_imp_ref->get_descriptor_type();
-        aem_cmd_acquire_entity.descriptor_index = desc_base_imp_ref->get_descriptor_index();
+        aem_cmd_acquire_entity.descriptor_type = desc_base_imp_ref->descriptor_type();
+        aem_cmd_acquire_entity.descriptor_index = desc_base_imp_ref->descriptor_index();
 
-        /***************************** Fill frame payload with AECP data and send the frame ***********************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);
+        /**************************** Fill frame payload with AECP data and send the frame **********************/
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
         aem_cmd_acquire_entity_returned = jdksavdecc_aem_command_acquire_entity_write(&aem_cmd_acquire_entity,
                                                                                       cmd_frame->payload,
                                                                                       ETHER_HDR_SIZE,
@@ -139,7 +139,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->get_guid());
+        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);
@@ -184,14 +184,14 @@ namespace avdecc_lib
 
     int STDCALL descriptor_base_imp::send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Need to implement send_lock_entity_cmd\n");
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override send_lock_entity_cmd.\n");
 
         return 0;
     }
 
     int descriptor_base_imp::proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Need to implement proc_lock_entity_resp\n");
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override proc_lock_entity_resp.\n");
 
         return 0;
     }
@@ -211,11 +211,11 @@ namespace avdecc_lib
         /****************************** AECP Message Specific Data ****************************/
         aem_cmd_lock_entity.aem_lock_flags = lock_entity_flag;
         jdksavdecc_eui64_init(&aem_cmd_lock_entity.locked_entity_id);
-        aem_cmd_lock_entity.descriptor_type = descriptor_base_imp_ref->get_descriptor_type();
-        aem_cmd_lock_entity.descriptor_index = descriptor_base_imp_ref->get_descriptor_index();
+        aem_cmd_lock_entity.descriptor_type = descriptor_base_imp_ref->descriptor_type();
+        aem_cmd_lock_entity.descriptor_index = descriptor_base_imp_ref->descriptor_index();
 
         /**************************** Fill frame payload with AECP data and send the frame **********************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->get_mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
         aem_cmd_acquire_entity_returned = jdksavdecc_aem_command_lock_entity_write(&aem_cmd_lock_entity,
                                                                                    cmd_frame->payload,
                                                                                    ETHER_HDR_SIZE,
@@ -228,7 +228,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->get_guid());
+        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);
@@ -273,28 +273,28 @@ namespace avdecc_lib
 
     int STDCALL descriptor_base_imp::send_set_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index, char * name)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_NAME command.");
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override SET_NAME command.");
 
         return 0;
     }
 
     int descriptor_base_imp::proc_set_name_resp(uint8_t *base_pointer, uint16_t frame_len)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_NAME response.");
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override SET_NAME response.");
 
         return 0;
     }
 
     int STDCALL descriptor_base_imp::send_get_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_NAME command.");
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override GET_NAME command.");
 
         return 0;
     }
 
     int descriptor_base_imp::proc_get_name_resp(uint8_t *base_pointer, uint16_t frame_len)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_NAME response.");
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override GET_NAME response.");
 
         return 0;
     }

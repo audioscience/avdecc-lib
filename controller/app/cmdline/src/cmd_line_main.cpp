@@ -35,48 +35,56 @@
 #include <stdint.h>
 #include <stdexcept>
 #include "cmd_line.h"
-#ifdef __MACH__
+#if defined(__MACH__)
 #include <readline/readline.h>
 #include <readline/history.h>
+#elif defined(__linux__)
+#include <editline/readline.h>
 #endif
 
 using namespace std;
 
 extern "C" void notification_callback(void *user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
-                                      uint16_t desc_type, uint16_t desc_index, void *notification_id)
+                                      uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status,
+                                      void *notification_id)
 {
     if(notification_type == avdecc_lib::COMMAND_TIMEOUT || notification_type == avdecc_lib::RESPONSE_RECEIVED)
     {
         const char *cmd_name;
         const char *desc_name;
+        const char *cmd_status_name;
 
         if(cmd_type < avdecc_lib::CMD_LOOKUP)
         {
             cmd_name = cmd_line::utility->aem_cmd_value_to_name(cmd_type);
             desc_name = cmd_line::utility->aem_desc_value_to_name(desc_type);
+            cmd_status_name = cmd_line::utility->aem_cmd_status_value_to_name(cmd_status);
         }
         else
         {
             cmd_name = cmd_line::utility->acmp_cmd_value_to_name(cmd_type - avdecc_lib::CMD_LOOKUP);
             desc_name = "NULL";
+            cmd_status_name = cmd_line::utility->acmp_cmd_status_value_to_name(cmd_status);
         }
 
-        printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %p)\n",
+        printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %s, %p)\n",
                cmd_line::utility->notification_value_to_name(notification_type),
                guid,
                cmd_name,
                desc_name,
                desc_index,
+               cmd_status_name,
                notification_id);
     }
     else
     {
-        printf("\n[NOTIFICATION] (%s, 0x%llx, %d, %d, %d, %p)\n",
+        printf("\n[NOTIFICATION] (%s, 0x%llx, %d, %d, %d, %d, %p)\n",
                cmd_line::utility->notification_value_to_name(notification_type),
                guid,
                cmd_type,
                desc_type,
                desc_index,
+               cmd_status,
                notification_id);
     }
 }
@@ -98,15 +106,16 @@ int main()
     std::streambuf *cout_buf = std::cout.rdbuf();
     bool is_output_redirected = false;
     std::string cmd_input_orig;
-#ifdef __MACH__
+#if defined(__MACH__) || defined(__linux__)
     char* input, shell_prompt[100];
 #endif
+
 
     std::cout << "\nEnter help for a list of valid commands." << std::endl;
 
     while(while_loop)
     {
-#ifdef __MACH__
+#if defined(__MACH__) || defined(__linux__)
         snprintf(shell_prompt, sizeof(shell_prompt), "$ ");
         input = readline(shell_prompt);
         if (!input)
@@ -114,7 +123,7 @@ int main()
         std::string cmd_input(input);
         cmd_input_orig = cmd_input;
         add_history(input);
-#else
+#else 
         std::string cmd_input;
         printf("\n>");
         std::getline(std::cin, cmd_input);
@@ -210,7 +219,7 @@ int main()
                 else
                 {
                     std::cout << "Invalid Command\n" << std::endl;
-                    avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+                    avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
                 }
             }
             else
@@ -223,25 +232,33 @@ int main()
         {
             if(input_argv.size() == 2)
             {
-                std::string file = cmd_line::log_path + input_argv.at(1) + ".txt";
-                try
+                if(input_argv.at(1) == "level")
                 {
-                    ofstream_ref.open(file);
-                    ofstream_ref.good();
-                    std::cout.rdbuf(ofstream_ref.rdbuf());
-                    is_output_redirected = true;
+                    std::cout << "Invalid Command\n" << std::endl;
+                    avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
                 }
-                catch(std::ofstream::failure e)
+                else
                 {
-                    std::cerr << "\nofstream exception";
-                    exit(EXIT_FAILURE);
+                    std::string file = cmd_line::log_path + input_argv.at(1) + ".txt";
+                    try
+                    {
+                        ofstream_ref.open(file);
+                        ofstream_ref.good();
+                        std::cout.rdbuf(ofstream_ref.rdbuf());
+                        is_output_redirected = true;
+                    }
+                    catch(std::ofstream::failure e)
+                    {
+                        std::cerr << "\nofstream exception";
+                        exit(EXIT_FAILURE);
+                    }
                 }
             }
             else if((input_argv.size() == 3) && (input_argv.at(1) == "level"))
             {
                 uint32_t new_log_level;
 
-                if((input_argv.at(2) == "0") || (atoi(input_argv.at(1).c_str()) != 0))
+                if((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0))
                 {
                     is_input_valid = true;
                     new_log_level = (uint16_t)atoi(input_argv.at(2).c_str());
@@ -368,10 +385,10 @@ int main()
                 else
                 {
                     std::cout << "Invalid Command" << std::endl;
-                    avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+                    avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
                 }
             }
-            else if(input_argv.size() == 6)
+            else if((input_argv.size() == 5) || (input_argv.size() == 6))
             {
                 uint32_t instream_end_station_index = 0;
                 uint16_t instream_desc_index = 0;
@@ -392,16 +409,27 @@ int main()
 
                 if(is_input_valid)
                 {
-                    avdecc_cmd_line_ref->cmd_connect_rx(instream_end_station_index,
-                                                        instream_desc_index,
-                                                        outstream_end_station_index,
-                                                        outstream_desc_index,
-                                                        input_argv.at(5));
+                    if(input_argv.size() == 5)
+                    {
+                        avdecc_cmd_line_ref->cmd_connect_rx(instream_end_station_index,
+                                                            instream_desc_index,
+                                                            outstream_end_station_index,
+                                                            outstream_desc_index,
+                                                            "");
+                    }
+                    else if(input_argv.size() == 6)
+                    {
+                        avdecc_cmd_line_ref->cmd_connect_rx(instream_end_station_index,
+                                                            instream_desc_index,
+                                                            outstream_end_station_index,
+                                                            outstream_desc_index,
+                                                            input_argv.at(5));
+                    }
                 }
                 else
                 {
                     std::cout << "Invalid Command" << std::endl;
-                    avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+                    avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
                 }
             }
             else
@@ -438,7 +466,7 @@ int main()
                 else
                 {
                     std::cout << "Invalid Command" << std::endl;
-                    avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+                    avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
                 }
             }
             else
@@ -513,7 +541,7 @@ int main()
             else
             {
                 std::cout << "Invalid Command\n" << std::endl;
-                avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+                avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
             }
         }
         else if(input_argv.at(0) == "controller")
@@ -525,7 +553,7 @@ int main()
             else
             {
                 std::cout << "Invalid Command\n" << std::endl;
-                avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+                avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
             }
         }
         else if(input_argv.at(0) == "read")
@@ -725,7 +753,7 @@ int main()
                     std::cout << "Invalid Command\n" << std::endl;
                     avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0) + " " + input_argv.at(1));
                 }
-            }
+            }             
             else if((input_argv.size() == 4) && (input_argv.at(1) == "stream_info"))
             {
                 uint16_t desc_index = 0;
@@ -842,8 +870,8 @@ int main()
                 uint32_t outstream_end_station_index = 0;
                 uint16_t outstream_desc_index = 0;
 
-                if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
-                   (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
+                if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
                     outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
@@ -865,8 +893,8 @@ int main()
                 uint32_t instream_end_station_index = 0;
                 uint16_t instream_desc_index = 0;
 
-                if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
-                   (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
+                if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
                     instream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
@@ -888,8 +916,8 @@ int main()
                 uint32_t outstream_end_station_index = 0;
                 uint16_t outstream_desc_index = 0;
 
-                if((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0) &&
-                   (input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0))
+                if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                   ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
                     outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
@@ -909,7 +937,7 @@ int main()
             else
             {
                 std::cout << "Invalid Command\n" << std::endl;
-                avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+               avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
             }
         }
         else if((input_argv.at(0) == "start"))
@@ -1044,7 +1072,7 @@ int main()
 
         is_input_valid = false;
         input_argv.clear();
-#if __MACH__
+#if defined(__MACH__) || defined(__linux__)
         free(input);
 #endif
     }

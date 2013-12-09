@@ -28,9 +28,9 @@ INCLUDES += -I$(SRC_DIR1)
 EXTRA_CFLAGS += -g -D__linux__
 EXTRA_CXXFLAGS += -Wall -ansi -g -std=c++0x -D__linux__
 
-OBJS =  avdecc_controller_cmd_line.o \
-	avdecc_controller_cmd_line_main.o
-
+OBJS =  cmd_line.o \
+	cmd_line_main.o \
+	cmd_line_help.o
 
 # Search .o files in build directory
 vpath %.o $(BUILD_DIR)
@@ -64,9 +64,11 @@ $(AVDECC_LIB):
 
 $(TARGET_APP): $(OBJS) $(AVDECC_LIB)
 	@echo $(CC) linking $@
-	@$(CXX) $(LDFLAGS) -g -lm -lrt -o $@ $(addprefix $(BUILD_DIR)/,$(notdir $(OBJS))) $(AVDECC_LIB)
+	@$(CXX) $(LDFLAGS) -g -lm -lrt -lpthread  -ledit -lcurses -o $@ $(addprefix $(BUILD_DIR)/,$(notdir $(OBJS))) $(AVDECC_LIB)
 
 clean:
+	@echo clean: avdecc-lib
+	cd ../../../../lib/build/linux; make clean
 	rm -f $(OBJS) $(TARGET_LIB) $(TARGET_APP) $(BUILD_DIR)/*.o $(DEP_DIR)/*.d
 
 CPPCHECK_DEPS1 := $(OBJS1:.o=.x)
