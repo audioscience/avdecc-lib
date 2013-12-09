@@ -33,8 +33,6 @@
 
 #include "controller.h"
 
-#define AVDECC_CONTROLLER_VERSION "v0.4.7"
-
 namespace avdecc_lib
 {
     class controller_imp : public virtual controller

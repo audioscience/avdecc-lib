@@ -55,13 +55,13 @@ namespace avdecc_lib
         size_t ether_frame_pos = 0;
         jdksavdecc_frame_init(cmd_frame);
 
-        /**************************************** Ethernet Frame **************************************/
+        /**************************************** Ethernet Frame *************************************/
         cmd_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
         utility->convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value);
         utility->convert_uint64_to_eui48(end_station_mac, cmd_frame->dest_address.value);
         cmd_frame->length = AECP_FRAME_LEN; // Length of AECP packet is 64 bytes
 
-        /******************** Fill frame payload with Ethernet frame information ******************/
+        /****************** Fill frame payload with Ethernet frame information ****************/
         jdksavdecc_frame_write(cmd_frame, cmd_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
 
         return 0;
@@ -83,7 +83,7 @@ namespace avdecc_lib
         aecpdu_common_ctrl_hdr.control_data_length = 20;
         jdksavdecc_uint64_write(target_guid, &aecpdu_common_ctrl_hdr.target_entity_id, 0, sizeof(uint64_t));
 
-        /*********************** Fill frame payload with AECP Common Control Header information **********************/
+        /********************** Fill frame payload with AECP Common Control Header information *********************/
         aecpdu_common_ctrl_hdr_returned = jdksavdecc_aecpdu_common_control_header_write(&aecpdu_common_ctrl_hdr,
                                                                                         cmd_frame->payload,
                                                                                         aecpdu_common_pos,
@@ -184,28 +184,35 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame frame = inflight_cmds.at(inflight_cmd_index).frame();
         bool is_retried = inflight_cmds.at(inflight_cmd_index).retried();
+        uint32_t notification_flag = inflight_cmds.at(inflight_cmd_index).notification_flag();
 
         if(is_retried)
         {
             jdksavdecc_eui64 id = jdksavdecc_common_control_header_get_stream_id(frame.payload, ETHER_HDR_SIZE);
-            //uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame.payload, ETHER_HDR_SIZE);
             uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame.payload, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
             uint16_t desc_type = jdksavdecc_aem_command_read_descriptor_get_descriptor_type(frame.payload, ETHER_HDR_SIZE);
             uint16_t desc_index = jdksavdecc_aem_command_read_descriptor_get_descriptor_index(frame.payload, ETHER_HDR_SIZE);
+            
+            notification_imp_ref->post_notification_msg(COMMAND_TIMEOUT,
+                                                        jdksavdecc_uint64_get(&id, 0),
+                                                        cmd_type,
+                                                        desc_type,
+                                                        desc_index,
+                                                        -1,
+                                                        inflight_cmds.at(inflight_cmd_index).cmd_notification_id);
+
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
-                                     "Command Timeout, 0x%llx, %s, %s, %d, %d",
-                                     jdksavdecc_uint64_get(&id, 0),
-                                     utility->aem_cmd_value_to_name(cmd_type),
-                                     utility->aem_desc_value_to_name(desc_type),
-                                     desc_index,
-                                     inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
+                                      "Command Timeout, 0x%llx, %s, %s, %d, %d",
+                                      jdksavdecc_uint64_get(&id, 0),
+                                      utility->aem_cmd_value_to_name(cmd_type),
+                                      utility->aem_desc_value_to_name(desc_type),
+                                      desc_index,
+                                      inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
 
             inflight_cmds.erase(inflight_cmds.begin() + inflight_cmd_index);
         }
         else
         {
-            uint32_t notification_flag = inflight_cmds.at(inflight_cmd_index).notification_flag();
-
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "Resend the command with sequence id = %d",
                                       inflight_cmds.at(inflight_cmd_index).cmd_seq_id);

@@ -52,9 +52,9 @@ Directory layout
 				linux\
 				msvc\
 			include\ (contains public header files)
-			src\ (contains private header files and c++ source code)
+			src\ (contains private header files and C++ source code)
 				linux\ (linux specific files)
-				msvc\ (Microsoft Visual Studio specific files
+				msvc\ (Microsoft Visual Studio specific files)
 				
 		app\
 			bin\
@@ -144,6 +144,11 @@ ToDo
 Operations
 ==========
 
+AVDECC Controller version
+-------------------------
+
+The AVDECC Controller version number can be updated inside the version header file.
+
 AVDECC End Station Discovery
 ----------------------------
 
@@ -223,6 +228,14 @@ directory. asytle is run from the command line using the following command seque
 	AStyle --options=..\avdecc-lib\astyle_code_style.txt ..\avdecc-lib\controller\lib\include\*.h
 			 ..\avdecc-lib\controller\lib\src\*.h ..\avdecc-lib\controller\lib\src\*.cpp
 			 ..\avdecc-lib\controller\lib\src\msvc\*.h ..\avdecc-lib\controller\lib\src\msvc\*.cpp
+			 
+Source documentation
+--------------------
+
+A standard tool, Doxygen, is used for generating documentation from the AVDECC Controller Lib source code.
+A link to the online version of the AVDECC Controller Lib documentation can be found at:
+http://www.audioscience.com/internet/download/sdk/avdecclib_usermanual_html/html/index.html
+			 
 
 Roadmap
 =======

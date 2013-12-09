@@ -70,8 +70,6 @@ cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uin
     sys = avdecc_lib::create_system(avdecc_lib::system::LAYER2_MULTITHREADED_CALLBACK, netif, controller_obj);
     utility = avdecc_lib::create_util();
 
-    //controller_obj->set_logging_level(avdecc_lib::LOGGING_LEVEL_DEBUG);
-
     std::cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
     std::cout << "(c) AudioScience, Inc. 2013\n"<< std::endl;
     print_interfaces_and_select();
@@ -1529,38 +1527,6 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
     return 0;
 }
 
-int cmd_line::cmd_get_tx_state(uint32_t outstream_end_station_index, uint16_t outstream_desc_index)
-{
-    bool is_valid = (outstream_end_station_index < (controller_obj->get_end_station_count())) &&
-                    (outstream_desc_index < (controller_obj->get_config_desc_by_index(outstream_end_station_index, current_entity, current_config)->stream_output_desc_count()));
-
-    if(is_valid)
-    {
-        int status = -1;
-        intptr_t cmd_notification_id = 0;
-
-        cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
-        avdecc_lib::stream_output_descriptor *outstream = controller_obj->get_config_desc_by_index(outstream_end_station_index, current_entity, current_config)->get_stream_output_desc_by_index(outstream_desc_index);
-        outstream->send_get_tx_state_cmd((void *)cmd_notification_id);
-        status = sys->get_last_resp_status();
-
-        if(status == avdecc_lib::ACMP_STATUS_SUCCESS)
-        {
-            std::cout << "\nstream_id = 0x" << std::hex << outstream->get_tx_state_stream_id();
-            std::cout << "\nstream_dest_mac = 0x" << std::hex << outstream->get_tx_state_stream_dest_mac();
-            std::cout << "\nconnection_count = " << std::dec << outstream->get_tx_state_connection_count();
-            std::cout << "\nstream_vlan_id = " << std::dec << outstream->get_tx_state_stream_vlan_id() << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "Invalid GET Talker Connection State" << std::endl;
-    }
-
-    return 0;
-}
-
 int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
                              uint16_t instream_desc_index,
                              uint32_t outstream_end_station_index,
@@ -1571,6 +1537,7 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
                     (instream_desc_index < (controller_obj->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->stream_input_desc_count())) &&
                     (outstream_end_station_index < (controller_obj->get_end_station_count())) &&
                     (outstream_desc_index < (controller_obj->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->stream_output_desc_count()));
+    
     if(is_valid)
     {
         uint16_t connection_flag = 0;
@@ -1614,10 +1581,19 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
 
         intptr_t cmd_notification_id = 0;
         uint64_t talker_guid;
+        bool check_stream_format;
 
         cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *instream = controller_obj->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->get_stream_input_desc_by_index(instream_desc_index);
+        avdecc_lib::stream_output_descriptor *outstream = controller_obj->get_config_desc_by_index(outstream_end_station_index, current_entity, current_config)->get_stream_output_desc_by_index(outstream_desc_index);
+        check_stream_format = (strcmp(instream->current_format(), outstream->current_format()) == 0);
+        if(!check_stream_format)
+        {
+            std::cout << "\nStream format does not match. \nInstream has stream format: " << instream->current_format() <<
+                         "\nOutstream has stream format: " << outstream->current_format() << std::endl;
+        }
+
         talker_guid = controller_obj->get_end_station_by_index(outstream_end_station_index)->get_entity_desc_by_index(current_entity)->entity_id();
         instream->send_connect_rx_cmd((void *)cmd_notification_id, talker_guid, outstream_desc_index, connection_flag);
         sys->get_last_resp_status();
@@ -1653,6 +1629,38 @@ int cmd_line::cmd_disconnect_rx(uint32_t instream_end_station_index,
     else
     {
         std::cout << "Invalid ACMP Disconnection" << std::endl;
+    }
+
+    return 0;
+}
+
+int cmd_line::cmd_get_tx_state(uint32_t outstream_end_station_index, uint16_t outstream_desc_index)
+{
+    bool is_valid = (outstream_end_station_index < (controller_obj->get_end_station_count())) &&
+                    (outstream_desc_index < (controller_obj->get_config_desc_by_index(outstream_end_station_index, current_entity, current_config)->stream_output_desc_count()));
+
+    if(is_valid)
+    {
+        int status = -1;
+        intptr_t cmd_notification_id = 0;
+
+        cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+        avdecc_lib::stream_output_descriptor *outstream = controller_obj->get_config_desc_by_index(outstream_end_station_index, current_entity, current_config)->get_stream_output_desc_by_index(outstream_desc_index);
+        outstream->send_get_tx_state_cmd((void *)cmd_notification_id);
+        status = sys->get_last_resp_status();
+
+        if(status == avdecc_lib::ACMP_STATUS_SUCCESS)
+        {
+            std::cout << "\nstream_id = 0x" << std::hex << outstream->get_tx_state_stream_id();
+            std::cout << "\nstream_dest_mac = 0x" << std::hex << outstream->get_tx_state_stream_dest_mac();
+            std::cout << "\nconnection_count = " << std::dec << outstream->get_tx_state_connection_count();
+            std::cout << "\nstream_vlan_id = " << std::dec << outstream->get_tx_state_stream_vlan_id() << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "Invalid GET Talker Connection State" << std::endl;
     }
 
     return 0;
