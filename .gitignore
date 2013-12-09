@@ -1,19 +1,28 @@
-bin
-*.tlog
-*.manifest
-*.lastbuildstate
-*.log
-*.obj
-*.pdb
-*.opensdf
-*.sdf
-*.sln
-*.suo
-*.filters
-*.user
-*.ipch
-*.cache
-*.idb
-*.orig
+.DS_Store
+
+# Compiled Object files
+*.slo
+*.lo
 *.o
+*.obj
+*.d
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.class
+*.lib
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.py[cod]
+
 
