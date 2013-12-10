@@ -8,9 +8,13 @@ file(GLOB_RECURSE CONTROLLERLIB_INCLUDES "include/*.h" "src/*.h" )
 
 file(GLOB_RECURSE CONTROLLERLIB_SRC "src/*.cpp" )
 
-if(TRUE)
+if(APPLE)
   file(GLOB_RECURSE CONTROLLERLIB_SRC "src/osx/*.cpp" )
-endif(TRUE)
+elseif(UNIX)
+  file(GLOB_RECURSE CONTROLLERLIB_SRC "src/linux/*.cpp" )
+elseif(WIN32)
+  file(GLOB_RECURSE CONTROLLERLIB_SRC "src/msvc/*.cpp" )
+endif()
 
 add_library (controller ${CONTROLLERLIB_SRC} ${CONTROLLERLIB_INCLUDES})
 
