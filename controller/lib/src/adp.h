@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_ADP_H_
-#define _AVDECC_CONTROLLER_LIB_ADP_H_
 
 #include "jdksavdecc_adp.h"
 
@@ -219,4 +217,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

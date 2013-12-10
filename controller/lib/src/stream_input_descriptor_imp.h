@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_STREAM_INPUT_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_STREAM_INPUT_DESCRIPTOR_IMP_H_
 
 #include "jdksavdecc_acmp_controller.h"
 #include "descriptor_base_imp.h"
@@ -501,4 +499,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

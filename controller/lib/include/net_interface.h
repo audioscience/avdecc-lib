@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_NET_INTERFACE_H_
-#define _AVDECC_CONTROLLER_LIB_NET_INTERFACE_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -71,4 +69,3 @@ namespace avdecc_lib
     extern "C" AVDECC_CONTROLLER_LIB32_API net_interface * STDCALL create_net_interface();
 }
 
-#endif

@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
 
 #include "avdecc_lib_os.h"
 #include <stdint.h>
@@ -82,4 +80,3 @@ namespace avdecc_lib
     extern notification_imp *notification_imp_ref;
 }
 
-#endif

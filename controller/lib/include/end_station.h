@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_END_STATION_H_
-#define _AVDECC_CONTROLLER_LIB_END_STATION_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -89,4 +87,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

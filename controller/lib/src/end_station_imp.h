@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_END_STATION_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_END_STATION_IMP_H_
 
 #include "entity_descriptor_imp.h"
 #include "end_station.h"
@@ -221,4 +219,4 @@ namespace avdecc_lib
     };
 }
 
-#endif
+

@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_NET_INTERFACE_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_NET_INTERFACE_IMP_H_
 
 #define HAVE_REMOTE
 
@@ -107,4 +105,3 @@ namespace avdecc_lib
     extern net_interface_imp *net_interface_ref;
 }
 
-#endif

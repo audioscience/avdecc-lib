@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_CONTROLLER_H_
-#define _AVDECC_CONTROLLER_LIB_CONTROLLER_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -116,4 +114,3 @@ namespace avdecc_lib
                                                                                   void (*log_callback) (void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms));
 }
 
-#endif

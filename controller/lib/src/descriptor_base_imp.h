@@ -32,9 +32,6 @@
 #pragma warning(disable : 4250) // Disable warning message C4250: inherits via dominance
 #endif
 
-#ifndef _AVDECC_CONTROLLER_LIB_DESCRIPTOR_BASE_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_DESCRIPTOR_BASE_IMP_H_
-
 #include <vector>
 #include "jdksavdecc_util.h"
 #include "jdksavdecc_aem_command.h"
@@ -198,4 +195,3 @@ namespace avdecc_lib
     bool operator< (const descriptor_base_imp &n1, const descriptor_base_imp &n2);
 }
 
-#endif

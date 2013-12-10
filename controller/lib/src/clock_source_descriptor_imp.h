@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_CLOCK_SOURCE_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_CLOCK_SOURCE_DESCRIPTOR_IMP_H_
 
 #include "descriptor_base_imp.h"
 #include "clock_source_descriptor.h"
@@ -113,4 +111,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

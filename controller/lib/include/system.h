@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_SYSTEM_H_
-#define _AVDECC_CONTROLLER_LIB_SYSTEM_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -86,4 +84,3 @@ namespace avdecc_lib
     extern "C" AVDECC_CONTROLLER_LIB32_API system * STDCALL create_system(system::system_type type, net_interface *netif, controller *controller_obj);
 }
 
-#endif

@@ -28,8 +28,7 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_LOCALE_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_LOCALE_DESCRIPTOR_IMP_H_
+
 
 #include "descriptor_base_imp.h"
 #include "locale_descriptor.h"
@@ -87,4 +86,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

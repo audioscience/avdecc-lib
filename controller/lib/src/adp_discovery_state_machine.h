@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_ADP_DISCOVERY_STATE_MACHINE_H_
-#define _AVDECC_CONTROLLER_LIB_ADP_DISCOVERY_STATE_MACHINE_H_
 
 #include "timer.h"
 
@@ -122,4 +120,3 @@ namespace avdecc_lib
     extern adp_discovery_state_machine *adp_discovery_state_machine_ref;
 }
 
-#endif

@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_AUDIO_UNIT_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_AUDIO_UNIT_DESCRIPTOR_IMP_H_
 
 #include "descriptor_base_imp.h"
 #include "audio_unit_descriptor.h"
@@ -327,4 +325,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

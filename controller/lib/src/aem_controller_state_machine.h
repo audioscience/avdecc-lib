@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_AEM_CONTROLLER_STATE_MACHINE_H_
-#define _AVDECC_CONTROLLER_LIB_AEM_CONTROLLER_STATE_MACHINE_H_
 
 namespace avdecc_lib
 {
@@ -117,4 +115,3 @@ namespace avdecc_lib
     extern aem_controller_state_machine *aem_controller_state_machine_ref;
 }
 
-#endif

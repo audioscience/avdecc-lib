@@ -29,8 +29,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_STREAM_INPUT_DESCRIPTOR_H_
-#define _AVDECC_CONTROLLER_LIB_STREAM_INPUT_DESCRIPTOR_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -372,4 +370,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

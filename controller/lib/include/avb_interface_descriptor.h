@@ -31,8 +31,7 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_AVB_INTERFACE_DESCRIPTOR_H_
-#define _AVDECC_CONTROLLER_LIB_AVB_INTERFACE_DESCRIPTOR_H_
+
 
 #include <stdint.h>
 #include "build.h"
@@ -114,4 +113,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

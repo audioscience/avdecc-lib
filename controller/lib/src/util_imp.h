@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_UTIL_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_UTIL_IMP_H_
 
 #include "util.h"
 
@@ -131,4 +129,3 @@ namespace avdecc_lib
     extern util_imp *utility;
 }
 
-#endif

@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_CONTROLLER_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_CONTROLLER_IMP_H_
 
 #include "controller.h"
 
@@ -138,4 +136,3 @@ namespace avdecc_lib
     extern controller_imp *controller_imp_ref;
 }
 
-#endif

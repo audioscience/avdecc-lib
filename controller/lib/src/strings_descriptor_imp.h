@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_STRINGS_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_STRINGS_DESCRIPTOR_IMP_H_
 
 #include "descriptor_base_imp.h"
 #include "strings_descriptor.h"
@@ -71,5 +69,3 @@ namespace avdecc_lib
         uint8_t * STDCALL get_string_by_index(uint32_t string_index);
     };
 }
-
-#endif
