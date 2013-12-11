@@ -2,20 +2,31 @@ cmake_minimum_required (VERSION 2.8)
 project (controller)
 enable_testing()
 
-include_directories( src include ../../jdksavdecc-c/include )
-
-file(GLOB_RECURSE CONTROLLERLIB_INCLUDES "include/*.h" "src/*.h" )
-
-file(GLOB_RECURSE CONTROLLERLIB_SRC "src/*.cpp" )
-
 if(APPLE)
-  file(GLOB_RECURSE CONTROLLERLIB_SRC "src/osx/*.cpp" )
+  include_directories( include src src/osx ../../jdksavdecc-c/include )
 elseif(UNIX)
-  file(GLOB_RECURSE CONTROLLERLIB_SRC "src/linux/*.cpp" )
+  include_directories( include src src/linux ../../jdksavdecc-c/include )
 elseif(WIN32)
-  file(GLOB_RECURSE CONTROLLERLIB_SRC "src/msvc/*.cpp" )
+	if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+      link_directories($ENV{WPCAP_DIR}/Lib/x64)
+	elseif( CMAKE_SIZEOF_VOID_P EQUAL 4 )
+      link_directories($ENV{WPCAP_DIR}/Lib)
+	endif()
+  include_directories( include src src/msvc ../../jdksavdecc-c/include $ENV{WPCAP_DIR}/Include )
 endif()
 
-add_library (controller ${CONTROLLERLIB_SRC} ${CONTROLLERLIB_INCLUDES})
+file(GLOB CONTROLLERLIB_INCLUDES "include/*.h" "src/*.h" )
 
+file(GLOB CONTROLLERLIB_SRC "src/*.cpp" "../../jdksavdecc-c/src/jdksavdecc_pdu.c" "../../jdksavdecc-c/src/jdksavdecc_frame.c")
 
+if(APPLE)
+  file(GLOB_RECURSE SYSTEM_SPEC_SRC "src/osx/*.cpp")
+elseif(UNIX)
+  file(GLOB_RECURSE SYSTEM_SPEC_SRC "src/linux/*.cpp")
+elseif(WIN32)
+  file(GLOB_RECURSE SYSTEM_SPEC_SRC "src/msvc/*.cpp")
+endif()
+
+add_library(controller SHARED ${CONTROLLERLIB_INCLUDES} ${CONTROLLERLIB_SRC} ${SYSTEM_SPEC_SRC})
+
+target_link_libraries(controller wpcap Iphlpapi Ws2_32)
