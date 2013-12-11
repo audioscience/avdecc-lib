@@ -489,7 +489,7 @@ namespace avdecc_lib
     {
         new_value = 0;
 
-        for (uint32_t i = 0; i < 6; i++)
+        for(uint32_t i = 0; i < 6; i++)
         {
             new_value |= (uint64_t) value[i] << ((5 - i) * 8);
         }

@@ -29,6 +29,7 @@
 
 #include <vector>
 #include <cstdint>
+#include "version.h"
 #include "net_interface_imp.h"
 #include "enumeration.h"
 #include "notification_imp.h"
@@ -257,7 +258,7 @@ namespace avdecc_lib
                         }
                         else
                         {
-                            //log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Entity GUID is 0.");
+                            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid ADP packet with an entity GUID of 0.");
                         }
 
                         status = AVDECC_LIB_STATUS_INVALID;
@@ -304,7 +305,6 @@ namespace avdecc_lib
                         }
                         else
                         {
-                            //log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Need to have ADP packet first.");
                             status = AVDECC_LIB_STATUS_INVALID;
                         }
                     }
@@ -351,11 +351,9 @@ namespace avdecc_lib
                             status = AVDECC_LIB_STATUS_INVALID;
                         }
                     }
-
                     break;
 
                 default:
-                    //log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid subtype");
                     break;
             }
         }

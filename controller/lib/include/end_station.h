@@ -44,7 +44,7 @@ namespace avdecc_lib
     public:
         /**
          * \return The status of the End Station connection.
-         *	   'C' if connected. An End Station is connected after capturing an ADP packet with a different and unique entity GUID.
+         *	       'C' if connected. An End Station is connected after capturing an ADP packet with a different and unique entity GUID.
          *         'D' if disconnected. An End Station is disconnected after it fails to advertise through ADP for 62,000 milliseconds.
          */
         AVDECC_CONTROLLER_LIB32_API virtual const char STDCALL get_connection_status() const = 0;

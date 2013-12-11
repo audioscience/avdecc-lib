@@ -121,7 +121,15 @@ namespace avdecc_lib
             uint64_t end_station_guid = jdksavdecc_uint64_get(&_end_station_guid, 0);
             uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame.payload, ETHER_HDR_SIZE);
 
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
+            notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
+                                                        end_station_guid,
+                                                        msg_type + CMD_LOOKUP,
+                                                        0,
+                                                        0,
+                                                        -1,
+                                                        inflight_cmds.at(inflight_cmd_index).cmd_notification_id);
+
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
                                       "Command Timeout, 0x%llx, %s, %s, %s, %d",
                                       end_station_guid,
                                       utility->acmp_cmd_value_to_name(msg_type),
@@ -257,7 +265,14 @@ namespace avdecc_lib
 
             if(status != ACMP_STATUS_SUCCESS)
             {
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Status: %s", utility->acmp_cmd_status_value_to_name(status));
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
+                                          "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %s, %d",
+                                          end_station_guid,
+                                          utility->acmp_cmd_value_to_name(msg_type),
+                                          "NULL",
+                                          "NULL",  
+                                          utility->aem_cmd_status_value_to_name(status),
+                                          seq_id);
             }
         }
         else if((notification_flag == CMD_WITH_NOTIFICATION) &&

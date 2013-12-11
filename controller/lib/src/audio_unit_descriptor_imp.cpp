@@ -296,7 +296,7 @@ namespace avdecc_lib
         /******************************************* AECP Common Data **********************************************/
         aem_cmd_set_sampling_rate.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
         // Fill aem_cmd_get_sampling_rate.sequence_id in AEM Controller State Machine
-        aem_cmd_set_sampling_rate.command_type = JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE;
+        aem_cmd_set_sampling_rate.command_type = JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE;
 
         /******************** AECP Message Specific Data *******************/
         aem_cmd_set_sampling_rate.descriptor_type = descriptor_type();
@@ -369,11 +369,11 @@ namespace avdecc_lib
         // Fill aem_cmd_get_sampling_rate.sequence_id in AEM Controller State Machine
         aem_cmd_get_sampling_rate.command_type = JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE;
 
-        /******************* AECP Message Specific Data ********************/
+        /****************** AECP Message Specific Data *****************/
         aem_cmd_get_sampling_rate.descriptor_type = descriptor_type();
         aem_cmd_get_sampling_rate.descriptor_index = descriptor_index();
 
-        /******************************** Fill frame payload with AECP data and send the frame ***************************/
+        /******************************* Fill frame payload with AECP data and send the frame **************************/
         aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
         aem_cmd_get_sampling_rate_returned = jdksavdecc_aem_command_get_sampling_rate_write(&aem_cmd_get_sampling_rate,
                                                                                             cmd_frame->payload,

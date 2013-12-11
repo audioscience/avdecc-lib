@@ -147,11 +147,6 @@ public:
     int cmd_connect(uint32_t instream_end_station_index, uint16_t instream_desc_index);
 
     /**
-     * Send a GET_TX_STATE command to get Talker source stream connection state.
-     */
-    int cmd_get_tx_state(uint32_t outstream_end_station_index, uint16_t outstream_desc_index);
-
-    /**
      * Send a CONNECT_RX command to connect Listener sink stream.
      */
     int cmd_connect_rx(uint32_t instream_end_station_index,
@@ -167,6 +162,11 @@ public:
                           uint16_t instream_desc_index,
                           uint32_t outstream_end_station_index,
                           uint16_t outstream_desc_index);
+
+    /**
+     * Send a GET_TX_STATE command to get Talker source stream connection state.
+     */
+    int cmd_get_tx_state(uint32_t outstream_end_station_index, uint16_t outstream_desc_index);
 
     /**
      * Send a GET_RX_STATE command to get Listener sink stream connection state.
