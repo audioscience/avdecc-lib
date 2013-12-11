@@ -71,7 +71,7 @@ namespace avdecc_lib
         /**
          * Release sempahore so that notification callback function is called.
          */
-        void post_log_event();
+        void post_notification_event();
     };
 
     extern notification_imp *notification_imp_ref;
