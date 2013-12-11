@@ -110,6 +110,11 @@ namespace avdecc_lib
         void time_tick_event();
 
         /**
+         * Find an end station that matches the entity and controller IDs
+         */
+        int find_in_end_station(struct jdksavdecc_eui64 &entity_guid, const uint8_t *frame);
+
+        /**
          * Lookup and process packet received.
          */
         void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t frame_len, int &status);
