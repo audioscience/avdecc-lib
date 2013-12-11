@@ -25,4 +25,23 @@
 *.ear
 *.py[cod]
 
+bin
+*.tlog
+*.manifest
+*.lastbuildstate
+*.log
+*.obj
+*.pdb
+*.opensdf
+*.sdf
+*.sln
+*.suo
+*.filters
+*.user
+*.ipch
+*.cache
+*.idb
+*.orig
+*.o
+
 
