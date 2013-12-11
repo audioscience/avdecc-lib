@@ -31,6 +31,7 @@
 #include <vector>
 #include <iomanip>
 #include <string>
+#include <sstream>
 #include "end_station.h"
 #include "entity_descriptor.h"
 #include "configuration_descriptor.h"
@@ -531,7 +532,7 @@ int cmd_line::cmd_version()
 
 int cmd_line::cmd_list()
 {
-    std::cout << "\n" << "End Station" << "  |  " << "Name" << std::setw(21)  << "  |  " <<  "Entity GUID" << std::setw(10) << "  |  " << "MAC" << std::endl;
+    std::cout << "\n" << "End Station" << "  |  " << "Name" << std::setw(21)  << "  |  " <<  "Entity GUID" << std::setw(12) << "  |  " << "MAC" << std::endl;
     std::cout << "------------------------------------------------------------------------------" << std::endl;
 
     for(unsigned int i = 0; i < controller_obj->get_end_station_count(); i++)
@@ -541,18 +542,22 @@ int cmd_line::cmd_list()
         if (endstn)
         {
             uint64_t end_station_guid = endstn->guid();
-            avdecc_lib::entity_descriptor *ent_desc = endstn->get_entity_desc_by_index(current_entity);
+            avdecc_lib::entity_descriptor *ent_desc = NULL;
+            if (endstn->entity_desc_count())
+            {
+                ent_desc = endstn->get_entity_desc_by_index(current_entity);
+            }
             char *end_station_name;
             if (ent_desc)
             {
                 end_station_name = (char *)ent_desc->entity_name();
             }
             uint64_t end_station_mac = endstn->mac();
-            std::cout << endstn->get_connection_status()
-                      << std::setw(10) << std::dec << i << "  |  "
-                      << std::setw(20) << std::hex << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
-                      << std::setw(14) << std::hex << end_station_guid << "  |  0x"
-                      << std::hex << end_station_mac << std::endl;
+            std::cout << (std::stringstream() << endstn->get_connection_status()
+                      << std::setw(10) << std::dec << std::setfill(' ') << i << "  |  "
+                      << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
+                      << std::setw(16) << std::hex << std::setfill('0') << end_station_guid << "  |  0x"
+                      << std::setw(12) << std::hex << std::setfill('0') << end_station_mac).rdbuf() << std::endl;
         }
     }
 

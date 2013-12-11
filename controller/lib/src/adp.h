@@ -92,10 +92,9 @@ namespace avdecc_lib
         /**
          * Get the Entity GUID field of the ADP object.
          */
-        inline uint64_t get_entity_entity_id()
+        inline struct jdksavdecc_eui64 get_entity_entity_id()
         {
-            struct jdksavdecc_eui64 entity_guid = adpdu.header.entity_id;
-            return jdksavdecc_uint64_get(&entity_guid, 0);
+            return adpdu.header.entity_id;
         }
 
         /**

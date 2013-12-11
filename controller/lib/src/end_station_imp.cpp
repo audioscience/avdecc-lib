@@ -65,7 +65,9 @@ namespace avdecc_lib
         desc_type_index_from_stream_port_output = JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER;
 
         adp_ref = new adp(frame, frame_len);
-        end_station_guid = adp_ref->get_entity_entity_id();
+        struct jdksavdecc_eui64 guid;
+        guid = adp_ref->get_entity_entity_id();
+        end_station_guid = jdksavdecc_uint64_get(&guid, 0);
         utility->convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
         end_station_init();
     }

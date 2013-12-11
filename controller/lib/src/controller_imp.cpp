@@ -203,6 +203,26 @@ namespace avdecc_lib
         }
     }
 
+    int controller_imp::find_in_end_station(struct jdksavdecc_eui64 &other_entity_id, const uint8_t *frame)
+    {
+        struct jdksavdecc_eui64 other_controller_id = jdksavdecc_acmpdu_get_controller_entity_id(frame, ETHER_HDR_SIZE);
+
+        for(uint32_t i = 0; i < end_station_vec.size(); i++)
+        {
+            struct jdksavdecc_eui64 end_entity_id = end_station_vec.at(i)->get_adp()->get_entity_entity_id();
+            struct jdksavdecc_eui64 this_controller_id = end_station_vec.at(i)->get_adp()->get_controller_guid();
+
+            if((jdksavdecc_eui64_compare(&end_entity_id, &other_entity_id) == 0) &&
+                ((jdksavdecc_eui64_compare(&other_controller_id, &this_controller_id) == 0) ||
+                (jdksavdecc_eui64_compare(&other_controller_id, &end_entity_id) == 0)))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t frame_len, int &status)
     {
         uint64_t dest_mac_addr;
@@ -218,7 +238,8 @@ namespace avdecc_lib
                     {
                         int found_end_station_index = -1;
                         bool found_adp_in_end_station = false;
-                        uint64_t entity_guid = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE);
+                        struct jdksavdecc_eui64 other_entity_id;
+                        jdksavdecc_eui64_read(&other_entity_id, frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE, frame_len);
 
                         //log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "ADP packet discovered.");
 
@@ -228,14 +249,15 @@ namespace avdecc_lib
                          */
                         for(uint32_t i = 0; i < end_station_vec.size(); i++)
                         {
-                            if(end_station_vec.at(i)->get_adp()->get_entity_entity_id() == entity_guid)
+                            struct jdksavdecc_eui64 end_entity_id = end_station_vec.at(i)->get_adp()->get_entity_entity_id();
+                            if(jdksavdecc_eui64_compare(&end_entity_id, &other_entity_id) == 0)
                             {
                                 found_adp_in_end_station = true;
                                 found_end_station_index = i;
                             }
                         }
 
-                        if(entity_guid != 0)
+                        if(jdksavdecc_uint64_get(&other_entity_id, 0) != 0)
                         {
                             if(!found_adp_in_end_station)
                             {
@@ -271,21 +293,15 @@ namespace avdecc_lib
                         int found_end_station_index = -1;
                         bool found_aecp_in_end_station = false;
                         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
-                        uint64_t entity_guid = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE);
+                        struct jdksavdecc_eui64 entity_guid = jdksavdecc_common_control_header_get_stream_id(frame, ETHER_HDR_SIZE);
 
                         /**
                          * Check if an AECP object is already in the system. If yes, process response for the AECP packet.
                          */
                         if((msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE) && (dest_mac_addr == net_interface_ref->mac_addr()))
                         {
-                            for(uint32_t i = 0; i < end_station_vec.size(); i++)
-                            {
-                                if(end_station_vec.at(i)->get_adp()->get_entity_entity_id() == entity_guid)
-                                {
-                                    found_aecp_in_end_station = true;
-                                    found_end_station_index = i;
-                                }
-                            }
+                            found_end_station_index = find_in_end_station(entity_guid, frame);
+                            if (found_end_station_index >= 0) found_aecp_in_end_station = true;
                         }
 
                         if(found_aecp_in_end_station)
@@ -314,31 +330,23 @@ namespace avdecc_lib
                     {
                         int found_end_station_index = -1;
                         bool found_acmp_in_end_station = false;
-                        uint64_t entity_guid = 0;
+                        struct jdksavdecc_eui64 entity_guid;
                         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
 
                         if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) || 
                            (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))
                         {
-                            struct jdksavdecc_eui64 _entity_guid = jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE);
-                            entity_guid = jdksavdecc_uint64_get(&_entity_guid, 0);
+                            entity_guid = jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE);
                         }
                         else if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
                                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
                                 (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE))
                         {
-                            struct jdksavdecc_eui64 _entity_guid = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
-                            entity_guid = jdksavdecc_uint64_get(&_entity_guid, 0);
+                            entity_guid = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
                         }
 
-                        for(uint32_t i = 0; i < end_station_vec.size(); i++)
-                        {
-                            if(end_station_vec.at(i)->get_adp()->get_entity_entity_id() == entity_guid) // Check if it is a Talker GUID or Listener GUID
-                            {
-                                found_acmp_in_end_station = true;
-                                found_end_station_index = i;
-                            }
-                        }
+                        found_end_station_index = find_in_end_station(entity_guid, frame);
+                        if (found_end_station_index >= 0) found_acmp_in_end_station = true;
 
                         if(found_acmp_in_end_station)
                         {

@@ -271,7 +271,7 @@ namespace avdecc_lib
                                           utility->acmp_cmd_value_to_name(msg_type),
                                           "NULL",
                                           "NULL",  
-                                          utility->aem_cmd_status_value_to_name(status),
+                                          utility->acmp_cmd_status_value_to_name(status),
                                           seq_id);
             }
         }
@@ -299,7 +299,7 @@ namespace avdecc_lib
                                           utility->acmp_cmd_value_to_name(msg_type),
                                           "NULL",
                                           "NULL",  
-                                          utility->aem_cmd_status_value_to_name(status),
+                                          utility->acmp_cmd_status_value_to_name(status),
                                           seq_id);
             }
         }
@@ -314,7 +314,7 @@ namespace avdecc_lib
                                       utility->acmp_cmd_value_to_name(msg_type),
                                       "NULL",
                                       "NULL",  
-                                      utility->aem_cmd_status_value_to_name(status),
+                                      utility->acmp_cmd_status_value_to_name(status),
                                       seq_id);
         }
         else
@@ -327,7 +327,7 @@ namespace avdecc_lib
                                       utility->acmp_cmd_value_to_name(msg_type),
                                       "NULL",
                                       "NULL",
-                                      utility->aem_cmd_status_value_to_name(status),
+                                      utility->acmp_cmd_status_value_to_name(status),
                                       seq_id);
         }
 
