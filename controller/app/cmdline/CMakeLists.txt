@@ -4,11 +4,20 @@ enable_testing()
 
 include_directories( src ../../lib/include ../../jdksavdecc-c/include )
 
+file(GLOB_RECURSE CMDLINE_INCLUDES "src/*.h" )
+
+file(GLOB_RECURSE CMDLINE_SRC "src/*.cpp" )
+
+add_executable (avdecccmdline ${CMDLINE_INCLUDES} ${CMDLINE_SRC})
+
+
 if(APPLE)
   set(PCAP_NAME pcap)
   set(READLINE_NAME edit)
 elseif(UNIX)
   set(PCAP_NAME pcap)
+  set(READLINE_NAME edit)
+  target_link_libraries(avdecccmdline rt)
 elseif(WIN32)
   if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     link_directories($ENV{WPCAP_DIR}/Lib/x64)
@@ -18,12 +27,6 @@ elseif(WIN32)
   
   set(PCAP_NAME wpcap)
 endif()
-
-file(GLOB_RECURSE CMDLINE_INCLUDES "src/*.h" )
-
-file(GLOB_RECURSE CMDLINE_SRC "src/*.cpp" )
-
-add_executable (avdecccmdline ${CMDLINE_INCLUDES} ${CMDLINE_SRC})
 
 target_link_libraries(avdecccmdline controller)
 
