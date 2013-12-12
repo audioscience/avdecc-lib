@@ -6,7 +6,7 @@ include_directories( src ../../lib/include )
 
 if(APPLE)
   set(PCAP_NAME pcap)
-  set(READLINE_NAME readline)
+  set(READLINE_NAME edit)
 elseif(UNIX)
   set(PCAP_NAME pcap)
 elseif(WIN32)
