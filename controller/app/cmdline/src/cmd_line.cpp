@@ -32,6 +32,7 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
+#include <string.h>
 #include "end_station.h"
 #include "entity_descriptor.h"
 #include "configuration_descriptor.h"
