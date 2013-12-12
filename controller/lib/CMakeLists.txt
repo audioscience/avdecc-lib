@@ -12,6 +12,7 @@ elseif(WIN32)
 	elseif( CMAKE_SIZEOF_VOID_P EQUAL 4 )
       link_directories($ENV{WPCAP_DIR}/Lib)
 	endif()
+	
   add_definitions(-DAVDECC_CONTROLLER_LIB32_EXPORTS -D_CRT_SECURE_NO_WARNINGS)
   include_directories( include src src/msvc ../../jdksavdecc-c/include $ENV{WPCAP_DIR}/Include )
 endif()
@@ -30,4 +31,11 @@ endif()
 
 add_library(controller SHARED ${CONTROLLERLIB_INCLUDES} ${CONTROLLERLIB_SRC} ${SYSTEM_SPEC_SRC})
 
-target_link_libraries(controller wpcap Iphlpapi Ws2_32)
+if(APPLE)
+  target_link_libraries(controller pcap)
+elseif(UNIX)
+  target_link_libraries(controller pcap)
+elseif(WIN32)
+  target_link_libraries(controller wpcap Iphlpapi Ws2_32)
+endif()
+
