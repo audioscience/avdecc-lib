@@ -62,7 +62,7 @@ namespace avdecc_lib
         /**
          * Process the Response state of the ACMP Controller State Machine.
          */
-        int state_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *cmd_frame);
+        int state_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame);
 
         /**
          * Check timeout for the inflight commands.
@@ -88,7 +88,7 @@ namespace avdecc_lib
         /**
          * Handle the receipt and processing of a received response for a command sent.
          */
-        int proc_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *cmd_frame);
+        int proc_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame);
 
         /**
          * Call notification or post_log_msg callback function for the command sent or response received.

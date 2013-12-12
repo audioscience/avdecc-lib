@@ -77,13 +77,6 @@ namespace avdecc_lib
 
         virtual ~stream_output_descriptor_imp();
 
-    private:
-        /**
-         * Store the stream flags components of the STREAM OUTPUT descriptor object in a vector.
-         */
-        void stream_flags_init();
-
-    public:
         /**
          * Get the type of the descriptor.
          */
@@ -503,7 +496,16 @@ namespace avdecc_lib
          * Process a GET_TX_CONNECTION response for the GET_TX_CONNECTION command.
          */
         int proc_get_tx_connection_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+
+    private:
+        /**
+         * Store the stream flags components of the STREAM OUTPUT descriptor object in a vector.
+         */
+        void stream_flags_init();
+
+        /**
+         * Update the internal STREAM OUTPUT descriptor's stream format field.
+         */
+        void update_stream_format(struct jdksavdecc_eui64 stream_format);
     };
 }
-
-

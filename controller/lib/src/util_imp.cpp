@@ -263,6 +263,8 @@ namespace avdecc_lib
     {
         {UINT64_C(0x00a0020140000100), "IEC...48KHZ_1CH"}, // IEC61883_AM824_MBLA_48KHZ_1CH
         {UINT64_C(0x00a0020240000200), "IEC...48KHZ_2CH"}, // IEC61883_AM824_MBLA_48KHZ_2CH
+        {UINT64_C(0x00a0040240000100), "IEC...96KHZ_1CH"}, // Need to lookup IEC61883_AM824_MBLA_96KHZ_1CH
+        {UINT64_C(0x00a0040440000200), "IEC...96KHZ_2CH"}, // Need to lookup IEC61883_AM824_MBLA_96KHZ_2CH
         {UINT64_C(0x0000000000000000), "UNKNOWN"}
     };
 
@@ -303,7 +305,7 @@ namespace avdecc_lib
         {
             if(cmd_name_string == aem_cmds_names[i])
             {
-                return i;
+                return (uint16_t)i;
             }
         }
 
@@ -331,7 +333,7 @@ namespace avdecc_lib
         {
             if(desc_name_string.compare(aem_descs_names[i]) == 0)
             {
-                return i;
+                return (uint16_t)i;
             }
         }
 
@@ -356,7 +358,7 @@ namespace avdecc_lib
         return "UNKNOWN";
     }
 
-    const char * STDCALL util_imp::acmp_cmd_value_to_name(uint16_t cmd_value)
+    const char * STDCALL util_imp::acmp_cmd_value_to_name(uint32_t cmd_value)
     {
         if(cmd_value < TOTAL_NUM_OF_ACMP_CMDS)
         {
@@ -377,7 +379,7 @@ namespace avdecc_lib
         {
             if(cmd_name_string == acmp_cmds_names[i])
             {
-                return i;
+                return (uint16_t)i;
             }
         }
 

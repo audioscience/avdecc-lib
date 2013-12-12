@@ -280,6 +280,11 @@ namespace avdecc_lib
         return aem_cmd_set_sampling_rate_resp.sampling_rate;
     }
 
+    void audio_unit_descriptor_imp::update_sampling_rate(uint32_t sampling_rate)
+    {
+        audio_unit_desc.current_sampling_rate = sampling_rate;
+    }
+
     uint32_t STDCALL audio_unit_descriptor_imp::get_sampling_rate_sampling_rate()
     {
         return aem_cmd_get_sampling_rate_resp.sampling_rate;
@@ -352,6 +357,11 @@ namespace avdecc_lib
         u_field = aem_cmd_set_sampling_rate_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
+
+        if(status == AEM_STATUS_SUCCESS)
+        {
+            update_sampling_rate(aem_cmd_set_sampling_rate_resp.sampling_rate);
+        }
 
         free(cmd_frame);
         return 0;

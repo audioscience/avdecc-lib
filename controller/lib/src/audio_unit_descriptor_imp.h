@@ -322,6 +322,11 @@ namespace avdecc_lib
          * Store the sampling rates of the AUDIO UNIT in a vector.
          */
         void sampling_rates_init(const uint8_t *frame);
+
+        /**
+         * Update the internal AUDIO UNIT's sampling rate field.
+         */
+        void update_sampling_rate(uint32_t sampling_rate);
     };
 }
 
