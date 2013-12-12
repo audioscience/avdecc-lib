@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_CLOCK_DOMAIN_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_CLOCK_DOMAIN_DESCRIPTOR_IMP_H_
 
 #include "descriptor_base_imp.h"
 #include "clock_domain_descriptor.h"
@@ -40,7 +38,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_clock_domain clock_domain_desc; // Store the CLOCK DOMAIN Descriptor fields
-        int desc_clock_domain_read_returned; // Status of extracting CLOCK DOMAIN descriptor information from a network buffer
+        ssize_t desc_clock_domain_read_returned; // Status of extracting CLOCK DOMAIN descriptor information from a network buffer
         std::vector<uint16_t> clk_src_vec; // Store clock sources in a vector
 
         struct jdksavdecc_aem_command_set_clock_source_response aem_cmd_set_clk_src_resp; // Store the response received after sending a SET_CLOCK_SOURCE command
@@ -60,7 +58,7 @@ namespace avdecc_lib
          * \param pos The position offset to read the descriptor fields from.
          * \param frame_len The memory buffer length of the descriptor frame.
          */
-        clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~clock_domain_descriptor_imp();
 
@@ -109,7 +107,7 @@ namespace avdecc_lib
         /**
          * Get the corresponding CLOCK SOURCE by index present in the CLOCK DOMAIN.
          */
-        uint16_t STDCALL get_clock_source_by_index(uint32_t clk_src_index);
+        uint16_t STDCALL get_clock_source_by_index(size_t clk_src_index);
 
         /**
          * Get the CLOCK SOURCE index of the requested CLOCK DOMAIN after sending a
@@ -139,7 +137,7 @@ namespace avdecc_lib
         /**
          * Process a SET_CLOCK_SOURCE response for the SET_CLOCK_SOURCE command.
          */
-        int proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a GET_CLOCK_SOURCE command to get the current CLOCK SOURCE of a CLOCK DOMAIN.
@@ -156,8 +154,7 @@ namespace avdecc_lib
         /**
          * Process a GET_CLOCK_SOURCE response for the GET_CLOCK_SOURCE command.
          */
-        int proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
     };
 }
 
-#endif

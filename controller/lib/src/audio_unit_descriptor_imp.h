@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_AUDIO_UNIT_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_AUDIO_UNIT_DESCRIPTOR_IMP_H_
 
 #include "descriptor_base_imp.h"
 #include "audio_unit_descriptor.h"
@@ -40,7 +38,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_audio audio_unit_desc; // Structure containing the audio_unit_desc fields
-        int desc_audio_read_returned; // Status of extracting AUDIO_UNIT descriptor information from a network buffer
+        ssize_t desc_audio_read_returned; // Status of extracting AUDIO_UNIT descriptor information from a network buffer
 
         std::vector<uint32_t> sample_rates_vec; // Store sample rates information
         struct jdksavdecc_aem_command_set_sampling_rate_response aem_cmd_set_sampling_rate_resp; // Store the response received after sending a SET_SAMPLING_RATE command.
@@ -55,7 +53,7 @@ namespace avdecc_lib
          * \param pos The position offset to read the descriptor fields from.
          * \param frame_len The memory buffer length of the descriptor frame.
          */
-        audio_unit_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        audio_unit_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~audio_unit_descriptor_imp();
 
@@ -256,7 +254,7 @@ namespace avdecc_lib
         /**
          * Get the corresponding sampling rate by index of this Audio Unit.
          */
-        uint32_t STDCALL get_sampling_rate_by_index(uint32_t sampling_rate_index);
+        uint32_t STDCALL get_sampling_rate_by_index(size_t sampling_rate_index);
 
         /**
          * Get the offset to the sample rates field from the start of the descriptor.
@@ -299,7 +297,7 @@ namespace avdecc_lib
          * current sampling rate, that is it contains the new sampling rate if the command succeeds or the old
          * sampling rate if it fails.
          */
-        int proc_set_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_set_sampling_rate_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
@@ -317,7 +315,7 @@ namespace avdecc_lib
          * Process a GET_SAMPLING_RATE response for the GET_SAMPLING_RATE command. The sampling rate field is set
          * to the current sampling rate of the port or unit in the response.
          */
-        int proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
     private:
         /**
@@ -327,4 +325,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

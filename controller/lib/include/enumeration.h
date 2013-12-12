@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_ENUMERATION_H_
-#define _AVDECC_CONTROLLER_LIB_ENUMERATION_H_
 
 namespace avdecc_lib
 {
@@ -292,4 +290,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

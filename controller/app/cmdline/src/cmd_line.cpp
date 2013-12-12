@@ -691,14 +691,23 @@ void cmd_line::print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
     std::cout << std::setw(20) << utility->aem_desc_value_to_name(desc.descriptor_type());
     std::cout << "   "<<  std::setw(16) << std::dec << desc.descriptor_index();
 
-    uint8_t localized_desc_index = (desc.localized_description()) & 0x7; // The 3 bit index subfield defining the index of the string within the STRINGS descriptor
-    if(localized_desc_index < localized_string_max_index)
+    if((desc.descriptor_type() == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT) ||
+       (desc.descriptor_type() == avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT) ||
+       (desc.descriptor_type() == avdecc_lib::AEM_DESC_AUDIO_MAP))
     {
-        std::cout << "   " << std::setw(20) << std::hex << strings.get_string_by_index(localized_desc_index) << std::endl;
+        std::cout << "   " << std::endl;
     }
     else
     {
-        std::cout << "   " << std::setw(20) << std::hex << desc.object_name() << std::endl;
+        uint8_t localized_desc_index = (desc.localized_description()) & 0x7; // The 3 bit index subfield defining the index of the string within the STRINGS descriptor
+        if(localized_desc_index < localized_string_max_index)
+        {
+            std::cout << "   " << std::setw(20) << std::hex << strings.get_string_by_index(localized_desc_index) << std::endl;
+        }
+        else
+        {
+            std::cout << "   " << std::setw(20) << std::hex << desc.object_name() << std::endl;
+        }
     }
 }
 
@@ -1444,8 +1453,8 @@ int cmd_line::cmd_connect()
     uint8_t *outstream_end_station_name;
     uint8_t *instream_end_station_name;
     const char * format;
-    uint32_t stream_input_desc_count = 0;
-    uint32_t stream_output_desc_count = 0;
+    size_t stream_input_desc_count = 0;
+    size_t stream_output_desc_count = 0;
     uint64_t end_station_mac;
 
     std::cout << "\n" << "End Station" << std::setw(26) << "" << "Instream" << std::setw(16) << "" << "Stream Format" << std::endl;
@@ -1499,7 +1508,7 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
         uint8_t *outstream_end_station_name;
         uint8_t *src_desc_name;
         const char *format;
-        uint32_t stream_output_desc_count = 0;
+        size_t stream_output_desc_count = 0;
         uint64_t end_station_mac;
 
         std::cout << "\n" << "End Station" << std::setw(26) << "   " << "Outstream" << std::setw(16) << "   " << "Stream Format" << std::endl;
@@ -2176,7 +2185,7 @@ int cmd_line::cmd_set_clock_source(std::string desc_name, uint16_t desc_index, u
 
 uint32_t cmd_line::get_next_notification_id()
 {
-    return notification_id++;
+    return (uint32_t)notification_id++;
 }
 
 int cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_index)

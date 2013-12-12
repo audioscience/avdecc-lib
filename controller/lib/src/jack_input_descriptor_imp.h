@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_JACK_INPUT_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_JACK_INPUT_DESCRIPTOR_IMP_H_
 
 #include "descriptor_base_imp.h"
 #include "jack_input_descriptor.h"
@@ -40,7 +38,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_jack jack_input_desc; // Structure containing the jack_input_desc fields
-        int desc_jack_input_read_returned; // Status of extracting JACK INPUT descriptor information from a network buffer
+        ssize_t desc_jack_input_read_returned; // Status of extracting JACK INPUT descriptor information from a network buffer
 
         struct jack_input_desc_jack_flags
         {
@@ -59,7 +57,7 @@ namespace avdecc_lib
          * \param pos The position offset to read the descriptor fields from.
          * \param frame_len The memory buffer length of the descriptor frame.
          */
-        jack_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        jack_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~jack_input_descriptor_imp();
 
@@ -126,4 +124,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

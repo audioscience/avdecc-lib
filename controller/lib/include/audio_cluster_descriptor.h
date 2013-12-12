@@ -31,8 +31,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_AUDIO_CLUSTER_DESCRIPTOR_H_
-#define _AVDECC_CONTROLLER_LIB_AUDIO_CLUSTER_DESCRIPTOR_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -95,5 +93,3 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL format() = 0;
     };
 }
-
-#endif

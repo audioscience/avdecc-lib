@@ -29,8 +29,7 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_NOTIFICATION_H_
-#define _AVDECC_CONTROLLER_LIB_NOTIFICATION_H_
+
 
 #include <stdint.h>
 
@@ -90,5 +89,3 @@ namespace avdecc_lib
         uint32_t missed_notification_event_count();
     };
 }
-
-#endif

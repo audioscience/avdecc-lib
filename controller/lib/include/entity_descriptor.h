@@ -31,8 +31,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_ENTITY_DESCRIPTOR_H_
-#define _AVDECC_CONTROLLER_LIB_ENTITY_DESCRIPTOR_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -146,7 +144,7 @@ namespace avdecc_lib
          * \return The number of Configuration descriptors.
          * \see configurations_count()
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL config_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL config_desc_count() = 0;
 
         /**
          * \return The corresponding Configuration descriptorby index.
@@ -165,4 +163,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_END_STATION_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_END_STATION_IMP_H_
 
 #include "entity_descriptor_imp.h"
 #include "end_station.h"
@@ -154,12 +152,12 @@ namespace avdecc_lib
         /**
          * Get the number of Entity descriptors for this End Station.
          */
-        uint32_t STDCALL entity_desc_count();
+        size_t STDCALL entity_desc_count();
 
         /**
          * Get the corresponding ENTITY descriptor by index.
          */
-        entity_descriptor * STDCALL get_entity_desc_by_index(uint32_t entity_desc_index);
+        entity_descriptor * STDCALL get_entity_desc_by_index(size_t entity_desc_index);
 
         /**
          * Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity. Reading a descriptor can be performed
@@ -177,7 +175,7 @@ namespace avdecc_lib
          * set to the contents of the descriptor. On failure, the descriptor contains the descriptor type and index
          * and are in the same location as in the command frame.
          */
-        int proc_read_desc_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_read_desc_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a ENTITY_AVAILABLE command to verify that an AVDECC Entity is still available and responding to commands.
@@ -189,17 +187,17 @@ namespace avdecc_lib
         /**
          * Process a ENTITY_AVAILABLE response for the ENTITY_AVAILABLE command.
          */
-        int proc_entity_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_entity_avail_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Process response received for the corresponding AEM command.
          */
-        int proc_rcvd_aem_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_rcvd_aem_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Process response received for the corresponding ACMP command.
          */
-        int proc_rcvd_acmp_resp(uint32_t msg_type, void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_rcvd_acmp_resp(uint32_t msg_type, void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
     private:
         /**
@@ -221,4 +219,4 @@ namespace avdecc_lib
     };
 }
 
-#endif
+

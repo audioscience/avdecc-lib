@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_SYSTEM_LAYER2_MULTITHREADED_CALLBACK_H_
-#define _AVDECC_CONTROLLER_LIB_SYSTEM_LAYER2_MULTITHREADED_CALLBACK_H_
 
 #include "system.h"
 #include "timer.h"
@@ -42,7 +40,7 @@ namespace avdecc_lib
         struct poll_thread_data
         {
             uint8_t *frame;
-            uint16_t frame_len;
+            size_t frame_len;
             void *notification_id;
             uint32_t notification_flag;
         };
@@ -159,5 +157,3 @@ namespace avdecc_lib
         int poll_single();
     };
 }
-
-#endif

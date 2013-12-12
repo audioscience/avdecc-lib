@@ -337,8 +337,8 @@ namespace avdecc_lib
         ReleaseSemaphore(poll_rx.queue_thread.kill_sem, 1, &previous);
         ReleaseSemaphore(poll_thread.kill_sem, 1, &previous);
 
-        while((WaitForSingleObject(poll_rx.queue_thread.handle, 0) != WAIT_OBJECT_0) ||
-              (WaitForSingleObject(poll_thread.handle, 0) != WAIT_OBJECT_0)) // Wait for thread termination
+        while((WaitForSingleObject(poll_rx.queue_thread.handle, 0) == WAIT_TIMEOUT) &&
+              (WaitForSingleObject(poll_thread.handle, 0) == WAIT_TIMEOUT)) // Wait for thread termination
         {
             Sleep(100);
         }

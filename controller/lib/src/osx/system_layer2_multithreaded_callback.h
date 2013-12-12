@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_SYSTEM_LAYER2_MULTITHREADED_CALLBACK_H_
-#define _AVDECC_CONTROLLER_LIB_SYSTEM_LAYER2_MULTITHREADED_CALLBACK_H_
 
 #include "avdecc_lib_os.h"
 #include "system.h"
@@ -140,5 +138,3 @@ namespace avdecc_lib
 
     };
 }
-
-#endif

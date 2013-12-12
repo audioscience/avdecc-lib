@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_UTIL_H_
-#define _AVDECC_CONTROLLER_LIB_UTIL_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -121,4 +119,3 @@ namespace avdecc_lib
     extern "C" AVDECC_CONTROLLER_LIB32_API util * STDCALL create_util();
 }
 
-#endif
