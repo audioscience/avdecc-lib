@@ -32,7 +32,7 @@ endif()
 add_library(controller SHARED ${CONTROLLERLIB_INCLUDES} ${CONTROLLERLIB_SRC} ${SYSTEM_SPEC_SRC})
 
 if(APPLE)
-  target_link_libraries(controller pcap)
+  target_link_libraries(controller pcap edit)
 elseif(UNIX)
   target_link_libraries(controller pcap)
 elseif(WIN32)

@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "jdksavdecc_acmp_controller.h"
+#include "jdksavdecc_acmp.h"
 #include "descriptor_base_imp.h"
 #include "stream_output_descriptor.h"
 

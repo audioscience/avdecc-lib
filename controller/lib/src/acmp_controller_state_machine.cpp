@@ -29,7 +29,7 @@
 
 #include <algorithm> // std::find_if
 #include <vector>
-#include "jdksavdecc_acmp_controller.h"
+#include "jdksavdecc_acmp.h"
 #include "net_interface_imp.h"
 #include "util_imp.h"
 #include "enumeration.h"

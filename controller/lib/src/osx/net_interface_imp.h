@@ -76,7 +76,7 @@ namespace avdecc_lib
         /**
          * Get the corresponding network interface description by index.
          */
-        char * STDCALL get_dev_desc_by_index(uint32_t dev_index);
+        AVDECC_CONTROLLER_LIB32_API char * STDCALL get_dev_desc_by_index(size_t dev_index);
 
         /**
          * Select the corresponding interface by number.
