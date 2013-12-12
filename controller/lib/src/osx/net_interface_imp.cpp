@@ -92,7 +92,7 @@ namespace avdecc_lib
         return mac;
     }
 
-    char * STDCALL net_interface_imp::get_dev_desc_by_index(uint32_t dev_index)
+    AVDECC_CONTROLLER_LIB32_API char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
     {
         uint32_t index_i;
 
