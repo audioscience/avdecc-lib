@@ -67,7 +67,7 @@ namespace avdecc_lib
         /**
          * Process the Available state of the ADP Discovery State Machine.
          */
-        int state_avail(const uint8_t *frame, uint16_t frame_len);
+        int state_avail(const uint8_t *frame, size_t frame_len);
 
         /**
          * Process the Departing state of the ADP Discovery State Machine.

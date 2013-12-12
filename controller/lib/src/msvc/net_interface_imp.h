@@ -74,7 +74,7 @@ namespace avdecc_lib
         /**
          * Get the corresponding network interface description by index.
          */
-        char * STDCALL get_dev_desc_by_index(uint32_t dev_index);
+        char * STDCALL get_dev_desc_by_index(size_t dev_index);
 
         /**
          * Select the corresponding interface by number.
@@ -94,7 +94,7 @@ namespace avdecc_lib
         /**
          * Send a network packet.
          */
-        int send_frame(uint8_t *frame, uint16_t frame_len);
+        int send_frame(uint8_t *frame, size_t frame_len);
 
     };
 

@@ -70,8 +70,7 @@ namespace avdecc_lib
     void aem_controller_state_machine::common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_guid)
     {
         struct jdksavdecc_aecpdu_common_control_header aecpdu_common_ctrl_hdr;
-        int aecpdu_common_ctrl_hdr_returned;
-        size_t aecpdu_common_pos = ETHER_HDR_SIZE; // Offset to write the field to
+        ssize_t aecpdu_common_ctrl_hdr_returned;
 
         /************************************** 1722 Protocol Header **************************************/
         aecpdu_common_ctrl_hdr.cd = 1;
@@ -86,7 +85,7 @@ namespace avdecc_lib
         /********************** Fill frame payload with AECP Common Control Header information *********************/
         aecpdu_common_ctrl_hdr_returned = jdksavdecc_aecpdu_common_control_header_write(&aecpdu_common_ctrl_hdr,
                                                                                         cmd_frame->payload,
-                                                                                        aecpdu_common_pos,
+                                                                                        ETHER_HDR_SIZE, // Offset to write the field to
                                                                                         sizeof(cmd_frame->payload));
 
         if(aecpdu_common_ctrl_hdr_returned < 0)

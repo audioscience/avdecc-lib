@@ -40,7 +40,7 @@ namespace avdecc_lib
         struct poll_thread_data
         {
             uint8_t *frame;
-            uint16_t frame_len;
+            size_t frame_len;
             void *notification_id;
             uint32_t notification_flag;
         };

@@ -40,7 +40,7 @@
 
 namespace avdecc_lib
 {
-    stream_output_descriptor_imp::stream_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    stream_output_descriptor_imp::stream_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
         stream_output_desc_read_returned = jdksavdecc_descriptor_stream_read(&stream_output_desc, frame, pos, frame_len);
 
@@ -347,7 +347,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_set_stream_format aem_cmd_set_stream_format;
-        int aem_cmd_set_stream_format_returned;
+        ssize_t aem_cmd_set_stream_format_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *********************************************/
@@ -381,10 +381,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_output_descriptor_imp::proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_output_descriptor_imp::proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_set_stream_format_resp_returned;
+        ssize_t aem_cmd_set_stream_format_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -417,7 +417,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_get_stream_format aem_cmd_get_stream_format;
-        int aem_cmd_get_stream_format_returned;
+        ssize_t aem_cmd_get_stream_format_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *********************************************/
@@ -450,10 +450,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_output_descriptor_imp::proc_get_stream_format_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_output_descriptor_imp::proc_get_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_get_stream_format_resp_returned;
+        ssize_t aem_cmd_get_stream_format_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -489,7 +489,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_output_descriptor_imp::proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_output_descriptor_imp::proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO response.");
 
@@ -500,7 +500,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_get_stream_info aem_cmd_get_stream_info;
-        int aem_cmd_get_stream_info_returned;
+        ssize_t aem_cmd_get_stream_info_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *******************************************/
@@ -533,10 +533,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_output_descriptor_imp::proc_get_stream_info_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_output_descriptor_imp::proc_get_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_get_stream_info_resp_returned;
+        ssize_t aem_cmd_get_stream_info_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -568,7 +568,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_start_streaming aem_cmd_start_streaming;
-        int aem_cmd_start_streaming_returned;
+        ssize_t aem_cmd_start_streaming_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *******************************************/
@@ -601,11 +601,11 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_output_descriptor_imp::proc_start_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_output_descriptor_imp::proc_start_streaming_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_start_streaming_response aem_cmd_start_streaming_resp;
-        int aem_cmd_start_streaming_resp_returned;
+        ssize_t aem_cmd_start_streaming_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -637,7 +637,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_stop_streaming aem_cmd_stop_streaming;
-        int aem_cmd_stop_streaming_returned;
+        ssize_t aem_cmd_stop_streaming_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************* AECP Common Data *******************************************/
@@ -670,11 +670,11 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_output_descriptor_imp::proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_output_descriptor_imp::proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_stop_streaming_response aem_cmd_stop_streaming_resp;
-        int aem_cmd_stop_streaming_resp_returned;
+        ssize_t aem_cmd_stop_streaming_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -706,7 +706,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_acmpdu acmp_cmd_get_tx_state;
-        int acmp_cmd_get_tx_state_returned;
+        ssize_t acmp_cmd_get_tx_state_returned;
         uint64_t talker_guid = base_end_station_imp_ref->get_entity_desc_by_index(0)->entity_id();
 
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
@@ -744,10 +744,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_output_descriptor_imp::proc_get_tx_state_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_output_descriptor_imp::proc_get_tx_state_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int acmp_cmd_get_tx_state_resp_returned;
+        ssize_t acmp_cmd_get_tx_state_resp_returned;
         uint32_t msg_type;
 
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
@@ -777,7 +777,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_acmpdu acmp_cmd_get_tx_connection;
-        int acmp_cmd_get_tx_connection_returned;
+        ssize_t acmp_cmd_get_tx_connection_returned;
         uint64_t talker_guid = base_end_station_imp_ref->get_entity_desc_by_index(0)->entity_id();
 
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
@@ -815,10 +815,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_output_descriptor_imp::proc_get_tx_connection_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_output_descriptor_imp::proc_get_tx_connection_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int acmp_cmd_get_tx_connection_resp_returned;
+        ssize_t acmp_cmd_get_tx_connection_resp_returned;
         uint32_t msg_type;
 
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));

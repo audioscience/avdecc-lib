@@ -42,7 +42,7 @@ namespace avdecc_lib
         /**
          * \return The corresponding localized string of the Strings descriptor.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_string_by_index(uint32_t string_index) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_string_by_index(size_t string_index) = 0;
     };
 }
 

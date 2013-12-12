@@ -53,17 +53,17 @@ namespace avdecc_lib
         /**
          * \return The total number of End Stations connected.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_end_station_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL get_end_station_count() = 0;
 
         /**
          * \return The corresponding End Station by index.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual end_station * STDCALL get_end_station_by_index(uint32_t end_station_index) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual end_station * STDCALL get_end_station_by_index(size_t end_station_index) = 0;
 
         /**
          * \return The corresponding CONFIGURATION descriptor by index.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_index(size_t end_station_index, uint16_t entity_index, uint16_t config_index) = 0;
 
         /**
          * \return The corresponding CONFIGURATION descriptor by GUID.

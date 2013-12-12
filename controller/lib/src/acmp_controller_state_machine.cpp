@@ -71,8 +71,8 @@ namespace avdecc_lib
     void acmp_controller_state_machine::common_hdr_init(uint32_t msg_type, struct jdksavdecc_frame *cmd_frame)
     {
         struct jdksavdecc_acmpdu_common_control_header acmpdu_common_ctrl_hdr;
-        int acmpdu_common_ctrl_hdr_returned;
-        size_t acmpdu_common_pos;
+        ssize_t acmpdu_common_ctrl_hdr_returned;
+        ssize_t acmpdu_common_pos;
 
         /***** Offset to write the field to ****/
         acmpdu_common_pos = ETHER_HDR_SIZE;

@@ -39,7 +39,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_stream stream_input_desc; // Structure containing the stream_input_desc fields
-        int stream_input_desc_read_returned; // Status of extracting STREAM INPUT descriptor information from a network buffer
+        ssize_t stream_input_desc_read_returned; // Status of extracting STREAM INPUT descriptor information from a network buffer
 
         struct stream_input_desc_stream_flags
         {
@@ -74,7 +74,7 @@ namespace avdecc_lib
          * \param pos The position offset to read the descriptor fields from.
          * \param frame_len The memory buffer length of the descriptor frame.
          */
-        stream_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        stream_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~stream_input_descriptor_imp();
 
@@ -352,7 +352,7 @@ namespace avdecc_lib
          * the current value, that is it contains the new stream format if the command succeeds or the old stream
          * format if it fails.
          */
-        int proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a GET_STREAM_FORMAT command with a notification id to fetch the current format of a stream.
@@ -371,7 +371,7 @@ namespace avdecc_lib
          * the current stream format, which is equivalent to the current format field in the addressed STREAM_INPUT
          * descriptor object.
          */
-        int proc_get_stream_format_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_get_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a SET_STREAM_INFO command with a notification id to change the current values of the dynamic information of
@@ -385,7 +385,7 @@ namespace avdecc_lib
         /**
          * Process a SET_STREAM_INFO response for the SET_STREAM_INFO command.
          */
-        int proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
@@ -404,7 +404,7 @@ namespace avdecc_lib
         /**
          * Process a GET_STREAM_INFO response for the GET_STREAM_INFO command.
          */
-        int proc_get_stream_info_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_get_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
@@ -417,7 +417,7 @@ namespace avdecc_lib
         /**
          * Process a START_STREAMING response for the START_STREAMING command.
          */
-        int proc_start_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_start_streaming_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a STOP_STREAMING command with a notification id to stop a connected stream for streaming media.
@@ -429,7 +429,7 @@ namespace avdecc_lib
         /**
          * Process a START_STREAMING response for the START_STREAMING command.
          */
-        int proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a CONNECT_RX command with a notification id to connect Listener sink stream.
@@ -449,7 +449,7 @@ namespace avdecc_lib
         /**
          * Process a CONNECT_RX response for the CONNECT_RX command.
          */
-        int proc_connect_rx_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_connect_rx_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a DISCONNECT_RX command with a notification id to disconnect Listener sink stream.
@@ -469,7 +469,7 @@ namespace avdecc_lib
         /**
          * Process a DISCONNECT_RX response for the DISCONNECT_RX command.
          */
-        int proc_disconnect_rx_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_disconnect_rx_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a GET_RX_STATE command with a notification id to get Listener sink stream connection state.
@@ -489,7 +489,7 @@ namespace avdecc_lib
         /**
          * Process a GET_RX_STATE response for the GET_RX_STATE command.
          */
-        int proc_get_rx_state_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_get_rx_state_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
     private:
         /**

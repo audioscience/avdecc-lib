@@ -92,12 +92,12 @@ namespace avdecc_lib
         return AVDECC_CONTROLLER_VERSION;
     }
 
-    uint32_t STDCALL controller_imp::get_end_station_count()
+    size_t STDCALL controller_imp::get_end_station_count()
     {
         return end_station_vec.size();
     }
 
-    end_station * STDCALL controller_imp::get_end_station_by_index(uint32_t end_station_index)
+    end_station * STDCALL controller_imp::get_end_station_by_index(size_t end_station_index)
     {
         return end_station_vec.at(end_station_index);
     }
@@ -120,7 +120,7 @@ namespace avdecc_lib
         return false;
     }
 
-    configuration_descriptor * STDCALL controller_imp::get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index)
+    configuration_descriptor * STDCALL controller_imp::get_config_desc_by_index(size_t end_station_index, uint16_t entity_index, uint16_t config_index)
     {
         bool is_valid = ((end_station_index < end_station_vec.size()) &&
                          (entity_index < end_station_vec.at(end_station_index)->entity_desc_count()) &&
@@ -223,7 +223,7 @@ namespace avdecc_lib
         return -1;
     }
 
-    void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t frame_len, int &status)
+    void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, size_t frame_len, int &status)
     {
         uint64_t dest_mac_addr;
         utility->convert_eui48_to_uint64(frame, dest_mac_addr);
@@ -367,7 +367,7 @@ namespace avdecc_lib
         }
     }
 
-    void controller_imp::tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t frame_len)
+    void controller_imp::tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len)
     {
         uint32_t subtype = jdksavdecc_subtype_data_get_subtype(jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE));
         struct jdksavdecc_frame packet_frame;
@@ -395,7 +395,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_controller_available aem_cmd_controller_avail;
-        int aem_cmd_controller_avail_returned;
+        ssize_t aem_cmd_controller_avail_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /*************************************************** AECP Common Data **************************************************/
@@ -424,11 +424,11 @@ namespace avdecc_lib
         return 0;
     }
 
-    int controller_imp::proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int controller_imp::proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_controller_available_response aem_cmd_controller_avail_resp;
-        int aem_cmd_controller_avail_resp_returned = 0;
+        ssize_t aem_cmd_controller_avail_resp_returned = 0;
         uint32_t msg_type = 0;
         bool u_field = false;
 

@@ -1453,8 +1453,8 @@ int cmd_line::cmd_connect()
     uint8_t *outstream_end_station_name;
     uint8_t *instream_end_station_name;
     const char * format;
-    uint32_t stream_input_desc_count = 0;
-    uint32_t stream_output_desc_count = 0;
+    size_t stream_input_desc_count = 0;
+    size_t stream_output_desc_count = 0;
     uint64_t end_station_mac;
 
     std::cout << "\n" << "End Station" << std::setw(26) << "" << "Instream" << std::setw(16) << "" << "Stream Format" << std::endl;
@@ -1508,7 +1508,7 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
         uint8_t *outstream_end_station_name;
         uint8_t *src_desc_name;
         const char *format;
-        uint32_t stream_output_desc_count = 0;
+        size_t stream_output_desc_count = 0;
         uint64_t end_station_mac;
 
         std::cout << "\n" << "End Station" << std::setw(26) << "   " << "Outstream" << std::setw(16) << "   " << "Stream Format" << std::endl;
@@ -2185,7 +2185,7 @@ int cmd_line::cmd_set_clock_source(std::string desc_name, uint16_t desc_index, u
 
 uint32_t cmd_line::get_next_notification_id()
 {
-    return notification_id++;
+    return (uint32_t)notification_id++;
 }
 
 int cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_index)

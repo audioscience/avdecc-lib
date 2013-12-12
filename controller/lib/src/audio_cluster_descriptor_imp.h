@@ -38,7 +38,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_audio_cluster audio_cluster_desc; // Structure containing the audio_cluster_desc fields
-        int audio_cluster_desc_read_returned; // Status of extracting Audio Cluster descriptor information from a network buffer
+        ssize_t audio_cluster_desc_read_returned; // Status of extracting Audio Cluster descriptor information from a network buffer
 
     public:
         /**
@@ -49,7 +49,7 @@ namespace avdecc_lib
          * \param pos The position offset to read the descriptor fields from.
          * \param frame_len The memory buffer length of the descriptor frame.
          */
-        audio_cluster_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        audio_cluster_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~audio_cluster_descriptor_imp();
 

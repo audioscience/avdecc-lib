@@ -38,7 +38,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_avb_interface avb_interface_desc; // Structure containing the avb_interface_desc fields
-        int desc_avb_interface_read_returned; // Status of extracting AVB INTERFACE descriptor information from a network buffer
+        ssize_t desc_avb_interface_read_returned; // Status of extracting AVB INTERFACE descriptor information from a network buffer
 
     public:
         /**
@@ -49,7 +49,7 @@ namespace avdecc_lib
          * \param pos The position offset to read the descriptor fields from.
          * \param frame_len The memory buffer length of the descriptor frame.
          */
-        avb_interface_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        avb_interface_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~avb_interface_descriptor_imp();
 

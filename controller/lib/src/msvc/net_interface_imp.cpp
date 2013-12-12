@@ -91,7 +91,7 @@ namespace avdecc_lib
         return mac;
     }
 
-    char * STDCALL net_interface_imp::get_dev_desc_by_index(uint32_t dev_index)
+    char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
     {
         uint32_t i;
 
@@ -258,7 +258,7 @@ namespace avdecc_lib
         return -2; // Timeout
     }
 
-    int net_interface_imp::send_frame(uint8_t *frame, uint16_t frame_len)
+    int net_interface_imp::send_frame(uint8_t *frame, size_t frame_len)
     {
         if(pcap_sendpacket(pcap_interface, frame, frame_len) != 0)
         {

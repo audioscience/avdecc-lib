@@ -38,7 +38,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_clock_source clock_source_desc; // Structure containing the clock_source_desc fields
-        int desc_clock_source_read_returned; // Status of extracting CLOCK SOURCE descriptor information from a network buffer
+        ssize_t desc_clock_source_read_returned; // Status of extracting CLOCK SOURCE descriptor information from a network buffer
 
     public:
         /**
@@ -49,7 +49,7 @@ namespace avdecc_lib
          * \param pos The position offset to read the descriptor fields from.
          * \param frame_len The memory buffer length of the descriptor frame.
          */
-        clock_source_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        clock_source_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~clock_source_descriptor_imp();
 
