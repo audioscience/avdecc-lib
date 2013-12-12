@@ -6,6 +6,7 @@ include_directories( src ../../lib/include )
 
 if(APPLE)
   set(PCAP_NAME pcap)
+  set(READLINE_NAME readline)
 elseif(UNIX)
   set(PCAP_NAME pcap)
 elseif(WIN32)
@@ -27,3 +28,6 @@ add_executable (avdecccmdline ${CMDLINE_INCLUDES} ${CMDLINE_SRC})
 target_link_libraries(avdecccmdline controller)
 
 target_link_libraries(avdecccmdline ${PCAP_NAME})
+
+target_link_libraries(avdecccmdline ${READLINE_NAME})
+
