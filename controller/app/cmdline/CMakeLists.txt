@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.8)
 project (controller)
 enable_testing()
 
-include_directories( src ../../lib/include )
+include_directories( src ../../lib/include ../../jdksavdecc-c/include )
 
 if(APPLE)
   set(PCAP_NAME pcap)
