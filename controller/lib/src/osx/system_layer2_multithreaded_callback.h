@@ -64,7 +64,7 @@ namespace avdecc_lib
         /**
          * Set a waiting flag for the command sent.
          */
-        int STDCALL set_wait_for_next_cmd(void *notification_id);
+        int STDCALL set_wait_for_next_cmd();
 
         /**
          * Wait for the response packet with the corrsponding notification id to be received.
