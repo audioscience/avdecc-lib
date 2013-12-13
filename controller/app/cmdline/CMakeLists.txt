@@ -14,7 +14,7 @@ if(APPLE)
 elseif(UNIX)
   set(PCAP_NAME pcap)
   set(READLINE_NAME edit)
-  target_link_libraries(avdecccmdline rt)
+  target_link_libraries(rt)
 elseif(WIN32)
   set(PCAP_NAME wpcap)
 
