@@ -197,7 +197,7 @@ namespace avdecc_lib
                                                         cmd_type,
                                                         desc_type,
                                                         desc_index,
-                                                        -1,
+                                                        UINT_MAX,
                                                         inflight_cmds.at(inflight_cmd_index).cmd_notification_id);
 
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,

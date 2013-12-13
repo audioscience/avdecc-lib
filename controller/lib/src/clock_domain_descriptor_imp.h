@@ -44,11 +44,6 @@ namespace avdecc_lib
         struct jdksavdecc_aem_command_set_clock_source_response aem_cmd_set_clk_src_resp; // Store the response received after sending a SET_CLOCK_SOURCE command
         struct jdksavdecc_aem_command_get_clock_source_response aem_cmd_get_clk_src_resp; // Store the response received after sending a GET_CLOCK_SOURCE command
 
-        /**
-        * Store the Clock Sources of the CLOCK DOMAIN descriptor object.
-        */
-        void store_clock_sources(const uint8_t *frame, size_t pos);
-
     public:
         /**
          * Constructor for CLOCK DOMAIN descriptor object.
@@ -155,6 +150,17 @@ namespace avdecc_lib
          * Process a GET_CLOCK_SOURCE response for the GET_CLOCK_SOURCE command.
          */
         int proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+
+    private:
+        /**
+        * Store the Clock Sources of the CLOCK DOMAIN object.
+        */
+        void store_clock_sources(const uint8_t *frame, size_t pos);
+
+        /**
+         * Update the internal CLOCK DOMAIN's clock source field.
+         */
+        void update_clock_source_index(uint16_t clock_source_index);
     };
 }
 

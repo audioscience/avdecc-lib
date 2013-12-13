@@ -364,7 +364,7 @@ namespace avdecc_lib
 
                         for(int desc_count_index = 0; desc_count_index < desc_count; desc_count_index++)
                         {
-                            read_desc_init(desc_type_from_config, desc_count_index);
+                            read_desc_init(desc_type_from_config, (uint16_t)desc_count_index);
                             read_desc_count++;
                         }
 
@@ -403,7 +403,7 @@ namespace avdecc_lib
                                 uint16_t num_of_string_desc = config_desc_imp_ref->get_locale_desc_by_index(0)->number_of_strings();
                                 for(int i = 0; i < num_of_string_desc; i++)
                                 {
-                                    read_desc_init(JDKSAVDECC_DESCRIPTOR_STRINGS, i); // Send a READ_DESCRIPTOR command for the STRINGS descriptor as part of the End Station initialization
+                                    read_desc_init(JDKSAVDECC_DESCRIPTOR_STRINGS, (uint16_t)i); // Send a READ_DESCRIPTOR command for the STRINGS descriptor as part of the End Station initialization
                                     read_desc_count++;
                                 }
 
@@ -450,7 +450,7 @@ namespace avdecc_lib
                                 {
                                     for(int i = base_desc; i < base_desc+num_desc; i++)
                                     {
-                                        read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT, i);
+                                        read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT, (uint16_t)i);
                                         read_desc_count++;
                                     }
                                 }
@@ -470,7 +470,7 @@ namespace avdecc_lib
                                 {
                                     for(int i = base_desc; i < base_desc+num_desc; i++)
                                     {
-                                        read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT, i);
+                                        read_desc_init(JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT, (uint16_t)i);
                                         read_desc_count++;
                                     }
                                 }
@@ -518,7 +518,7 @@ namespace avdecc_lib
                                         {
                                             for(int i = 0; i < base_desc + num_desc; i++)
                                             {
-                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER, i);
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER, (uint16_t)i);
                                                 read_desc_count++;
                                             }
                                         }
@@ -539,7 +539,7 @@ namespace avdecc_lib
                                         {
                                             for(int i = 0; i < base_desc + num_desc; i++)
                                             {
-                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_MAP, i);
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_MAP, (uint16_t)i);
                                                 read_desc_count++;
                                             }
                                         }
@@ -560,7 +560,7 @@ namespace avdecc_lib
                                         {
                                             for(int i = 0; i < base_desc + num_desc; i++)
                                             {
-                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_CONTROL, i);
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_CONTROL, (uint16_t)i);
                                                 read_desc_count++;
                                             }
                                         }
@@ -609,7 +609,7 @@ namespace avdecc_lib
                                         {
                                             for(int i = 0; i < base_desc + num_desc; i++)
                                             {
-                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER, i);
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER, (uint16_t)i);
                                                 read_desc_count++;
                                             }
                                         }
@@ -630,7 +630,7 @@ namespace avdecc_lib
                                         {
                                             for(int i = 0; i < base_desc + num_desc; i++)
                                             {
-                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_MAP, i);
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_AUDIO_MAP, (uint16_t)i);
                                                 read_desc_count++;
                                             }
                                         }
@@ -651,7 +651,7 @@ namespace avdecc_lib
                                         {
                                             for(int i = 0; i < base_desc + num_desc; i++)
                                             {
-                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_CONTROL, i);
+                                                read_desc_init(JDKSAVDECC_DESCRIPTOR_CONTROL, (uint16_t)i);
                                                 read_desc_count++;
                                             }
                                         }

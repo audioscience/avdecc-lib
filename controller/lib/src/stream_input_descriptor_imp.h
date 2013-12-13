@@ -493,9 +493,13 @@ namespace avdecc_lib
 
     private:
         /**
-         * Store the stream flags componenets of the STREAM OUTPUT descriptor object in a vector.
+         * Store the stream flags componenets of the STREAM INPUT descriptor object in a vector.
          */
         void stream_flags_init();
+
+        /**
+         * Update the internal STREAM INPUT descriptor's stream format field.
+         */
+        void update_stream_format(struct jdksavdecc_eui64 stream_format);
     };
 }
-

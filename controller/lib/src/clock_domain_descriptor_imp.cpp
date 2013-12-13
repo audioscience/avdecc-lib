@@ -114,6 +114,11 @@ namespace avdecc_lib
         return aem_cmd_set_clk_src_resp.clock_source_index;
     }
 
+    void clock_domain_descriptor_imp::update_clock_source_index(uint16_t clock_source_index)
+    {
+        clock_domain_desc.clock_source_index = clock_source_index;
+    }
+
     uint16_t STDCALL clock_domain_descriptor_imp::get_clock_source_clock_source_index()
     {
         return aem_cmd_get_clk_src_resp.clock_source_index;
@@ -185,6 +190,11 @@ namespace avdecc_lib
         u_field = aem_cmd_set_clk_src_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
+
+        if(status == AEM_STATUS_SUCCESS)
+        {
+            update_clock_source_index(aem_cmd_set_clk_src_resp.clock_source_index);
+        }
 
         free(cmd_frame);
         return 0;

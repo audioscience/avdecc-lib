@@ -105,9 +105,9 @@ namespace avdecc_lib
         return tx_cmd(notification_id, notification_flag, cmd_frame, false);
     }
 
-    int acmp_controller_state_machine::state_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *cmd_frame)
+    int acmp_controller_state_machine::state_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
     {
-        return proc_resp(notification_id, msg_type, cmd_frame);
+        return proc_resp(notification_id, cmd_frame);
     }
 
     void acmp_controller_state_machine::state_timeout(uint32_t inflight_cmd_index)
@@ -123,10 +123,10 @@ namespace avdecc_lib
 
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
-                                                        msg_type + CMD_LOOKUP,
+                                                        (uint16_t)msg_type + CMD_LOOKUP,
                                                         0,
                                                         0,
-                                                        -1,
+                                                        UINT_MAX,
                                                         inflight_cmds.at(inflight_cmd_index).cmd_notification_id);
 
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
@@ -196,7 +196,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int acmp_controller_state_machine::proc_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *cmd_frame)
+    int acmp_controller_state_machine::proc_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
     {
         uint16_t seq_id = jdksavdecc_acmpdu_get_sequence_id(cmd_frame->payload, ETHER_HDR_SIZE);
         int inflight_index = 0;
@@ -257,7 +257,7 @@ namespace avdecc_lib
 
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
-                                                        msg_type + CMD_LOOKUP,
+                                                        (uint16_t)msg_type + CMD_LOOKUP,
                                                         0,
                                                         0,
                                                         status,

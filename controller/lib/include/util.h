@@ -70,7 +70,7 @@ namespace avdecc_lib
         /**
          * Convert command value to its corresponding ACMP command name.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL acmp_cmd_value_to_name(uint16_t cmd_value) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL acmp_cmd_value_to_name(uint32_t cmd_value) = 0;
 
         /**
          * Convert ACMP command name to its corresponding command value.

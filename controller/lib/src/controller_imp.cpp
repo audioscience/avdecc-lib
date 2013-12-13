@@ -372,7 +372,7 @@ namespace avdecc_lib
         uint32_t subtype = jdksavdecc_subtype_data_get_subtype(jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE));
         struct jdksavdecc_frame packet_frame;
 
-        packet_frame.length = frame_len;
+        packet_frame.length = (uint16_t)frame_len;
         memcpy(packet_frame.payload, frame, frame_len);
 
         if(subtype == JDKSAVDECC_SUBTYPE_AECP)

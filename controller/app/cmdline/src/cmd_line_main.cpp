@@ -33,7 +33,7 @@
 #include <iomanip>
 #include <string>
 #include <vector>
-#include <inttypes.h>
+#include <cstdint>
 
 #include <stdexcept>
 #include "cmd_line.h"
@@ -42,6 +42,7 @@
 #include <readline/history.h>
 #elif defined(__linux__)
 #include <editline/readline.h>
+#include <inttypes.h>
 #endif
 
 using namespace std;
