@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_LIB_OS_H_
-#define _AVDECC_LIB_OS_H_
 
 #if defined __MACH__
 #include <mach/clock.h>
@@ -79,4 +77,3 @@ namespace avdecc_lib_os
 
 #endif
 
-#endif

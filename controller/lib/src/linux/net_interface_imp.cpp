@@ -160,7 +160,7 @@ namespace avdecc_lib
         return mac;
     }
 
-    char * STDCALL net_interface_imp::get_dev_desc_by_index(uint32_t dev_index)
+    char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
     {
         return (char *)ifnames[dev_index].c_str();
     }

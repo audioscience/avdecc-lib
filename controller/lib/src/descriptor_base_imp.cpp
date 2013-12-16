@@ -101,7 +101,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int descriptor_base_imp::proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int descriptor_base_imp::proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override proc_acquire_entity_resp.\n");
         return 0;
@@ -111,7 +111,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_acquire_entity aem_cmd_acquire_entity;
-        int aem_cmd_acquire_entity_returned;
+        ssize_t aem_cmd_acquire_entity_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /***************************************** AECP Common Data *********************************************/
@@ -149,11 +149,11 @@ namespace avdecc_lib
     int descriptor_base_imp::default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp,
                                                               void *&notification_id,
                                                               const uint8_t *frame,
-                                                              uint16_t frame_len,
+                                                              size_t frame_len,
                                                               int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_acquire_entity_resp_returned;
+        ssize_t aem_cmd_acquire_entity_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -189,7 +189,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int descriptor_base_imp::proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int descriptor_base_imp::proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override proc_lock_entity_resp.\n");
 
@@ -200,7 +200,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_lock_entity aem_cmd_lock_entity;
-        int aem_cmd_acquire_entity_returned;
+        ssize_t aem_cmd_acquire_entity_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /***************************************** AECP Common Data ******************************************/
@@ -238,11 +238,11 @@ namespace avdecc_lib
     int descriptor_base_imp::default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp,
                                                            void *&notification_id,
                                                            const uint8_t *frame,
-                                                           uint16_t frame_len,
+                                                           size_t frame_len,
                                                            int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_lock_entity_resp_returned = 0;
+        ssize_t aem_cmd_lock_entity_resp_returned = 0;
         uint32_t msg_type = 0;
         bool u_field = false;
 

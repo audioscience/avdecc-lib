@@ -117,7 +117,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd(void *notification_id)
+    int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd()
     {
         queue_is_waiting = true;
         resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID; // Reset the status
@@ -337,8 +337,8 @@ namespace avdecc_lib
         ReleaseSemaphore(poll_rx.queue_thread.kill_sem, 1, &previous);
         ReleaseSemaphore(poll_thread.kill_sem, 1, &previous);
 
-        while((WaitForSingleObject(poll_rx.queue_thread.handle, 0) != WAIT_OBJECT_0) ||
-              (WaitForSingleObject(poll_thread.handle, 0) != WAIT_OBJECT_0)) // Wait for thread termination
+        while((WaitForSingleObject(poll_rx.queue_thread.handle, 0) == WAIT_TIMEOUT) &&
+              (WaitForSingleObject(poll_thread.handle, 0) == WAIT_TIMEOUT)) // Wait for thread termination
         {
             Sleep(100);
         }

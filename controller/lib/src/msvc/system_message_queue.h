@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_SYSTEM_MESSAGE_QUEUE_H_
-#define _AVDECC_CONTROLLER_LIB_SYSTEM_MESSAGE_QUEUE_H_
 
 #include <stdint.h>
 
@@ -65,4 +63,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

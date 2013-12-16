@@ -28,8 +28,7 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_LOCALE_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_LOCALE_DESCRIPTOR_IMP_H_
+
 
 #include "descriptor_base_imp.h"
 #include "locale_descriptor.h"
@@ -40,7 +39,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_locale locale_desc; // Structure containing the locale_desc fields
-        int desc_locale_read_returned; // Status of extracting LOCALE descriptor information from a network buffer
+        ssize_t desc_locale_read_returned; // Status of extracting LOCALE descriptor information from a network buffer
 
     public:
         /**
@@ -51,7 +50,7 @@ namespace avdecc_lib
          * \param pos The position offset to read the descriptor fields from.
          * \param frame_len The memory buffer length of the descriptor frame.
          */
-        locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~locale_descriptor_imp();
 
@@ -87,4 +86,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_CONTROLLER_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_CONTROLLER_IMP_H_
 
 #include "controller.h"
 
@@ -62,12 +60,12 @@ namespace avdecc_lib
         /**
          * Get the total number of End Stations connected
          */
-        uint32_t STDCALL get_end_station_count();
+        size_t STDCALL get_end_station_count();
 
         /**
          * Get the corresponding End Station by index.
          */
-        end_station * STDCALL get_end_station_by_index(uint32_t end_station_index);
+        end_station * STDCALL get_end_station_by_index(size_t end_station_index);
 
         /**
          * Check if the corresponding End Station with the GUID exist.
@@ -77,7 +75,7 @@ namespace avdecc_lib
         /**
          * Get the corresponding CONFIGURATION descriptor by index.
          */
-        configuration_descriptor * STDCALL get_config_desc_by_index(uint32_t end_station_index, uint16_t entity_index, uint16_t config_index);
+        configuration_descriptor * STDCALL get_config_desc_by_index(size_t end_station_index, uint16_t entity_index, uint16_t config_index);
 
         /**
          * Get the corresponding CONFIGURATION descriptor by GUID.
@@ -117,12 +115,12 @@ namespace avdecc_lib
         /**
          * Lookup and process packet received.
          */
-        void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, uint16_t frame_len, int &status);
+        void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send queued packet to the AEM Controller State Machine.
          */
-        void tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, uint16_t frame_len);
+        void tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len);
 
         /**
          * Send a CONTROLLER_AVAILABLE command to verify that the AVDECC Controller is still there.
@@ -132,10 +130,9 @@ namespace avdecc_lib
         /**
          * Process a CONTROLLER_AVAILABLE response for the CONTROLLER_AVAILABLE command.
          */
-        int proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
     };
 
     extern controller_imp *controller_imp_ref;
 }
 
-#endif

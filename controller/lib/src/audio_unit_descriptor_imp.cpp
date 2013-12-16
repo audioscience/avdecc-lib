@@ -38,7 +38,7 @@
 
 namespace avdecc_lib
 {
-    audio_unit_descriptor_imp::audio_unit_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    audio_unit_descriptor_imp::audio_unit_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
         desc_audio_read_returned = jdksavdecc_descriptor_audio_read(&audio_unit_desc, frame, pos, frame_len);
 
@@ -260,7 +260,7 @@ namespace avdecc_lib
         return audio_unit_desc.current_sampling_rate;
     }
 
-    uint32_t STDCALL audio_unit_descriptor_imp::get_sampling_rate_by_index(uint32_t sampling_rate_index)
+    uint32_t STDCALL audio_unit_descriptor_imp::get_sampling_rate_by_index(size_t sampling_rate_index)
     {
         return sample_rates_vec.at(sampling_rate_index);
     }
@@ -280,6 +280,11 @@ namespace avdecc_lib
         return aem_cmd_set_sampling_rate_resp.sampling_rate;
     }
 
+    void audio_unit_descriptor_imp::update_sampling_rate(uint32_t sampling_rate)
+    {
+        audio_unit_desc.current_sampling_rate = sampling_rate;
+    }
+
     uint32_t STDCALL audio_unit_descriptor_imp::get_sampling_rate_sampling_rate()
     {
         return aem_cmd_get_sampling_rate_resp.sampling_rate;
@@ -290,7 +295,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_set_sampling_rate aem_cmd_set_sampling_rate;
-        int aem_cmd_set_sampling_rate_returned;
+        ssize_t aem_cmd_set_sampling_rate_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************* AECP Common Data **********************************************/
@@ -325,10 +330,10 @@ namespace avdecc_lib
 
     }
 
-    int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_set_sampling_rate_resp_returned;
+        ssize_t aem_cmd_set_sampling_rate_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -353,6 +358,11 @@ namespace avdecc_lib
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
+        if(status == AEM_STATUS_SUCCESS)
+        {
+            update_sampling_rate(aem_cmd_set_sampling_rate_resp.sampling_rate);
+        }
+
         free(cmd_frame);
         return 0;
     }
@@ -361,7 +371,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_get_sampling_rate aem_cmd_get_sampling_rate;
-        int aem_cmd_get_sampling_rate_returned;
+        ssize_t aem_cmd_get_sampling_rate_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *********************************************/
@@ -395,10 +405,10 @@ namespace avdecc_lib
     }
 
 
-    int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_get_sampling_rate_resp_returned;
+        ssize_t aem_cmd_get_sampling_rate_resp_returned;
         uint32_t msg_type;
         bool u_field;
 

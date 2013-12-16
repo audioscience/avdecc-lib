@@ -67,7 +67,7 @@ namespace avdecc_lib
     void adp_discovery_state_machine::common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_guid)
     {
         struct jdksavdecc_adpdu_common_control_header adpdu_common_ctrl_hdr;
-        int adpdu_common_ctrl_hdr_returned;
+        ssize_t adpdu_common_ctrl_hdr_returned;
 
         /********************************** 1722 Protocol Header ***********************************/
         adpdu_common_ctrl_hdr.cd = 1;
@@ -153,7 +153,7 @@ namespace avdecc_lib
 
     }
 
-    int adp_discovery_state_machine::state_avail(const uint8_t *frame, uint16_t frame_len)
+    int adp_discovery_state_machine::state_avail(const uint8_t *frame, size_t frame_len)
     {
         struct jdksavdecc_adpdu_common_control_header adp_hdr;
         uint64_t entity_guid;

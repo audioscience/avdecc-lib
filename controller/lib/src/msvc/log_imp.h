@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_IMP_LOG_H_
-#define _AVDECC_CONTROLLER_LIB_IMP_LOG_H_
 
 #include "avdecc_lib_os.h"
 #include <stdint.h>
@@ -82,4 +80,4 @@ namespace avdecc_lib
     extern log_imp *log_imp_ref;
 }
 
-#endif
+
