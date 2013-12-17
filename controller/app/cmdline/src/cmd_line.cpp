@@ -2031,9 +2031,8 @@ int cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
                 std::cout << "Stream format: " << stream_format << std::endl;
             }
 
-            std::cout << "Stream ID: " << std::dec << stream_input_desc_ref->get_stream_info_stream_id() << std::endl;
-            std::cout << "MSRP Accumulated Latency: 0x" << std::dec << stream_input_desc_ref->get_stream_info_msrp_accumulated_latency() << std::endl;
-            std::cout << "Stream Destination MAC: 0x" << std::hex << stream_input_desc_ref->get_stream_info_stream_dest_mac() << std::endl;
+            std::cout << "Stream ID: 0x" << std::hex << stream_input_desc_ref->get_stream_info_stream_id() << std::endl;
+            std::cout << "MSRP Accumulated Latency: " << std::dec << stream_input_desc_ref->get_stream_info_msrp_accumulated_latency() << std::endl;
         }
 
         return 1;
@@ -2058,8 +2057,8 @@ int cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
                 std::cout << "Stream format: " << stream_format << std::endl;
             }
 
-            std::cout << "Stream ID: " << std::dec << stream_output_desc_ref->get_stream_info_stream_id() << std::endl;
-            std::cout << "MSRP Accumulated Latency: 0x" << std::dec << stream_output_desc_ref->get_stream_info_msrp_accumulated_latency() << std::endl;
+            std::cout << "Flags: 0x" << std::hex << stream_output_desc_ref->get_stream_info_flags() << std::endl;
+            std::cout << "Stream ID: 0x" << std::hex << std::setw(16) << stream_output_desc_ref->get_stream_info_stream_id() << std::endl;
             std::cout << "Stream Destination MAC: 0x" << std::hex << stream_output_desc_ref->get_stream_info_stream_dest_mac() << std::endl;
         }
         return 1;
