@@ -115,8 +115,6 @@ namespace avdecc_lib
     system_layer2_multithreaded_callback::~system_layer2_multithreaded_callback()
     {
         sem_unlink("/waiting_sem");
-        delete netif_obj_in_system;
-        delete controller_ref_in_system;
         delete local_system;
     }
 

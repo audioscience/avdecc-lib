@@ -67,10 +67,10 @@ cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uin
 
     cmd_line_help_init();
 
+    utility = avdecc_lib::create_util();
     netif = avdecc_lib::create_net_interface();
     controller_obj = avdecc_lib::create_controller(netif, notification_callback, log_callback);
     sys = avdecc_lib::create_system(avdecc_lib::system::LAYER2_MULTITHREADED_CALLBACK, netif, controller_obj);
-    utility = avdecc_lib::create_util();
 
     std::cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
     std::cout << "(c) AudioScience, Inc. 2013\n"<< std::endl;
@@ -83,6 +83,8 @@ cmd_line::~cmd_line()
 {
     sys->process_close();
     sys->destroy();
+    controller_obj->destroy();
+    netif->destroy();
     utility->destroy();
 }
 
