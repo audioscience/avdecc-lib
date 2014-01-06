@@ -188,7 +188,7 @@ namespace avdecc_lib
         if(is_retried)
         {
             jdksavdecc_eui64 id = jdksavdecc_common_control_header_get_stream_id(frame.payload, ETHER_HDR_SIZE);
-            uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame.payload, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+            uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame.payload, ETHER_HDR_SIZE );
             uint16_t desc_type = jdksavdecc_aem_command_read_descriptor_get_descriptor_type(frame.payload, ETHER_HDR_SIZE);
             uint16_t desc_index = jdksavdecc_aem_command_read_descriptor_get_descriptor_index(frame.payload, ETHER_HDR_SIZE);
             
@@ -256,7 +256,7 @@ namespace avdecc_lib
     int aem_controller_state_machine::callback(void *notification_id, uint32_t notification_flag, uint8_t *frame)
     {
         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
-        uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+        uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
         uint32_t status = jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE);
         uint16_t desc_type = 0;
         uint16_t desc_index = 0;

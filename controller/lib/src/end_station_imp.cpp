@@ -746,7 +746,7 @@ namespace avdecc_lib
         uint16_t cmd_type;
         uint16_t desc_type;
         uint16_t desc_index;
-        cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+        cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
 
         switch(cmd_type)
         {
