@@ -84,8 +84,6 @@ namespace avdecc_lib
     {
         delete poll_rx.rx_queue;
         delete poll_tx.tx_queue;
-        delete netif_obj_in_system;
-        delete controller_obj_in_system;
     }
 
     void STDCALL system_layer2_multithreaded_callback::destroy()
@@ -117,7 +115,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd(void *notification_id)
+    int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd()
     {
         queue_is_waiting = true;
         resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID; // Reset the status
@@ -272,20 +270,20 @@ namespace avdecc_lib
                     poll_rx.rx_queue->queue_pop_nowait(&thread_data);
 
                     bool is_notification_id_valid = false;
-                    int status = -1;
+                    int rx_status = -1;
                     bool is_waiting_completed = false;
 
                     controller_obj_in_system->rx_packet_event(thread_data.notification_id,
                                                               is_notification_id_valid,
                                                               thread_data.frame,
                                                               thread_data.frame_len,
-                                                              status);
+                                                              rx_status);
 
                     is_waiting_completed = is_waiting && (!controller_obj_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
                                            is_notification_id_valid && (waiting_notification_id == thread_data.notification_id);
                     if(is_waiting_completed)
                     {
-                        resp_status_for_cmd = status;
+                        resp_status_for_cmd = rx_status;
                         is_waiting = false;
                         ReleaseSemaphore(waiting_sem, 1, NULL);
                     }
@@ -331,17 +329,17 @@ namespace avdecc_lib
 
     int STDCALL system_layer2_multithreaded_callback::process_close()
     {
-        LONG previous;
 
         /**************** Send kill events to threads ****************/
-        ReleaseSemaphore(poll_rx.queue_thread.kill_sem, 1, &previous);
-        ReleaseSemaphore(poll_thread.kill_sem, 1, &previous);
+        ReleaseSemaphore(poll_rx.queue_thread.kill_sem, 1, NULL);
+        ReleaseSemaphore(poll_thread.kill_sem, 1, NULL);
+        SetEvent(poll_events_array[KILL_ALL]);
 
-        while((WaitForSingleObject(poll_rx.queue_thread.handle, 0) != WAIT_OBJECT_0) ||
-              (WaitForSingleObject(poll_thread.handle, 0) != WAIT_OBJECT_0)) // Wait for thread termination
-        {
-            Sleep(100);
-        }
+        while (WaitForSingleObject(poll_rx.queue_thread.handle, 0) != WAIT_OBJECT_0){ Sleep(100); }
+        while (WaitForSingleObject(poll_thread.handle, 0) != WAIT_OBJECT_0){ Sleep(100); }
+
+        CloseHandle(poll_rx.queue_thread.kill_sem);
+        CloseHandle(poll_thread.kill_sem);
 
         return 0;
     }

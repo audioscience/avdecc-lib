@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_UTIL_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_UTIL_IMP_H_
 
 #include "util.h"
 
@@ -75,7 +73,7 @@ namespace avdecc_lib
         /**
          * Convert command value to its corresponding ACMP command name.
          */
-        const char * STDCALL acmp_cmd_value_to_name(uint16_t cmd_value);
+        const char * STDCALL acmp_cmd_value_to_name(uint32_t cmd_value);
 
         /**
          * Convert ACMP command name to its corresponding command value.
@@ -131,4 +129,3 @@ namespace avdecc_lib
     extern util_imp *utility;
 }
 
-#endif

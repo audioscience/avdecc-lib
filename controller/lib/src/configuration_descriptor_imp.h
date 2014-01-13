@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_CONFIGURATION_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_CONFIGURATION_DESCRIPTOR_IMP_H_
 
 #include "descriptor_base_imp.h"
 #include "audio_unit_descriptor_imp.h"
@@ -54,7 +52,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_configuration config_desc; // Structure containing the config_desc fields
-        int config_desc_read_returned; // Status of extracting CONFIGURATION descriptor information from a network buffer
+        ssize_t config_desc_read_returned; // Status of extracting CONFIGURATION descriptor information from a network buffer
 
         std::vector<uint16_t> desc_type_vec; // Store descriptor types present in the CONFIGURATION descriptor
         std::vector<uint16_t> desc_count_vec; // Store descriptor counts present in the CONFIGURATION descriptor
@@ -83,7 +81,7 @@ namespace avdecc_lib
          * \param pos The position offset to read the descriptor fields from.
          * \param frame_len The memory buffer length of the descriptor frame.
          */
-        configuration_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        configuration_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~configuration_descriptor_imp();
 
@@ -125,142 +123,142 @@ namespace avdecc_lib
         /**
          * Store AUDIO UNIT descriptor object.
          */
-        void store_audio_unit_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_audio_unit_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store STREAM INPUT descriptor object.
          */
-        void store_stream_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_stream_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store STREAM OUTPUT descriptor object.
          */
-        void store_stream_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_stream_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store JACK INPUT descriptor object.
          */
-        void store_jack_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_jack_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store JACK OUTPUT descriptor object.
          */
-        void store_jack_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_jack_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store AVB INTERFACE descriptor object.
          */
-        void store_avb_interface_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_avb_interface_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store CLOCK SOURCE descriptor object.
          */
-        void store_clock_source_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_clock_source_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store LOCALE descriptor object.
          */
-        void store_locale_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_locale_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store Strings descriptor object.
          */
-        void store_strings_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_strings_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store Stream Port Input descriptor object.
          */
-        void store_stream_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_stream_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store Stream Port Output descriptor object.
          */
-        void store_stream_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_stream_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store Audio Cluster descriptor object.
          */
-        void store_audio_cluster_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_audio_cluster_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store Audio Map descriptor object.
          */
-        void store_audio_map_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_audio_map_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Store CLOCK DOMAIN descriptor object.
          */
-        void store_clock_domain_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_clock_domain_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Get the number of AUDIO UNIT descriptors present in the current configuration.
          */
-        uint32_t STDCALL audio_unit_desc_count();
+        size_t STDCALL audio_unit_desc_count();
 
         /**
          * Get the number of STREAM INPUT descriptors present in the current configuration.
          */
-        uint32_t STDCALL stream_input_desc_count();
+        size_t STDCALL stream_input_desc_count();
 
         /**
          * Get the number of STREAM OUTPUT descriptors present in the current configuration.
          */
-        uint32_t STDCALL stream_output_desc_count();
+        size_t STDCALL stream_output_desc_count();
 
         /**
          * Get the number of JACK INPUT descriptors present in the current configuration.
          */
-        uint32_t STDCALL jack_input_desc_count();
+        size_t STDCALL jack_input_desc_count();
 
         /**
          * Get the number of JACK OUTPUT descriptors present in the current configuration.
          */
-        uint32_t STDCALL jack_output_desc_count();
+        size_t STDCALL jack_output_desc_count();
 
         /**
          * Get the number of AVB INTERFACE descriptors present in the current configuration.
          */
-        uint32_t STDCALL avb_interface_desc_count();
+        size_t STDCALL avb_interface_desc_count();
 
         /**
          * Get the number of CLOCK SOURCE descriptors present in the current configuration.
          */
-        uint32_t STDCALL clock_source_desc_count();
+        size_t STDCALL clock_source_desc_count();
 
         /**
          * Get the number of LOCALE descriptors present in the current configuration.
          */
-        uint32_t STDCALL locale_desc_count();
+        size_t STDCALL locale_desc_count();
 
         /**
          * Get the number of Strings descriptors present in the current configuration.
          */
-        uint32_t STDCALL strings_desc_count();
+        size_t STDCALL strings_desc_count();
 
         /**
          * Get the number of Stream Port Input descriptors present in the current configuration.
          */
-        uint32_t STDCALL stream_port_input_desc_count();
+        size_t STDCALL stream_port_input_desc_count();
 
         /**
          * Get the number of Stream Port Output descriptors present in the current configuration.
          */
-        uint32_t STDCALL stream_port_output_desc_count();
+        size_t STDCALL stream_port_output_desc_count();
 
         /**
          * Get the number of Audio Cluster descriptors present in the current configuration.
          */
-        uint32_t STDCALL audio_cluster_desc_count();
+        size_t STDCALL audio_cluster_desc_count();
 
         /**
          * Get the number of Audio Map descriptors present in the current configuration.
          */
-        uint32_t STDCALL audio_map_desc_count();
+        size_t STDCALL audio_map_desc_count();
 
         /**
          * Get the number of CLOCK DOMAIN descriptors present in the current configuration.
          */
-        uint32_t STDCALL clock_domain_desc_count();
+        size_t STDCALL clock_domain_desc_count();
 
         /**
          * Get the top level descriptor present in the CONFIGURATION descriptor.
@@ -280,72 +278,72 @@ namespace avdecc_lib
         /**
          * Get the corresponding AUDIO UNIT descriptor by index.
          */
-        audio_unit_descriptor * STDCALL get_audio_unit_desc_by_index(uint32_t audio_unit_desc_index);
+        audio_unit_descriptor * STDCALL get_audio_unit_desc_by_index(size_t audio_unit_desc_index);
 
         /**
          * Get the corresponding STREAM INPUT descriptor by index.
          */
-        stream_input_descriptor * STDCALL get_stream_input_desc_by_index(uint32_t stream_input_desc_index);
+        stream_input_descriptor * STDCALL get_stream_input_desc_by_index(size_t stream_input_desc_index);
 
         /**
          * Get the corresponding STREAM OUTPUT descriptor by index.
          */
-        stream_output_descriptor * STDCALL get_stream_output_desc_by_index(uint32_t stream_output_desc_index);
+        stream_output_descriptor * STDCALL get_stream_output_desc_by_index(size_t stream_output_desc_index);
 
         /**
          * Get the corresponding JACK INPUT descriptor by index.
          */
-        jack_input_descriptor * STDCALL get_jack_input_desc_by_index(uint32_t jack_input_desc_index);
+        jack_input_descriptor * STDCALL get_jack_input_desc_by_index(size_t jack_input_desc_index);
 
         /**
          * Get the corresponding JACK OUTPUT descriptor by index.
          */
-        jack_output_descriptor * STDCALL get_jack_output_desc_by_index(uint32_t jack_output_desc_index);
+        jack_output_descriptor * STDCALL get_jack_output_desc_by_index(size_t jack_output_desc_index);
 
         /**
          * Get the corresponding AVB INTERFACE descriptor by index.
          */
-        avb_interface_descriptor * STDCALL get_avb_interface_desc_by_index(uint32_t avb_interface_desc_index);
+        avb_interface_descriptor * STDCALL get_avb_interface_desc_by_index(size_t avb_interface_desc_index);
 
         /**
          * Get the corresponding CLOCK SOURCE descriptor by index.
          */
-        clock_source_descriptor * STDCALL get_clock_source_desc_by_index(uint32_t clock_source_desc_index);
+        clock_source_descriptor * STDCALL get_clock_source_desc_by_index(size_t clock_source_desc_index);
 
         /**
          * Get the corresponding LOCALE descriptor by index.
          */
-        locale_descriptor * STDCALL get_locale_desc_by_index(uint32_t locale_desc_index);
+        locale_descriptor * STDCALL get_locale_desc_by_index(size_t locale_desc_index);
 
         /**
          * Get the corresponding STRINGS descriptor by index.
          */
-        strings_descriptor * STDCALL get_strings_desc_by_index(uint32_t strings_desc_index);
+        strings_descriptor * STDCALL get_strings_desc_by_index(size_t strings_desc_index);
 
         /**
          * \return The corresponding STREAM PORT INPUT descriptor by index.
          */
-        stream_port_input_descriptor * STDCALL get_stream_port_input_desc_by_index(uint32_t stream_port_input_desc_index);
+        stream_port_input_descriptor * STDCALL get_stream_port_input_desc_by_index(size_t stream_port_input_desc_index);
 
         /**
          * \return The corresponding STREAM PORT OUTPUT descriptor by index.
          */
-        stream_port_output_descriptor * STDCALL get_stream_port_output_desc_by_index(uint32_t stream_port_output_desc_index);
+        stream_port_output_descriptor * STDCALL get_stream_port_output_desc_by_index(size_t stream_port_output_desc_index);
 
         /**
          * Get the corresponding AUDIO CLUSTER descriptor by index.
          */
-        audio_cluster_descriptor * STDCALL get_audio_cluster_desc_by_index(uint32_t audio_cluster_desc_index);
+        audio_cluster_descriptor * STDCALL get_audio_cluster_desc_by_index(size_t audio_cluster_desc_index);
 
         /**
          * Get the corresponding AUDIO MAP descriptor by index.
          */
-        audio_map_descriptor * STDCALL get_audio_map_desc_by_index(uint32_t audio_map_desc_index);
+        audio_map_descriptor * STDCALL get_audio_map_desc_by_index(size_t audio_map_desc_index);
 
         /**
          * Get the corresponding CLOCK DOMAIN descriptor by index.
          */
-        clock_domain_descriptor * STDCALL get_clock_domain_desc_by_index(uint32_t clock_domain_desc_index);
+        clock_domain_descriptor * STDCALL get_clock_domain_desc_by_index(size_t clock_domain_desc_index);
 
     private:
         /**
@@ -360,4 +358,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

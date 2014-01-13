@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_ADP_H_
-#define _AVDECC_CONTROLLER_LIB_ADP_H_
 
 #include "jdksavdecc_adp.h"
 
@@ -41,8 +39,8 @@ namespace avdecc_lib
         struct jdksavdecc_frame cmd_frame; // Structure containing the Ethernet Frame fields
         struct jdksavdecc_adpdu adpdu; // Structure containing the ADPDU fields
         uint8_t *adp_frame; // Point to a raw memory buffer to read from
-        int frame_read_returned; // Status of extracting Ethernet Frame information from a network buffer
-        int adpdu_read_returned; // Status of extracting ADPDU information from a network buffer
+        ssize_t frame_read_returned; // Status of extracting Ethernet Frame information from a network buffer
+        ssize_t adpdu_read_returned; // Status of extracting ADPDU information from a network buffer
 
     public:
         /**
@@ -219,4 +217,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

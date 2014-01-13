@@ -32,9 +32,6 @@
 #pragma warning(disable : 4250) // Disable warning message C4250: inherits via dominance
 #endif
 
-#ifndef _AVDECC_CONTROLLER_LIB_DESCRIPTOR_BASE_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_DESCRIPTOR_BASE_IMP_H_
-
 #include <vector>
 #include "jdksavdecc_util.h"
 #include "jdksavdecc_aem_command.h"
@@ -112,7 +109,7 @@ namespace avdecc_lib
         /**
          * Process a ACQURE_ENTITY response for the ACQURE_ENTITY command.
          */
-        virtual int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        virtual int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a ACQURE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
@@ -128,7 +125,7 @@ namespace avdecc_lib
         int default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp,
                                              void *&notification_id,
                                              const uint8_t *frame,
-                                             uint16_t frame_len,
+                                             size_t frame_len,
                                              int &status);
 
         /**
@@ -142,7 +139,7 @@ namespace avdecc_lib
         /**
          * Process a LOCK ENTITY response for the LOCK ENTITY command.
          */
-        virtual int proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        virtual int proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a LOCK ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
@@ -155,7 +152,7 @@ namespace avdecc_lib
         int default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp,
                                           void *&notification_id,
                                           const uint8_t *frame,
-                                          uint16_t frame_len,
+                                          size_t frame_len,
                                           int &status);
 
         /**
@@ -198,4 +195,3 @@ namespace avdecc_lib
     bool operator< (const descriptor_base_imp &n1, const descriptor_base_imp &n2);
 }
 
-#endif

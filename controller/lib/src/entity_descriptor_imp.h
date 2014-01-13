@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_ENTITY_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_ENTITY_DESCRIPTOR_IMP_H_
 
 #include "descriptor_base_imp.h"
 #include "configuration_descriptor_imp.h"
@@ -41,7 +39,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_entity entity_desc; // Structure containing the entity_desc fields
-        int desc_entity_read_returned; // Status of extracting ENTITY descriptor information from a network buffer
+        ssize_t desc_entity_read_returned; // Status of extracting ENTITY descriptor information from a network buffer
         std::vector<configuration_descriptor_imp *> config_desc_vec; // Store a list of CONFIGURATION descriptor objects
 
         struct jdksavdecc_aem_command_acquire_entity_response aem_cmd_acquire_entity_resp; // Store the response received after sending a ACQUIRE_ENTITY command.
@@ -56,7 +54,7 @@ namespace avdecc_lib
          * \param pos The position offset to read the descriptor fields from.
          * \param frame_len The memory buffer length of the descriptor frame.
          */
-        entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~entity_descriptor_imp();
 
@@ -171,12 +169,12 @@ namespace avdecc_lib
         /**
          * Store CONFIGURATION descriptor object.
          */
-        void store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        void store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         /**
          * Get the number of Configuration descriptors.
          */
-        uint32_t STDCALL config_desc_count();
+        size_t STDCALL config_desc_count();
 
         /**
          * Get the corresponding Configuration descriptorby index.
@@ -219,7 +217,7 @@ namespace avdecc_lib
         /**
          * Process a ACQURE_ENTITY response for the ACQURE_ENTITY command.
          */
-        int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a LOCK_ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
@@ -237,7 +235,7 @@ namespace avdecc_lib
         /**
          * Process a LOCK ENTITY response for the LOCK ENTITY command.
          */
-        int proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status);
+        int proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Send a SET_CONFIFURATION command to change the current configuration of the AVDECC Entity.
@@ -261,4 +259,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

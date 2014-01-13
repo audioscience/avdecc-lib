@@ -70,8 +70,7 @@ namespace avdecc_lib
     void aem_controller_state_machine::common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_guid)
     {
         struct jdksavdecc_aecpdu_common_control_header aecpdu_common_ctrl_hdr;
-        int aecpdu_common_ctrl_hdr_returned;
-        size_t aecpdu_common_pos = ETHER_HDR_SIZE; // Offset to write the field to
+        ssize_t aecpdu_common_ctrl_hdr_returned;
 
         /************************************** 1722 Protocol Header **************************************/
         aecpdu_common_ctrl_hdr.cd = 1;
@@ -86,7 +85,7 @@ namespace avdecc_lib
         /********************** Fill frame payload with AECP Common Control Header information *********************/
         aecpdu_common_ctrl_hdr_returned = jdksavdecc_aecpdu_common_control_header_write(&aecpdu_common_ctrl_hdr,
                                                                                         cmd_frame->payload,
-                                                                                        aecpdu_common_pos,
+                                                                                        ETHER_HDR_SIZE, // Offset to write the field to
                                                                                         sizeof(cmd_frame->payload));
 
         if(aecpdu_common_ctrl_hdr_returned < 0)
@@ -189,7 +188,7 @@ namespace avdecc_lib
         if(is_retried)
         {
             jdksavdecc_eui64 id = jdksavdecc_common_control_header_get_stream_id(frame.payload, ETHER_HDR_SIZE);
-            uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame.payload, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+            uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame.payload, ETHER_HDR_SIZE );
             uint16_t desc_type = jdksavdecc_aem_command_read_descriptor_get_descriptor_type(frame.payload, ETHER_HDR_SIZE);
             uint16_t desc_index = jdksavdecc_aem_command_read_descriptor_get_descriptor_index(frame.payload, ETHER_HDR_SIZE);
             
@@ -198,7 +197,7 @@ namespace avdecc_lib
                                                         cmd_type,
                                                         desc_type,
                                                         desc_index,
-                                                        -1,
+                                                        UINT_MAX,
                                                         inflight_cmds.at(inflight_cmd_index).cmd_notification_id);
 
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
@@ -257,7 +256,7 @@ namespace avdecc_lib
     int aem_controller_state_machine::callback(void *notification_id, uint32_t notification_flag, uint8_t *frame)
     {
         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
-        uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+        uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
         uint32_t status = jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE);
         uint16_t desc_type = 0;
         uint16_t desc_index = 0;

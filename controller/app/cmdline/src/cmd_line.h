@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CMD_LINE_H_
-#define _AVDECC_CMD_LINE_H_
 
 #include "net_interface.h"
 #include "system.h"
@@ -286,4 +284,3 @@ public:
     bool is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config);
 };
 
-#endif

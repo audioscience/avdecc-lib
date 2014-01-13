@@ -110,8 +110,6 @@ namespace avdecc_lib
     system_layer2_multithreaded_callback::~system_layer2_multithreaded_callback()
     {
         free(waiting_sem);
-        delete netif_obj_in_system;
-        delete controller_ref_in_system;
         delete local_system;
     }
 
@@ -162,7 +160,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd(void *notification_id)
+    int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd()
     {
         queue_is_waiting = true;
         resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID; // Reset the status

@@ -34,7 +34,7 @@
 
 namespace avdecc_lib
 {
-    stream_port_output_descriptor_imp::stream_port_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    stream_port_output_descriptor_imp::stream_port_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
         stream_port_output_desc_read_returned = jdksavdecc_descriptor_stream_port_read(&stream_port_output_desc, frame, pos, frame_len);
 
@@ -55,7 +55,6 @@ namespace avdecc_lib
 
     uint16_t STDCALL stream_port_output_descriptor_imp::descriptor_index() const
     {
-        //assert(stream_port_output_desc.descriptor_index == 0);
         return stream_port_output_desc.descriptor_index;
     }
 

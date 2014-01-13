@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_NET_INTERFACE_H_
-#define _AVDECC_CONTROLLER_LIB_NET_INTERFACE_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -52,7 +50,7 @@ namespace avdecc_lib
         /**
          * \return The corresponding network interface description by index.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_desc_by_index(uint32_t dev_index) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_desc_by_index(size_t dev_index) = 0;
 
         /**
          * Select the corresponding interface by number.
@@ -71,4 +69,3 @@ namespace avdecc_lib
     extern "C" AVDECC_CONTROLLER_LIB32_API net_interface * STDCALL create_net_interface();
 }
 
-#endif

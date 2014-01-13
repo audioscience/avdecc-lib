@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_ADP_DISCOVERY_STATE_MACHINE_H_
-#define _AVDECC_CONTROLLER_LIB_ADP_DISCOVERY_STATE_MACHINE_H_
 
 #include "timer.h"
 
@@ -69,7 +67,7 @@ namespace avdecc_lib
         /**
          * Process the Available state of the ADP Discovery State Machine.
          */
-        int state_avail(const uint8_t *frame, uint16_t frame_len);
+        int state_avail(const uint8_t *frame, size_t frame_len);
 
         /**
          * Process the Departing state of the ADP Discovery State Machine.
@@ -122,4 +120,3 @@ namespace avdecc_lib
     extern adp_discovery_state_machine *adp_discovery_state_machine_ref;
 }
 
-#endif

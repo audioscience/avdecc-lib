@@ -34,7 +34,7 @@
 
 namespace avdecc_lib
 {
-    stream_port_input_descriptor_imp::stream_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    stream_port_input_descriptor_imp::stream_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
         stream_port_input_desc_read_returned = jdksavdecc_descriptor_stream_port_read(&stream_port_input_desc, frame, pos, frame_len);
 

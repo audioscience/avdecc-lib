@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_NOTIFICATION_IMP_H_
 
 #include "avdecc_lib_os.h"
 #include <stdint.h>
@@ -39,6 +37,11 @@ namespace avdecc_lib
 {
     class notification_imp : public virtual notification
     {
+    public:
+        notification_imp();
+
+        virtual ~notification_imp();
+
     private:
         enum notification_events
         {
@@ -51,12 +54,6 @@ namespace avdecc_lib
         DWORD thread_id;
         HANDLE poll_events[2];
 
-    public:
-        notification_imp();
-
-        virtual ~notification_imp();
-
-    private:
         /**
          * Create and initialize notification thread, event, and semaphore.
          */
@@ -72,7 +69,6 @@ namespace avdecc_lib
          */
         int proc_notification_thread_callback();
 
-    public:
         /**
          * Release sempahore so that notification callback function is called.
          */
@@ -82,4 +78,3 @@ namespace avdecc_lib
     extern notification_imp *notification_imp_ref;
 }
 
-#endif
