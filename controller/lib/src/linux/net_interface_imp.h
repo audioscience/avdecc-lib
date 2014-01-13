@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_NET_INTERFACE_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_NET_INTERFACE_IMP_H_
 
 #define HAVE_REMOTE
 
@@ -97,7 +95,7 @@ namespace avdecc_lib
         /**
          * Get network interface description by index.
          */
-        char * STDCALL get_dev_desc_by_index(uint32_t dev_index);
+        char * STDCALL get_dev_desc_by_index(size_t dev_index);
 
         /**
          * Select network interface by number.
@@ -126,4 +124,3 @@ namespace avdecc_lib
     extern net_interface_imp *net_interface_ref;
 }
 
-#endif

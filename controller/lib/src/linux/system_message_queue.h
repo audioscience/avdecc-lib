@@ -27,6 +27,8 @@
  * System message queue class, which is called by System modules to queue packets.
  */
 
+#pragma once
+
 #include <cstdint>
 
 #include "avdecc_lib_os.h"

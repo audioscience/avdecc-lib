@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_STRINGS_DESCRIPTOR_IMP_H_
-#define _AVDECC_CONTROLLER_LIB_STRINGS_DESCRIPTOR_IMP_H_
 
 #include "descriptor_base_imp.h"
 #include "strings_descriptor.h"
@@ -40,7 +38,7 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_strings strings_desc; // Structure containing the strings_desc fields
-        int desc_strings_read_returned; // Status of extracting Strings descriptor information from a network buffer
+        ssize_t desc_strings_read_returned; // Status of extracting Strings descriptor information from a network buffer
 
     public:
         /**
@@ -51,7 +49,7 @@ namespace avdecc_lib
          * \param pos The position offset to read the descriptor fields from.
          * \param frame_len The memory buffer length of the descriptor frame.
          */
-        strings_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len);
+        strings_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~strings_descriptor_imp();
 
@@ -68,8 +66,6 @@ namespace avdecc_lib
         /**
          * Get the corresponding localized string of the Strings descriptor.
          */
-        uint8_t * STDCALL get_string_by_index(uint32_t string_index);
+        uint8_t * STDCALL get_string_by_index(size_t string_index);
     };
 }
-
-#endif

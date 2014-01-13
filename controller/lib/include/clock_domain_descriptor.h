@@ -33,8 +33,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_CLOCK_DOMAIN_DESCRIPTOR_H_
-#define _AVDECC_CONTROLLER_LIB_CLOCK_DOMAIN_DESCRIPTOR_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -60,7 +58,7 @@ namespace avdecc_lib
         /**
          * \return The corresponding Clock Sources by index present in the CLOCK DOMAIN.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_by_index(uint32_t clk_src_index) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_by_index(size_t clk_src_index) = 0;
 
         /**
          * \return The CLOCK SOURCE index of the requested CLOCK DOMAIN after sending a
@@ -101,4 +99,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

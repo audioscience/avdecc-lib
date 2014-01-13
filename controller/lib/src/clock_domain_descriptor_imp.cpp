@@ -38,7 +38,7 @@
 
 namespace avdecc_lib
 {
-    clock_domain_descriptor_imp::clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    clock_domain_descriptor_imp::clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
         desc_clock_domain_read_returned = jdksavdecc_descriptor_clock_domain_read(&clock_domain_desc, frame, pos, frame_len);
 
@@ -104,7 +104,7 @@ namespace avdecc_lib
         }
     }
 
-    uint16_t STDCALL clock_domain_descriptor_imp::get_clock_source_by_index(uint32_t clk_src_index)
+    uint16_t STDCALL clock_domain_descriptor_imp::get_clock_source_by_index(size_t clk_src_index)
     {
         return clk_src_vec.at(clk_src_index);
     }
@@ -112,6 +112,11 @@ namespace avdecc_lib
     uint16_t STDCALL clock_domain_descriptor_imp::set_clock_source_clock_source_index()
     {
         return aem_cmd_set_clk_src_resp.clock_source_index;
+    }
+
+    void clock_domain_descriptor_imp::update_clock_source_index(uint16_t clock_source_index)
+    {
+        clock_domain_desc.clock_source_index = clock_source_index;
     }
 
     uint16_t STDCALL clock_domain_descriptor_imp::get_clock_source_clock_source_index()
@@ -123,7 +128,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_set_clock_source aem_cmd_set_clk_src;
-        int aem_cmd_set_clk_src_returned;
+        ssize_t aem_cmd_set_clk_src_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /***************************************** AECP Common Data ******************************************/
@@ -158,10 +163,10 @@ namespace avdecc_lib
 
     }
 
-    int clock_domain_descriptor_imp::proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int clock_domain_descriptor_imp::proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_set_clk_src_resp_returned;
+        ssize_t aem_cmd_set_clk_src_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -186,6 +191,11 @@ namespace avdecc_lib
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
+        if(status == AEM_STATUS_SUCCESS)
+        {
+            update_clock_source_index(aem_cmd_set_clk_src_resp.clock_source_index);
+        }
+
         free(cmd_frame);
         return 0;
     }
@@ -194,7 +204,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_get_clock_source aem_cmd_get_clk_src;
-        int aem_cmd_get_clk_src_returned;
+        ssize_t aem_cmd_get_clk_src_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /***************************************** AECP Common Data ******************************************/
@@ -227,10 +237,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int clock_domain_descriptor_imp::proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int clock_domain_descriptor_imp::proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_get_clk_src_resp_returned;
+        ssize_t aem_cmd_get_clk_src_resp_returned;
         uint32_t msg_type;
         bool u_field;
 

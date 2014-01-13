@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CMD_LINE_HELP_H_
-#define _AVDECC_CMD_LINE_HELP_H_
 
 class cmd_line_help
 {
@@ -61,4 +59,3 @@ public:
     const std::string get_description();
 };
 
-#endif

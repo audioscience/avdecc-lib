@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_END_STATION_H_
-#define _AVDECC_CONTROLLER_LIB_END_STATION_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -62,12 +60,12 @@ namespace avdecc_lib
         /**
          * \return The number of Entity descriptors for this End Station.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL entity_desc_count() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL entity_desc_count() = 0;
 
         /**
          * \return The corresponding ENTITY descriptor by index.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor * STDCALL get_entity_desc_by_index(uint32_t entity_desc_index) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor * STDCALL get_entity_desc_by_index(size_t entity_desc_index) = 0;
 
         /**
          * Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity. Reading a descriptor can be performed
@@ -89,4 +87,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

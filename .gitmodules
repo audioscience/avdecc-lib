@@ -1,0 +1,3 @@
+[submodule "jdksavdecc-c"]
+	path = jdksavdecc-c
+	url = git@github.com:jdkoftinoff/jdksavdecc-c.git

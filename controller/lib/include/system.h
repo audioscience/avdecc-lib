@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_SYSTEM_H_
-#define _AVDECC_CONTROLLER_LIB_SYSTEM_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -58,7 +56,7 @@ namespace avdecc_lib
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL set_wait_for_next_cmd(void *notification_id) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL set_wait_for_next_cmd() = 0;
 
         /**
          * Wait for the response packet with the corrsponding notification id to be received.
@@ -86,4 +84,3 @@ namespace avdecc_lib
     extern "C" AVDECC_CONTROLLER_LIB32_API system * STDCALL create_system(system::system_type type, net_interface *netif, controller *controller_obj);
 }
 
-#endif

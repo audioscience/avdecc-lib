@@ -35,7 +35,7 @@
 
 namespace avdecc_lib
 {
-    avb_interface_descriptor_imp::avb_interface_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    avb_interface_descriptor_imp::avb_interface_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
         desc_avb_interface_read_returned = jdksavdecc_descriptor_avb_interface_read(&avb_interface_desc, frame, pos, frame_len);
 

@@ -30,8 +30,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_AUDIO_UNIT_DESCRIPTOR_H_
-#define _AVDECC_CONTROLLER_LIB_AUDIO_UNIT_DESCRIPTOR_H_
 
 #include <stdint.h>
 #include "build.h"
@@ -215,7 +213,7 @@ namespace avdecc_lib
         /**
          * \return The corresponding sampling rate by index of this Audio Unit.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_sampling_rate_by_index(uint32_t sampling_rate_index) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_sampling_rate_by_index(size_t sampling_rate_index) = 0;
 
         /**
          * \return The number of sample rates. The maximum value is 91 for this version of AEM.
@@ -261,4 +259,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

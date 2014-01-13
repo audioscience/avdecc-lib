@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_TIMER_H_
-#define _AVDECC_CONTROLLER_LIB_TIMER_H_
 
 #include <cstdint>
 
@@ -62,4 +60,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_INFLIGHT_H_
-#define _AVDECC_CONTROLLER_LIB_INFLIGHT_H_
 
 #include "timer.h"
 
@@ -124,4 +122,3 @@ namespace avdecc_lib
     };
 }
 
-#endif

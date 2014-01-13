@@ -29,7 +29,7 @@
 
 #include <algorithm> // std::find_if
 #include <vector>
-#include "jdksavdecc_acmp_controller.h"
+#include "jdksavdecc_acmp.h"
 #include "net_interface_imp.h"
 #include "util_imp.h"
 #include "enumeration.h"
@@ -71,8 +71,8 @@ namespace avdecc_lib
     void acmp_controller_state_machine::common_hdr_init(uint32_t msg_type, struct jdksavdecc_frame *cmd_frame)
     {
         struct jdksavdecc_acmpdu_common_control_header acmpdu_common_ctrl_hdr;
-        int acmpdu_common_ctrl_hdr_returned;
-        size_t acmpdu_common_pos;
+        ssize_t acmpdu_common_ctrl_hdr_returned;
+        ssize_t acmpdu_common_pos;
 
         /***** Offset to write the field to ****/
         acmpdu_common_pos = ETHER_HDR_SIZE;
@@ -105,9 +105,9 @@ namespace avdecc_lib
         return tx_cmd(notification_id, notification_flag, cmd_frame, false);
     }
 
-    int acmp_controller_state_machine::state_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *cmd_frame)
+    int acmp_controller_state_machine::state_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
     {
-        return proc_resp(notification_id, msg_type, cmd_frame);
+        return proc_resp(notification_id, cmd_frame);
     }
 
     void acmp_controller_state_machine::state_timeout(uint32_t inflight_cmd_index)
@@ -123,10 +123,10 @@ namespace avdecc_lib
 
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
-                                                        msg_type + CMD_LOOKUP,
+                                                        (uint16_t)msg_type + CMD_LOOKUP,
                                                         0,
                                                         0,
-                                                        -1,
+                                                        UINT_MAX,
                                                         inflight_cmds.at(inflight_cmd_index).cmd_notification_id);
 
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
@@ -196,7 +196,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int acmp_controller_state_machine::proc_resp(void *&notification_id, uint32_t msg_type, struct jdksavdecc_frame *cmd_frame)
+    int acmp_controller_state_machine::proc_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
     {
         uint16_t seq_id = jdksavdecc_acmpdu_get_sequence_id(cmd_frame->payload, ETHER_HDR_SIZE);
         int inflight_index = 0;
@@ -257,7 +257,7 @@ namespace avdecc_lib
 
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         end_station_guid,
-                                                        msg_type + CMD_LOOKUP,
+                                                        (uint16_t)msg_type + CMD_LOOKUP,
                                                         0,
                                                         0,
                                                         status,

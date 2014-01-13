@@ -34,7 +34,7 @@
 
 namespace avdecc_lib
 {
-    locale_descriptor_imp::locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    locale_descriptor_imp::locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
         desc_locale_read_returned = jdksavdecc_descriptor_locale_read(&locale_desc, frame, pos, frame_len);
 

@@ -27,12 +27,14 @@
  * AVDECC command line main implementation used for testing command line interface.
  */
 
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <string>
 #include <vector>
-#include <stdint.h>
+#include <cstdint>
+
 #include <stdexcept>
 #include "cmd_line.h"
 #if defined(__MACH__)
@@ -40,6 +42,7 @@
 #include <readline/history.h>
 #elif defined(__linux__)
 #include <editline/readline.h>
+#include <inttypes.h>
 #endif
 
 using namespace std;

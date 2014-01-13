@@ -40,7 +40,7 @@
 
 namespace avdecc_lib
 {
-    stream_input_descriptor_imp::stream_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, size_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    stream_input_descriptor_imp::stream_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
         stream_input_desc_read_returned = jdksavdecc_descriptor_stream_read(&stream_input_desc, frame, pos, frame_len);
 
@@ -231,6 +231,11 @@ namespace avdecc_lib
         return jdksavdecc_uint64_get(&aem_cmd_set_stream_format_resp.stream_format, 0);
     }
 
+    void stream_input_descriptor_imp::update_stream_format(struct jdksavdecc_eui64 stream_format)
+    {
+        stream_input_desc.current_format = stream_format;
+    }
+
     uint64_t STDCALL stream_input_descriptor_imp::get_stream_format_stream_format()
     {
         return jdksavdecc_uint64_get(&aem_cmd_get_stream_format_resp.stream_format, 0);
@@ -321,7 +326,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_set_stream_format aem_cmd_set_stream_format;
-        int aem_cmd_set_stream_format_returned;
+        ssize_t aem_cmd_set_stream_format_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *********************************************/
@@ -355,10 +360,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_input_descriptor_imp::proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_input_descriptor_imp::proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_set_stream_format_resp_returned;
+        ssize_t aem_cmd_set_stream_format_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -383,6 +388,11 @@ namespace avdecc_lib
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
+        if(status == AEM_STATUS_SUCCESS)
+        {
+            update_stream_format(aem_cmd_set_stream_format_resp.stream_format);
+        }
+
         free(cmd_frame);
         return 0;
     }
@@ -391,7 +401,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_get_stream_format aem_cmd_get_stream_format;
-        int aem_cmd_get_stream_format_returned;
+        ssize_t aem_cmd_get_stream_format_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *********************************************/
@@ -399,11 +409,11 @@ namespace avdecc_lib
         // Fill aem_cmd_get_stream_format.sequence_id in AEM Controller State Machine
         aem_cmd_get_stream_format.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
 
-        /******************* AECP Message Specific Data ********************/
+        /***************** AECP Message Specific Data ******************/
         aem_cmd_get_stream_format.descriptor_type = descriptor_type();
         aem_cmd_get_stream_format.descriptor_index = descriptor_index();
 
-        /******************************** Fill frame payload with AECP data and send the frame ***************************/
+        /******************************* Fill frame payload with AECP data and send the frame *************************/
         aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
         aem_cmd_get_stream_format_returned = jdksavdecc_aem_command_get_stream_format_write(&aem_cmd_get_stream_format,
                                                                                             cmd_frame->payload,
@@ -424,10 +434,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_input_descriptor_imp::proc_get_stream_format_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_input_descriptor_imp::proc_get_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_get_stream_format_resp_returned;
+        ssize_t aem_cmd_get_stream_format_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -463,7 +473,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_input_descriptor_imp::proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_input_descriptor_imp::proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO response.");
 
@@ -474,7 +484,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_get_stream_info aem_cmd_get_stream_info;
-        int aem_cmd_get_stream_info_returned;
+        ssize_t aem_cmd_get_stream_info_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *******************************************/
@@ -507,10 +517,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_input_descriptor_imp::proc_get_stream_info_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_input_descriptor_imp::proc_get_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int aem_cmd_get_stream_info_resp_returned;
+        ssize_t aem_cmd_get_stream_info_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -542,7 +552,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_start_streaming aem_cmd_start_streaming;
-        int aem_cmd_start_streaming_returned;
+        ssize_t aem_cmd_start_streaming_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *******************************************/
@@ -575,11 +585,11 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_input_descriptor_imp::proc_start_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_input_descriptor_imp::proc_start_streaming_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_start_streaming_response aem_cmd_start_streaming_resp;
-        int aem_cmd_start_streaming_resp_returned;
+        ssize_t aem_cmd_start_streaming_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -611,7 +621,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_stop_streaming aem_cmd_stop_streaming;
-        int aem_cmd_stop_streaming_returned;
+        ssize_t aem_cmd_stop_streaming_returned;
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************* AECP Common Data *******************************************/
@@ -644,11 +654,11 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_input_descriptor_imp::proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_input_descriptor_imp::proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_aem_command_stop_streaming_response aem_cmd_stop_streaming_resp;
-        int aem_cmd_stop_streaming_resp_returned;
+        ssize_t aem_cmd_stop_streaming_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
@@ -680,7 +690,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_acmpdu acmp_cmd_connect_rx;
-        int acmp_cmd_connect_rx_returned;
+        ssize_t acmp_cmd_connect_rx_returned;
         uint64_t listener_guid = base_end_station_imp_ref->get_entity_desc_by_index(0)->entity_id();
 
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
@@ -718,11 +728,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_input_descriptor_imp::proc_connect_rx_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_input_descriptor_imp::proc_connect_rx_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int acmp_cmd_connect_rx_resp_returned;
-        uint32_t msg_type;
+        ssize_t acmp_cmd_connect_rx_resp_returned;
 
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
         memcpy(cmd_frame->payload, frame, frame_len);
@@ -738,10 +747,9 @@ namespace avdecc_lib
             return -1;
         }
 
-        msg_type = acmp_cmd_connect_rx_resp.header.message_type;
         status = acmp_cmd_connect_rx_resp.header.status;
 
-        acmp_controller_state_machine_ref->state_resp(notification_id, msg_type, cmd_frame);
+        acmp_controller_state_machine_ref->state_resp(notification_id, cmd_frame);
 
         free(cmd_frame);
         return 0;
@@ -751,7 +759,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_acmpdu acmp_cmd_disconnect_rx;
-        int acmp_cmd_disconnect_rx_returned;
+        ssize_t acmp_cmd_disconnect_rx_returned;
         uint64_t listener_guid = base_end_station_imp_ref->get_entity_desc_by_index(0)->entity_id();
 
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
@@ -789,11 +797,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_input_descriptor_imp::proc_disconnect_rx_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_input_descriptor_imp::proc_disconnect_rx_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int acmp_cmd_disconnect_rx_resp_returned;
-        uint32_t msg_type;
+        ssize_t acmp_cmd_disconnect_rx_resp_returned;
 
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
         memcpy(cmd_frame->payload, frame, frame_len);
@@ -809,10 +816,9 @@ namespace avdecc_lib
             return -1;
         }
 
-        msg_type = acmp_cmd_disconnect_rx_resp.header.message_type;
         status = acmp_cmd_disconnect_rx_resp.header.status;
 
-        acmp_controller_state_machine_ref->state_resp(notification_id, msg_type, cmd_frame);
+        acmp_controller_state_machine_ref->state_resp(notification_id, cmd_frame);
 
         free(cmd_frame);
         return 0;
@@ -822,7 +828,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame *cmd_frame;
         struct jdksavdecc_acmpdu acmp_cmd_get_rx_state;
-        int acmp_cmd_get_rx_state_returned;
+        ssize_t acmp_cmd_get_rx_state_returned;
         uint64_t listener_guid = base_end_station_imp_ref->get_entity_desc_by_index(0)->entity_id();
 
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
@@ -860,11 +866,10 @@ namespace avdecc_lib
         return 0;
     }
 
-    int stream_input_descriptor_imp::proc_get_rx_state_resp(void *&notification_id, const uint8_t *frame, uint16_t frame_len, int &status)
+    int stream_input_descriptor_imp::proc_get_rx_state_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame *cmd_frame;
-        int acmp_cmd_get_rx_state_resp_returned;
-        uint32_t msg_type;
+        ssize_t acmp_cmd_get_rx_state_resp_returned;
 
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
         memcpy(cmd_frame->payload, frame, frame_len);
@@ -880,10 +885,9 @@ namespace avdecc_lib
             return -1;
         }
 
-        msg_type = acmp_cmd_get_rx_state_resp.header.message_type;
         status = acmp_cmd_get_rx_state_resp.header.status;
 
-        acmp_controller_state_machine_ref->state_resp(notification_id, msg_type, cmd_frame);
+        acmp_controller_state_machine_ref->state_resp(notification_id, cmd_frame);
 
         free(cmd_frame);
         return 0;

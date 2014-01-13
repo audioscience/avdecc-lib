@@ -38,6 +38,11 @@ Special thanks are owed to Jeff Koftinoff for creating and releasing public sour
 the jdksavdecc-c library and for comments and advice freely given during the development of this library. This C++
 library is a rather thin wrapper around functions already present in the jdksavdecc-c library.
 
+Community
+---------
+
+Please join Google Group "avdecc-lib" if you wish to comment on avdecc-lib, or keep track of discussions.
+
 
 Directory layout
 ----------------
@@ -48,9 +53,6 @@ Directory layout
 			doc\
 			binding\
 				python\
-			build\
-				linux\
-				msvc\
 			include\ (contains public header files)
 			src\ (contains private header files and C++ source code)
 				linux\ (linux specific files)
@@ -59,9 +61,6 @@ Directory layout
 		app\
 			bin\
 			doc\
-			build\
-				linux\
-				msvc\
 			cmdline\
 				src\
 			test\
@@ -113,9 +112,10 @@ Building
 
 All build environments require
 
-1. jdksavdecc-c git repository from <https://github.com/jdkoftinoff/jdksavdecc-c>
-2. checkout of branch TBD from jdksavdecc-c.
+1. cmake v2.8
 
+
+Run cmake to create the build dirctories for your environment.
 
 ### Windows ###
 	
@@ -126,7 +126,6 @@ Prerequisites
 
 The following environment variables must be defined:
 * WPCAP_DIR the directory where WinPcap is installed
-* JDKSAVDECC_DIR the directory where JDKSAVDECC-C git 1722.1 C library is installed
 
 ### Linux ###
 
@@ -134,7 +133,6 @@ Prerequisites
 
 1. gcc development environment (v4.8 or later)
 2. libedit
-3. shell environment variable set to point to the location where jdksavdecc-c is installed, e.g. JDKSAVDECC_DIR=/home/user/dev/jdksavdecc-c
 
 ### OSX ###
 
@@ -315,8 +313,7 @@ REMOVE_SENSOR_MAPPINGS | P4 | | |
 
 
 #### ToDo ####
-* need to work through P1 priorities above
-* add linux and OSX builds
+
 
 
 Release Notes

@@ -28,8 +28,6 @@
  */
 
 #pragma once
-#ifndef _AVDECC_CONTROLLER_LIB_BUILD_H_
-#define _AVDECC_CONTROLLER_LIB_BUILD_H_
 
 #if defined __linux__ || defined __MACH__
 
@@ -48,4 +46,3 @@
 
 #endif
 
-#endif
