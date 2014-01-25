@@ -400,13 +400,12 @@ namespace avdecc_lib
         int proc_get_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
-         * Send a SET_STREAM_INFO command with a notification id to change the current values of the dynamic information of
-         * the stream, such as the msrp_accumulated_latency, stream ID, and destination MAC.
+         * Send a SET_STREAM_INFO command with a notification id to set the vlan ID of the stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          * \param new_stream_info_field The new field information to be set to for a stream.
          */
-        int STDCALL send_set_stream_info_cmd(void *notification_id, void *new_stream_info_field);
+        int STDCALL send_set_stream_info_vlan_id_cmd(void *notification_id, uint16_t vlan_id);
 
         /**
          * Process a SET_STREAM_INFO response for the SET_STREAM_INFO command.

@@ -132,9 +132,9 @@ namespace avdecc_lib
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /***************************************** AECP Common Data ******************************************/
-        aem_cmd_set_clk_src.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_set_clk_src.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
         // Fill aem_cmd_set_clk_src.sequence_id in AEM Controller State Machine
-        aem_cmd_set_clk_src.command_type = JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE;
+        aem_cmd_set_clk_src.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE;
 
         /***************** AECP Message Specific Data ****************/
         aem_cmd_set_clk_src.descriptor_type = descriptor_type();
@@ -187,7 +187,7 @@ namespace avdecc_lib
 
         msg_type = aem_cmd_set_clk_src_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_set_clk_src_resp.aem_header.aecpdu_header.header.status;
-        u_field = aem_cmd_set_clk_src_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        u_field = aem_cmd_set_clk_src_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
@@ -208,9 +208,9 @@ namespace avdecc_lib
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /***************************************** AECP Common Data ******************************************/
-        aem_cmd_get_clk_src.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_get_clk_src.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
         // Fill aem_cmd_get_clk_src.sequence_id in AEM Controller State Machine
-        aem_cmd_get_clk_src.command_type = JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE;
+        aem_cmd_get_clk_src.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE;
 
         /****************** AECP Message Specific Data ***************/
         aem_cmd_get_clk_src.descriptor_type = descriptor_type();
@@ -261,7 +261,7 @@ namespace avdecc_lib
 
         msg_type = aem_cmd_get_clk_src_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_get_clk_src_resp.aem_header.aecpdu_header.header.status;
-        u_field = aem_cmd_get_clk_src_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        u_field = aem_cmd_get_clk_src_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 

@@ -1999,7 +1999,7 @@ int cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_index)
 }
 
 int cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
-                                         uint64_t new_stream_info_field_value)
+                                         std::string new_stream_info_field_value)
 {
     std::cout << "Need to implement cmd_set_stream_info" << std::endl;
 

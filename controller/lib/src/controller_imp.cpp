@@ -399,9 +399,9 @@ namespace avdecc_lib
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /*************************************************** AECP Common Data **************************************************/
-        aem_cmd_controller_avail.controller_entity_id = end_station_vec.at(end_station_index)->get_adp()->get_controller_guid();
+        aem_cmd_controller_avail.aem_header.aecpdu_header.controller_entity_id = end_station_vec.at(end_station_index)->get_adp()->get_controller_guid();
         // Fill aem_cmd_controller_avail.sequence_id in AEM Controller State Machine
-        aem_cmd_controller_avail.command_type = JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE;
+        aem_cmd_controller_avail.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE;
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
         aem_controller_state_machine_ref->ether_frame_init(end_station_vec.at(end_station_index)->mac(), cmd_frame);
@@ -449,7 +449,7 @@ namespace avdecc_lib
 
         msg_type = aem_cmd_controller_avail_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_controller_avail_resp.aem_header.aecpdu_header.header.status;
-        u_field = aem_cmd_controller_avail_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        u_field = aem_cmd_controller_avail_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 

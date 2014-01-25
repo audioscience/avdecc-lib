@@ -619,19 +619,17 @@ int main()
             else if((input_argv.size() == 6) && (input_argv.at(1) == "stream_info"))
             {
                 uint16_t desc_index = 0;
-                uint64_t stream_info_field_value = 0;
 
                 if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
                    ((input_argv.at(5) == "0") || (atoi(input_argv.at(5).c_str()) != 0)))
                 {
                     is_input_valid = true;
                     desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
-                    stream_info_field_value = (uint16_t)atoi(input_argv.at(5).c_str());
                 }
 
                 if(is_input_valid)
                 {
-                    avdecc_cmd_line_ref->cmd_set_stream_info(input_argv.at(2), desc_index, input_argv.at(4), stream_info_field_value);
+                    avdecc_cmd_line_ref->cmd_set_stream_info(input_argv.at(2), desc_index, input_argv.at(4), input_argv.at(5).c_str());
                 }
                 else
                 {

@@ -215,7 +215,7 @@ public:
      * Send a SET_STREAM_INFO command to change a stream info field value to a new value.
      */
     int cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
-                            uint64_t new_stream_info_field_value);
+                            std::string new_stream_info_field_value);
 
     /**
      * Send a GET_STREAM_INFO command to fetch the current information of a stream.
