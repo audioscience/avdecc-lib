@@ -166,8 +166,8 @@ void cmd_line::cmd_line_help_init()
 
     cmd_line_help_vec.push_back(new cmd_line_help("view details",
 
-                                                  "view desc [e_s_i]\n" \
-                                                  "Display all the descriptors with details in the end station.\n\n" \
+                                                  "view details [e_s_i]\n" \
+                                                  "Display all descriptors in the specified end station.\n\n" \
                                                   "\nParameters"
                                                   "\n\t e_s_i stands for End Station index and is an integer.\n\n" \
                                                   "To see a list of valid End Stations, enter \"list\" command."
@@ -335,18 +335,29 @@ void cmd_line::cmd_line_help_init()
 
     cmd_line_help_vec.push_back(new cmd_line_help("get stream_info",
 
-                                                  "get stream_info [d_t] [d_i] [f]\n" \
-                                                  "Display the GET_STREAM_INFO Stream ID or the MSRP Accumulated Latency field\n" \
+                                                  "get stream_info [d_t] [d_i]\n" \
+                                                  "Display the GET_STREAM_INFO result\n" \
                                                   "using the current setting.\n\n" \
                                                   "\nParameters" \
                                                   "\n\t d_t stands for descriptor type and is a string."
                                                   "\n\t d_i stands for descriptor index and is an integer."
-                                                  "\n\t f stands for stream info field and is a string.\n\n" \
                                                   "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
-                                                  "Valid fields are stream_id, msrp_accumulated_latency, and stream_dest_mac."
                                                  ));
 
-    cmd_line_help_vec.push_back(new cmd_line_help("set sampling_rate",
+    cmd_line_help_vec.push_back(new cmd_line_help("set stream_info",
+
+                                                  "set stream_info [d_t] [d_i] [flag] [value]\n" \
+                                                  "Display the GET_STREAM_INFO result\n" \
+                                                  "using the current setting.\n\n" \
+                                                  "\nParameters" \
+                                                  "\n\t d_t stands for descriptor type and is a string."
+                                                  "\n\t d_i stands for descriptor index and is an integer." 
+												  "\n\t flag is the setting to adjust [stream_vlan_id]"
+                                                  "\n\t value is the value to set."
+                                                 "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
+                                                 ));
+
+	cmd_line_help_vec.push_back(new cmd_line_help("set sampling_rate",
 
                                                   "set sampling_rate [d_t] [d_i]\n" \
                                                   "Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.\n\n" \
@@ -1999,10 +2010,41 @@ int cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_index)
 }
 
 int cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
-                                         uint64_t new_stream_info_field_value)
+                                         std::string new_stream_info_field_value)
 {
-    std::cout << "Need to implement cmd_set_stream_info" << std::endl;
+    uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
+    int status = -1;
+    intptr_t cmd_notification_id = 0;
+    std::string stream_format;
 
+	if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
+    {
+		std::cout << "STREAM INPUT unsupported at this time" << std::endl ;
+	}
+	else  if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
+	{
+		if (stream_info_field == "stream_vlan_id") {
+			uint16_t vlan_id = (uint16_t)atoi(new_stream_info_field_value.c_str());
+			cmd_notification_id = get_next_notification_id();
+			sys->set_wait_for_next_cmd();
+			avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
+			stream_output_desc_ref->send_set_stream_info_vlan_id_cmd((void *)notification_id, vlan_id);
+			status = sys->get_last_resp_status();
+	        if(status != avdecc_lib::AEM_STATUS_SUCCESS)
+			{
+				std::cout << "cmd_get_stream_info error" << std::endl;
+				return -1;
+			}
+		} else {
+		std::cout << "Supported fields are:" << std::endl <<
+			"stream_vlan_id" << std::endl ;
+		}
+	}
+    else
+    {
+        std::cout << "cmd_get_stream_info invalid descriptor type" << std::endl;
+        return -1;
+    }
     return 0;
 }
 
@@ -2058,10 +2100,16 @@ int cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
             {
                 std::cout << "Stream format: " << stream_format << std::endl;
             }
-
             std::cout << "Flags: 0x" << std::hex << stream_output_desc_ref->get_stream_info_flags() << std::endl;
-            std::cout << "Stream ID: 0x" << std::hex << std::setw(16) << stream_output_desc_ref->get_stream_info_stream_id() << std::endl;
-            std::cout << "Stream Destination MAC: 0x" << std::hex << stream_output_desc_ref->get_stream_info_stream_dest_mac() << std::endl;
+ 			if (stream_output_desc_ref->get_stream_info_flag("STREAM_ID_VALID"))
+                std::cout << "Stream ID: 0x" << std::hex << std::setfill('0') << std::setw(16) <<
+					stream_output_desc_ref->get_stream_info_stream_id() << std::endl;
+ 			if (stream_output_desc_ref->get_stream_info_flag("STREAM_DEST_MAC_VALID"))
+				std::cout << "Stream Destination MAC: " << std::hex <<
+					stream_output_desc_ref->get_stream_info_stream_dest_mac() << std::endl;
+ 			if (stream_output_desc_ref->get_stream_info_flag("STREAM_VLAN_ID_VALID"))
+				std::cout << "Stream VLAN ID: " <<
+					stream_output_desc_ref->get_stream_info_stream_vlan_id() << std::endl;
         }
         return 1;
     }

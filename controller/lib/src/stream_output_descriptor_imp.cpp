@@ -60,6 +60,20 @@ namespace avdecc_lib
         memset(&acmp_cmd_get_tx_connection_resp, 0, sizeof(struct jdksavdecc_acmpdu));
 
         stream_flags_init();
+
+		stream_info_flags["CLASS_B"]                  = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_CLASS_B;
+		stream_info_flags["FAST_CONNECT"]             = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_FAST_CONNECT;
+		stream_info_flags["SAVED_STATE"]              = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_SAVED_STATE;
+		stream_info_flags["STREAMING_WAIT"]           = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAMING_WAIT;
+		stream_info_flags["ENCRYPTED_PDU"]            = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_ENCRYPTED_PDU;
+		stream_info_flags["STREAM_VLAN_ID_VALID"]     = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_VLAN_ID_VALID;
+		stream_info_flags["CONNECTED"]                = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_CONNECTED;
+		stream_info_flags["MSRP_FAILURE_VALID"]       = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_MSRP_FAILURE_VALID;
+		stream_info_flags["STREAM_DEST_MAC_VALID"]    = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_DEST_MAC_VALID;
+		stream_info_flags["MSRP_ACC_LAT_VALID"]       = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_MSRP_ACC_LAT_VALID;
+		stream_info_flags["STREAM_ID_VALID"]          = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_ID_VALID;
+		stream_info_flags["STREAM_FORMAT_VALID"]      = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_FORMAT_VALID;
+
     }
 
     stream_output_descriptor_imp::~stream_output_descriptor_imp() {}
@@ -276,6 +290,11 @@ namespace avdecc_lib
         return aem_cmd_get_stream_info_resp.msrp_failure_code;
     }
 
+    uint16_t STDCALL stream_output_descriptor_imp::get_stream_info_stream_vlan_id()
+	{
+		return aem_cmd_get_stream_info_resp.stream_vlan_id;
+ 	}
+
     uint64_t STDCALL stream_output_descriptor_imp::get_stream_info_msrp_failure_bridge_id()
     {
         return jdksavdecc_uint64_get(&aem_cmd_get_stream_info_resp.msrp_failure_bridge_id, 0);
@@ -356,9 +375,9 @@ namespace avdecc_lib
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *********************************************/
-        aem_cmd_set_stream_format.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_set_stream_format.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
         // Fill aem_cmd_set_stream_format.sequence_id in AEM Controller State Machine
-        aem_cmd_set_stream_format.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
+        aem_cmd_set_stream_format.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
 
         /**************************************** AECP Message Specific Data *************************************/
         aem_cmd_set_stream_format.descriptor_type = descriptor_type();
@@ -366,7 +385,8 @@ namespace avdecc_lib
         jdksavdecc_uint64_write(new_stream_format, &aem_cmd_set_stream_format.stream_format, 0, sizeof(uint64_t));
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame,
+						ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_COMMAND_LEN);
         aem_cmd_set_stream_format_returned = jdksavdecc_aem_command_set_stream_format_write(&aem_cmd_set_stream_format,
                                                                                             cmd_frame->payload,
                                                                                             ETHER_HDR_SIZE,
@@ -410,7 +430,7 @@ namespace avdecc_lib
 
         msg_type = aem_cmd_set_stream_format_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_set_stream_format_resp.aem_header.aecpdu_header.header.status;
-        u_field = aem_cmd_set_stream_format_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        u_field = aem_cmd_set_stream_format_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
@@ -431,16 +451,17 @@ namespace avdecc_lib
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *********************************************/
-        aem_cmd_get_stream_format.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_get_stream_format.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
         // Fill aem_cmd_get_stream_format.sequence_id in AEM Controller State Machine
-        aem_cmd_get_stream_format.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
+        aem_cmd_get_stream_format.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
 
         /****************** AECP Message Specific Data *****************/
         aem_cmd_get_stream_format.descriptor_type = descriptor_type();
         aem_cmd_get_stream_format.descriptor_index = descriptor_index();
 
         /****************************** Fill frame payload with AECP data and send the frame **************************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame,
+						ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_COMMAND_LEN);
         aem_cmd_get_stream_format_returned = jdksavdecc_aem_command_get_stream_format_write(&aem_cmd_get_stream_format,
                                                                                             cmd_frame->payload,
                                                                                             ETHER_HDR_SIZE,
@@ -484,7 +505,7 @@ namespace avdecc_lib
 
         msg_type = aem_cmd_get_stream_format_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_get_stream_format_resp.aem_header.aecpdu_header.header.status;
-        u_field = aem_cmd_get_stream_format_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        u_field = aem_cmd_get_stream_format_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
@@ -492,17 +513,77 @@ namespace avdecc_lib
         return 0;
     }
 
-    int STDCALL stream_output_descriptor_imp::send_set_stream_info_cmd(void *notification_id, void *new_stream_info_field)
+    int STDCALL stream_output_descriptor_imp::send_set_stream_info_vlan_id_cmd(void *notification_id, uint16_t vlan_id)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO command.");
+        struct jdksavdecc_frame *cmd_frame;
+        struct jdksavdecc_aem_command_set_stream_info cmd;
+        ssize_t write_return;
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
+		memset(&cmd, 0, sizeof(cmd));
+
+        /******************************************** AECP Common Data *******************************************/
+        cmd.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        // Fill aem_cmd_start_streaming.sequence_id in AEM Controller State Machine
+        cmd.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO;
+
+        /****************** AECP Message Specific Data ***************/
+        cmd.descriptor_type = descriptor_type();
+        cmd.descriptor_index = descriptor_index();
+		cmd.aem_stream_info_flags = 0x02000000;
+		cmd.stream_vlan_id = vlan_id;
+
+        /************************** Fill frame payload with AECP data and send the frame ***************************/
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame,
+						ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_COMMAND_LEN);
+        write_return = jdksavdecc_aem_command_set_stream_info_write(&cmd,
+                                                                   cmd_frame->payload,
+                                                                   ETHER_HDR_SIZE,
+                                                                   sizeof(cmd_frame->payload));
+
+        if(write_return < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_start_streaming_write error\n");
+            assert(write_return >= 0);
+            return -1;
+        }
+
+        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->guid());
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
+
+        free(cmd_frame);
+        return 0;
         return 0;
     }
 
     int stream_output_descriptor_imp::proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO response.");
+       struct jdksavdecc_frame *cmd_frame;
+        ssize_t read_status;
+        uint32_t msg_type;
+        bool u_field;
 
+        cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
+        memcpy(cmd_frame->payload, frame, frame_len);
+        read_status = jdksavdecc_aem_command_set_stream_info_response_read(&aem_cmd_set_stream_info_resp,
+                                                                    frame,
+                                                                    ETHER_HDR_SIZE,
+                                                                    frame_len);
+
+        if(read_status < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_stream_info_resp_read error");
+            assert(read_status >= 0);
+            return -1;
+        }
+
+        msg_type = aem_cmd_set_stream_info_resp.aem_header.aecpdu_header.header.message_type;
+        status = aem_cmd_set_stream_info_resp.aem_header.aecpdu_header.header.status;
+        u_field = aem_cmd_set_stream_info_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+
+        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
+
+        free(cmd_frame);
         return 0;
     }
 
@@ -514,16 +595,17 @@ namespace avdecc_lib
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *******************************************/
-        aem_cmd_get_stream_info.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_get_stream_info.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
         // Fill aem_cmd_get_stream_info.sequence_id in AEM Controller State Machine
-        aem_cmd_get_stream_info.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO;
+        aem_cmd_get_stream_info.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO;
 
         /****************** AECP Message Specific Data ***************/
         aem_cmd_get_stream_info.descriptor_type = descriptor_type();
         aem_cmd_get_stream_info.descriptor_index = descriptor_index();
 
         /************************* Fill frame payload with AECP data and send the frame ***************************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame,
+						ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_COMMAND_LEN);
         aem_cmd_get_stream_info_returned = jdksavdecc_aem_command_get_stream_info_write(&aem_cmd_get_stream_info,
                                                                                         cmd_frame->payload,
                                                                                         ETHER_HDR_SIZE,
@@ -542,6 +624,15 @@ namespace avdecc_lib
         free(cmd_frame);
         return 0;
     }
+
+	bool stream_output_descriptor_imp::get_stream_info_flag(const char *flag)
+	{
+		std::map<string, int>::iterator it;
+
+		it = stream_info_flags.find(flag);
+		assert(it != stream_info_flags.end());
+		return ((aem_cmd_get_stream_info_resp.aem_stream_info_flags & it->second) != 0);
+	}
 
     int stream_output_descriptor_imp::proc_get_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
@@ -566,7 +657,7 @@ namespace avdecc_lib
 
         msg_type = aem_cmd_get_stream_info_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_get_stream_info_resp.aem_header.aecpdu_header.header.status;
-        u_field = aem_cmd_get_stream_info_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        u_field = aem_cmd_get_stream_info_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
@@ -582,16 +673,17 @@ namespace avdecc_lib
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************** AECP Common Data *******************************************/
-        aem_cmd_start_streaming.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_start_streaming.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
         // Fill aem_cmd_start_streaming.sequence_id in AEM Controller State Machine
-        aem_cmd_start_streaming.command_type = JDKSAVDECC_AEM_COMMAND_START_STREAMING;
+        aem_cmd_start_streaming.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_START_STREAMING;
 
         /****************** AECP Message Specific Data ***************/
         aem_cmd_start_streaming.descriptor_type = descriptor_type();
         aem_cmd_start_streaming.descriptor_index = descriptor_index();
 
         /************************** Fill frame payload with AECP data and send the frame ***************************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame,
+						ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_START_STREAMING_COMMAND_LEN);
         aem_cmd_start_streaming_returned = jdksavdecc_aem_command_start_streaming_write(&aem_cmd_start_streaming,
                                                                                         cmd_frame->payload,
                                                                                         ETHER_HDR_SIZE,
@@ -635,7 +727,7 @@ namespace avdecc_lib
 
         msg_type = aem_cmd_start_streaming_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_start_streaming_resp.aem_header.aecpdu_header.header.status;
-        u_field = aem_cmd_start_streaming_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        u_field = aem_cmd_start_streaming_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
@@ -651,16 +743,17 @@ namespace avdecc_lib
         cmd_frame = (struct jdksavdecc_frame *)malloc(sizeof(struct jdksavdecc_frame));
 
         /******************************************* AECP Common Data *******************************************/
-        aem_cmd_stop_streaming.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_stop_streaming.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
         // Fill aem_cmd_stop_streaming.sequence_id in AEM Controller State Machine
-        aem_cmd_stop_streaming.command_type = JDKSAVDECC_AEM_COMMAND_STOP_STREAMING;
+        aem_cmd_stop_streaming.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_STOP_STREAMING;
 
         /***************** AECP Message Specific Data ***************/
         aem_cmd_stop_streaming.descriptor_type = descriptor_type();
         aem_cmd_stop_streaming.descriptor_index = descriptor_index();
 
         /************************** Fill frame payload with AECP data and send the frame *************************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame,
+			ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_STOP_STREAMING_COMMAND_LEN);
         aem_cmd_stop_streaming_returned = jdksavdecc_aem_command_stop_streaming_write(&aem_cmd_stop_streaming,
                                                                                       cmd_frame->payload,
                                                                                       ETHER_HDR_SIZE,
@@ -704,7 +797,7 @@ namespace avdecc_lib
 
         msg_type = aem_cmd_stop_streaming_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_stop_streaming_resp.aem_header.aecpdu_header.header.status;
-        u_field = aem_cmd_stop_streaming_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        u_field = aem_cmd_stop_streaming_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 

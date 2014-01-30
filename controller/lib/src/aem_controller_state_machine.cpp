@@ -49,7 +49,7 @@ namespace avdecc_lib
 
     aem_controller_state_machine::~aem_controller_state_machine() {}
 
-    int aem_controller_state_machine::ether_frame_init(uint64_t end_station_mac, struct jdksavdecc_frame *cmd_frame)
+    int aem_controller_state_machine::ether_frame_init(uint64_t end_station_mac, struct jdksavdecc_frame *cmd_frame, uint16_t len)
     {
         /*** Offset to write the field to ***/
         size_t ether_frame_pos = 0;
@@ -59,7 +59,7 @@ namespace avdecc_lib
         cmd_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
         utility->convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value);
         utility->convert_uint64_to_eui48(end_station_mac, cmd_frame->dest_address.value);
-        cmd_frame->length = AECP_FRAME_LEN; // Length of AECP packet is 64 bytes
+		cmd_frame->length = len;
 
         /****************** Fill frame payload with Ethernet frame information ****************/
         jdksavdecc_frame_write(cmd_frame, cmd_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
