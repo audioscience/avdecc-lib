@@ -142,7 +142,8 @@ namespace avdecc_lib
         aem_cmd_set_clk_src.clock_source_index = new_clk_src_index;
 
         /*************************** Fill frame payload with AECP data and send the frame ***********************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame,
+						ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE_COMMAND_LEN);
         aem_cmd_set_clk_src_returned = jdksavdecc_aem_command_set_clock_source_write(&aem_cmd_set_clk_src,
                                                                                      cmd_frame->payload,
                                                                                      ETHER_HDR_SIZE,
@@ -217,7 +218,8 @@ namespace avdecc_lib
         aem_cmd_get_clk_src.descriptor_index = descriptor_index();
 
         /***************************** Fill frame payload with AECP data and send the frame ***********************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame,
+										ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE_COMMAND_LEN);
         aem_cmd_get_clk_src_returned = jdksavdecc_aem_command_get_clock_source_write(&aem_cmd_get_clk_src,
                                                                                      cmd_frame->payload,
                                                                                      ETHER_HDR_SIZE,

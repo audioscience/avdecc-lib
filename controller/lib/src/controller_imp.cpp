@@ -404,7 +404,8 @@ namespace avdecc_lib
         aem_cmd_controller_avail.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE;
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
-        aem_controller_state_machine_ref->ether_frame_init(end_station_vec.at(end_station_index)->mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(end_station_vec.at(end_station_index)->mac(), cmd_frame,
+								ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE);
         aem_cmd_controller_avail_returned = jdksavdecc_aem_command_controller_available_write(&aem_cmd_controller_avail,
                                                                                               cmd_frame->payload,
                                                                                               ETHER_HDR_SIZE,

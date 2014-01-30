@@ -47,7 +47,7 @@ namespace avdecc_lib
         /**
          * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
          */
-        int ether_frame_init(uint64_t end_station_mac, struct jdksavdecc_frame *cmd_frame);
+        int ether_frame_init(uint64_t end_station_mac, struct jdksavdecc_frame *cmd_frame, uint16_t len);
 
         /**
          * Initialize and fill Ethernet frame payload with 1722 AECP Header information.

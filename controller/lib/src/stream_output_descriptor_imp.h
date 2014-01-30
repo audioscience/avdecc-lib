@@ -29,6 +29,11 @@
 
 #pragma once
 
+#include <iostream>
+#include <map>
+#include <string>
+using namespace std;
+
 #include "jdksavdecc_acmp.h"
 #include "descriptor_base_imp.h"
 #include "stream_output_descriptor.h"
@@ -40,6 +45,8 @@ namespace avdecc_lib
     private:
         struct jdksavdecc_descriptor_stream stream_output_desc; // Structure containing the stream_output_desc fields
         ssize_t stream_output_desc_read_returned; // Status of extracting STREAM OUTPUT descriptor information from a network buffer
+
+		std::map <string, int> stream_info_flags;
 
         struct stream_output_desc_stream_flags
         {
@@ -283,6 +290,8 @@ namespace avdecc_lib
          */
         uint64_t STDCALL get_stream_info_msrp_failure_bridge_id();
 
+        uint16_t STDCALL get_stream_info_stream_vlan_id() ;
+
         /**
          * Check if the Clock Sync Source flag is set.
          */
@@ -425,6 +434,8 @@ namespace avdecc_lib
          *      get_stream_info_msrp_failure_code(), get_stream_info_msrp_failure_bridge_id()
          */
         int STDCALL send_get_stream_info_cmd(void *notification_id);
+
+		bool STDCALL get_stream_info_flag(const char *flag);
 
         /**
          * Process a GET_STREAM_INFO response for the GET_STREAM_INFO command.

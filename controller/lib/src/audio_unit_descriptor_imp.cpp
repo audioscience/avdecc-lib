@@ -309,7 +309,8 @@ namespace avdecc_lib
         aem_cmd_set_sampling_rate.sampling_rate = new_sampling_rate;
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame,
+								ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE_COMMAND_LEN);
         aem_cmd_set_sampling_rate_returned = jdksavdecc_aem_command_set_sampling_rate_write(&aem_cmd_set_sampling_rate,
                                                                                             cmd_frame->payload,
                                                                                             ETHER_HDR_SIZE,
@@ -384,7 +385,8 @@ namespace avdecc_lib
         aem_cmd_get_sampling_rate.descriptor_index = descriptor_index();
 
         /******************************* Fill frame payload with AECP data and send the frame **************************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
+        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame,
+									ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE_COMMAND_LEN);
         aem_cmd_get_sampling_rate_returned = jdksavdecc_aem_command_get_sampling_rate_write(&aem_cmd_get_sampling_rate,
                                                                                             cmd_frame->payload,
                                                                                             ETHER_HDR_SIZE,
