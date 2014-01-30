@@ -52,19 +52,8 @@ namespace avdecc_lib
          */
         void STDCALL destroy();
 
-        /**
-         * Get the current build release version.
-         */
         const char * STDCALL get_version() const;
-
-        /**
-         * Get the total number of End Stations connected
-         */
         size_t STDCALL get_end_station_count();
-
-        /**
-         * Get the corresponding End Station by index.
-         */
         end_station * STDCALL get_end_station_by_index(size_t end_station_index);
 
         /**
@@ -72,14 +61,7 @@ namespace avdecc_lib
          */
         bool is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
 
-        /**
-         * Get the corresponding CONFIGURATION descriptor by index.
-         */
         configuration_descriptor * STDCALL get_config_desc_by_index(size_t end_station_index, uint16_t entity_index, uint16_t config_index);
-
-        /**
-         * Get the corresponding CONFIGURATION descriptor by GUID.
-         */
         configuration_descriptor * STDCALL get_config_desc_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index);
 
         /**
@@ -87,19 +69,8 @@ namespace avdecc_lib
          */
         bool is_inflight_cmd_with_notification_id(void *notification_id);
 
-        /**
-         * Update the base log level for messages to be logged by the post_log_msg callback.
-         */
         void STDCALL set_logging_level(int32_t new_log_level);
-
-        /**
-         * Get the missed notification event count.
-         */
         uint32_t STDCALL missed_notification_count();
-
-        /**
-         * Get the missed log event count.
-         */
         uint32_t STDCALL missed_log_count();
 
         /**
@@ -122,9 +93,6 @@ namespace avdecc_lib
          */
         void tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len);
 
-        /**
-         * Send a CONTROLLER_AVAILABLE command to verify that the AVDECC Controller is still there.
-         */
         int STDCALL send_controller_avail_cmd(void *notification_id, uint32_t end_station_index);
 
         /**
