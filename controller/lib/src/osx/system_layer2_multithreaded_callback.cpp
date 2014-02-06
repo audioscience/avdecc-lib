@@ -115,7 +115,6 @@ namespace avdecc_lib
     system_layer2_multithreaded_callback::~system_layer2_multithreaded_callback()
     {
         sem_unlink("/waiting_sem");
-        delete local_system;
     }
 
     void STDCALL system_layer2_multithreaded_callback::destroy()
