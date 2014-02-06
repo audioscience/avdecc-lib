@@ -114,6 +114,9 @@ namespace avdecc_lib
 
     void STDCALL system_layer2_multithreaded_callback::destroy()
     {
+        if (this == local_system)
+          local_system = NULL;
+
         delete this;
     }
 
