@@ -146,7 +146,6 @@ namespace avdecc_lib
     int aem_controller_state_machine::proc_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
     {
         uint16_t seq_id = jdksavdecc_aecpdu_common_get_sequence_id(cmd_frame->payload, ETHER_HDR_SIZE);
-        int inflight_index = 0;
         uint32_t notification_flag = 0;
 
         std::vector<inflight>::iterator j =
@@ -157,7 +156,7 @@ namespace avdecc_lib
             notification_id = j->cmd_notification_id;
             notification_flag = j->notification_flag();
             callback(notification_id, notification_flag, cmd_frame->payload);
-            inflight_cmds.erase(inflight_cmds.begin() + inflight_index);
+            inflight_cmds.erase(j);
             return 1;
         }
 
