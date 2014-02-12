@@ -260,7 +260,7 @@ namespace avdecc_lib
 
     int net_interface_imp::send_frame(uint8_t *frame, size_t frame_len)
     {
-        if(pcap_sendpacket(pcap_interface, frame, frame_len) != 0)
+        if(pcap_sendpacket(pcap_interface, frame, (int)frame_len) != 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "pcap_sendpacket error %s", pcap_geterr(pcap_interface));
             return -1;
