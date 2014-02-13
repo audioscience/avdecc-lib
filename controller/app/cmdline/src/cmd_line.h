@@ -151,7 +151,7 @@ public:
                        uint16_t instream_desc_index,
                        uint32_t outstream_end_station_index,
                        uint16_t outstream_desc_index,
-                       std::string flags);
+                       const std::vector<std::string> &flags);
 
     /**
      * Send a CONNECT_RX command to disconnect Listener sink stream.

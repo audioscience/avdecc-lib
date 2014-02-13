@@ -391,7 +391,7 @@ int main()
                     avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
                 }
             }
-            else if((input_argv.size() == 5) || (input_argv.size() == 6))
+            else if(input_argv.size() >= 5)
             {
                 uint32_t instream_end_station_index = 0;
                 uint16_t instream_desc_index = 0;
@@ -412,22 +412,14 @@ int main()
 
                 if(is_input_valid)
                 {
-                    if(input_argv.size() == 5)
-                    {
-                        avdecc_cmd_line_ref->cmd_connect_rx(instream_end_station_index,
-                                                            instream_desc_index,
-                                                            outstream_end_station_index,
-                                                            outstream_desc_index,
-                                                            "");
-                    }
-                    else if(input_argv.size() == 6)
-                    {
-                        avdecc_cmd_line_ref->cmd_connect_rx(instream_end_station_index,
-                                                            instream_desc_index,
-                                                            outstream_end_station_index,
-                                                            outstream_desc_index,
-                                                            input_argv.at(5));
-                    }
+                    std::vector<std::string>::const_iterator start = input_argv.begin() + 5;
+                    std::vector<std::string>::const_iterator end = input_argv.end();
+                    std::vector<std::string> flags(start, end);
+                    avdecc_cmd_line_ref->cmd_connect_rx(instream_end_station_index,
+                                                        instream_desc_index,
+                                                        outstream_end_station_index,
+                                                        outstream_desc_index,
+                                                        flags);
                 }
                 else
                 {

@@ -191,16 +191,16 @@ void cmd_line::cmd_line_help_init()
                                                   "connect [d_e_s_i] [d_d_i]\n" \
                                                   "Display all the available outstreams for all End Stations that can connect with\n" \
                                                   "the instreams.\n\n" \
-                                                  "connect [d_e_s_i] [d_d_i] [s_e_s_i] [s_d_i] [f]\n" \
+                                                  "connect [d_e_s_i] [d_d_i] [s_e_s_i] [s_d_i] [f]*\n" \
                                                   "Connect an instream to an outstream.\n\n" \
                                                   "\nParameters"
                                                   "\n\t d_e_s_i stands for destination End Station index and is an integer." \
                                                   "\n\t d_d_i stands for destination descriptor index and is an integer."
                                                   "\n\t s_e_s_i stands for source End Station index and is an integer. " \
                                                   "\n\t s_d_i stands for source descriptor index and is an integer. " \
-                                                  "\n\t f stands for flags and is an integer.\n\n"
-                                                  "Valid flags are Class B, Fast Connect, Saved State, Streaming Wait,\n" \
-                                                  "Supports Encrypted, Encrypted PDU, and Talker Failed."
+                                                  "\n\t f stands for a optional set of flags.\n\n"
+                                                  "Valid flags are class_b, fast_connect, saved_state, streaming_wait,\n" \
+                                                  "supports_encrypted, encrypted_pdu, and talker_failed."
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("disconnect",
@@ -1559,7 +1559,7 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
                              uint16_t instream_desc_index,
                              uint32_t outstream_end_station_index,
                              uint16_t outstream_desc_index,
-                             std::string flags)
+                             const std::vector<std::string> &flags)
 {
     bool is_valid = (instream_end_station_index != outstream_end_station_index) && (instream_end_station_index < (controller_obj->get_end_station_count())) &&
                     (instream_desc_index < (controller_obj->get_config_desc_by_index(instream_end_station_index, current_entity, current_config)->stream_input_desc_count())) &&
@@ -1568,43 +1568,43 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
     
     if(is_valid)
     {
-        uint16_t connection_flag = 0;
-        if(flags == "")
+        uint16_t connection_flags = 0;
+        for (std::vector<std::string>::const_iterator it = flags.begin(); it != flags.end(); ++it)
         {
-            connection_flag = 0x0;
-        }
-        else if(flags == "class_b")
-        {
-            connection_flag = 0x1;
-        }
-        else if(flags == "fast_connect")
-        {
-            connection_flag = 0x2;
-        }
-        else if(flags == "saved_state")
-        {
-            connection_flag = 0x4;
-        }
-        else if(flags == "wait")
-        {
-            connection_flag = 0x8;
-        }
-        else if(flags == "supports_encrypted")
-        {
-            connection_flag = 0x8;
-        }
-        else if(flags == "encrypted_pdu")
-        {
-            connection_flag = 0x10;
-        }
-        else if(flags == "talker_failed")
-        {
-            connection_flag = 0x10;
-        }
-        else
-        {
-              std::cout << "\nInvalid Flag" << std::endl;
-              return -1;
+            const std::string flag = *it;
+            if(flag == "class_b")
+            {
+                connection_flags |= 0x1;
+            }
+            else if(flag == "fast_connect")
+            {
+                connection_flags |= 0x2;
+            }
+            else if(flag == "saved_state")
+            {
+                connection_flags |= 0x4;
+            }
+            else if(flag == "streaming_wait")
+            {
+                connection_flags |= 0x8;
+            }
+            else if(flag == "supports_encrypted")
+            {
+                connection_flags |= 0x8;
+            }
+            else if(flag == "encrypted_pdu")
+            {
+                connection_flags |= 0x10;
+            }
+            else if(flag == "talker_failed")
+            {
+                connection_flags |= 0x10;
+            }
+            else if(flag != "")
+            {
+                std::cout << "\nInvalid Flag" << std::endl;
+                return -1;
+            }
         }
 
         intptr_t cmd_notification_id = 0;
@@ -1623,7 +1623,7 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
         }
 
         talker_guid = controller_obj->get_end_station_by_index(outstream_end_station_index)->get_entity_desc_by_index(current_entity)->entity_id();
-        instream->send_connect_rx_cmd((void *)cmd_notification_id, talker_guid, outstream_desc_index, connection_flag);
+        instream->send_connect_rx_cmd((void *)cmd_notification_id, talker_guid, outstream_desc_index, connection_flags);
         sys->get_last_resp_status();
     }
     else
