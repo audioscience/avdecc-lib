@@ -1027,7 +1027,11 @@ int main()
         {
             if(input_argv.size() == 1)
             {
+#if defined(__MACH__) || defined(__linux__)
+                std::system("clear");
+#else
                 std::system("cls");
+#endif
             }
             else
             {
