@@ -129,7 +129,7 @@ void cmd_line::cmd_line_help_init()
     cmd_line_help_vec.push_back(new cmd_line_help("list",
 
                                                   "list\n" \
-                                                  "Display a table with information about each end station."
+                                                  "Display a table with information about each End Station."
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("select",
