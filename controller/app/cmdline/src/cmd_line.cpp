@@ -108,6 +108,10 @@ int cmd_line::print_interfaces_and_select()
     return 0;
 }
 
+#define END_STATION_HELP "stands for End Station (index or GUID)."
+#define DST_END_STATION_HELP "stands for destination End Station (index or GUID)."
+#define SRC_END_STATION_HELP "stands for source End Station (index or GUID)."
+
 void cmd_line::cmd_line_help_init()
 {
     cmd_line_help_vec.push_back(new cmd_line_help("help",
@@ -125,17 +129,17 @@ void cmd_line::cmd_line_help_init()
     cmd_line_help_vec.push_back(new cmd_line_help("list",
 
                                                   "list\n" \
-                                                  "Display a table with information about each end station."
+                                                  "Display a table with information about each End Station."
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("select",
 
                                                   "select\n" \
                                                   "Display the current End Station, Entity, and Configuration setting.\n\n" \
-                                                  "select [e_s_i] [e_i] [c_i]\n" \
-                                                  "Change the setting of end station, entity, and configuration.\n\n" \
+                                                  "select [e_s] [e_i] [c_i]\n" \
+                                                  "Change the setting of End Station, entity, and configuration.\n\n" \
                                                   "\nParameters" \
-                                                  "\n\t e_s_i stands for end station and is an integer." \
+                                                  "\n\t e_s " END_STATION_HELP \
                                                   "\n\t e_i stands for entity and is an integer. " \
                                                   "\n\t c_i stands for configuration and is integers.\n\n" \
                                                   "To see a list of valid End Stations, enter \"list\" command." \
@@ -166,10 +170,10 @@ void cmd_line::cmd_line_help_init()
 
     cmd_line_help_vec.push_back(new cmd_line_help("view details",
 
-                                                  "view details [e_s_i]\n" \
-                                                  "Display all descriptors in the specified end station.\n\n" \
+                                                  "view details [e_s]\n" \
+                                                  "Display all descriptors in the specified End Station.\n\n" \
                                                   "\nParameters"
-                                                  "\n\t e_s_i stands for End Station index and is an integer.\n\n" \
+                                                  "\n\t e_s " END_STATION_HELP "\n\n" \
                                                   "To see a list of valid End Stations, enter \"list\" command."
                                                  ));
 
@@ -188,15 +192,15 @@ void cmd_line::cmd_line_help_init()
 
                                                   "connect\n" \
                                                   "Display all the available instreams for all End Stations.\n\n"
-                                                  "connect [d_e_s_i] [d_d_i]\n" \
+                                                  "connect [d_e_s] [d_d_i]\n" \
                                                   "Display all the available outstreams for all End Stations that can connect with\n" \
                                                   "the instreams.\n\n" \
-                                                  "connect [d_e_s_i] [d_d_i] [s_e_s_i] [s_d_i] [f]*\n" \
+                                                  "connect [d_e_s] [d_d_i] [s_e_s] [s_d_i] [f]*\n" \
                                                   "Connect an instream to an outstream.\n\n" \
                                                   "\nParameters"
-                                                  "\n\t d_e_s_i stands for destination End Station index and is an integer." \
+                                                  "\n\t d_e_s " DST_END_STATION_HELP \
                                                   "\n\t d_d_i stands for destination descriptor index and is an integer."
-                                                  "\n\t s_e_s_i stands for source End Station index and is an integer. " \
+                                                  "\n\t s_e_s " SRC_END_STATION_HELP \
                                                   "\n\t s_d_i stands for source descriptor index and is an integer. " \
                                                   "\n\t f stands for a optional set of flags.\n\n"
                                                   "Valid flags are class_b, fast_connect, saved_state, streaming_wait,\n" \
@@ -205,40 +209,40 @@ void cmd_line::cmd_line_help_init()
 
     cmd_line_help_vec.push_back(new cmd_line_help("disconnect",
 
-                                                  "disconnect [d_e_s_i] [d_d_i] [s_e_s_i] [s_d_i]\n" \
+                                                  "disconnect [d_e_s] [d_d_i] [s_e_s] [s_d_i]\n" \
                                                   "Send a CONNECT_RX command to disconnect Listener sink stream.\n\n" \
                                                   "\nParameters"
-                                                  "\n\t d_e_s_i stands for destination End Station index and is an integer." \
+                                                  "\n\t d_e_s " DST_END_STATION_HELP \
                                                   "\n\t d_d_i stands for destination descriptor index and is an integer."
-                                                  "\n\t s_e_s_i stands for source End Station index and is an integer. " \
+                                                  "\n\t s_e_s " SRC_END_STATION_HELP \
                                                   "\n\t s_d_i stands for source descriptor index and is an integer."
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("get tx state",
 
-                                                  "get tx state [s_e_s_i] [s_d_i]\n" \
+                                                  "get tx state [s_e_s] [s_d_i]\n" \
                                                   "Send a GET_TX_STATE command to get Talker source stream connection state.\n\n"
                                                   "\nParameters"
-                                                  "\n\t s_e_s_i stands for source End Station index and is an integer. " \
+                                                  "\n\t s_e_s " SRC_END_STATION_HELP \
                                                   "\n\t s_d_i stands for source descriptor index and is an integer."
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("get rx state",
 
-                                                  "get rx state [d_e_s_i] [d_d_i]\n" \
+                                                  "get rx state [d_e_s] [d_d_i]\n" \
                                                   "Send a GET_RX_STATE command to get Listener sink stream connection state.\n\n"
                                                   "\nParameters"
-                                                  "\n\t d_e_s_i stands for destination End Station index and is an integer." \
+                                                  "\n\t d_e_s " DST_END_STATION_HELP \
                                                   "\n\t d_d_i stands for destination descriptor index and is an integer."
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("get tx connection",
 
-                                                  "get tx connection [s_e_s_i] [s_d_i]\n" \
+                                                  "get tx connection [s_e_s] [s_d_i]\n" \
                                                   "Send a GET_TX_CONNECTION command with a notification id to get a specific\n" \
                                                   "Talker connection information.\n\n"
                                                   "\nParameters"
-                                                  "\n\t s_e_s_i stands for source End Station index and is an integer. " \
+                                                  "\n\t s_e_s " SRC_END_STATION_HELP \
                                                   "\n\t s_d_i stands for source descriptor index and is an integer."
                                                  ));
 
@@ -320,29 +324,18 @@ void cmd_line::cmd_line_help_init()
 #if 0 
     cmd_line_help_vec.push_back(new cmd_line_help("set stream_info",
 
-    					      "set stream_info [d_t] [d_i] [f] [f_v]\n" \
-    					      "Send a SET_STREAM_INFO command to change a stream info field value to a new\n" \
-    					      "value using the current setting.\n\n"
-    					      "\nParameters" \
-    					      "\n\t d_t stands for descriptor type and is a string." \
-    					      "\n\t d_i stands for descriptor index and is an integer." \
-    					      "\n\t f stands for field and is a string." \
-    					      "\n\t f_v stands for field value and is an integer.\n\n" \
-    					      "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
-    					      "Valid fields are stream_id, msrp_accumulated_latency, and stream_dest_mac."
-    					      ));
-#endif
-
-    cmd_line_help_vec.push_back(new cmd_line_help("get stream_info",
-
-                                                  "get stream_info [d_t] [d_i]\n" \
-                                                  "Display the GET_STREAM_INFO result\n" \
-                                                  "using the current setting.\n\n" \
+                                                  "set stream_info [d_t] [d_i] [f] [f_v]\n" \
+                                                  "Send a SET_STREAM_INFO command to change a stream info field value to a new\n" \
+                                                  "value using the current setting.\n\n"
                                                   "\nParameters" \
-                                                  "\n\t d_t stands for descriptor type and is a string."
-                                                  "\n\t d_i stands for descriptor index and is an integer."
+                                                  "\n\t d_t stands for descriptor type and is a string." \
+                                                  "\n\t d_i stands for descriptor index and is an integer." \
+                                                  "\n\t f stands for field and is a string." \
+                                                  "\n\t f_v stands for field value and is an integer.\n\n" \
                                                   "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
-                                                 ));
+                                                  "Valid fields are stream_id, msrp_accumulated_latency, and stream_dest_mac."
+                                                  ));
+#endif
 
     cmd_line_help_vec.push_back(new cmd_line_help("set stream_info",
 
@@ -351,13 +344,24 @@ void cmd_line::cmd_line_help_init()
                                                   "using the current setting.\n\n" \
                                                   "\nParameters" \
                                                   "\n\t d_t stands for descriptor type and is a string."
-                                                  "\n\t d_i stands for descriptor index and is an integer." 
-												  "\n\t flag is the setting to adjust [stream_vlan_id]"
+                                                  "\n\t d_i stands for descriptor index and is an integer."
+                                                  "\n\t flag is the setting to adjust [stream_vlan_id]"
                                                   "\n\t value is the value to set."
                                                  "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
                                                  ));
 
-	cmd_line_help_vec.push_back(new cmd_line_help("set sampling_rate",
+    cmd_line_help_vec.push_back(new cmd_line_help("get stream_info",
+
+                                                  "get stream_info [d_t] [d_i]\n" \
+                                                  "Display the GET_STREAM_INFO result\n" \
+                                                  "using the current setting.\n\n" \
+                                                  "\nParameters" \
+                                                  "\n\t d_t stands for descriptor type and is a string."
+                                                  "\n\t d_i stands for descriptor index and is an integer.\n\n"
+                                                  "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
+                                                 ));
+
+    cmd_line_help_vec.push_back(new cmd_line_help("set sampling_rate",
 
                                                   "set sampling_rate [d_t] [d_i]\n" \
                                                   "Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.\n\n" \
@@ -385,7 +389,7 @@ void cmd_line::cmd_line_help_init()
                                                   "\nParameters" \
                                                   "\n\t d_t stands for descriptor type and is a string."
                                                   "\n\t d_i stands for descriptor index and is an integer."
-                                                  "\n\t c_s_i stands for Clock Source index and is an integer. \n\n"
+                                                  "\n\t c_s_i stands for Clock Source index and is an integer.\n\n"
                                                   "Valid descriptor type is CLOCK_DOMAIN."
                                                  ));
 
@@ -402,50 +406,50 @@ void cmd_line::cmd_line_help_init()
 
     cmd_line_help_vec.push_back(new cmd_line_help("start streaming",
 
-    					                          "start streaming [d_t] [d_i]\n" \
-    					                          "Send a START_STREAMING command to start streaming on a previously connected\n" \
-    					                          "stream that was connected via ACMP or has previously been stopped with the\n" \
-    					                          "STOP_STREAMING command.\n\n" \
-    					                          "\nParameters" \
-    					                          "\n\t d_t stands for descriptor type and is a string." \
-    					                          "\n\t d_i stands for descriptor index and is an integer.\n\n"
-    					                          "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
-    					                          ));
+                                                  "start streaming [d_t] [d_i]\n" \
+                                                  "Send a START_STREAMING command to start streaming on a previously connected\n" \
+                                                  "stream that was connected via ACMP or has previously been stopped with the\n" \
+                                                  "STOP_STREAMING command.\n\n" \
+                                                  "\nParameters" \
+                                                  "\n\t d_t stands for descriptor type and is a string." \
+                                                  "\n\t d_i stands for descriptor index and is an integer.\n\n"
+                                                  "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
+                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("stop streaming",
 
-    					                          "stop streaming [d_t] [d_i]\n" \
-    					                          "Send a STOP_STREAMING command to stop a connected stream for streaming media.\n\n" \
-    					                          "\nParameters" \
-    					                          "\n\t d_t stands for descriptor type and is a string." \
-    					                          "\n\t d_i standsfor descriptor index and is an integer.\n\n"
-    					                          "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
-    					                          ));
+                                                  "stop streaming [d_t] [d_i]\n" \
+                                                  "Send a STOP_STREAMING command to stop a connected stream for streaming media.\n\n" \
+                                                  "\nParameters" \
+                                                  "\n\t d_t stands for descriptor type and is a string." \
+                                                  "\n\t d_i standsfor descriptor index and is an integer.\n\n"
+                                                  "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
+                                                  ));
 #if 0
     cmd_line_help_vec.push_back(new cmd_line_help("set name",
 
-    					                          "set name [d_t] [d_i] [ni] [n]\n" \
-    					                          "Send a SET_NAME command to change the value of a name field within a descriptor" \
-    					                          "using the current setting.\n\n"
-    					                          "\nParameters" \
-    					                          "\n\t d_t stands for descriptor type and is a string." \
-    					                          "\n\t d_i stands for descriptor index and is an integer." \
-    					                          "\n\t ni stands for name index and is an integer." \
-    					                          "\n\t n stands for name and is a string."
-    					                          ));
+                                                  "set name [d_t] [d_i] [ni] [n]\n" \
+                                                  "Send a SET_NAME command to change the value of a name field within a descriptor" \
+                                                  "using the current setting.\n\n"
+                                                  "\nParameters" \
+                                                  "\n\t d_t stands for descriptor type and is a string." \
+                                                  "\n\t d_i stands for descriptor index and is an integer." \
+                                                  "\n\t ni stands for name index and is an integer." \
+                                                  "\n\t n stands for name and is a string."
+                                                  ));
 #endif
 
 #if 0
     cmd_line_help_vec.push_back(new cmd_line_help("get name",
 
-    					                          "get name [d_t] [d_i] [ni]\n" \
-    					                          "Send a GET_NAME command to fetch the value of a name field within a descriptor" \
-    					                          "using the current setting.\n\n"
-    				                                  "\nParameters" \
-    					                          "\n\t d_t stands for descriptor type and is a string." \
-    					                          "\n\t d_i stands for descriptor index and is an integer." \
-    					                          "\n\t ni stands for name index and is an integer."
-    					                          ));
+                                                  "get name [d_t] [d_i] [ni]\n" \
+                                                  "Send a GET_NAME command to fetch the value of a name field within a descriptor" \
+                                                  "using the current setting.\n\n"
+                                                      "\nParameters" \
+                                                  "\n\t d_t stands for descriptor type and is a string." \
+                                                  "\n\t d_i stands for descriptor index and is an integer." \
+                                                  "\n\t ni stands for name index and is an integer."
+                                                  ));
 #endif
 
     cmd_line_help_vec.push_back(new cmd_line_help("path",
@@ -826,12 +830,12 @@ int cmd_line::cmd_view_all()
                     std::cout << "   " << std::setw(20) << std::hex << locale_def_ref->locale_identifier() << std::endl;
                 }
 
-                //case avdecc_lib::AEM_DESC_STRINGS:
-                //	for(int j = 0; j < configuration->strings_desc_count(); j++)
-                //	{
-                //		avdecc_lib::strings_descriptor *strings = configuration->get_strings_desc_by_index(j);
-                //		print_desc_type_index_name_row(*strings, *strings, *locale);
-                //	}
+//            case avdecc_lib::AEM_DESC_STRINGS:
+//                for(int j = 0; j < configuration->strings_desc_count(); j++)
+//                {
+//                    avdecc_lib::strings_descriptor *strings = configuration->get_strings_desc_by_index(j);
+//                    print_desc_type_index_name_row(*strings, *strings, *locale);
+//                }
 
             case avdecc_lib::AEM_DESC_STREAM_PORT_INPUT:
                 for(unsigned int j = 0; j < configuration->stream_port_input_desc_count(); j++)
@@ -2017,29 +2021,29 @@ int cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, st
     intptr_t cmd_notification_id = 0;
     std::string stream_format;
 
-	if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
+    if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
-		std::cout << "STREAM INPUT unsupported at this time" << std::endl ;
-	}
-	else  if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
-	{
-		if (stream_info_field == "stream_vlan_id") {
-			uint16_t vlan_id = (uint16_t)atoi(new_stream_info_field_value.c_str());
-			cmd_notification_id = get_next_notification_id();
-			sys->set_wait_for_next_cmd();
-			avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
-			stream_output_desc_ref->send_set_stream_info_vlan_id_cmd((void *)notification_id, vlan_id);
-			status = sys->get_last_resp_status();
-	        if(status != avdecc_lib::AEM_STATUS_SUCCESS)
-			{
-				std::cout << "cmd_get_stream_info error" << std::endl;
-				return -1;
-			}
-		} else {
-		std::cout << "Supported fields are:" << std::endl <<
-			"stream_vlan_id" << std::endl ;
-		}
-	}
+        std::cout << "STREAM INPUT unsupported at this time" << std::endl ;
+    }
+    else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
+    {
+        if (stream_info_field == "stream_vlan_id") {
+            uint16_t vlan_id = (uint16_t)atoi(new_stream_info_field_value.c_str());
+            cmd_notification_id = get_next_notification_id();
+            sys->set_wait_for_next_cmd();
+            avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_obj->get_config_desc_by_index(current_end_station, current_entity, current_config)->get_stream_output_desc_by_index(desc_index);
+            stream_output_desc_ref->send_set_stream_info_vlan_id_cmd((void *)notification_id, vlan_id);
+            status = sys->get_last_resp_status();
+            if(status != avdecc_lib::AEM_STATUS_SUCCESS)
+            {
+                std::cout << "cmd_get_stream_info error" << std::endl;
+                return -1;
+            }
+        } else {
+            std::cout << "Supported fields are:" << std::endl <<
+                "stream_vlan_id" << std::endl ;
+        }
+    }
     else
     {
         std::cout << "cmd_get_stream_info invalid descriptor type" << std::endl;
@@ -2101,15 +2105,15 @@ int cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
                 std::cout << "Stream format: " << stream_format << std::endl;
             }
             std::cout << "Flags: 0x" << std::hex << stream_output_desc_ref->get_stream_info_flags() << std::endl;
- 			if (stream_output_desc_ref->get_stream_info_flag("STREAM_ID_VALID"))
-                std::cout << "Stream ID: 0x" << std::hex << std::setfill('0') << std::setw(16) <<
-					stream_output_desc_ref->get_stream_info_stream_id() << std::endl;
- 			if (stream_output_desc_ref->get_stream_info_flag("STREAM_DEST_MAC_VALID"))
-				std::cout << "Stream Destination MAC: " << std::hex <<
-					stream_output_desc_ref->get_stream_info_stream_dest_mac() << std::endl;
- 			if (stream_output_desc_ref->get_stream_info_flag("STREAM_VLAN_ID_VALID"))
-				std::cout << "Stream VLAN ID: " <<
-					stream_output_desc_ref->get_stream_info_stream_vlan_id() << std::endl;
+            if (stream_output_desc_ref->get_stream_info_flag("STREAM_ID_VALID"))
+              std::cout << "Stream ID: 0x" << std::hex << std::setfill('0') << std::setw(16) <<
+                stream_output_desc_ref->get_stream_info_stream_id() << std::endl;
+            if (stream_output_desc_ref->get_stream_info_flag("STREAM_DEST_MAC_VALID"))
+              std::cout << "Stream Destination MAC: " << std::hex <<
+                stream_output_desc_ref->get_stream_info_stream_dest_mac() << std::endl;
+            if (stream_output_desc_ref->get_stream_info_flag("STREAM_VLAN_ID_VALID"))
+              std::cout << "Stream VLAN ID: " <<
+                stream_output_desc_ref->get_stream_info_stream_vlan_id() << std::endl;
         }
         return 1;
     }
@@ -2340,4 +2344,27 @@ bool cmd_line::is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t 
                             (config == controller_obj->get_end_station_by_index(end_station)->get_entity_desc_by_index(entity)->current_configuration());
 
     return is_setting_valid;
+}
+
+bool cmd_line::get_end_station_index(std::string arg, uint32_t &end_station_index) const
+{
+    uint64_t entity_guid = 0;
+    const char *str = arg.c_str();
+    char *end;
+
+    // Try treating the argument as a GUID
+    entity_guid = strtoull(str, &end, 16);
+    if (end != str)
+    {
+      bool found = controller_obj->is_end_station_found_by_guid(entity_guid, end_station_index);
+      if (found)
+        return true;
+    }
+
+    // Not a valid GUID, so assume it is an index
+    end_station_index = strtoul(str, &end, 10);
+    if (end != str)
+      return true;
+
+    return false;
 }
