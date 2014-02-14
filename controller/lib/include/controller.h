@@ -61,6 +61,11 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual end_station * STDCALL get_end_station_by_index(size_t end_station_index) = 0;
 
         /**
+         * \return Find a endstation's index by GUID.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index) = 0;
+
+        /**
          * \return The corresponding CONFIGURATION descriptor by index.
          */
         AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_index(size_t end_station_index, uint16_t entity_index, uint16_t config_index) = 0;

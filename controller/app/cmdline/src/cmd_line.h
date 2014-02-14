@@ -282,5 +282,10 @@ public:
      * Check if end station, entity, and configuration setting is in range and valid.
      */
     bool is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config);
+
+    /**
+     * Find an endstation index from an argument string.
+     */
+    bool get_end_station_index(std::string arg, uint32_t &end_station_index) const;
 };
 

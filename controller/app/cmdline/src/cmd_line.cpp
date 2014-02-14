@@ -108,6 +108,10 @@ int cmd_line::print_interfaces_and_select()
     return 0;
 }
 
+#define END_STATION_HELP "stands for End Station (index or GUID)."
+#define DST_END_STATION_HELP "stands for destination End Station (index or GUID)."
+#define SRC_END_STATION_HELP "stands for source End Station (index or GUID)."
+
 void cmd_line::cmd_line_help_init()
 {
     cmd_line_help_vec.push_back(new cmd_line_help("help",
@@ -132,10 +136,10 @@ void cmd_line::cmd_line_help_init()
 
                                                   "select\n" \
                                                   "Display the current End Station, Entity, and Configuration setting.\n\n" \
-                                                  "select [e_s_i] [e_i] [c_i]\n" \
-                                                  "Change the setting of end station, entity, and configuration.\n\n" \
+                                                  "select [e_s] [e_i] [c_i]\n" \
+                                                  "Change the setting of End Station, entity, and configuration.\n\n" \
                                                   "\nParameters" \
-                                                  "\n\t e_s_i stands for end station and is an integer." \
+                                                  "\n\t e_s " END_STATION_HELP \
                                                   "\n\t e_i stands for entity and is an integer. " \
                                                   "\n\t c_i stands for configuration and is integers.\n\n" \
                                                   "To see a list of valid End Stations, enter \"list\" command." \
@@ -166,10 +170,10 @@ void cmd_line::cmd_line_help_init()
 
     cmd_line_help_vec.push_back(new cmd_line_help("view details",
 
-                                                  "view details [e_s_i]\n" \
-                                                  "Display all descriptors in the specified end station.\n\n" \
+                                                  "view details [e_s]\n" \
+                                                  "Display all descriptors in the specified End Station.\n\n" \
                                                   "\nParameters"
-                                                  "\n\t e_s_i stands for End Station index and is an integer.\n\n" \
+                                                  "\n\t e_s " END_STATION_HELP "\n\n" \
                                                   "To see a list of valid End Stations, enter \"list\" command."
                                                  ));
 
@@ -188,15 +192,15 @@ void cmd_line::cmd_line_help_init()
 
                                                   "connect\n" \
                                                   "Display all the available instreams for all End Stations.\n\n"
-                                                  "connect [d_e_s_i] [d_d_i]\n" \
+                                                  "connect [d_e_s] [d_d_i]\n" \
                                                   "Display all the available outstreams for all End Stations that can connect with\n" \
                                                   "the instreams.\n\n" \
-                                                  "connect [d_e_s_i] [d_d_i] [s_e_s_i] [s_d_i] [f]*\n" \
+                                                  "connect [d_e_s] [d_d_i] [s_e_s] [s_d_i] [f]*\n" \
                                                   "Connect an instream to an outstream.\n\n" \
                                                   "\nParameters"
-                                                  "\n\t d_e_s_i stands for destination End Station index and is an integer." \
+                                                  "\n\t d_e_s " DST_END_STATION_HELP \
                                                   "\n\t d_d_i stands for destination descriptor index and is an integer."
-                                                  "\n\t s_e_s_i stands for source End Station index and is an integer. " \
+                                                  "\n\t s_e_s " SRC_END_STATION_HELP \
                                                   "\n\t s_d_i stands for source descriptor index and is an integer. " \
                                                   "\n\t f stands for a optional set of flags.\n\n"
                                                   "Valid flags are class_b, fast_connect, saved_state, streaming_wait,\n" \
@@ -205,40 +209,40 @@ void cmd_line::cmd_line_help_init()
 
     cmd_line_help_vec.push_back(new cmd_line_help("disconnect",
 
-                                                  "disconnect [d_e_s_i] [d_d_i] [s_e_s_i] [s_d_i]\n" \
+                                                  "disconnect [d_e_s] [d_d_i] [s_e_s] [s_d_i]\n" \
                                                   "Send a CONNECT_RX command to disconnect Listener sink stream.\n\n" \
                                                   "\nParameters"
-                                                  "\n\t d_e_s_i stands for destination End Station index and is an integer." \
+                                                  "\n\t d_e_s " DST_END_STATION_HELP \
                                                   "\n\t d_d_i stands for destination descriptor index and is an integer."
-                                                  "\n\t s_e_s_i stands for source End Station index and is an integer. " \
+                                                  "\n\t s_e_s " SRC_END_STATION_HELP \
                                                   "\n\t s_d_i stands for source descriptor index and is an integer."
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("get tx state",
 
-                                                  "get tx state [s_e_s_i] [s_d_i]\n" \
+                                                  "get tx state [s_e_s] [s_d_i]\n" \
                                                   "Send a GET_TX_STATE command to get Talker source stream connection state.\n\n"
                                                   "\nParameters"
-                                                  "\n\t s_e_s_i stands for source End Station index and is an integer. " \
+                                                  "\n\t s_e_s " SRC_END_STATION_HELP \
                                                   "\n\t s_d_i stands for source descriptor index and is an integer."
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("get rx state",
 
-                                                  "get rx state [d_e_s_i] [d_d_i]\n" \
+                                                  "get rx state [d_e_s] [d_d_i]\n" \
                                                   "Send a GET_RX_STATE command to get Listener sink stream connection state.\n\n"
                                                   "\nParameters"
-                                                  "\n\t d_e_s_i stands for destination End Station index and is an integer." \
+                                                  "\n\t d_e_s " DST_END_STATION_HELP \
                                                   "\n\t d_d_i stands for destination descriptor index and is an integer."
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("get tx connection",
 
-                                                  "get tx connection [s_e_s_i] [s_d_i]\n" \
+                                                  "get tx connection [s_e_s] [s_d_i]\n" \
                                                   "Send a GET_TX_CONNECTION command with a notification id to get a specific\n" \
                                                   "Talker connection information.\n\n"
                                                   "\nParameters"
-                                                  "\n\t s_e_s_i stands for source End Station index and is an integer. " \
+                                                  "\n\t s_e_s " SRC_END_STATION_HELP \
                                                   "\n\t s_d_i stands for source descriptor index and is an integer."
                                                  ));
 
@@ -2340,4 +2344,27 @@ bool cmd_line::is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t 
                             (config == controller_obj->get_end_station_by_index(end_station)->get_entity_desc_by_index(entity)->current_configuration());
 
     return is_setting_valid;
+}
+
+bool cmd_line::get_end_station_index(std::string arg, uint32_t &end_station_index) const
+{
+    uint64_t entity_guid = 0;
+    const char *str = arg.c_str();
+    char *end;
+
+    // Try treating the argument as a GUID
+    entity_guid = strtoull(str, &end, 16);
+    if (end != str)
+    {
+      bool found = controller_obj->is_end_station_found_by_guid(entity_guid, end_station_index);
+      if (found)
+        return true;
+    }
+
+    // Not a valid GUID, so assume it is an index
+    end_station_index = strtoul(str, &end, 10);
+    if (end != str)
+      return true;
+
+    return false;
 }
