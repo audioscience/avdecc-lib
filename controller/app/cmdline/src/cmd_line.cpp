@@ -333,17 +333,6 @@ void cmd_line::cmd_line_help_init()
                                                   ));
 #endif
 
-    cmd_line_help_vec.push_back(new cmd_line_help("get stream_info",
-
-                                                  "get stream_info [d_t] [d_i]\n" \
-                                                  "Display the GET_STREAM_INFO result\n" \
-                                                  "using the current setting.\n\n" \
-                                                  "\nParameters" \
-                                                  "\n\t d_t stands for descriptor type and is a string."
-                                                  "\n\t d_i stands for descriptor index and is an integer."
-                                                  "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
-                                                 ));
-
     cmd_line_help_vec.push_back(new cmd_line_help("set stream_info",
 
                                                   "set stream_info [d_t] [d_i] [flag] [value]\n" \
@@ -351,10 +340,21 @@ void cmd_line::cmd_line_help_init()
                                                   "using the current setting.\n\n" \
                                                   "\nParameters" \
                                                   "\n\t d_t stands for descriptor type and is a string."
-                                                  "\n\t d_i stands for descriptor index and is an integer." 
-												  "\n\t flag is the setting to adjust [stream_vlan_id]"
+                                                  "\n\t d_i stands for descriptor index and is an integer."
+                                                  "\n\t flag is the setting to adjust [stream_vlan_id]"
                                                   "\n\t value is the value to set."
                                                  "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
+                                                 ));
+
+    cmd_line_help_vec.push_back(new cmd_line_help("get stream_info",
+
+                                                  "get stream_info [d_t] [d_i]\n" \
+                                                  "Display the GET_STREAM_INFO result\n" \
+                                                  "using the current setting.\n\n" \
+                                                  "\nParameters" \
+                                                  "\n\t d_t stands for descriptor type and is a string."
+                                                  "\n\t d_i stands for descriptor index and is an integer.\n\n"
+                                                  "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT.\n" \
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("set sampling_rate",
