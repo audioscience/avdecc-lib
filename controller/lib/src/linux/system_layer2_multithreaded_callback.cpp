@@ -105,17 +105,30 @@ namespace avdecc_lib
         waiting_sem = (sem_t *)calloc(1, sizeof(*waiting_sem));
         if (waiting_sem)
             sem_init(waiting_sem, 0, 0);
+
+        shutdown_sem = (sem_t *)calloc(1, sizeof(*shutdown_sem));
+        if (shutdown_sem)
+            sem_init(shutdown_sem, 0, 0);
     }
 
     system_layer2_multithreaded_callback::~system_layer2_multithreaded_callback()
     {
         free(waiting_sem);
+        free(shutdown_sem);
     }
 
     void STDCALL system_layer2_multithreaded_callback::destroy()
     {
         if (this == local_system)
-          local_system = NULL;
+        {
+            local_system = NULL;
+
+            // Wait for controller to have finished
+            if (sem_wait(shutdown_sem) != 0)
+            {
+                perror("sem_wait");
+            }
+        }
 
         delete this;
     }
@@ -342,6 +355,13 @@ namespace avdecc_lib
             int i, res;
             struct epoll_priv *priv;
             res = epoll_wait(epollfd, epoll_evt, POLL_COUNT, -1);
+
+            if (local_system == NULL)
+            {
+                // System has been shut down
+                sem_post(shutdown_sem);
+                return 0;
+            }
 
             /* exit on error */
             if (-1 == res)

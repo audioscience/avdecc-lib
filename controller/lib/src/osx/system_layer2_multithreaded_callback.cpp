@@ -104,8 +104,10 @@ namespace avdecc_lib
         resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID;
 
         sem_unlink("/waiting_sem");
+        sem_unlink("/shutdown_sem");
 
-        if ((waiting_sem = sem_open("/waiting_sem", O_CREAT | O_EXCL, 0644, 0)) == SEM_FAILED)
+        if (((waiting_sem = sem_open("/waiting_sem", O_CREAT | O_EXCL, 0644, 0)) == SEM_FAILED) ||
+            ((shutdown_sem = sem_open("/shutdown_sem", O_CREAT | O_EXCL, 0644, 0)) == SEM_FAILED))
         {
             perror("sem_open");
             exit(-1);
@@ -115,12 +117,21 @@ namespace avdecc_lib
     system_layer2_multithreaded_callback::~system_layer2_multithreaded_callback()
     {
         sem_unlink("/waiting_sem");
+        sem_unlink("/shutdown_sem");
     }
 
     void STDCALL system_layer2_multithreaded_callback::destroy()
     {
         if (this == local_system)
-          local_system = NULL;
+        {
+            local_system = NULL;
+
+            // Wait for controller to have finished
+            if (sem_wait(shutdown_sem) != 0)
+            {
+                perror("sem_wait");
+            }
+        }
 
         delete this;
     }
@@ -313,6 +324,13 @@ namespace avdecc_lib
         do
         {
             nev = kevent(kq, chlist, POLL_COUNT, evlist, POLL_COUNT, NULL);
+
+            if (local_system == NULL)
+            {
+                // System has been shut down
+                sem_post(shutdown_sem);
+                return 0;
+            }
 
             if (nev == -1)
             {
