@@ -318,7 +318,7 @@ void cmd_line::cmd_line_help_init()
                                                   "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."
                                                  ));
 
-#if 0 
+#if 0
     cmd_line_help_vec.push_back(new cmd_line_help("set stream_info",
 
                                                   "set stream_info [d_t] [d_i] [f] [f_v]\n" \
@@ -1523,11 +1523,11 @@ int cmd_line::cmd_connect()
         }
     }
 
-        std::cout << "\n" << "End Station" << std::setw(26) << "" << "Outstream" << std::setw(15) << "" << "Stream Format" << std::endl;
-        std::cout << "------------------------------------------------------------------------------" << std::endl;
+    std::cout << "\n" << "End Station" << std::setw(26) << "" << "Outstream" << std::setw(15) << "" << "Stream Format" << std::endl;
+    std::cout << "------------------------------------------------------------------------------" << std::endl;
 
-        for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
-        {
+    for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
+    {
         avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(i);
         end_station_mac = end_station->mac();
 
@@ -1614,7 +1614,7 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
     {
         std::cout << "Invalid Instream" << std::endl;
     }
-    
+
     return 0;
 }
 
