@@ -165,7 +165,7 @@ namespace avdecc_lib
         /**
          * If queue_is_waiting is true, wait for the response before returning.
          */
-        if(queue_is_waiting)
+        if(queue_is_waiting && (notification_flag == CMD_WITH_NOTIFICATION))
         {
             is_waiting = true;
             sem_wait(waiting_sem);
