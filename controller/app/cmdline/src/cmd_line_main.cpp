@@ -135,7 +135,9 @@ int main()
 
         while((pos = cmd_input.find(" ")) != std::string::npos)
         {
-            input_argv.push_back(cmd_input.substr(0, pos));
+            if (pos)
+              input_argv.push_back(cmd_input.substr(0, pos));
+
             cmd_input.erase(0, pos + 1);
         }
 
