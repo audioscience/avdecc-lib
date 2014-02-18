@@ -84,6 +84,12 @@ namespace avdecc_lib
          * \param notification_id A void pointer to the unique identifier associated with the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_entity_avail_cmd(void *notification_id) = 0;
+
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_aecp_address_access_cmd(void *notification_id,
+                                                                                    unsigned mode,
+                                                                                    unsigned length,
+                                                                                    uint64_t address,
+                                                                                    uint8_t memory_data[]) = 0;
     };
 }
 

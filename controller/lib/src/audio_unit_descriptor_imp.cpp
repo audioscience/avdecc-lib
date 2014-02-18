@@ -33,7 +33,7 @@
 #include "adp.h"
 #include "end_station_imp.h"
 #include "system_tx_queue.h"
-#include "aem_controller_state_machine.h"
+#include "aecp_controller_state_machine.h"
 #include "audio_unit_descriptor_imp.h"
 
 namespace avdecc_lib
@@ -309,7 +309,7 @@ namespace avdecc_lib
         aem_cmd_set_sampling_rate.sampling_rate = new_sampling_rate;
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
+        aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
         aem_cmd_set_sampling_rate_returned = jdksavdecc_aem_command_set_sampling_rate_write(&aem_cmd_set_sampling_rate,
                                                                                             cmd_frame->payload,
                                                                                             ETHER_HDR_SIZE,
@@ -322,7 +322,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->guid());
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND, cmd_frame, base_end_station_imp_ref->guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);
@@ -356,7 +356,7 @@ namespace avdecc_lib
         status = aem_cmd_set_sampling_rate_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_set_sampling_rate_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
+        aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
         if(status == AEM_STATUS_SUCCESS)
         {
@@ -384,7 +384,7 @@ namespace avdecc_lib
         aem_cmd_get_sampling_rate.descriptor_index = descriptor_index();
 
         /******************************* Fill frame payload with AECP data and send the frame **************************/
-        aem_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
+        aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), cmd_frame);
         aem_cmd_get_sampling_rate_returned = jdksavdecc_aem_command_get_sampling_rate_write(&aem_cmd_get_sampling_rate,
                                                                                             cmd_frame->payload,
                                                                                             ETHER_HDR_SIZE,
@@ -397,7 +397,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aem_controller_state_machine_ref->common_hdr_init(cmd_frame, base_end_station_imp_ref->guid());
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND, cmd_frame, base_end_station_imp_ref->guid());
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);
@@ -431,7 +431,7 @@ namespace avdecc_lib
         status = aem_cmd_get_sampling_rate_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_get_sampling_rate_resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-        aem_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
+        aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, cmd_frame);
 
         free(cmd_frame);
         return 0;
