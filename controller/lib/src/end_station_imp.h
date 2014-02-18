@@ -45,6 +45,9 @@ namespace avdecc_lib
         uint16_t current_entity_desc; // The ENTITY descriptor associated with the End Station
         uint16_t current_config_desc; // The CONFIGURATION descriptor associated with the ENTITY descriptor in the same End Station
 
+        uint16_t selected_entity_index; // The controller-selected entity index
+        uint16_t selected_config_index; // The controller-selected configuraition descriptor index
+
         enum read_top_level_desc_in_config_states
         {
             READ_TOP_LEVEL_DESC_IN_CONFIG_IDLE,
@@ -149,6 +152,11 @@ namespace avdecc_lib
         int proc_rcvd_aecp_aa_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         int proc_rcvd_acmp_resp(uint32_t msg_type, void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+
+        void STDCALL set_current_entity_index(uint16_t entity_index);
+        uint16_t STDCALL get_current_entity_index() const;
+        void STDCALL set_current_config_index(uint16_t entity_index);
+        uint16_t STDCALL get_current_config_index() const;
 
     private:
         /**

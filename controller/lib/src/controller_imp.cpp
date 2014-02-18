@@ -120,11 +120,21 @@ namespace avdecc_lib
         return false;
     }
 
-    configuration_descriptor * STDCALL controller_imp::get_config_desc_by_index(size_t end_station_index, uint16_t entity_index, uint16_t config_index)
+    configuration_descriptor * STDCALL controller_imp::get_current_config_desc(size_t end_station_index, bool report_error)
     {
-        bool is_valid = ((end_station_index < end_station_vec.size()) &&
-                         (entity_index < end_station_vec.at(end_station_index)->entity_desc_count()) &&
-                         (config_index < end_station_vec.at(end_station_index)->get_entity_desc_by_index(entity_index)->configurations_count()));
+        uint16_t entity_index = 0;
+        uint16_t config_index = 0;
+        bool is_valid = false;
+
+        if(end_station_index < end_station_vec.size())
+        {
+            avdecc_lib::end_station *end_station = end_station_vec.at(end_station_index);
+            entity_index = end_station->get_current_entity_index();
+            config_index = end_station->get_current_config_index();
+
+            is_valid = (entity_index < end_station->entity_desc_count()) &&
+                       (config_index < end_station->get_entity_desc_by_index(entity_index)->config_desc_count());
+        }
 
         if(is_valid)
         {
@@ -133,9 +143,9 @@ namespace avdecc_lib
 
             return configuration;
         }
-        else
+        else if (report_error)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_current_config_desc error");
         }
 
         return NULL;

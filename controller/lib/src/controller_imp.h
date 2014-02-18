@@ -66,7 +66,8 @@ namespace avdecc_lib
          */
         bool is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
 
-        configuration_descriptor * STDCALL get_config_desc_by_index(size_t end_station_index, uint16_t entity_index, uint16_t config_index);
+        configuration_descriptor * STDCALL get_current_config_desc(size_t end_station_index, bool report_error=true);
+
         configuration_descriptor * STDCALL get_config_desc_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index);
 
         /**

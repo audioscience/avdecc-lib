@@ -69,7 +69,7 @@ namespace avdecc_lib
 
         /**
          * Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity. Reading a descriptor can be performed
-         * by any AVDECC Controller even when the AVDECC Entityis locked or acquired as the act of reading the descriptor
+         * by any AVDECC Controller even when the AVDECC Entitys locked or acquired as the act of reading the descriptor
          * does not affect the AVDECC Entity state.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
@@ -90,6 +90,26 @@ namespace avdecc_lib
                                                                                     unsigned length,
                                                                                     uint64_t address,
                                                                                     uint8_t memory_data[]) = 0;
+        /**
+         * \param entity_index The index of the entity to set as current selected.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_current_entity_index(uint16_t entity_index) = 0;
+
+
+        /**
+         * \return The index of the currently selected entity.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_current_entity_index() const = 0;
+
+        /**
+         * \param config_index The index of the config to set as current selected.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_current_config_index(uint16_t entity_index) = 0;
+
+        /**
+         * \return The index of the currently selected config.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_current_config_index() const = 0;
     };
 }
 

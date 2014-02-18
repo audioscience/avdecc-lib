@@ -109,6 +109,7 @@ namespace avdecc_lib
         //int tick_timer;
 
         sem_t *waiting_sem;
+        sem_t *shutdown_sem;
 
         /*
         Events to process:

@@ -47,6 +47,8 @@ namespace avdecc_lib
         end_station_connection_status = ' ';
         current_entity_desc = 0;
         current_config_desc = 0;
+        selected_entity_index = 0;
+        selected_config_index = 0;
         desc_type_from_config = 0;
         desc_type_index_from_config = 0;
         desc_count_from_config = 0;
@@ -1382,5 +1384,25 @@ namespace avdecc_lib
         }
 
         return 0;
+    }
+
+    void STDCALL end_station_imp::set_current_entity_index(uint16_t entity_index)
+    {
+        selected_entity_index = entity_index;
+    }
+
+    uint16_t STDCALL end_station_imp::get_current_entity_index() const
+    {
+        return selected_entity_index;
+    }
+
+    void STDCALL end_station_imp::set_current_config_index(uint16_t config_index)
+    {
+        selected_config_index = config_index;
+    }
+
+    uint16_t STDCALL end_station_imp::get_current_config_index() const
+    {
+        return selected_config_index;
     }
 }

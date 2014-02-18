@@ -68,7 +68,7 @@ namespace avdecc_lib
         /**
          * \return The corresponding CONFIGURATION descriptor by index.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_index(size_t end_station_index, uint16_t entity_index, uint16_t config_index) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_current_config_desc(size_t end_station_index, bool report_error=true) = 0;
 
         /**
          * \return The corresponding CONFIGURATION descriptor by GUID.
