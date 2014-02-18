@@ -192,7 +192,7 @@ void cmd_line::cmd_line_help_init()
                                                   "connect [d_e_s] [d_d_i]\n" \
                                                   "Display all the available outstreams for all End Stations that can connect with\n" \
                                                   "the instreams.\n\n" \
-                                                  "connect [d_e_s] [d_d_i] [s_e_s] [s_d_i] [f]*\n" \
+                                                  "connect [s_e_s] [s_d_i] [d_e_s] [d_d_i] [f]*\n" \
                                                   "Connect an instream to an outstream.\n\n" \
                                                   "\nParameters"
                                                   "\n\t d_e_s " DST_END_STATION_HELP \
@@ -206,13 +206,13 @@ void cmd_line::cmd_line_help_init()
 
     cmd_line_help_vec.push_back(new cmd_line_help("disconnect",
 
-                                                  "disconnect [d_e_s] [d_d_i] [s_e_s] [s_d_i]\n" \
+                                                  "disconnect [s_e_s] [s_d_i] [d_e_s] [d_d_i]\n" \
                                                   "Send a CONNECT_RX command to disconnect Listener sink stream.\n\n" \
                                                   "\nParameters"
-                                                  "\n\t d_e_s " DST_END_STATION_HELP \
-                                                  "\n\t d_d_i stands for destination descriptor index and is an integer."
                                                   "\n\t s_e_s " SRC_END_STATION_HELP \
                                                   "\n\t s_d_i stands for source descriptor index and is an integer."
+                                                  "\n\t d_e_s " DST_END_STATION_HELP \
+                                                  "\n\t d_d_i stands for destination descriptor index and is an integer."
                                                  ));
 
     cmd_line_help_vec.push_back(new cmd_line_help("get tx state",
@@ -1453,7 +1453,7 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
             break;
 
         default:
-            std::cout << "Descriptor type is not found." << std::endl;
+            std::cout << "\nDescriptor type is not found." << std::endl;
             break;
     }
 

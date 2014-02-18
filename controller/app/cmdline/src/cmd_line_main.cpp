@@ -121,6 +121,7 @@ int main()
 #if defined(__MACH__) || defined(__linux__)
         snprintf(shell_prompt, sizeof(shell_prompt), "$ ");
         input = readline(shell_prompt);
+
         if (!input)
             break;
         std::string cmd_input(input);
@@ -392,19 +393,19 @@ int main()
             }
             else if(input_argv.size() >= 5)
             {
-                uint32_t instream_end_station_index = 0;
-                uint16_t instream_desc_index = 0;
                 uint32_t outstream_end_station_index = 0;
                 uint16_t outstream_desc_index = 0;
+                uint32_t instream_end_station_index = 0;
+                uint16_t instream_desc_index = 0;
 
-                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(1), instream_end_station_index) &&
+                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(1), outstream_end_station_index) &&
                    ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)) &&
-                   avdecc_cmd_line_ref->get_end_station_index(input_argv.at(3), outstream_end_station_index) &&
+                   avdecc_cmd_line_ref->get_end_station_index(input_argv.at(3), instream_end_station_index) &&
                    ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
-                    instream_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
-                    outstream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
+                    outstream_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
+                    instream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
                 }
 
                 if(is_input_valid)
@@ -434,19 +435,19 @@ int main()
         {
             if(input_argv.size() == 5)
             {
+                uint32_t outstream_end_station_index = 0;
+                uint16_t outstream_desc_index = 0;
                 uint32_t instream_end_station_index = 0;
                 uint16_t instream_desc_index = 0;
-                uint32_t outstream_end_station_index;
-                uint16_t outstream_desc_index;
 
-                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(1), instream_end_station_index) &&
+                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(1), outstream_end_station_index) &&
                    ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)) &&
-                   avdecc_cmd_line_ref->get_end_station_index(input_argv.at(3), outstream_end_station_index) &&
+                   avdecc_cmd_line_ref->get_end_station_index(input_argv.at(3), instream_end_station_index) &&
                    ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
-                    instream_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
-                    outstream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
+                    outstream_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
+                    instream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
                 }
 
                 if(is_input_valid)
