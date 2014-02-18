@@ -151,7 +151,7 @@ public:
                        uint16_t instream_desc_index,
                        uint32_t outstream_end_station_index,
                        uint16_t outstream_desc_index,
-                       std::string flags);
+                       const std::vector<std::string> &flags);
 
     /**
      * Send a CONNECT_RX command to disconnect Listener sink stream.
@@ -215,7 +215,7 @@ public:
      * Send a SET_STREAM_INFO command to change a stream info field value to a new value.
      */
     int cmd_set_stream_info(std::string desc_name, uint16_t desc_index, std::string stream_info_field,
-                            uint64_t new_stream_info_field_value);
+                            std::string new_stream_info_field_value);
 
     /**
      * Send a GET_STREAM_INFO command to fetch the current information of a stream.
@@ -282,5 +282,10 @@ public:
      * Check if end station, entity, and configuration setting is in range and valid.
      */
     bool is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config);
+
+    /**
+     * Find an endstation index from an argument string.
+     */
+    bool get_end_station_index(std::string arg, uint32_t &end_station_index) const;
 };
 

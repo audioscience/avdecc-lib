@@ -215,6 +215,12 @@ namespace avdecc_lib
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_msrp_failure_bridge_id() = 0;
 
+	    /**
+         * \return The stream info vlan ID of a stream after sending a GET_STREAM_info command and
+         *	       receiving a response back for the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_stream_info_stream_vlan_id() = 0;
+
         /**
          * \return The stream id field used to identify and transfer the associated stream ID where suitable 
          * after sending a GET_TX_STATE command and receiving a response back for the command.
@@ -313,13 +319,12 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_format_cmd(void *notification_id) = 0;
 
         /**
-         * Send a SET_STREAM_INFO command with a notification id to change the current values of the dynamic information of
-         * the stream, such as the msrp_accumulated_latency, stream ID, and destination MAC.
+         * Send a SET_STREAM_INFO command with a notification id to set the vlan ID of the stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          * \param new_stream_info_field The new field information to be set to for a stream.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_info_cmd(void *notification_id, void *new_stream_info_field) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_info_vlan_id_cmd(void *notification_id, uint16_t vlan_id) = 0;
 
         /**
          * Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
@@ -334,6 +339,21 @@ namespace avdecc_lib
          *      get_stream_info_msrp_failure_code(), get_stream_info_msrp_failure_bridge_id()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void *notification_id) = 0;
+
+		 /**
+         * Tests state of a flag returned by last GET_STREAM_INFO command.
+         *
+         * \param flag The flag to check. Valid values are: 
+		 * CLASS_B, FAST_CONNECT, SAVED_STATE, STREAMING_WAIT, ENCRYPTED_PDU, STREAM_VLAN_ID_VALID
+		 * CONNECTED, MSRP_FAILURE_VALID, STREAM_DEST_MAC_VALID, MSRP_ACC_LAT_VALID, STREAM_ID_VALID,
+		 * STREAM_FORMAT_VALID.
+         *
+         * \see get_stream_info_flags(), get_stream_info_stream_format(), get_stream_info_stream_id(),
+         *      get_stream_info_msrp_accumulated_latency(), get_stream_info_stream_dest_mac(),
+         *      get_stream_info_msrp_failure_code(), get_stream_info_msrp_failure_bridge_id()
+         */
+
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_info_flag(const char *flag) = 0;
 
         /**
          * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected

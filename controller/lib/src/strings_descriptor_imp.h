@@ -41,31 +41,11 @@ namespace avdecc_lib
         ssize_t desc_strings_read_returned; // Status of extracting Strings descriptor information from a network buffer
 
     public:
-        /**
-         * Constructor for Strings descriptor object.
-         *
-         * \param end_station_obj A pointer to the base End Station object.
-         * \param frame The raw memory that contains the descriptor information to read from.
-         * \param pos The position offset to read the descriptor fields from.
-         * \param frame_len The memory buffer length of the descriptor frame.
-         */
         strings_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-
         virtual ~strings_descriptor_imp();
 
-        /**
-         * Get the type of the descriptor.
-         */
         uint16_t STDCALL descriptor_type() const;
-
-        /**
-         * Get the index of the descriptor.
-         */
         uint16_t STDCALL descriptor_index() const;
-
-        /**
-         * Get the corresponding localized string of the Strings descriptor.
-         */
         uint8_t * STDCALL get_string_by_index(size_t string_index);
     };
 }

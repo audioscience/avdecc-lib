@@ -66,7 +66,6 @@ namespace avdecc_lib
 
     uint16_t STDCALL audio_map_descriptor_imp::number_of_mappings()
     {
-        assert(audio_map_desc.number_of_mappings == 62);
         return audio_map_desc.number_of_mappings;
     }
 }

@@ -205,12 +205,11 @@ int main()
                 uint16_t new_entity = 0;
                 uint16_t new_config = 0;
 
-                if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
+                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(1), new_end_station) &&
                    ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)) &&
                    ((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)))
                 {
                     is_input_valid = true;
-                    new_end_station = (uint16_t)atoi(input_argv.at(1).c_str());
                     new_entity = (uint16_t)atoi(input_argv.at(2).c_str());
                     new_config = (uint16_t)atoi(input_argv.at(3).c_str());
                 }
@@ -302,12 +301,11 @@ int main()
             }
             else if((input_argv.size() == 3) && (input_argv.at(1) == "details"))
             {
-                uint16_t end_station_index = 0;
+                uint32_t end_station_index = 0;
 
-                if((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0))
+                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(2), end_station_index))
                 {
                     is_input_valid = true;
-                    end_station_index = (uint16_t)atoi(input_argv.at(2).c_str());
                 }
 
                 if(is_input_valid)
@@ -373,11 +371,10 @@ int main()
                 uint32_t instream_end_station_index = 0;
                 uint16_t instream_desc_index = 0;
 
-                if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
+                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(1), instream_end_station_index) &&
                    ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)))
                 {
                     is_input_valid = true;
-                    instream_end_station_index = (uint32_t)atoi(input_argv.at(1).c_str());
                     instream_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
                 }
 
@@ -391,43 +388,33 @@ int main()
                     avdecc_cmd_line_ref->cmd_help_details(input_argv.at(0));
                 }
             }
-            else if((input_argv.size() == 5) || (input_argv.size() == 6))
+            else if(input_argv.size() >= 5)
             {
                 uint32_t instream_end_station_index = 0;
                 uint16_t instream_desc_index = 0;
                 uint32_t outstream_end_station_index = 0;
                 uint16_t outstream_desc_index = 0;
 
-                if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
+                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(1), instream_end_station_index) &&
                    ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)) &&
-                   ((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                   avdecc_cmd_line_ref->get_end_station_index(input_argv.at(3), outstream_end_station_index) &&
                    ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
-                    instream_end_station_index = (uint32_t)atoi(input_argv.at(1).c_str());
                     instream_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
-                    outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
                     outstream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
                 }
 
                 if(is_input_valid)
                 {
-                    if(input_argv.size() == 5)
-                    {
-                        avdecc_cmd_line_ref->cmd_connect_rx(instream_end_station_index,
-                                                            instream_desc_index,
-                                                            outstream_end_station_index,
-                                                            outstream_desc_index,
-                                                            "");
-                    }
-                    else if(input_argv.size() == 6)
-                    {
-                        avdecc_cmd_line_ref->cmd_connect_rx(instream_end_station_index,
-                                                            instream_desc_index,
-                                                            outstream_end_station_index,
-                                                            outstream_desc_index,
-                                                            input_argv.at(5));
-                    }
+                    std::vector<std::string>::const_iterator start = input_argv.begin() + 5;
+                    std::vector<std::string>::const_iterator end = input_argv.end();
+                    std::vector<std::string> flags(start, end);
+                    avdecc_cmd_line_ref->cmd_connect_rx(instream_end_station_index,
+                                                        instream_desc_index,
+                                                        outstream_end_station_index,
+                                                        outstream_desc_index,
+                                                        flags);
                 }
                 else
                 {
@@ -450,15 +437,13 @@ int main()
                 uint32_t outstream_end_station_index;
                 uint16_t outstream_desc_index;
 
-                if(((input_argv.at(1) == "0") || (atoi(input_argv.at(1).c_str()) != 0)) &&
+                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(1), instream_end_station_index) &&
                    ((input_argv.at(2) == "0") || (atoi(input_argv.at(2).c_str()) != 0)) &&
-                   ((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                   avdecc_cmd_line_ref->get_end_station_index(input_argv.at(3), outstream_end_station_index) &&
                    ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
-                    instream_end_station_index = (uint32_t)atoi(input_argv.at(1).c_str());
                     instream_desc_index = (uint16_t)atoi(input_argv.at(2).c_str());
-                    outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
                     outstream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
                 }
 
@@ -619,19 +604,17 @@ int main()
             else if((input_argv.size() == 6) && (input_argv.at(1) == "stream_info"))
             {
                 uint16_t desc_index = 0;
-                uint64_t stream_info_field_value = 0;
 
                 if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
                    ((input_argv.at(5) == "0") || (atoi(input_argv.at(5).c_str()) != 0)))
                 {
                     is_input_valid = true;
                     desc_index = (uint16_t)atoi(input_argv.at(3).c_str());
-                    stream_info_field_value = (uint16_t)atoi(input_argv.at(5).c_str());
                 }
 
                 if(is_input_valid)
                 {
-                    avdecc_cmd_line_ref->cmd_set_stream_info(input_argv.at(2), desc_index, input_argv.at(4), stream_info_field_value);
+                    avdecc_cmd_line_ref->cmd_set_stream_info(input_argv.at(2), desc_index, input_argv.at(4), input_argv.at(5).c_str());
                 }
                 else
                 {
@@ -873,11 +856,10 @@ int main()
                 uint32_t outstream_end_station_index = 0;
                 uint16_t outstream_desc_index = 0;
 
-                if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(3), outstream_end_station_index) &&
                    ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
-                    outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
                     outstream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
                 }
 
@@ -896,11 +878,10 @@ int main()
                 uint32_t instream_end_station_index = 0;
                 uint16_t instream_desc_index = 0;
 
-                if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(3), instream_end_station_index) &&
                    ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
-                    instream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
                     instream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
                 }
 
@@ -919,11 +900,10 @@ int main()
                 uint32_t outstream_end_station_index = 0;
                 uint16_t outstream_desc_index = 0;
 
-                if(((input_argv.at(3) == "0") || (atoi(input_argv.at(3).c_str()) != 0)) &&
+                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(3), outstream_end_station_index) &&
                    ((input_argv.at(4) == "0") || (atoi(input_argv.at(4).c_str()) != 0)))
                 {
                     is_input_valid = true;
-                    outstream_end_station_index = (uint32_t)atoi(input_argv.at(3).c_str());
                     outstream_desc_index = (uint16_t)atoi(input_argv.at(4).c_str());
                 }
 
@@ -1047,7 +1027,11 @@ int main()
         {
             if(input_argv.size() == 1)
             {
+#if defined(__MACH__) || defined(__linux__)
+                std::system("clear");
+#else
                 std::system("cls");
+#endif
             }
             else
             {
