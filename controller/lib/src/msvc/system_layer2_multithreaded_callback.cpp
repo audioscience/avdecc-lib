@@ -88,6 +88,13 @@ namespace avdecc_lib
 
     void STDCALL system_layer2_multithreaded_callback::destroy()
     {
+        if (this == local_system)
+        {
+            local_system = NULL;
+
+            // Wait for controller to have finished
+            WaitForSingleObject(shutdown_sem, INFINITE);
+        }
         delete this;
     }
 
@@ -105,7 +112,7 @@ namespace avdecc_lib
         /**
          * If queue_is_waiting is true, wait for the response before returning.
          */
-        if(queue_is_waiting)
+        if(queue_is_waiting && (notification_flag == CMD_WITH_NOTIFICATION))
         {
             is_waiting = true;
             WaitForSingleObject(waiting_sem, INFINITE);
@@ -225,6 +232,7 @@ namespace avdecc_lib
         poll_events_array[KILL_ALL] = CreateEvent(NULL, FALSE, FALSE, NULL);
 
         waiting_sem = CreateSemaphore(NULL, 0, 32767, NULL);
+        shutdown_sem = CreateSemaphore(NULL, 0, 32767, NULL);
 
         return 0;
     }
@@ -259,6 +267,13 @@ namespace avdecc_lib
         //adp_discovery_state_machine_ref->state_discover(NULL); // Send ENTITY_DISCOVER message
 
         dwEvent = WaitForMultipleObjects(poll_count, poll_events_array, FALSE, INFINITE);
+
+        if (local_system == NULL)
+        {
+            // System has been shut down
+            ReleaseSemaphore(shutdown_sem, 1, NULL);
+            return 0;
+        }
 
         switch (dwEvent)
         {

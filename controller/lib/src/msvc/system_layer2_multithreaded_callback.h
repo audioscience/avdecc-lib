@@ -75,6 +75,7 @@ namespace avdecc_lib
         struct thread_creation poll_thread;
         HANDLE poll_events_array[NUM_OF_EVENTS];
         HANDLE waiting_sem;
+        HANDLE shutdown_sem;
 
         bool is_waiting;
         bool queue_is_waiting;
