@@ -1174,8 +1174,6 @@ namespace avdecc_lib
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aecp_aa_tlv aa_tlv;
 
-        memset(cmd_frame, 0, sizeof(jdksavdecc_frame));
-
         aecp_cmd_aa_header.controller_entity_id = adp_ref->get_controller_guid();
         aecp_cmd_aa_header.sequence_id = 0;
         aecp_cmd_aa_header.tlv_count = 1;
