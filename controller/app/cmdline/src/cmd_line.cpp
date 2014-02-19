@@ -1222,7 +1222,7 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                     std::cout << "\n\tsecondary_backup_supported = " << std::dec << stream_input_desc_ref->stream_flags_secondary_backup_supported();
                     std::cout << "\n\tsecondary_backup_valid = " << std::dec << stream_input_desc_ref->stream_flags_secondary_backup_valid();
                     std::cout << "\n\ttertiary_backup_supported = " << std::dec << stream_input_desc_ref->stream_flags_tertiary_backup_supported();
-                    std::cout << "\n\ttertiary_back_up_valid = " << std::dec << stream_input_desc_ref->stream_flags_tertiary_back_up_valid();
+                    std::cout << "\n\ttertiary_backup_valid = " << std::dec << stream_input_desc_ref->stream_flags_tertiary_backup_valid();
                     std::cout << "\ncurrent_format = " << std::hex << stream_input_desc_ref->current_format();
                     std::cout << "\nnumber_of_formats = " << std::dec << stream_input_desc_ref->number_of_formats();
                     std::cout << "\nbackup_talker_entity_id_0 = 0x" << std::hex << stream_input_desc_ref->backup_talker_entity_id_0();
@@ -1257,7 +1257,7 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                     std::cout << "\n\tsecondary_backup_supported = " << std::dec << stream_output_desc_ref->stream_flags_secondary_backup_supported();
                     std::cout << "\n\tsecondary_backup_valid = " << std::dec << stream_output_desc_ref->stream_flags_secondary_backup_valid();
                     std::cout << "\n\ttertiary_backup_supported = " << std::dec << stream_output_desc_ref->stream_flags_tertiary_backup_supported();
-                    std::cout << "\n\ttertiary_back_up_valid = " << std::dec << stream_output_desc_ref->stream_flags_tertiary_back_up_valid();
+                    std::cout << "\n\ttertiary_backup_valid = " << std::dec << stream_output_desc_ref->stream_flags_tertiary_backup_valid();
                     std::cout << "\ncurrent_format = " << std::hex << stream_output_desc_ref->current_format();
                     std::cout << "\nnumber_of_formats = " << std::dec << stream_output_desc_ref->number_of_formats();
                     std::cout << "\nbackup_talker_entity_id_0 = 0x" << std::hex << stream_output_desc_ref->backup_talker_entity_id_0();

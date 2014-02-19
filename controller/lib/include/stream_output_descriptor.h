@@ -97,7 +97,7 @@ namespace avdecc_lib
         /**
          * \return True if the tertiary backup AVDECC Talker's Entity ID and tertiary backup AVDECC Talker's Unique ID are valid.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_tertiary_back_up_valid() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_tertiary_backup_valid() = 0;
 
         /**
          * \return The current format of the stream.
