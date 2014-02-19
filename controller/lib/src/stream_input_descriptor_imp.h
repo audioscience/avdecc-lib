@@ -52,7 +52,7 @@ namespace avdecc_lib
             bool secondary_backup_supported;
             bool secondary_backup_valid;
             bool tertiary_backup_supported;
-            bool tertiary_back_up_valid;
+            bool tertiary_backup_valid;
         };
 
         struct stream_input_desc_stream_flags stream_input_flags;
@@ -85,7 +85,7 @@ namespace avdecc_lib
         bool STDCALL stream_flags_secondary_backup_supported();
         bool STDCALL stream_flags_secondary_backup_valid();
         bool STDCALL stream_flags_tertiary_backup_supported();
-        bool STDCALL stream_flags_tertiary_back_up_valid();
+        bool STDCALL stream_flags_tertiary_backup_valid();
         const char * STDCALL current_format();
         uint16_t formats_offset();
         uint16_t STDCALL number_of_formats();
