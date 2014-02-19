@@ -1666,13 +1666,14 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
                              uint16_t outstream_desc_index,
                              const std::vector<std::string> &flags)
 {
-    avdecc_lib::configuration_descriptor *descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
-    bool is_valid = (descriptor &&
+    avdecc_lib::configuration_descriptor *in_descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
+    avdecc_lib::configuration_descriptor *out_descriptor = controller_obj->get_current_config_desc(outstream_end_station_index, false);
+    bool is_valid = (in_descriptor && out_descriptor &&
                     (test_mode || (instream_end_station_index != outstream_end_station_index)) &&
                      (instream_end_station_index < controller_obj->get_end_station_count()) &&
                      (outstream_end_station_index < controller_obj->get_end_station_count()) &&
-                     (instream_desc_index < descriptor->stream_input_desc_count()) &&
-                     (outstream_desc_index < descriptor->stream_output_desc_count()));
+                     (instream_desc_index < in_descriptor->stream_input_desc_count()) &&
+                     (outstream_desc_index < out_descriptor->stream_output_desc_count()));
 
     if(is_valid)
     {
@@ -1721,8 +1722,8 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
 
         cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd();
-        avdecc_lib::stream_input_descriptor *instream = descriptor->get_stream_input_desc_by_index(instream_desc_index);
-        avdecc_lib::stream_output_descriptor *outstream = descriptor->get_stream_output_desc_by_index(outstream_desc_index);
+        avdecc_lib::stream_input_descriptor *instream = in_descriptor->get_stream_input_desc_by_index(instream_desc_index);
+        avdecc_lib::stream_output_descriptor *outstream = out_descriptor->get_stream_output_desc_by_index(outstream_desc_index);
         check_stream_format = (strcmp(instream->current_format(), outstream->current_format()) == 0);
         if(!check_stream_format)
         {
@@ -1749,13 +1750,14 @@ int cmd_line::cmd_disconnect_rx(uint32_t instream_end_station_index,
                                 uint32_t outstream_end_station_index,
                                 uint16_t outstream_desc_index)
 {
-    avdecc_lib::configuration_descriptor *descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
-    bool is_valid = (descriptor &&
+    avdecc_lib::configuration_descriptor *in_descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
+    avdecc_lib::configuration_descriptor *out_descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
+    bool is_valid = (in_descriptor && out_descriptor &&
                      (test_mode || (instream_end_station_index != outstream_end_station_index)) &&
                      (instream_end_station_index < controller_obj->get_end_station_count()) &&
                      (outstream_end_station_index < controller_obj->get_end_station_count()) &&
-                     (instream_desc_index < descriptor->stream_input_desc_count()) &&
-                     (outstream_desc_index < descriptor->stream_output_desc_count()));
+                     (instream_desc_index < in_descriptor->stream_input_desc_count()) &&
+                     (outstream_desc_index < out_descriptor->stream_output_desc_count()));
 
     if(is_valid)
     {
@@ -1764,7 +1766,7 @@ int cmd_line::cmd_disconnect_rx(uint32_t instream_end_station_index,
 
         cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd();
-        avdecc_lib::stream_input_descriptor *instream = descriptor->get_stream_input_desc_by_index(instream_desc_index);
+        avdecc_lib::stream_input_descriptor *instream = in_descriptor->get_stream_input_desc_by_index(instream_desc_index);
 
         avdecc_lib::end_station *outstream_end_station = controller_obj->get_end_station_by_index(outstream_end_station_index);
         uint16_t current_entity = outstream_end_station->get_current_entity_index();
