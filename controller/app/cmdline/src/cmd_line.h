@@ -52,6 +52,8 @@ private:
 
     std::vector<cmd_line_help *> cmd_line_help_vec;
 
+    bool test_mode;
+
 public:
     static avdecc_lib::util *utility;
     static std::string log_path;
@@ -62,12 +64,13 @@ public:
      * Constructor for cmd_line used for constructing an object with notification and log callback functions.
      */
     cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
-             void (*log_callback) (void *, int32_t, const char *, int32_t));
+             void (*log_callback) (void *, int32_t, const char *, int32_t),
+             bool test_mode=false, char *interface=NULL);
 
     ~cmd_line();
 
 private:
-    int print_interfaces_and_select();
+    int print_interfaces_and_select(char *interface);
     int check_current_end_station() const;
 
     void cmd_line_help_init();

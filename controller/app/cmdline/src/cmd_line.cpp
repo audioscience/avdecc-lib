@@ -58,7 +58,9 @@ std::string cmd_line::log_path = "."; // Log to a file in the current working di
 cmd_line::cmd_line() {}
 
 cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
-                   void (*log_callback) (void *, int32_t, const char *, int32_t))
+                   void (*log_callback) (void *, int32_t, const char *, int32_t),
+                   bool test_mode, char *interface)
+    : test_mode(test_mode)
 {
     current_end_station = 0;
     notification_id = 0;
@@ -72,7 +74,7 @@ cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uin
 
     std::cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
     std::cout << "(c) AudioScience, Inc. 2013\n"<< std::endl;
-    print_interfaces_and_select();
+    print_interfaces_and_select(interface);
     sys->process_start();
 }
 
@@ -85,20 +87,34 @@ cmd_line::~cmd_line()
     utility->destroy();
 }
 
-int cmd_line::print_interfaces_and_select()
+int cmd_line::print_interfaces_and_select(char *interface)
 {
-    int interface_num;
+    int interface_num = -1;
     char *dev_desc;
     dev_desc = (char *)malloc(256);
 
-    for(uint32_t i = 0; i < netif->devs_count();)
+    for(uint32_t i = 1; i < netif->devs_count() + 1; i++)
     {
-        dev_desc = netif->get_dev_desc_by_index(i);
-        printf("%d (%s)\n", ++i, dev_desc);
+        dev_desc = netif->get_dev_desc_by_index(i - 1);
+        if (!interface)
+        {
+            printf("%d (%s)\n", i, dev_desc);
+        }
+        else
+        {
+            if (strcmp(dev_desc, interface) == 0)
+            {
+                interface_num = i;
+                break;
+            }
+        }
     }
 
-    std::cout << "Enter the interface number (1-" << std::dec << netif->devs_count() << "): ";
-    std::cin >> interface_num;
+    if (!interface)
+    {
+        std::cout << "Enter the interface number (1-" << std::dec << netif->devs_count() << "): ";
+        std::cin >> interface_num;
+    }
 
     netif->select_interface_by_num(interface_num);
 
@@ -1652,7 +1668,7 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
 {
     avdecc_lib::configuration_descriptor *descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
     bool is_valid = (descriptor &&
-                     (instream_end_station_index != outstream_end_station_index) &&
+                    (test_mode || (instream_end_station_index != outstream_end_station_index)) &&
                      (instream_end_station_index < controller_obj->get_end_station_count()) &&
                      (outstream_end_station_index < controller_obj->get_end_station_count()) &&
                      (instream_desc_index < descriptor->stream_input_desc_count()) &&
@@ -1735,7 +1751,7 @@ int cmd_line::cmd_disconnect_rx(uint32_t instream_end_station_index,
 {
     avdecc_lib::configuration_descriptor *descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
     bool is_valid = (descriptor &&
-                     (instream_end_station_index != outstream_end_station_index) &&
+                     (test_mode || (instream_end_station_index != outstream_end_station_index)) &&
                      (instream_end_station_index < controller_obj->get_end_station_count()) &&
                      (outstream_end_station_index < controller_obj->get_end_station_count()) &&
                      (instream_desc_index < descriptor->stream_input_desc_count()) &&
