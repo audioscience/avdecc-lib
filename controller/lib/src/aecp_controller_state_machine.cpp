@@ -354,7 +354,9 @@ namespace avdecc_lib
         }
 
         jdksavdecc_eui64 id = jdksavdecc_common_control_header_get_stream_id(frame, ETHER_HDR_SIZE);
-        if((notification_flag == CMD_WITH_NOTIFICATION) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE))
+        if((notification_flag == CMD_WITH_NOTIFICATION) &&
+            ((msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE) ||
+            (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE)))
         {
             notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                         jdksavdecc_uint64_get(&id, 0),
