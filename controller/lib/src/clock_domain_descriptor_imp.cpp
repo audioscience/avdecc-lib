@@ -156,7 +156,11 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND, cmd_frame, base_end_station_imp_ref->guid());
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                            cmd_frame,
+                                                            base_end_station_imp_ref->guid(),
+                                                            JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE_COMMAND_LEN - 
+                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);
@@ -232,7 +236,11 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND, cmd_frame, base_end_station_imp_ref->guid());
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                            cmd_frame,
+                                                            base_end_station_imp_ref->guid(),
+                                                            JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE_COMMAND_LEN - 
+                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);

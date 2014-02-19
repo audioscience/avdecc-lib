@@ -408,7 +408,7 @@ namespace avdecc_lib
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid Subtype");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid Subtype: %x", subtype);
         }
     }
 
@@ -439,7 +439,11 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND, cmd_frame, end_station_vec.at(end_station_index)->guid());
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                            cmd_frame,
+                                                            end_station_vec.at(end_station_index)->guid(),
+                                                            JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE_COMMAND_LEN - 
+                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);

@@ -190,7 +190,11 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND, cmd_frame, end_station_guid);
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                            cmd_frame,
+                                                            end_station_guid,
+                                                            JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_COMMAND_LEN - 
+                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, notification_flag, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);
@@ -707,7 +711,11 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND, cmd_frame, end_station_guid);
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                            cmd_frame,
+                                                            end_station_guid,
+                                                            JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE_COMMAND_LEN - 
+                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame->payload, cmd_frame->length);
 
         free(cmd_frame);
@@ -1208,6 +1216,9 @@ namespace avdecc_lib
         aecp_cmd_aa_header.sequence_id = 0;
         aecp_cmd_aa_header.tlv_count = 1;
 
+        aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
+                                                                ETHER_HDR_SIZE + JDKSAVDECC_AECPDU_AA_LEN + JDKSAVDECC_AECPDU_AA_TLV_LEN + length);
+
         write_return_val = jdksavdecc_aecp_aa_write(&aecp_cmd_aa_header,
                                                     &cmd_frame.payload,
                                                     ETHER_HDR_SIZE,
@@ -1224,8 +1235,6 @@ namespace avdecc_lib
         aa_tlv.address_upper = address >> 32;
         aa_tlv.address_lower = address & 0xFFFFFFFF;
 
-        aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
-                                                                ETHER_HDR_SIZE + JDKSAVDECC_AECPDU_AA_LEN);
         write_return_val = jdksavdecc_aecp_aa_tlv_write(&aa_tlv,
                                                         &cmd_frame.payload,
                                                         ETHER_HDR_SIZE + JDKSAVDECC_AECPDU_AA_LEN,
@@ -1238,7 +1247,14 @@ namespace avdecc_lib
             return -1;
         }
 
-        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_COMMAND, &cmd_frame, end_station_guid);
+        memcpy(&cmd_frame.payload[ETHER_HDR_SIZE + JDKSAVDECC_AECPDU_AA_LEN + JDKSAVDECC_AECPDU_AA_TLV_LEN], memory_data, length);
+
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_COMMAND,
+                                                            &cmd_frame,
+                                                            end_station_guid,
+                                                            JDKSAVDECC_AECPDU_AA_LEN + JDKSAVDECC_AECPDU_AA_TLV_LEN + length - 
+                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
         return 0;
@@ -1247,6 +1263,9 @@ namespace avdecc_lib
 
     int end_station_imp::proc_rcvd_aecp_aa_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
+        struct jdksavdecc_frame cmd_frame;
+        memcpy(cmd_frame.payload, frame, frame_len);
+
         uint16_t sequence_id = jdksavdecc_aecp_aa_get_sequence_id(frame, ETHER_HDR_SIZE);
         uint16_t tlv_count = jdksavdecc_aecp_aa_get_tlv_count(frame, ETHER_HDR_SIZE);
 
@@ -1276,8 +1295,7 @@ namespace avdecc_lib
         uint32_t address_upper = jdksavdecc_aecp_aa_tlv_get_address_upper(frame, tlv_data_offset);
         uint32_t address_lower = jdksavdecc_aecp_aa_tlv_get_address_lower(frame, tlv_data_offset);
 
-        printf("sequence_id: %d, tlv_count: %d, mode: %d, length: %d", sequence_id, tlv_count, mode, length);
-
+        aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE, false, &cmd_frame);
 
         return 0;
     }

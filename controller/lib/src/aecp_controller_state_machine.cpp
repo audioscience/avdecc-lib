@@ -67,7 +67,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    void aecp_controller_state_machine::common_hdr_init(int message_type, struct jdksavdecc_frame *cmd_frame, uint64_t target_guid)
+    void aecp_controller_state_machine::common_hdr_init(int message_type, struct jdksavdecc_frame *cmd_frame, uint64_t target_guid, uint32_t cd_len)
     {
         struct jdksavdecc_aecpdu_common_control_header aecpdu_common_ctrl_hdr;
         ssize_t aecpdu_common_ctrl_hdr_returned;
@@ -79,7 +79,7 @@ namespace avdecc_lib
         aecpdu_common_ctrl_hdr.version = 0;
         aecpdu_common_ctrl_hdr.message_type = message_type;
         aecpdu_common_ctrl_hdr.status = JDKSAVDECC_AEM_STATUS_SUCCESS;
-        aecpdu_common_ctrl_hdr.control_data_length = 20;
+        aecpdu_common_ctrl_hdr.control_data_length = cd_len;
         jdksavdecc_uint64_write(target_guid, &aecpdu_common_ctrl_hdr.target_entity_id, 0, sizeof(uint64_t));
 
         /********************** Fill frame payload with AECP Common Control Header information *********************/
@@ -235,18 +235,23 @@ namespace avdecc_lib
 
     int aecp_controller_state_machine::update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *cmd_frame)
     {
-        if(msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE && u_field == false)
+        switch (msg_type)
         {
-            state_rcvd_resp(notification_id, cmd_frame);
-        }
-        else if(msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE && u_field == true)
-        {
-            state_rcvd_unsolicited(notification_id, cmd_frame);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid message type");
-            return -1;
+            case JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE:
+            case JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE: // Fallthrough intentional
+                if (u_field)
+                {
+                    state_rcvd_unsolicited(notification_id, cmd_frame);
+                    state_rcvd_resp(notification_id, cmd_frame);
+                }
+                else
+                {
+                    state_rcvd_resp(notification_id, cmd_frame);
+                }
+                break;
+            default:
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid message type");
+                return -1;
         }
 
         return 0;
