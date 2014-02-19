@@ -378,7 +378,8 @@ namespace avdecc_lib
                                           utility->aem_cmd_status_value_to_name(status));
             }
         }
-        else if(((notification_flag == CMD_WITH_NOTIFICATION) || (notification_flag == CMD_WITHOUT_NOTIFICATION)) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND))
+        else if(((notification_flag == CMD_WITH_NOTIFICATION) || (notification_flag == CMD_WITHOUT_NOTIFICATION)) &&
+                ((msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND) || (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_COMMAND)))
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "COMMAND_SENT, 0x%llx, %s, %s, %d, %d",
@@ -388,7 +389,9 @@ namespace avdecc_lib
                                       desc_index,
                                       jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE));
         }
-        else if((notification_flag == CMD_WITHOUT_NOTIFICATION) && (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE))
+        else if((notification_flag == CMD_WITHOUT_NOTIFICATION) &&
+                ((msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE) ||
+                (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE)))
         {
             if(status == AEM_STATUS_SUCCESS)
             {
