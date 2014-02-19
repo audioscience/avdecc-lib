@@ -74,7 +74,7 @@ namespace avdecc_lib
         stream_input_flags.secondary_backup_supported = stream_input_desc.stream_flags >> 6 & 0x01;
         stream_input_flags.secondary_backup_valid = stream_input_desc.stream_flags >> 7 & 0x01;
         stream_input_flags.tertiary_backup_supported = stream_input_desc.stream_flags >> 8 & 0x01;
-        stream_input_flags.tertiary_back_up_valid = stream_input_desc.stream_flags >> 9 & 0x01;
+        stream_input_flags.tertiary_backup_valid = stream_input_desc.stream_flags >> 9 & 0x01;
     }
 
     uint16_t STDCALL stream_input_descriptor_imp::descriptor_type() const
@@ -153,9 +153,9 @@ namespace avdecc_lib
         return stream_input_flags.tertiary_backup_supported;
     }
 
-    bool STDCALL stream_input_descriptor_imp::stream_flags_tertiary_back_up_valid()
+    bool STDCALL stream_input_descriptor_imp::stream_flags_tertiary_backup_valid()
     {
-        return stream_input_flags.tertiary_back_up_valid;
+        return stream_input_flags.tertiary_backup_valid;
     }
 
     const char * STDCALL stream_input_descriptor_imp::current_format()

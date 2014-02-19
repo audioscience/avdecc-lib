@@ -45,6 +45,12 @@
 #include <inttypes.h>
 #endif
 
+#if defined(__MACH__) || defined(__linux__)
+#include <unistd.h>
+#else
+#include "getopt.h"
+#endif
+
 using namespace std;
 
 extern "C" void notification_callback(void *user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
@@ -97,9 +103,55 @@ extern "C" void log_callback(void *user_obj, int32_t log_level, const char *log_
     printf("\n[LOG] %s (%s)\n", cmd_line::utility->logging_level_value_to_name(log_level), log_msg);
 }
 
-int main()
+static void usage(char *argv[])
 {
-    cmd_line *avdecc_cmd_line_ref = new cmd_line(notification_callback, log_callback);
+    std::cerr << "Usage: " << argv[0] << " [-d] [-i interface]" << std::endl;
+    std::cerr << "  -t           :  Sets test mode which disables checks" << std::endl;
+    std::cerr << "  -i interface :  Sets the name of the interface to use" << std::endl;
+    exit(1);
+}
+
+int main(int argc, char *argv[])
+{
+    bool test_mode = false;
+    int error = 0;
+    char *interface = NULL;
+    int c = 0;
+    while ((c = getopt(argc, argv, "ti:")) != -1) {
+        switch (c) {
+            case 't':
+                test_mode = true;
+                break;
+            case 'i':
+                interface = optarg;
+                break;
+            case ':':
+                fprintf(stderr, "Option -%c requires an operand\n", optopt);
+                error++;
+                break;
+            case '?':
+                fprintf(stderr, "Unrecognized option: '-%c'\n", optopt);
+                error++;
+                break;
+        }
+    }
+
+    for ( ; optind < argc; optind++) {
+        error++; // Unused arguments
+    }
+
+    if (error)
+    {
+        usage(argv);
+    }
+
+    if (test_mode)
+    {
+        // Ensure that stdout is not buffered
+        setvbuf(stdout, NULL, _IOLBF, 0);
+    }
+
+    cmd_line *avdecc_cmd_line_ref = new cmd_line(notification_callback, log_callback, test_mode, interface);
 
     std::vector<std::string> input_argv;
     size_t pos = 0;
