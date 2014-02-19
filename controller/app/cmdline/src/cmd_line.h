@@ -68,6 +68,7 @@ public:
 
 private:
     int print_interfaces_and_select();
+    int check_current_end_station() const;
 
     void cmd_line_help_init();
 

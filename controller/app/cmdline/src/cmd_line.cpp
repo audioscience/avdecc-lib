@@ -105,6 +105,17 @@ int cmd_line::print_interfaces_and_select()
     return 0;
 }
 
+int cmd_line::check_current_end_station() const
+{
+    if (current_end_station >= controller_obj->get_end_station_count())
+    {
+        std::cout << "No End Stations available" << std::endl;
+        return 1;
+    }
+
+    return 0;
+}
+
 #define END_STATION_HELP "stands for End Station (index or GUID)."
 #define DST_END_STATION_HELP "stands for destination End Station (index or GUID)."
 #define SRC_END_STATION_HELP "stands for source End Station (index or GUID)."
@@ -645,6 +656,9 @@ int cmd_line::cmd_view_media_clock()
 
 void cmd_line::cmd_select()
 {
+    if (check_current_end_station())
+        return;
+
     avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(current_end_station);
     uint16_t current_entity = end_station->get_current_entity_index();
     uint16_t current_config = end_station->get_current_config_index();
@@ -890,6 +904,12 @@ int cmd_line::cmd_view_all()
 
 int cmd_line::cmd_view_details(uint32_t end_station_index)
 {
+    if (end_station_index >= controller_obj->get_end_station_count())
+    {
+        std::cout << "Invalid End Station" << std::endl;
+        return 0;
+    }
+
     std::string desc_name;
     uint16_t desc_index;
     avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(end_station_index);
@@ -1084,6 +1104,9 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
 
 int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
 {
+    if (check_current_end_station())
+        return -1;
+
     uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
 
     std::cout << "\ndescriptor_type: " << utility->aem_desc_value_to_name(desc_type_value);
@@ -1462,6 +1485,9 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
 
 int cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_index)
 {
+    if (check_current_end_station())
+        return -1;
+
     uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     intptr_t cmd_notification_id = 0;
 
@@ -1849,6 +1875,9 @@ int cmd_line::cmd_get_tx_connection(uint32_t outstream_end_station_index, uint16
 
 int cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
 {
+    if (check_current_end_station())
+        return -1;
+
     uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
     uint32_t flag_id = 0;
     intptr_t cmd_notification_id = 0;
@@ -1913,6 +1942,9 @@ int cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_name, u
 
 int cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_name, uint16_t desc_index)
 {
+    if (check_current_end_station())
+        return -1;
+
     uint32_t flag_id;
     uint16_t desc_type_value;
     intptr_t cmd_notification_id;
@@ -1954,6 +1986,9 @@ int cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_name, uint
 
 int cmd_line::cmd_entity_avail()
 {
+    if (check_current_end_station())
+        return -1;
+
     intptr_t cmd_notification_id = get_next_notification_id();
 
     sys->set_wait_for_next_cmd();
