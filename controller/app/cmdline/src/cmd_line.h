@@ -28,6 +28,7 @@
  */
 
 #pragma once
+#include <sstream>
 
 #include "net_interface.h"
 #include "system.h"
@@ -38,6 +39,27 @@
 
 #include "locale_descriptor.h"
 #include "strings_descriptor.h"
+#include "entity_descriptor.h"
+
+class AtomicOut : public std::ostream
+{
+  public:
+    AtomicOut() : std::ostream(0), buffer()
+    {
+      this->init(buffer.rdbuf());
+    }
+
+    ~AtomicOut()
+    {
+      // Use printf as cout seems to still be interleaved
+      printf("%s", buffer.str().c_str());
+    }
+
+  private:
+    std::ostringstream buffer;
+};
+
+#define atomic_cout AtomicOut()
 
 class cmd_line
 {
@@ -72,6 +94,8 @@ public:
 private:
     int print_interfaces_and_select(char *interface);
     int check_current_end_station() const;
+    int get_current_entity_and_descriptor(avdecc_lib::end_station *end_station,
+        avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **descriptor);
 
     void cmd_line_help_init();
 
@@ -162,6 +186,11 @@ public:
                           uint16_t instream_desc_index,
                           uint32_t outstream_end_station_index,
                           uint16_t outstream_desc_index);
+
+    /**
+     * Display all current connections.
+     */
+    void cmd_show_connections();
 
     /**
      * Send a GET_TX_STATE command to get Talker source stream connection state.
@@ -264,6 +293,11 @@ public:
      * Send a STOP_STREAMING command with a notification id to stop a connected stream for streaming media.
      */
     int cmd_stop_streaming(std::string desc_name, uint16_t desc_index);
+
+    /**
+     * Send a IDENTIFY command to either enable or disable identification.
+     */
+    void cmd_identify(uint32_t end_station_index, bool turn_on);
 
     /**
      * Display the location of the redirected output file.

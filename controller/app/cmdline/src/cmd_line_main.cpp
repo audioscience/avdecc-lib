@@ -174,6 +174,8 @@ int main(int argc, char *argv[])
         snprintf(shell_prompt, sizeof(shell_prompt), "$ ");
         input = readline(shell_prompt);
 
+        if (strlen(input) == 0)
+            continue;
         if (!input)
             break;
         std::string cmd_input(input);
@@ -229,6 +231,18 @@ int main(int argc, char *argv[])
                 {
                     avdecc_cmd_line_ref->cmd_version();
                 }
+            }
+            else
+            {
+                std::cout << "Invalid Command\n" << std::endl;
+                avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+            }
+        }
+        else if(input_argv.at(0) == "show")
+        {
+            if(input_argv.size() == 2 && input_argv.at(1) == "connections")
+            {
+                avdecc_cmd_line_ref->cmd_show_connections();
             }
             else
             {
@@ -1043,6 +1057,29 @@ int main(int argc, char *argv[])
                 }
             }
             else
+            {
+                std::cout << "Invalid Command\n" << std::endl;
+                avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+            }
+        }
+        else if((input_argv.at(0) == "identify"))
+        {
+            is_input_valid = false;
+
+            if((input_argv.size() == 3) &&
+               ((input_argv.at(1) == "on") || (input_argv.at(1) == "off")))
+            {
+                uint32_t end_station_index = 0;
+
+                if(avdecc_cmd_line_ref->get_end_station_index(input_argv.at(2), end_station_index))
+                {
+                    bool turn_on = (input_argv.at(1) == "on");
+                    avdecc_cmd_line_ref->cmd_identify(end_station_index, turn_on);
+                    is_input_valid = true;
+                }
+            }
+
+            if(!is_input_valid)
             {
                 std::cout << "Invalid Command\n" << std::endl;
                 avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);

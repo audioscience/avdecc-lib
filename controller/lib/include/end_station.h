@@ -85,10 +85,25 @@ namespace avdecc_lib
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_entity_avail_cmd(void *notification_id) = 0;
 
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_aecp_address_access_cmd(void *notification_id,
+                                                                                    unsigned mode,
+                                                                                    unsigned length,
+                                                                                    uint64_t address,
+                                                                                    uint8_t memory_data[]) = 0;
+
+        /**
+         * Send a IDENTIFY command
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         * \param turn_on When true the end station will be told to enable identification.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_identify(void *notification_id, bool turn_on) = 0;
+
         /**
          * \param entity_index The index of the entity to set as current selected.
          */
         AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_current_entity_index(uint16_t entity_index) = 0;
+
 
         /**
          * \return The index of the currently selected entity.

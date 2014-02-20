@@ -63,7 +63,9 @@ cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uin
     : test_mode(test_mode)
 {
     current_end_station = 0;
-    notification_id = 0;
+
+    // Start non-zero so as not to be confused with commands without notification
+    notification_id = 1;
 
     cmd_line_help_init();
 
@@ -72,8 +74,8 @@ cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uin
     controller_obj = avdecc_lib::create_controller(netif, notification_callback, log_callback);
     sys = avdecc_lib::create_system(avdecc_lib::system::LAYER2_MULTITHREADED_CALLBACK, netif, controller_obj);
 
-    std::cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
-    std::cout << "(c) AudioScience, Inc. 2013\n"<< std::endl;
+    atomic_cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
+    atomic_cout << "(c) AudioScience, Inc. 2013\n"<< std::endl;
     print_interfaces_and_select(interface);
     sys->process_start();
 }
@@ -112,7 +114,7 @@ int cmd_line::print_interfaces_and_select(char *interface)
 
     if (!interface)
     {
-        std::cout << "Enter the interface number (1-" << std::dec << netif->devs_count() << "): ";
+        atomic_cout << "Enter the interface number (1-" << std::dec << netif->devs_count() << "): ";
         std::cin >> interface_num;
     }
 
@@ -125,9 +127,27 @@ int cmd_line::check_current_end_station() const
 {
     if (current_end_station >= controller_obj->get_end_station_count())
     {
-        std::cout << "No End Stations available" << std::endl;
+        atomic_cout << "No End Stations available" << std::endl;
         return 1;
     }
+
+    return 0;
+}
+
+int cmd_line::get_current_entity_and_descriptor(avdecc_lib::end_station *end_station,
+        avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **descriptor)
+{
+    uint16_t current_entity = end_station->get_current_entity_index();
+    if (current_entity >= end_station->entity_desc_count())
+        return 1;
+
+    *entity = end_station->get_entity_desc_by_index(current_entity);
+
+    uint16_t current_config = end_station->get_current_config_index();
+    if (current_config >= (*entity)->config_desc_count())
+        return 1;
+
+    *descriptor = (*entity)->get_config_desc_by_index(current_config);
 
     return 0;
 }
@@ -476,6 +496,22 @@ void cmd_line::cmd_line_help_init()
                                                   ));
 #endif
 
+    cmd_line_help_vec.push_back(new cmd_line_help("identify on",
+
+                                                  "identify on [e_s]\n" \
+                                                  "Send an IDENTIFY packet to enable identification.\n\n"
+                                                  "\nParameters"
+                                                  "\n\t e_s " END_STATION_HELP \
+                                                 ));
+
+    cmd_line_help_vec.push_back(new cmd_line_help("identify off",
+
+                                                  "identify on [e_s]\n" \
+                                                  "Send an IDENTIFY packet to disable identification.\n\n"
+                                                  "\nParameters"
+                                                  "\n\t e_s " END_STATION_HELP \
+                                                 ));
+
     cmd_line_help_vec.push_back(new cmd_line_help("path",
 
                                                   "path\n" \
@@ -534,16 +570,16 @@ void cmd_line::cmd_line_help_init()
 
 int cmd_line::cmd_help()
 {
-    std::cout << "Commands" << std::endl;
-    std::cout << "------------------------------------------------------------------------------" << std::endl;
+    atomic_cout << "Commands" << std::endl;
+    atomic_cout << "------------------------------------------------------------------------------" << std::endl;
 
     for(uint32_t i = 0; i < cmd_line_help_vec.size(); i++)
     {
-        std::cout << cmd_line_help_vec.at(i)->get_command() << std::endl;
+        atomic_cout << cmd_line_help_vec.at(i)->get_command() << std::endl;
     }
 
-    std::cout << "------------------------------------------------------------------------------" << std::endl;
-    std::cout << "Type \"help command\" for details"<< std::endl;
+    atomic_cout << "------------------------------------------------------------------------------" << std::endl;
+    atomic_cout << "Type \"help command\" for details"<< std::endl;
 
     return 0;
 }
@@ -556,26 +592,26 @@ int cmd_line::cmd_help_details(std::string cmd)
 
         if(cmd_match)
         {
-            std::cout << cmd_line_help_vec.at(i)->get_description() << std::endl;
+            atomic_cout << cmd_line_help_vec.at(i)->get_description() << std::endl;
             return 1;
         }
     }
 
-    std::cout << "Type \"help\" for a list of available commands" << std::endl;
+    atomic_cout << "Type \"help\" for a list of available commands" << std::endl;
 
     return -1;
 }
 
 int cmd_line::cmd_version()
 {
-    std::cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
+    atomic_cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
     return 0;
 }
 
 int cmd_line::cmd_list()
 {
-    std::cout << "\n" << "End Station" << "  |  " << "Name" << std::setw(21)  << "  |  " <<  "Entity GUID" << std::setw(12) << "  |  " << "MAC" << std::endl;
-    std::cout << "------------------------------------------------------------------------------" << std::endl;
+    atomic_cout << "\n" << "End Station" << "  |  " << "Name" << std::setw(21)  << "  |  " <<  "Entity GUID" << std::setw(12) << "  |  " << "MAC" << std::endl;
+    atomic_cout << "------------------------------------------------------------------------------" << std::endl;
 
     for(unsigned int i = 0; i < controller_obj->get_end_station_count(); i++)
     {
@@ -596,16 +632,16 @@ int cmd_line::cmd_list()
                 end_station_name = (char *)ent_desc->entity_name();
             }
             uint64_t end_station_mac = end_station->mac();
-            std::cout << (std::stringstream() << end_station->get_connection_status()
-                      << std::setw(10) << std::dec << std::setfill(' ') << i << "  |  "
-                      << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
-                      << std::setw(16) << std::hex << std::setfill('0') << end_station_guid << "  |  0x"
-                      << std::setw(12) << std::hex << std::setfill('0') << end_station_mac).rdbuf() << std::endl;
+            atomic_cout << (std::stringstream() << end_station->get_connection_status()
+                        << std::setw(10) << std::dec << std::setfill(' ') << i << "  |  "
+                        << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
+                        << std::setw(16) << std::hex << std::setfill('0') << end_station_guid << "  |  0x"
+                        << std::setw(12) << std::hex << std::setfill('0') << end_station_mac).rdbuf() << std::endl;
         }
     }
 
-    std::cout << "\nC - End Station Connected." << std::endl;
-    std::cout << "D - End Station Disconnected." << std::endl;
+    atomic_cout << "\nC - End Station Connected." << std::endl;
+    atomic_cout << "D - End Station Disconnected." << std::endl;
 
     return 0;
 }
@@ -617,9 +653,9 @@ int cmd_line::cmd_view_media_clock()
     uint16_t desc_index = 0;
     bool is_clock_sync_source_set = false;
 
-    std::cout << "\n" << "End Station" << "  " << std::setw(20) << "Descriptor Name" << "  " <<
-              std::setw(18) << "Descriptor Type" << "  " << std::setw(18) << "Descriptor Index" << std::endl;
-    std::cout << "------------------------------------------------------------------------------" << std::endl;
+    atomic_cout << "\n" << "End Station" << "  " << std::setw(20) << "Descriptor Name" << "  "
+                << std::setw(18) << "Descriptor Type" << "  " << std::setw(18) << "Descriptor Index" << std::endl;
+    atomic_cout << "------------------------------------------------------------------------------" << std::endl;
 
     for(unsigned int i = 0; i < controller_obj->get_end_station_count(); i++)
     {
@@ -639,9 +675,9 @@ int cmd_line::cmd_view_media_clock()
                         desc_type_value = stream_input_desc->descriptor_type();
                         desc_index = stream_input_desc->descriptor_index();
 
-                        std::cout << std::setw(8) << i << std::setw(5) << "" << std::setw(20) << desc_obj_name <<
-                                  "  " << std::setw(18) << utility->aem_desc_value_to_name(desc_type_value) <<
-                                  "  " << std::setw(16) << std::dec << desc_index << std::endl;
+                        atomic_cout << std::setw(8) << i << std::setw(5) << "" << std::setw(20) << desc_obj_name
+                                    << "  " << std::setw(18) << utility->aem_desc_value_to_name(desc_type_value)
+                                    << "  " << std::setw(16) << std::dec << desc_index << std::endl;
                     }
                 }
             }
@@ -658,9 +694,9 @@ int cmd_line::cmd_view_media_clock()
                         desc_type_value = stream_output_desc->descriptor_type();
                         desc_index = stream_output_desc->descriptor_index();
 
-                        std::cout << std::setw(8) << i << std::setw(5) << "" << std::setw(20) << desc_obj_name <<
-                                  "  " << std::setw(18) << std::hex << utility->aem_desc_value_to_name(desc_type_value) <<
-                                  "  " << std::setw(16) << std::dec << desc_index << std::endl;
+                        atomic_cout << std::setw(8) << i << std::setw(5) << "" << std::setw(20) << desc_obj_name
+                                    << "  " << std::setw(18) << std::hex << utility->aem_desc_value_to_name(desc_type_value)
+                                    << "  " << std::setw(16) << std::dec << desc_index << std::endl;
                     }
                 }
             }
@@ -679,10 +715,10 @@ void cmd_line::cmd_select()
     uint16_t current_entity = end_station->get_current_entity_index();
     uint16_t current_config = end_station->get_current_config_index();
 
-    std::cout << "Current setting" << std::endl;
-    std::cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station->get_entity_desc_by_index(current_entity)->entity_name() << ")" << std::endl;
-    std::cout << "\tEntity: " << std::dec << current_entity << std::endl;
-    std::cout << "\tConfiguration: " << std::dec << current_config << std::endl;
+    atomic_cout << "Current setting" << std::endl;
+    atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station->get_entity_desc_by_index(current_entity)->entity_name() << ")" << std::endl;
+    atomic_cout << "\tEntity: " << std::dec << current_entity << std::endl;
+    atomic_cout << "\tConfiguration: " << std::dec << current_config << std::endl;
 }
 
 int cmd_line::cmd_select(uint32_t new_end_station, uint16_t new_entity, uint16_t new_config)
@@ -696,25 +732,25 @@ int cmd_line::cmd_select(uint32_t new_end_station, uint16_t new_entity, uint16_t
 
         if((current_end_station == new_end_station) && (current_entity == new_entity) && (current_config == new_config))
         {
-            std::cout << "Same setting" << std::endl;
-            std::cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
-            std::cout << "\tEntity: " << std::dec << current_entity << std::endl;
-            std::cout << "\tConfiguration: " << std::dec << current_config << std::endl;
+            atomic_cout << "Same setting" << std::endl;
+            atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
+            atomic_cout << "\tEntity: " << std::dec << current_entity << std::endl;
+            atomic_cout << "\tConfiguration: " << std::dec << current_config << std::endl;
         }
         else
         {
             current_end_station = new_end_station;
             end_station->set_current_entity_index(new_entity);
             end_station->set_current_config_index(new_config);
-            std::cout << "New setting" << std::endl;
-            std::cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
-            std::cout << "\tEntity: " << std::dec << current_entity << std::endl;
-            std::cout << "\tConfiguration: " << std::dec << current_config << std::endl;
+            atomic_cout << "New setting" << std::endl;
+            atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
+            atomic_cout << "\tEntity: " << std::dec << current_entity << std::endl;
+            atomic_cout << "\tConfiguration: " << std::dec << current_config << std::endl;
         }
     }
     else
     {
-        std::cout << "Invalid new setting" << std::endl;
+        atomic_cout << "Invalid new setting" << std::endl;
     }
 
     return 0;
@@ -728,7 +764,7 @@ int cmd_line::cmd_log_level(uint32_t new_log_level)
     }
     else
     {
-        std::cout << "Invalid new log level" << std::endl;
+        atomic_cout << "Invalid new log level" << std::endl;
     }
 
     return 0;
@@ -741,25 +777,25 @@ void cmd_line::print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
 {
     const uint8_t localized_string_max_index = 7;
 
-    std::cout << std::setw(20) << utility->aem_desc_value_to_name(desc.descriptor_type());
-    std::cout << "   "<<  std::setw(16) << std::dec << desc.descriptor_index();
+    atomic_cout << std::setw(20) << utility->aem_desc_value_to_name(desc.descriptor_type())
+                << "   "<<  std::setw(16) << std::dec << desc.descriptor_index();
 
     if((desc.descriptor_type() == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT) ||
        (desc.descriptor_type() == avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT) ||
        (desc.descriptor_type() == avdecc_lib::AEM_DESC_AUDIO_MAP))
     {
-        std::cout << "   " << std::endl;
+        atomic_cout << "   " << std::endl;
     }
     else
     {
         uint8_t localized_desc_index = (desc.localized_description()) & 0x7; // The 3 bit index subfield defining the index of the string within the STRINGS descriptor
         if(localized_desc_index < localized_string_max_index)
         {
-            std::cout << "   " << std::setw(20) << std::hex << strings.get_string_by_index(localized_desc_index) << std::endl;
+            atomic_cout << "   " << std::setw(20) << std::hex << strings.get_string_by_index(localized_desc_index) << std::endl;
         }
         else
         {
-            std::cout << "   " << std::setw(20) << std::hex << desc.object_name() << std::endl;
+            atomic_cout << "   " << std::setw(20) << std::hex << desc.object_name() << std::endl;
         }
     }
 }
@@ -775,9 +811,10 @@ int cmd_line::cmd_view_all()
         uint16_t current_config = end_station->get_current_config_index();
 
         obj_name = end_station->get_entity_desc_by_index(current_entity)->entity_name();
-        std::cout << "\nEnd Station: " << i << " (" << obj_name << ")" << std::endl;
-        std::cout << std::setw(20) << "Descriptor Type" << "   " << std::setw(16)  <<  "Descriptor Index" << "   " << std::setw(20) << "Descriptor Name" << std::endl;
-        std::cout << "------------------------------------------------------------------------------" << std::endl;
+        atomic_cout << "\nEnd Station: " << i << " (" << obj_name << ")" << std::endl;
+        atomic_cout << std::setw(20) << "Descriptor Type" << "   " << std::setw(16)
+                    <<  "Descriptor Index" << "   " << std::setw(20) << "Descriptor Name" << std::endl;
+        atomic_cout << "------------------------------------------------------------------------------" << std::endl;
 
         avdecc_lib::entity_descriptor *entity = end_station->get_entity_desc_by_index(current_entity);
         avdecc_lib::configuration_descriptor *configuration = entity->get_config_desc_by_index(current_config);
@@ -798,17 +835,17 @@ int cmd_line::cmd_view_all()
         {
             case avdecc_lib::AEM_DESC_ENTITY:
                 {
-                    std::cout << std::setw(20) << std::hex << utility->aem_desc_value_to_name(entity->descriptor_type());
-                    std::cout << "   " << std::setw(16) << std::dec << entity->descriptor_index();
-                    std::cout << "   " << std::setw(20) << std::hex << entity->entity_name() << std::endl;
+                    atomic_cout << std::setw(20) << std::hex << utility->aem_desc_value_to_name(entity->descriptor_type())
+                                << "   " << std::setw(16) << std::dec << entity->descriptor_index()
+                                << "   " << std::setw(20) << std::hex << entity->entity_name() << std::endl;
                 }
 
             case avdecc_lib::AEM_DESC_CONFIGURATION:
                 {
-                    std::cout << std::setw(20) << utility->aem_desc_value_to_name(configuration->descriptor_type());
-                    std::cout << "   " << std::setw(16) << std::dec << configuration->descriptor_index();
-                    std::cout << "   " << std::setw(20) << std::hex << configuration->object_name() << std::endl;
-                    std::cout << "\nTop Level Descriptors" << std::endl;
+                    atomic_cout << std::setw(20) << utility->aem_desc_value_to_name(configuration->descriptor_type())
+                                << "   " << std::setw(16) << std::dec << configuration->descriptor_index()
+                                << "   " << std::setw(20) << std::hex << configuration->object_name() << std::endl;
+                    atomic_cout << "\nTop Level Descriptors" << std::endl;
                 }
 
             case avdecc_lib::AEM_DESC_AUDIO_UNIT:
@@ -864,9 +901,9 @@ int cmd_line::cmd_view_all()
                 for(unsigned int j = 0; j < configuration->locale_desc_count(); j++)
                 {
                     avdecc_lib::locale_descriptor *locale_def_ref = configuration->get_locale_desc_by_index(j);
-                    std::cout << std::setw(20) << utility->aem_desc_value_to_name(locale->descriptor_type());
-                    std::cout << "   "<<  std::setw(16) << std::hex << locale_def_ref->descriptor_index();
-                    std::cout << "   " << std::setw(20) << std::hex << locale_def_ref->locale_identifier() << std::endl;
+                    atomic_cout << std::setw(20) << utility->aem_desc_value_to_name(locale->descriptor_type())
+                                << "   "<<  std::setw(16) << std::hex << locale_def_ref->descriptor_index()
+                                << "   " << std::setw(20) << std::hex << locale_def_ref->locale_identifier() << std::endl;
                 }
 
 //            case avdecc_lib::AEM_DESC_STRINGS:
@@ -922,7 +959,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
 {
     if (end_station_index >= controller_obj->get_end_station_count())
     {
-        std::cout << "Invalid End Station" << std::endl;
+        atomic_cout << "Invalid End Station" << std::endl;
         return 0;
     }
 
@@ -934,8 +971,8 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
     avdecc_lib::entity_descriptor *entity = end_station->get_entity_desc_by_index(current_entity);
     avdecc_lib::configuration_descriptor *configuration = entity->get_config_desc_by_index(current_config);
 
-    std::cout << "\nEnd Station: " << end_station_index << " (" << entity->entity_name() << ")" << std::endl;
-    std::cout << "------------------------------------------------------------------------------" << std::endl;
+    atomic_cout << "\nEnd Station: " << end_station_index << " (" << entity->entity_name() << ")" << std::endl;
+    atomic_cout << "------------------------------------------------------------------------------" << std::endl;
 
     switch(0)
     {
@@ -944,7 +981,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(entity->descriptor_type());
                 desc_index = entity->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -953,7 +990,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(configuration->descriptor_type());
                 desc_index = configuration->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -964,7 +1001,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(audio_unit_desc_ref->descriptor_type());
                 desc_index = audio_unit_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
 
             }
@@ -976,7 +1013,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(stream_input_desc_ref->descriptor_type());
                 desc_index = stream_input_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -987,7 +1024,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(stream_output_desc_ref->descriptor_type());
                 desc_index = stream_output_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -998,7 +1035,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(jack_input_desc_ref->descriptor_type());
                 desc_index = jack_input_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -1009,7 +1046,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(jack_output_desc_ref->descriptor_type());
                 desc_index = jack_output_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -1020,7 +1057,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(avb_interface_desc_ref->descriptor_type());
                 desc_index = avb_interface_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -1031,7 +1068,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(clk_src_desc_ref->descriptor_type());
                 desc_index = clk_src_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -1042,7 +1079,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(locale_def_ref->descriptor_type());
                 desc_index = locale_def_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -1053,7 +1090,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(strings->descriptor_type());
                 desc_index = strings->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -1064,7 +1101,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(stream_port_input_desc_ref->descriptor_type());
                 desc_index = stream_port_input_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -1075,7 +1112,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(stream_port_output_desc_ref->descriptor_type());
                 desc_index = stream_port_output_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -1086,7 +1123,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(audio_cluster_desc_ref->descriptor_type());
                 desc_index = audio_cluster_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -1097,7 +1134,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(audio_map_desc_ref->descriptor_type());
                 desc_index = audio_map_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -1108,7 +1145,7 @@ int cmd_line::cmd_view_details(uint32_t end_station_index)
                 desc_name = utility->aem_desc_value_to_name(clk_domain_desc_ref->descriptor_type());
                 desc_index = clk_domain_desc_ref->descriptor_index();
 
-                std::cout << "\n----------------------- " << desc_name << " -----------------------";
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 cmd_view_descriptor(desc_name, desc_index);
             }
 
@@ -1125,8 +1162,8 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
 
     uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
 
-    std::cout << "\ndescriptor_type: " << utility->aem_desc_value_to_name(desc_type_value);
-    std::cout << "\ndescriptor_index: " << std::dec << desc_index;
+    atomic_cout << "\ndescriptor_type: " << utility->aem_desc_value_to_name(desc_type_value);
+    atomic_cout << "\ndescriptor_index: " << std::dec << desc_index;
 
     avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(current_end_station);
     uint16_t current_entity = end_station->get_current_entity_index();
@@ -1138,25 +1175,25 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::entity_descriptor *entity = end_station->get_entity_desc_by_index(current_entity);
                 if(entity)
                 {
-                    std::cout << "\nentity_id = 0x" << std::hex << entity->entity_id();
-                    std::cout << "\nvendor_id = " << std::dec << entity->vendor_id();
-                    std::cout << "\nentity_model_id = " << std::dec << entity->entity_model_id();
-                    std::cout << "\nentity_capabilities = 0x" << std::hex << entity->entity_capabilities();
-                    std::cout << "\ntalker_stream_sources = " << std::dec << entity->talker_stream_sources();
-                    std::cout << "\ntalker_capabilities = 0x" << std::hex << entity->talker_capabilities();
-                    std::cout << "\nlistener_stream_sinks = " << std::dec << entity->listener_stream_sinks();
-                    std::cout << "\nlistener_capabilities = 0x" << std::hex << entity->listener_capabilities();
-                    std::cout << "\ncontroller_capabilities = 0x" << std::hex << entity->controller_capabilities();
-                    std::cout << "\navailable_index = " << std::dec << entity->available_index();
-                    std::cout << "\nassociation_id = " << std::dec << entity->association_id();
-                    std::cout << "\nentity_name = " << std::hex << entity->entity_name();
-                    std::cout << "\nvendor_name_string = " << std::dec << entity->vendor_name_string();
-                    std::cout << "\nmodel_name_string = " << std::dec << entity->model_name_string();
-                    std::cout << "\nfirmware_version = " << std::dec << entity->firmware_version();
-                    std::cout << "\ngroup_name = " << std::dec << entity->group_name();
-                    std::cout << "\nserial_number = " << std::dec << entity->serial_number();
-                    std::cout << "\nconfigurations_count = " << std::dec << entity->configurations_count();
-                    std::cout << "\ncurrent_configuration = " << std::dec << entity->current_configuration() << std::endl;
+                    atomic_cout << "\nentity_id = 0x" << std::hex << entity->entity_id();
+                    atomic_cout << "\nvendor_id = " << std::dec << entity->vendor_id();
+                    atomic_cout << "\nentity_model_id = " << std::dec << entity->entity_model_id();
+                    atomic_cout << "\nentity_capabilities = 0x" << std::hex << entity->entity_capabilities();
+                    atomic_cout << "\ntalker_stream_sources = " << std::dec << entity->talker_stream_sources();
+                    atomic_cout << "\ntalker_capabilities = 0x" << std::hex << entity->talker_capabilities();
+                    atomic_cout << "\nlistener_stream_sinks = " << std::dec << entity->listener_stream_sinks();
+                    atomic_cout << "\nlistener_capabilities = 0x" << std::hex << entity->listener_capabilities();
+                    atomic_cout << "\ncontroller_capabilities = 0x" << std::hex << entity->controller_capabilities();
+                    atomic_cout << "\navailable_index = " << std::dec << entity->available_index();
+                    atomic_cout << "\nassociation_id = " << std::dec << entity->association_id();
+                    atomic_cout << "\nentity_name = " << std::hex << entity->entity_name();
+                    atomic_cout << "\nvendor_name_string = " << std::dec << entity->vendor_name_string();
+                    atomic_cout << "\nmodel_name_string = " << std::dec << entity->model_name_string();
+                    atomic_cout << "\nfirmware_version = " << std::dec << entity->firmware_version();
+                    atomic_cout << "\ngroup_name = " << std::dec << entity->group_name();
+                    atomic_cout << "\nserial_number = " << std::dec << entity->serial_number();
+                    atomic_cout << "\nconfigurations_count = " << std::dec << entity->configurations_count();
+                    atomic_cout << "\ncurrent_configuration = " << std::dec << entity->current_configuration() << std::endl;
                 }
             }
             break;
@@ -1166,9 +1203,9 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::configuration_descriptor *configuration = controller_obj->get_current_config_desc(current_end_station);
                 if(configuration)
                 {
-                    std::cout << "\nobject_name = " << std::hex << configuration->object_name();
-                    std::cout << "\nlocalized_description = " << std::dec << configuration->localized_description();
-                    std::cout << "\ndescriptor_counts_count = " << std::dec << configuration->descriptor_counts_count()<< std::endl;
+                    atomic_cout << "\nobject_name = " << std::hex << configuration->object_name();
+                    atomic_cout << "\nlocalized_description = " << std::dec << configuration->localized_description();
+                    atomic_cout << "\ndescriptor_counts_count = " << std::dec << configuration->descriptor_counts_count()<< std::endl;
 
                     uint16_t desc_counts_count = configuration->descriptor_counts_count();
                     uint16_t desc_type_from_config = 0;
@@ -1176,16 +1213,16 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
 
                     if(desc_counts_count > 0)
                     {
-                        std::cout << "\nTop level descriptors" << std::endl;
+                        atomic_cout << "\nTop level descriptors" << std::endl;
 
                         for(uint32_t i = 0; i < desc_counts_count; i++)
                         {
                             desc_type_from_config = configuration->get_desc_type_from_config_by_index(i);
                             desc_count_from_config = configuration->get_desc_count_from_config_by_index(i);
 
-                            std::cout << "\tdesc_type = 0x" << std::hex << desc_type_from_config << " (" <<
-                                         utility->aem_desc_value_to_name(desc_type_from_config) << ")" << std::endl;
-                            std::cout << "\tdesc_count = " << std::dec << desc_count_from_config << std::endl;
+                            atomic_cout << "\tdesc_type = 0x" << std::hex << desc_type_from_config << " ("
+                                        << utility->aem_desc_value_to_name(desc_type_from_config) << ")" << std::endl;
+                            atomic_cout << "\tdesc_count = " << std::dec << desc_count_from_config << std::endl;
                         }
                     }
                 }
@@ -1197,47 +1234,47 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = controller_obj->get_current_config_desc(current_end_station)->get_audio_unit_desc_by_index(desc_index);
                 if(audio_unit_desc_ref)
                 {
-                    std::cout << "\nobject_name = " << std::hex << audio_unit_desc_ref->object_name();
-                    std::cout << "\nlocalized_description = " << std::dec << audio_unit_desc_ref->localized_description();
-                    std::cout << "\nclock_domain_index = " << std::dec << audio_unit_desc_ref->clock_domain_index();
-                    std::cout << "\nnumber_of_stream_input_ports = " << std::dec << audio_unit_desc_ref->number_of_stream_input_ports();
-                    std::cout << "\nbase_stream_input_port = " << std::dec << audio_unit_desc_ref->base_stream_input_port();
-                    std::cout << "\nnumber_of_stream_output_ports = " << std::dec << audio_unit_desc_ref->number_of_stream_output_ports();
-                    std::cout << "\nbase_stream_output_port = " << std::dec << audio_unit_desc_ref->base_stream_output_port();
-                    std::cout << "\nnumber_of_external_input_ports = " << std::dec << audio_unit_desc_ref->number_of_external_input_ports();
-                    std::cout << "\nbase_external_input_port = " << std::dec << audio_unit_desc_ref->base_external_input_port();
-                    std::cout << "\nnumber_of_external_output_ports = " << std::dec << audio_unit_desc_ref->number_of_external_output_ports();
-                    std::cout << "\nbase_external_output_port = " << std::dec << audio_unit_desc_ref->base_external_output_port();
-                    std::cout << "\nnumber_of_internal_input_ports = " << std::dec << audio_unit_desc_ref->number_of_internal_input_ports();
-                    std::cout << "\nbase_internal_input_port = " << std::dec << audio_unit_desc_ref->base_internal_input_port();
-                    std::cout << "\nnumber_of_internal_output_ports = " << std::dec << audio_unit_desc_ref->number_of_internal_output_ports();
-                    std::cout << "\nbase_internal_output_port = " << std::dec << audio_unit_desc_ref->base_internal_output_port();
-                    std::cout << "\nnumber_of_controls = " << std::dec << audio_unit_desc_ref->number_of_controls();
-                    std::cout << "\nbase_control = " << std::dec << audio_unit_desc_ref->base_control();
-                    std::cout << "\nnumber_of_signal_selectors = " << std::dec << audio_unit_desc_ref->number_of_signal_selectors();
-                    std::cout << "\nbase_signal_selector = " << std::dec << audio_unit_desc_ref->base_signal_selector();
-                    std::cout << "\nnumber_of_mixers = " << std::dec << audio_unit_desc_ref->number_of_mixers();
-                    std::cout << "\nbase_mixer = " << std::dec << audio_unit_desc_ref->base_mixer();
-                    std::cout << "\nnumber_of_matrices = " << std::dec << audio_unit_desc_ref->number_of_matrices();
-                    std::cout << "\nbase_matrix = " << std::dec << audio_unit_desc_ref->base_matrix();
-                    std::cout << "\nnumber_of_splitters = " << std::dec << audio_unit_desc_ref->number_of_splitters();
-                    std::cout << "\nbase_splitter = " << std::dec << audio_unit_desc_ref->base_splitter();
-                    std::cout << "\nnumber_of_combiners = " << std::dec << audio_unit_desc_ref->number_of_combiners();
-                    std::cout << "\nbase_combiner = " << std::dec << audio_unit_desc_ref->base_combiner();
-                    std::cout << "\nnumber_of_demultiplexers = " << std::dec << audio_unit_desc_ref->number_of_demultiplexers();
-                    std::cout << "\nbase_demultiplexer = " << std::dec << audio_unit_desc_ref->base_demultiplexer();
-                    std::cout << "\nnumber_of_multiplexers = " << std::dec << audio_unit_desc_ref->number_of_multiplexers();
-                    std::cout << "\nbase_multiplexer = " << std::dec << audio_unit_desc_ref->base_multiplexer();
-                    std::cout << "\nnumber_of_transcoders = " << std::dec << audio_unit_desc_ref->number_of_transcoders();
-                    std::cout << "\nbase_transcoder = " << std::dec << audio_unit_desc_ref->base_transcoder();
-                    std::cout << "\nnumber_of_control_blocks = " << std::dec << audio_unit_desc_ref->number_of_control_blocks();
-                    std::cout << "\nbase_control_block = " << std::dec << audio_unit_desc_ref->base_control_block();
-                    std::cout << "\ncurrent_sampling_rate = " << std::dec << audio_unit_desc_ref->current_sampling_rate();
-                    std::cout << "\nsampling_rates_count = " << std::dec << audio_unit_desc_ref->sampling_rates_count() << std::endl;
+                    atomic_cout << "\nobject_name = " << std::hex << audio_unit_desc_ref->object_name();
+                    atomic_cout << "\nlocalized_description = " << std::dec << audio_unit_desc_ref->localized_description();
+                    atomic_cout << "\nclock_domain_index = " << std::dec << audio_unit_desc_ref->clock_domain_index();
+                    atomic_cout << "\nnumber_of_stream_input_ports = " << std::dec << audio_unit_desc_ref->number_of_stream_input_ports();
+                    atomic_cout << "\nbase_stream_input_port = " << std::dec << audio_unit_desc_ref->base_stream_input_port();
+                    atomic_cout << "\nnumber_of_stream_output_ports = " << std::dec << audio_unit_desc_ref->number_of_stream_output_ports();
+                    atomic_cout << "\nbase_stream_output_port = " << std::dec << audio_unit_desc_ref->base_stream_output_port();
+                    atomic_cout << "\nnumber_of_external_input_ports = " << std::dec << audio_unit_desc_ref->number_of_external_input_ports();
+                    atomic_cout << "\nbase_external_input_port = " << std::dec << audio_unit_desc_ref->base_external_input_port();
+                    atomic_cout << "\nnumber_of_external_output_ports = " << std::dec << audio_unit_desc_ref->number_of_external_output_ports();
+                    atomic_cout << "\nbase_external_output_port = " << std::dec << audio_unit_desc_ref->base_external_output_port();
+                    atomic_cout << "\nnumber_of_internal_input_ports = " << std::dec << audio_unit_desc_ref->number_of_internal_input_ports();
+                    atomic_cout << "\nbase_internal_input_port = " << std::dec << audio_unit_desc_ref->base_internal_input_port();
+                    atomic_cout << "\nnumber_of_internal_output_ports = " << std::dec << audio_unit_desc_ref->number_of_internal_output_ports();
+                    atomic_cout << "\nbase_internal_output_port = " << std::dec << audio_unit_desc_ref->base_internal_output_port();
+                    atomic_cout << "\nnumber_of_controls = " << std::dec << audio_unit_desc_ref->number_of_controls();
+                    atomic_cout << "\nbase_control = " << std::dec << audio_unit_desc_ref->base_control();
+                    atomic_cout << "\nnumber_of_signal_selectors = " << std::dec << audio_unit_desc_ref->number_of_signal_selectors();
+                    atomic_cout << "\nbase_signal_selector = " << std::dec << audio_unit_desc_ref->base_signal_selector();
+                    atomic_cout << "\nnumber_of_mixers = " << std::dec << audio_unit_desc_ref->number_of_mixers();
+                    atomic_cout << "\nbase_mixer = " << std::dec << audio_unit_desc_ref->base_mixer();
+                    atomic_cout << "\nnumber_of_matrices = " << std::dec << audio_unit_desc_ref->number_of_matrices();
+                    atomic_cout << "\nbase_matrix = " << std::dec << audio_unit_desc_ref->base_matrix();
+                    atomic_cout << "\nnumber_of_splitters = " << std::dec << audio_unit_desc_ref->number_of_splitters();
+                    atomic_cout << "\nbase_splitter = " << std::dec << audio_unit_desc_ref->base_splitter();
+                    atomic_cout << "\nnumber_of_combiners = " << std::dec << audio_unit_desc_ref->number_of_combiners();
+                    atomic_cout << "\nbase_combiner = " << std::dec << audio_unit_desc_ref->base_combiner();
+                    atomic_cout << "\nnumber_of_demultiplexers = " << std::dec << audio_unit_desc_ref->number_of_demultiplexers();
+                    atomic_cout << "\nbase_demultiplexer = " << std::dec << audio_unit_desc_ref->base_demultiplexer();
+                    atomic_cout << "\nnumber_of_multiplexers = " << std::dec << audio_unit_desc_ref->number_of_multiplexers();
+                    atomic_cout << "\nbase_multiplexer = " << std::dec << audio_unit_desc_ref->base_multiplexer();
+                    atomic_cout << "\nnumber_of_transcoders = " << std::dec << audio_unit_desc_ref->number_of_transcoders();
+                    atomic_cout << "\nbase_transcoder = " << std::dec << audio_unit_desc_ref->base_transcoder();
+                    atomic_cout << "\nnumber_of_control_blocks = " << std::dec << audio_unit_desc_ref->number_of_control_blocks();
+                    atomic_cout << "\nbase_control_block = " << std::dec << audio_unit_desc_ref->base_control_block();
+                    atomic_cout << "\ncurrent_sampling_rate = " << std::dec << audio_unit_desc_ref->current_sampling_rate();
+                    atomic_cout << "\nsampling_rates_count = " << std::dec << audio_unit_desc_ref->sampling_rates_count() << std::endl;
 
                     for(uint32_t i = 0; i < audio_unit_desc_ref->sampling_rates_count(); i++)
                     {
-                        std::cout << "sampling_rate_" << i << " = " << std::dec << audio_unit_desc_ref->get_sampling_rate_by_index(i) << std::endl;
+                        atomic_cout << "sampling_rate_" << i << " = " << std::dec << audio_unit_desc_ref->get_sampling_rate_by_index(i) << std::endl;
                     }
                 }
             }
@@ -1248,32 +1285,32 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::stream_input_descriptor *stream_input_desc_ref = controller_obj->get_current_config_desc(current_end_station)->get_stream_input_desc_by_index(desc_index);
                 if(stream_input_desc_ref)
                 {
-                    std::cout << "\nobject_name = " << std::hex << stream_input_desc_ref->object_name();
-                    std::cout << "\nlocalized_description = " << std::dec << stream_input_desc_ref->localized_description();
-                    std::cout << "\nclock_domain_index = " << std::dec << stream_input_desc_ref->clock_domain_index();
-                    std::cout << "\nstream_flags = 0x" << std::hex << stream_input_desc_ref->stream_flags();
-                    std::cout << "\n\tclock_sync_source = " << std::dec << stream_input_desc_ref->stream_flags_clock_sync_source();
-                    std::cout << "\n\tclass_a = " << std::dec << stream_input_desc_ref->stream_flags_class_a();
-                    std::cout << "\n\tclass_b = " << std::dec << stream_input_desc_ref->stream_flags_class_b();
-                    std::cout << "\n\tsupports_encrypted = " << std::dec << stream_input_desc_ref->stream_flags_supports_encrypted();
-                    std::cout << "\n\tprimary_backup_valid = " << std::dec << stream_input_desc_ref->stream_flags_primary_backup_valid();
-                    std::cout << "\n\tprimary_backup_valid = " << std::dec << stream_input_desc_ref->stream_flags_primary_backup_valid();
-                    std::cout << "\n\tsecondary_backup_supported = " << std::dec << stream_input_desc_ref->stream_flags_secondary_backup_supported();
-                    std::cout << "\n\tsecondary_backup_valid = " << std::dec << stream_input_desc_ref->stream_flags_secondary_backup_valid();
-                    std::cout << "\n\ttertiary_backup_supported = " << std::dec << stream_input_desc_ref->stream_flags_tertiary_backup_supported();
-                    std::cout << "\n\ttertiary_backup_valid = " << std::dec << stream_input_desc_ref->stream_flags_tertiary_backup_valid();
-                    std::cout << "\ncurrent_format = " << std::hex << stream_input_desc_ref->current_format();
-                    std::cout << "\nnumber_of_formats = " << std::dec << stream_input_desc_ref->number_of_formats();
-                    std::cout << "\nbackup_talker_entity_id_0 = 0x" << std::hex << stream_input_desc_ref->backup_talker_entity_id_0();
-                    std::cout << "\nbackup_talker_unique_0 = " << std::dec << stream_input_desc_ref->backup_talker_unique_0();
-                    std::cout << "\nbackup_talker_entity_id_1 = 0x" << std::hex << stream_input_desc_ref->backup_talker_entity_id_1();
-                    std::cout << "\nbackup_talker_unique_1 = " << std::dec << stream_input_desc_ref->backup_talker_unique_1();
-                    std::cout << "\nbackup_talker_entity_id_2 = 0x" << std::hex << stream_input_desc_ref->backup_talker_entity_id_2();
-                    std::cout << "\nbackup_talker_unique_2 = " << std::dec << stream_input_desc_ref->backup_talker_unique_2();
-                    std::cout << "\nbackedup_talker_entity_id = 0x" << std::hex << stream_input_desc_ref->backedup_talker_entity_id();
-                    std::cout << "\nbackedup_talker_unique = " << std::dec << stream_input_desc_ref->backedup_talker_unique();
-                    std::cout << "\navb_interface_index = " << std::dec << stream_input_desc_ref->avb_interface_index();
-                    std::cout << "\nbuffer_length = " << std::dec << stream_input_desc_ref->buffer_length() << std::endl;
+                    atomic_cout << "\nobject_name = " << std::hex << stream_input_desc_ref->object_name();
+                    atomic_cout << "\nlocalized_description = " << std::dec << stream_input_desc_ref->localized_description();
+                    atomic_cout << "\nclock_domain_index = " << std::dec << stream_input_desc_ref->clock_domain_index();
+                    atomic_cout << "\nstream_flags = 0x" << std::hex << stream_input_desc_ref->stream_flags();
+                    atomic_cout << "\n\tclock_sync_source = " << std::dec << stream_input_desc_ref->stream_flags_clock_sync_source();
+                    atomic_cout << "\n\tclass_a = " << std::dec << stream_input_desc_ref->stream_flags_class_a();
+                    atomic_cout << "\n\tclass_b = " << std::dec << stream_input_desc_ref->stream_flags_class_b();
+                    atomic_cout << "\n\tsupports_encrypted = " << std::dec << stream_input_desc_ref->stream_flags_supports_encrypted();
+                    atomic_cout << "\n\tprimary_backup_valid = " << std::dec << stream_input_desc_ref->stream_flags_primary_backup_valid();
+                    atomic_cout << "\n\tprimary_backup_valid = " << std::dec << stream_input_desc_ref->stream_flags_primary_backup_valid();
+                    atomic_cout << "\n\tsecondary_backup_supported = " << std::dec << stream_input_desc_ref->stream_flags_secondary_backup_supported();
+                    atomic_cout << "\n\tsecondary_backup_valid = " << std::dec << stream_input_desc_ref->stream_flags_secondary_backup_valid();
+                    atomic_cout << "\n\ttertiary_backup_supported = " << std::dec << stream_input_desc_ref->stream_flags_tertiary_backup_supported();
+                    atomic_cout << "\n\ttertiary_backup_valid = " << std::dec << stream_input_desc_ref->stream_flags_tertiary_backup_valid();
+                    atomic_cout << "\ncurrent_format = " << std::hex << stream_input_desc_ref->current_format();
+                    atomic_cout << "\nnumber_of_formats = " << std::dec << stream_input_desc_ref->number_of_formats();
+                    atomic_cout << "\nbackup_talker_entity_id_0 = 0x" << std::hex << stream_input_desc_ref->backup_talker_entity_id_0();
+                    atomic_cout << "\nbackup_talker_unique_0 = " << std::dec << stream_input_desc_ref->backup_talker_unique_0();
+                    atomic_cout << "\nbackup_talker_entity_id_1 = 0x" << std::hex << stream_input_desc_ref->backup_talker_entity_id_1();
+                    atomic_cout << "\nbackup_talker_unique_1 = " << std::dec << stream_input_desc_ref->backup_talker_unique_1();
+                    atomic_cout << "\nbackup_talker_entity_id_2 = 0x" << std::hex << stream_input_desc_ref->backup_talker_entity_id_2();
+                    atomic_cout << "\nbackup_talker_unique_2 = " << std::dec << stream_input_desc_ref->backup_talker_unique_2();
+                    atomic_cout << "\nbackedup_talker_entity_id = 0x" << std::hex << stream_input_desc_ref->backedup_talker_entity_id();
+                    atomic_cout << "\nbackedup_talker_unique = " << std::dec << stream_input_desc_ref->backedup_talker_unique();
+                    atomic_cout << "\navb_interface_index = " << std::dec << stream_input_desc_ref->avb_interface_index();
+                    atomic_cout << "\nbuffer_length = " << std::dec << stream_input_desc_ref->buffer_length() << std::endl;
                 }
             }
             break;
@@ -1283,32 +1320,32 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::stream_output_descriptor *stream_output_desc_ref = controller_obj->get_current_config_desc(current_end_station)->get_stream_output_desc_by_index(desc_index);
                 if(stream_output_desc_ref)
                 {
-                    std::cout << "\nobject_name = " << std::hex << stream_output_desc_ref->object_name();
-                    std::cout << "\nlocalized_description = " << std::dec << stream_output_desc_ref->localized_description();
-                    std::cout << "\nclock_domain_index = " << std::dec << stream_output_desc_ref->clock_domain_index();
-                    std::cout << "\nstream_flags = 0x" << std::hex << stream_output_desc_ref->stream_flags();
-                    std::cout << "\n\tclock_sync_source = " << std::dec << stream_output_desc_ref->stream_flags_clock_sync_source();
-                    std::cout << "\n\tclass_a = " << std::dec << stream_output_desc_ref->stream_flags_class_a();
-                    std::cout << "\n\tclass_b = " << std::dec << stream_output_desc_ref->stream_flags_class_b();
-                    std::cout << "\n\tsupports_encrypted = " << std::dec << stream_output_desc_ref->stream_flags_supports_encrypted();
-                    std::cout << "\n\tprimary_backup_valid = " << std::dec << stream_output_desc_ref->stream_flags_primary_backup_valid();
-                    std::cout << "\n\tprimary_backup_valid = " << std::dec << stream_output_desc_ref->stream_flags_primary_backup_valid();
-                    std::cout << "\n\tsecondary_backup_supported = " << std::dec << stream_output_desc_ref->stream_flags_secondary_backup_supported();
-                    std::cout << "\n\tsecondary_backup_valid = " << std::dec << stream_output_desc_ref->stream_flags_secondary_backup_valid();
-                    std::cout << "\n\ttertiary_backup_supported = " << std::dec << stream_output_desc_ref->stream_flags_tertiary_backup_supported();
-                    std::cout << "\n\ttertiary_backup_valid = " << std::dec << stream_output_desc_ref->stream_flags_tertiary_backup_valid();
-                    std::cout << "\ncurrent_format = " << std::hex << stream_output_desc_ref->current_format();
-                    std::cout << "\nnumber_of_formats = " << std::dec << stream_output_desc_ref->number_of_formats();
-                    std::cout << "\nbackup_talker_entity_id_0 = 0x" << std::hex << stream_output_desc_ref->backup_talker_entity_id_0();
-                    std::cout << "\nbackup_talker_unique_0 = " << std::dec << stream_output_desc_ref->backup_talker_unique_0();
-                    std::cout << "\nbackup_talker_entity_id_1 = 0x" << std::hex << stream_output_desc_ref->backup_talker_entity_id_1();
-                    std::cout << "\nbackup_talker_unique_1 = " << std::dec << stream_output_desc_ref->backup_talker_unique_1();
-                    std::cout << "\nbackup_talker_entity_id_2 = 0x" << std::hex << stream_output_desc_ref->backup_talker_entity_id_2();
-                    std::cout << "\nbackup_talker_unique_2 = " << std::dec << stream_output_desc_ref->backup_talker_unique_2();
-                    std::cout << "\nbackedup_talker_entity_id = 0x" << std::hex << stream_output_desc_ref->backedup_talker_entity_id();
-                    std::cout << "\nbackedup_talker_unique = " << std::dec << stream_output_desc_ref->backedup_talker_unique();
-                    std::cout << "\navb_interface_index = " << std::dec << stream_output_desc_ref->avb_interface_index();
-                    std::cout << "\nbuffer_length = " << std::dec << stream_output_desc_ref->buffer_length() << std::endl;
+                    atomic_cout << "\nobject_name = " << std::hex << stream_output_desc_ref->object_name();
+                    atomic_cout << "\nlocalized_description = " << std::dec << stream_output_desc_ref->localized_description();
+                    atomic_cout << "\nclock_domain_index = " << std::dec << stream_output_desc_ref->clock_domain_index();
+                    atomic_cout << "\nstream_flags = 0x" << std::hex << stream_output_desc_ref->stream_flags();
+                    atomic_cout << "\n\tclock_sync_source = " << std::dec << stream_output_desc_ref->stream_flags_clock_sync_source();
+                    atomic_cout << "\n\tclass_a = " << std::dec << stream_output_desc_ref->stream_flags_class_a();
+                    atomic_cout << "\n\tclass_b = " << std::dec << stream_output_desc_ref->stream_flags_class_b();
+                    atomic_cout << "\n\tsupports_encrypted = " << std::dec << stream_output_desc_ref->stream_flags_supports_encrypted();
+                    atomic_cout << "\n\tprimary_backup_valid = " << std::dec << stream_output_desc_ref->stream_flags_primary_backup_valid();
+                    atomic_cout << "\n\tprimary_backup_valid = " << std::dec << stream_output_desc_ref->stream_flags_primary_backup_valid();
+                    atomic_cout << "\n\tsecondary_backup_supported = " << std::dec << stream_output_desc_ref->stream_flags_secondary_backup_supported();
+                    atomic_cout << "\n\tsecondary_backup_valid = " << std::dec << stream_output_desc_ref->stream_flags_secondary_backup_valid();
+                    atomic_cout << "\n\ttertiary_backup_supported = " << std::dec << stream_output_desc_ref->stream_flags_tertiary_backup_supported();
+                    atomic_cout << "\n\ttertiary_backup_valid = " << std::dec << stream_output_desc_ref->stream_flags_tertiary_backup_valid();
+                    atomic_cout << "\ncurrent_format = " << std::hex << stream_output_desc_ref->current_format();
+                    atomic_cout << "\nnumber_of_formats = " << std::dec << stream_output_desc_ref->number_of_formats();
+                    atomic_cout << "\nbackup_talker_entity_id_0 = 0x" << std::hex << stream_output_desc_ref->backup_talker_entity_id_0();
+                    atomic_cout << "\nbackup_talker_unique_0 = " << std::dec << stream_output_desc_ref->backup_talker_unique_0();
+                    atomic_cout << "\nbackup_talker_entity_id_1 = 0x" << std::hex << stream_output_desc_ref->backup_talker_entity_id_1();
+                    atomic_cout << "\nbackup_talker_unique_1 = " << std::dec << stream_output_desc_ref->backup_talker_unique_1();
+                    atomic_cout << "\nbackup_talker_entity_id_2 = 0x" << std::hex << stream_output_desc_ref->backup_talker_entity_id_2();
+                    atomic_cout << "\nbackup_talker_unique_2 = " << std::dec << stream_output_desc_ref->backup_talker_unique_2();
+                    atomic_cout << "\nbackedup_talker_entity_id = 0x" << std::hex << stream_output_desc_ref->backedup_talker_entity_id();
+                    atomic_cout << "\nbackedup_talker_unique = " << std::dec << stream_output_desc_ref->backedup_talker_unique();
+                    atomic_cout << "\navb_interface_index = " << std::dec << stream_output_desc_ref->avb_interface_index();
+                    atomic_cout << "\nbuffer_length = " << std::dec << stream_output_desc_ref->buffer_length() << std::endl;
                 }
             }
             break;
@@ -1318,13 +1355,13 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::jack_input_descriptor *jack_input_desc_ref = controller_obj->get_current_config_desc(current_end_station)->get_jack_input_desc_by_index(desc_index);
                 if(jack_input_desc_ref)
                 {
-                    std::cout << "\nobject_name = " << std::hex << jack_input_desc_ref->object_name();
-                    std::cout << "\nlocalized_description = " << std::dec << jack_input_desc_ref->localized_description();
-                    std::cout << "\njack_flags = 0x" << std::hex << jack_input_desc_ref->jack_flags();
-                    std::cout << "\n\tclock_sync_source_flag = 0x" << std::hex << jack_input_desc_ref->jack_flag_clock_sync_source();
-                    std::cout << "\n\tcaptive_flag = 0x" << std::hex << jack_input_desc_ref->jack_flag_captive();
-                    std::cout << "\nnumber_of_controls = " << std::dec << jack_input_desc_ref->number_of_controls();
-                    std::cout << "\nbase_control = " << std::dec << jack_input_desc_ref->base_control() << std::endl;
+                    atomic_cout << "\nobject_name = " << std::hex << jack_input_desc_ref->object_name();
+                    atomic_cout << "\nlocalized_description = " << std::dec << jack_input_desc_ref->localized_description();
+                    atomic_cout << "\njack_flags = 0x" << std::hex << jack_input_desc_ref->jack_flags();
+                    atomic_cout << "\n\tclock_sync_source_flag = 0x" << std::hex << jack_input_desc_ref->jack_flag_clock_sync_source();
+                    atomic_cout << "\n\tcaptive_flag = 0x" << std::hex << jack_input_desc_ref->jack_flag_captive();
+                    atomic_cout << "\nnumber_of_controls = " << std::dec << jack_input_desc_ref->number_of_controls();
+                    atomic_cout << "\nbase_control = " << std::dec << jack_input_desc_ref->base_control() << std::endl;
                 }
             }
             break;
@@ -1334,14 +1371,14 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::jack_output_descriptor *jack_output_desc_ref = controller_obj->get_current_config_desc(current_end_station)->get_jack_output_desc_by_index(desc_index);
                 if(jack_output_desc_ref)
                 {
-                    std::cout << "\nobject_name = " << std::hex << jack_output_desc_ref->object_name();
-                    std::cout << "\nlocalized_description = 0x" << std::hex << jack_output_desc_ref->localized_description();
-                    std::cout << "\njack_flags = 0x" << std::hex << jack_output_desc_ref->jack_flags();
-                    std::cout << "\n\tclock_sync_source_flag = 0x" << std::hex << jack_output_desc_ref->jack_flag_clock_sync_source();
-                    std::cout << "\n\tcaptive_flag = 0x" << std::hex << jack_output_desc_ref->jack_flag_captive();
-                    std::cout << "\njack_type = 0x" << std::hex << jack_output_desc_ref->jack_type();
-                    std::cout << "\nnumber_of_controls = " << std::dec << jack_output_desc_ref->number_of_controls();
-                    std::cout << "\nbase_control = " << std::dec << jack_output_desc_ref->base_control() << std::endl;
+                    atomic_cout << "\nobject_name = " << std::hex << jack_output_desc_ref->object_name();
+                    atomic_cout << "\nlocalized_description = 0x" << std::hex << jack_output_desc_ref->localized_description();
+                    atomic_cout << "\njack_flags = 0x" << std::hex << jack_output_desc_ref->jack_flags();
+                    atomic_cout << "\n\tclock_sync_source_flag = 0x" << std::hex << jack_output_desc_ref->jack_flag_clock_sync_source();
+                    atomic_cout << "\n\tcaptive_flag = 0x" << std::hex << jack_output_desc_ref->jack_flag_captive();
+                    atomic_cout << "\njack_type = 0x" << std::hex << jack_output_desc_ref->jack_type();
+                    atomic_cout << "\nnumber_of_controls = " << std::dec << jack_output_desc_ref->number_of_controls();
+                    atomic_cout << "\nbase_control = " << std::dec << jack_output_desc_ref->base_control() << std::endl;
                 }
             }
             break;
@@ -1351,18 +1388,18 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::avb_interface_descriptor *avb_interface_desc = controller_obj->get_current_config_desc(current_end_station)->get_avb_interface_desc_by_index(desc_index);
                 if(avb_interface_desc)
                 {
-                    std::cout << "\nobject_name = " << std::hex << avb_interface_desc->object_name();
-                    std::cout << "\nlocalized_description = " << std::dec << avb_interface_desc->localized_description();
-                    std::cout << "\nmac_address = 0x" << std::hex << avb_interface_desc->mac_addr();
-                    std::cout << "\ninterface_flags = 0x" << std::hex << avb_interface_desc->interface_flags();
-                    std::cout << "\nclock_identity = 0x" << std::hex << avb_interface_desc->clock_identity();
-                    std::cout << "\npriority1 = " << std::dec << avb_interface_desc->priority1();
-                    std::cout << "\nclock_class = " << std::dec << avb_interface_desc->clock_class();
-                    std::cout << "\noffset_scaled_log_variance = " << std::dec << avb_interface_desc->offset_scaled_log_variance();
-                    std::cout << "\nclock_accuracy = " << std::dec << avb_interface_desc->clock_accuracy();
-                    std::cout << "\npriority2 = " << std::dec << avb_interface_desc->priority2();
-                    std::cout << "\ndomain_number = " << std::dec << avb_interface_desc->domain_number();
-                    std::cout << "\nlog_sync_interval = " << std::dec << avb_interface_desc->log_sync_interval() << std::endl;
+                    atomic_cout << "\nobject_name = " << std::hex << avb_interface_desc->object_name();
+                    atomic_cout << "\nlocalized_description = " << std::dec << avb_interface_desc->localized_description();
+                    atomic_cout << "\nmac_address = 0x" << std::hex << avb_interface_desc->mac_addr();
+                    atomic_cout << "\ninterface_flags = 0x" << std::hex << avb_interface_desc->interface_flags();
+                    atomic_cout << "\nclock_identity = 0x" << std::hex << avb_interface_desc->clock_identity();
+                    atomic_cout << "\npriority1 = " << std::dec << avb_interface_desc->priority1();
+                    atomic_cout << "\nclock_class = " << std::dec << avb_interface_desc->clock_class();
+                    atomic_cout << "\noffset_scaled_log_variance = " << std::dec << avb_interface_desc->offset_scaled_log_variance();
+                    atomic_cout << "\nclock_accuracy = " << std::dec << avb_interface_desc->clock_accuracy();
+                    atomic_cout << "\npriority2 = " << std::dec << avb_interface_desc->priority2();
+                    atomic_cout << "\ndomain_number = " << std::dec << avb_interface_desc->domain_number();
+                    atomic_cout << "\nlog_sync_interval = " << std::dec << avb_interface_desc->log_sync_interval() << std::endl;
                 }
             }
             break;
@@ -1372,13 +1409,13 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::clock_source_descriptor *clk_src_desc = controller_obj->get_current_config_desc(current_end_station)->get_clock_source_desc_by_index(desc_index);
                 if(clk_src_desc)
                 {
-                    std::cout << "\nobject_name = " << std::hex << clk_src_desc->object_name();
-                    std::cout << "\nlocalized_description = " << std::dec << clk_src_desc->localized_description();
-                    std::cout << "\nclock_source_flags = 0x" << std::hex << clk_src_desc->clock_source_flags();
-                    std::cout << "\nclock_source_type = 0x" << std::hex << clk_src_desc->clock_source_type();
-                    std::cout << "\nclock_source_identifier = 0x" << std::hex << clk_src_desc->clock_source_identifier();
-                    std::cout << "\nclock_source_location_type = 0x" << std::hex << clk_src_desc->clock_source_location_type();
-                    std::cout << "\nclock_source_location_index = " << std::dec << clk_src_desc->clock_source_location_index() << std::endl;
+                    atomic_cout << "\nobject_name = " << std::hex << clk_src_desc->object_name();
+                    atomic_cout << "\nlocalized_description = " << std::dec << clk_src_desc->localized_description();
+                    atomic_cout << "\nclock_source_flags = 0x" << std::hex << clk_src_desc->clock_source_flags();
+                    atomic_cout << "\nclock_source_type = 0x" << std::hex << clk_src_desc->clock_source_type();
+                    atomic_cout << "\nclock_source_identifier = 0x" << std::hex << clk_src_desc->clock_source_identifier();
+                    atomic_cout << "\nclock_source_location_type = 0x" << std::hex << clk_src_desc->clock_source_location_type();
+                    atomic_cout << "\nclock_source_location_index = " << std::dec << clk_src_desc->clock_source_location_index() << std::endl;
                 }
             }
             break;
@@ -1388,9 +1425,9 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::locale_descriptor *locale = controller_obj->get_current_config_desc(current_end_station)->get_locale_desc_by_index(desc_index);
                 if(locale)
                 {
-                    std::cout << "\nlocale_identifier = " << std::dec << locale->locale_identifier();
-                    std::cout << "\nnumber_of_strings = " << std::dec << locale->number_of_strings();
-                    std::cout << "\nbase_strings = " << std::dec << locale->base_strings() << std::endl;
+                    atomic_cout << "\nlocale_identifier = " << std::dec << locale->locale_identifier();
+                    atomic_cout << "\nnumber_of_strings = " << std::dec << locale->number_of_strings();
+                    atomic_cout << "\nbase_strings = " << std::dec << locale->base_strings() << std::endl;
                 }
             }
             break;
@@ -1400,13 +1437,13 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::strings_descriptor *strings = controller_obj->get_current_config_desc(current_end_station)->get_strings_desc_by_index(desc_index);
                 if(strings)
                 {
-                    std::cout << "\nstring_0 = " << std::hex << strings->get_string_by_index(0);
-                    std::cout << "\nstring_1 = " << std::hex << strings->get_string_by_index(1);
-                    std::cout << "\nstring_2 = " << std::hex << strings->get_string_by_index(2);
-                    std::cout << "\nstring_3 = " << std::hex << strings->get_string_by_index(3);
-                    std::cout << "\nstring_4 = " << std::hex << strings->get_string_by_index(4);
-                    std::cout << "\nstring_5 = " << std::hex << strings->get_string_by_index(5);
-                    std::cout << "\nstring_6 = " << std::hex << strings->get_string_by_index(6) << std::endl;
+                    atomic_cout << "\nstring_0 = " << std::hex << strings->get_string_by_index(0);
+                    atomic_cout << "\nstring_1 = " << std::hex << strings->get_string_by_index(1);
+                    atomic_cout << "\nstring_2 = " << std::hex << strings->get_string_by_index(2);
+                    atomic_cout << "\nstring_3 = " << std::hex << strings->get_string_by_index(3);
+                    atomic_cout << "\nstring_4 = " << std::hex << strings->get_string_by_index(4);
+                    atomic_cout << "\nstring_5 = " << std::hex << strings->get_string_by_index(5);
+                    atomic_cout << "\nstring_6 = " << std::hex << strings->get_string_by_index(6) << std::endl;
                 }
             }
             break;
@@ -1416,14 +1453,14 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::stream_port_input_descriptor *stream_port_input_desc = controller_obj->get_current_config_desc(current_end_station)->get_stream_port_input_desc_by_index(desc_index);
                 if(stream_port_input_desc)
                 {
-                    std::cout << "\nclock_domain_index = " << std::dec << stream_port_input_desc->clock_domain_index();
-                    std::cout << "\nport_flags = " << std::hex << stream_port_input_desc->port_flags();
-                    std::cout << "\nnumber_of_controls = " << std::dec << stream_port_input_desc->number_of_controls();
-                    std::cout << "\nbase_control = " << std::dec << stream_port_input_desc->base_control();
-                    std::cout << "\nnumber_of_clusters = " << std::dec << stream_port_input_desc->number_of_clusters();
-                    std::cout << "\nbase_cluster = " << std::dec << stream_port_input_desc->base_cluster();
-                    std::cout << "\nnumber_of_maps = " << std::dec << stream_port_input_desc->number_of_maps();
-                    std::cout << "\nbase_map = " << std::dec << stream_port_input_desc->base_map() << std::endl;
+                    atomic_cout << "\nclock_domain_index = " << std::dec << stream_port_input_desc->clock_domain_index();
+                    atomic_cout << "\nport_flags = " << std::hex << stream_port_input_desc->port_flags();
+                    atomic_cout << "\nnumber_of_controls = " << std::dec << stream_port_input_desc->number_of_controls();
+                    atomic_cout << "\nbase_control = " << std::dec << stream_port_input_desc->base_control();
+                    atomic_cout << "\nnumber_of_clusters = " << std::dec << stream_port_input_desc->number_of_clusters();
+                    atomic_cout << "\nbase_cluster = " << std::dec << stream_port_input_desc->base_cluster();
+                    atomic_cout << "\nnumber_of_maps = " << std::dec << stream_port_input_desc->number_of_maps();
+                    atomic_cout << "\nbase_map = " << std::dec << stream_port_input_desc->base_map() << std::endl;
                 }
             }
             break;
@@ -1433,14 +1470,14 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::stream_port_output_descriptor *stream_port_output_desc = controller_obj->get_current_config_desc(current_end_station)->get_stream_port_output_desc_by_index(desc_index);
                 if(stream_port_output_desc)
                 {
-                    std::cout << "\nclock_domain_index = " << std::dec << stream_port_output_desc->clock_domain_index();
-                    std::cout << "\nport_flags = " << std::hex << stream_port_output_desc->port_flags();
-                    std::cout << "\nnumber_of_controls = " << std::dec << stream_port_output_desc->number_of_controls();
-                    std::cout << "\nbase_control = " << std::dec << stream_port_output_desc->base_control();
-                    std::cout << "\nnumber_of_clusters = " << std::dec << stream_port_output_desc->number_of_clusters();
-                    std::cout << "\nbase_cluster = " << std::dec << stream_port_output_desc->base_cluster();
-                    std::cout << "\nnumber_of_maps = " << std::dec << stream_port_output_desc->number_of_maps();
-                    std::cout << "\nbase_map = " << std::dec << stream_port_output_desc->base_map() << std::endl;
+                    atomic_cout << "\nclock_domain_index = " << std::dec << stream_port_output_desc->clock_domain_index();
+                    atomic_cout << "\nport_flags = " << std::hex << stream_port_output_desc->port_flags();
+                    atomic_cout << "\nnumber_of_controls = " << std::dec << stream_port_output_desc->number_of_controls();
+                    atomic_cout << "\nbase_control = " << std::dec << stream_port_output_desc->base_control();
+                    atomic_cout << "\nnumber_of_clusters = " << std::dec << stream_port_output_desc->number_of_clusters();
+                    atomic_cout << "\nbase_cluster = " << std::dec << stream_port_output_desc->base_cluster();
+                    atomic_cout << "\nnumber_of_maps = " << std::dec << stream_port_output_desc->number_of_maps();
+                    atomic_cout << "\nbase_map = " << std::dec << stream_port_output_desc->base_map() << std::endl;
                 }
             }
             break;
@@ -1450,15 +1487,15 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::audio_cluster_descriptor *audio_cluster_desc = controller_obj->get_current_config_desc(current_end_station)->get_audio_cluster_desc_by_index(desc_index);
                 if(audio_cluster_desc)
                 {
-                    std::cout << "\nobject_name = " << std::hex << audio_cluster_desc->object_name();
-                    std::cout << "\nlocalized_description = " << std::dec << audio_cluster_desc->localized_description();
-                    std::cout << "\nsignal_type = " << std::dec << audio_cluster_desc->signal_type();
-                    std::cout << "\nsignal_index = " << std::dec << audio_cluster_desc->signal_index();
-                    std::cout << "\nsignal_output = " << std::dec << audio_cluster_desc->signal_output();
-                    std::cout << "\npath_latency = " << std::dec << audio_cluster_desc->path_latency();
-                    std::cout << "\nblock_latency = " << std::dec << audio_cluster_desc->block_latency();
-                    std::cout << "\nchannel_count = " << std::dec << audio_cluster_desc->channel_count();
-                    std::cout << "\nformat = 0x" << std::hex << audio_cluster_desc->format() << std::endl;
+                    atomic_cout << "\nobject_name = " << std::hex << audio_cluster_desc->object_name();
+                    atomic_cout << "\nlocalized_description = " << std::dec << audio_cluster_desc->localized_description();
+                    atomic_cout << "\nsignal_type = " << std::dec << audio_cluster_desc->signal_type();
+                    atomic_cout << "\nsignal_index = " << std::dec << audio_cluster_desc->signal_index();
+                    atomic_cout << "\nsignal_output = " << std::dec << audio_cluster_desc->signal_output();
+                    atomic_cout << "\npath_latency = " << std::dec << audio_cluster_desc->path_latency();
+                    atomic_cout << "\nblock_latency = " << std::dec << audio_cluster_desc->block_latency();
+                    atomic_cout << "\nchannel_count = " << std::dec << audio_cluster_desc->channel_count();
+                    atomic_cout << "\nformat = 0x" << std::hex << audio_cluster_desc->format() << std::endl;
                 }
             }
             break;
@@ -1468,7 +1505,7 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::audio_map_descriptor *audio_map_desc = controller_obj->get_current_config_desc(current_end_station)->get_audio_map_desc_by_index(desc_index);
                 if(audio_map_desc)
                 {
-                    std::cout << "\nnumber_of_mappings = " << std::dec << audio_map_desc->number_of_mappings() << std::endl;
+                    atomic_cout << "\nnumber_of_mappings = " << std::dec << audio_map_desc->number_of_mappings() << std::endl;
                 }
             }
             break;
@@ -1478,21 +1515,21 @@ int cmd_line::cmd_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::clock_domain_descriptor *clk_domain_desc = controller_obj->get_current_config_desc(current_end_station)->get_clock_domain_desc_by_index(desc_index);
                 if(clk_domain_desc)
                 {
-                    std::cout << "\nobject_name = " << std::hex << clk_domain_desc->object_name();
-                    std::cout << "\nlocalized_description = " << std::dec << clk_domain_desc->localized_description();
-                    std::cout << "\nclock_source_index = " << std::dec << clk_domain_desc->clock_source_index();
-                    std::cout << "\nclock_sources_count = " << std::dec << clk_domain_desc->clock_sources_count() << std::endl;
+                    atomic_cout << "\nobject_name = " << std::hex << clk_domain_desc->object_name();
+                    atomic_cout << "\nlocalized_description = " << std::dec << clk_domain_desc->localized_description();
+                    atomic_cout << "\nclock_source_index = " << std::dec << clk_domain_desc->clock_source_index();
+                    atomic_cout << "\nclock_sources_count = " << std::dec << clk_domain_desc->clock_sources_count() << std::endl;
 
                     for(uint32_t i = 0; i < clk_domain_desc->clock_sources_count(); i++)
                     {
-                        std::cout << "\tclock_sources = " << std::dec << clk_domain_desc->get_clock_source_by_index(i) << std::endl;
+                        atomic_cout << "\tclock_sources = " << std::dec << clk_domain_desc->get_clock_source_by_index(i) << std::endl;
                     }
                 }
             }
             break;
 
         default:
-            std::cout << "\nDescriptor type is not found." << std::endl;
+            atomic_cout << "\nDescriptor type is not found." << std::endl;
             break;
     }
 
@@ -1516,7 +1553,7 @@ int cmd_line::cmd_read_descriptor(std::string desc_name, uint16_t desc_index)
     }
     else
     {
-        std::cout << "cmd_read_descriptor error" << std::endl;
+        atomic_cout << "cmd_read_descriptor error" << std::endl;
         return -1;
     }
 
@@ -1532,69 +1569,59 @@ int cmd_line::cmd_connect()
     size_t stream_output_desc_count = 0;
     uint64_t end_station_mac;
 
-    std::cout << "\n" << "End Station" << std::setw(26) << "" << "Instream" << std::setw(16) << "" << "Stream Format" << std::endl;
-    std::cout << "------------------------------------------------------------------------------" << std::endl;
+    atomic_cout << "\n" << "End Station" << std::setw(26) << "" << "Instream" << std::setw(16) << "" << "Stream Format" << std::endl;
+    atomic_cout << "------------------------------------------------------------------------------" << std::endl;
 
     for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
     {
         avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(i);
+        avdecc_lib::entity_descriptor *entity;
+        avdecc_lib::configuration_descriptor *descriptor;
+        if (get_current_entity_and_descriptor(end_station, &entity, &descriptor))
+            continue;
+
         end_station_mac = end_station->mac();
-
-        uint16_t current_entity = end_station->get_current_entity_index();
-        if (current_entity >= end_station->entity_desc_count())
-            continue;
-
-        avdecc_lib::entity_descriptor *entity = end_station->get_entity_desc_by_index(current_entity);
         instream_end_station_name = entity->entity_name();
-
-        uint16_t current_config = end_station->get_current_config_index();
-        if (current_config >= entity->config_desc_count())
-            continue;
-
-        avdecc_lib::configuration_descriptor *desc_i = entity->get_config_desc_by_index(current_config);
-        stream_input_desc_count = desc_i->stream_input_desc_count();
+        stream_input_desc_count = descriptor->stream_input_desc_count();
 
         for(uint32_t j = 0; j < stream_input_desc_count; j++)
         {
-            avdecc_lib::stream_input_descriptor *input_descriptor = desc_i->get_stream_input_desc_by_index(j);
+            avdecc_lib::stream_input_descriptor *input_descriptor = descriptor->get_stream_input_desc_by_index(j);
             uint8_t *desc_desc_name = input_descriptor->object_name();
             format = input_descriptor->current_format();
 
-            std::cout << std::setw(5) << i << std::setw(20) << instream_end_station_name << utility->end_station_mac_to_string(end_station_mac) << "   " <<
-                         std::setw(3) << j << std::setw(19) << desc_desc_name << "   " << std::setw(14) << format << std::endl;
+            atomic_cout << std::setw(5) << i << std::setw(20) << instream_end_station_name
+                        << utility->end_station_mac_to_string(end_station_mac) << "   "
+                        << std::setw(3) << j << std::setw(19) << desc_desc_name << "   "
+                        << std::setw(14) << format << std::endl;
         }
     }
 
-    std::cout << "\n" << "End Station" << std::setw(26) << "" << "Outstream" << std::setw(15) << "" << "Stream Format" << std::endl;
-    std::cout << "------------------------------------------------------------------------------" << std::endl;
+    atomic_cout << "\n" << "End Station" << std::setw(26) << "" << "Outstream" << std::setw(15) << "" << "Stream Format" << std::endl;
+    atomic_cout << "------------------------------------------------------------------------------" << std::endl;
 
     for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
     {
         avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(i);
+        avdecc_lib::entity_descriptor *entity;
+        avdecc_lib::configuration_descriptor *descriptor;
+        if (get_current_entity_and_descriptor(end_station, &entity, &descriptor))
+            continue;
+
         end_station_mac = end_station->mac();
-
-        uint16_t current_entity = end_station->get_current_entity_index();
-        if (current_entity >= end_station->entity_desc_count())
-            continue;
-
-        avdecc_lib::entity_descriptor *entity = end_station->get_entity_desc_by_index(current_entity);
         outstream_end_station_name = entity->entity_name();
-
-        uint16_t current_config = end_station->get_current_config_index();
-        if (current_config >= entity->config_desc_count())
-            continue;
-
-        avdecc_lib::configuration_descriptor *desc_i = entity->get_config_desc_by_index(current_config);
-        stream_output_desc_count = desc_i->stream_output_desc_count();
+        stream_output_desc_count = descriptor->stream_output_desc_count();
 
         for(uint32_t j = 0; j < stream_output_desc_count; j++)
         {
-            avdecc_lib::stream_output_descriptor *output_descriptor = desc_i->get_stream_output_desc_by_index(j);
+            avdecc_lib::stream_output_descriptor *output_descriptor = descriptor->get_stream_output_desc_by_index(j);
             uint8_t *src_desc_name = output_descriptor->object_name();
             format = output_descriptor->current_format();
 
-            std::cout << std::setw(5) << i << std::setw(20) << outstream_end_station_name << utility->end_station_mac_to_string(end_station_mac) << "   " <<
-                std::setw(3) << j << std::setw(19) << src_desc_name << "   " << std::setw(15) << format << std::endl;
+            atomic_cout << std::setw(5) << i << std::setw(20) << outstream_end_station_name
+                        << utility->end_station_mac_to_string(end_station_mac) << "   "
+                        << std::setw(3) << j << std::setw(19) << src_desc_name << "   "
+                        << std::setw(15) << format << std::endl;
         }
     }
 
@@ -1616,28 +1643,21 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
         size_t stream_output_desc_count = 0;
         uint64_t end_station_mac;
 
-        std::cout << "\n" << "End Station" << std::setw(26) << "   " << "Outstream" << std::setw(16) << "   " << "Stream Format" << std::endl;
-        std::cout << "------------------------------------------------------------------------------" << std::endl;
+        atomic_cout << "\n" << "End Station" << std::setw(26) << "   " << "Outstream" << std::setw(16) << "   " << "Stream Format" << std::endl;
+        atomic_cout << "------------------------------------------------------------------------------" << std::endl;
 
         for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
         {
             if(i == instream_end_station_index)
             {
                 avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(i);
+                avdecc_lib::entity_descriptor *entity;
+                avdecc_lib::configuration_descriptor *desc_i;
+                if (get_current_entity_and_descriptor(end_station, &entity, &desc_i))
+                    continue;
+
                 end_station_mac = end_station->mac();
-
-                uint16_t current_entity = end_station->get_current_entity_index();
-                if (current_entity >= end_station->entity_desc_count())
-                    continue;
-
-                avdecc_lib::entity_descriptor *entity = end_station->get_entity_desc_by_index(current_entity);
                 outstream_end_station_name = entity->entity_name();
-
-                uint16_t current_config = end_station->get_current_config_index();
-                if (current_config >= entity->config_desc_count())
-                    continue;
-
-                avdecc_lib::configuration_descriptor *desc_i = entity->get_config_desc_by_index(current_config);
                 stream_output_desc_count = desc_i->stream_output_desc_count();
 
                 for(uint32_t j = 0; j < stream_output_desc_count; j++)
@@ -1646,15 +1666,17 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
                     src_desc_name = output_descriptor->object_name();
                     format = output_descriptor->current_format();
 
-                    std::cout << std::setw(5) << i << std::setw(20) << outstream_end_station_name << utility->end_station_mac_to_string(end_station_mac) << "   " <<
-                              std::setw(2) << j << std::setw(19) << src_desc_name << "   " << std::setw(10) << format << std::endl;
+                    atomic_cout << std::setw(5) << i << std::setw(20) << outstream_end_station_name
+                                << utility->end_station_mac_to_string(end_station_mac)
+                                << "   " << std::setw(2) << j << std::setw(19) << src_desc_name
+                                << "   " << std::setw(10) << format << std::endl;
                 }
             }
         }
     }
     else
     {
-        std::cout << "Invalid Instream" << std::endl;
+        atomic_cout << "Invalid Instream" << std::endl;
     }
 
     return 0;
@@ -1711,7 +1733,7 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
             }
             else if(flag != "")
             {
-                std::cout << "\nInvalid Flag" << std::endl;
+                atomic_cout << "\nInvalid Flag" << std::endl;
                 return -1;
             }
         }
@@ -1727,8 +1749,8 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
         check_stream_format = (strcmp(instream->current_format(), outstream->current_format()) == 0);
         if(!check_stream_format)
         {
-            std::cout << "\n[WARNING] Stream formats do not match. \nInstream has stream format: " << instream->current_format() <<
-                         "\nOutstream has stream format: " << outstream->current_format() << std::endl;
+            atomic_cout << "\n[WARNING] Stream formats do not match. \nInstream has stream format: " << instream->current_format()
+                        << "\nOutstream has stream format: " << outstream->current_format() << std::endl;
         }
 
         avdecc_lib::end_station *outstream_end_station = controller_obj->get_end_station_by_index(outstream_end_station_index);
@@ -1739,7 +1761,7 @@ int cmd_line::cmd_connect_rx(uint32_t instream_end_station_index,
     }
     else
     {
-        std::cout << "Invalid ACMP Connection" << std::endl;
+        atomic_cout << "Invalid ACMP Connection" << std::endl;
     }
 
     return 0;
@@ -1777,10 +1799,89 @@ int cmd_line::cmd_disconnect_rx(uint32_t instream_end_station_index,
     }
     else
     {
-        std::cout << "Invalid ACMP Disconnection" << std::endl;
+        atomic_cout << "Invalid ACMP Disconnection" << std::endl;
     }
 
     return 0;
+}
+
+void cmd_line::cmd_show_connections()
+{
+    // Use the same notification ID for all the read commands
+    intptr_t cmd_notification_id = get_next_notification_id();
+
+    for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
+    {
+        avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(i);
+        avdecc_lib::entity_descriptor *entity;
+        avdecc_lib::configuration_descriptor *descriptor;
+        if (get_current_entity_and_descriptor(end_station, &entity, &descriptor))
+            continue;
+
+        size_t stream_input_desc_count = descriptor->stream_input_desc_count();
+        for(uint32_t j = 0; j < stream_input_desc_count; j++)
+        {
+            avdecc_lib::stream_input_descriptor *instream = descriptor->get_stream_input_desc_by_index(j);
+            instream->send_get_rx_state_cmd((void *)cmd_notification_id);
+        }
+
+        size_t stream_output_desc_count = descriptor->stream_output_desc_count();
+
+        for(uint32_t j = 0; j < stream_output_desc_count; j++)
+        {
+            // Only wait when issuing the last packet
+            const bool last_command = (i == controller_obj->get_end_station_count() - 1) &&
+                                      (j == stream_output_desc_count - 1);
+            if (last_command)
+                sys->set_wait_for_next_cmd();
+            avdecc_lib::stream_output_descriptor *outstream = descriptor->get_stream_output_desc_by_index(j);
+            outstream->send_get_tx_state_cmd((void *)cmd_notification_id);
+            if (last_command)
+                sys->get_last_resp_status();
+        }
+    }
+
+    for(uint32_t in_index = 0; in_index < controller_obj->get_end_station_count(); in_index++)
+    {
+        avdecc_lib::end_station *in_end_station = controller_obj->get_end_station_by_index(in_index);
+        avdecc_lib::entity_descriptor *in_entity;
+        avdecc_lib::configuration_descriptor *in_descriptor;
+        if (get_current_entity_and_descriptor(in_end_station, &in_entity, &in_descriptor))
+            continue;
+
+        size_t stream_input_desc_count = in_descriptor->stream_input_desc_count();
+        for(uint32_t in_stream_index = 0; in_stream_index < stream_input_desc_count; in_stream_index++)
+        {
+            avdecc_lib::stream_input_descriptor *instream = in_descriptor->get_stream_input_desc_by_index(in_stream_index);
+            if (!instream->get_rx_state_connection_count())
+                continue;
+
+            for(uint32_t out_index = 0; out_index < controller_obj->get_end_station_count(); out_index++)
+            {
+                avdecc_lib::end_station *out_end_station = controller_obj->get_end_station_by_index(out_index);
+                avdecc_lib::entity_descriptor *out_entity;
+                avdecc_lib::configuration_descriptor *out_descriptor;
+                if (get_current_entity_and_descriptor(out_end_station, &out_entity, &out_descriptor))
+                    continue;
+
+                size_t stream_output_desc_count = out_descriptor->stream_output_desc_count();
+                for(uint32_t out_stream_index = 0; out_stream_index < stream_output_desc_count; out_stream_index++)
+                {
+                    avdecc_lib::stream_output_descriptor *outstream = out_descriptor->get_stream_output_desc_by_index(out_stream_index);
+                    if (!outstream->get_tx_state_connection_count() ||
+                        (instream->get_rx_state_stream_id() != outstream->get_tx_state_stream_id()))
+                    {
+                        continue;
+                    }
+
+                    atomic_cout << "0x" << std::setw(16) << std::hex << std::setfill('0') << out_end_station->guid()
+                                << "[" << in_stream_index << "] -> "
+                                << "0x" << std::setw(16) << std::hex << std::setfill('0') << in_end_station->guid()
+                                << "[" << out_stream_index << "]" << std::endl;
+                }
+            }
+        }
+    }
 }
 
 int cmd_line::cmd_get_tx_state(uint32_t outstream_end_station_index, uint16_t outstream_desc_index)
@@ -1803,15 +1904,15 @@ int cmd_line::cmd_get_tx_state(uint32_t outstream_end_station_index, uint16_t ou
 
         if(status == avdecc_lib::ACMP_STATUS_SUCCESS)
         {
-            std::cout << "\nstream_id = 0x" << std::hex << outstream->get_tx_state_stream_id();
-            std::cout << "\nstream_dest_mac = 0x" << std::hex << outstream->get_tx_state_stream_dest_mac();
-            std::cout << "\nconnection_count = " << std::dec << outstream->get_tx_state_connection_count();
-            std::cout << "\nstream_vlan_id = " << std::dec << outstream->get_tx_state_stream_vlan_id() << std::endl;
+            atomic_cout << "\nstream_id = 0x" << std::hex << outstream->get_tx_state_stream_id();
+            atomic_cout << "\nstream_dest_mac = 0x" << std::hex << outstream->get_tx_state_stream_dest_mac();
+            atomic_cout << "\nconnection_count = " << std::dec << outstream->get_tx_state_connection_count();
+            atomic_cout << "\nstream_vlan_id = " << std::dec << outstream->get_tx_state_stream_vlan_id() << std::endl;
         }
     }
     else
     {
-        std::cout << "Invalid GET Talker Connection State" << std::endl;
+        atomic_cout << "Invalid GET Talker Connection State" << std::endl;
     }
 
     return 0;
@@ -1838,18 +1939,18 @@ int cmd_line::cmd_get_rx_state(uint32_t instream_end_station_index, uint16_t ins
 
         if(status == avdecc_lib::ACMP_STATUS_SUCCESS)
         {
-            std::cout << "\nstream_id = 0x" << std::hex << instream->get_rx_state_stream_id();
-            std::cout << "\ntalker_unique_id = " << std::dec <<  std::dec << instream->get_rx_state_talker_unique_id();
-            std::cout << "\nlistener_unique_id = " << std::dec << instream->get_rx_state_listener_unique_id();
-            std::cout << "\nstream_dest_mac = 0x" << std::hex << instream->get_rx_state_stream_dest_mac();
-            std::cout << "\nconnection_count = " << std::dec << instream->get_rx_state_connection_count();
-            std::cout << "\nflags = " << std::dec << instream->get_rx_state_flags();
-            std::cout << "\nstream_vlan_id = " << std::dec << instream->get_rx_state_stream_vlan_id() << std::endl;
+            atomic_cout << "\nstream_id = 0x" << std::hex << instream->get_rx_state_stream_id();
+            atomic_cout << "\ntalker_unique_id = " << std::dec <<  std::dec << instream->get_rx_state_talker_unique_id();
+            atomic_cout << "\nlistener_unique_id = " << std::dec << instream->get_rx_state_listener_unique_id();
+            atomic_cout << "\nstream_dest_mac = 0x" << std::hex << instream->get_rx_state_stream_dest_mac();
+            atomic_cout << "\nconnection_count = " << std::dec << instream->get_rx_state_connection_count();
+            atomic_cout << "\nflags = " << std::dec << instream->get_rx_state_flags();
+            atomic_cout << "\nstream_vlan_id = " << std::dec << instream->get_rx_state_stream_vlan_id() << std::endl;
         }
     }
     else
     {
-        std::cout << "Invalid Get Listener Connection State" << std::endl;
+        atomic_cout << "Invalid Get Listener Connection State" << std::endl;
     }
 
     return 0;
@@ -1875,17 +1976,17 @@ int cmd_line::cmd_get_tx_connection(uint32_t outstream_end_station_index, uint16
 
         if(status == avdecc_lib::ACMP_STATUS_SUCCESS)
         {
-            std::cout << "\nstream_id = 0x" << std::hex << outstream->get_tx_connection_stream_id();
-            std::cout << "\nlistener_entity_id = 0x" << std::hex << outstream->get_tx_connection_listener_entity_id();
-            std::cout << "\nlistener_unique_id = " << std::dec << outstream->get_tx_connection_listener_unique_id();
-            std::cout << "\nstream_dest_mac = 0x" << std::hex << outstream->get_tx_connection_stream_dest_mac();
-            std::cout << "\nconnection_count = " << std::dec << outstream->get_tx_connection_connection_count();
-            std::cout << "\nstream_vlan_id = " << std::dec << outstream->get_tx_connection_stream_vlan_id() << std::endl;
+            atomic_cout << "\nstream_id = 0x" << std::hex << outstream->get_tx_connection_stream_id();
+            atomic_cout << "\nlistener_entity_id = 0x" << std::hex << outstream->get_tx_connection_listener_entity_id();
+            atomic_cout << "\nlistener_unique_id = " << std::dec << outstream->get_tx_connection_listener_unique_id();
+            atomic_cout << "\nstream_dest_mac = 0x" << std::hex << outstream->get_tx_connection_stream_dest_mac();
+            atomic_cout << "\nconnection_count = " << std::dec << outstream->get_tx_connection_connection_count();
+            atomic_cout << "\nstream_vlan_id = " << std::dec << outstream->get_tx_connection_stream_vlan_id() << std::endl;
         }
     }
     else
     {
-        std::cout << "Invalid GET Talker Connection State" << std::endl;
+        atomic_cout << "Invalid GET Talker Connection State" << std::endl;
     }
 
     return 0;
@@ -1914,7 +2015,7 @@ int cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_name, u
     }
     else
     {
-        std::cout << "\nInvalid flag" << std::endl;
+        atomic_cout << "\nInvalid flag" << std::endl;
         return -1;
     }
 
@@ -1952,7 +2053,7 @@ int cmd_line::cmd_acquire_entity(std::string flag_name, std::string desc_name, u
     }
     else
     {
-        std::cout << "cmd_acquire_entity error" << std::endl;
+        atomic_cout << "cmd_acquire_entity error" << std::endl;
         return -1;
     }
 
@@ -1979,7 +2080,7 @@ int cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_name, uint
     }
     else
     {
-        std::cout << "\nInvalid flag" << std::endl;
+        atomic_cout << "\nInvalid flag" << std::endl;
         return -1;
     }
 
@@ -1996,7 +2097,7 @@ int cmd_line::cmd_lock_entity(std::string flag_name, std::string desc_name, uint
         return 1;
     }
 
-    //        std::cout << "Need to implement cmd_lock_entity" << std::endl;
+    //        atomic_cout << "Need to implement cmd_lock_entity" << std::endl;
 
     return 0;
 }
@@ -2049,11 +2150,11 @@ int cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, 
             stream_format = utility->ieee1722_format_value_to_name(stream_input_desc_ref->set_stream_format_stream_format());
             if(stream_format == "UNKNOWN")
             {
-                std::cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->set_stream_format_stream_format() << std::endl;
+                atomic_cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->set_stream_format_stream_format() << std::endl;
             }
             else
             {
-                std::cout << "Stream format: " << stream_format << std::endl;
+                atomic_cout << "Stream format: " << stream_format << std::endl;
             }
         }
 
@@ -2072,11 +2173,11 @@ int cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, 
             stream_format = utility->ieee1722_format_value_to_name(stream_output_desc_ref->set_stream_format_stream_format());
             if(stream_format == "UNKNOWN")
             {
-                std::cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_format_stream_format() << std::endl;
+                atomic_cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_format_stream_format() << std::endl;
             }
             else
             {
-                std::cout << "Stream format: " << stream_format << std::endl;
+                atomic_cout << "Stream format: " << stream_format << std::endl;
             }
         }
 
@@ -2084,7 +2185,7 @@ int cmd_line::cmd_set_stream_format(std::string desc_name, uint16_t desc_index, 
     }
     else
     {
-        std::cout << "cmd_get_stream_format error" << std::endl;
+        atomic_cout << "cmd_get_stream_format error" << std::endl;
         return -1;
     }
 }
@@ -2109,11 +2210,11 @@ int cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_index)
             stream_format = utility->ieee1722_format_value_to_name(stream_input_desc_ref->get_stream_format_stream_format());
             if(stream_format == "UNKNOWN")
             {
-                std::cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->get_stream_format_stream_format() << std::endl;
+                atomic_cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->get_stream_format_stream_format() << std::endl;
             }
             else
             {
-                std::cout << "Stream format: " << stream_format << std::endl;
+                atomic_cout << "Stream format: " << stream_format << std::endl;
             }
         }
 
@@ -2132,11 +2233,11 @@ int cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_index)
             stream_format = utility->ieee1722_format_value_to_name(stream_output_desc_ref->get_stream_format_stream_format());
             if(stream_format == "UNKNOWN")
             {
-                std::cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_format_stream_format() << std::endl;
+                atomic_cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_format_stream_format() << std::endl;
             }
             else
             {
-                std::cout << "Stream format: " << stream_format << std::endl;
+                atomic_cout << "Stream format: " << stream_format << std::endl;
             }
         }
 
@@ -2144,7 +2245,7 @@ int cmd_line::cmd_get_stream_format(std::string desc_name, uint16_t desc_index)
     }
     else
     {
-        std::cout << "cmd_get_stream_format error" << std::endl;
+        atomic_cout << "cmd_get_stream_format error" << std::endl;
         return -1;
     }
 }
@@ -2159,7 +2260,7 @@ int cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, st
 
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
-        std::cout << "STREAM INPUT unsupported at this time" << std::endl ;
+        atomic_cout << "STREAM INPUT unsupported at this time" << std::endl ;
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
     {
@@ -2172,17 +2273,17 @@ int cmd_line::cmd_set_stream_info(std::string desc_name, uint16_t desc_index, st
             status = sys->get_last_resp_status();
             if(status != avdecc_lib::AEM_STATUS_SUCCESS)
             {
-                std::cout << "cmd_get_stream_info error" << std::endl;
+                atomic_cout << "cmd_get_stream_info error" << std::endl;
                 return -1;
             }
         } else {
-            std::cout << "Supported fields are:" << std::endl <<
+            atomic_cout << "Supported fields are:" << std::endl <<
                 "stream_vlan_id" << std::endl ;
         }
     }
     else
     {
-        std::cout << "cmd_get_stream_info invalid descriptor type" << std::endl;
+        atomic_cout << "cmd_get_stream_info invalid descriptor type" << std::endl;
         return -1;
     }
     return 0;
@@ -2208,15 +2309,15 @@ int cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
             stream_format = utility->ieee1722_format_value_to_name(stream_input_desc_ref->get_stream_info_stream_format());
             if(stream_format == "UNKNOWN")
             {
-                std::cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->get_stream_info_stream_format() << std::endl;
+                atomic_cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->get_stream_info_stream_format() << std::endl;
             }
             else
             {
-                std::cout << "Stream format: " << stream_format << std::endl;
+                atomic_cout << "Stream format: " << stream_format << std::endl;
             }
 
-            std::cout << "Stream ID: 0x" << std::hex << stream_input_desc_ref->get_stream_info_stream_id() << std::endl;
-            std::cout << "MSRP Accumulated Latency: " << std::dec << stream_input_desc_ref->get_stream_info_msrp_accumulated_latency() << std::endl;
+            atomic_cout << "Stream ID: 0x" << std::hex << stream_input_desc_ref->get_stream_info_stream_id() << std::endl;
+            atomic_cout << "MSRP Accumulated Latency: " << std::dec << stream_input_desc_ref->get_stream_info_msrp_accumulated_latency() << std::endl;
         }
 
         return 1;
@@ -2234,28 +2335,28 @@ int cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
             stream_format = utility->ieee1722_format_value_to_name(stream_output_desc_ref->get_stream_info_stream_format());
             if(stream_format == "UNKNOWN")
             {
-                std::cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_info_stream_format() << std::endl;
+                atomic_cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_info_stream_format() << std::endl;
             }
             else
             {
-                std::cout << "Stream format: " << stream_format << std::endl;
+                atomic_cout << "Stream format: " << stream_format << std::endl;
             }
-            std::cout << "Flags: 0x" << std::hex << stream_output_desc_ref->get_stream_info_flags() << std::endl;
+            atomic_cout << "Flags: 0x" << std::hex << stream_output_desc_ref->get_stream_info_flags() << std::endl;
             if (stream_output_desc_ref->get_stream_info_flag("STREAM_ID_VALID"))
-              std::cout << "Stream ID: 0x" << std::hex << std::setfill('0') << std::setw(16) <<
+              atomic_cout << "Stream ID: 0x" << std::hex << std::setfill('0') << std::setw(16) <<
                 stream_output_desc_ref->get_stream_info_stream_id() << std::endl;
             if (stream_output_desc_ref->get_stream_info_flag("STREAM_DEST_MAC_VALID"))
-              std::cout << "Stream Destination MAC: " << std::hex <<
+              atomic_cout << "Stream Destination MAC: " << std::hex <<
                 stream_output_desc_ref->get_stream_info_stream_dest_mac() << std::endl;
             if (stream_output_desc_ref->get_stream_info_flag("STREAM_VLAN_ID_VALID"))
-              std::cout << "Stream VLAN ID: " <<
+              atomic_cout << "Stream VLAN ID: " <<
                 stream_output_desc_ref->get_stream_info_stream_vlan_id() << std::endl;
         }
         return 1;
     }
     else
     {
-        std::cout << "cmd_get_stream_info error" << std::endl;
+        atomic_cout << "cmd_get_stream_info error" << std::endl;
         return -1;
     }
 }
@@ -2263,14 +2364,14 @@ int cmd_line::cmd_get_stream_info(std::string desc_name, uint16_t desc_index)
 int cmd_line::cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name)
 {
 
-    std::cout << "Need to implement cmd_set_name" << std::endl;
+    atomic_cout << "Need to implement cmd_set_name" << std::endl;
 
     return 0;
 }
 
 int cmd_line::cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index)
 {
-    std::cout << "Need to implement cmd_get_name" << std::endl;
+    atomic_cout << "Need to implement cmd_get_name" << std::endl;
 
     return 0;
 }
@@ -2291,24 +2392,24 @@ int cmd_line::cmd_set_sampling_rate(std::string desc_name, uint16_t desc_index, 
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            std::cout << "Sampling rate: " << std::dec << audio_unit_desc_ref->set_sampling_rate_sampling_rate();
+            atomic_cout << "Sampling rate: " << std::dec << audio_unit_desc_ref->set_sampling_rate_sampling_rate();
         }
 
         return 1;
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_VIDEO_CLUSTER)
     {
-        std::cout << "\nVideo Cluster descriptor is not implemented." << std::endl;
+        atomic_cout << "\nVideo Cluster descriptor is not implemented." << std::endl;
         return 1;
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_SENSOR_CLUSTER)
     {
-        std::cout << "\nSensor Cluster descriptor is not implemented." << std::endl;
+        atomic_cout << "\nSensor Cluster descriptor is not implemented." << std::endl;
         return 1;
     }
     else
     {
-        std::cout << "cmd_get_sampling_rate error" << std::endl;
+        atomic_cout << "cmd_get_sampling_rate error" << std::endl;
         return -1;
     }
 
@@ -2331,24 +2432,24 @@ int cmd_line::cmd_get_sampling_rate(std::string desc_name, uint16_t desc_index)
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            std::cout << "Sampling rate: " << std::dec << audio_unit_desc_ref->get_sampling_rate_sampling_rate();
+            atomic_cout << "Sampling rate: " << std::dec << audio_unit_desc_ref->get_sampling_rate_sampling_rate();
         }
 
         return 1;
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_VIDEO_CLUSTER)
     {
-        std::cout << "\nVideo Cluster descriptor is not implemented." << std::endl;
+        atomic_cout << "\nVideo Cluster descriptor is not implemented." << std::endl;
         return 1;
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_SENSOR_CLUSTER)
     {
-        std::cout << "\nSensor Cluster descriptor is not implemented." << std::endl;
+        atomic_cout << "\nSensor Cluster descriptor is not implemented." << std::endl;
         return 1;
     }
     else
     {
-        std::cout << "cmd_get_sampling_rate error" << std::endl;
+        atomic_cout << "cmd_get_sampling_rate error" << std::endl;
         return -1;
     }
 
@@ -2367,7 +2468,7 @@ int cmd_line::cmd_set_clock_source(std::string desc_name, uint16_t desc_index, u
 
     if(status == avdecc_lib::AEM_STATUS_SUCCESS)
     {
-        std::cout << "Clock source index : " << std::dec << clk_domain_desc_ref->set_clock_source_clock_source_index() << std::endl;
+        atomic_cout << "Clock source index : " << std::dec << clk_domain_desc_ref->set_clock_source_clock_source_index() << std::endl;
     }
 
     return 0;
@@ -2392,7 +2493,7 @@ int cmd_line::cmd_get_clock_source(std::string desc_name, uint16_t desc_index)
 
     if(status == avdecc_lib::AEM_STATUS_SUCCESS)
     {
-        std::cout << "Clock source index : " << std::dec << clk_domain_desc_ref->get_clock_source_by_index(clk_src_index) << std::endl;
+        atomic_cout << "Clock source index : " << std::dec << clk_domain_desc_ref->get_clock_source_by_index(clk_src_index) << std::endl;
     }
 
     return 0;
@@ -2425,7 +2526,7 @@ int cmd_line::cmd_start_streaming(std::string desc_name, uint16_t desc_index)
     }
     else
     {
-        std::cout << "cmd_start_streaming error" << std::endl;
+        atomic_cout << "cmd_start_streaming error" << std::endl;
         return -1;
     }
 }
@@ -2457,14 +2558,29 @@ int cmd_line::cmd_stop_streaming(std::string desc_name, uint16_t desc_index)
     }
     else
     {
-        std::cout << "cmd_stop_streaming error" << std::endl;
+        atomic_cout << "cmd_stop_streaming error" << std::endl;
         return -1;
     }
 }
 
+void cmd_line::cmd_identify(uint32_t end_station_index, bool turn_on)
+{
+    if (end_station_index >= controller_obj->get_end_station_count())
+    {
+        atomic_cout << "Invalid End Station" << std::endl;
+    }
+
+    avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(end_station_index);
+
+    intptr_t cmd_notification_id = get_next_notification_id();
+    sys->set_wait_for_next_cmd();
+    end_station->send_identify((void *)cmd_notification_id, turn_on);
+    sys->get_last_resp_status();
+}
+
 void cmd_line::cmd_path()
 {
-    std::cout << "Log path: " << log_path << std::endl;
+    atomic_cout << "Log path: " << log_path << std::endl;
 }
 
 int cmd_line::cmd_path(std::string new_log_path)
