@@ -94,6 +94,8 @@ public:
 private:
     int print_interfaces_and_select(char *interface);
     int check_current_end_station() const;
+    int get_current_entity_and_descriptor(avdecc_lib::end_station *end_station,
+        avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **descriptor);
 
     void cmd_line_help_init();
 

@@ -132,6 +132,24 @@ int cmd_line::check_current_end_station() const
     return 0;
 }
 
+int cmd_line::get_current_entity_and_descriptor(avdecc_lib::end_station *end_station,
+        avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **descriptor)
+{
+    uint16_t current_entity = end_station->get_current_entity_index();
+    if (current_entity >= end_station->entity_desc_count())
+        return 1;
+
+    *entity = end_station->get_entity_desc_by_index(current_entity);
+
+    uint16_t current_config = end_station->get_current_config_index();
+    if (current_config >= (*entity)->config_desc_count())
+        return 1;
+
+    *descriptor = (*entity)->get_config_desc_by_index(current_config);
+
+    return 0;
+}
+
 #define END_STATION_HELP "stands for End Station (index or GUID)."
 #define DST_END_STATION_HELP "stands for destination End Station (index or GUID)."
 #define SRC_END_STATION_HELP "stands for source End Station (index or GUID)."
@@ -1539,30 +1557,25 @@ int cmd_line::cmd_connect()
     for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
     {
         avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(i);
+        avdecc_lib::entity_descriptor *entity;
+        avdecc_lib::configuration_descriptor *descriptor;
+        if (get_current_entity_and_descriptor(end_station, &entity, &descriptor))
+            continue;
+
         end_station_mac = end_station->mac();
-
-        uint16_t current_entity = end_station->get_current_entity_index();
-        if (current_entity >= end_station->entity_desc_count())
-            continue;
-
-        avdecc_lib::entity_descriptor *entity = end_station->get_entity_desc_by_index(current_entity);
         instream_end_station_name = entity->entity_name();
-
-        uint16_t current_config = end_station->get_current_config_index();
-        if (current_config >= entity->config_desc_count())
-            continue;
-
-        avdecc_lib::configuration_descriptor *desc_i = entity->get_config_desc_by_index(current_config);
-        stream_input_desc_count = desc_i->stream_input_desc_count();
+        stream_input_desc_count = descriptor->stream_input_desc_count();
 
         for(uint32_t j = 0; j < stream_input_desc_count; j++)
         {
-            avdecc_lib::stream_input_descriptor *input_descriptor = desc_i->get_stream_input_desc_by_index(j);
+            avdecc_lib::stream_input_descriptor *input_descriptor = descriptor->get_stream_input_desc_by_index(j);
             uint8_t *desc_desc_name = input_descriptor->object_name();
             format = input_descriptor->current_format();
 
-            std::cout << std::setw(5) << i << std::setw(20) << instream_end_station_name << utility->end_station_mac_to_string(end_station_mac) << "   " <<
-                         std::setw(3) << j << std::setw(19) << desc_desc_name << "   " << std::setw(14) << format << std::endl;
+            atomic_cout << std::setw(5) << i << std::setw(20) << instream_end_station_name
+                        << utility->end_station_mac_to_string(end_station_mac) << "   "
+                        << std::setw(3) << j << std::setw(19) << desc_desc_name << "   "
+                        << std::setw(14) << format << std::endl;
         }
     }
 
@@ -1572,30 +1585,25 @@ int cmd_line::cmd_connect()
     for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
     {
         avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(i);
+        avdecc_lib::entity_descriptor *entity;
+        avdecc_lib::configuration_descriptor *descriptor;
+        if (get_current_entity_and_descriptor(end_station, &entity, &descriptor))
+            continue;
+
         end_station_mac = end_station->mac();
-
-        uint16_t current_entity = end_station->get_current_entity_index();
-        if (current_entity >= end_station->entity_desc_count())
-            continue;
-
-        avdecc_lib::entity_descriptor *entity = end_station->get_entity_desc_by_index(current_entity);
         outstream_end_station_name = entity->entity_name();
-
-        uint16_t current_config = end_station->get_current_config_index();
-        if (current_config >= entity->config_desc_count())
-            continue;
-
-        avdecc_lib::configuration_descriptor *desc_i = entity->get_config_desc_by_index(current_config);
-        stream_output_desc_count = desc_i->stream_output_desc_count();
+        stream_output_desc_count = descriptor->stream_output_desc_count();
 
         for(uint32_t j = 0; j < stream_output_desc_count; j++)
         {
-            avdecc_lib::stream_output_descriptor *output_descriptor = desc_i->get_stream_output_desc_by_index(j);
+            avdecc_lib::stream_output_descriptor *output_descriptor = descriptor->get_stream_output_desc_by_index(j);
             uint8_t *src_desc_name = output_descriptor->object_name();
             format = output_descriptor->current_format();
 
-            std::cout << std::setw(5) << i << std::setw(20) << outstream_end_station_name << utility->end_station_mac_to_string(end_station_mac) << "   " <<
-                std::setw(3) << j << std::setw(19) << src_desc_name << "   " << std::setw(15) << format << std::endl;
+            atomic_cout << std::setw(5) << i << std::setw(20) << outstream_end_station_name
+                        << utility->end_station_mac_to_string(end_station_mac) << "   "
+                        << std::setw(3) << j << std::setw(19) << src_desc_name << "   "
+                        << std::setw(15) << format << std::endl;
         }
     }
 
@@ -1625,20 +1633,13 @@ int cmd_line::cmd_connect(uint32_t instream_end_station_index, uint16_t instream
             if(i == instream_end_station_index)
             {
                 avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(i);
+                avdecc_lib::entity_descriptor *entity;
+                avdecc_lib::configuration_descriptor *desc_i;
+                if (get_current_entity_and_descriptor(end_station, &entity, &desc_i))
+                    continue;
+
                 end_station_mac = end_station->mac();
-
-                uint16_t current_entity = end_station->get_current_entity_index();
-                if (current_entity >= end_station->entity_desc_count())
-                    continue;
-
-                avdecc_lib::entity_descriptor *entity = end_station->get_entity_desc_by_index(current_entity);
                 outstream_end_station_name = entity->entity_name();
-
-                uint16_t current_config = end_station->get_current_config_index();
-                if (current_config >= entity->config_desc_count())
-                    continue;
-
-                avdecc_lib::configuration_descriptor *desc_i = entity->get_config_desc_by_index(current_config);
                 stream_output_desc_count = desc_i->stream_output_desc_count();
 
                 for(uint32_t j = 0; j < stream_output_desc_count; j++)
