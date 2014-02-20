@@ -1169,6 +1169,10 @@ namespace avdecc_lib
                 }
                 break;
 
+            case JDKSAVDECC_AEM_COMMAND_SET_CONTROL:
+                proc_set_control_resp(notification_id, frame, frame_len, status);
+                break;
+
             default:
                 notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, cmd_type, 0, 0, 0, 0);
                 break;
@@ -1234,6 +1238,57 @@ namespace avdecc_lib
         return 0;
     }
 
+    int STDCALL end_station_imp::send_identify(void *notification_id, bool turn_on)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_set_control aem_command_set_control;
+
+        /***************************** AECP Common Data ****************************/
+        aem_command_set_control.aem_header.aecpdu_header.controller_entity_id = adp_ref->get_controller_guid();
+        // Fill aem_command_read_desc.sequence_id in AEM Controller State Machine
+        aem_command_set_control.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_SET_CONTROL;
+
+        /******************************************************** AECP Message Specific Data ********************************************************/
+        aem_command_set_control.descriptor_type = JDKSAVDECC_DESCRIPTOR_CONTROL;
+        aem_command_set_control.descriptor_index = get_adp()->get_identify_control_index();
+
+        /************************** Fill frame payload with AECP data and send the frame *************************/
+        aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
+							ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_CONTROL_COMMAND_LEN + 1);
+        ssize_t write_return_val = jdksavdecc_aem_command_set_control_write(&aem_command_set_control,
+                                                                                      cmd_frame.payload,
+                                                                                      ETHER_HDR_SIZE,
+                                                                                      sizeof(cmd_frame.payload));
+
+        if(write_return_val < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_command_set_control_write error");
+            return -1;
+        }
+
+        unsigned char data[1];
+        if (turn_on)
+            data[0] = 255;
+        else
+            data[0] = 0;
+        memcpy(&cmd_frame.payload[ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_CONTROL_COMMAND_LEN], data, 1);
+
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                            &cmd_frame,
+                                                            end_station_guid,
+                                                            JDKSAVDECC_AEM_COMMAND_SET_CONTROL_COMMAND_LEN + 1 -
+                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
+        return 0;
+    }
+
+    int end_station_imp::proc_set_control_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        memcpy(cmd_frame.payload, frame, frame_len);
+        aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE, false, &cmd_frame);
+        return 0;
+    }
 
     int end_station_imp::proc_rcvd_aecp_aa_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {

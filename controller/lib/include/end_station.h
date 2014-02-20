@@ -90,6 +90,15 @@ namespace avdecc_lib
                                                                                     unsigned length,
                                                                                     uint64_t address,
                                                                                     uint8_t memory_data[]) = 0;
+
+        /**
+         * Send a IDENTIFY command
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         * \param turn_on When true the end station will be told to enable identification.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_identify(void *notification_id, bool turn_on) = 0;
+
         /**
          * \param entity_index The index of the entity to set as current selected.
          */

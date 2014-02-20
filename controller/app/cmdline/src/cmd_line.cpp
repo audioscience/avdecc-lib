@@ -496,6 +496,22 @@ void cmd_line::cmd_line_help_init()
                                                   ));
 #endif
 
+    cmd_line_help_vec.push_back(new cmd_line_help("identify on",
+
+                                                  "identify on [e_s]\n" \
+                                                  "Send an IDENTIFY packet to enable identification.\n\n"
+                                                  "\nParameters"
+                                                  "\n\t e_s " END_STATION_HELP \
+                                                 ));
+
+    cmd_line_help_vec.push_back(new cmd_line_help("identify off",
+
+                                                  "identify on [e_s]\n" \
+                                                  "Send an IDENTIFY packet to disable identification.\n\n"
+                                                  "\nParameters"
+                                                  "\n\t e_s " END_STATION_HELP \
+                                                 ));
+
     cmd_line_help_vec.push_back(new cmd_line_help("path",
 
                                                   "path\n" \
@@ -2545,6 +2561,21 @@ int cmd_line::cmd_stop_streaming(std::string desc_name, uint16_t desc_index)
         atomic_cout << "cmd_stop_streaming error" << std::endl;
         return -1;
     }
+}
+
+void cmd_line::cmd_identify(uint32_t end_station_index, bool turn_on)
+{
+    if (end_station_index >= controller_obj->get_end_station_count())
+    {
+        atomic_cout << "Invalid End Station" << std::endl;
+    }
+
+    avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(end_station_index);
+
+    intptr_t cmd_notification_id = get_next_notification_id();
+    sys->set_wait_for_next_cmd();
+    end_station->send_identify((void *)cmd_notification_id, turn_on);
+    sys->get_last_resp_status();
 }
 
 void cmd_line::cmd_path()
