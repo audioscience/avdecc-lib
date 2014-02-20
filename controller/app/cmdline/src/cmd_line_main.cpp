@@ -174,6 +174,8 @@ int main(int argc, char *argv[])
         snprintf(shell_prompt, sizeof(shell_prompt), "$ ");
         input = readline(shell_prompt);
 
+        if (strlen(input) == 0)
+            continue;
         if (!input)
             break;
         std::string cmd_input(input);
