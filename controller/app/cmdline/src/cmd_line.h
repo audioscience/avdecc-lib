@@ -28,6 +28,7 @@
  */
 
 #pragma once
+#include <sstream>
 
 #include "net_interface.h"
 #include "system.h"
@@ -38,6 +39,27 @@
 
 #include "locale_descriptor.h"
 #include "strings_descriptor.h"
+#include "entity_descriptor.h"
+
+class AtomicOut : public std::ostream
+{
+  public:
+    AtomicOut() : std::ostream(0), buffer()
+    {
+      this->init(buffer.rdbuf());
+    }
+
+    ~AtomicOut()
+    {
+      // Use printf as cout seems to still be interleaved
+      printf("%s", buffer.str().c_str());
+    }
+
+  private:
+    std::ostringstream buffer;
+};
+
+#define atomic_cout AtomicOut()
 
 class cmd_line
 {
