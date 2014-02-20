@@ -140,6 +140,17 @@ namespace avdecc_lib
         int STDCALL send_entity_avail_cmd(void *notification_id);
         int proc_entity_avail_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
         int proc_rcvd_aem_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+        int STDCALL send_aecp_address_access_cmd(void *notification_id,
+                                        unsigned mode,
+                                        unsigned length,
+                                        uint64_t address,
+                                        uint8_t memory_data[]);
+
+        /**
+         * Process response received for the corresponding AECP Address Access command.
+         */
+        int proc_rcvd_aecp_aa_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+
         int proc_rcvd_acmp_resp(uint32_t msg_type, void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         void STDCALL set_current_entity_index(uint16_t entity_index);

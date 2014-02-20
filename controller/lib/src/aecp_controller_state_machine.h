@@ -22,7 +22,7 @@
  */
 
 /**
- * aem_controller_state_machine.h
+ * aecp_controller_state_machine.h
  *
  * AVDECC Entity Model Controller State Machine class
  */
@@ -33,16 +33,16 @@ namespace avdecc_lib
 {
     class inflight;
 
-    class aem_controller_state_machine
+    class aecp_controller_state_machine
     {
     private:
         uint16_t aecp_seq_id; // The sequence id used for identifying the AECP command that a response is for
         std::vector<inflight> inflight_cmds;
 
     public:
-        aem_controller_state_machine();
+        aecp_controller_state_machine();
 
-        ~aem_controller_state_machine();
+        ~aecp_controller_state_machine();
 
         /**
          * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
@@ -52,7 +52,7 @@ namespace avdecc_lib
         /**
          * Initialize and fill Ethernet frame payload with 1722 AECP Header information.
          */
-        void common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_guid);
+        void common_hdr_init(int message_type, struct jdksavdecc_frame *cmd_frame, uint64_t target_guid, uint32_t cd_len);
 
         /**
          * Process the Send Command state of the AEM Controller State Machine.
@@ -112,6 +112,6 @@ namespace avdecc_lib
         int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
     };
 
-    extern aem_controller_state_machine *aem_controller_state_machine_ref;
+    extern aecp_controller_state_machine *aecp_controller_state_machine_ref;
 }
 
