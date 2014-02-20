@@ -188,6 +188,11 @@ public:
                           uint16_t outstream_desc_index);
 
     /**
+     * Display all current connections.
+     */
+    void cmd_show_connections();
+
+    /**
      * Send a GET_TX_STATE command to get Talker source stream connection state.
      */
     int cmd_get_tx_state(uint32_t outstream_end_station_index, uint16_t outstream_desc_index);

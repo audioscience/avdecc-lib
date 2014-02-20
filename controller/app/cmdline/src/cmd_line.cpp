@@ -63,7 +63,9 @@ cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uin
     : test_mode(test_mode)
 {
     current_end_station = 0;
-    notification_id = 0;
+
+    // Start non-zero so as not to be confused with commands without notification
+    notification_id = 1;
 
     cmd_line_help_init();
 
@@ -1785,6 +1787,85 @@ int cmd_line::cmd_disconnect_rx(uint32_t instream_end_station_index,
     }
 
     return 0;
+}
+
+void cmd_line::cmd_show_connections()
+{
+    // Use the same notification ID for all the read commands
+    intptr_t cmd_notification_id = get_next_notification_id();
+
+    for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
+    {
+        avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(i);
+        avdecc_lib::entity_descriptor *entity;
+        avdecc_lib::configuration_descriptor *descriptor;
+        if (get_current_entity_and_descriptor(end_station, &entity, &descriptor))
+            continue;
+
+        size_t stream_input_desc_count = descriptor->stream_input_desc_count();
+        for(uint32_t j = 0; j < stream_input_desc_count; j++)
+        {
+            avdecc_lib::stream_input_descriptor *instream = descriptor->get_stream_input_desc_by_index(j);
+            instream->send_get_rx_state_cmd((void *)cmd_notification_id);
+        }
+
+        size_t stream_output_desc_count = descriptor->stream_output_desc_count();
+
+        for(uint32_t j = 0; j < stream_output_desc_count; j++)
+        {
+            // Only wait when issuing the last packet
+            const bool last_command = (i == controller_obj->get_end_station_count() - 1) &&
+                                      (j == stream_output_desc_count - 1);
+            if (last_command)
+                sys->set_wait_for_next_cmd();
+            avdecc_lib::stream_output_descriptor *outstream = descriptor->get_stream_output_desc_by_index(j);
+            outstream->send_get_tx_state_cmd((void *)cmd_notification_id);
+            if (last_command)
+                sys->get_last_resp_status();
+        }
+    }
+
+    for(uint32_t in_index = 0; in_index < controller_obj->get_end_station_count(); in_index++)
+    {
+        avdecc_lib::end_station *in_end_station = controller_obj->get_end_station_by_index(in_index);
+        avdecc_lib::entity_descriptor *in_entity;
+        avdecc_lib::configuration_descriptor *in_descriptor;
+        if (get_current_entity_and_descriptor(in_end_station, &in_entity, &in_descriptor))
+            continue;
+
+        size_t stream_input_desc_count = in_descriptor->stream_input_desc_count();
+        for(uint32_t in_stream_index = 0; in_stream_index < stream_input_desc_count; in_stream_index++)
+        {
+            avdecc_lib::stream_input_descriptor *instream = in_descriptor->get_stream_input_desc_by_index(in_stream_index);
+            if (!instream->get_rx_state_connection_count())
+                continue;
+
+            for(uint32_t out_index = 0; out_index < controller_obj->get_end_station_count(); out_index++)
+            {
+                avdecc_lib::end_station *out_end_station = controller_obj->get_end_station_by_index(out_index);
+                avdecc_lib::entity_descriptor *out_entity;
+                avdecc_lib::configuration_descriptor *out_descriptor;
+                if (get_current_entity_and_descriptor(out_end_station, &out_entity, &out_descriptor))
+                    continue;
+
+                size_t stream_output_desc_count = out_descriptor->stream_output_desc_count();
+                for(uint32_t out_stream_index = 0; out_stream_index < stream_output_desc_count; out_stream_index++)
+                {
+                    avdecc_lib::stream_output_descriptor *outstream = out_descriptor->get_stream_output_desc_by_index(out_stream_index);
+                    if (!outstream->get_tx_state_connection_count() ||
+                        (instream->get_rx_state_stream_id() != outstream->get_tx_state_stream_id()))
+                    {
+                        continue;
+                    }
+
+                    atomic_cout << "0x" << std::setw(16) << std::hex << std::setfill('0') << out_end_station->guid()
+                                << "[" << in_stream_index << "] -> "
+                                << "0x" << std::setw(16) << std::hex << std::setfill('0') << in_end_station->guid()
+                                << "[" << out_stream_index << "]" << std::endl;
+                }
+            }
+        }
+    }
 }
 
 int cmd_line::cmd_get_tx_state(uint32_t outstream_end_station_index, uint16_t outstream_desc_index)

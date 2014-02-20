@@ -236,6 +236,18 @@ int main(int argc, char *argv[])
                 avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
             }
         }
+        else if(input_argv.at(0) == "show")
+        {
+            if(input_argv.size() == 2 && input_argv.at(1) == "connections")
+            {
+                avdecc_cmd_line_ref->cmd_show_connections();
+            }
+            else
+            {
+                std::cout << "Invalid Command\n" << std::endl;
+                avdecc_cmd_line_ref->cmd_help_details(cmd_input_orig);
+            }
+        }
         else if(input_argv.at(0) == "list")
         {
             if(input_argv.size() == 1)
