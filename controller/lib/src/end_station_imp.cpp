@@ -161,7 +161,6 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_read_descriptor aem_command_read_desc;
-        ssize_t aem_command_read_desc_returned;
 
         /***************************** AECP Common Data ****************************/
         aem_command_read_desc.aem_header.aecpdu_header.controller_entity_id = adp_ref->get_controller_guid();
@@ -182,10 +181,9 @@ namespace avdecc_lib
                                                                                       ETHER_HDR_SIZE,
                                                                                       sizeof(cmd_frame.payload));
 
-        if(aem_command_read_desc_returned < 0)
+        if(write_return_val < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_read_desc_write error");
-            assert(aem_command_read_desc_returned >= 0);
             return -1;
         }
 
@@ -227,7 +225,6 @@ namespace avdecc_lib
         if(aem_cmd_read_desc_resp_returned < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_read_desc_res_read error");
-            assert(aem_cmd_read_desc_resp_returned >= 0);
             return -1;
         }
 
@@ -441,7 +438,7 @@ namespace avdecc_lib
                                 dynamic_cast<audio_unit_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_audio_unit_desc_by_index(0));
                     // TODO: Handle multiple audio units
 
-                    if (!audio_unit_desc_imp_ref) assert(audio_unit_desc_imp_ref == NULL);
+                    assert(audio_unit_desc_imp_ref != NULL);
 
                     switch(desc_type_index_from_audio_unit)
                     {
@@ -505,10 +502,7 @@ namespace avdecc_lib
                         stream_port_input_descriptor_imp *stream_port_input_desc_imp_ref = 
                             dynamic_cast<stream_port_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_port_input_desc_by_index(0));
 
-                        if(!stream_port_input_desc_imp_ref)
-                        {
-                            assert(stream_port_input_desc_imp_ref == NULL);
-                        }
+                        assert(stream_port_input_desc_imp_ref != NULL);
 
                         switch(desc_type_index_from_stream_port_input)
                         {
@@ -596,10 +590,7 @@ namespace avdecc_lib
                         stream_port_output_descriptor_imp *stream_port_output_desc_imp_ref = 
                             dynamic_cast<stream_port_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_port_output_desc_by_index(0));
 
-                        if(!stream_port_output_desc_imp_ref)
-                        {
-                            assert(stream_port_output_desc_imp_ref == NULL);
-                        }
+                        assert(stream_port_output_desc_imp_ref != NULL);
 
                         switch(desc_type_index_from_stream_port_output)
                         {
@@ -683,7 +674,6 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_entity_available aem_cmd_entity_avail;
-        ssize_t aem_cmd_entity_avail_returned;
 
         /**************************** AECP Common Data ****************************/
         aem_cmd_entity_avail.aem_header.aecpdu_header.controller_entity_id = adp_ref->get_controller_guid();
@@ -698,10 +688,9 @@ namespace avdecc_lib
                                                                                       ETHER_HDR_SIZE,
                                                                                       sizeof(cmd_frame.payload));
 
-        if(aem_cmd_entity_avail_returned < 0)
+        if(write_return_val < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_entity_avail_write error\n");
-            assert(aem_cmd_entity_avail_returned >= 0);
             return -1;
         }
 
@@ -732,7 +721,6 @@ namespace avdecc_lib
         if(aem_cmd_entity_avail_resp_returned < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_entity_avail_resp_read error\n");
-            assert(aem_cmd_entity_avail_resp_returned >= 0);
             return -1;
         }
 
@@ -1190,14 +1178,13 @@ namespace avdecc_lib
     }
 
 
-    int STDCALL end_station_imp::send_aecp_address_access_cmd(  void *notification_id,
+    int STDCALL end_station_imp::send_aecp_address_access_cmd(void *notification_id,
                                                         unsigned mode,
                                                         unsigned length,
                                                         uint64_t address,
                                                         uint8_t memory_data[])
     {
         struct jdksavdecc_aecp_aa aecp_cmd_aa_header;
-        ssize_t write_return_val;
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aecp_aa_tlv aa_tlv;
 
@@ -1208,15 +1195,14 @@ namespace avdecc_lib
         aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
                                                                 ETHER_HDR_SIZE + JDKSAVDECC_AECPDU_AA_LEN + JDKSAVDECC_AECPDU_AA_TLV_LEN + length);
 
-        write_return_val = jdksavdecc_aecp_aa_write(&aecp_cmd_aa_header,
-                                                    &cmd_frame.payload,
+        ssize_t write_return_val = jdksavdecc_aecp_aa_write(&aecp_cmd_aa_header,
+                                                    cmd_frame.payload,
                                                     ETHER_HDR_SIZE,
                                                     sizeof(cmd_frame.payload));
 
         if(write_return_val < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "jdksavdecc_aecp_aa_write error");
-            assert(write_return_val >= 0);
             return -1;
         }
 
@@ -1232,7 +1218,6 @@ namespace avdecc_lib
         if(write_return_val < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "jdksavdecc_aecp_aa_tlv_write error");
-            assert(write_return_val >= 0);
             return -1;
         }
 
