@@ -205,6 +205,7 @@ namespace avdecc_lib
         uint64_t end_station_guid;
         uint32_t disconnected_end_station_index;
         aecp_controller_state_machine_ref->tick();
+        acmp_controller_state_machine_ref->tick();
 
         if(adp_discovery_state_machine_ref->tick(end_station_guid) &&
            is_end_station_found_by_guid(end_station_guid, disconnected_end_station_index))
