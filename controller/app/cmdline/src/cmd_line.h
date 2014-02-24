@@ -295,6 +295,11 @@ public:
     int cmd_stop_streaming(std::string desc_name, uint16_t desc_index);
 
     /**
+     * Send a IDENTIFY command to either enable or disable identification.
+     */
+    void cmd_identify(uint32_t end_station_index, bool turn_on);
+
+    /**
      * Display the location of the redirected output file.
      */
     void cmd_path();

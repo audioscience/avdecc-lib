@@ -145,6 +145,8 @@ namespace avdecc_lib
                                         unsigned length,
                                         uint64_t address,
                                         uint8_t memory_data[]);
+        int STDCALL send_identify(void *notification_id, bool turn_on);
+        int proc_set_control_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         /**
          * Process response received for the corresponding AECP Address Access command.
