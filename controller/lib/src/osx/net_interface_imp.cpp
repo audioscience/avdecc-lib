@@ -36,6 +36,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+#include <net/bpf.h>
+
 #include "util_imp.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -116,7 +121,7 @@ namespace avdecc_lib
     int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     {
         uint32_t index;
-        int timeout_ms = 100;
+        int timeout_ms = 1;
 
         if(interface_num == 0)
         {
@@ -146,6 +151,25 @@ namespace avdecc_lib
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Unable to open the adapter. %s is not supported by pcap.", dev->name);
             pcap_freealldevs(all_devs); // Free the device list
+            exit(EXIT_FAILURE);
+        }
+
+        if(pcap_setnonblock(pcap_interface, 1, err_buf) < 0)
+        {
+            perror("pcap_setnonblock");
+            exit(EXIT_FAILURE);
+        }
+
+        int fd = pcap_fileno(pcap_interface);
+        if (fd == -1) {
+            perror("Can't get file descriptor for pcap_t");
+            exit(EXIT_FAILURE);
+        }
+
+        int on = 1;
+        if (ioctl(fd, BIOCIMMEDIATE, &on) == -1)
+        {
+            perror("BIOCIMMEDIATE error")
             exit(EXIT_FAILURE);
         }
 
@@ -198,7 +222,7 @@ namespace avdecc_lib
 
         uint16_t ether_type[1];
         ether_type[0] = JDKSAVDECC_AVTP_ETHERTYPE;
-        set_capture_ether_type(ether_type, 0); // Set the filter
+        set_capture_ether_type(ether_type, 1); // Set the filter
 
         free(buf);
         return 0;
@@ -266,7 +290,7 @@ namespace avdecc_lib
             return 1;
         }
 
-        return -2; // Timeout
+        return error;
     }
 
     int net_interface_imp::send_frame(uint8_t *frame, uint16_t mem_buf_len)
