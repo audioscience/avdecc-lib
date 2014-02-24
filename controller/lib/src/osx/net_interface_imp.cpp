@@ -169,7 +169,7 @@ namespace avdecc_lib
         int on = 1;
         if (ioctl(fd, BIOCIMMEDIATE, &on) == -1)
         {
-            perror("BIOCIMMEDIATE error")
+            perror("BIOCIMMEDIATE error");
             exit(EXIT_FAILURE);
         }
 
