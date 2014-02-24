@@ -1266,6 +1266,8 @@ namespace avdecc_lib
         struct jdksavdecc_frame cmd_frame;
         memcpy(cmd_frame.payload, frame, frame_len);
 
+        status = jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE);
+
         uint16_t sequence_id = jdksavdecc_aecp_aa_get_sequence_id(frame, ETHER_HDR_SIZE);
         uint16_t tlv_count = jdksavdecc_aecp_aa_get_tlv_count(frame, ETHER_HDR_SIZE);
 
