@@ -340,6 +340,8 @@ namespace avdecc_lib
                         case JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE:
                         {
                             end_station_vec.at(found_end_station_index)->proc_rcvd_aecp_aa_resp(notification_id, frame, frame_len, status);
+
+                            is_notification_id_valid = true;
                             break;
                         }
 
