@@ -2325,16 +2325,16 @@ int cmd_line::cmd_acquire_entity(int total_matched, std::vector<cli_argument*> a
     {
         cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd();
-        stream_input_desc_ref->send_acquire_entity_cmd((void *)notification_id, flag_id);
         avdecc_lib::stream_input_descriptor *stream_input_desc_ref = configuration->get_stream_input_desc_by_index(desc_index);
+        stream_input_desc_ref->send_acquire_entity_cmd((void *)cmd_notification_id, flag_id);
         sys->get_last_resp_status();
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
     {
         cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd();
-        stream_output_desc_ref->send_get_stream_format_cmd((void *)notification_id);
         avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
+        stream_output_desc_ref->send_get_stream_format_cmd((void *)cmd_notification_id);
         sys->get_last_resp_status();
     }
     else
@@ -2603,9 +2603,9 @@ int cmd_line::cmd_set_stream_info(int total_matched, std::vector<cli_argument*> 
             uint16_t vlan_id = (uint16_t)atoi(new_stream_info_field_value.c_str());
             cmd_notification_id = get_next_notification_id();
             sys->set_wait_for_next_cmd();
-            stream_output_desc_ref->send_set_stream_info_vlan_id_cmd((void *)notification_id, vlan_id);
             status = sys->get_last_resp_status();
             avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
+            stream_output_desc_ref->send_set_stream_info_vlan_id_cmd((void *)cmd_notification_id, vlan_id);
             if(status != avdecc_lib::AEM_STATUS_SUCCESS)
             {
                 atomic_cout << "cmd_set_stream_info error" << std::endl;
@@ -2674,9 +2674,9 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
     {
         cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd();
-        stream_output_desc_ref->send_get_stream_info_cmd((void *)notification_id);
         status = sys->get_last_resp_status();
         avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
+        stream_output_desc_ref->send_get_stream_info_cmd((void *)cmd_notification_id);
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
