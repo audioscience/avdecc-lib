@@ -171,10 +171,10 @@ int main(int argc, char *argv[])
         snprintf(shell_prompt, sizeof(shell_prompt), "$ ");
         input = readline(shell_prompt);
 
-        if (strlen(input) == 0)
-            continue;
         if (!input)
             break;
+        if (strlen(input) == 0)
+            continue;
         std::string cmd_input(input);
         cmd_input_orig = cmd_input;
         add_history(input);
