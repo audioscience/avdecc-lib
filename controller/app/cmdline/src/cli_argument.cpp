@@ -1,3 +1,33 @@
+/*
+ * Licensed under the MIT License (MIT)
+ *
+ * Copyright (c) 2013 AudioScience Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+/**
+ * cli_argument.cpp
+ *
+ * CLI argument implementation
+ *
+ */
+
 #include <assert.h>
 
 #include "cmd_line.h"
@@ -28,36 +58,48 @@ const std::string &cli_argument::get_name() const
 
 int cli_argument::get_value_int() const
 {
+    // Base class method. Should never be called unless there is a disconnect between
+    // what the CLI (cmd_line_commands_init()) and the implementation method expect.
     assert(false);
     return 0;
 }
 
 uint32_t cli_argument::get_value_uint() const
 {
+    // Base class method. Should never be called unless there is a disconnect between
+    // what the CLI (cmd_line_commands_init()) and the implementation method expect.
     assert(false);
     return 0;
 }
 
 std::string cli_argument::get_value_str() const
 {
+    // Base class method. Should never be called unless there is a disconnect between
+    // what the CLI (cmd_line_commands_init()) and the implementation method expect.
     assert(false);
     return std::string("");
 }
 
 std::vector<int> cli_argument::get_all_value_int() const
 {
+    // Base class method. Should never be called unless there is a disconnect between
+    // what the CLI (cmd_line_commands_init()) and the implementation method expect.
     assert(false);
     return std::vector<int>();
 }
 
 std::vector<uint32_t> cli_argument::get_all_value_uint() const
 {
+    // Base class method. Should never be called unless there is a disconnect between
+    // what the CLI (cmd_line_commands_init()) and the implementation method expect.
     assert(false);
     return std::vector<uint32_t>();
 }
 
 std::vector<std::string> cli_argument::get_all_value_str() const
 {
+    // Base class method. Should never be called unless there is a disconnect between
+    // what the CLI (cmd_line_commands_init()) and the implementation method expect.
     assert(false);
     return std::vector<std::string>();
 }
@@ -195,7 +237,7 @@ bool cli_argument_string::set_value(cmd_line *cmd_ptr, std::string value_str)
 
 std::string cli_argument_string::get_value_str() const
 {
-    assert(m_is_valid);
+    assert(m_is_valid && m_values.size() == 1);
     return m_values[0];
 }
 
