@@ -105,6 +105,8 @@ private:
     int get_current_end_station(avdecc_lib::end_station **end_station) const;
     int get_current_entity_and_descriptor(avdecc_lib::end_station *end_station,
         avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **descriptor);
+    int get_current_end_station_entity_and_descriptor(avdecc_lib::end_station **end_station,
+        avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **configuration);
 
     void cmd_line_commands_init();
 

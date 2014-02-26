@@ -184,6 +184,20 @@ int cmd_line::get_current_entity_and_descriptor(avdecc_lib::end_station *end_sta
     return 0;
 }
 
+int cmd_line::get_current_end_station_entity_and_descriptor(avdecc_lib::end_station **end_station,
+        avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **configuration)
+{
+    if (get_current_end_station(end_station))
+        return 1;
+
+    if (get_current_entity_and_descriptor(*end_station, entity, configuration))
+    {
+        atomic_cout << "Current End Station not fully enumerated" << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
 void cmd_line::cmd_line_commands_init()
 {
     // Create the commands. Each command can have multiple sub-commands and/or multiple formats.
@@ -2265,10 +2279,6 @@ int cmd_line::cmd_get_tx_connection(int total_matched, std::vector<cli_argument*
 
 int cmd_line::cmd_acquire_entity(int total_matched, std::vector<cli_argument*> args)
 {
-    avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     std::string flag_name = args[0]->get_value_str();
     std::string desc_name = args[1]->get_value_str();
     uint16_t desc_index = args[2]->get_value_int();
@@ -2294,13 +2304,11 @@ int cmd_line::cmd_acquire_entity(int total_matched, std::vector<cli_argument*> a
         return 0;
     }
 
+    avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     if(desc_type_value == avdecc_lib::AEM_DESC_ENTITY)
     {
@@ -2335,10 +2343,6 @@ int cmd_line::cmd_acquire_entity(int total_matched, std::vector<cli_argument*> a
 
 int cmd_line::cmd_lock_entity(int total_matched, std::vector<cli_argument*> args)
 {
-    avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     std::string flag_name = args[0]->get_value_str();
     std::string desc_name = args[1]->get_value_str();
     uint16_t desc_index = args[2]->get_value_int();
@@ -2360,13 +2364,11 @@ int cmd_line::cmd_lock_entity(int total_matched, std::vector<cli_argument*> args
         return 0;
     }
 
+    avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     if(desc_type_value == avdecc_lib::AEM_DESC_ENTITY)
     {
@@ -2418,16 +2420,10 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument*
     std::string stream_format;
 
     avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
@@ -2488,16 +2484,10 @@ int cmd_line::cmd_get_stream_format(int total_matched, std::vector<cli_argument*
     std::string stream_format;
 
     avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
@@ -2560,16 +2550,10 @@ int cmd_line::cmd_set_stream_info(int total_matched, std::vector<cli_argument*> 
     std::string stream_format;
 
     avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
@@ -2611,16 +2595,10 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
     std::string stream_format;
 
     avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
@@ -2708,16 +2686,10 @@ int cmd_line::cmd_set_sampling_rate(int total_matched, std::vector<cli_argument*
     uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
 
     avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     if(desc_type_value == avdecc_lib::AEM_DESC_AUDIO_UNIT)
     {
@@ -2756,16 +2728,10 @@ int cmd_line::cmd_get_sampling_rate(int total_matched, std::vector<cli_argument*
     uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());
 
     avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     if(desc_type_value == avdecc_lib::AEM_DESC_AUDIO_UNIT)
     {
@@ -2803,16 +2769,10 @@ int cmd_line::cmd_set_clock_source(int total_matched, std::vector<cli_argument*>
     uint16_t new_clk_src_index = args[2]->get_value_int();
 
     avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     intptr_t cmd_notification_id = get_next_notification_id();
     sys->set_wait_for_next_cmd();
@@ -2842,16 +2802,10 @@ int cmd_line::cmd_get_clock_source(int total_matched, std::vector<cli_argument*>
     uint16_t clk_src_index = 0;
 
     avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     sys->set_wait_for_next_cmd();
     avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = configuration->get_clock_domain_desc_by_index(desc_index);
@@ -2876,16 +2830,10 @@ int cmd_line::cmd_start_streaming(int total_matched, std::vector<cli_argument*> 
     intptr_t cmd_notification_id = 0;
 
     avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
@@ -2920,16 +2868,10 @@ int cmd_line::cmd_stop_streaming(int total_matched, std::vector<cli_argument*> a
     intptr_t cmd_notification_id = 0;
 
     avdecc_lib::end_station *end_station;
-    if (get_current_end_station(&end_station))
-        return 0;
-
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
-    {
-        atomic_cout << "\nCurrent End Station not fully enumerated" << std::endl;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    }
 
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
