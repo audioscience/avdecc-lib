@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
         setvbuf(stdout, NULL, _IOLBF, 0);
     }
 
-    cmd_line *avdecc_cmd_line_ref = new cmd_line(notification_callback, log_callback, test_mode, interface);
+    cmd_line avdecc_cmd_line_ref(notification_callback, log_callback, test_mode, interface);
 
     std::vector<std::string> input_argv;
     size_t pos = 0;
@@ -198,12 +198,12 @@ int main(int argc, char *argv[])
             input_argv.push_back(cmd_input);
         }
 
-        if(avdecc_cmd_line_ref->is_output_redirected())
+        if(avdecc_cmd_line_ref.is_output_redirected())
         {
             std::cout << "\n> " << cmd_input_orig << std::endl;
         }
 
-        done = avdecc_cmd_line_ref->handle(input_argv);
+        done = avdecc_cmd_line_ref.handle(input_argv);
 
         is_input_valid = false;
         input_argv.clear();
@@ -212,6 +212,5 @@ int main(int argc, char *argv[])
 #endif
     }
 
-    delete avdecc_cmd_line_ref;
     return 0;
 }
