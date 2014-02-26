@@ -1644,13 +1644,16 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                     atomic_cout << "\nmac_address = 0x" << std::hex << avb_interface_desc->mac_addr();
                     atomic_cout << "\ninterface_flags = 0x" << std::hex << avb_interface_desc->interface_flags();
                     atomic_cout << "\nclock_identity = 0x" << std::hex << avb_interface_desc->clock_identity();
-                    atomic_cout << "\npriority1 = " << std::dec << avb_interface_desc->priority1();
-                    atomic_cout << "\nclock_class = " << std::dec << avb_interface_desc->clock_class();
+                    atomic_cout << "\npriority1 = " << std::dec << (unsigned int)avb_interface_desc->priority1();
+                    atomic_cout << "\nclock_class = " << std::dec << (unsigned int)avb_interface_desc->clock_class();
                     atomic_cout << "\noffset_scaled_log_variance = " << std::dec << avb_interface_desc->offset_scaled_log_variance();
-                    atomic_cout << "\nclock_accuracy = " << std::dec << avb_interface_desc->clock_accuracy();
-                    atomic_cout << "\npriority2 = " << std::dec << avb_interface_desc->priority2();
-                    atomic_cout << "\ndomain_number = " << std::dec << avb_interface_desc->domain_number();
-                    atomic_cout << "\nlog_sync_interval = " << std::dec << avb_interface_desc->log_sync_interval() << std::endl;
+                    atomic_cout << "\nclock_accuracy = " << std::dec << (unsigned int)avb_interface_desc->clock_accuracy();
+                    atomic_cout << "\npriority2 = " << std::dec << (unsigned int)avb_interface_desc->priority2();
+                    atomic_cout << "\ndomain_number = " << std::dec << (unsigned int)avb_interface_desc->domain_number();
+                    atomic_cout << "\nlog_sync_interval = " << std::dec << (unsigned int)avb_interface_desc->log_sync_interval();
+                    atomic_cout << "\nlog_announce_interval = " << std::dec << (unsigned int)avb_interface_desc->log_announce_interval();
+                    atomic_cout << "\nlog_pdelay_interval = " << std::dec << (unsigned int)avb_interface_desc->log_pdelay_interval();
+                    atomic_cout << "\nport_number = " << std::dec << avb_interface_desc->port_number() << std::endl;
                 }
             }
             break;
@@ -1764,7 +1767,7 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                     atomic_cout << "\npath_latency = " << std::dec << audio_cluster_desc->path_latency();
                     atomic_cout << "\nblock_latency = " << std::dec << audio_cluster_desc->block_latency();
                     atomic_cout << "\nchannel_count = " << std::dec << audio_cluster_desc->channel_count();
-                    atomic_cout << "\nformat = 0x" << std::hex << audio_cluster_desc->format() << std::endl;
+                    atomic_cout << "\nformat = 0x" << std::hex << (unsigned int)audio_cluster_desc->format() << std::endl;
                 }
             }
             break;
