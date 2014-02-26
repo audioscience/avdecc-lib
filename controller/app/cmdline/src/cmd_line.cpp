@@ -119,12 +119,10 @@ bool cmd_line::handle(std::vector<std::string> &args)
 int cmd_line::print_interfaces_and_select(char *interface)
 {
     int interface_num = -1;
-    char *dev_desc;
-    dev_desc = (char *)malloc(256);
 
     for(uint32_t i = 1; i < netif->devs_count() + 1; i++)
     {
-        dev_desc = netif->get_dev_desc_by_index(i - 1);
+        char *dev_desc = netif->get_dev_desc_by_index(i - 1);
         if (!interface)
         {
             printf("%d (%s)\n", i, dev_desc);
