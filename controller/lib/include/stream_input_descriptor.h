@@ -174,43 +174,43 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_format_stream_format() = 0;
 
         /**
-         * \return The stream info flags of a stream after sending a GET_STREAM_info command and
+         * \return The stream info flags of a stream after sending a GET_STREAM_INFO command and
          *	       receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_info_flags() = 0;
 
         /**
-         * \return The stream info stream format of a stream after sending a GET_STREAM_info command and
+         * \return The stream info stream format of a stream after sending a GET_STREAM_INFO command and
          *	       receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_stream_format() = 0;
 
         /**
-         * \return The stream info stream id of a stream after sending a GET_STREAM_info command and
+         * \return The stream info stream id of a stream after sending a GET_STREAM_INFO command and
          *	       receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_stream_id() = 0;
 
         /**
-         * \return The stream info MSRP accumulated latency of a stream after sending a GET_STREAM_info command and
+         * \return The stream info MSRP accumulated latency of a stream after sending a GET_STREAM_INFO command and
          *	       receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_info_msrp_accumulated_latency() = 0;
 
         /**
-         * \return The stream info stream destination MAC of a stream after sending a GET_STREAM_info command and
+         * \return The stream info stream destination MAC of a stream after sending a GET_STREAM_INFO command and
          *	       receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_stream_dest_mac() = 0;
 
         /**
-         * \return The stream info MSRP failure code of a stream after sending a GET_STREAM_info command and
+         * \return The stream info MSRP failure code of a stream after sending a GET_STREAM_INFO command and
          *	       receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_stream_info_msrp_failure_code() = 0;
 
         /**
-         * \return The stream info MSRP failure bridge id of a stream after sending a GET_STREAM_info command and
+         * \return The stream info MSRP failure bridge id of a stream after sending a GET_STREAM_INFO command and
          *	       receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_msrp_failure_bridge_id() = 0;
