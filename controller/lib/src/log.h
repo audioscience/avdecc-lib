@@ -61,7 +61,7 @@ namespace avdecc_lib
     public:
         log();
 
-        ~log();
+        virtual ~log();
 
         /**
          * Update the base log level for messages to be logged by the logging callback.
