@@ -32,6 +32,8 @@
 #include <stdint.h>
 #include "build.h"
 
+class net_interface;
+
 namespace avdecc_lib
 {
     class end_station;
