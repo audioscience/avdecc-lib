@@ -47,6 +47,11 @@
 
 #if defined(__MACH__) || defined(__linux__)
 #include <unistd.h>
+#include <stdio.h>
+
+// For TAB-completion
+#include "cli_argument.h"
+#include <set>
 #else
 #include "getopt.h"
 #endif
@@ -111,6 +116,104 @@ static void usage(char *argv[])
     exit(1);
 }
 
+#if defined(__MACH__) || defined(__linux__)
+const cli_command *top_level_command;
+const cli_command *current_command;
+int complettion_arg_index = 0;
+
+void split(const std::string &s, char delim, std::queue<std::string> &elems)
+{
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim))
+        elems.push(item);
+}
+
+char *command_generator(const char *text, int state)
+{
+    static std::list<std::string> completion_options;
+    static int len;
+
+    if (!current_command)
+        return NULL;
+
+    if (!state)
+    {
+        // New word to complete then set up the options to match
+
+        // Cache the len for efficiency
+        len = strlen(text);
+
+        // Try the sub-commands of the current command
+        completion_options = current_command->get_sub_command_names();
+        if (!completion_options.size())
+        {
+            // If there are no sub-commands then try the arguments
+            std::vector<cli_argument*> args;
+            std::set<std::string> arg_options;
+
+            // There can be multiple arguments at a given index as there
+            // can be multiple command formats
+            current_command->get_args(complettion_arg_index, args);
+            for (std::vector<cli_argument*>::iterator iter = args.begin();
+                 iter != args.end();
+                 ++iter)
+            {
+                (*iter)->get_completion_options(arg_options);
+            }
+            completion_options.insert(completion_options.end(),
+                    arg_options.begin(), arg_options.end());
+        }
+    }
+
+    // Return the next name which matches from the command list
+    while (completion_options.size())
+    {
+        std::string sub_command = completion_options.front();
+        completion_options.pop_front();
+
+        if (strncmp(sub_command.c_str(), text, len) == 0)
+            return (strdup(sub_command.c_str()));
+    }
+
+    // There are no matches
+    return NULL;
+}
+
+char **command_completer(const char *text, int start, int end)
+{
+    if (start == 0)
+    {
+        // Start of a new command
+        current_command = top_level_command;
+    }
+    else
+    {
+        // In the middle of a command line, use the rest of the line
+        // to find the right command to provide completion options
+        std::string cmd_path(rl_line_buffer);
+        cmd_path = cmd_path.substr(0, start);
+        std::queue<std::string, std::deque<std::string>> cmd_path_queue;
+        split(cmd_path, ' ', cmd_path_queue);
+
+        std::string prefix;
+        current_command = top_level_command->get_sub_command(cmd_path_queue, prefix);
+
+        // There can be remaining parts of the command which mean that an argument
+        // value is being completed instead
+        complettion_arg_index = cmd_path_queue.size();
+    }
+
+    char **matches = rl_completion_matches(text, command_generator);
+    return matches;
+}
+
+char *null_completer(const char *text, int state)
+{
+    return NULL;
+}
+#endif
+
 int main(int argc, char *argv[])
 {
     bool test_mode = false;
@@ -160,6 +263,13 @@ int main(int argc, char *argv[])
     std::string cmd_input_orig;
 #if defined(__MACH__) || defined(__linux__)
     char* input, shell_prompt[100];
+
+    // Set up the state for command-line completion
+    top_level_command = avdecc_cmd_line_ref.get_commands();
+    rl_attempted_completion_function = command_completer;
+
+    // Override to prevent filename completion
+    rl_completion_entry_function = (Function *)null_completer;
 #endif
 
 

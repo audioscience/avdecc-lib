@@ -115,6 +115,13 @@ private:
                                         avdecc_lib::locale_descriptor &locale);
 
 public:
+
+    /**
+     * Access methods used for command-line completion
+     */
+    const cli_command *get_commands() const;
+    avdecc_lib::controller *get_controller() const;
+
     /**
      * Try to execute a command
      */

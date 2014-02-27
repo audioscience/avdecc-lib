@@ -30,12 +30,17 @@
 
 #include <assert.h>
 
+#include "controller.h"
+#include "end_station.h"
+
 #include "cmd_line.h"
 #include "cli_argument.h"
 
-cli_argument::cli_argument(const std::string name, const std::string help, const std::string hint,
+cli_argument::cli_argument(cmd_line *cmd_line_ptr, const std::string name,
+        const std::string help, const std::string hint,
         int match_min, int match_max)
-    : m_is_valid(false)
+    : m_cmd_line_ptr(cmd_line_ptr)
+    , m_is_valid(false)
     , m_match_min(match_min)
     , m_match_max(match_max)
     , m_name(name)
@@ -128,9 +133,10 @@ int cli_argument::get_match_max() const
     return m_match_max;
 }
 
-cli_argument_int::cli_argument_int(const std::string name, const std::string help, const std::string hint,
+cli_argument_int::cli_argument_int(cmd_line *cmd_line_ptr, const std::string name,
+        const std::string help, const std::string hint,
         int match_min, int match_max)
-    : cli_argument(name, help + " (type int)", hint, match_min, match_max)
+    : cli_argument(cmd_line_ptr, name, help + " (type int)", hint, match_min, match_max)
 {}
 
 void cli_argument_int::clear()
@@ -139,7 +145,7 @@ void cli_argument_int::clear()
     m_is_valid = false;
 }
 
-bool cli_argument_int::set_value(cmd_line *cmd_ptr, std::string value_str)
+bool cli_argument_int::set_value(std::string value_str)
 {
     if (m_values.size() < m_match_max)
     {
@@ -153,6 +159,11 @@ bool cli_argument_int::set_value(cmd_line *cmd_ptr, std::string value_str)
     }
 
     return false;
+}
+
+void cli_argument_int::get_completion_options(std::set<std::string> &options)
+{
+    // Do nothing
 }
 
 int cli_argument_int::get_value_int() const
@@ -171,9 +182,10 @@ std::vector<int> cli_argument_int::get_all_value_int() const
     return m_values;
 }
 
-cli_argument_end_station::cli_argument_end_station(const std::string name, const std::string help, const std::string hint,
+cli_argument_end_station::cli_argument_end_station(cmd_line *cmd_line_ptr, const std::string name,
+        const std::string help, const std::string hint,
         int match_min, int match_max)
-    : cli_argument(name, help + " (index as int or GUID)", hint, match_min, match_max)
+    : cli_argument(cmd_line_ptr, name, help + " (index as int or GUID)", hint, match_min, match_max)
 {}
 
 void cli_argument_end_station::clear()
@@ -182,12 +194,12 @@ void cli_argument_end_station::clear()
     m_is_valid = false;
 }
 
-bool cli_argument_end_station::set_value(cmd_line *cmd_ptr, std::string value_str)
+bool cli_argument_end_station::set_value(std::string value_str)
 {
     if (m_values.size() < m_match_max)
     {
         uint32_t value = 0;
-        if (cmd_ptr->get_end_station_index(value_str, value))
+        if (m_cmd_line_ptr->get_end_station_index(value_str, value))
         {
             m_values.push_back(value);
             m_is_valid = true;
@@ -195,6 +207,19 @@ bool cli_argument_end_station::set_value(cmd_line *cmd_ptr, std::string value_st
         }
     }
     return false;
+}
+
+void cli_argument_end_station::get_completion_options(std::set<std::string> &options)
+{
+    avdecc_lib::controller *controller = m_cmd_line_ptr->get_controller();
+
+    for (size_t i = 0; i < controller->get_end_station_count(); i++)
+    {
+        char guid_str[20];
+        avdecc_lib::end_station *end_station = controller->get_end_station_by_index(i);
+        sprintf(guid_str, "0x%llx", end_station->guid());
+        options.insert(std::string(guid_str));
+    }
 }
 
 uint32_t cli_argument_end_station::get_value_uint() const
@@ -213,9 +238,10 @@ std::vector<uint32_t> cli_argument_end_station::get_all_value_uint() const
     return m_values;
 }
 
-cli_argument_string::cli_argument_string(const std::string name, const std::string help, const std::string hint,
+cli_argument_string::cli_argument_string(cmd_line *cmd_line_ptr, const std::string name,
+        const std::string help, const std::string hint,
         int match_min, int match_max)
-    : cli_argument(name, help + " (type string)", hint, match_min, match_max)
+    : cli_argument(cmd_line_ptr, name, help + " (type string)", hint, match_min, match_max)
 {}
 
 void cli_argument_string::clear()
@@ -224,7 +250,7 @@ void cli_argument_string::clear()
     m_is_valid = false;
 }
 
-bool cli_argument_string::set_value(cmd_line *cmd_ptr, std::string value_str)
+bool cli_argument_string::set_value(std::string value_str)
 {
     if ((value_str.length() > 0) && (m_values.size() < m_match_max))
     {
@@ -233,6 +259,11 @@ bool cli_argument_string::set_value(cmd_line *cmd_ptr, std::string value_str)
         return true;
     }
     return false;
+}
+
+void cli_argument_string::get_completion_options(std::set<std::string> &options)
+{
+    // Do nothing
 }
 
 std::string cli_argument_string::get_value_str() const
