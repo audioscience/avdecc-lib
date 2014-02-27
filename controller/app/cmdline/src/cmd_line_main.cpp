@@ -108,14 +108,6 @@ extern "C" void log_callback(void *user_obj, int32_t log_level, const char *log_
     printf("\n[LOG] %s (%s)\n", cmd_line::utility->logging_level_value_to_name(log_level), log_msg);
 }
 
-static void usage(char *argv[])
-{
-    std::cerr << "Usage: " << argv[0] << " [-d] [-i interface]" << std::endl;
-    std::cerr << "  -t           :  Sets test mode which disables checks" << std::endl;
-    std::cerr << "  -i interface :  Sets the name of the interface to use" << std::endl;
-    exit(1);
-}
-
 #if defined(__MACH__) || defined(__linux__)
 const cli_command *top_level_command;
 const cli_command *current_command;
@@ -214,19 +206,34 @@ char *null_completer(const char *text, int state)
 }
 #endif
 
+static void usage(char *argv[])
+{
+    std::cerr << "Usage: " << argv[0] << " [-d] [-i interface]" << std::endl;
+    std::cerr << "  -t           :  Sets test mode which disables checks" << std::endl;
+    std::cerr << "  -i interface :  Sets the name of the interface to use" << std::endl;
+    std::cerr << "  -l log_level :  Sets the log level to use." << std::endl;
+    std::cerr << log_level_help << std::endl;
+    exit(1);
+}
+
 int main(int argc, char *argv[])
 {
     bool test_mode = false;
     int error = 0;
     char *interface = NULL;
     int c = 0;
-    while ((c = getopt(argc, argv, "ti:")) != -1) {
+    int32_t log_level = 0;
+
+    while ((c = getopt(argc, argv, "ti:l:")) != -1) {
         switch (c) {
             case 't':
                 test_mode = true;
                 break;
             case 'i':
                 interface = optarg;
+                break;
+            case 'l':
+                log_level = atoi(optarg);
                 break;
             case ':':
                 fprintf(stderr, "Option -%c requires an operand\n", optopt);
@@ -254,7 +261,8 @@ int main(int argc, char *argv[])
         setvbuf(stdout, NULL, _IOLBF, 0);
     }
 
-    cmd_line avdecc_cmd_line_ref(notification_callback, log_callback, test_mode, interface);
+    cmd_line avdecc_cmd_line_ref(notification_callback, log_callback,
+            test_mode, interface, log_level);
 
     std::vector<std::string> input_argv;
     size_t pos = 0;

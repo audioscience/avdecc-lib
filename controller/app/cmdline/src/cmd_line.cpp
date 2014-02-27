@@ -60,6 +60,12 @@
 #define DST_END_STATION_HELP "the destination End Station"
 #define SRC_END_STATION_HELP "the source End Station"
 
+const char *const log_level_help =
+    "Valid log levels are:\n" \
+    "  0 - LOGGING_LEVEL_ERROR,  1 - LOGGING_LEVEL_WARNING,\n" \
+    "  2 - LOGGING_LEVEL_NOTICE, 3 - LOGGING_LEVEL_INFO,\n" \
+    "  4 - LOGGING_LEVEL_DEBUG,  5 - LOGGING_LEVEL_VERBOSE.";
+
 avdecc_lib::util *cmd_line::utility;
 std::string cmd_line::log_path = "."; // Log to a file in the current working directory
 
@@ -70,7 +76,7 @@ cmd_line::cmd_line()
 
 cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
                    void (*log_callback) (void *, int32_t, const char *, int32_t),
-                   bool test_mode, char *interface)
+                   bool test_mode, char *interface, int32_t log_level)
     : test_mode(test_mode)
     , output_redirected(false)
 {
@@ -84,7 +90,7 @@ cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uin
 
     utility = avdecc_lib::create_util();
     netif = avdecc_lib::create_net_interface();
-    controller_obj = avdecc_lib::create_controller(netif, notification_callback, log_callback);
+    controller_obj = avdecc_lib::create_controller(netif, notification_callback, log_callback, log_level);
     sys = avdecc_lib::create_system(avdecc_lib::system::LAYER2_MULTITHREADED_CALLBACK, netif, controller_obj);
 
     atomic_cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
@@ -281,9 +287,7 @@ void cmd_line::cmd_line_commands_init()
                                     "Update the base log level for messages to be logged by the logging callback.",
                                     &cmd_line::cmd_log_level);
     log_level_fmt->add_argument(new cli_argument_int(this, "n_l_l", "the new log level",
-                                    "Valid log levels are 0 - LOGGING_LEVEL_ERROR, 1 - LOGGING_LEVEL_WARNING,\n" \
-                                    "2 - LOGGING_LEVEL_NOTICE, 3 - LOGGING_LEVEL_INFO, 4 - LOGGING_LEVEL_DEBUG\n" \
-                                    "5 - LOGGING_LEVEL_VERBOSE."));
+                                    log_level_help));
     log_level_cmd->add_format(log_level_fmt);
 
     // unlog

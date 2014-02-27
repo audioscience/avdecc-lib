@@ -50,8 +50,11 @@ namespace avdecc_lib
 
     controller * STDCALL create_controller(net_interface *netif,
                                            void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
-                                           void (*log_callback) (void *, int32_t, const char *, int32_t))
+                                           void (*log_callback) (void *, int32_t, const char *, int32_t),
+                                           int32_t initial_log_level)
     {
+        log_imp_ref->set_log_level(initial_log_level);
+
         net_interface_ref = dynamic_cast<net_interface_imp *>(netif);
         if(!net_interface_ref)
         {
