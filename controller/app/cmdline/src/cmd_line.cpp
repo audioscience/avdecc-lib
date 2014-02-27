@@ -935,7 +935,9 @@ int cmd_line::cmd_show_select(int total_matched, std::vector<cli_argument*> args
     uint16_t current_config = end_station->get_current_config_index();
 
     atomic_cout << "Current setting" << std::endl;
-    atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station->get_entity_desc_by_index(current_entity)->entity_name() << ")" << std::endl;
+    atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station->get_entity_desc_by_index(current_entity)->entity_name()
+                << ", " << "0x" << std::setw(16) << std::hex << std::setfill('0') << end_station->guid()
+                << ")" << std::endl;
     atomic_cout << "\tEntity: " << std::dec << current_entity << std::endl;
     atomic_cout << "\tConfiguration: " << std::dec << current_config << std::endl;
 
