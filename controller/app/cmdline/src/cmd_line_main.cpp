@@ -303,7 +303,7 @@ int main(int argc, char *argv[])
             cmd_input.erase(0, pos + 1);
         }
 
-        if(cmd_input != " ")
+        if(cmd_input.length() && cmd_input != " ")
         {
             input_argv.push_back(cmd_input);
         }
