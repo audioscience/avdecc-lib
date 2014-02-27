@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
     bool is_input_valid = false;
     std::string cmd_input_orig;
 #if defined(__MACH__) || defined(__linux__)
-    char* input, shell_prompt[100];
+    char* input;
 
     // Set up the state for command-line completion
     top_level_command = avdecc_cmd_line_ref.get_commands();
@@ -278,8 +278,7 @@ int main(int argc, char *argv[])
     while(!done)
     {
 #if defined(__MACH__) || defined(__linux__)
-        snprintf(shell_prompt, sizeof(shell_prompt), "$ ");
-        input = readline(shell_prompt);
+        input = readline("$ ");
 
         if (!input)
             break;
