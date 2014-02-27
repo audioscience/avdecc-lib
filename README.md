@@ -30,6 +30,15 @@ Users developing 1722.1 end stations and controllers are encouraged to add new d
 The library provides an easy entry point for adding and testing a completely new 1722.1 descriptor without having
 to develop a complete controller side 1722.1 software stack.
 
+Dependencies
+------------
+
+Uses Jeff Koftinoff's packet processing library. This is a submodule that can be cloned using:
+
+	cd avdecc-lib
+	git submodule init
+	git submodule update
+
 
 Acknowledgements
 ----------------
@@ -114,8 +123,10 @@ All build environments require
 
 1. cmake v2.8
 
-
 Run cmake to create the build dirctories for your environment.
+
+	cd avdecc-lib
+	cmake .
 
 ### Windows ###
 	
