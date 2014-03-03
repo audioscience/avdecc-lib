@@ -142,28 +142,20 @@ namespace avdecc_lib
         uint8_t *frame,
         size_t mem_buf_len)
     {
-        struct tx_data *t;
+        struct tx_data t;
 
-        t = new struct tx_data;
-        if (!t)
+        t.frame = new uint8_t[2048];
+        if (!t.frame)
         {
             perror("malloc");
             exit(EXIT_FAILURE);
 
         }
-
-        t->frame = new uint8_t[2048];
-        if (!t->frame)
-        {
-            perror("malloc");
-            exit(EXIT_FAILURE);
-
-        }
-        t->mem_buf_len = mem_buf_len;
-        memcpy(t->frame, frame, mem_buf_len);
-        t->notification_id = notification_id;
-        t->notification_flag = notification_flag;
-        write(tx_pipe[PIPE_WR], t, sizeof(*t));
+        t.mem_buf_len = mem_buf_len;
+        memcpy(t.frame, frame, mem_buf_len);
+        t.notification_id = notification_id;
+        t.notification_flag = notification_flag;
+        write(tx_pipe[PIPE_WR], &t, sizeof(t));
 
         /**
          * If queue_is_waiting is true, wait for the response before returning.
@@ -226,35 +218,24 @@ namespace avdecc_lib
 
     int system_layer2_multithreaded_callback::fn_tx(struct kevent *priv)
     {
-        struct tx_data *t;
-
-        t = new struct tx_data;
-        if (!t)
-        {
-            perror("malloc");
-            exit(EXIT_FAILURE);
-
-        }
-
-        int result = read(tx_pipe[PIPE_RD], t, sizeof(*t));
+        struct tx_data t;
+        int result = read(tx_pipe[PIPE_RD], &t, sizeof(t));
 
         if (result > 0)
         {
             controller_ref_in_system->tx_packet_event(
-                t->notification_id,
-                t->notification_flag,
-                t->frame,
-                t->mem_buf_len);
+                t.notification_id,
+                t.notification_flag,
+                t.frame,
+                t.mem_buf_len);
 
-            if(t->notification_flag == CMD_WITH_NOTIFICATION)
+            if(t.notification_flag == CMD_WITH_NOTIFICATION)
             {
-                waiting_notification_id = t->notification_id;
+                waiting_notification_id = t.notification_id;
             }
 
-            delete[] t->frame;
+            delete[] t.frame;
         }
-
-        delete t;
 
         return 0;
     }

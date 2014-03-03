@@ -32,6 +32,8 @@
 #include <stdint.h>
 #include "build.h"
 
+class net_interface;
+
 namespace avdecc_lib
 {
     class end_station;
@@ -116,6 +118,7 @@ namespace avdecc_lib
     extern "C" AVDECC_CONTROLLER_LIB32_API controller * STDCALL create_controller(net_interface *netif,
                                                                                   void (*notification_callback) (void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
                                                                                                                  uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void *notification_id),
-                                                                                  void (*log_callback) (void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms));
+                                                                                  void (*log_callback) (void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms),
+                                                                                  int32_t initial_log_level);
 }
 
