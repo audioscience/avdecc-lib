@@ -39,6 +39,7 @@
 
 class cmd_line;
 class cli_command_format;
+class cli_argument;
 
 class cli_command
 {
@@ -52,8 +53,13 @@ public:
     bool run_command(cmd_line *cmd_ptr, std::queue<std::string> args, bool &done, std::string prefix="");
 
     void print_help_all(std::string prefix, int depth) const;
-    void print_help_one(std::queue<std::string> cmd_path, std::string prefix="") const;
     void print_help_details(std::string prefix) const;
+
+    const cli_command *get_sub_command(std::queue<std::string> &cmd_path, std::string &prefix) const;
+    std::list<std::string> get_sub_command_names() const;
+
+    // There can be multiple arguments at a given index (one per command format)
+    void get_args(ssize_t index, std::vector<cli_argument*> &args) const;
 
 private:
     std::string m_hint;

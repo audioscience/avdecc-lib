@@ -34,7 +34,7 @@
 
 namespace avdecc_lib
 {
-    extern "C" void default_log(void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms) {}
+    void default_log(void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms) {}
 
     log::log()
     {

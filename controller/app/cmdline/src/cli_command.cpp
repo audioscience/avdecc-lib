@@ -116,11 +116,17 @@ void cli_command::print_help_all(std::string prefix, int depth) const
     }
 }
 
-void cli_command::print_help_one(std::queue<std::string> cmd_path, std::string prefix) const
+const cli_command *cli_command::get_sub_command(std::queue<std::string> &cmd_path, std::string &prefix) const
 {
-    if (cmd_path.size() == 0)
+    while (cmd_path.size() && cmd_path.front().length() == 0)
     {
-        print_help_details(prefix);
+        // Ignore any blanks in the path
+        cmd_path.pop();
+    }
+
+    if ((cmd_path.size() == 0) || (m_sub_commands.size() == 0))
+    {
+        return this;
     }
     else
     {
@@ -129,13 +135,10 @@ void cli_command::print_help_one(std::queue<std::string> cmd_path, std::string p
         {
             prefix += cmd_path.front() + " ";
             cmd_path.pop();
-            iter->second->print_help_one(cmd_path, prefix);
-        }
-        else
-        {
-            printf("Could not find command '%s' to print help for\n", cmd_path.front().c_str());
+            return iter->second->get_sub_command(cmd_path, prefix);
         }
     }
+    return (cli_command*)NULL;
 }
 
 void cli_command::print_help_details(std::string prefix) const
@@ -161,5 +164,20 @@ void cli_command::print_help_details(std::string prefix) const
         printf("\n%s\n", m_hint.c_str());
     }
     printf("\n");
+}
+
+std::list<std::string> cli_command::get_sub_command_names() const
+{
+    return m_sub_command_names;
+}
+
+void cli_command::get_args(ssize_t index, std::vector<cli_argument*> &args) const
+{
+    for (std::vector<cli_command_format*>::const_iterator iter = m_formats.begin(); iter != m_formats.end(); ++iter)
+    {
+        cli_argument *arg = (*iter)->get_arg(index);
+        if (arg)
+            args.push_back(arg);
+    }
 }
 

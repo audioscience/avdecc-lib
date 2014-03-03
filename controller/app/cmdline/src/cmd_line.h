@@ -96,7 +96,7 @@ public:
      */
     cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
              void (*log_callback) (void *, int32_t, const char *, int32_t),
-             bool test_mode=false, char *interface=NULL);
+             bool test_mode, char *interface, int32_t log_level);
 
     ~cmd_line();
 
@@ -115,6 +115,13 @@ private:
                                         avdecc_lib::locale_descriptor &locale);
 
 public:
+
+    /**
+     * Access methods used for command-line completion
+     */
+    const cli_command *get_commands() const;
+    avdecc_lib::controller *get_controller() const;
+
     /**
      * Try to execute a command
      */
@@ -365,6 +372,6 @@ private:
      * Check if end station, entity, and configuration setting is in range and valid.
      */
     bool is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config);
-
 };
 
+extern const char *const log_level_help;

@@ -42,6 +42,14 @@ void cli_command_format::add_argument(cli_argument *arg)
     m_args.push_back(arg);
 }
 
+cli_argument *cli_command_format::get_arg(ssize_t index) const
+{
+    if (index < m_args.size())
+        return m_args[index];
+    else
+        return NULL;
+}
+
 bool cli_command_format::run_command(cmd_line *cmd_ptr, std::queue<std::string> args, bool &done)
 {
     clear_args();
@@ -52,7 +60,7 @@ bool cli_command_format::run_command(cmd_line *cmd_ptr, std::queue<std::string> 
     int total_matched = 0;
     while (args.size() && (m_i < m_args.size()) && args_ok)
     {
-        bool ok = m_args[m_i]->set_value(cmd_ptr, args.front());
+        bool ok = m_args[m_i]->set_value(args.front());
 
         const int match_max = m_args[m_i]->get_match_max();
         const int match_min = m_args[m_i]->get_match_min();

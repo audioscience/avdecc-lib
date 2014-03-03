@@ -50,15 +50,19 @@ namespace avdecc_lib
 
     controller * STDCALL create_controller(net_interface *netif,
                                            void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
-                                           void (*log_callback) (void *, int32_t, const char *, int32_t))
+                                           void (*log_callback) (void *, int32_t, const char *, int32_t),
+                                           int32_t initial_log_level)
     {
+        log_imp_ref->set_log_level(initial_log_level);
+
         net_interface_ref = dynamic_cast<net_interface_imp *>(netif);
+
+        controller_imp_ref = new controller_imp(notification_callback, log_callback);
+
         if(!net_interface_ref)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base net_interface to derived net_interface_imp error");
         }
-
-        controller_imp_ref = new controller_imp(notification_callback, log_callback);
 
         return controller_imp_ref;
     }
