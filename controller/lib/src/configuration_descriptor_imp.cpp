@@ -67,6 +67,7 @@ namespace avdecc_lib
         std::for_each(jack_output_desc_vec.begin(), jack_output_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(avb_interface_desc_vec.begin(), avb_interface_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(clock_source_desc_vec.begin(), clock_source_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+        std::for_each(memory_object_desc_vec.begin(), memory_object_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(locale_desc_vec.begin(), locale_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(strings_desc_vec.begin(), strings_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(stream_port_input_desc_vec.begin(), stream_port_input_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
@@ -232,6 +233,12 @@ namespace avdecc_lib
         add_or_replace_descriptor_and_sort(d, clock_source_desc_vec);
     }
 
+    void configuration_descriptor_imp::store_memory_object_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
+    {
+        memory_object_descriptor_imp *d = new memory_object_descriptor_imp(end_station_obj, frame, pos, frame_len);
+        add_or_replace_descriptor_and_sort(d, memory_object_desc_vec);
+    }
+
     void configuration_descriptor_imp::store_locale_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
         locale_descriptor_imp *d = new locale_descriptor_imp(end_station_obj, frame, pos, frame_len);
@@ -304,6 +311,11 @@ namespace avdecc_lib
     size_t STDCALL configuration_descriptor_imp::clock_source_desc_count()
     {
         return clock_source_desc_vec.size();
+    }
+
+    size_t STDCALL configuration_descriptor_imp::memory_object_desc_count()
+    {
+        return memory_object_desc_vec.size();
     }
 
     size_t STDCALL configuration_descriptor_imp::locale_desc_count()
@@ -448,6 +460,22 @@ namespace avdecc_lib
         else
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_clock_source_desc_by_index error", base_end_station_imp_ref->guid());
+        }
+
+        return NULL;
+    }
+
+    memory_object_descriptor * STDCALL configuration_descriptor_imp::get_memory_object_desc_by_index(size_t memory_object_desc_index)
+    {
+        bool is_valid = (memory_object_desc_index < memory_object_desc_vec.size());
+
+        if(is_valid)
+        {
+            return memory_object_desc_vec.at(memory_object_desc_index);
+        }
+        else
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_memory_object_desc_by_index error", base_end_station_imp_ref->guid());
         }
 
         return NULL;

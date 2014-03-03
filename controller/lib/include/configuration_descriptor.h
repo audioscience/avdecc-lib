@@ -46,6 +46,7 @@ namespace avdecc_lib
     class jack_output_descriptor;
     class avb_interface_descriptor;
     class clock_source_descriptor;
+    class memory_object_descriptor;
     class locale_descriptor;
     class strings_descriptor;
     class stream_port_input_descriptor;
@@ -111,6 +112,11 @@ namespace avdecc_lib
          * \return The number of CLOCK SOURCE descriptors present in the current configuration.
          */
         AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL clock_source_desc_count() = 0;
+
+        /**
+         * \return The number of MEMORY OBJECT descriptors present in the current configuration.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL memory_object_desc_count() = 0;
 
         /**
          * \return The number of LOCALE descriptors present in the current configuration.
@@ -181,6 +187,11 @@ namespace avdecc_lib
          * \return The corresponding CLOCK SOURCE descriptor by index.
          */
         AVDECC_CONTROLLER_LIB32_API virtual clock_source_descriptor * STDCALL get_clock_source_desc_by_index(size_t clock_source_desc_index) = 0;
+
+        /**
+         * \return The corresponding MEMORY OBJECT descriptor by index.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual memory_object_descriptor * STDCALL get_memory_object_desc_by_index(size_t memory_object_desc_index) = 0;
 
         /**
          * \return The corresponding LOCALE descriptor by index.
