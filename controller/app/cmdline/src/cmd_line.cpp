@@ -44,6 +44,7 @@
 #include "jack_output_descriptor.h"
 #include "avb_interface_descriptor.h"
 #include "clock_source_descriptor.h"
+#include "memory_object_descriptor.h"
 #include "locale_descriptor.h"
 #include "strings_descriptor.h"
 #include "stream_port_input_descriptor.h"
@@ -1150,6 +1151,13 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     print_desc_type_index_name_row(*clk_src_desc_ref, *strings, *locale);
                 }
 
+            case avdecc_lib::AEM_DESC_MEMORY_OBJECT:
+                for(unsigned int j = 0; j < configuration->memory_object_desc_count(); j++)
+                {
+                    avdecc_lib::memory_object_descriptor *mem_obj_desc_ref = configuration->get_memory_object_desc_by_index(j);
+                    print_desc_type_index_name_row(*mem_obj_desc_ref, *strings, *locale);
+                }
+
             case avdecc_lib::AEM_DESC_LOCALE:
                 for(unsigned int j = 0; j < configuration->locale_desc_count(); j++)
                 {
@@ -1698,6 +1706,26 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                     atomic_cout << "\nclock_source_identifier = 0x" << std::hex << clk_src_desc->clock_source_identifier();
                     atomic_cout << "\nclock_source_location_type = 0x" << std::hex << clk_src_desc->clock_source_location_type();
                     atomic_cout << "\nclock_source_location_index = " << std::dec << clk_src_desc->clock_source_location_index() << std::endl;
+                }
+            }
+            break;
+
+        case avdecc_lib::AEM_DESC_MEMORY_OBJECT:
+            {
+                if (!configuration)
+                    break;
+
+                avdecc_lib::memory_object_descriptor *mem_obj_desc = configuration->get_memory_object_desc_by_index(desc_index);
+                if(mem_obj_desc)
+                {
+                    atomic_cout << "\nobject_name = " << std::hex << mem_obj_desc->object_name();
+                    atomic_cout << "\nlocalized_description = " << std::dec << mem_obj_desc->localized_description();
+                    atomic_cout << "\nmemory_object_type = " << mem_obj_desc->memory_object_type_to_str();
+                    atomic_cout << "\ntarget_descriptor_type = 0x" << std::hex << mem_obj_desc->target_descriptor_type();
+                    atomic_cout << "\ntarget_descriptor_index = " << std::dec << mem_obj_desc->target_descriptor_index();
+                    atomic_cout << "\nstart_address = 0x" << std::hex << mem_obj_desc->start_address();
+                    atomic_cout << "\nmaximum_length = " << std::dec << mem_obj_desc->maximum_length() << " bytes";;
+                    atomic_cout << "\nlength = " << std::dec << mem_obj_desc->length() << " bytes" << std::endl;
                 }
             }
             break;

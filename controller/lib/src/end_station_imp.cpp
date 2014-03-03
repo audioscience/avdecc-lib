@@ -267,79 +267,84 @@ namespace avdecc_lib
 
         if(store_descriptor)
         {
+            const int read_desc_offset = ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN;
             switch(desc_type)
             {
                 case JDKSAVDECC_DESCRIPTOR_ENTITY:
                     if(entity_desc_vec.size() == 0)
                     {
-                        entity_desc_vec.push_back(new entity_descriptor_imp(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len));
+                        entity_desc_vec.push_back(new entity_descriptor_imp(this, frame, read_desc_offset, frame_len));
                         current_config_desc = entity_desc_vec.at(current_entity_desc)->current_configuration();
                         read_desc_init(JDKSAVDECC_DESCRIPTOR_CONFIGURATION, 0); // Send READ_DESCRIPTOR command for CONFIGURATION descriptor to get the setup for the AVDECC Entity
                     }
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
-                    entity_desc_vec.at(current_entity_desc)->store_config_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    entity_desc_vec.at(current_entity_desc)->store_config_desc(this, frame, read_desc_offset, frame_len);
                     read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING;
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
-                    config_desc_imp_ref->store_audio_unit_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_audio_unit_desc(this, frame, read_desc_offset, frame_len);
                     read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_RUNNING;
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STREAM_INPUT:
-                    config_desc_imp_ref->store_stream_input_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_stream_input_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT:
-                    config_desc_imp_ref->store_stream_output_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_stream_output_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_JACK_INPUT:
-                    config_desc_imp_ref->store_jack_input_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_jack_input_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT:
-                    config_desc_imp_ref->store_jack_output_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_jack_output_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE:
-                    config_desc_imp_ref->store_avb_interface_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_avb_interface_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE:
-                    config_desc_imp_ref->store_clock_source_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_clock_source_desc(this, frame, read_desc_offset, frame_len);
+                    break;
+
+                case JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT:
+                    config_desc_imp_ref->store_memory_object_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_LOCALE:
-                    config_desc_imp_ref->store_locale_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_locale_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STRINGS:
-                    config_desc_imp_ref->store_strings_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_strings_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
-                    config_desc_imp_ref->store_stream_port_input_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_stream_port_input_desc(this, frame, read_desc_offset, frame_len);
                     read_desc_in_stream_port_input_state = READ_DESC_IN_STREAM_PORT_INPUT_RUNNING;
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
-                    config_desc_imp_ref->store_stream_port_output_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_stream_port_output_desc(this, frame, read_desc_offset, frame_len);
                     read_desc_in_stream_port_output_state = READ_DESC_IN_STREAM_PORT_OUTPUT_RUNNING;
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
-                    config_desc_imp_ref->store_audio_cluster_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_audio_cluster_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_AUDIO_MAP:
-                    config_desc_imp_ref->store_audio_map_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_audio_map_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
                 case JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN:
-                    config_desc_imp_ref->store_clock_domain_desc(this, frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN, frame_len);
+                    config_desc_imp_ref->store_clock_domain_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
                 default:

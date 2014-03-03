@@ -37,6 +37,7 @@
 #include "jack_output_descriptor_imp.h"
 #include "avb_interface_descriptor_imp.h"
 #include "clock_source_descriptor_imp.h"
+#include "memory_object_descriptor_imp.h"
 #include "locale_descriptor_imp.h"
 #include "strings_descriptor_imp.h"
 #include "stream_port_input_descriptor_imp.h"
@@ -64,6 +65,7 @@ namespace avdecc_lib
         std::vector<jack_output_descriptor_imp *> jack_output_desc_vec; // Store a list of JACK OUTPUT descriptor objects
         std::vector<avb_interface_descriptor_imp *> avb_interface_desc_vec; // Store a list of AVB INTERFACE descriptor objects
         std::vector<clock_source_descriptor_imp *> clock_source_desc_vec; // Store a list of CLOCK SOURCE descriptor objects
+        std::vector<memory_object_descriptor_imp *> memory_object_desc_vec; // Store a list of MEMORY_OBJECT descriptor objects
         std::vector<locale_descriptor_imp *> locale_desc_vec; // Store a list of LOCALE descriptor objects
         std::vector<strings_descriptor_imp *> strings_desc_vec; // Store a list of Strings descriptor objects
         std::vector<stream_port_input_descriptor_imp *> stream_port_input_desc_vec; // Store a list of Stream Port Input descriptor objects
@@ -96,6 +98,7 @@ namespace avdecc_lib
         void store_jack_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         void store_avb_interface_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         void store_clock_source_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
+        void store_memory_object_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         void store_locale_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         void store_strings_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         void store_stream_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
@@ -111,6 +114,7 @@ namespace avdecc_lib
         size_t STDCALL jack_output_desc_count();
         size_t STDCALL avb_interface_desc_count();
         size_t STDCALL clock_source_desc_count();
+        size_t STDCALL memory_object_desc_count();
         size_t STDCALL locale_desc_count();
         size_t STDCALL strings_desc_count();
         size_t STDCALL stream_port_input_desc_count();
@@ -130,6 +134,7 @@ namespace avdecc_lib
         jack_output_descriptor * STDCALL get_jack_output_desc_by_index(size_t jack_output_desc_index);
         avb_interface_descriptor * STDCALL get_avb_interface_desc_by_index(size_t avb_interface_desc_index);
         clock_source_descriptor * STDCALL get_clock_source_desc_by_index(size_t clock_source_desc_index);
+        memory_object_descriptor * STDCALL get_memory_object_desc_by_index(size_t memory_object_desc_index);
         locale_descriptor * STDCALL get_locale_desc_by_index(size_t locale_desc_index);
         strings_descriptor * STDCALL get_strings_desc_by_index(size_t strings_desc_index);
         stream_port_input_descriptor * STDCALL get_stream_port_input_desc_by_index(size_t stream_port_input_desc_index);
