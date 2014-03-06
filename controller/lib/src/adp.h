@@ -49,6 +49,11 @@ namespace avdecc_lib
         adp(const uint8_t *frame, size_t frame_len);
 
         ~adp();
+
+        /**
+         * Update the stored ADP contents with the latest ADPDU fields
+         */
+        int proc_adpdu(const uint8_t *frame, size_t frame_len);
         
         /**
          * Get the Ethernet type of the ADP packet.

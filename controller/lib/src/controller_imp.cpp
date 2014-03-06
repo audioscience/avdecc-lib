@@ -263,12 +263,20 @@ namespace avdecc_lib
             {
                 case JDKSAVDECC_SUBTYPE_ADP:
                 {
-                    int found_end_station_index = -1;
+                    end_station_imp *end_station = NULL;
                     bool found_adp_in_end_station = false;
                     struct jdksavdecc_eui64 other_entity_id;
                     jdksavdecc_eui64_read(&other_entity_id, frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE, frame_len);
 
-                    //log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "ADP packet discovered.");
+                    jdksavdecc_adpdu_common_control_header adpdu_header;
+                    jdksavdecc_adpdu_common_control_header_read(&adpdu_header, frame, ETHER_HDR_SIZE, frame_len);
+
+                    uint32_t entity_capabilities = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_ADPDU_OFFSET_ENTITY_CAPABILITIES);
+                    uint32_t available_index = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_ADPDU_OFFSET_AVAILABLE_INDEX);
+                    uint64_t entity_model_id = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_ADPDU_OFFSET_ENTITY_MODEL_ID);
+
+                    status = AVDECC_LIB_STATUS_INVALID;
+                    is_notification_id_valid = false;
 
                     /**
                      * Check if an ADP object is already in the system. If not, create a new End Station object storing the ADPDU information
@@ -280,7 +288,7 @@ namespace avdecc_lib
                         if(jdksavdecc_eui64_compare(&end_entity_id, &other_entity_id) == 0)
                         {
                             found_adp_in_end_station = true;
-                            found_end_station_index = i;
+                            end_station = end_station_vec.at(i);
                         }
                     }
 
@@ -309,9 +317,6 @@ namespace avdecc_lib
                     {
                         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid ADP packet with an entity GUID of 0.");
                     }
-
-                    status = AVDECC_LIB_STATUS_INVALID;
-                    is_notification_id_valid = false;
                 }
                 break;
 
