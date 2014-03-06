@@ -341,6 +341,8 @@ private:
      */
     int cmd_stop_streaming(int total_matched, std::vector<cli_argument*> args);
 
+    int cmd_firmware_upgrade(int total_matched, std::vector<cli_argument*> args);
+
     /**
      * Send a IDENTIFY command to enable identification.
      */
