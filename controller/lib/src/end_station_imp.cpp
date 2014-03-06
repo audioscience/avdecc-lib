@@ -45,6 +45,26 @@ namespace avdecc_lib
     end_station_imp::end_station_imp(const uint8_t *frame, size_t frame_len)
     {
         end_station_connection_status = ' ';
+        adp_ref = new adp(frame, frame_len);
+        struct jdksavdecc_eui64 guid;
+        guid = adp_ref->get_entity_entity_id();
+        end_station_guid = jdksavdecc_uint64_get(&guid, 0);
+        utility->convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
+        end_station_init();
+    }
+
+    end_station_imp::~end_station_imp()
+    {
+        delete adp_ref;
+
+        for(uint32_t entity_vec_index = 0; entity_vec_index < entity_desc_vec.size(); entity_vec_index++)
+        {
+            delete entity_desc_vec.at(entity_vec_index);
+        }
+    }
+
+    int end_station_imp::end_station_init()
+    {
         current_entity_desc = 0;
         current_config_desc = 0;
         selected_entity_index = 0;
@@ -68,32 +88,24 @@ namespace avdecc_lib
         desc_type_index_from_stream_port_input = JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER;
         desc_type_index_from_stream_port_output = JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER;
 
-        adp_ref = new adp(frame, frame_len);
-        struct jdksavdecc_eui64 guid;
-        guid = adp_ref->get_entity_entity_id();
-        end_station_guid = jdksavdecc_uint64_get(&guid, 0);
-        utility->convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
-        end_station_init();
-    }
-
-    end_station_imp::~end_station_imp()
-    {
-        delete adp_ref;
-
-        for(uint32_t entity_vec_index = 0; entity_vec_index < entity_desc_vec.size(); entity_vec_index++)
-        {
-            delete entity_desc_vec.at(entity_vec_index);
-        }
-    }
-
-    int end_station_imp::end_station_init()
-    {
         uint16_t desc_type = JDKSAVDECC_DESCRIPTOR_ENTITY;
         uint16_t desc_index = 0;
 
         read_desc_init(desc_type, desc_index);
 
         return 0;
+    }
+
+    void end_station_imp::end_station_reenumerate()
+    {
+        for(uint32_t entity_vec_index = 0; entity_vec_index < entity_desc_vec.size(); entity_vec_index++)
+        {
+            delete entity_desc_vec.at(entity_vec_index);
+        }
+
+        entity_desc_vec.clear();
+
+        end_station_init();
     }
 
     const char STDCALL end_station_imp::get_connection_status() const

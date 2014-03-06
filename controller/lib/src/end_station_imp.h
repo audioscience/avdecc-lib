@@ -129,6 +129,11 @@ namespace avdecc_lib
          */
         void set_disconnected();
 
+        /**
+         * Re-enumerate the endpoint by re-reading the descriptors
+         */
+        void end_station_reenumerate();
+
         uint64_t STDCALL guid();
         uint64_t STDCALL mac();
         adp * get_adp();
