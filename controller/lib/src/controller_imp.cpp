@@ -309,9 +309,18 @@ namespace avdecc_lib
                         }
                         else
                         {
-                            if(end_station_vec.at(found_end_station_index)->get_connection_status() == 'D')
+                            if ((available_index < end_station->get_adp()->get_available_index()) ||
+                                (entity_model_id != end_station->get_adp()->get_entity_model_id()))
                             {
-                                end_station_vec.at(found_end_station_index)->set_connected();
+                                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Re-enumerating end station with guid %ull", end_station->guid());
+                                end_station->end_station_reenumerate();
+                            }
+
+                            end_station->get_adp()->proc_adpdu(frame, frame_len);
+
+                            if(end_station->get_connection_status() == 'D')
+                            {
+                                end_station->set_connected();
                                 adp_discovery_state_machine_ref->state_avail(frame, frame_len);
                             }
                             else
@@ -320,7 +329,7 @@ namespace avdecc_lib
                             }
                         }
                     }
-                    else
+                    else if (adpdu_header.message_type != JDKSAVDECC_ADP_MESSAGE_TYPE_ENTITY_DISCOVER)
                     {
                         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid ADP packet with an entity GUID of 0.");
                     }
