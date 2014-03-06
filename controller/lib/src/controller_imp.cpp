@@ -278,6 +278,13 @@ namespace avdecc_lib
                     status = AVDECC_LIB_STATUS_INVALID;
                     is_notification_id_valid = false;
 
+                    if ((entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_GENERAL_CONTROLLER_IGNORE) ||
+                        (entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_ENTITY_NOT_READY))
+                    {
+                        // The entity indicates that we should not enumerate it
+                        break;
+                    }
+
                     /**
                      * Check if an ADP object is already in the system. If not, create a new End Station object storing the ADPDU information
                      * and add the End Station object to the system.
