@@ -287,16 +287,27 @@ namespace avdecc_lib
                     bool is_notification_id_valid = false;
                     int rx_status = -1;
                     bool is_waiting_completed = false;
+                    uint16_t operation_id = 0;
+                    bool is_operation_id_valid = false;
+                    bool is_operation_complete = false;
 
-                    controller_obj_in_system->rx_packet_event(thread_data.notification_id,
+                    controller_ref_in_system->rx_packet_event(thread_data.notification_id,
                                                               is_notification_id_valid,
                                                               thread_data.frame,
                                                               thread_data.frame_len,
-                                                              rx_status);
+                                                              rx_status,
+                                                              operation_id,
+                                                              is_operation_id_valid);
+
+                    is_operation_complete = is_waiting &&
+                                            !controller_ref_in_system->is_active_operation_with_notification_id(waiting_notification_id) &&
+                                            is_notification_id_valid &&
+                                            (waiting_notification_id == thread_data.notification_id);
 
                     is_waiting_completed = is_waiting && (!controller_obj_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id)) &&
                                            is_notification_id_valid && (waiting_notification_id == thread_data.notification_id);
-                    if(is_waiting_completed)
+                                           
+                    if((!is_operation_id_valid && is_waiting_completed) || (is_operation_id_valid && is_operation_complete))
                     {
                         resp_status_for_cmd = rx_status;
                         is_waiting = false;
@@ -328,7 +339,9 @@ namespace avdecc_lib
         {
             controller_obj_in_system->time_tick_event();
 
-            bool is_waiting_completed = is_waiting && (!controller_obj_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id));
+            bool is_waiting_completed = is_waiting &&
+                                        (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id) &&
+                                        !controller_ref_in_system->is_active_operation_with_notification_id(waiting_notification_id));
             if(is_waiting_completed)
             {
                 is_waiting = false;

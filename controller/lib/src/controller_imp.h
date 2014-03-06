@@ -75,6 +75,8 @@ namespace avdecc_lib
          */
         bool is_inflight_cmd_with_notification_id(void *notification_id);
 
+        bool is_active_operation_with_notification_id(void *notification_id);
+
         void STDCALL set_logging_level(int32_t new_log_level);
         uint32_t STDCALL missed_notification_count();
         uint32_t STDCALL missed_log_count();
@@ -87,7 +89,7 @@ namespace avdecc_lib
         /**
          * Lookup and process packet received.
          */
-        void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, size_t frame_len, int &status);
+        void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, size_t frame_len, int &status, uint16_t &operation_id, bool &is_operation_id_valid);
 
         /**
          * Send queued packet to the AEM Controller State Machine.

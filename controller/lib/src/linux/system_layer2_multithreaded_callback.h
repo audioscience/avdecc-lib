@@ -130,6 +130,7 @@ namespace avdecc_lib
         bool queue_is_waiting;
         void *waiting_notification_id;
         int resp_status_for_cmd;
+        uint16_t operation_id_for_cmd;
         int prep_evt_desc(int fd, handler_fn fn, struct epoll_priv *priv, struct epoll_event *ev);
         static int fn_timer_cb(struct epoll_priv *priv);
         static int fn_netif_cb(struct epoll_priv *priv);

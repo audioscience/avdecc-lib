@@ -189,6 +189,11 @@ namespace avdecc_lib
         return is_inflight_cmd;
     }
 
+    bool controller_imp::is_active_operation_with_notification_id(void *notification_id)
+    {
+        return aecp_controller_state_machine_ref->is_active_operation_with_notification_id(notification_id);
+    }
+
     void STDCALL controller_imp::set_logging_level(int32_t new_log_level)
     {
         log_imp_ref->set_log_level(new_log_level);
@@ -238,10 +243,17 @@ namespace avdecc_lib
         return -1;
     }
 
-    void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, size_t frame_len, int &status)
+    void controller_imp::rx_packet_event(void *&notification_id,
+                                        bool &is_notification_id_valid,
+                                        const uint8_t *frame,
+                                        size_t frame_len,
+                                        int &status,
+                                        uint16_t &operation_id,
+                                        bool &is_operation_id_valid)
     {
         uint64_t dest_mac_addr;
         utility->convert_eui48_to_uint64(frame, dest_mac_addr);
+        is_operation_id_valid = false;
 
         if((dest_mac_addr == net_interface_ref->mac_addr()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address
         {
@@ -329,6 +341,7 @@ namespace avdecc_lib
                         case JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE:
                         {
                             uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
+                            cmd_type &= 0x7FFF;
 
                             if(cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
                             {
@@ -336,7 +349,7 @@ namespace avdecc_lib
                             }
                             else
                             {
-                                end_station_vec.at(found_end_station_index)->proc_rcvd_aem_resp(notification_id, frame, frame_len, status);
+                                end_station_vec.at(found_end_station_index)->proc_rcvd_aem_resp(notification_id, frame, frame_len, status, operation_id, is_operation_id_valid);
                             }
 
                             is_notification_id_valid = true;

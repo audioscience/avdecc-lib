@@ -29,6 +29,9 @@
 
 #pragma once
 
+#include "inflight.h"
+#include "operation.h"
+
 namespace avdecc_lib
 {
     class inflight;
@@ -38,6 +41,7 @@ namespace avdecc_lib
     private:
         uint16_t aecp_seq_id; // The sequence id used for identifying the AECP command that a response is for
         std::vector<inflight> inflight_cmds;
+        std::vector<operation> active_operations;
 
     public:
         aecp_controller_state_machine();
@@ -78,6 +82,11 @@ namespace avdecc_lib
          * Update inflight command for the response received.
          */
         int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *cmd_frame);
+
+        int start_operation(void *&notification_id, uint16_t operation_id, uint16_t operation_type, const uint8_t *frame, ssize_t frame_len);
+        bool is_active_operation_with_notification_id(void *notification_id);
+
+        int update_operation_for_rcvd_resp(void *&notification_id, uint16_t operation_id, uint16_t percent_complete, struct jdksavdecc_frame *cmd_frame);
 
         /**
          * Check if the command with the corresponding notification id is already in the inflight command vector.

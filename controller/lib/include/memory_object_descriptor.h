@@ -77,6 +77,14 @@ namespace avdecc_lib
          * \return String representation of the memory_object_type
          */
         AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL memory_object_type_to_str() = 0;
+
+        /**
+         * Send a START_OPERATION command with a notification id to begin an operation on the memory object
+         *
+         * \param notification_id   A void pointer to the unique identifier associated with the command.
+         * \param operation_tyoe    An integer representation the operation type to perform on the object
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL start_operation_cmd(void *notification_id, uint16_t operation_type) = 0;
     };
 }
 

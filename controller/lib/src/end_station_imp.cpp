@@ -737,12 +737,18 @@ namespace avdecc_lib
         return 0;
     }
 
-    int end_station_imp::proc_rcvd_aem_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+    int end_station_imp::proc_rcvd_aem_resp(void *&notification_id,
+                                            const uint8_t *frame,
+                                            size_t frame_len,
+                                            int &status,
+                                            uint16_t &operation_id,
+                                            bool &is_operation_id_valid)
     {
         uint16_t cmd_type;
         uint16_t desc_type;
         uint16_t desc_index;
         cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
+        cmd_type &= 0x7FFF;
 
         switch(cmd_type)
         {
@@ -1200,6 +1206,69 @@ namespace avdecc_lib
                 }
 
                 break;
+
+            case JDKSAVDECC_AEM_COMMAND_START_OPERATION:
+                {
+                    desc_type = jdksavdecc_aem_command_start_operation_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                    desc_index = jdksavdecc_aem_command_start_operation_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+
+                    if(desc_type == JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT)
+                    {
+                        memory_object_descriptor *mo = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_memory_object_desc_by_index(desc_index);
+
+                        if (mo)
+                        {
+                            memory_object_descriptor_imp *memory_object_desc_imp_ref =
+                                dynamic_cast<memory_object_descriptor_imp *>(mo);
+
+                            if(memory_object_desc_imp_ref)
+                            {
+                                uint16_t operation_type;
+                                memory_object_desc_imp_ref->proc_start_operation_resp(notification_id, frame, frame_len, status, operation_id, operation_type);
+                                if (status == AEM_STATUS_SUCCESS && operation_id)
+                                {
+                                    aecp_controller_state_machine_ref->start_operation(notification_id, operation_id, operation_type, frame, frame_len);
+                                    is_operation_id_valid = true;
+                                }
+                            }
+                            else
+                            {
+                                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived memory_object_descriptor_imp to base memory_object_descriptor error");
+                            }
+                        }
+
+                    }
+                }
+                break;
+
+            case JDKSAVDECC_AEM_COMMAND_OPERATION_STATUS:
+                {
+                    desc_type = jdksavdecc_aem_command_operation_status_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                    desc_index = jdksavdecc_aem_command_operation_status_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+
+                    if(desc_type == JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT)
+                    {
+                        memory_object_descriptor *mo = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_memory_object_desc_by_index(desc_index);
+
+                        if (mo)
+                        {
+                            memory_object_descriptor_imp *memory_object_desc_imp_ref =
+                                dynamic_cast<memory_object_descriptor_imp *>(mo);
+
+                            if(memory_object_desc_imp_ref)
+                            {
+                                memory_object_desc_imp_ref->proc_operation_status_resp(notification_id, frame, frame_len, status, operation_id, is_operation_id_valid);
+                            }
+                            else
+                            {
+                                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived memory_object_descriptor_imp to base memory_object_descriptor error");
+                            }
+                        }
+
+                    }
+                }
+                break;
+
             case JDKSAVDECC_AEM_COMMAND_SET_CONTROL:
                 proc_set_control_resp(notification_id, frame, frame_len, status);
                 break;

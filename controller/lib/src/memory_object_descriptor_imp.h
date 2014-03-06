@@ -56,7 +56,10 @@ namespace avdecc_lib
         uint64_t STDCALL maximum_length();
         uint64_t STDCALL length();
         const char * STDCALL memory_object_type_to_str();
-    
+        int STDCALL start_operation_cmd(void *notification_id, uint16_t operation_type);
+        int proc_start_operation_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status, uint16_t &operation_id, uint16_t &operation_type);
+        int proc_operation_status_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status, uint16_t &operation_id, bool &is_operation_id_valid);
+
     private:
     };
 }
