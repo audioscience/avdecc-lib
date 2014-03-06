@@ -126,7 +126,7 @@ namespace avdecc_lib
 
         /**************************** Fill frame payload with AECP data and send the frame **********************/
         aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-								ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY_COMMAND_LEN);
+                                ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY_COMMAND_LEN);
         aem_cmd_acquire_entity_returned = jdksavdecc_aem_command_acquire_entity_write(&aem_cmd_acquire_entity,
                                                                                       cmd_frame.payload,
                                                                                       ETHER_HDR_SIZE,
@@ -201,7 +201,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_lock_entity aem_cmd_lock_entity;
-        ssize_t aem_cmd_acquire_entity_returned;
+        ssize_t aem_cmd_lock_entity_returned;
 
         /***************************************** AECP Common Data ******************************************/
         aem_cmd_lock_entity.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
@@ -216,16 +216,16 @@ namespace avdecc_lib
 
         /**************************** Fill frame payload with AECP data and send the frame **********************/
         aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-								ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY_COMMAND_LEN);
-        aem_cmd_acquire_entity_returned = jdksavdecc_aem_command_lock_entity_write(&aem_cmd_lock_entity,
+                                ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY_COMMAND_LEN);
+        aem_cmd_lock_entity_returned = jdksavdecc_aem_command_lock_entity_write(&aem_cmd_lock_entity,
                                                                                    cmd_frame.payload,
                                                                                    ETHER_HDR_SIZE,
                                                                                    sizeof(cmd_frame.payload));
 
-        if(aem_cmd_acquire_entity_returned < 0)
+        if(aem_cmd_lock_entity_returned < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_write error\n");
-            assert(aem_cmd_acquire_entity_returned >= 0);
+            assert(aem_cmd_lock_entity_returned >= 0);
             return -1;
         }
 
@@ -249,24 +249,112 @@ namespace avdecc_lib
         ssize_t aem_cmd_lock_entity_resp_returned = 0;
         uint32_t msg_type = 0;
         bool u_field = false;
-
+ 
         memcpy(cmd_frame.payload, frame, frame_len);
-
+ 
         aem_cmd_lock_entity_resp_returned = jdksavdecc_aem_command_lock_entity_response_read(&aem_cmd_lock_entity_resp,
-                                                                                             frame,
-                                                                                             ETHER_HDR_SIZE,
-                                                                                             frame_len);
-
+                                                                                              frame,
+                                                                                              ETHER_HDR_SIZE,
+                                                                                              frame_len);
+ 
         if(aem_cmd_lock_entity_resp_returned < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_resp_read error\n");
             assert(aem_cmd_lock_entity_resp_returned >= 0);
             return -1;
         }
-
+ 
         msg_type = aem_cmd_lock_entity_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_lock_entity_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_lock_entity_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+ 
+        aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
+
+        return 0;
+    }
+
+    int STDCALL descriptor_base_imp::send_reboot_cmd(void *notification_id)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override send_reboot_cmd.\n");
+
+        return 0;
+    }
+
+
+    int descriptor_base_imp::proc_reboot_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override proc_reboot_resp.\n");
+
+        return 0;
+    }
+
+
+    int descriptor_base_imp::default_send_reboot_cmd(descriptor_base_imp *descriptor_base_imp_ref, void *notification_id)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_reboot aem_cmd_reboot;
+
+        /***************************************** AECP Common Data ******************************************/
+        aem_cmd_reboot.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        // Fill aem_cmd_reboot.sequence_id in AEM Controller State Machine
+        aem_cmd_reboot.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_REBOOT;
+
+        /****************************** AECP Message Specific Data ****************************/
+        aem_cmd_reboot.descriptor_type = descriptor_base_imp_ref->descriptor_type();
+        aem_cmd_reboot.descriptor_index = descriptor_base_imp_ref->descriptor_index();
+
+        /**************************** Fill frame payload with AECP data and send the frame **********************/
+        aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
+                                ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_REBOOT_COMMAND_LEN);
+        ssize_t aem_cmd_reboot_entity_returned = jdksavdecc_aem_command_reboot_write(&aem_cmd_reboot,
+                                                                                   cmd_frame.payload,
+                                                                                   ETHER_HDR_SIZE,
+                                                                                   sizeof(cmd_frame.payload));
+
+        if(aem_cmd_reboot_entity_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_reboot_write error\n");
+            assert(aem_cmd_reboot_entity_returned >= 0);
+            return -1;
+        }
+
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                            &cmd_frame,
+                                                            base_end_station_imp_ref->guid(),
+                                                            JDKSAVDECC_AEM_COMMAND_REBOOT_COMMAND_LEN - 
+                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
+
+        return 0;
+    }
+
+
+    int descriptor_base_imp::default_proc_reboot_resp(struct jdksavdecc_aem_command_reboot_response &aem_cmd_reboot_resp,
+                                                       void *&notification_id,
+                                                       const uint8_t *frame,
+                                                       size_t frame_len,
+                                                       int &status)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        uint32_t msg_type = 0;
+        bool u_field = false;
+
+        memcpy(cmd_frame.payload, frame, frame_len);
+
+        ssize_t aem_cmd_reboot_resp_returned = jdksavdecc_aem_command_reboot_response_read(&aem_cmd_reboot_resp,
+                                                                                             frame,
+                                                                                             ETHER_HDR_SIZE,
+                                                                                             frame_len);
+
+        if(aem_cmd_reboot_resp_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_reboot_resp_read error\n");
+            return -1;
+        }
+
+        msg_type = aem_cmd_reboot_resp.aem_header.aecpdu_header.header.message_type;
+        status = aem_cmd_reboot_resp.aem_header.aecpdu_header.header.status;
+        u_field = aem_cmd_reboot_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 

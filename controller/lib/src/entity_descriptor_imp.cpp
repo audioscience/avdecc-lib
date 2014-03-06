@@ -223,9 +223,19 @@ namespace avdecc_lib
         return default_send_lock_entity_cmd(this, notification_id, lock_entity_flag);
     }
 
+    int STDCALL entity_descriptor_imp::send_reboot_cmd(void *notification_id)
+    {
+        return default_send_reboot_cmd(this, notification_id);
+    }
+
     int entity_descriptor_imp::proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         return default_proc_lock_entity_resp(aem_cmd_lock_entity_resp, notification_id, frame, frame_len, status);
+    }
+
+    int entity_descriptor_imp::proc_reboot_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+    {
+        return default_proc_reboot_resp(aem_cmd_reboot_resp, notification_id, frame, frame_len, status);
     }
 
     int STDCALL entity_descriptor_imp::send_set_config_cmd()

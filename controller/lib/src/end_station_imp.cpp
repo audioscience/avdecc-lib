@@ -1174,6 +1174,32 @@ namespace avdecc_lib
                 }
                 break;
 
+            case JDKSAVDECC_AEM_COMMAND_REBOOT:
+                {
+                    desc_type = jdksavdecc_aem_command_reboot_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                    desc_index = jdksavdecc_aem_command_reboot_get_descriptor_index(frame, ETHER_HDR_SIZE);
+
+                    if(desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY)
+                    {
+                        entity_descriptor_imp *entity_desc_imp_ref =
+                            dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
+
+                        if(entity_desc_imp_ref)
+                        {
+                            entity_desc_imp_ref->proc_reboot_resp(notification_id, frame, frame_len, status);
+                        }
+                        else
+                        {
+                            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base entity_descriptor to derived entity_descriptor_imp error");
+                        }
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Descriptor type %d is not valid.", desc_type);
+                    }
+                }
+
+                break;
             case JDKSAVDECC_AEM_COMMAND_SET_CONTROL:
                 proc_set_control_resp(notification_id, frame, frame_len, status);
                 break;

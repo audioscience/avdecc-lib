@@ -96,6 +96,16 @@ namespace avdecc_lib
                                           size_t frame_len,
                                           int &status);
 
+        virtual int STDCALL send_reboot_cmd(void *notification_id);
+        virtual int proc_reboot_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+
+        int default_send_reboot_cmd(descriptor_base_imp *descriptor_base_imp_ref, void *notification_id);
+        int default_proc_reboot_resp(struct jdksavdecc_aem_command_reboot_response &aem_cmd_reboot_resp,
+                                      void *&notification_id,
+                                      const uint8_t *frame,
+                                      size_t frame_len,
+                                      int &status);
+
         virtual int STDCALL send_set_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index, char * new_name);
         virtual int proc_set_name_resp(uint8_t *base_pointer, uint16_t frame_len);
 

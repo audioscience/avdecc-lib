@@ -516,6 +516,27 @@ void cmd_line::cmd_line_commands_init()
                                     &cmd_line::cmd_entity_avail);
     entity_available_cmd->add_format(entity_available_fmt);
 
+    // entity reboot
+    cli_command *entity_reboot_cmd = new cli_command();
+    entity_cmd->add_sub_command("reboot", entity_reboot_cmd);
+
+
+    cli_command_format *reboot_fmt = new cli_command_format(
+                                    "Send a REBOOT command to an AVDECC Entity",
+                                    &cmd_line::cmd_reboot);
+    entity_reboot_cmd->add_format(reboot_fmt);
+
+
+    // reboot
+    cli_command *reboot_cmd = new cli_command();
+    commands.add_sub_command("reboot", reboot_cmd);
+
+    // reboot entity
+    cli_command *reboot_entity_cmd = new cli_command();
+    reboot_cmd->add_sub_command("entity", reboot_entity_cmd);
+
+    reboot_entity_cmd->add_format(reboot_fmt);
+
     // controller
     cli_command *controller_cmd = new cli_command();
     commands.add_sub_command("controller", controller_cmd);
@@ -2457,6 +2478,24 @@ int cmd_line::cmd_entity_avail(int total_matched, std::vector<cli_argument*> arg
 
     return 0;
 }
+
+int cmd_line::cmd_reboot(int total_matched, std::vector<cli_argument*> args)
+{
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+
+    intptr_t cmd_notification_id = get_next_notification_id();
+
+    sys->set_wait_for_next_cmd();
+    entity->send_reboot_cmd((void *)cmd_notification_id);
+    sys->get_last_resp_status();
+
+    return 0;
+}
+
 
 int cmd_line::cmd_controller_avail(int total_matched, std::vector<cli_argument*> args)
 {

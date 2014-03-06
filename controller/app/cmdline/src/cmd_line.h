@@ -266,6 +266,11 @@ private:
     int cmd_entity_avail(int total_matched, std::vector<cli_argument*> args);
 
     /**
+     * Send a REBOOT command to reboot the entity
+     */
+    int cmd_reboot(int total_matched, std::vector<cli_argument*> args);
+
+    /**
      * Send a CONTROLLER_AVAILABLE command to determine if an AVDECC Controller is still alive.
      */
     int cmd_controller_avail(int total_matched, std::vector<cli_argument*> args);

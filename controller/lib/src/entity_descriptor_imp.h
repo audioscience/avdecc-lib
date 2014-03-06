@@ -44,6 +44,7 @@ namespace avdecc_lib
 
         struct jdksavdecc_aem_command_acquire_entity_response aem_cmd_acquire_entity_resp; // Store the response received after sending a ACQUIRE_ENTITY command.
         struct jdksavdecc_aem_command_lock_entity_response aem_cmd_lock_entity_resp; // Store the response received after sending a LOCK_ENTITY command.
+        struct jdksavdecc_aem_command_reboot_response aem_cmd_reboot_resp;
 
     public:
         entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
@@ -83,6 +84,9 @@ namespace avdecc_lib
 
         int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag);
         int proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+
+        int STDCALL send_reboot_cmd(void *notification_id);
+        int proc_reboot_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         int STDCALL send_set_config_cmd();
         int proc_set_config_resp();
