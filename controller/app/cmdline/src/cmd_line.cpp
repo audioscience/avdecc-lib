@@ -830,8 +830,12 @@ int cmd_line::cmd_version(int total_matched, std::vector<cli_argument*> args)
 
 int cmd_line::cmd_list(int total_matched, std::vector<cli_argument*> args)
 {
-    atomic_cout << "\n" << "End Station" << "  |  " << "Name" << std::setw(21)  << "  |  " <<  "Entity GUID" << std::setw(12) << "  |  " << "MAC" << std::endl;
-    atomic_cout << "------------------------------------------------------------------------------" << std::endl;
+    atomic_cout << "\n" << "End Station" << "  |  "
+                        << "Name" << std::setw(21)  << "  |  "
+                        << "Entity GUID" << std::setw(12) << "  |  "
+                        << "Firmware Version" << "  |  "
+                        << "MAC" << std::endl;
+    atomic_cout << std::string(100, '-') << std::endl;
 
     for(unsigned int i = 0; i < controller_obj->get_end_station_count(); i++)
     {
@@ -847,15 +851,18 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument*> args)
                 ent_desc = end_station->get_entity_desc_by_index(current_entity);
             }
             char *end_station_name;
+            char *fw_ver;
             if (ent_desc)
             {
                 end_station_name = (char *)ent_desc->entity_name();
+                fw_ver = (char *)ent_desc->firmware_version();
             }
             uint64_t end_station_mac = end_station->mac();
             atomic_cout << (std::stringstream() << end_station->get_connection_status()
                         << std::setw(10) << std::dec << std::setfill(' ') << i << "  |  "
                         << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
-                        << std::setw(16) << std::hex << std::setfill('0') << end_station_guid << "  |  0x"
+                        << std::setw(16) << std::hex << std::setfill('0') << end_station_guid << "  |  "
+                        << std::setw(16) << std::hex << std::setfill(' ') << (ent_desc ? fw_ver : "UNKNOWN") << "  |  "
                         << std::setw(12) << std::hex << std::setfill('0') << end_station_mac).rdbuf() << std::endl;
         }
     }
