@@ -36,6 +36,15 @@
 #include <string>
 #include <queue>
 
+#if defined _WIN32 || defined _WIN64
+#ifdef _MSC_VER
+#include <BaseTsd.h>
+#ifndef ssize_t
+#define ssize_t SSIZE_T
+#endif
+#endif
+#endif
+
 #include "cli_argument.h"
 
 class cmd_line;

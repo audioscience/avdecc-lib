@@ -19,6 +19,8 @@ elseif(UNIX)
   target_link_libraries(avdecccmdline rt)
 elseif(WIN32)
   set(PCAP_NAME wpcap)
+  include_directories( src src/msvc ../../lib/include ../../jdksavdecc-c/include )
+  file(GLOB_RECURSE SYSTEM_SPEC_SRC "src/msvc/*.c")
 
   if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     link_directories($ENV{WPCAP_DIR}/Lib/x64)
@@ -26,7 +28,8 @@ elseif(WIN32)
     link_directories($ENV{WPCAP_DIR}/Lib)
   endif()
 
-  add_executable (avdecccmdline ${CMDLINE_INCLUDES} ${CMDLINE_SRC})
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+  add_executable (avdecccmdline ${CMDLINE_INCLUDES} ${CMDLINE_SRC} ${SYSTEM_SPEC_SRC})
 endif()
 
 target_link_libraries(avdecccmdline controller)

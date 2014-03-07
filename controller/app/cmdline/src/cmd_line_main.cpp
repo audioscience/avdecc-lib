@@ -53,7 +53,7 @@
 #include "cli_argument.h"
 #include <set>
 #else
-#include "getopt.h"
+#include "msvc\getopt.h"
 #endif
 
 using namespace std;
