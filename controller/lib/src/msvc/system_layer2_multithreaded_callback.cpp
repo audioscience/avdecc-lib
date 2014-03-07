@@ -291,7 +291,7 @@ namespace avdecc_lib
                     bool is_operation_id_valid = false;
                     bool is_operation_complete = false;
 
-                    controller_ref_in_system->rx_packet_event(thread_data.notification_id,
+                    controller_obj_in_system->rx_packet_event(thread_data.notification_id,
                                                               is_notification_id_valid,
                                                               thread_data.frame,
                                                               thread_data.frame_len,
@@ -300,7 +300,7 @@ namespace avdecc_lib
                                                               is_operation_id_valid);
 
                     is_operation_complete = is_waiting &&
-                                            !controller_ref_in_system->is_active_operation_with_notification_id(waiting_notification_id) &&
+                                            !controller_obj_in_system->is_active_operation_with_notification_id(waiting_notification_id) &&
                                             is_notification_id_valid &&
                                             (waiting_notification_id == thread_data.notification_id);
 
@@ -340,8 +340,8 @@ namespace avdecc_lib
             controller_obj_in_system->time_tick_event();
 
             bool is_waiting_completed = is_waiting &&
-                                        (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id) &&
-                                        !controller_ref_in_system->is_active_operation_with_notification_id(waiting_notification_id));
+                                        (!controller_obj_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id) &&
+                                        !controller_obj_in_system->is_active_operation_with_notification_id(waiting_notification_id));
             if(is_waiting_completed)
             {
                 is_waiting = false;

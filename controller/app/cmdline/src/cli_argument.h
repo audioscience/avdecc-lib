@@ -37,6 +37,8 @@
 #include <vector>
 #include <set>
 
+#include <stdint.h>
+
 class cmd_line;
 
 class cli_argument

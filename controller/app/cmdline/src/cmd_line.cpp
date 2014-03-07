@@ -58,6 +58,12 @@
 #include "cli_command.h"
 #include "cli_command_format.h"
 
+#if defined _WIN32 || defined _WIN64
+#ifdef _MSC_VER
+#define strtoull(str, end, base) _strtoui64 (str, end, base)
+#endif
+#endif
+
 #define END_STATION_HELP "the End Station"
 #define DST_END_STATION_HELP "the destination End Station"
 #define SRC_END_STATION_HELP "the source End Station"
