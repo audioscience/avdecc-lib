@@ -249,21 +249,21 @@ namespace avdecc_lib
         ssize_t aem_cmd_lock_entity_resp_returned = 0;
         uint32_t msg_type = 0;
         bool u_field = false;
- 
+
         memcpy(cmd_frame.payload, frame, frame_len);
  
         aem_cmd_lock_entity_resp_returned = jdksavdecc_aem_command_lock_entity_response_read(&aem_cmd_lock_entity_resp,
-                                                                                              frame,
-                                                                                              ETHER_HDR_SIZE,
-                                                                                              frame_len);
- 
+                                                                                             frame,
+                                                                                             ETHER_HDR_SIZE,
+                                                                                             frame_len);
+
         if(aem_cmd_lock_entity_resp_returned < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_lock_entity_resp_read error\n");
             assert(aem_cmd_lock_entity_resp_returned >= 0);
             return -1;
         }
- 
+
         msg_type = aem_cmd_lock_entity_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_lock_entity_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_lock_entity_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
