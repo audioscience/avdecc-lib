@@ -42,6 +42,7 @@ namespace avdecc_lib
             timer inflight_timer;
         };
 
+        bool first_tick;
         std::vector<struct entities> entities_vec;
 
     public:

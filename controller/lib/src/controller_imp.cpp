@@ -189,6 +189,11 @@ namespace avdecc_lib
         return is_inflight_cmd;
     }
 
+    bool controller_imp::is_active_operation_with_notification_id(void *notification_id)
+    {
+        return aecp_controller_state_machine_ref->is_active_operation_with_notification_id(notification_id);
+    }
+
     void STDCALL controller_imp::set_logging_level(int32_t new_log_level)
     {
         log_imp_ref->set_log_level(new_log_level);
@@ -238,10 +243,17 @@ namespace avdecc_lib
         return -1;
     }
 
-    void controller_imp::rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, size_t frame_len, int &status)
+    void controller_imp::rx_packet_event(void *&notification_id,
+                                        bool &is_notification_id_valid,
+                                        const uint8_t *frame,
+                                        size_t frame_len,
+                                        int &status,
+                                        uint16_t &operation_id,
+                                        bool &is_operation_id_valid)
     {
         uint64_t dest_mac_addr;
         utility->convert_eui48_to_uint64(frame, dest_mac_addr);
+        is_operation_id_valid = false;
 
         if((dest_mac_addr == net_interface_ref->mac_addr()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address
         {
@@ -251,12 +263,27 @@ namespace avdecc_lib
             {
                 case JDKSAVDECC_SUBTYPE_ADP:
                 {
-                    int found_end_station_index = -1;
+                    end_station_imp *end_station = NULL;
                     bool found_adp_in_end_station = false;
                     struct jdksavdecc_eui64 other_entity_id;
                     jdksavdecc_eui64_read(&other_entity_id, frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE, frame_len);
 
-                    //log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "ADP packet discovered.");
+                    jdksavdecc_adpdu_common_control_header adpdu_header;
+                    jdksavdecc_adpdu_common_control_header_read(&adpdu_header, frame, ETHER_HDR_SIZE, frame_len);
+
+                    uint32_t entity_capabilities = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_ADPDU_OFFSET_ENTITY_CAPABILITIES);
+                    uint32_t available_index = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_ADPDU_OFFSET_AVAILABLE_INDEX);
+                    uint64_t entity_model_id = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_ADPDU_OFFSET_ENTITY_MODEL_ID);
+
+                    status = AVDECC_LIB_STATUS_INVALID;
+                    is_notification_id_valid = false;
+
+                    if ((entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_GENERAL_CONTROLLER_IGNORE) ||
+                        (entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_ENTITY_NOT_READY))
+                    {
+                        // The entity indicates that we should not enumerate it
+                        break;
+                    }
 
                     /**
                      * Check if an ADP object is already in the system. If not, create a new End Station object storing the ADPDU information
@@ -268,7 +295,7 @@ namespace avdecc_lib
                         if(jdksavdecc_eui64_compare(&end_entity_id, &other_entity_id) == 0)
                         {
                             found_adp_in_end_station = true;
-                            found_end_station_index = i;
+                            end_station = end_station_vec.at(i);
                         }
                     }
 
@@ -282,9 +309,18 @@ namespace avdecc_lib
                         }
                         else
                         {
-                            if(end_station_vec.at(found_end_station_index)->get_connection_status() == 'D')
+                            if ((available_index < end_station->get_adp()->get_available_index()) ||
+                                (entity_model_id != end_station->get_adp()->get_entity_model_id()))
                             {
-                                end_station_vec.at(found_end_station_index)->set_connected();
+                                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Re-enumerating end station with guid %ull", end_station->guid());
+                                end_station->end_station_reenumerate();
+                            }
+
+                            end_station->get_adp()->proc_adpdu(frame, frame_len);
+
+                            if(end_station->get_connection_status() == 'D')
+                            {
+                                end_station->set_connected();
                                 adp_discovery_state_machine_ref->state_avail(frame, frame_len);
                             }
                             else
@@ -293,13 +329,10 @@ namespace avdecc_lib
                             }
                         }
                     }
-                    else
+                    else if (adpdu_header.message_type != JDKSAVDECC_ADP_MESSAGE_TYPE_ENTITY_DISCOVER)
                     {
                         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid ADP packet with an entity GUID of 0.");
                     }
-
-                    status = AVDECC_LIB_STATUS_INVALID;
-                    is_notification_id_valid = false;
                 }
                 break;
 
@@ -329,6 +362,7 @@ namespace avdecc_lib
                         case JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE:
                         {
                             uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
+                            cmd_type &= 0x7FFF;
 
                             if(cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
                             {
@@ -336,7 +370,7 @@ namespace avdecc_lib
                             }
                             else
                             {
-                                end_station_vec.at(found_end_station_index)->proc_rcvd_aem_resp(notification_id, frame, frame_len, status);
+                                end_station_vec.at(found_end_station_index)->proc_rcvd_aem_resp(notification_id, frame, frame_len, status, operation_id, is_operation_id_valid);
                             }
 
                             is_notification_id_valid = true;

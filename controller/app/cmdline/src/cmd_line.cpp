@@ -33,6 +33,7 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <string.h>
 #include "end_station.h"
 #include "entity_descriptor.h"
@@ -516,6 +517,27 @@ void cmd_line::cmd_line_commands_init()
                                     &cmd_line::cmd_entity_avail);
     entity_available_cmd->add_format(entity_available_fmt);
 
+    // entity reboot
+    cli_command *entity_reboot_cmd = new cli_command();
+    entity_cmd->add_sub_command("reboot", entity_reboot_cmd);
+
+
+    cli_command_format *reboot_fmt = new cli_command_format(
+                                    "Send a REBOOT command to an AVDECC Entity",
+                                    &cmd_line::cmd_reboot);
+    entity_reboot_cmd->add_format(reboot_fmt);
+
+
+    // reboot
+    cli_command *reboot_cmd = new cli_command();
+    commands.add_sub_command("reboot", reboot_cmd);
+
+    // reboot entity
+    cli_command *reboot_entity_cmd = new cli_command();
+    reboot_cmd->add_sub_command("entity", reboot_entity_cmd);
+
+    reboot_entity_cmd->add_format(reboot_fmt);
+
     // controller
     cli_command *controller_cmd = new cli_command();
     commands.add_sub_command("controller", controller_cmd);
@@ -785,6 +807,16 @@ void cmd_line::cmd_line_commands_init()
                                     "To see a list of valid descriptor types and corresponding indexes, enter\n" \
                                     "\"view all\" command."));
     param_cmd->add_format(param_fmt);
+
+    // upgrade
+    cli_command *upgrade_cmd = new cli_command();
+    commands.add_sub_command("upgrade", upgrade_cmd);
+
+    cli_command_format *upgrade_cmd_fmt = new cli_command_format(
+                                    "Perform the EFU process on the end station to upgrade a firmware image",
+                                    &cmd_line::cmd_firmware_upgrade);
+    upgrade_cmd_fmt->add_argument(new cli_argument_string(this, "upgrade_image_path", "the path to the upgrade image file"));
+    upgrade_cmd->add_format(upgrade_cmd_fmt);
 }
 
 int cmd_line::cmd_help_all(int total_matched, std::vector<cli_argument*> args)
@@ -830,8 +862,12 @@ int cmd_line::cmd_version(int total_matched, std::vector<cli_argument*> args)
 
 int cmd_line::cmd_list(int total_matched, std::vector<cli_argument*> args)
 {
-    atomic_cout << "\n" << "End Station" << "  |  " << "Name" << std::setw(21)  << "  |  " <<  "Entity GUID" << std::setw(12) << "  |  " << "MAC" << std::endl;
-    atomic_cout << "------------------------------------------------------------------------------" << std::endl;
+    atomic_cout << "\n" << "End Station" << "  |  "
+                        << "Name" << std::setw(21)  << "  |  "
+                        << "Entity GUID" << std::setw(12) << "  |  "
+                        << "Firmware Version" << "  |  "
+                        << "MAC" << std::endl;
+    atomic_cout << std::string(100, '-') << std::endl;
 
     for(unsigned int i = 0; i < controller_obj->get_end_station_count(); i++)
     {
@@ -847,15 +883,18 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument*> args)
                 ent_desc = end_station->get_entity_desc_by_index(current_entity);
             }
             char *end_station_name;
+            char *fw_ver;
             if (ent_desc)
             {
                 end_station_name = (char *)ent_desc->entity_name();
+                fw_ver = (char *)ent_desc->firmware_version();
             }
             uint64_t end_station_mac = end_station->mac();
             atomic_cout << (std::stringstream() << end_station->get_connection_status()
                         << std::setw(10) << std::dec << std::setfill(' ') << i << "  |  "
                         << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
-                        << std::setw(16) << std::hex << std::setfill('0') << end_station_guid << "  |  0x"
+                        << std::setw(16) << std::hex << std::setfill('0') << end_station_guid << "  |  "
+                        << std::setw(16) << std::hex << std::setfill(' ') << (ent_desc ? fw_ver : "UNKNOWN") << "  |  "
                         << std::setw(12) << std::hex << std::setfill('0') << end_station_mac).rdbuf() << std::endl;
         }
     }
@@ -2451,6 +2490,24 @@ int cmd_line::cmd_entity_avail(int total_matched, std::vector<cli_argument*> arg
     return 0;
 }
 
+int cmd_line::cmd_reboot(int total_matched, std::vector<cli_argument*> args)
+{
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+
+    intptr_t cmd_notification_id = get_next_notification_id();
+
+    sys->set_wait_for_next_cmd();
+    entity->send_reboot_cmd((void *)cmd_notification_id);
+    sys->get_last_resp_status();
+
+    return 0;
+}
+
+
 int cmd_line::cmd_controller_avail(int total_matched, std::vector<cli_argument*> args)
 {
     intptr_t cmd_notification_id = get_next_notification_id();
@@ -2946,6 +3003,97 @@ int cmd_line::cmd_stop_streaming(int total_matched, std::vector<cli_argument*> a
     else
     {
         atomic_cout << "cmd_stop_streaming error" << std::endl;
+    }
+
+    return 0;
+}
+
+int cmd_line::cmd_firmware_upgrade(int total_matched, std::vector<cli_argument*> args)
+{
+    std::string image_file_path = args[0]->get_value_str();
+    std::ifstream is(image_file_path, std::ios::in|std::ios::binary);
+
+    if (is.is_open())
+    {
+        avdecc_lib::end_station *end_station;
+        avdecc_lib::entity_descriptor *entity;
+        avdecc_lib::configuration_descriptor *configuration;
+        if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+            return 0;
+
+        intptr_t cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd();
+        avdecc_lib::memory_object_descriptor *memory_object_desc_ref = configuration->get_memory_object_desc_by_index(0);
+        atomic_cout << "Erasing image..." << std::endl;
+        memory_object_desc_ref->start_operation_cmd((void *)cmd_notification_id, 3);
+        int status = sys->get_last_resp_status();
+
+        if (status)
+        {
+            atomic_cout << "Error: Erase failed." << std::endl;
+            return 0;
+        }
+        else
+        {
+            atomic_cout << "Succesfully erased." << std::endl;
+        }
+
+        std::streampos current = 0;
+        char buffer[256];
+        is.seekg(0, std::ios::beg);
+
+        is.read(buffer, 256);
+
+        while (is.gcount())
+        {
+            sys->set_wait_for_next_cmd();
+            controller_obj->get_end_station_by_index(current_end_station)->send_aecp_address_access_cmd((void *)cmd_notification_id,
+                                                                                                        1, 
+                                                                                                        is.gcount(),
+                                                                                                        int(current),
+                                                                                                        (uint8_t *)buffer);
+            status = sys->get_last_resp_status();
+            if (status)
+            {
+                atomic_cout << "Error: Could not write TLV at address " << current << std::endl;
+                return 0;
+            }
+            current += 256;
+            is.read(buffer, 256);
+        }
+
+        is.close();
+
+        atomic_cout << "Successfully upgraded image." << std::endl;
+
+        std::string yn;
+        atomic_cout << "Do you want to reboot the device? [y/n]: ";
+        std::cin >> yn;
+
+        while (1)
+        {
+            if (yn == "Y" || yn == "y")
+            {
+                cmd_reboot(0, std::vector<cli_argument *>());
+                break;
+            }
+            else if (yn == "N" || yn == "n")
+            {
+                break;
+            }
+            else
+            {
+                atomic_cout << "Please answer \"y\" or \"n\": ";
+                std::cin >> yn;
+            }
+        }
+
+
+    }
+    else
+    {
+        atomic_cout << "Error: Unable to open upgrade image at " << image_file_path << std::endl;
+        return 0;
     }
 
     return 0;

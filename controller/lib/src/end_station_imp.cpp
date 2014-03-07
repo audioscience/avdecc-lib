@@ -45,6 +45,26 @@ namespace avdecc_lib
     end_station_imp::end_station_imp(const uint8_t *frame, size_t frame_len)
     {
         end_station_connection_status = ' ';
+        adp_ref = new adp(frame, frame_len);
+        struct jdksavdecc_eui64 guid;
+        guid = adp_ref->get_entity_entity_id();
+        end_station_guid = jdksavdecc_uint64_get(&guid, 0);
+        utility->convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
+        end_station_init();
+    }
+
+    end_station_imp::~end_station_imp()
+    {
+        delete adp_ref;
+
+        for(uint32_t entity_vec_index = 0; entity_vec_index < entity_desc_vec.size(); entity_vec_index++)
+        {
+            delete entity_desc_vec.at(entity_vec_index);
+        }
+    }
+
+    int end_station_imp::end_station_init()
+    {
         current_entity_desc = 0;
         current_config_desc = 0;
         selected_entity_index = 0;
@@ -68,32 +88,24 @@ namespace avdecc_lib
         desc_type_index_from_stream_port_input = JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER;
         desc_type_index_from_stream_port_output = JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER;
 
-        adp_ref = new adp(frame, frame_len);
-        struct jdksavdecc_eui64 guid;
-        guid = adp_ref->get_entity_entity_id();
-        end_station_guid = jdksavdecc_uint64_get(&guid, 0);
-        utility->convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
-        end_station_init();
-    }
-
-    end_station_imp::~end_station_imp()
-    {
-        delete adp_ref;
-
-        for(uint32_t entity_vec_index = 0; entity_vec_index < entity_desc_vec.size(); entity_vec_index++)
-        {
-            delete entity_desc_vec.at(entity_vec_index);
-        }
-    }
-
-    int end_station_imp::end_station_init()
-    {
         uint16_t desc_type = JDKSAVDECC_DESCRIPTOR_ENTITY;
         uint16_t desc_index = 0;
 
         read_desc_init(desc_type, desc_index);
 
         return 0;
+    }
+
+    void end_station_imp::end_station_reenumerate()
+    {
+        for(uint32_t entity_vec_index = 0; entity_vec_index < entity_desc_vec.size(); entity_vec_index++)
+        {
+            delete entity_desc_vec.at(entity_vec_index);
+        }
+
+        entity_desc_vec.clear();
+
+        end_station_init();
     }
 
     const char STDCALL end_station_imp::get_connection_status() const
@@ -737,12 +749,18 @@ namespace avdecc_lib
         return 0;
     }
 
-    int end_station_imp::proc_rcvd_aem_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+    int end_station_imp::proc_rcvd_aem_resp(void *&notification_id,
+                                            const uint8_t *frame,
+                                            size_t frame_len,
+                                            int &status,
+                                            uint16_t &operation_id,
+                                            bool &is_operation_id_valid)
     {
         uint16_t cmd_type;
         uint16_t desc_type;
         uint16_t desc_index;
         cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
+        cmd_type &= 0x7FFF;
 
         switch(cmd_type)
         {
@@ -1170,6 +1188,95 @@ namespace avdecc_lib
                         {
                             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_output_descriptor_imp to base stream_output_descriptor error");
                         }
+                    }
+                }
+                break;
+
+            case JDKSAVDECC_AEM_COMMAND_REBOOT:
+                {
+                    desc_type = jdksavdecc_aem_command_reboot_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                    desc_index = jdksavdecc_aem_command_reboot_get_descriptor_index(frame, ETHER_HDR_SIZE);
+
+                    if(desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY)
+                    {
+                        entity_descriptor_imp *entity_desc_imp_ref =
+                            dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
+
+                        if(entity_desc_imp_ref)
+                        {
+                            entity_desc_imp_ref->proc_reboot_resp(notification_id, frame, frame_len, status);
+                        }
+                        else
+                        {
+                            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base entity_descriptor to derived entity_descriptor_imp error");
+                        }
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Descriptor type %d is not valid.", desc_type);
+                    }
+                }
+
+                break;
+
+            case JDKSAVDECC_AEM_COMMAND_START_OPERATION:
+                {
+                    desc_type = jdksavdecc_aem_command_start_operation_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                    desc_index = jdksavdecc_aem_command_start_operation_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+
+                    if(desc_type == JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT)
+                    {
+                        memory_object_descriptor *mo = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_memory_object_desc_by_index(desc_index);
+
+                        if (mo)
+                        {
+                            memory_object_descriptor_imp *memory_object_desc_imp_ref =
+                                dynamic_cast<memory_object_descriptor_imp *>(mo);
+
+                            if(memory_object_desc_imp_ref)
+                            {
+                                uint16_t operation_type;
+                                memory_object_desc_imp_ref->proc_start_operation_resp(notification_id, frame, frame_len, status, operation_id, operation_type);
+                                if (status == AEM_STATUS_SUCCESS && operation_id)
+                                {
+                                    aecp_controller_state_machine_ref->start_operation(notification_id, operation_id, operation_type, frame, frame_len);
+                                    is_operation_id_valid = true;
+                                }
+                            }
+                            else
+                            {
+                                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived memory_object_descriptor_imp to base memory_object_descriptor error");
+                            }
+                        }
+
+                    }
+                }
+                break;
+
+            case JDKSAVDECC_AEM_COMMAND_OPERATION_STATUS:
+                {
+                    desc_type = jdksavdecc_aem_command_operation_status_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                    desc_index = jdksavdecc_aem_command_operation_status_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+
+                    if(desc_type == JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT)
+                    {
+                        memory_object_descriptor *mo = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_memory_object_desc_by_index(desc_index);
+
+                        if (mo)
+                        {
+                            memory_object_descriptor_imp *memory_object_desc_imp_ref =
+                                dynamic_cast<memory_object_descriptor_imp *>(mo);
+
+                            if(memory_object_desc_imp_ref)
+                            {
+                                memory_object_desc_imp_ref->proc_operation_status_resp(notification_id, frame, frame_len, status, operation_id, is_operation_id_valid);
+                            }
+                            else
+                            {
+                                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived memory_object_descriptor_imp to base memory_object_descriptor error");
+                            }
+                        }
+
                     }
                 }
                 break;

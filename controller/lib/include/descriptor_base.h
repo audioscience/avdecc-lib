@@ -109,6 +109,15 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag) = 0;
 
         /**
+         * Send a REBOOT command to the AVDECC Entity
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         * \param lock_entity_flag The flag to be set for the command. Valid flags are 0 and 1 (UNLOCK).
+         *
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_reboot_cmd(void *notification_id) = 0;
+
+        /**
          * Send a SET_NAME command to change the value of a name field within a descriptor. For descriptors with multiple names, this
          * sets only one specified name per command.
          *

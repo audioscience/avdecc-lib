@@ -36,6 +36,7 @@
 #include "notification_imp.h"
 #include "log_imp.h"
 #include "inflight.h"
+#include "operation.h"
 #include "aecp_controller_state_machine.h"
 
 namespace avdecc_lib
@@ -188,6 +189,7 @@ namespace avdecc_lib
         {
             jdksavdecc_eui64 id = jdksavdecc_common_control_header_get_stream_id(frame.payload, ETHER_HDR_SIZE);
             uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame.payload, ETHER_HDR_SIZE );
+            cmd_type &= 0x7FFF;
             uint16_t desc_type = jdksavdecc_aem_command_read_descriptor_get_descriptor_type(frame.payload, ETHER_HDR_SIZE);
             uint16_t desc_index = jdksavdecc_aem_command_read_descriptor_get_descriptor_index(frame.payload, ETHER_HDR_SIZE);
             
@@ -257,10 +259,65 @@ namespace avdecc_lib
         return 0;
     }
 
+    int aecp_controller_state_machine::start_operation(void *&notification_id, uint16_t operation_id, uint16_t operation_type, const uint8_t *frame, ssize_t frame_len)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        memcpy(cmd_frame.payload, frame, frame_len);
+
+        operation oper = operation(&cmd_frame,
+                                  operation_id,
+                                  operation_type,
+                                  notification_id,
+                                  CMD_WITH_NOTIFICATION);
+        active_operations.push_back(oper);
+
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Added new operation with type %x and id %d", operation_type, operation_id);
+
+        return 0;
+    }
+
+    int aecp_controller_state_machine::update_operation_for_rcvd_resp(void *&notification_id, uint16_t operation_id, uint16_t percent_complete, struct jdksavdecc_frame *cmd_frame)
+    {
+        uint32_t notification_flag = 0;
+
+        std::vector<operation>::iterator j =
+            std::find_if(active_operations.begin(), active_operations.end(), operation_id_comp(operation_id));
+
+        if(j != active_operations.end()) // found?
+        {
+            notification_id = j->cmd_notification_id;
+            notification_flag = j->notification_flag();
+            callback(notification_id, notification_flag, cmd_frame->payload);
+            if (percent_complete == 0 || percent_complete == 1000)
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Removed operation with id %d, percent_complete: %d", operation_id, percent_complete);
+                active_operations.erase(j);
+            }
+            return 1;
+        }
+
+        return -1;
+    }
+
+    bool aecp_controller_state_machine::is_active_operation_with_notification_id(void *notification_id)
+    {
+        std::vector<operation>::iterator j =
+            std::find_if(active_operations.begin(), active_operations.end(), notification_comp(notification_id));
+
+        if(j != active_operations.end()) // found?
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     int aecp_controller_state_machine::callback(void *notification_id, uint32_t notification_flag, uint8_t *frame)
     {
         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
+
         uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
+        cmd_type &= 0x7FFF;
         uint32_t status = jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE);
         uint16_t desc_type = 0;
         uint16_t desc_index = 0;

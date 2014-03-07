@@ -42,7 +42,10 @@ namespace avdecc_lib
 {
     adp_discovery_state_machine *adp_discovery_state_machine_ref = new adp_discovery_state_machine(); // To have one ADP Discovery State Machine for all end stations
 
-    adp_discovery_state_machine::adp_discovery_state_machine() {}
+    adp_discovery_state_machine::adp_discovery_state_machine()
+    {
+        first_tick = true;
+    }
 
     adp_discovery_state_machine::~adp_discovery_state_machine() {}
 
@@ -192,6 +195,12 @@ namespace avdecc_lib
 
     bool adp_discovery_state_machine::tick(uint64_t &end_station_guid)
     {
+        if (first_tick)
+        {
+            state_discover(0);
+            first_tick = false;
+        }
+
         for(uint32_t i = 0; i < entities_vec.size(); i++)
         {
             if(entities_vec.at(i).inflight_timer.timeout())

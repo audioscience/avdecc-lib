@@ -129,6 +129,11 @@ namespace avdecc_lib
          */
         void set_disconnected();
 
+        /**
+         * Re-enumerate the endpoint by re-reading the descriptors
+         */
+        void end_station_reenumerate();
+
         uint64_t STDCALL guid();
         uint64_t STDCALL mac();
         adp * get_adp();
@@ -139,7 +144,7 @@ namespace avdecc_lib
 
         int STDCALL send_entity_avail_cmd(void *notification_id);
         int proc_entity_avail_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
-        int proc_rcvd_aem_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+        int proc_rcvd_aem_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status, uint16_t &operation_id, bool &is_operation_id_valid);
         int STDCALL send_aecp_address_access_cmd(void *notification_id,
                                         unsigned mode,
                                         unsigned length,
