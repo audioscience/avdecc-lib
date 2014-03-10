@@ -30,6 +30,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stddef.h>
 #include "build.h"
 
 class net_interface;

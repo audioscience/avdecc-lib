@@ -48,6 +48,7 @@
 #if defined(__MACH__) || defined(__linux__)
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 
 // For TAB-completion
 #include "cli_argument.h"
