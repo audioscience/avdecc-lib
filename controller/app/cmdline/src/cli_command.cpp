@@ -92,7 +92,7 @@ bool cli_command::run_command(cmd_line *cmd_ptr, std::queue<std::string> args, b
     return false;
 }
 
-void cli_command::print_help_all(std::string prefix, int depth) const
+void cli_command::print_help_all(std::string prefix, size_t depth) const
 {
     if (depth && m_sub_commands.size())
     {
@@ -107,7 +107,7 @@ void cli_command::print_help_all(std::string prefix, int depth) const
 
             std::map<std::string, cli_command*>::const_iterator cmd_iter = m_sub_commands.find(*iter);
             assert(cmd_iter != m_sub_commands.end());
-            cmd_iter->second->print_help_all(sub_prefix, depth - 1);
+            cmd_iter->second->print_help_all(sub_prefix, (depth == UINT_MAX) ? depth : depth - 1);
         }
     }
     else

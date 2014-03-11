@@ -59,7 +59,7 @@ public:
     virtual ~cli_command_format() {};
 
     void add_argument(cli_argument *arg);
-    cli_argument *get_arg(ssize_t index) const;
+    cli_argument *get_arg(size_t index) const;
 
     bool run_command(cmd_line *cmd_ptr, std::queue<std::string> args, bool &done);
 

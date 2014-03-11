@@ -27,6 +27,7 @@
  * CLI command format implementation
  */
 
+#include <limits>
 #include <assert.h>
 
 #include "cli_command_format.h"
@@ -42,7 +43,7 @@ void cli_command_format::add_argument(cli_argument *arg)
     m_args.push_back(arg);
 }
 
-cli_argument *cli_command_format::get_arg(ssize_t index) const
+cli_argument *cli_command_format::get_arg(size_t index) const
 {
     if (index < m_args.size())
         return m_args[index];
@@ -55,7 +56,7 @@ bool cli_command_format::run_command(cmd_line *cmd_ptr, std::queue<std::string> 
     clear_args();
 
     bool args_ok = true;
-    int m_i = 0;
+    size_t m_i = 0;
     int match_count = 0;
     int total_matched = 0;
     while (args.size() && (m_i < m_args.size()) && args_ok)
@@ -70,7 +71,7 @@ bool cli_command_format::run_command(cmd_line *cmd_ptr, std::queue<std::string> 
             match_count++;
             total_matched++;
 
-            if ((match_max != -1) && (match_count >= match_max))
+            if ((match_max != UINT_MAX) && (match_count >= match_max))
             {
                 // Move to next argument - completed this one
                 m_i++;
@@ -117,7 +118,7 @@ bool cli_command_format::run_command(cmd_line *cmd_ptr, std::queue<std::string> 
 void cli_command_format::print_help(std::string prefix) const
 {
     printf("\n%s", prefix.c_str());
-    for (int i = 0; i < m_args.size(); i++)
+    for (size_t i = 0; i < m_args.size(); i++)
     {
         printf("[%s] ", m_args[i]->get_name().c_str());
     }
@@ -127,7 +128,7 @@ void cli_command_format::print_help(std::string prefix) const
     if (m_args.size() > 0)
     {
         printf("Parameters:\n");
-        for (int i = 0; i < m_args.size(); i++)
+        for (size_t i = 0; i < m_args.size(); i++)
         {
             m_args[i]->print_help();
         }

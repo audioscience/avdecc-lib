@@ -34,6 +34,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <limits>
 #include <string.h>
 #include "end_station.h"
 #include "entity_descriptor.h"
@@ -233,7 +234,7 @@ void cmd_line::cmd_line_commands_init()
     cli_command_format *help_one_fmt = new cli_command_format(
                                     "Display details of specified command.",
                                     &cmd_line::cmd_help_one);
-    help_one_fmt->add_argument(new cli_argument_string(this, "cmd", "the command for which to show details", "", 1, -1));
+    help_one_fmt->add_argument(new cli_argument_string(this, "cmd", "the command for which to show details", "", 1, UINT_MAX));
     help_cmd->add_format(help_one_fmt);
 
     cli_command_format *help_all_fmt = new cli_command_format(
@@ -381,7 +382,7 @@ void cmd_line::cmd_line_commands_init()
     connect_rx_fmt->add_argument(new cli_argument_int(this, "d_d_i", "the destination descriptor index"));
     connect_rx_fmt->add_argument(new cli_argument_string(this, "f", "the set of flags",
                                     "Valid flags are class_b, fast_connect, saved_state, streaming_wait,\n" \
-                                    "supports_encrypted, encrypted_pdu, and talker_failed.", 0, -1));
+                                    "supports_encrypted, encrypted_pdu, and talker_failed.", 0, UINT_MAX));
     connect_cmd->add_format(connect_rx_fmt);
 
     cli_command_format *connect_dst_fmt = new cli_command_format(
@@ -836,7 +837,7 @@ int cmd_line::cmd_help_one(int total_matched, std::vector<cli_argument*> args)
     std::vector<std::string> tmp = args[0]->get_all_value_str();
     if (tmp[0] == "-a")
     {
-        commands.print_help_all("", -1);
+        commands.print_help_all("", UINT_MAX);
     }
     else
     {

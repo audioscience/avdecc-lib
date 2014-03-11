@@ -38,7 +38,7 @@
 
 cli_argument::cli_argument(cmd_line *cmd_line_ptr, const std::string name,
         const std::string help, const std::string hint,
-        int match_min, int match_max)
+        size_t match_min, size_t match_max)
     : m_cmd_line_ptr(cmd_line_ptr)
     , m_is_valid(false)
     , m_match_min(match_min)
@@ -123,19 +123,19 @@ bool cli_argument::is_valid() const
     return m_is_valid;
 }
 
-bool cli_argument::get_match_min() const
+size_t cli_argument::get_match_min() const
 {
     return m_match_min;
 }
 
-int cli_argument::get_match_max() const
+size_t cli_argument::get_match_max() const
 {
     return m_match_max;
 }
 
 cli_argument_int::cli_argument_int(cmd_line *cmd_line_ptr, const std::string name,
         const std::string help, const std::string hint,
-        int match_min, int match_max)
+        size_t match_min, size_t match_max)
     : cli_argument(cmd_line_ptr, name, help + " (type int)", hint, match_min, match_max)
 {}
 
@@ -172,7 +172,7 @@ int cli_argument_int::get_value_int() const
     return m_values[0];
 }
 
-int cli_argument_int::get_all_value_count() const
+size_t cli_argument_int::get_all_value_count() const
 {
     return m_values.size();
 }
@@ -184,7 +184,7 @@ std::vector<int> cli_argument_int::get_all_value_int() const
 
 cli_argument_end_station::cli_argument_end_station(cmd_line *cmd_line_ptr, const std::string name,
         const std::string help, const std::string hint,
-        int match_min, int match_max)
+        size_t match_min, size_t match_max)
     : cli_argument(cmd_line_ptr, name, help + " (index as int or GUID)", hint, match_min, match_max)
 {}
 
@@ -228,7 +228,7 @@ uint32_t cli_argument_end_station::get_value_uint() const
     return m_values[0];
 }
 
-int cli_argument_end_station::get_all_value_count() const
+size_t cli_argument_end_station::get_all_value_count() const
 {
     return m_values.size();
 }
@@ -240,7 +240,7 @@ std::vector<uint32_t> cli_argument_end_station::get_all_value_uint() const
 
 cli_argument_string::cli_argument_string(cmd_line *cmd_line_ptr, const std::string name,
         const std::string help, const std::string hint,
-        int match_min, int match_max)
+        size_t match_min, size_t match_max)
     : cli_argument(cmd_line_ptr, name, help + " (type string)", hint, match_min, match_max)
 {}
 
@@ -272,7 +272,7 @@ std::string cli_argument_string::get_value_str() const
     return m_values[0];
 }
 
-int cli_argument_string::get_all_value_count() const
+size_t cli_argument_string::get_all_value_count() const
 {
     return m_values.size();
 }

@@ -61,7 +61,7 @@ public:
 
     bool run_command(cmd_line *cmd_ptr, std::queue<std::string> args, bool &done, std::string prefix="");
 
-    void print_help_all(std::string prefix, int depth) const;
+    void print_help_all(std::string prefix, size_t depth) const;
     void print_help_details(std::string prefix) const;
 
     const cli_command *get_sub_command(std::queue<std::string> &cmd_path, std::string &prefix) const;

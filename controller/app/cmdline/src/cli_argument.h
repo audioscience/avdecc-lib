@@ -45,7 +45,7 @@ class cli_argument
 {
 public:
     cli_argument(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint,
-            int match_min, int match_max);
+            size_t match_min, size_t match_max);
     virtual ~cli_argument() {};
 
     const std::string &get_name() const;
@@ -65,21 +65,21 @@ public:
      * The get_all_ functions return all matching values where an argument has
      * matched more than once
      */
-    virtual int get_all_value_count() const = 0;
+    virtual size_t get_all_value_count() const = 0;
     virtual std::vector<int> get_all_value_int() const;
     virtual std::vector<uint32_t> get_all_value_uint() const;
     virtual std::vector<std::string> get_all_value_str() const;
 
     void print_help() const;
     bool is_valid() const;
-    bool get_match_min() const;
-    int  get_match_max() const;
+    size_t get_match_min() const;
+    size_t get_match_max() const;
 
 protected:
     cmd_line *m_cmd_line_ptr;
     bool m_is_valid;
-    bool m_match_min;
-    int  m_match_max;
+    size_t m_match_min;
+    size_t m_match_max;
     std::string m_name;
     std::string m_help;
     std::string m_hint;
@@ -89,7 +89,7 @@ class cli_argument_int : public cli_argument
 {
 public:
     cli_argument_int(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint="",
-            int match_min=1, int match_max=1);
+            size_t match_min=1, size_t match_max=1);
     virtual ~cli_argument_int() {};
 
     virtual void clear();
@@ -98,7 +98,7 @@ public:
 
     virtual int get_value_int() const;
 
-    virtual int get_all_value_count() const;
+    virtual size_t get_all_value_count() const;
     virtual std::vector<int> get_all_value_int() const;
 
 private:
@@ -109,7 +109,7 @@ class cli_argument_end_station : public cli_argument
 {
 public:
     cli_argument_end_station(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint="",
-            int match_min=1, int match_max=1);
+            size_t match_min=1, size_t match_max=1);
     virtual ~cli_argument_end_station() {};
 
     virtual void clear();
@@ -118,7 +118,7 @@ public:
 
     virtual uint32_t get_value_uint() const;
 
-    virtual int get_all_value_count() const;
+    virtual size_t get_all_value_count() const;
     virtual std::vector<uint32_t> get_all_value_uint() const;
 
 private:
@@ -129,7 +129,7 @@ class cli_argument_string : public cli_argument
 {
 public:
     cli_argument_string(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint="",
-            int match_min=1, int match_max=1);
+            size_t match_min=1, size_t match_max=1);
     virtual ~cli_argument_string() {};
 
     virtual void clear();
@@ -138,7 +138,7 @@ public:
 
     virtual std::string get_value_str() const;
 
-    virtual int get_all_value_count() const;
+    virtual size_t get_all_value_count() const;
     virtual std::vector<std::string> get_all_value_str() const;
 
 private:
