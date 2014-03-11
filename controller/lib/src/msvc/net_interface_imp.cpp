@@ -55,12 +55,6 @@ namespace avdecc_lib
         for(dev = all_devs, total_devs = 0; dev; dev = dev->next)
         {
             total_devs++;
-
-            /********** If this is the Windows AVB driver then use the RTX Virtual NIC *********/
-            if(strstr(dev->description,"RTX Virtual") || strstr(dev->description,"Virtual RTX"))
-            {
-                interface_num = total_devs;
-            }
         }
 
         if(total_devs == 0)
@@ -106,7 +100,7 @@ namespace avdecc_lib
     }
 
 
-    int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
+    int STDCALL net_interface_imp::select_interface_by_num(uint32_t if_num)
     {
         uint32_t index;
         IP_ADAPTER_INFO *AdapterInfo;
@@ -117,17 +111,16 @@ namespace avdecc_lib
 
         if(interface_num == 0)
         {
-            if(interface_num < 1 || interface_num > total_devs)
+            if(if_num < 1 || if_num > total_devs)
             {
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Interface number out of range.");
                 pcap_freealldevs(all_devs); // Free the device list
                 exit(EXIT_FAILURE);
             }
         }
-
         else
         {
-            interface_num = interface_num;
+            interface_num = if_num;
         }
 
         for(dev = all_devs, index = 0; index < interface_num - 1; dev = dev->next, index++); // Jump to the selected adapter
