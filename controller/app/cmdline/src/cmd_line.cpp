@@ -3054,11 +3054,11 @@ int cmd_line::cmd_firmware_upgrade(int total_matched, std::vector<cli_argument*>
         while (is.gcount())
         {
             sys->set_wait_for_next_cmd();
-            controller_obj->get_end_station_by_index(current_end_station)->send_aecp_address_access_cmd((void *)cmd_notification_id,
-                                                                                                        1, 
-                                                                                                        is.gcount(),
-                                                                                                        int(current),
-                                                                                                        (uint8_t *)buffer);
+            end_station->send_aecp_address_access_cmd((void *)cmd_notification_id,
+                                                      1,
+                                                      is.gcount(),
+                                                      int(current),
+                                                      (uint8_t *)buffer);
             status = sys->get_last_resp_status();
             if (status)
             {
