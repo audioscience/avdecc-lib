@@ -889,12 +889,12 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument*> args)
                 uint16_t current_entity = end_station->get_current_entity_index();
                 ent_desc = end_station->get_entity_desc_by_index(current_entity);
             }
-            char *end_station_name = "";
-            char *fw_ver = "";
+            const char *end_station_name = "";
+            const char *fw_ver = "";
             if (ent_desc)
             {
-                end_station_name = (char *)ent_desc->entity_name();
-                fw_ver = (char *)ent_desc->firmware_version();
+                end_station_name = (const char *)ent_desc->entity_name();
+                fw_ver = (const char *)ent_desc->firmware_version();
             }
             uint64_t end_station_mac = end_station->mac();
             atomic_cout << (std::stringstream() << end_station->get_connection_status()
