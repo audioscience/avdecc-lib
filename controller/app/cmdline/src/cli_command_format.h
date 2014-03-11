@@ -46,8 +46,7 @@
 #endif
 
 #include "cli_argument.h"
-
-class cmd_line;
+#include "cmd_line.h"
 
 class cli_command;
 typedef int (cmd_line::*cli_fptr)(int total_matched, std::vector<cli_argument*> args);
