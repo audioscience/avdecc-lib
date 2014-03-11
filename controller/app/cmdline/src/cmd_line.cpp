@@ -889,8 +889,8 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument*> args)
                 uint16_t current_entity = end_station->get_current_entity_index();
                 ent_desc = end_station->get_entity_desc_by_index(current_entity);
             }
-            char *end_station_name;
-            char *fw_ver;
+            char *end_station_name = "";
+            char *fw_ver = "";
             if (ent_desc)
             {
                 end_station_name = (char *)ent_desc->entity_name();
