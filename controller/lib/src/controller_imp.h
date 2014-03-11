@@ -64,7 +64,7 @@ namespace avdecc_lib
         /**
          * Check if the corresponding End Station with the GUID exist.
          */
-        bool is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
+        bool STDCALL is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
 
         configuration_descriptor * STDCALL get_current_config_desc(size_t end_station_index, bool report_error=true);
 

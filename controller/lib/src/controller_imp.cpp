@@ -106,7 +106,7 @@ namespace avdecc_lib
         return end_station_vec.at(end_station_index);
     }
 
-    bool controller_imp::is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index)
+    bool STDCALL controller_imp::is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index)
     {
         uint64_t end_station_guid;
 
