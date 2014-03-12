@@ -45,7 +45,6 @@ namespace avdecc_lib
         pcap_if_t *dev;
         uint64_t mac;
         uint32_t total_devs;
-        uint32_t interface_num; // The interface selected
         pcap_t *pcap_interface;
         char err_buf[PCAP_ERRBUF_SIZE];
         const u_char *ether_frame;

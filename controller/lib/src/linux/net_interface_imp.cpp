@@ -93,7 +93,6 @@ namespace avdecc_lib
         char host[NI_MAXHOST];
         char ifname[256];
 
-        interface_num = 0;
         total_devs = 0;
 
         ip_hdr_store = new ipheader;

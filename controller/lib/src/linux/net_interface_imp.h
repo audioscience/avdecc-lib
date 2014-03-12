@@ -55,7 +55,6 @@ namespace avdecc_lib
         std::vector<std::string> ifnames;
 
         uint32_t total_devs;
-        uint32_t interface_num; // The interface selected
         struct ipheader *ip_hdr_store;
         struct udpheader *udp_hdr_store;
         int rawsock;
