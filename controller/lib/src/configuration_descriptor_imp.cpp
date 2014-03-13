@@ -513,6 +513,26 @@ namespace avdecc_lib
         return NULL;
     }
 
+    uint8_t * STDCALL configuration_descriptor_imp::get_strings_desc_string_by_reference(size_t reference)
+    {
+        if (reference == 0xffff)
+        {
+            return NULL;
+        }
+        strings_descriptor * desc = get_strings_desc_by_index(reference >> 3);
+
+        if(desc)
+        {
+            return desc->get_string_by_index(reference & 0x3);
+        }
+
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
+                                  "0x%llx, get_strings_desc_string_by_reference error, ref 0x%04x",
+                                  base_end_station_imp_ref->guid(),
+                                  (unsigned int)reference & 0xffff);
+        return NULL;
+    }
+
     stream_port_input_descriptor * STDCALL configuration_descriptor_imp::get_stream_port_input_desc_by_index(size_t stream_port_input_desc_index)
     {
         bool is_valid = (stream_port_input_desc_index < stream_port_input_desc_vec.size());
