@@ -39,7 +39,8 @@ namespace avdecc_lib
 
     private:
         struct jdksavdecc_descriptor_audio_map audio_map_desc; // Structure containing the audio_map_desc fields
-        ssize_t audio_map_desc_read_returned; // Status of extracting Audio Map descriptor information from a network buffer
+        std::vector<struct audio_map_mapping> maps; // Store maps in a vector
+
     public:
         audio_map_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~audio_map_descriptor_imp();
@@ -48,6 +49,7 @@ namespace avdecc_lib
         uint16_t STDCALL descriptor_index() const;
         uint16_t mappings_offset();
         uint16_t STDCALL number_of_mappings();
+        int STDCALL mapping(size_t index, struct audio_map_mapping &map);
     };
 }
 

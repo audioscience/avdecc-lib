@@ -1903,7 +1903,23 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                 avdecc_lib::audio_map_descriptor *audio_map_desc = configuration->get_audio_map_desc_by_index(desc_index);
                 if(audio_map_desc)
                 {
-                    atomic_cout << "\nnumber_of_mappings = " << std::dec << audio_map_desc->number_of_mappings() << std::endl;
+                    uint16_t nmappings = audio_map_desc->number_of_mappings();
+                    atomic_cout << "\nnumber_of_mappings = " << std::dec << nmappings << std::endl;
+
+                    for (int i = 0; i < (int)nmappings; i++)
+                    {
+                        struct avdecc_lib::audio_map_mapping map;
+
+                        int ret = audio_map_desc->mapping(i, map);
+
+                        if (ret == 0)
+                        {
+                            atomic_cout << "map[" << i << "].stream_index = " << std::dec << map.stream_index << std::endl;
+                            atomic_cout << "map[" << i << "].stream_channel = " << std::dec << map.stream_channel << std::endl;
+                            atomic_cout << "map[" << i << "].cluster_offset = " << std::dec << map.cluster_offset << std::endl;
+                            atomic_cout << "map[" << i << "].cluster_channel = " << std::dec << map.cluster_channel << std::endl;
+                       }
+                    }
                 }
             }
             break;

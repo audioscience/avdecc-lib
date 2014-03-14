@@ -40,6 +40,13 @@
 
 namespace avdecc_lib
 {
+    struct audio_map_mapping {
+        uint16_t stream_index;
+        uint16_t stream_channel;
+        uint16_t cluster_offset;
+        uint16_t cluster_channel;
+    };
+
     class audio_map_descriptor : public virtual descriptor_base
     {
     public:
@@ -48,6 +55,12 @@ namespace avdecc_lib
          *	       of this field is 62 for this version of AEM.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_mappings() = 0;
+        /**
+         * \param index The index of the mapping to return.
+         * \param mapping The mapping structure that is filled in by this funtion.
+         * \return Returns 0 on success.
+        */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL mapping(size_t index, struct audio_map_mapping &mapping) = 0;
     };
 }
 
