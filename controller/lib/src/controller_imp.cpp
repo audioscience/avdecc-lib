@@ -265,21 +265,15 @@ namespace avdecc_lib
                 {
                     end_station_imp *end_station = NULL;
                     bool found_adp_in_end_station = false;
-                    struct jdksavdecc_eui64 other_entity_id;
-                    jdksavdecc_eui64_read(&other_entity_id, frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE, frame_len);
 
-                    jdksavdecc_adpdu_common_control_header adpdu_header;
-                    jdksavdecc_adpdu_common_control_header_read(&adpdu_header, frame, ETHER_HDR_SIZE, frame_len);
-
-                    uint32_t entity_capabilities = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_ADPDU_OFFSET_ENTITY_CAPABILITIES);
-                    uint32_t available_index = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_ADPDU_OFFSET_AVAILABLE_INDEX);
-                    uint64_t entity_model_id = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_ADPDU_OFFSET_ENTITY_MODEL_ID);
+                    jdksavdecc_adpdu adpdu;
+                    jdksavdecc_adpdu_read(&adpdu, frame, ETHER_HDR_SIZE, frame_len );
 
                     status = AVDECC_LIB_STATUS_INVALID;
                     is_notification_id_valid = false;
 
-                    if ((entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_GENERAL_CONTROLLER_IGNORE) ||
-                        (entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_ENTITY_NOT_READY))
+                    if ((adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_GENERAL_CONTROLLER_IGNORE) ||
+                        (adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_ENTITY_NOT_READY))
                     {
                         // The entity indicates that we should not enumerate it
                         break;
@@ -292,14 +286,15 @@ namespace avdecc_lib
                     for(uint32_t i = 0; i < end_station_vec.size(); i++)
                     {
                         struct jdksavdecc_eui64 end_entity_id = end_station_vec.at(i)->get_adp()->get_entity_entity_id();
-                        if(jdksavdecc_eui64_compare(&end_entity_id, &other_entity_id) == 0)
+                        if(jdksavdecc_eui64_compare(&end_entity_id, &adpdu.header.entity_id) == 0)
                         {
                             found_adp_in_end_station = true;
                             end_station = end_station_vec.at(i);
                         }
                     }
 
-                    if(jdksavdecc_uint64_get(&other_entity_id, 0) != 0)
+
+                    if(jdksavdecc_eui64_convert_to_uint64(&adpdu.header.entity_id) != 0)
                     {
                         if(!found_adp_in_end_station)
                         {
@@ -309,8 +304,8 @@ namespace avdecc_lib
                         }
                         else
                         {
-                            if ((available_index < end_station->get_adp()->get_available_index()) ||
-                                (entity_model_id != end_station->get_adp()->get_entity_model_id()))
+                            if ((adpdu.available_index < end_station->get_adp()->get_available_index()) ||
+                                (jdksavdecc_eui64_convert_to_uint64(&adpdu.entity_model_id) != end_station->get_adp()->get_entity_model_id()))
                             {
                                 log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Re-enumerating end station with guid %ull", end_station->guid());
                                 end_station->end_station_reenumerate();
@@ -329,9 +324,9 @@ namespace avdecc_lib
                             }
                         }
                     }
-                    else if (adpdu_header.message_type != JDKSAVDECC_ADP_MESSAGE_TYPE_ENTITY_DISCOVER)
+                    else if (adpdu.header.message_type != JDKSAVDECC_ADP_MESSAGE_TYPE_ENTITY_DISCOVER)
                     {
-                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid ADP packet with an entity GUID of 0.");
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid ADP packet with an entity ID of 0.");
                     }
                 }
                 break;
