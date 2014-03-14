@@ -114,7 +114,7 @@ namespace avdecc_lib
         ssize_t aem_cmd_acquire_entity_returned;
 
         /***************************************** AECP Common Data *********************************************/
-        aem_cmd_acquire_entity.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_acquire_entity.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_acquire_entity.sequence_id in AEM Controller State Machine
         aem_cmd_acquire_entity.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY;
 
@@ -141,7 +141,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                             &cmd_frame,
-                                                            base_end_station_imp_ref->guid(),
+                                                            base_end_station_imp_ref->entity_id(),
                                                             JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY_COMMAND_LEN - 
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
@@ -204,7 +204,7 @@ namespace avdecc_lib
         ssize_t aem_cmd_lock_entity_returned;
 
         /***************************************** AECP Common Data ******************************************/
-        aem_cmd_lock_entity.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_lock_entity.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_lock_entity.sequence_id in AEM Controller State Machine
         aem_cmd_lock_entity.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY;
 
@@ -231,7 +231,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                             &cmd_frame,
-                                                            base_end_station_imp_ref->guid(),
+                                                            base_end_station_imp_ref->entity_id(),
                                                             JDKSAVDECC_AEM_COMMAND_LOCK_ENTITY_COMMAND_LEN - 
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
@@ -295,7 +295,7 @@ namespace avdecc_lib
         struct jdksavdecc_aem_command_reboot aem_cmd_reboot;
 
         /***************************************** AECP Common Data ******************************************/
-        aem_cmd_reboot.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_reboot.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_reboot.sequence_id in AEM Controller State Machine
         aem_cmd_reboot.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_REBOOT;
 
@@ -320,7 +320,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                             &cmd_frame,
-                                                            base_end_station_imp_ref->guid(),
+                                                            base_end_station_imp_ref->entity_id(),
                                                             JDKSAVDECC_AEM_COMMAND_REBOOT_COMMAND_LEN - 
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);

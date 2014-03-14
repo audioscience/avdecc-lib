@@ -185,7 +185,7 @@ std::vector<int> cli_argument_int::get_all_value_int() const
 cli_argument_end_station::cli_argument_end_station(cmd_line *cmd_line_ptr, const std::string name,
         const std::string help, const std::string hint,
         size_t match_min, size_t match_max)
-    : cli_argument(cmd_line_ptr, name, help + " (index as int or GUID)", hint, match_min, match_max)
+    : cli_argument(cmd_line_ptr, name, help + " (index as int or Entity ID)", hint, match_min, match_max)
 {}
 
 void cli_argument_end_station::clear()
@@ -215,10 +215,10 @@ void cli_argument_end_station::get_completion_options(std::set<std::string> &opt
 
     for (size_t i = 0; i < controller->get_end_station_count(); i++)
     {
-        char guid_str[20];
+        char entity_id_str[20];
         avdecc_lib::end_station *end_station = controller->get_end_station_by_index(i);
-        sprintf(guid_str, "0x%llx", end_station->guid());
-        options.insert(std::string(guid_str));
+        sprintf(entity_id_str, "0x%llx", end_station->entity_id());
+        options.insert(std::string(entity_id_str));
     }
 }
 

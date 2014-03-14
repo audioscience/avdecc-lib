@@ -59,7 +59,7 @@
 
 using namespace std;
 
-extern "C" void notification_callback(void *user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
+extern "C" void notification_callback(void *user_obj, int32_t notification_type, uint64_t entity_id, uint16_t cmd_type,
                                       uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status,
                                       void *notification_id)
 {
@@ -84,7 +84,7 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
 
         printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %s, %p)\n",
                cmd_line::utility->notification_value_to_name(notification_type),
-               guid,
+               entity_id,
                cmd_name,
                desc_name,
                desc_index,
@@ -95,7 +95,7 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
     {
         printf("\n[NOTIFICATION] (%s, 0x%llx, %d, %d, %d, %d, %p)\n",
                cmd_line::utility->notification_value_to_name(notification_type),
-               guid,
+               entity_id,
                cmd_type,
                desc_type,
                desc_index,

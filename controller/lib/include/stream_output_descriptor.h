@@ -374,7 +374,7 @@ namespace avdecc_lib
          * Send a GET_TX_STATE command with a notification id to connect Listener sink stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
-         * \param talker_guid The Talker Entity ID used to identify the AVDECC Talker being targed by
+         * \param talker_entity_id The Talker Entity ID used to identify the AVDECC Talker being targed by
          *                    the command. In the case of Talker commands, this is the AVDECC Entity
          *                    receiving the command. In the case of Listener commands, this is the
          *                    AVDECC Entity that any Talker command is to be sent to. This field is
@@ -389,7 +389,7 @@ namespace avdecc_lib
          * Send a GET_TX_CONNECTION command with a notification id to get a specific Talker connection information.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
-         * \param talker_guid The Talker Entity ID used to identify the AVDECC Talker being targed by
+         * \param talker_entity_id The Talker Entity ID used to identify the AVDECC Talker being targed by
          *                    the command. In the case of Talker commands, this is the AVDECC Entity
          *                    receiving the command. In the case of Listener commands, this is the
          *                    AVDECC Entity that any Talker command is to be sent to. This field is
@@ -398,7 +398,7 @@ namespace avdecc_lib
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
          *                         this corresponds to the id of the STREAM OUTPUT descriptor.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_tx_connection_cmd(void *notification_id, uint64_t listener_guid, uint16_t listener_unique_id) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_tx_connection_cmd(void *notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id) = 0;
     };
 }
 
