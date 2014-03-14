@@ -57,7 +57,7 @@ namespace avdecc_lib
         if(desc_memory_object_read_returned < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, memory_object_desc_read error", end_station_obj->guid());
-            assert(desc_memory_object_read_returned >= 0);
+            //assert(desc_memory_object_read_returned >= 0);
         }
     }
 
