@@ -135,10 +135,10 @@ namespace avdecc_lib
         int STDCALL send_stop_streaming_cmd(void *notification_id);
         int proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
-        int STDCALL send_connect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id, uint16_t flags);
+        int STDCALL send_connect_rx_cmd(void *notification_id, uint64_t talker_entity_id, uint16_t talker_unique_id, uint16_t flags);
         int proc_connect_rx_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
-        int STDCALL send_disconnect_rx_cmd(void *notification_id, uint64_t talker_guid, uint16_t talker_unique_id);
+        int STDCALL send_disconnect_rx_cmd(void *notification_id, uint64_t talker_entity_id, uint16_t talker_unique_id);
         int proc_disconnect_rx_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
         int STDCALL send_get_rx_state_cmd(void *notification_id);

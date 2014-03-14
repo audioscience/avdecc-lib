@@ -41,7 +41,7 @@ namespace avdecc_lib
         /**
          * Find an end station that matches the entity and controller IDs
          */
-        int find_in_end_station(struct jdksavdecc_eui64 &entity_guid, const uint8_t *frame);
+        int find_in_end_station(struct jdksavdecc_eui64 &entity_entity_id, const uint8_t *frame);
 
     public:
         /**
@@ -62,13 +62,13 @@ namespace avdecc_lib
         end_station * STDCALL get_end_station_by_index(size_t end_station_index);
 
         /**
-         * Check if the corresponding End Station with the GUID exist.
+         * Check if the corresponding End Station with the Entity ID exist.
          */
-        bool STDCALL is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index);
+        bool STDCALL is_end_station_found_by_entity_id(uint64_t entity_entity_id, uint32_t &end_station_index);
 
         configuration_descriptor * STDCALL get_current_config_desc(size_t end_station_index, bool report_error=true);
 
-        configuration_descriptor * STDCALL get_config_desc_by_guid(uint64_t entity_guid, uint16_t entity_index, uint16_t config_index);
+        configuration_descriptor * STDCALL get_config_desc_by_entity_id(uint64_t entity_entity_id, uint16_t entity_index, uint16_t config_index);
 
         /**
          * Check if the command with the corresponding notification id is in the inflight list.

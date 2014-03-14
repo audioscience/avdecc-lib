@@ -68,7 +68,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    void aecp_controller_state_machine::common_hdr_init(int message_type, struct jdksavdecc_frame *cmd_frame, uint64_t target_guid, uint32_t cd_len)
+    void aecp_controller_state_machine::common_hdr_init(int message_type, struct jdksavdecc_frame *cmd_frame, uint64_t target_entity_id, uint32_t cd_len)
     {
         struct jdksavdecc_aecpdu_common_control_header aecpdu_common_ctrl_hdr;
         ssize_t aecpdu_common_ctrl_hdr_returned;
@@ -81,7 +81,7 @@ namespace avdecc_lib
         aecpdu_common_ctrl_hdr.message_type = message_type;
         aecpdu_common_ctrl_hdr.status = JDKSAVDECC_AEM_STATUS_SUCCESS;
         aecpdu_common_ctrl_hdr.control_data_length = cd_len;
-        jdksavdecc_uint64_write(target_guid, &aecpdu_common_ctrl_hdr.target_entity_id, 0, sizeof(uint64_t));
+        jdksavdecc_uint64_write(target_entity_id, &aecpdu_common_ctrl_hdr.target_entity_id, 0, sizeof(uint64_t));
 
         /********************** Fill frame payload with AECP Common Control Header information *********************/
         aecpdu_common_ctrl_hdr_returned = jdksavdecc_aecpdu_common_control_header_write(&aecpdu_common_ctrl_hdr,

@@ -871,7 +871,7 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument*> args)
 {
     atomic_cout << "\n" << "End Station" << "  |  "
                         << "Name" << std::setw(21)  << "  |  "
-                        << "Entity GUID" << std::setw(12) << "  |  "
+                        << "Entity ID" << std::setw(12) << "  |  "
                         << "Firmware Version" << "  |  "
                         << "MAC" << std::endl;
     atomic_cout << std::string(100, '-') << std::endl;
@@ -882,7 +882,7 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument*> args)
 
         if (end_station)
         {
-            uint64_t end_station_guid = end_station->guid();
+            uint64_t end_station_entity_id = end_station->entity_id();
             avdecc_lib::entity_descriptor *ent_desc = NULL;
             if (end_station->entity_desc_count())
             {
@@ -900,7 +900,7 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument*> args)
             atomic_cout << (std::stringstream() << end_station->get_connection_status()
                         << std::setw(10) << std::dec << std::setfill(' ') << i << "  |  "
                         << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
-                        << std::setw(16) << std::hex << std::setfill('0') << end_station_guid << "  |  "
+                        << std::setw(16) << std::hex << std::setfill('0') << end_station_entity_id << "  |  "
                         << std::setw(16) << std::hex << std::setfill(' ') << (ent_desc ? fw_ver : "UNKNOWN") << "  |  "
                         << std::setw(12) << std::hex << std::setfill('0') << end_station_mac).rdbuf() << std::endl;
         }
@@ -983,7 +983,7 @@ int cmd_line::cmd_show_select(int total_matched, std::vector<cli_argument*> args
 
     atomic_cout << "Current setting" << std::endl;
     atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station->get_entity_desc_by_index(current_entity)->entity_name()
-                << ", " << "0x" << std::setw(16) << std::hex << std::setfill('0') << end_station->guid()
+                << ", " << "0x" << std::setw(16) << std::hex << std::setfill('0') << end_station->entity_id()
                 << ")" << std::endl;
     atomic_cout << "\tEntity: " << std::dec << current_entity << std::endl;
     atomic_cout << "\tConfiguration: " << std::dec << current_config << std::endl;
@@ -2124,7 +2124,7 @@ int cmd_line::cmd_connect_rx(int total_matched, std::vector<cli_argument*> args)
         }
 
         intptr_t cmd_notification_id = 0;
-        uint64_t talker_guid;
+        uint64_t talker_entity_id;
         bool check_stream_format;
 
         cmd_notification_id = get_next_notification_id();
@@ -2140,8 +2140,8 @@ int cmd_line::cmd_connect_rx(int total_matched, std::vector<cli_argument*> args)
 
         avdecc_lib::end_station *outstream_end_station = controller_obj->get_end_station_by_index(outstream_end_station_index);
         uint16_t outstream_current_entity = outstream_end_station->get_current_entity_index();
-        talker_guid = outstream_end_station->get_entity_desc_by_index(outstream_current_entity)->entity_id();
-        instream->send_connect_rx_cmd((void *)cmd_notification_id, talker_guid, outstream_desc_index, connection_flags);
+        talker_entity_id = outstream_end_station->get_entity_desc_by_index(outstream_current_entity)->entity_id();
+        instream->send_connect_rx_cmd((void *)cmd_notification_id, talker_entity_id, outstream_desc_index, connection_flags);
         sys->get_last_resp_status();
     }
     else
@@ -2171,7 +2171,7 @@ int cmd_line::cmd_disconnect_rx(int total_matched, std::vector<cli_argument*> ar
     if(is_valid)
     {
         intptr_t cmd_notification_id = 0;
-        uint64_t talker_guid;
+        uint64_t talker_entity_id;
 
         cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd();
@@ -2179,9 +2179,9 @@ int cmd_line::cmd_disconnect_rx(int total_matched, std::vector<cli_argument*> ar
 
         avdecc_lib::end_station *outstream_end_station = controller_obj->get_end_station_by_index(outstream_end_station_index);
         uint16_t current_entity = outstream_end_station->get_current_entity_index();
-        talker_guid = outstream_end_station->get_entity_desc_by_index(current_entity)->entity_id();
+        talker_entity_id = outstream_end_station->get_entity_desc_by_index(current_entity)->entity_id();
 
-        instream->send_disconnect_rx_cmd((void *)cmd_notification_id, talker_guid, outstream_desc_index);
+        instream->send_disconnect_rx_cmd((void *)cmd_notification_id, talker_entity_id, outstream_desc_index);
         sys->get_last_resp_status();
     }
     else
@@ -2261,9 +2261,9 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument*>
                         continue;
                     }
 
-                    atomic_cout << "0x" << std::setw(16) << std::hex << std::setfill('0') << out_end_station->guid()
+                    atomic_cout << "0x" << std::setw(16) << std::hex << std::setfill('0') << out_end_station->entity_id()
                                 << "[" << in_stream_index << "] -> "
-                                << "0x" << std::setw(16) << std::hex << std::setfill('0') << in_end_station->guid()
+                                << "0x" << std::setw(16) << std::hex << std::setfill('0') << in_end_station->entity_id()
                                 << "[" << out_stream_index << "]" << std::endl;
                 }
             }
@@ -3170,20 +3170,20 @@ bool cmd_line::is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t 
 
 bool cmd_line::get_end_station_index(std::string arg, uint32_t &end_station_index) const
 {
-    uint64_t entity_guid = 0;
+    uint64_t entity_entity_id = 0;
     const char *str = arg.c_str();
     char *end;
 
-    // Try treating the argument as a GUID
-    entity_guid = strtoull(str, &end, 16);
+    // Try treating the argument as a Entity ID
+    entity_entity_id = strtoull(str, &end, 16);
     if (end != str)
     {
-      bool found = controller_obj->is_end_station_found_by_guid(entity_guid, end_station_index);
+      bool found = controller_obj->is_end_station_found_by_entity_id(entity_entity_id, end_station_index);
       if (found)
         return true;
     }
 
-    // Not a valid GUID, so assume it is an index
+    // Not a valid Entity ID, so assume it is an index
     end_station_index = strtoul(str, &end, 10);
     if (end != str)
       return true;

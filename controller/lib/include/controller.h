@@ -64,9 +64,9 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual end_station * STDCALL get_end_station_by_index(size_t end_station_index) = 0;
 
         /**
-         * \return Find a endstation's index by GUID.
+         * \return Find a endstation's index by Entity ID.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL is_end_station_found_by_guid(uint64_t entity_guid, uint32_t &end_station_index) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL is_end_station_found_by_entity_id(uint64_t entity_entity_id, uint32_t &end_station_index) = 0;
 
         /**
          * \return The corresponding CONFIGURATION descriptor by index.
@@ -74,9 +74,9 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_current_config_desc(size_t end_station_index, bool report_error=true) = 0;
 
         /**
-         * \return The corresponding CONFIGURATION descriptor by GUID.
+         * \return The corresponding CONFIGURATION descriptor by Entity ID.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_guid(uint64_t end_station_guid, uint16_t entity_index, uint16_t config_index) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_entity_id(uint64_t end_station_entity_id, uint16_t entity_index, uint16_t config_index) = 0;
 
         /**
          * Update the base log level for messages to be logged by the post_log_msg callback.
@@ -105,7 +105,7 @@ namespace avdecc_lib
      * \param netif A network interface object created in the application level using the public network interface API provided.
      * \param notification_user_obj A void pointer used to store any helpful C++ class object.
      * \param notification_type The type of notification that the callback function is called with. (Refer to notifications enumeration included in the library for a list of notification types supported.)
-     * \param guid An unique identifier of the End Station the command is targeted to.
+     * \param entity_id An unique identifier of the End Station the command is targeted to.
      * \param cmd_type The type of the AEM command used in the command data to be sent.
      * \param desc_type The type of the AEM descriptor used in the command data to be sent.
      * \param desc_index The index associated with the corresponding descriptor type used in the command data to be sent.
@@ -117,7 +117,7 @@ namespace avdecc_lib
      * \param time_stamp_ms The time in milliseconds indicating when the message is logged.
      */
     extern "C" AVDECC_CONTROLLER_LIB32_API controller * STDCALL create_controller(net_interface *netif,
-                                                                                  void (*notification_callback) (void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
+                                                                                  void (*notification_callback) (void *notification_user_obj, int32_t notification_type, uint64_t entity_id, uint16_t cmd_type,
                                                                                                                  uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void *notification_id),
                                                                                   void (*log_callback) (void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms),
                                                                                   int32_t initial_log_level);

@@ -33,7 +33,7 @@
 
 namespace avdecc_lib
 {
-    extern "C" void default_notification(void *notification_user_obj, int32_t notification_type, uint64_t guid, uint16_t cmd_type,
+    extern "C" void default_notification(void *notification_user_obj, int32_t notification_type, uint64_t entity_id, uint16_t cmd_type,
                                          uint16_t desc_type, uint16_t desc_index, uint32_t status, void *notification_id) {}
 
     notification::notification()
@@ -48,7 +48,7 @@ namespace avdecc_lib
 
     notification::~notification() {}
 
-    void notification::post_notification_msg(int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void *notification_id)
+    void notification::post_notification_msg(int32_t notification_type, uint64_t entity_id, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void *notification_id)
     {
         uint32_t index;
 
@@ -64,7 +64,7 @@ namespace avdecc_lib
         {
             index = InterlockedExchangeAdd(&write_index, 1);
             notification_buf[index % NOTIFICATION_BUF_COUNT].notification_type = notification_type;
-            notification_buf[index % NOTIFICATION_BUF_COUNT].guid = guid;
+            notification_buf[index % NOTIFICATION_BUF_COUNT].entity_id = entity_id;
             notification_buf[index % NOTIFICATION_BUF_COUNT].cmd_type = cmd_type;
             notification_buf[index % NOTIFICATION_BUF_COUNT].desc_type = desc_type;
             notification_buf[index % NOTIFICATION_BUF_COUNT].desc_index = desc_index;

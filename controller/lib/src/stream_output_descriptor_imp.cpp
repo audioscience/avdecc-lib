@@ -46,7 +46,7 @@ namespace avdecc_lib
 
         if(stream_output_desc_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, stream_output_desc_read error", end_station_obj->guid());
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, stream_output_desc_read error", end_station_obj->entity_id());
             assert(stream_output_desc_read_returned >= 0);
         }
 
@@ -374,7 +374,7 @@ namespace avdecc_lib
         ssize_t aem_cmd_set_stream_format_returned;
 
         /******************************************** AECP Common Data *********************************************/
-        aem_cmd_set_stream_format.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_set_stream_format.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_set_stream_format.sequence_id in AEM Controller State Machine
         aem_cmd_set_stream_format.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
 
@@ -400,7 +400,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                             &cmd_frame,
-                                                            base_end_station_imp_ref->guid(),
+                                                            base_end_station_imp_ref->entity_id(),
                                                             JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT_COMMAND_LEN - 
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
@@ -450,7 +450,7 @@ namespace avdecc_lib
         ssize_t aem_cmd_get_stream_format_returned;
 
         /******************************************** AECP Common Data *********************************************/
-        aem_cmd_get_stream_format.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_get_stream_format.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_get_stream_format.sequence_id in AEM Controller State Machine
         aem_cmd_get_stream_format.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
 
@@ -475,7 +475,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                             &cmd_frame,
-                                                            base_end_station_imp_ref->guid(),
+                                                            base_end_station_imp_ref->entity_id(),
                                                             JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_COMMAND_LEN - 
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
@@ -522,7 +522,7 @@ namespace avdecc_lib
         memset(&cmd, 0, sizeof(cmd));
 
         /******************************************** AECP Common Data *******************************************/
-        cmd.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        cmd.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_start_streaming.sequence_id in AEM Controller State Machine
         cmd.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO;
 
@@ -549,7 +549,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                             &cmd_frame,
-                                                            base_end_station_imp_ref->guid(),
+                                                            base_end_station_imp_ref->entity_id(),
                                                             JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_COMMAND_LEN - 
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
@@ -594,7 +594,7 @@ namespace avdecc_lib
         ssize_t aem_cmd_get_stream_info_returned;
 
         /******************************************** AECP Common Data *******************************************/
-        aem_cmd_get_stream_info.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_get_stream_info.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_get_stream_info.sequence_id in AEM Controller State Machine
         aem_cmd_get_stream_info.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO;
 
@@ -619,7 +619,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                             &cmd_frame,
-                                                            base_end_station_imp_ref->guid(),
+                                                            base_end_station_imp_ref->entity_id(),
                                                             JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_COMMAND_LEN - 
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
@@ -672,7 +672,7 @@ namespace avdecc_lib
         ssize_t aem_cmd_start_streaming_returned;
 
         /******************************************** AECP Common Data *******************************************/
-        aem_cmd_start_streaming.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_start_streaming.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_start_streaming.sequence_id in AEM Controller State Machine
         aem_cmd_start_streaming.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_START_STREAMING;
 
@@ -697,7 +697,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                             &cmd_frame,
-                                                            base_end_station_imp_ref->guid(),
+                                                            base_end_station_imp_ref->entity_id(),
                                                             JDKSAVDECC_AEM_COMMAND_START_STREAMING_COMMAND_LEN - 
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
@@ -742,7 +742,7 @@ namespace avdecc_lib
         ssize_t aem_cmd_stop_streaming_returned;
 
         /******************************************* AECP Common Data *******************************************/
-        aem_cmd_stop_streaming.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_stop_streaming.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_stop_streaming.sequence_id in AEM Controller State Machine
         aem_cmd_stop_streaming.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_STOP_STREAMING;
 
@@ -767,7 +767,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                             &cmd_frame,
-                                                            base_end_station_imp_ref->guid(),
+                                                            base_end_station_imp_ref->entity_id(),
                                                             JDKSAVDECC_AEM_COMMAND_STOP_STREAMING_COMMAND_LEN - 
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
@@ -810,11 +810,11 @@ namespace avdecc_lib
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_acmpdu acmp_cmd_get_tx_state;
         ssize_t acmp_cmd_get_tx_state_returned;
-        uint64_t talker_guid = base_end_station_imp_ref->get_entity_desc_by_index(0)->entity_id();
+        uint64_t talker_entity_id = base_end_station_imp_ref->get_entity_desc_by_index(0)->entity_id();
 
         /******************************************* ACMP Common Data ******************************************/
-        acmp_cmd_get_tx_state.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
-        jdksavdecc_uint64_write(talker_guid, &acmp_cmd_get_tx_state.talker_entity_id, 0, sizeof(uint64_t));
+        acmp_cmd_get_tx_state.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
+        jdksavdecc_uint64_write(talker_entity_id, &acmp_cmd_get_tx_state.talker_entity_id, 0, sizeof(uint64_t));
         jdksavdecc_eui64_init(&acmp_cmd_get_tx_state.listener_entity_id);
         acmp_cmd_get_tx_state.talker_unique_id = descriptor_index();
         acmp_cmd_get_tx_state.listener_unique_id = 0;
@@ -869,17 +869,17 @@ namespace avdecc_lib
         return 0;
     }
 
-    int STDCALL stream_output_descriptor_imp::send_get_tx_connection_cmd(void *notification_id, uint64_t listener_guid, uint16_t listener_unique_id)
+    int STDCALL stream_output_descriptor_imp::send_get_tx_connection_cmd(void *notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id)
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_acmpdu acmp_cmd_get_tx_connection;
         ssize_t acmp_cmd_get_tx_connection_returned;
-        uint64_t talker_guid = base_end_station_imp_ref->get_entity_desc_by_index(0)->entity_id();
+        uint64_t talker_entity_id = base_end_station_imp_ref->get_entity_desc_by_index(0)->entity_id();
 
         /********************************************* ACMP Common Data *********************************************/
-        acmp_cmd_get_tx_connection.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
-        jdksavdecc_uint64_write(talker_guid, &acmp_cmd_get_tx_connection.talker_entity_id, 0, sizeof(uint64_t));
-        jdksavdecc_uint64_write(listener_guid, &acmp_cmd_get_tx_connection.listener_entity_id, 0, sizeof(uint64_t));
+        acmp_cmd_get_tx_connection.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
+        jdksavdecc_uint64_write(talker_entity_id, &acmp_cmd_get_tx_connection.talker_entity_id, 0, sizeof(uint64_t));
+        jdksavdecc_uint64_write(listener_entity_id, &acmp_cmd_get_tx_connection.listener_entity_id, 0, sizeof(uint64_t));
         acmp_cmd_get_tx_connection.talker_unique_id = descriptor_index();
         acmp_cmd_get_tx_connection.listener_unique_id = listener_unique_id;
         jdksavdecc_eui48_init(&acmp_cmd_get_tx_connection.stream_dest_mac);

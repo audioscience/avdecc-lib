@@ -45,7 +45,7 @@ namespace avdecc_lib
         /**
          * AVDECC LIB modules call this function to generate a notification message.
          */
-        void post_notification_msg(int32_t notification_type, uint64_t guid, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void *notification_id);
+        void post_notification_msg(int32_t notification_type, uint64_t entity_id, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void *notification_id);
 
         /**
          * Change the notification callback function to a new post_notification_msg callback function.
@@ -73,7 +73,7 @@ namespace avdecc_lib
         struct notification_data
         {
             int32_t notification_type;
-            uint64_t guid;
+            uint64_t entity_id;
             uint16_t cmd_type;
             uint16_t desc_type;
             uint16_t desc_index;
