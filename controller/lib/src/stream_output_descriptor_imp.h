@@ -44,7 +44,6 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_stream stream_output_desc; // Structure containing the stream_output_desc fields
-        ssize_t stream_output_desc_read_returned; // Status of extracting STREAM OUTPUT descriptor information from a network buffer
 
 		std::map <string, int> stream_info_flags;
 

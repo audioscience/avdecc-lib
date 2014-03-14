@@ -39,7 +39,6 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_stream stream_input_desc; // Structure containing the stream_input_desc fields
-        ssize_t stream_input_desc_read_returned; // Status of extracting STREAM INPUT descriptor information from a network buffer
 
         struct stream_input_desc_stream_flags
         {

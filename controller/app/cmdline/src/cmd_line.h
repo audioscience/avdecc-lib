@@ -111,7 +111,7 @@ private:
     void cmd_line_commands_init();
 
     void print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
-                                        avdecc_lib::strings_descriptor &strings,
+                                        const uint8_t *localized_desc_string,
                                         avdecc_lib::locale_descriptor &locale);
 
 public:

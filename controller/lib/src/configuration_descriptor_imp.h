@@ -53,7 +53,6 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_configuration config_desc; // Structure containing the config_desc fields
-        ssize_t config_desc_read_returned; // Status of extracting CONFIGURATION descriptor information from a network buffer
 
         std::vector<uint16_t> desc_type_vec; // Store descriptor types present in the CONFIGURATION descriptor
         std::vector<uint16_t> desc_count_vec; // Store descriptor counts present in the CONFIGURATION descriptor
@@ -136,6 +135,7 @@ namespace avdecc_lib
         clock_source_descriptor * STDCALL get_clock_source_desc_by_index(size_t clock_source_desc_index);
         memory_object_descriptor * STDCALL get_memory_object_desc_by_index(size_t memory_object_desc_index);
         locale_descriptor * STDCALL get_locale_desc_by_index(size_t locale_desc_index);
+        uint8_t * STDCALL get_strings_desc_string_by_reference(size_t reference);
         strings_descriptor * STDCALL get_strings_desc_by_index(size_t strings_desc_index);
         stream_port_input_descriptor * STDCALL get_stream_port_input_desc_by_index(size_t stream_port_input_desc_index);
         stream_port_output_descriptor * STDCALL get_stream_port_output_desc_by_index(size_t stream_port_output_desc_index);

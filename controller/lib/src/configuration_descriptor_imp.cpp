@@ -40,12 +40,12 @@ namespace avdecc_lib
 {
     configuration_descriptor_imp::configuration_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
-        config_desc_read_returned = jdksavdecc_descriptor_configuration_read(&config_desc, frame, pos, frame_len);
+        ssize_t ret = jdksavdecc_descriptor_configuration_read(&config_desc, frame, pos, frame_len);
 
-        if(config_desc_read_returned < 0)
+        if(ret < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, config_desc_read error", end_station_obj->entity_id());
-            assert(config_desc_read_returned >= 0);
+            assert(ret >= 0);
         }
 
         desc_type_vec_init(frame, pos);
@@ -510,6 +510,26 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_strings_desc_by_index error", base_end_station_imp_ref->entity_id());
         }
 
+        return NULL;
+    }
+
+    uint8_t * STDCALL configuration_descriptor_imp::get_strings_desc_string_by_reference(size_t reference)
+    {
+        if (reference == 0xffff)
+        {
+            return NULL;
+        }
+        strings_descriptor * desc = get_strings_desc_by_index(reference >> 3);
+
+        if(desc)
+        {
+            return desc->get_string_by_index(reference & 0x3);
+        }
+
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
+                                  "0x%llx, get_strings_desc_string_by_reference error, ref 0x%04x",
+                                  base_end_station_imp_ref->entity_id(),
+                                  (unsigned int)reference & 0xffff);
         return NULL;
     }
 

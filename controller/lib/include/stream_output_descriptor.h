@@ -397,6 +397,7 @@ namespace avdecc_lib
          * \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
          *                         of the AVDECC Talker. For entities using the AVDECC Entity Mondel,
          *                         this corresponds to the id of the STREAM OUTPUT descriptor.
+         * \return Returns 0 on success.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_tx_connection_cmd(void *notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id) = 0;
     };

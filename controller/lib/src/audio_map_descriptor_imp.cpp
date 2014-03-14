@@ -36,12 +36,25 @@ namespace avdecc_lib
 {
     audio_map_descriptor_imp::audio_map_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
-        audio_map_desc_read_returned = jdksavdecc_descriptor_audio_map_read(&audio_map_desc, frame, pos, frame_len);
+        ssize_t ret = jdksavdecc_descriptor_audio_map_read(&audio_map_desc, frame, pos, frame_len);
 
-        if(audio_map_desc_read_returned < 0)
+        if(ret < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, audio_map_desc_read error", end_station_obj->entity_id());
-            assert(audio_map_desc_read_returned >= 0);
+            assert(ret >= 0);
+        }
+
+        ssize_t offset = pos + mappings_offset();
+        for (unsigned int i = 0; i < (unsigned int)number_of_mappings(); i++)
+        {
+            struct audio_map_mapping map;
+
+            map.stream_index = jdksavdecc_uint16_get(frame, offset);
+            map.stream_channel = jdksavdecc_uint16_get(frame, offset + 2);
+            map.cluster_offset = jdksavdecc_uint16_get(frame, offset + 4);
+            map.cluster_channel = jdksavdecc_uint16_get(frame, offset + 6);
+            maps.push_back(map);
+            offset += sizeof(struct audio_map_mapping);
         }
     }
 
@@ -68,4 +81,15 @@ namespace avdecc_lib
     {
         return audio_map_desc.number_of_mappings;
     }
+    
+    int STDCALL audio_map_descriptor_imp::mapping(size_t index, struct audio_map_mapping &map)
+    {
+        if (index >= audio_map_desc.number_of_mappings)
+            return -1;
+
+        map = maps.at(index);
+        return 0;
+    }
+
+
 }

@@ -42,12 +42,12 @@ namespace avdecc_lib
 {
     stream_output_descriptor_imp::stream_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
-        stream_output_desc_read_returned = jdksavdecc_descriptor_stream_read(&stream_output_desc, frame, pos, frame_len);
+        ssize_t ret = jdksavdecc_descriptor_stream_read(&stream_output_desc, frame, pos, frame_len);
 
-        if(stream_output_desc_read_returned < 0)
+        if(ret < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, stream_output_desc_read error", end_station_obj->entity_id());
-            assert(stream_output_desc_read_returned >= 0);
+            assert(ret >= 0);
         }
 
         memset(&stream_output_flags, 0, sizeof(struct stream_output_desc_stream_flags));
