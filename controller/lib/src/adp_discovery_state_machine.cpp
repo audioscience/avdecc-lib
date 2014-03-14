@@ -67,7 +67,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    void adp_discovery_state_machine::common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_guid)
+    void adp_discovery_state_machine::common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_entity_id)
     {
         struct jdksavdecc_adpdu_common_control_header adpdu_common_ctrl_hdr;
         ssize_t adpdu_common_ctrl_hdr_returned;
@@ -80,7 +80,7 @@ namespace avdecc_lib
         adpdu_common_ctrl_hdr.message_type = 2;
         adpdu_common_ctrl_hdr.valid_time = 0;
         adpdu_common_ctrl_hdr.control_data_length = 56;
-        jdksavdecc_uint64_write(target_guid, &adpdu_common_ctrl_hdr.entity_id, 0, sizeof(uint64_t));
+        jdksavdecc_uint64_write(target_entity_id, &adpdu_common_ctrl_hdr.entity_id, 0, sizeof(uint64_t));
 
         /******************** Fill frame payload with AECP Common Control Header information ********************/
         adpdu_common_ctrl_hdr_returned = jdksavdecc_adpdu_common_control_header_write(&adpdu_common_ctrl_hdr,
@@ -159,23 +159,23 @@ namespace avdecc_lib
     int adp_discovery_state_machine::state_avail(const uint8_t *frame, size_t frame_len)
     {
         struct jdksavdecc_adpdu_common_control_header adp_hdr;
-        uint64_t entity_guid;
+        uint64_t entity_entity_id;
         uint32_t entity_index;
 
-        entity_guid = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE);
+        entity_entity_id = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE);
         jdksavdecc_adpdu_common_control_header_read(&adp_hdr, frame, ETHER_HDR_SIZE, frame_len);
 
-        if(have_entity(entity_guid, &entity_index))
+        if(have_entity(entity_entity_id, &entity_index))
         {
             update_entity_timeout(entity_index, adp_hdr.valid_time * 2 * 1000); // Valid time period is between 2 and 62 seconds
         }
         else
         {
             struct entities entity;
-            entity.entity_id = entity_guid;
+            entity.entity_id = entity_entity_id;
             entity.inflight_timer.start(adp_hdr.valid_time * 2 * 1000); // Valid time period is between 2 and 62 seconds
             add_entity(entity);
-            notification_imp_ref->post_notification_msg(END_STATION_CONNECTED, entity_guid, 0, 0, 0, 0, 0);
+            notification_imp_ref->post_notification_msg(END_STATION_CONNECTED, entity_entity_id, 0, 0, 0, 0, 0);
         }
 
         return 0;
@@ -193,7 +193,7 @@ namespace avdecc_lib
         return 0;
     }
 
-    bool adp_discovery_state_machine::tick(uint64_t &end_station_guid)
+    bool adp_discovery_state_machine::tick(uint64_t &end_station_entity_id)
     {
         if (first_tick)
         {
@@ -205,9 +205,9 @@ namespace avdecc_lib
         {
             if(entities_vec.at(i).inflight_timer.timeout())
             {
-                end_station_guid = entities_vec.at(i).entity_id;
+                end_station_entity_id = entities_vec.at(i).entity_id;
                 state_timeout(i);
-                notification_imp_ref->post_notification_msg(END_STATION_DISCONNECTED, end_station_guid, 0, 0, 0, 0, 0);
+                notification_imp_ref->post_notification_msg(END_STATION_DISCONNECTED, end_station_entity_id, 0, 0, 0, 0, 0);
                 return true;
             }
         }

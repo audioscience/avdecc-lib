@@ -58,7 +58,7 @@ namespace avdecc_lib
         /**
          * Initialize and fill Ethernet frame payload with 1722 ADP Header information.
          */
-        void common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_guid);   
+        void common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_entity_id);   
 
         /**
          * Process the Discover state of the ADP Discovery State Machine.
@@ -78,7 +78,7 @@ namespace avdecc_lib
         /**
          * Check timeout for the end stations.
          */
-        bool tick(uint64_t &end_station_guid);
+        bool tick(uint64_t &end_station_entity_id);
 
     private:
         /**

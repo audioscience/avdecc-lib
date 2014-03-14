@@ -80,9 +80,9 @@ namespace avdecc_lib
         }
 
         /**
-         * Get the Controller GUID of the AVDECC Entity sending the command.
+         * Get the Controller Entity ID of the AVDECC Entity sending the command.
          */
-        static struct jdksavdecc_eui64 get_controller_guid();
+        static struct jdksavdecc_eui64 get_controller_entity_id();
 
         /**
          * Get the header field of the ADP object.
@@ -93,7 +93,7 @@ namespace avdecc_lib
         }
 
         /**
-         * Get the Entity GUID field of the ADP object.
+         * Get the Entity ID field of the ADP object.
          */
         inline struct jdksavdecc_eui64 get_entity_entity_id()
         {

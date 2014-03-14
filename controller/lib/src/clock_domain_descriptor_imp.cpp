@@ -44,7 +44,7 @@ namespace avdecc_lib
 
         if(desc_clock_domain_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, clock_domain_desc_read error", end_station_obj->guid());
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, clock_domain_desc_read error", end_station_obj->entity_id());
             assert(desc_clock_domain_read_returned >= 0);
         }
 
@@ -131,7 +131,7 @@ namespace avdecc_lib
         ssize_t aem_cmd_set_clk_src_returned;
 
         /***************************************** AECP Common Data ******************************************/
-        aem_cmd_set_clk_src.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_set_clk_src.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_set_clk_src.sequence_id in AEM Controller State Machine
         aem_cmd_set_clk_src.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE;
 
@@ -157,7 +157,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                             &cmd_frame,
-                                                            base_end_station_imp_ref->guid(),
+                                                            base_end_station_imp_ref->entity_id(),
                                                             JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE_COMMAND_LEN - 
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
@@ -208,7 +208,7 @@ namespace avdecc_lib
         ssize_t aem_cmd_get_clk_src_returned;
 
         /***************************************** AECP Common Data ******************************************/
-        aem_cmd_get_clk_src.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_guid();
+        aem_cmd_get_clk_src.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_get_clk_src.sequence_id in AEM Controller State Machine
         aem_cmd_get_clk_src.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE;
 
@@ -233,7 +233,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                             &cmd_frame,
-                                                            base_end_station_imp_ref->guid(),
+                                                            base_end_station_imp_ref->entity_id(),
                                                             JDKSAVDECC_AEM_COMMAND_GET_CLOCK_SOURCE_COMMAND_LEN - 
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);

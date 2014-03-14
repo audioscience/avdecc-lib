@@ -39,7 +39,7 @@ namespace avdecc_lib
     class end_station_imp : public virtual end_station
     {
     private:
-        uint64_t end_station_guid; // The unique identifier of the AVDECC Entity the command is targeted to
+        uint64_t end_station_entity_id; // The unique identifier of the AVDECC Entity the command is targeted to
         uint64_t end_station_mac; // The source MAC address of the End Station
         char end_station_connection_status; // The connection status of an End Station
         uint16_t current_entity_desc; // The ENTITY descriptor associated with the End Station
@@ -134,7 +134,7 @@ namespace avdecc_lib
          */
         void end_station_reenumerate();
 
-        uint64_t STDCALL guid();
+        uint64_t STDCALL entity_id();
         uint64_t STDCALL mac();
         adp * get_adp();
         size_t STDCALL entity_desc_count();

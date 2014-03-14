@@ -56,7 +56,7 @@ namespace avdecc_lib
         /**
          * Initialize and fill Ethernet frame payload with 1722 AECP Header information.
          */
-        void common_hdr_init(int message_type, struct jdksavdecc_frame *cmd_frame, uint64_t target_guid, uint32_t cd_len);
+        void common_hdr_init(int message_type, struct jdksavdecc_frame *cmd_frame, uint64_t target_entity_id, uint32_t cd_len);
 
         /**
          * Process the Send Command state of the AEM Controller State Machine.

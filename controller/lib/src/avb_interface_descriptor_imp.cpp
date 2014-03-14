@@ -41,7 +41,7 @@ namespace avdecc_lib
 
         if(desc_avb_interface_read_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, avb_interface_desc_read error", end_station_obj->guid());
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, avb_interface_desc_read error", end_station_obj->entity_id());
            // assert(desc_avb_interface_read_returned >= 0);
         }
     }

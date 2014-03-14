@@ -71,14 +71,14 @@ namespace avdecc_lib
         return 0;
     }
 
-    struct jdksavdecc_eui64 adp::get_controller_guid()
+    struct jdksavdecc_eui64 adp::get_controller_entity_id()
     {
-        uint64_t mac_guid = ((net_interface_ref->mac_addr() & UINT64_C(0xFFFFFF000000)) << 16) |
+        uint64_t mac_entity_id = ((net_interface_ref->mac_addr() & UINT64_C(0xFFFFFF000000)) << 16) |
                    UINT64_C(0x000000FFFF000000) |
                    (net_interface_ref->mac_addr() & UINT64_C(0xFFFFFF));
-        struct jdksavdecc_eui64 guid;
-        jdksavdecc_eui64_init_from_uint64(&guid, mac_guid);
+        struct jdksavdecc_eui64 entity_id;
+        jdksavdecc_eui64_init_from_uint64(&entity_id, mac_entity_id);
 
-        return guid;
+        return entity_id;
     }
 }
