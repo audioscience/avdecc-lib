@@ -528,7 +528,7 @@ namespace avdecc_lib
 
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
                                   "0x%llx, get_strings_desc_string_by_reference error, ref 0x%04x",
-                                  base_end_station_imp_ref->guid(),
+                                  base_end_station_imp_ref->entity_id(),
                                   (unsigned int)reference & 0xffff);
         return NULL;
     }
