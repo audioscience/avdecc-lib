@@ -53,7 +53,6 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_configuration config_desc; // Structure containing the config_desc fields
-        ssize_t config_desc_read_returned; // Status of extracting CONFIGURATION descriptor information from a network buffer
 
         std::vector<uint16_t> desc_type_vec; // Store descriptor types present in the CONFIGURATION descriptor
         std::vector<uint16_t> desc_count_vec; // Store descriptor counts present in the CONFIGURATION descriptor

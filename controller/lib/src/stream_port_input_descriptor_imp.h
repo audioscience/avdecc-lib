@@ -38,7 +38,6 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_stream_port stream_port_input_desc; // Structure containing the stream_port_input_desc fields
-        ssize_t stream_port_input_desc_read_returned; // Status of extracting Stream Port Input descriptor information from a network buffer
 
     public:
         stream_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
