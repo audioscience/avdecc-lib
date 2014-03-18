@@ -33,12 +33,14 @@ to develop a complete controller side 1722.1 software stack.
 Dependencies
 ------------
 
-Uses Jeff Koftinoff's packet processing library. This is a submodule that can be cloned using:
+Uses Jeff Koftinoff's packet processing library, see <https://github.com/jdkoftinoff/jdksavdecc-c.git>
+This is a submodule that can be cloned using:
 
 	cd avdecc-lib
 	git submodule init
 	git submodule update
 
+As of March 2014, avdecc-lib is following the master branch of jdksavdecc-c (from github).
 
 Acknowledgements
 ----------------
