@@ -31,6 +31,7 @@
 
 #include "system.h"
 #include "timer.h"
+#include "cmd_wait_mgr.h"
 
 namespace avdecc_lib
 {
@@ -76,11 +77,8 @@ namespace avdecc_lib
         HANDLE poll_events_array[NUM_OF_EVENTS];
         HANDLE waiting_sem;
 
-        bool is_waiting;
-        bool queue_is_waiting;
-        void *waiting_notification_id;
+        cmd_wait_mgr *wait_mgr;
         int resp_status_for_cmd;
-        uint16_t operation_id_for_cmd;
         timer tick_timer; // A tick timer that is always running
 
     public:
@@ -102,9 +100,9 @@ namespace avdecc_lib
         int queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len);
 
         /**
-         * Set a waiting flag for the command sent.
+         * Set a waiting flag for the next command sent.
          */
-        int STDCALL set_wait_for_next_cmd();
+        int STDCALL set_wait_for_next_cmd(void * id);
 
         /**
          * Wait for the response packet with the corrsponding notification id to be received.

@@ -76,7 +76,7 @@ namespace avdecc_lib
 
     size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
     {
-        if(local_system)
+        if (local_system)
         {
             return local_system->queue_tx_frame(notification_id, notification_flag, frame, mem_buf_len);
         }
@@ -100,7 +100,7 @@ namespace avdecc_lib
         controller_ref_in_system = dynamic_cast<controller_imp *>(controller_obj);
         pipe(tx_pipe);
 
-        queue_is_waiting = false;
+        wait_mgr = new cmd_wait_mgr();
 
         waiting_sem = (sem_t *)calloc(1, sizeof(*waiting_sem));
         if (waiting_sem)
@@ -155,23 +155,28 @@ namespace avdecc_lib
         write(tx_pipe[PIPE_WR], &t, sizeof(t));
 
         /**
-         * If queue_is_waiting is true, wait for the response before returning.
+         * Check for conditions that cause wait for completion.
          */
-        if(queue_is_waiting && (notification_flag == CMD_WITH_NOTIFICATION))
+        if ( wait_mgr->primed_state() &&
+             wait_mgr->match_id(notification_id) &&
+             (notification_flag == CMD_WITH_NOTIFICATION))
         {
-            is_waiting = true;
+            int status = 0;
+
+            status = wait_mgr->set_active_state();
+            assert(status == 0);
             sem_wait(waiting_sem);
-            queue_is_waiting = false;
+            resp_status_for_cmd = wait_mgr->get_completion_status();
+            status = wait_mgr->set_idle_state();
+            assert(status == 0);
         }
 
         return 0;
     }
 
-    int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd()
+    int STDCALL system_layer2_multithreaded_callback::set_wait_for_next_cmd(void * id)
     {
-        queue_is_waiting = true;
-        resp_status_for_cmd = AVDECC_LIB_STATUS_INVALID; // Reset the status
-
+        wait_mgr->set_primed_state(id);
         return 0;
     }
 
@@ -217,19 +222,31 @@ namespace avdecc_lib
         uint64_t timer_exp_count;
         read(priv->fd, &timer_exp_count, sizeof(timer_exp_count));
 
+        bool notification_id_incomplete = false;
+
+        if (wait_mgr->active_state())
+        {
+            if (controller_ref_in_system->is_inflight_cmd_with_notification_id(wait_mgr->get_notify_id()) ||
+                controller_ref_in_system->is_active_operation_with_notification_id(wait_mgr->get_notify_id()))
+                notification_id_incomplete = true;
+        }
+
+        // If waiting on a command to complete and the command was "inflight" prior to calling the
+        // timer tick update (ie notification_id_incomplete == true) AND after calling the timer tick
+        // update the command is no longer "inflight", timeout processing has removed it, so signal the
+        // waiting app thread.
         controller_ref_in_system->time_tick_event();
 
-        bool is_waiting_completed = is_waiting &&
-                                    (!controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id) &&
-                                    !controller_ref_in_system->is_active_operation_with_notification_id(waiting_notification_id));
-
-        if(is_waiting_completed)
+        bool is_timeout_for_waiting_notify_id = wait_mgr->active_state() && notification_id_incomplete &&
+                                                !controller_ref_in_system->is_inflight_cmd_with_notification_id(wait_mgr->get_notify_id()) &&
+                                                !controller_ref_in_system->is_active_operation_with_notification_id(wait_mgr->get_notify_id());
+        if (is_timeout_for_waiting_notify_id)
         {
-            is_waiting = false;
-            resp_status_for_cmd = AVDECC_LIB_STATUS_TICK_TIMEOUT;
+            int status = wait_mgr->set_completion_status(AVDECC_LIB_STATUS_TICK_TIMEOUT);
+            assert(status == 0);
             sem_post(waiting_sem);
-
         }
+
         return 0;
     }
 
@@ -247,11 +264,6 @@ namespace avdecc_lib
                 t.frame,
                 t.mem_buf_len);
 
-            if(t.notification_flag == CMD_WITH_NOTIFICATION)
-            {
-                waiting_notification_id = t.notification_id;
-            }
-
             delete[] t.frame;
         }
 
@@ -267,43 +279,34 @@ namespace avdecc_lib
 
         status = netif_obj_in_system->capture_frame(&rx_frame, &length);
 
-        if(status > 0)
+        if (status > 0)
         {
-
             bool is_notification_id_valid = false;
-            int status = -1;
-            bool is_waiting_completed = false;
+            int rx_status = -1;
             void *notification_id = NULL;
             uint16_t operation_id = 0;
             bool is_operation_id_valid = false;
-            bool is_operation_complete = false;
 
             controller_ref_in_system->rx_packet_event(notification_id,
-                                                      is_notification_id_valid,
-                                                      rx_frame,
-                                                      length,
-                                                      status,
-                                                      operation_id,
-                                                      is_operation_id_valid);
+                    is_notification_id_valid,
+                    rx_frame,
+                    length,
+                    rx_status,
+                    operation_id,
+                    is_operation_id_valid);
 
-            is_operation_complete = is_waiting &&
-                                    !controller_ref_in_system->is_active_operation_with_notification_id(waiting_notification_id) &&
-                                    is_notification_id_valid &&
-                                    (waiting_notification_id == notification_id);
-
-            is_waiting_completed =
-                is_waiting &&
-                !controller_ref_in_system->is_inflight_cmd_with_notification_id(waiting_notification_id) &&
+            if (
+                wait_mgr->active_state() &&
                 is_notification_id_valid &&
-                (waiting_notification_id == notification_id);
-
-            if((!is_operation_id_valid && is_waiting_completed) || (is_operation_id_valid && is_operation_complete))
+                wait_mgr->match_id(notification_id) &&
+                !controller_ref_in_system->is_inflight_cmd_with_notification_id(wait_mgr->get_notify_id()) &&
+                !controller_ref_in_system->is_active_operation_with_notification_id(wait_mgr->get_notify_id())
+            )
             {
-                resp_status_for_cmd = status;
-                is_waiting = false;
+                int status = wait_mgr->set_completion_status(rx_status);
+                assert(status == 0);
                 sem_post(waiting_sem);
             }
-            
         }
         return 0;
     }
