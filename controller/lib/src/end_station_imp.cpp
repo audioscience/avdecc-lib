@@ -359,6 +359,10 @@ namespace avdecc_lib
                     config_desc_imp_ref->store_clock_domain_desc(this, frame, read_desc_offset, frame_len);
                     break;
 
+                case JDKSAVDECC_DESCRIPTOR_CONTROL:
+                    config_desc_imp_ref->store_control_desc(this, frame, read_desc_offset, frame_len);
+                    break;
+
                 default:
                     log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "The descriptor is not implemented.");
                     break;

@@ -54,6 +54,7 @@ namespace avdecc_lib
     class audio_cluster_descriptor;
     class audio_map_descriptor;
     class clock_domain_descriptor;
+    class control_descriptor;
 
     class configuration_descriptor : public virtual descriptor_base
     {
@@ -159,6 +160,11 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL clock_domain_desc_count() = 0;
 
         /**
+         * \return The number of CONTROL descriptors present in the current configuration.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL control_desc_count() = 0;
+
+        /**
          * \return The corresponding AUDIO UNIT descriptor by index.
          */
         AVDECC_CONTROLLER_LIB32_API virtual audio_unit_descriptor * STDCALL get_audio_unit_desc_by_index(size_t audio_unit_desc_index) = 0;
@@ -232,6 +238,11 @@ namespace avdecc_lib
          * \return The corresponding CLOCK DOMAIN descriptor by index.
          */
         AVDECC_CONTROLLER_LIB32_API virtual clock_domain_descriptor * STDCALL get_clock_domain_desc_by_index(size_t clock_domain_desc_index) = 0;
+
+        /**
+         * \return The corresponding CONTROL descriptor by index.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual control_descriptor * STDCALL get_control_desc_by_index(size_t control_desc_index) = 0;
     };
 }
 

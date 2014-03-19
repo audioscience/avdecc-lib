@@ -75,6 +75,7 @@ namespace avdecc_lib
         std::for_each(audio_cluster_desc_vec.begin(), audio_cluster_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(audio_map_desc_vec.begin(), audio_map_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(clock_domain_desc_vec.begin(), clock_domain_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+        std::for_each(control_desc_vec.begin(), control_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
     }
 
     uint16_t STDCALL configuration_descriptor_imp::descriptor_type() const
@@ -279,6 +280,12 @@ namespace avdecc_lib
         add_or_replace_descriptor_and_sort(d, clock_domain_desc_vec);
     }
 
+    void configuration_descriptor_imp::store_control_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
+    {
+        control_descriptor_imp *d = new control_descriptor_imp(end_station_obj, frame, pos, frame_len);
+        add_or_replace_descriptor_and_sort(d, control_desc_vec);
+    }
+
     size_t STDCALL configuration_descriptor_imp::audio_unit_desc_count()
     {
         return audio_unit_desc_vec.size();
@@ -351,6 +358,11 @@ namespace avdecc_lib
     size_t STDCALL configuration_descriptor_imp::clock_domain_desc_count()
     {
         return clock_domain_desc_vec.size();
+    }
+
+    size_t STDCALL configuration_descriptor_imp::control_desc_count()
+    {
+        return control_desc_vec.size();
     }
 
     audio_unit_descriptor * STDCALL configuration_descriptor_imp::get_audio_unit_desc_by_index(size_t audio_unit_desc_index)
@@ -608,6 +620,22 @@ namespace avdecc_lib
         else
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_clock_domain_desc_by_index error", base_end_station_imp_ref->entity_id());
+        }
+
+        return NULL;
+    }
+
+    control_descriptor * STDCALL configuration_descriptor_imp::get_control_desc_by_index(size_t control_desc_index)
+    {
+        bool is_valid = (control_desc_index < control_desc_vec.size());
+
+        if(is_valid)
+        {
+            return control_desc_vec.at(control_desc_index);
+        }
+        else
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_control_desc_by_index error", base_end_station_imp_ref->entity_id());
         }
 
         return NULL;
