@@ -257,7 +257,7 @@ namespace avdecc_lib
 
         if((dest_mac_addr == net_interface_ref->mac_addr()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address
         {
-            uint32_t subtype = jdksavdecc_subtype_data_get_subtype(jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE));
+            uint8_t subtype = jdksavdecc_common_control_header_get_subtype(frame,ETHER_HDR_SIZE);
 
             switch(subtype)
             {
@@ -426,7 +426,7 @@ namespace avdecc_lib
 
     void controller_imp::tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len)
     {
-        uint32_t subtype = jdksavdecc_subtype_data_get_subtype(jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE));
+        uint8_t subtype = jdksavdecc_common_control_header_get_subtype(frame,ETHER_HDR_SIZE);
         struct jdksavdecc_frame packet_frame;
 
         packet_frame.length = (uint16_t)frame_len;
