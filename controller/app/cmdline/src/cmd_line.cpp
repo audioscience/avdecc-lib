@@ -34,7 +34,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#include <limits>
+#include <limits.h>
 #include <string.h>
 #include "end_station.h"
 #include "entity_descriptor.h"

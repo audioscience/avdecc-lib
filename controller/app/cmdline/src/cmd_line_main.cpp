@@ -41,7 +41,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #elif defined(__linux__)
-#include <editline/readline.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #include <inttypes.h>
 #endif
 
@@ -278,7 +279,7 @@ int main(int argc, char *argv[])
     rl_attempted_completion_function = command_completer;
 
     // Override to prevent filename completion
-    rl_completion_entry_function = (Function *)null_completer;
+    rl_completion_entry_function = null_completer;
 #endif
 
 

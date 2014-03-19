@@ -28,7 +28,7 @@
  */
 
 #include <assert.h>
-
+#include <limits.h>
 #include "cli_command_format.h"
 #include "cli_command.h"
 
