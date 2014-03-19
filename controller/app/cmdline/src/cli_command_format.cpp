@@ -27,7 +27,7 @@
  * CLI command format implementation
  */
 
-#include <limits>
+#include <limits.h>
 #include <assert.h>
 
 #include "cli_command_format.h"
