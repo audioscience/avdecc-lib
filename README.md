@@ -146,6 +146,7 @@ Prerequisites
 
 1. gcc development environment (v4.8 or later)
 2. libedit
+3. readline library, may need to go "sudo apt-get install libreadline5-dev"
 
 ### OSX ###
 
