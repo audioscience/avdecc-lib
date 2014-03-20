@@ -278,7 +278,11 @@ int main(int argc, char *argv[])
     top_level_command = avdecc_cmd_line_ref.get_commands();
     rl_attempted_completion_function = command_completer;
 
+#endif
     // Override to prevent filename completion
+#if defined(__MACH__)
+    rl_completion_entry_function = (Function *)null_completer;
+#elif defined(__linux__) 
     rl_completion_entry_function = null_completer;
 #endif
 
