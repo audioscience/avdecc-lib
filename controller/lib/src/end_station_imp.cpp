@@ -697,6 +697,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_entity_available aem_cmd_entity_avail;
+        memset(&aem_cmd_entity_avail,0,sizeof(aem_cmd_entity_avail));
 
         /**************************** AECP Common Data ****************************/
         aem_cmd_entity_avail.aem_header.aecpdu_header.controller_entity_id = adp_ref->get_controller_entity_id();
@@ -1309,6 +1310,8 @@ namespace avdecc_lib
         struct jdksavdecc_aecp_aa aecp_cmd_aa_header;
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aecp_aa_tlv aa_tlv;
+        memset(&aecp_cmd_aa_header,0,sizeof(aecp_cmd_aa_header));
+
 
         aecp_cmd_aa_header.controller_entity_id = adp_ref->get_controller_entity_id();
         aecp_cmd_aa_header.sequence_id = 0;
