@@ -218,6 +218,7 @@ namespace avdecc_lib
         bool u_field;
         uint16_t desc_type;
         configuration_descriptor_imp *config_desc_imp_ref = NULL;
+        memset(&aem_cmd_read_desc_resp,0,sizeof(aem_cmd_read_desc_resp));
 
         if(entity_desc_vec.size() >= 1 && entity_desc_vec.at(current_entity_desc)->config_desc_count() >= 1)
         {
