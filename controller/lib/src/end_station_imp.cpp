@@ -734,6 +734,7 @@ namespace avdecc_lib
         ssize_t aem_cmd_entity_avail_resp_returned = 0;
         uint32_t msg_type = 0;
         bool u_field = false;
+        memset(&aem_cmd_entity_avail_resp,0,sizeof(aem_cmd_entity_avail_resp));
 
         memcpy(cmd_frame.payload, frame, frame_len);
 
@@ -1363,6 +1364,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_set_control aem_command_set_control;
+        memset(&aem_command_set_control,0,sizeof(aem_command_set_control));
 
         /***************************** AECP Common Data ****************************/
         aem_command_set_control.aem_header.aecpdu_header.controller_entity_id = adp_ref->get_controller_entity_id();

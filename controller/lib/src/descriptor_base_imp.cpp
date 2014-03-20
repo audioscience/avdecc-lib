@@ -293,6 +293,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_reboot aem_cmd_reboot;
+        memset(&aem_cmd_reboot,0,sizeof(aem_cmd_reboot));
 
         /***************************************** AECP Common Data ******************************************/
         aem_cmd_reboot.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();

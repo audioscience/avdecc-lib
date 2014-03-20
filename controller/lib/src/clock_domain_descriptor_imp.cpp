@@ -129,6 +129,7 @@ namespace avdecc_lib
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_set_clock_source aem_cmd_set_clk_src;
         ssize_t aem_cmd_set_clk_src_returned;
+        memset(&aem_cmd_set_clk_src,0,sizeof(aem_cmd_set_clk_src));
 
         /***************************************** AECP Common Data ******************************************/
         aem_cmd_set_clk_src.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
@@ -206,6 +207,8 @@ namespace avdecc_lib
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_get_clock_source aem_cmd_get_clk_src;
         ssize_t aem_cmd_get_clk_src_returned;
+
+        memset(&aem_cmd_get_clk_src,0,sizeof(aem_cmd_get_clk_src));
 
         /***************************************** AECP Common Data ******************************************/
         aem_cmd_get_clk_src.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();

@@ -128,6 +128,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_start_operation aem_cmd_start_operation;
+        memset(&aem_cmd_start_operation,0,sizeof(aem_cmd_start_operation));
 
         if (operation_type > JDKSAVDECC_MEMORY_OBJECT_OPERATION_UPLOAD)
         {
@@ -175,6 +176,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_start_operation_response aem_cmd_start_operation_resp;
+        memset(&aem_cmd_start_operation_resp,0,sizeof(aem_cmd_start_operation_resp));
 
         memcpy(cmd_frame.payload, frame, frame_len);
 
@@ -210,7 +212,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_operation_status_response aem_operation_status_resp;
-
+        memset(&aem_operation_status_resp,0,sizeof(aem_operation_status_resp));
         memcpy(cmd_frame.payload, frame, frame_len);
 
         ssize_t aem_operation_status_resp_returned = jdksavdecc_aem_command_operation_status_response_read(&aem_operation_status_resp,
