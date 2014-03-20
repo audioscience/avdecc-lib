@@ -372,6 +372,7 @@ namespace avdecc_lib
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_set_stream_format aem_cmd_set_stream_format;
         ssize_t aem_cmd_set_stream_format_returned;
+        memset(&aem_cmd_set_stream_format,0,sizeof(aem_cmd_set_stream_format));
 
         /******************************************** AECP Common Data *********************************************/
         aem_cmd_set_stream_format.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
@@ -448,6 +449,8 @@ namespace avdecc_lib
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_get_stream_format aem_cmd_get_stream_format;
         ssize_t aem_cmd_get_stream_format_returned;
+        memset(&aem_cmd_get_stream_format,0,sizeof(aem_cmd_get_stream_format));
+
 
         /******************************************** AECP Common Data *********************************************/
         aem_cmd_get_stream_format.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
@@ -593,6 +596,8 @@ namespace avdecc_lib
         struct jdksavdecc_aem_command_get_stream_info aem_cmd_get_stream_info;
         ssize_t aem_cmd_get_stream_info_returned;
 
+        memset(&aem_cmd_get_stream_info, 0, sizeof(aem_cmd_get_stream_info));
+
         /******************************************** AECP Common Data *******************************************/
         aem_cmd_get_stream_info.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_get_stream_info.sequence_id in AEM Controller State Machine
@@ -671,6 +676,7 @@ namespace avdecc_lib
         struct jdksavdecc_aem_command_start_streaming aem_cmd_start_streaming;
         ssize_t aem_cmd_start_streaming_returned;
 
+        memset(&aem_cmd_start_streaming,0,sizeof(aem_cmd_start_streaming));
         /******************************************** AECP Common Data *******************************************/
         aem_cmd_start_streaming.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_start_streaming.sequence_id in AEM Controller State Machine
@@ -713,6 +719,7 @@ namespace avdecc_lib
         uint32_t msg_type;
         bool u_field;
 
+        memset(&aem_cmd_start_streaming_resp,0,sizeof(aem_cmd_start_streaming_resp));
         memcpy(cmd_frame.payload, frame, frame_len);
         aem_cmd_start_streaming_resp_returned = jdksavdecc_aem_command_start_streaming_response_read(&aem_cmd_start_streaming_resp,
                                                                                                      frame,
@@ -741,6 +748,7 @@ namespace avdecc_lib
         struct jdksavdecc_aem_command_stop_streaming aem_cmd_stop_streaming;
         ssize_t aem_cmd_stop_streaming_returned;
 
+        memset(&aem_cmd_stop_streaming, 0, sizeof(aem_cmd_stop_streaming));
         /******************************************* AECP Common Data *******************************************/
         aem_cmd_stop_streaming.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_stop_streaming.sequence_id in AEM Controller State Machine
@@ -783,6 +791,7 @@ namespace avdecc_lib
         uint32_t msg_type;
         bool u_field;
 
+        memset(&aem_cmd_stop_streaming_resp,0,sizeof(aem_cmd_stop_streaming_resp));
         memcpy(cmd_frame.payload, frame, frame_len);
         aem_cmd_stop_streaming_resp_returned = jdksavdecc_aem_command_stop_streaming_response_read(&aem_cmd_stop_streaming_resp,
                                                                                                    frame,

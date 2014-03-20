@@ -267,6 +267,7 @@ namespace avdecc_lib
                     bool found_adp_in_end_station = false;
 
                     jdksavdecc_adpdu adpdu;
+                    memset(&adpdu,0,sizeof(adpdu));
                     jdksavdecc_adpdu_read(&adpdu, frame, ETHER_HDR_SIZE, frame_len );
 
                     status = AVDECC_LIB_STATUS_INVALID;
@@ -453,6 +454,7 @@ namespace avdecc_lib
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_controller_available aem_cmd_controller_avail;
         ssize_t aem_cmd_controller_avail_returned;
+        memset(&aem_cmd_controller_avail,0,sizeof(aem_cmd_controller_avail));
 
         /*************************************************** AECP Common Data **************************************************/
         aem_cmd_controller_avail.aem_header.aecpdu_header.controller_entity_id = end_station_vec.at(end_station_index)->get_adp()->get_controller_entity_id();
@@ -492,6 +494,7 @@ namespace avdecc_lib
         uint32_t msg_type = 0;
         bool u_field = false;
 
+        memset(&aem_cmd_controller_avail_resp, 0, sizeof(aem_cmd_controller_avail_resp));
         memcpy(cmd_frame.payload, frame, frame_len);
 
         aem_cmd_controller_avail_resp_returned = jdksavdecc_aem_command_controller_available_response_read(&aem_cmd_controller_avail_resp,

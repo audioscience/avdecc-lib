@@ -297,6 +297,8 @@ namespace avdecc_lib
         struct jdksavdecc_aem_command_set_sampling_rate aem_cmd_set_sampling_rate;
         ssize_t aem_cmd_set_sampling_rate_returned;
 
+        memset(&aem_cmd_set_sampling_rate, 0, sizeof(aem_cmd_set_sampling_rate));
+
         /******************************************* AECP Common Data **********************************************/
 		aem_cmd_set_sampling_rate.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_get_sampling_rate.sequence_id in AEM Controller State Machine
@@ -373,6 +375,7 @@ namespace avdecc_lib
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_get_sampling_rate aem_cmd_get_sampling_rate;
         ssize_t aem_cmd_get_sampling_rate_returned;
+        memset(&aem_cmd_get_sampling_rate,0,sizeof(aem_cmd_get_sampling_rate));
 
         /******************************************** AECP Common Data *********************************************/
         aem_cmd_get_sampling_rate.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();

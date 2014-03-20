@@ -173,6 +173,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_read_descriptor aem_command_read_desc;
+        memset(&aem_command_read_desc,0,sizeof(aem_command_read_desc));
 
         /***************************** AECP Common Data ****************************/
         aem_command_read_desc.aem_header.aecpdu_header.controller_entity_id = adp_ref->get_controller_entity_id();
@@ -217,6 +218,7 @@ namespace avdecc_lib
         bool u_field;
         uint16_t desc_type;
         configuration_descriptor_imp *config_desc_imp_ref = NULL;
+        memset(&aem_cmd_read_desc_resp,0,sizeof(aem_cmd_read_desc_resp));
 
         if(entity_desc_vec.size() >= 1 && entity_desc_vec.at(current_entity_desc)->config_desc_count() >= 1)
         {
@@ -695,6 +697,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_entity_available aem_cmd_entity_avail;
+        memset(&aem_cmd_entity_avail,0,sizeof(aem_cmd_entity_avail));
 
         /**************************** AECP Common Data ****************************/
         aem_cmd_entity_avail.aem_header.aecpdu_header.controller_entity_id = adp_ref->get_controller_entity_id();
@@ -731,6 +734,7 @@ namespace avdecc_lib
         ssize_t aem_cmd_entity_avail_resp_returned = 0;
         uint32_t msg_type = 0;
         bool u_field = false;
+        memset(&aem_cmd_entity_avail_resp,0,sizeof(aem_cmd_entity_avail_resp));
 
         memcpy(cmd_frame.payload, frame, frame_len);
 
@@ -1307,6 +1311,8 @@ namespace avdecc_lib
         struct jdksavdecc_aecp_aa aecp_cmd_aa_header;
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aecp_aa_tlv aa_tlv;
+        memset(&aecp_cmd_aa_header,0,sizeof(aecp_cmd_aa_header));
+
 
         aecp_cmd_aa_header.controller_entity_id = adp_ref->get_controller_entity_id();
         aecp_cmd_aa_header.sequence_id = 0;
@@ -1358,6 +1364,7 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_set_control aem_command_set_control;
+        memset(&aem_command_set_control,0,sizeof(aem_command_set_control));
 
         /***************************** AECP Common Data ****************************/
         aem_command_set_control.aem_header.aecpdu_header.controller_entity_id = adp_ref->get_controller_entity_id();
