@@ -54,7 +54,7 @@ namespace avdecc_lib
         /**
          * Set a waiting flag for the command to be sent.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL set_wait_for_next_cmd() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL set_wait_for_next_cmd(void *) = 0;
 
         /**
          * Wait for the response packet with the corrsponding notification id to be received.

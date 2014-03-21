@@ -29,6 +29,8 @@
 
 #include <vector>
 #include <cstdint>
+#include <inttypes.h>
+
 #include "version.h"
 #include "net_interface_imp.h"
 #include "enumeration.h"

@@ -33,7 +33,7 @@
 
 #include "avdecc_lib_os.h"
 #include "system.h"
-
+#include "cmd_wait_mgr.h"
 
 namespace avdecc_lib
 {
@@ -66,7 +66,7 @@ namespace avdecc_lib
         /**
          * Set a waiting flag for the command sent.
          */
-        int STDCALL set_wait_for_next_cmd();
+        int STDCALL set_wait_for_next_cmd(void * id);
 
         /**
          * Wait for the response packet with the corrsponding notification id to be received.
@@ -126,11 +126,8 @@ namespace avdecc_lib
         Timer tick - from timer
         */
 
-        bool is_waiting;
-        bool queue_is_waiting;
-        void *waiting_notification_id;
+        cmd_wait_mgr *wait_mgr;
         int resp_status_for_cmd;
-        uint16_t operation_id_for_cmd;
         int prep_evt_desc(int fd, handler_fn fn, struct epoll_priv *priv, struct epoll_event *ev);
         static int fn_timer_cb(struct epoll_priv *priv);
         static int fn_netif_cb(struct epoll_priv *priv);

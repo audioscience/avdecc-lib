@@ -1968,7 +1968,7 @@ int cmd_line::cmd_read_descriptor(int total_matched, std::vector<cli_argument*> 
     if(desc_type_value < avdecc_lib::TOTAL_NUM_OF_AEM_DESCS)
     {
         cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         end_station->send_read_desc_cmd((void *)cmd_notification_id, desc_type_value, desc_index);
         sys->get_last_resp_status();
     }
@@ -2168,7 +2168,7 @@ int cmd_line::cmd_connect_rx(int total_matched, std::vector<cli_argument*> args)
         bool check_stream_format;
 
         cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *instream = in_descriptor->get_stream_input_desc_by_index(instream_desc_index);
         avdecc_lib::stream_output_descriptor *outstream = out_descriptor->get_stream_output_desc_by_index(outstream_desc_index);
         check_stream_format = (strcmp(instream->current_format(), outstream->current_format()) == 0);
@@ -2214,7 +2214,7 @@ int cmd_line::cmd_disconnect_rx(int total_matched, std::vector<cli_argument*> ar
         uint64_t talker_entity_id;
 
         cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *instream = in_descriptor->get_stream_input_desc_by_index(instream_desc_index);
 
         avdecc_lib::end_station *outstream_end_station = controller_obj->get_end_station_by_index(outstream_end_station_index);
@@ -2260,7 +2260,7 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument*>
             const bool last_command = (i == controller_obj->get_end_station_count() - 1) &&
                                       (j == stream_output_desc_count - 1);
             if (last_command)
-                sys->set_wait_for_next_cmd();
+                sys->set_wait_for_next_cmd((void *)cmd_notification_id);
             avdecc_lib::stream_output_descriptor *outstream = configuration->get_stream_output_desc_by_index(j);
             outstream->send_get_tx_state_cmd((void *)cmd_notification_id);
             if (last_command)
@@ -2324,7 +2324,7 @@ int cmd_line::cmd_get_tx_state(int total_matched, std::vector<cli_argument*> arg
     if(is_valid)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor *outstream = configuration->get_stream_output_desc_by_index(outstream_desc_index);
         outstream->send_get_tx_state_cmd((void *)cmd_notification_id);
         int status = sys->get_last_resp_status();
@@ -2357,7 +2357,7 @@ int cmd_line::cmd_get_rx_state(int total_matched, std::vector<cli_argument*> arg
     if(is_valid)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *instream = configuration->get_stream_input_desc_by_index(instream_desc_index);
 
         instream->send_get_rx_state_cmd((void *)cmd_notification_id);
@@ -2394,7 +2394,7 @@ int cmd_line::cmd_get_tx_connection(int total_matched, std::vector<cli_argument*
     if(is_valid)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor *outstream = configuration->get_stream_output_desc_by_index(outstream_desc_index);
         outstream->send_get_tx_connection_cmd((void *)cmd_notification_id, 0, 0);
         int status = sys->get_last_resp_status();
@@ -2453,14 +2453,14 @@ int cmd_line::cmd_acquire_entity(int total_matched, std::vector<cli_argument*> a
     if(desc_type_value == avdecc_lib::AEM_DESC_ENTITY)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         entity->send_acquire_entity_cmd((void *)cmd_notification_id, flag_id);
         sys->get_last_resp_status();
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *stream_input_desc_ref = configuration->get_stream_input_desc_by_index(desc_index);
         stream_input_desc_ref->send_acquire_entity_cmd((void *)cmd_notification_id, flag_id);
         sys->get_last_resp_status();
@@ -2468,7 +2468,7 @@ int cmd_line::cmd_acquire_entity(int total_matched, std::vector<cli_argument*> a
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
         stream_output_desc_ref->send_get_stream_format_cmd((void *)cmd_notification_id);
         sys->get_last_resp_status();
@@ -2513,7 +2513,7 @@ int cmd_line::cmd_lock_entity(int total_matched, std::vector<cli_argument*> args
     if(desc_type_value == avdecc_lib::AEM_DESC_ENTITY)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         entity->send_lock_entity_cmd((void *)cmd_notification_id, flag_id);
         sys->get_last_resp_status();
     }
@@ -2530,7 +2530,7 @@ int cmd_line::cmd_entity_avail(int total_matched, std::vector<cli_argument*> arg
 
     intptr_t cmd_notification_id = get_next_notification_id();
 
-    sys->set_wait_for_next_cmd();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     end_station->send_entity_avail_cmd((void *)cmd_notification_id);
     sys->get_last_resp_status();
 
@@ -2547,7 +2547,7 @@ int cmd_line::cmd_reboot(int total_matched, std::vector<cli_argument*> args)
 
     intptr_t cmd_notification_id = get_next_notification_id();
 
-    sys->set_wait_for_next_cmd();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     entity->send_reboot_cmd((void *)cmd_notification_id);
     sys->get_last_resp_status();
 
@@ -2559,7 +2559,7 @@ int cmd_line::cmd_controller_avail(int total_matched, std::vector<cli_argument*>
 {
     intptr_t cmd_notification_id = get_next_notification_id();
 
-    sys->set_wait_for_next_cmd();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     controller_obj->send_controller_avail_cmd((void *)cmd_notification_id, current_end_station);
     sys->get_last_resp_status();
 
@@ -2586,7 +2586,7 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument*
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *stream_input_desc_ref = configuration->get_stream_input_desc_by_index(desc_index);
         stream_input_desc_ref->send_set_stream_format_cmd((void *)cmd_notification_id, stream_format_value);
         int status = sys->get_last_resp_status();
@@ -2607,7 +2607,7 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument*
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
         stream_output_desc_ref->send_set_stream_format_cmd((void *)cmd_notification_id, stream_format_value);
         int status = sys->get_last_resp_status();
@@ -2650,7 +2650,7 @@ int cmd_line::cmd_get_stream_format(int total_matched, std::vector<cli_argument*
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *stream_input_desc_ref = configuration->get_stream_input_desc_by_index(desc_index);
         stream_input_desc_ref->send_get_stream_format_cmd((void *)cmd_notification_id);
         int status = sys->get_last_resp_status();
@@ -2671,7 +2671,7 @@ int cmd_line::cmd_get_stream_format(int total_matched, std::vector<cli_argument*
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
         stream_output_desc_ref->send_get_stream_format_cmd((void *)cmd_notification_id);
         int status = sys->get_last_resp_status();
@@ -2722,7 +2722,7 @@ int cmd_line::cmd_set_stream_info(int total_matched, std::vector<cli_argument*> 
         if (stream_info_field == "stream_vlan_id") {
             uint16_t vlan_id = (uint16_t)atoi(new_stream_info_field_value.c_str());
             intptr_t cmd_notification_id = get_next_notification_id();
-            sys->set_wait_for_next_cmd();
+            sys->set_wait_for_next_cmd((void *)cmd_notification_id);
             avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
             stream_output_desc_ref->send_set_stream_info_vlan_id_cmd((void *)cmd_notification_id, vlan_id);
             int status = sys->get_last_resp_status();
@@ -2761,7 +2761,7 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *stream_input_desc_ref = configuration->get_stream_input_desc_by_index(desc_index);
         stream_input_desc_ref->send_get_stream_info_cmd((void *)cmd_notification_id);
         int status = sys->get_last_resp_status();
@@ -2785,7 +2785,7 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
         stream_output_desc_ref->send_get_stream_info_cmd((void *)cmd_notification_id);
         int status = sys->get_last_resp_status();
@@ -2852,7 +2852,7 @@ int cmd_line::cmd_set_sampling_rate(int total_matched, std::vector<cli_argument*
     if(desc_type_value == avdecc_lib::AEM_DESC_AUDIO_UNIT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = configuration->get_audio_unit_desc_by_index(desc_index);
         audio_unit_desc_ref->send_set_sampling_rate_cmd((void *)cmd_notification_id, new_sampling_rate);
         int status = sys->get_last_resp_status();
@@ -2894,7 +2894,7 @@ int cmd_line::cmd_get_sampling_rate(int total_matched, std::vector<cli_argument*
     if(desc_type_value == avdecc_lib::AEM_DESC_AUDIO_UNIT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = configuration->get_audio_unit_desc_by_index(desc_index);
         audio_unit_desc_ref->send_get_sampling_rate_cmd((void *)cmd_notification_id);
         int status = sys->get_last_resp_status();
@@ -2933,7 +2933,7 @@ int cmd_line::cmd_set_clock_source(int total_matched, std::vector<cli_argument*>
         return 0;
 
     intptr_t cmd_notification_id = get_next_notification_id();
-    sys->set_wait_for_next_cmd();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = configuration->get_clock_domain_desc_by_index(desc_index);
     clk_domain_desc_ref->send_set_clock_source_cmd((void *)cmd_notification_id, new_clk_src_index);
     int status = sys->get_last_resp_status();
@@ -2965,7 +2965,7 @@ int cmd_line::cmd_get_clock_source(int total_matched, std::vector<cli_argument*>
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
 
-    sys->set_wait_for_next_cmd();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = configuration->get_clock_domain_desc_by_index(desc_index);
     clk_domain_desc_ref->send_get_clock_source_cmd((void *)cmd_notification_id);
     int status = sys->get_last_resp_status();
@@ -2996,7 +2996,7 @@ int cmd_line::cmd_start_streaming(int total_matched, std::vector<cli_argument*> 
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
         cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *stream_input_desc_ref = configuration->get_stream_input_desc_by_index(desc_index);
         stream_input_desc_ref->send_start_streaming_cmd((void *)cmd_notification_id);
         sys->get_last_resp_status();
@@ -3004,7 +3004,7 @@ int cmd_line::cmd_start_streaming(int total_matched, std::vector<cli_argument*> 
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
     {
         cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
         stream_output_desc_ref->send_start_streaming_cmd((void *)cmd_notification_id);
         sys->get_last_resp_status();
@@ -3034,7 +3034,7 @@ int cmd_line::cmd_stop_streaming(int total_matched, std::vector<cli_argument*> a
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
         cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_input_descriptor *stream_input_desc_ref = configuration->get_stream_input_desc_by_index(desc_index);
         stream_input_desc_ref->send_stop_streaming_cmd((void *)cmd_notification_id);
         sys->get_last_resp_status();
@@ -3042,7 +3042,7 @@ int cmd_line::cmd_stop_streaming(int total_matched, std::vector<cli_argument*> a
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
     {
         cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
         stream_output_desc_ref->send_stop_streaming_cmd((void *)cmd_notification_id);
         sys->get_last_resp_status();
@@ -3069,7 +3069,7 @@ int cmd_line::cmd_firmware_upgrade(int total_matched, std::vector<cli_argument*>
             return 0;
 
         intptr_t cmd_notification_id = get_next_notification_id();
-        sys->set_wait_for_next_cmd();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::memory_object_descriptor *memory_object_desc_ref = configuration->get_memory_object_desc_by_index(0);
         atomic_cout << "Erasing image..." << std::endl;
         memory_object_desc_ref->start_operation_cmd((void *)cmd_notification_id, 3);
@@ -3093,7 +3093,7 @@ int cmd_line::cmd_firmware_upgrade(int total_matched, std::vector<cli_argument*>
 
         while (is.gcount())
         {
-            sys->set_wait_for_next_cmd();
+            sys->set_wait_for_next_cmd((void *)cmd_notification_id);
             end_station->send_aecp_address_access_cmd((void *)cmd_notification_id,
                                                       1,
                                                       is.gcount(),
@@ -3170,7 +3170,7 @@ void cmd_line::do_identify(uint32_t end_station_index, bool turn_on)
     avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(end_station_index);
 
     intptr_t cmd_notification_id = get_next_notification_id();
-    sys->set_wait_for_next_cmd();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     end_station->send_identify((void *)cmd_notification_id, turn_on);
     sys->get_last_resp_status();
 }

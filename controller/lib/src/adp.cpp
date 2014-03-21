@@ -28,6 +28,7 @@
  */
 
 #include <cstdint>
+#include <inttypes.h>
 
 #include "net_interface_imp.h"
 #include "enumeration.h"
