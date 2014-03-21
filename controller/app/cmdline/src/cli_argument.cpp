@@ -29,6 +29,7 @@
  */
 
 #include <assert.h>
+#include <cinttypes>
 
 #include "controller.h"
 #include "end_station.h"
@@ -217,7 +218,7 @@ void cli_argument_end_station::get_completion_options(std::set<std::string> &opt
     {
         char entity_id_str[20];
         avdecc_lib::end_station *end_station = controller->get_end_station_by_index(i);
-        sprintf(entity_id_str, "0x%llx", end_station->entity_id());
+        sprintf(entity_id_str, "0x%"  PRIx64, end_station->entity_id());
         options.insert(std::string(entity_id_str));
     }
 }
