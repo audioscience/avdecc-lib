@@ -34,6 +34,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <inttypes.h>
 
 #include <stdexcept>
 #include "cmd_line.h"
@@ -43,7 +44,6 @@
 #elif defined(__linux__)
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <inttypes.h>
 #endif
 
 #if defined(__MACH__) || defined(__linux__)
@@ -83,7 +83,7 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
             cmd_status_name = cmd_line::utility->acmp_cmd_status_value_to_name(cmd_status);
         }
 
-        printf("\n[NOTIFICATION] (%s, 0x%llx, %s, %s, %d, %s, %p)\n",
+        printf("\n[NOTIFICATION] (%s, 0x%"  PRIx64 ", %s, %s, %d, %s, %p)\n",
                cmd_line::utility->notification_value_to_name(notification_type),
                entity_id,
                cmd_name,
@@ -94,7 +94,7 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
     }
     else
     {
-        printf("\n[NOTIFICATION] (%s, 0x%llx, %d, %d, %d, %d, %p)\n",
+        printf("\n[NOTIFICATION] (%s, 0x%"  PRIx64 ", %d, %d, %d, %d, %p)\n",
                cmd_line::utility->notification_value_to_name(notification_type),
                entity_id,
                cmd_type,
