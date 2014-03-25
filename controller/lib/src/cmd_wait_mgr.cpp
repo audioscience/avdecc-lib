@@ -45,6 +45,7 @@ namespace avdecc_lib
             return -1;
         else
         {
+            notify_id = id;
             state = wait_primed;
             return 0;
         }
