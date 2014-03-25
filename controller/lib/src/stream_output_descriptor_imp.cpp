@@ -29,6 +29,7 @@
 
 #include <vector>
 #include "util_imp.h"
+#include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
 #include "adp.h"
@@ -46,7 +47,7 @@ namespace avdecc_lib
 
         if (ret < 0)
         {
-            throw std::invalid_argument("stream_output_desc_read error");
+            throw avdecc_read_descriptor_error("stream_output_desc_read error");
         }
 
         memset(&stream_output_flags, 0, sizeof(struct stream_output_desc_stream_flags));

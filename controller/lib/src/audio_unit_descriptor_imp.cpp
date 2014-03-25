@@ -28,6 +28,7 @@
  */
 
 #include <vector>
+#include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
 #include "adp.h"
@@ -44,7 +45,7 @@ namespace avdecc_lib
 
         if(ret < 0)
         {
-            throw std::invalid_argument("audio_unit_desc_read error");
+            throw avdecc_read_descriptor_error("audio_unit_desc_read error");
         }
 
         sampling_rates_init(frame);

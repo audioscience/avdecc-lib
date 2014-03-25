@@ -27,6 +27,7 @@
  * JACK OUTPUT descriptor implementation
  */
 
+#include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
 #include "end_station_imp.h"
@@ -40,7 +41,7 @@ namespace avdecc_lib
 
         if (ret < 0)
         {
-            throw std::invalid_argument("jack_output_desc_read error");
+            throw avdecc_read_descriptor_error("jack_output_desc_read error");
         }
 
         jack_flags_init();

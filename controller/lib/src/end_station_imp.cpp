@@ -29,6 +29,7 @@
 
 #include <vector>
 #include <cstring>
+#include "avdecc_error.h"
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
@@ -372,7 +373,7 @@ namespace avdecc_lib
                     break;
                 }
             }
-            catch (const std::invalid_argument& ia)
+			catch (const avdecc_read_descriptor_error& ia)
             {
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, catch %s", entity_id(), ia.what());
 

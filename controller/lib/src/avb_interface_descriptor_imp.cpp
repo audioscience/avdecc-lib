@@ -27,6 +27,7 @@
  * AVB INTERFACE descriptor implementation
  */
 
+#include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
 #include "util_imp.h"
@@ -41,7 +42,7 @@ namespace avdecc_lib
 
         if (ret < 0)
         {
-            throw std::invalid_argument("avb_interface_desc_read error");
+            throw avdecc_read_descriptor_error("avb_interface_desc_read error");
         }
     }
 
