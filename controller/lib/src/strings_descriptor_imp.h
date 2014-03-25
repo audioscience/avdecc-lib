@@ -38,7 +38,6 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_strings strings_desc; // Structure containing the strings_desc fields
-        ssize_t desc_strings_read_returned; // Status of extracting Strings descriptor information from a network buffer
 
     public:
         strings_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);

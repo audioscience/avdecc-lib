@@ -39,7 +39,6 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_control control_desc; // Structure containing the control_desc fields
-        ssize_t desc_control_read_returned; // Status of extracting CONTROL descriptor information from a network buffer
 
     public:
         control_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);

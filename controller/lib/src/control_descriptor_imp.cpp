@@ -36,12 +36,11 @@ namespace avdecc_lib
 {
     control_descriptor_imp::control_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
-        desc_control_read_returned = jdksavdecc_descriptor_control_read(&control_desc, frame, pos, frame_len);
+        ssize_t ret = jdksavdecc_descriptor_control_read(&control_desc, frame, pos, frame_len);
 
-        if(desc_control_read_returned < 0)
+        if (ret < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, control_desc_read error", end_station_obj->entity_id());
-            assert(desc_control_read_returned >= 0);
+            throw std::invalid_argument("control_desc_read error");
         }
     }
 

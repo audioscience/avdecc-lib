@@ -38,7 +38,6 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_audio audio_unit_desc; // Structure containing the audio_unit_desc fields
-        ssize_t desc_audio_read_returned; // Status of extracting AUDIO_UNIT descriptor information from a network buffer
 
         std::vector<uint32_t> sample_rates_vec; // Store sample rates information
         struct jdksavdecc_aem_command_set_sampling_rate_response aem_cmd_set_sampling_rate_resp; // Store the response received after sending a SET_SAMPLING_RATE command.

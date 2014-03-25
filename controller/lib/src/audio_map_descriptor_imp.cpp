@@ -38,10 +38,9 @@ namespace avdecc_lib
     {
         ssize_t ret = jdksavdecc_descriptor_audio_map_read(&audio_map_desc, frame, pos, frame_len);
 
-        if(ret < 0)
+        if (ret < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, audio_map_desc_read error", end_station_obj->entity_id());
-            assert(ret >= 0);
+            throw std::invalid_argument("audio_map_desc_read error");
         }
 
         ssize_t offset = pos + mappings_offset();
