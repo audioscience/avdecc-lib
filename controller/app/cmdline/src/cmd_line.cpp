@@ -2935,6 +2935,9 @@ int cmd_line::cmd_set_clock_source(int total_matched, std::vector<cli_argument*>
     intptr_t cmd_notification_id = get_next_notification_id();
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = configuration->get_clock_domain_desc_by_index(desc_index);
+    if (!clk_domain_desc_ref)
+        return 0;
+
     clk_domain_desc_ref->send_set_clock_source_cmd((void *)cmd_notification_id, new_clk_src_index);
     int status = sys->get_last_resp_status();
 
@@ -2967,6 +2970,10 @@ int cmd_line::cmd_get_clock_source(int total_matched, std::vector<cli_argument*>
 
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = configuration->get_clock_domain_desc_by_index(desc_index);
+
+    if (!clk_domain_desc_ref)
+        return 0;
+
     clk_domain_desc_ref->send_get_clock_source_cmd((void *)cmd_notification_id);
     int status = sys->get_last_resp_status();
     clk_src_index = clk_domain_desc_ref->get_clock_source_clock_source_index();
