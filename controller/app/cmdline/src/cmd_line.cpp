@@ -194,13 +194,19 @@ int cmd_line::get_current_entity_and_descriptor(avdecc_lib::end_station *end_sta
 
     uint16_t current_entity = end_station->get_current_entity_index();
     if (current_entity >= end_station->entity_desc_count())
+    {
+        atomic_cout << "Current entity not available" << std::endl;
         return 1;
+    }
 
     *entity = end_station->get_entity_desc_by_index(current_entity);
 
     uint16_t current_config = end_station->get_current_config_index();
     if (current_config >= (*entity)->config_desc_count())
+    {
+        atomic_cout << "Current configuration not available" << std::endl;
         return 1;
+    }
 
     *configuration = (*entity)->get_config_desc_by_index(current_config);
 
