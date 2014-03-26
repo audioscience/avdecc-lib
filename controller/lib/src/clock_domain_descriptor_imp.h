@@ -38,7 +38,6 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_clock_domain clock_domain_desc; // Store the CLOCK DOMAIN Descriptor fields
-        ssize_t desc_clock_domain_read_returned; // Status of extracting CLOCK DOMAIN descriptor information from a network buffer
         std::vector<uint16_t> clk_src_vec; // Store clock sources in a vector
 
         struct jdksavdecc_aem_command_set_clock_source_response aem_cmd_set_clk_src_resp; // Store the response received after sending a SET_CLOCK_SOURCE command

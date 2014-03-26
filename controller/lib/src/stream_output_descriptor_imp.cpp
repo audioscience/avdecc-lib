@@ -29,6 +29,7 @@
 
 #include <vector>
 #include "util_imp.h"
+#include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
 #include "adp.h"
@@ -44,10 +45,9 @@ namespace avdecc_lib
     {
         ssize_t ret = jdksavdecc_descriptor_stream_read(&stream_output_desc, frame, pos, frame_len);
 
-        if(ret < 0)
+        if (ret < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, stream_output_desc_read error", end_station_obj->entity_id());
-            assert(ret >= 0);
+            throw avdecc_read_descriptor_error("stream_output_desc_read error");
         }
 
         memset(&stream_output_flags, 0, sizeof(struct stream_output_desc_stream_flags));

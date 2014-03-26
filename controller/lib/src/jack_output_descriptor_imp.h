@@ -38,7 +38,6 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_jack jack_output_desc; // Structure containing the jack_output_desc fields
-        ssize_t desc_jack_read_returned; // Status of extracting JACK INPUT Descriptor or JACK OUTPUT descriptor information from a network buffer
 
         struct jack_input_desc_jack_flags
         {

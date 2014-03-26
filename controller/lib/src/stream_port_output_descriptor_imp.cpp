@@ -27,6 +27,7 @@
  * Stream Port Output descriptor implementation
  */
 
+#include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
 #include "end_station_imp.h"
@@ -38,10 +39,9 @@ namespace avdecc_lib
     {
         ssize_t ret = jdksavdecc_descriptor_stream_port_read(&stream_port_output_desc, frame, pos, frame_len);
 
-        if(ret < 0)
+        if (ret < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, stream_port_output_desc_read error", end_station_obj->entity_id());
-            assert(ret >= 0);
+            throw avdecc_read_descriptor_error("stream_port_output_desc_read error");
         }
     }
 

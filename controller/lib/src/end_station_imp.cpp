@@ -29,6 +29,7 @@
 
 #include <vector>
 #include <cstring>
+#include "avdecc_error.h"
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
@@ -279,13 +280,15 @@ namespace avdecc_lib
             read_desc_count--;
         }
 
-        if(store_descriptor)
+        if (store_descriptor)
         {
             const int read_desc_offset = ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN;
-            switch(desc_type)
+            try
             {
+                switch (desc_type)
+                {
                 case JDKSAVDECC_DESCRIPTOR_ENTITY:
-                    if(entity_desc_vec.size() == 0)
+                    if (entity_desc_vec.size() == 0)
                     {
                         entity_desc_vec.push_back(new entity_descriptor_imp(this, frame, read_desc_offset, frame_len));
                         current_config_desc = entity_desc_vec.at(current_entity_desc)->current_configuration();
@@ -368,8 +371,39 @@ namespace avdecc_lib
                 default:
                     log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "The descriptor is not implemented.");
                     break;
+                }
+            }
+			catch (const avdecc_read_descriptor_error& ia)
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, catch %s", entity_id(), ia.what());
+
+                // update read_desc_xxxx even in the case of an error
+                switch (desc_type)
+                {
+                case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
+                    read_top_level_desc_in_config_state = READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING;
+                    break;
+
+                case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
+                    read_desc_in_audio_unit_state = READ_DESC_IN_AUDIO_UNIT_RUNNING;
+                    break;
+
+                case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
+                    read_desc_in_stream_port_input_state = READ_DESC_IN_STREAM_PORT_INPUT_RUNNING;
+                    break;
+
+                case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
+                    read_desc_in_stream_port_output_state = READ_DESC_IN_STREAM_PORT_OUTPUT_RUNNING;
+                    break;
+
+                default:
+                    break;
+                }
             }
         }
+
+
+
 
         /*
          * A state machine that iterates through the top level descriptors present in the CONFIGURATION descriptor.
