@@ -247,7 +247,15 @@ Source documentation
 A standard tool, Doxygen, is used for generating documentation from the AVDECC Controller Lib source code.
 A link to the online version of the AVDECC Controller Lib documentation can be found at:
 http://www.audioscience.com/internet/download/sdk/avdecclib_usermanual_html/html/index.html
-			 
+
+Development Conventions
+=======================
+
+Developers should add new features to the *staging* git branch. Periodically the *staging* git branch
+will be merged to the *master* branch.
+
+![](git_dev_seq_uml.png)
+
 
 Roadmap
 =======

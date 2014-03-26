@@ -1,0 +1,62 @@
+@startuml
+
+title Git branch conventions in avdecc-lib\ndevelopment sequence
+
+box "DeveloperX's\nenvironment" #LightBlue
+	actor DeveloperX
+	participant "branch\nin forked local\nDeveloperX's git repo" as LX
+end box
+
+box "DeveloperY's\nenvironment" #LightYellow
+	actor DeveloperY
+	participant "branch\nin forked local\nDeveloperY's git repo" as LY
+end box
+
+
+box "upstream git" #LightBlue
+	participant "<b>staging</b> branch\nin upstream repo" as S
+	participant "<b>master</b> branch\nin upstream repo" as M
+end box
+actor Manager
+
+note over DeveloperX
+	In this example DeveloperX is
+	working on a new feature
+end note
+
+DeveloperX -> LX: commits changes to forked git repo
+LX -> LX: many updates
+
+DeveloperX -> LX: completed a new feature
+LX -> S : git pull request
+S -> Manager : emailed pull request
+Manager -> S: do merge to staging
+S -> S : git merge
+
+Manager --> DeveloperX: email request to test staging
+Manager --> DeveloperY: email request to test staging
+
+note over DeveloperY
+	DeveloperY is taking on the role
+	of tester in this example
+end note
+
+
+loop until staging test signoff
+	S -> DeveloperY: pulls staging branch for testing
+	S -> LY: git pull
+	DeveloperY -> LY: commits bugfixes to forked git repo
+	LY -> S : git pull request
+	S -> Manager : emailed pull request
+	Manager -> S: do merge to staging
+	S -> S : git merge
+end
+
+==Signoffs for staging tests collected from all parties==
+
+Manager -> S: do merge
+S -> M: staging merged to master branch
+
+@enduml
+
+
