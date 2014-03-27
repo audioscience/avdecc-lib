@@ -28,6 +28,7 @@
  */
 
 #include <vector>
+#include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
 #include "adp.h"
@@ -40,12 +41,11 @@ namespace avdecc_lib
 {
     clock_domain_descriptor_imp::clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
     {
-        desc_clock_domain_read_returned = jdksavdecc_descriptor_clock_domain_read(&clock_domain_desc, frame, pos, frame_len);
+        ssize_t ret = jdksavdecc_descriptor_clock_domain_read(&clock_domain_desc, frame, pos, frame_len);
 
-        if(desc_clock_domain_read_returned < 0)
+        if (ret < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, clock_domain_desc_read error", end_station_obj->entity_id());
-            assert(desc_clock_domain_read_returned >= 0);
+            throw avdecc_read_descriptor_error("clock_domain_desc_read error");
         }
 
         store_clock_sources(frame, pos);

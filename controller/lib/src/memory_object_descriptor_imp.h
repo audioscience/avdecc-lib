@@ -38,7 +38,6 @@ namespace avdecc_lib
     {
     private:
         struct jdksavdecc_descriptor_memory_object memory_object_desc; // Structure containing the memory_object_desc fields
-        ssize_t desc_memory_object_read_returned; // Status of extracting MEMORY OBJECT descriptor information from a network buffer
 
     public:
         memory_object_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
