@@ -134,7 +134,7 @@ Run cmake to create the build dirctories for your environment.
 	
 Prerequisites
 
-1. MSVC 2010 or later
+1. MSVC 2013 or later
 2. winpcap development package from <http://www.winpcap.org/devel.htm>
 
 The following environment variables must be defined:
