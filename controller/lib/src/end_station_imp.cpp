@@ -168,11 +168,11 @@ namespace avdecc_lib
 
         /************************** Fill frame payload with AECP data and send the frame *************************/
         aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
-							ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_COMMAND_LEN);
+                                                            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_COMMAND_LEN);
         ssize_t write_return_val = jdksavdecc_aem_command_read_descriptor_write(&aem_command_read_desc,
-                                                                                      cmd_frame.payload,
-                                                                                      ETHER_HDR_SIZE,
-                                                                                      sizeof(cmd_frame.payload));
+                                                                                cmd_frame.payload,
+                                                                                ETHER_HDR_SIZE,
+                                                                                sizeof(cmd_frame.payload));
 
         if(write_return_val < 0)
         {
@@ -181,18 +181,18 @@ namespace avdecc_lib
         }
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-                                                            &cmd_frame,
-                                                            end_station_entity_id,
-                                                            JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_COMMAND_LEN - 
-                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                           &cmd_frame,
+                                                           end_station_entity_id,
+                                                           JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, notification_flag, cmd_frame.payload, cmd_frame.length);
         return 0;
     }
 
     int end_station_imp::proc_read_desc_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
-		const int read_desc_offset = ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN;
-		struct jdksavdecc_frame cmd_frame;
+        const int read_desc_offset = ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN;
+        struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_read_descriptor_response aem_cmd_read_desc_resp;
         ssize_t aem_cmd_read_desc_resp_returned;
         uint32_t msg_type;
@@ -254,92 +254,92 @@ namespace avdecc_lib
                     break;
             }
         }
-         
+
         if (store_descriptor)
         {
             try
             {
                 switch (desc_type)
                 {
-                case JDKSAVDECC_DESCRIPTOR_ENTITY:
-                    if (entity_desc_vec.size() == 0)
-                    {
-                        entity_desc_vec.push_back(new entity_descriptor_imp(this, frame, read_desc_offset, frame_len));
-                        current_config_desc = entity_desc_vec.at(current_entity_desc)->current_configuration();
-                    }
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_ENTITY:
+                        if (entity_desc_vec.size() == 0)
+                        {
+                            entity_desc_vec.push_back(new entity_descriptor_imp(this, frame, read_desc_offset, frame_len));
+                            current_config_desc = entity_desc_vec.at(current_entity_desc)->current_configuration();
+                        }
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
-                    entity_desc_vec.at(current_entity_desc)->store_config_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
+                        entity_desc_vec.at(current_entity_desc)->store_config_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
-                    config_desc_imp_ref->store_audio_unit_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
+                        config_desc_imp_ref->store_audio_unit_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_STREAM_INPUT:
-                    config_desc_imp_ref->store_stream_input_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_STREAM_INPUT:
+                        config_desc_imp_ref->store_stream_input_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT:
-                    config_desc_imp_ref->store_stream_output_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT:
+                        config_desc_imp_ref->store_stream_output_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_JACK_INPUT:
-                    config_desc_imp_ref->store_jack_input_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_JACK_INPUT:
+                        config_desc_imp_ref->store_jack_input_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT:
-                    config_desc_imp_ref->store_jack_output_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT:
+                        config_desc_imp_ref->store_jack_output_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE:
-                    config_desc_imp_ref->store_avb_interface_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE:
+                        config_desc_imp_ref->store_avb_interface_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE:
-                    config_desc_imp_ref->store_clock_source_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE:
+                        config_desc_imp_ref->store_clock_source_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT:
-                    config_desc_imp_ref->store_memory_object_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT:
+                        config_desc_imp_ref->store_memory_object_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_LOCALE:
-                    config_desc_imp_ref->store_locale_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_LOCALE:
+                        config_desc_imp_ref->store_locale_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_STRINGS:
-                    config_desc_imp_ref->store_strings_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_STRINGS:
+                        config_desc_imp_ref->store_strings_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
-                    config_desc_imp_ref->store_stream_port_input_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
+                        config_desc_imp_ref->store_stream_port_input_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
-                    config_desc_imp_ref->store_stream_port_output_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
+                        config_desc_imp_ref->store_stream_port_output_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
-                    config_desc_imp_ref->store_audio_cluster_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
+                        config_desc_imp_ref->store_audio_cluster_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_AUDIO_MAP:
-                    config_desc_imp_ref->store_audio_map_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_AUDIO_MAP:
+                        config_desc_imp_ref->store_audio_map_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN:
-                    config_desc_imp_ref->store_clock_domain_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN:
+                        config_desc_imp_ref->store_clock_domain_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                case JDKSAVDECC_DESCRIPTOR_CONTROL:
-                    config_desc_imp_ref->store_control_desc(this, frame, read_desc_offset, frame_len);
-                    break;
+                    case JDKSAVDECC_DESCRIPTOR_CONTROL:
+                        config_desc_imp_ref->store_control_desc(this, frame, read_desc_offset, frame_len);
+                        break;
 
-                default:
-                    log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "The descriptor is not implemented.");
-                    break;
+                    default:
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "The descriptor is not implemented.");
+                        break;
                 }
             }
             catch (const avdecc_read_descriptor_error& ia)
@@ -431,76 +431,76 @@ namespace avdecc_lib
     {
         switch (desc_type)
         {
-        case JDKSAVDECC_DESCRIPTOR_ENTITY:
-            desc_index = 0;
-            break;
+            case JDKSAVDECC_DESCRIPTOR_ENTITY:
+                desc_index = 0;
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
-            desc_index = jdksavdecc_descriptor_configuration_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
+                desc_index = jdksavdecc_descriptor_configuration_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
-            desc_index = jdksavdecc_descriptor_audio_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
+                desc_index = jdksavdecc_descriptor_audio_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_STREAM_INPUT:
-        case JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT:
-            desc_index = jdksavdecc_descriptor_stream_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_STREAM_INPUT:
+            case JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT:
+                desc_index = jdksavdecc_descriptor_stream_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_JACK_INPUT:
-        case JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT:
-            desc_index = jdksavdecc_descriptor_jack_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_JACK_INPUT:
+            case JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT:
+                desc_index = jdksavdecc_descriptor_jack_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE:
-            desc_index = jdksavdecc_descriptor_avb_interface_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE:
+                desc_index = jdksavdecc_descriptor_avb_interface_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE:
-            desc_index = jdksavdecc_descriptor_clock_source_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE:
+                desc_index = jdksavdecc_descriptor_clock_source_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT:
-            desc_index = jdksavdecc_descriptor_memory_object_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT:
+                desc_index = jdksavdecc_descriptor_memory_object_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_LOCALE:
-            desc_index = jdksavdecc_descriptor_locale_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_LOCALE:
+                desc_index = jdksavdecc_descriptor_locale_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_STRINGS:
-            desc_index = jdksavdecc_descriptor_strings_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_STRINGS:
+                desc_index = jdksavdecc_descriptor_strings_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
-        case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
-            desc_index = jdksavdecc_descriptor_stream_port_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
+            case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
+                desc_index = jdksavdecc_descriptor_stream_port_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_INPUT:
-        case JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_OUTPUT:
-            desc_index = jdksavdecc_descriptor_external_port_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_INPUT:
+            case JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_OUTPUT:
+                desc_index = jdksavdecc_descriptor_external_port_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
-            desc_index = jdksavdecc_descriptor_audio_cluster_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER:
+                desc_index = jdksavdecc_descriptor_audio_cluster_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_AUDIO_MAP:
-            desc_index = jdksavdecc_descriptor_audio_map_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_AUDIO_MAP:
+                desc_index = jdksavdecc_descriptor_audio_map_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN:
-            desc_index = jdksavdecc_descriptor_clock_domain_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN:
+                desc_index = jdksavdecc_descriptor_clock_domain_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_CONTROL:
-            desc_index = jdksavdecc_descriptor_control_get_descriptor_index(frame, read_desc_offset);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_CONTROL:
+                desc_index = jdksavdecc_descriptor_control_get_descriptor_index(frame, read_desc_offset);
+                break;
 
-        default:
-            return false;
+            default:
+                return false;
         }
         return true;
     }
@@ -530,95 +530,95 @@ namespace avdecc_lib
 
         switch (desc_type)
         {
-        case JDKSAVDECC_DESCRIPTOR_ENTITY:
-            queue_background_read_request(JDKSAVDECC_DESCRIPTOR_CONFIGURATION, 0, 1);
-            break;
+            case JDKSAVDECC_DESCRIPTOR_ENTITY:
+                queue_background_read_request(JDKSAVDECC_DESCRIPTOR_CONFIGURATION, 0, 1);
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
-            total_num_of_desc = cd->descriptor_counts_count();
-            for (int j = 0; j < total_num_of_desc; j++)
-            {
+            case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
+                total_num_of_desc = cd->descriptor_counts_count();
+                for (int j = 0; j < total_num_of_desc; j++)
+                {
+                    queue_background_read_request(
+                        cd->get_desc_type_from_config_by_index(j),
+                        0,
+                        cd->get_desc_count_from_config_by_index(j));
+                }
+                break;
+
+            case JDKSAVDECC_DESCRIPTOR_LOCALE:
                 queue_background_read_request(
-                    cd->get_desc_type_from_config_by_index(j),
+                    JDKSAVDECC_DESCRIPTOR_STRINGS,
                     0,
-                    cd->get_desc_count_from_config_by_index(j));
-            }
-            break;
+                    cd->get_locale_desc_by_index(0)->number_of_strings());
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_LOCALE:
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_STRINGS,
-                0,
-                cd->get_locale_desc_by_index(0)->number_of_strings());
-            break;
+            case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
+                aud = cd->get_audio_unit_desc_by_index(desc_index);
+                // stream port inputs
+                queue_background_read_request(
+                    JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT,
+                    aud->base_stream_input_port(),
+                    aud->number_of_stream_input_ports());
+                // stream port outputs
+                queue_background_read_request(
+                    JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT,
+                    aud->base_stream_output_port(),
+                    aud->number_of_stream_output_ports());
+                // external inputs
+                queue_background_read_request(
+                    JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_INPUT,
+                    aud->base_external_input_port(),
+                    aud->number_of_external_input_ports());
+                // external outputs
+                queue_background_read_request(
+                    JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_OUTPUT,
+                    aud->base_external_output_port(),
+                    aud->number_of_external_output_ports());
+                // controls
+                queue_background_read_request(
+                    JDKSAVDECC_DESCRIPTOR_CONTROL,
+                    aud->base_control_block(),
+                    aud->number_of_control_blocks());
+                // TODO: other descriptor types in AUDIO_UNIT
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
-            aud = cd->get_audio_unit_desc_by_index(desc_index);
-            // stream port inputs
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT,
-                aud->base_stream_input_port(),
-                aud->number_of_stream_input_ports());
-            // stream port outputs
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT,
-                aud->base_stream_output_port(),
-                aud->number_of_stream_output_ports());
-            // external inputs
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_INPUT,
-                aud->base_external_input_port(),
-                aud->number_of_external_input_ports());
-            // external outputs
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_OUTPUT,
-                aud->base_external_output_port(),
-                aud->number_of_external_output_ports());
-            // controls
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_CONTROL,
-                aud->base_control_block(),
-                aud->number_of_control_blocks());
-            // TODO: other descriptor types in AUDIO_UNIT
-            break;
+            case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
+                spid = cd->get_stream_port_input_desc_by_index(desc_index);
+                // controls
+                queue_background_read_request(
+                    JDKSAVDECC_DESCRIPTOR_CONTROL,
+                    spid->base_control(),
+                    spid->number_of_controls());
+                // clusters
+                queue_background_read_request(
+                    JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER,
+                    spid->base_cluster(),
+                    spid->number_of_clusters());
+                // maps
+                queue_background_read_request(
+                    JDKSAVDECC_DESCRIPTOR_AUDIO_MAP,
+                    spid->base_map(),
+                    spid->number_of_maps());
+                break;
 
-        case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
-            spid = cd->get_stream_port_input_desc_by_index(desc_index);
-            // controls
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_CONTROL,
-                spid->base_control(),
-                spid->number_of_controls());
-            // clusters
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER,
-                spid->base_cluster(),
-                spid->number_of_clusters());
-            // maps
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_AUDIO_MAP,
-                spid->base_map(),
-                spid->number_of_maps());
-            break;
-
-        case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
-            spod = cd->get_stream_port_output_desc_by_index(desc_index);
-            // controls
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_CONTROL,
-                spod->base_control(),
-                spod->number_of_controls());
-            // clusters
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER,
-                spod->base_cluster(),
-                spod->number_of_clusters());
-            // maps
-            queue_background_read_request(
-                JDKSAVDECC_DESCRIPTOR_AUDIO_MAP,
-                spod->base_map(),
-                spod->number_of_maps());
-            break;
+            case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
+                spod = cd->get_stream_port_output_desc_by_index(desc_index);
+                // controls
+                queue_background_read_request(
+                    JDKSAVDECC_DESCRIPTOR_CONTROL,
+                    spod->base_control(),
+                    spod->number_of_controls());
+                // clusters
+                queue_background_read_request(
+                    JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER,
+                    spod->base_cluster(),
+                    spod->number_of_clusters());
+                // maps
+                queue_background_read_request(
+                    JDKSAVDECC_DESCRIPTOR_AUDIO_MAP,
+                    spod->base_map(),
+                    spod->number_of_maps());
+                break;
         }
     }
 
@@ -647,11 +647,11 @@ namespace avdecc_lib
 
         /**************************** Fill frame payload with AECP data and send the frame *************************/
         aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
-							ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE_COMMAND_LEN);
+                                                            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE_COMMAND_LEN);
         ssize_t write_return_val = jdksavdecc_aem_command_entity_available_write(&aem_cmd_entity_avail,
-                                                                                      cmd_frame.payload,
-                                                                                      ETHER_HDR_SIZE,
-                                                                                      sizeof(cmd_frame.payload));
+                                                                                 cmd_frame.payload,
+                                                                                 ETHER_HDR_SIZE,
+                                                                                 sizeof(cmd_frame.payload));
 
         if(write_return_val < 0)
         {
@@ -660,10 +660,10 @@ namespace avdecc_lib
         }
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-                                                            &cmd_frame,
-                                                            end_station_entity_id,
-                                                            JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE_COMMAND_LEN - 
-                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                           &cmd_frame,
+                                                           end_station_entity_id,
+                                                           JDKSAVDECC_AEM_COMMAND_ENTITY_AVAILABLE_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
         return 0;
     }
@@ -1244,10 +1244,10 @@ namespace avdecc_lib
 
 
     int STDCALL end_station_imp::send_aecp_address_access_cmd(void *notification_id,
-                                                        unsigned mode,
-                                                        unsigned length,
-                                                        uint64_t address,
-                                                        uint8_t memory_data[])
+                                                              unsigned mode,
+                                                              unsigned length,
+                                                              uint64_t address,
+                                                              uint8_t memory_data[])
     {
         struct jdksavdecc_aecp_aa aecp_cmd_aa_header;
         struct jdksavdecc_frame cmd_frame;
@@ -1260,12 +1260,12 @@ namespace avdecc_lib
         aecp_cmd_aa_header.tlv_count = 1;
 
         aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
-                                                                ETHER_HDR_SIZE + JDKSAVDECC_AECPDU_AA_LEN + JDKSAVDECC_AECPDU_AA_TLV_LEN + length);
+                                                            ETHER_HDR_SIZE + JDKSAVDECC_AECPDU_AA_LEN + JDKSAVDECC_AECPDU_AA_TLV_LEN + length);
 
         ssize_t write_return_val = jdksavdecc_aecp_aa_write(&aecp_cmd_aa_header,
-                                                    cmd_frame.payload,
-                                                    ETHER_HDR_SIZE,
-                                                    sizeof(cmd_frame.payload));
+                                                            cmd_frame.payload,
+                                                            ETHER_HDR_SIZE,
+                                                            sizeof(cmd_frame.payload));
 
         if(write_return_val < 0)
         {
@@ -1291,10 +1291,10 @@ namespace avdecc_lib
         memcpy(&cmd_frame.payload[ETHER_HDR_SIZE + JDKSAVDECC_AECPDU_AA_LEN + JDKSAVDECC_AECPDU_AA_TLV_LEN], memory_data, length);
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_COMMAND,
-                                                            &cmd_frame,
-                                                            end_station_entity_id,
-                                                            JDKSAVDECC_AECPDU_AA_LEN + JDKSAVDECC_AECPDU_AA_TLV_LEN + length - 
-                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                           &cmd_frame,
+                                                           end_station_entity_id,
+                                                           JDKSAVDECC_AECPDU_AA_LEN + JDKSAVDECC_AECPDU_AA_TLV_LEN + length -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
 
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
@@ -1318,11 +1318,11 @@ namespace avdecc_lib
 
         /************************** Fill frame payload with AECP data and send the frame *************************/
         aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
-							ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_CONTROL_COMMAND_LEN + 1);
+                                                            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_CONTROL_COMMAND_LEN + 1);
         ssize_t write_return_val = jdksavdecc_aem_command_set_control_write(&aem_command_set_control,
-                                                                                      cmd_frame.payload,
-                                                                                      ETHER_HDR_SIZE,
-                                                                                      sizeof(cmd_frame.payload));
+                                                                            cmd_frame.payload,
+                                                                            ETHER_HDR_SIZE,
+                                                                            sizeof(cmd_frame.payload));
 
         if(write_return_val < 0)
         {
@@ -1338,10 +1338,10 @@ namespace avdecc_lib
         memcpy(&cmd_frame.payload[ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_CONTROL_COMMAND_LEN], data, 1);
 
         aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-                                                            &cmd_frame,
-                                                            end_station_entity_id,
-                                                            JDKSAVDECC_AEM_COMMAND_SET_CONTROL_COMMAND_LEN + 1 -
-                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                           &cmd_frame,
+                                                           end_station_entity_id,
+                                                           JDKSAVDECC_AEM_COMMAND_SET_CONTROL_COMMAND_LEN + 1 -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
         return 0;
     }
@@ -1364,7 +1364,7 @@ namespace avdecc_lib
         uint16_t sequence_id = jdksavdecc_aecp_aa_get_sequence_id(frame, ETHER_HDR_SIZE);
         uint16_t tlv_count = jdksavdecc_aecp_aa_get_tlv_count(frame, ETHER_HDR_SIZE);
 
-        if (tlv_count != 1) 
+        if (tlv_count != 1)
         {
             // Do not currently support TLV counts > 1
             notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, 0, 0, 0, 0, 0);
@@ -1403,90 +1403,90 @@ namespace avdecc_lib
         {
             case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE:
                 {
-                        desc_index = jdksavdecc_acmpdu_get_talker_unique_id(frame, ETHER_HDR_SIZE);
-                        stream_output_descriptor_imp *stream_output_desc_imp_ref;
-                        stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+                    desc_index = jdksavdecc_acmpdu_get_talker_unique_id(frame, ETHER_HDR_SIZE);
+                    stream_output_descriptor_imp *stream_output_desc_imp_ref;
+                    stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
 
-                        if(stream_output_desc_imp_ref)
-                        {
-                            stream_output_desc_imp_ref->proc_get_tx_state_resp(notification_id, frame, frame_len, status);
-                        }
-                        else
-                        {
-                            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
-                        }
+                    if(stream_output_desc_imp_ref)
+                    {
+                        stream_output_desc_imp_ref->proc_get_tx_state_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
+                    }
                 }
 
                 break;
 
             case JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE:
                 {
-                        desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
-                        stream_input_descriptor_imp *stream_input_desc_imp_ref;
-                        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+                    desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
+                    stream_input_descriptor_imp *stream_input_desc_imp_ref;
+                    stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 
-                        if(stream_input_desc_imp_ref)
-                        {
-                            stream_input_desc_imp_ref->proc_connect_rx_resp(notification_id, frame, frame_len, status);
-                        }
-                        else
-                        {
-                            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
-                        }
+                    if(stream_input_desc_imp_ref)
+                    {
+                        stream_input_desc_imp_ref->proc_connect_rx_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
+                    }
                 }
 
                 break;
 
             case JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE:
                 {
-                        desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
-                        stream_input_descriptor_imp *stream_input_desc_imp_ref;
-                        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+                    desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
+                    stream_input_descriptor_imp *stream_input_desc_imp_ref;
+                    stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 
-                        if(stream_input_desc_imp_ref)
-                        {
-                            stream_input_desc_imp_ref->proc_disconnect_rx_resp(notification_id, frame, frame_len, status);
-                        }
-                        else
-                        {
-                            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
-                        }
+                    if(stream_input_desc_imp_ref)
+                    {
+                        stream_input_desc_imp_ref->proc_disconnect_rx_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
+                    }
                 }
 
                 break;
 
             case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE:
                 {
-                        desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
-                        stream_input_descriptor_imp *stream_input_desc_imp_ref;
-                        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+                    desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
+                    stream_input_descriptor_imp *stream_input_desc_imp_ref;
+                    stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
 
-                        if(stream_input_desc_imp_ref)
-                        {
-                            stream_input_desc_imp_ref->proc_get_rx_state_resp(notification_id, frame, frame_len, status);
-                        }
-                        else
-                        {
-                            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
-                        }
+                    if(stream_input_desc_imp_ref)
+                    {
+                        stream_input_desc_imp_ref->proc_get_rx_state_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
+                    }
                 }
 
                 break;
 
-           case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE:
+            case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE:
                 {
-                        desc_index = jdksavdecc_acmpdu_get_talker_unique_id(frame, ETHER_HDR_SIZE);
-                        stream_output_descriptor_imp *stream_output_desc_imp_ref;
-                        stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
+                    desc_index = jdksavdecc_acmpdu_get_talker_unique_id(frame, ETHER_HDR_SIZE);
+                    stream_output_descriptor_imp *stream_output_desc_imp_ref;
+                    stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
 
-                        if(stream_output_desc_imp_ref)
-                        {
-                            stream_output_desc_imp_ref->proc_get_tx_connection_resp(notification_id, frame, frame_len, status);
-                        }
-                        else
-                        {
-                            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
-                        }
+                    if(stream_output_desc_imp_ref)
+                    {
+                        stream_output_desc_imp_ref->proc_get_tx_connection_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
+                    }
                 }
 
                 break;
