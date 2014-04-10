@@ -69,7 +69,6 @@ namespace avdecc_lib
         void queue_background_read_request(uint16_t desc_type, uint16_t desc_base_index, uint16_t count);  ///< Generate "count" read requests
         void background_read_deduce_next(configuration_descriptor *cd, uint16_t desc_type, void *frame, ssize_t pos); ///< Deduce what else needs to be read from the rx'd frame
         void background_read_update_inflight(uint16_t desc_type, void *frame, ssize_t read_desc_offset); ///< Remove rx'd frame from background read inflight list
-        void background_read_submit_pending(void); ///< Submit pending background reads
 
         bool desc_index_from_frame(uint16_t desc_type, void *frame, ssize_t read_desc_offset, uint16_t &desc_index);
 
@@ -112,6 +111,9 @@ namespace avdecc_lib
                                         uint8_t memory_data[]);
         int STDCALL send_identify(void *notification_id, bool turn_on);
         int proc_set_control_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+
+        void background_read_update_timeouts(void); ///< update timeout conditions
+        void background_read_submit_pending(void); ///< Submit pending background reads
 
         /**
          * Process response received for the corresponding AECP Address Access command.

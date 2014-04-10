@@ -338,7 +338,7 @@ namespace avdecc_lib
                         break;
 
                     default:
-                        log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "The descriptor is not implemented.");
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Descriptor %s is not yet implemented in avdecc-lib.", utility->aem_desc_value_to_name(desc_type));
                         break;
                 }
             }
@@ -369,28 +369,53 @@ namespace avdecc_lib
         return 0;
     }
 
+    void end_station_imp::background_read_update_timeouts(void)
+    {
+        std::list<background_read_request *>::const_iterator ii;
+        background_read_request *b;
+
+        ii = m_backbround_read_inflight.begin();
+        while (ii != m_backbround_read_inflight.end())
+        {
+            b = *ii;
+            // check inflight timeout
+            if (b->m_timer.timeout())
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Background read timeout reading descriptor %s index %d\n", utility->aem_desc_value_to_name(b->m_type), b->m_index);
+                ii = m_backbround_read_inflight.erase(ii);
+                delete b;
+            }
+            else
+            {
+                ++ii;
+            }
+        }
+    }
+
+
     void end_station_imp::background_read_update_inflight(uint16_t desc_type, void *frame, ssize_t read_desc_offset)
     {
         std::list<background_read_request *>::const_iterator ii;
+        background_read_request *b;
         uint16_t desc_index;
 
         bool have_index = desc_index_from_frame(desc_type, frame, read_desc_offset, desc_index);
-        for (ii = m_backbround_read_inflight.begin(); ii != m_backbround_read_inflight.end(); ++ii)
+
+        ii = m_backbround_read_inflight.begin();
+        while (ii != m_backbround_read_inflight.end())
         {
+            b = *ii;
             // check inflight has been read
-            if (have_index && ((*ii)->m_type == desc_type) && ((*ii)->m_index == desc_index))
+            if (have_index && (b->m_type == desc_type) && (b->m_index == desc_index))
             {
-                m_backbround_read_inflight.erase(ii++);
-                break;
+                ii = m_backbround_read_inflight.erase(ii);
+                delete b;
             }
-            // check inflight timeout
-            if ((*ii)->m_timer.timeout())
+            else
             {
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Timeout reading descriptor %s index %d\n", utility->aem_desc_value_to_name((*ii)->m_type), (*ii)->m_index);
-                m_backbround_read_inflight.erase(ii++);
+                ++ii;
             }
         }
-
     }
 
     void end_station_imp::background_read_submit_pending(void)
@@ -401,8 +426,9 @@ namespace avdecc_lib
         {
             background_read_request *b_first = m_backbround_read_pending.front();
             m_backbround_read_pending.pop_front();
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d", utility->aem_desc_value_to_name(b_first->m_type), b_first->m_index);
             read_desc_init(b_first->m_type, b_first->m_index);
-            b_first->m_timer.start(200);       // 200 ms timeout
+            b_first->m_timer.start(750);       // 750 ms timeout (1722.1 timeout is 250ms)
             m_backbround_read_inflight.push_back(b_first);
 
             if (!m_backbround_read_pending.empty())
@@ -411,8 +437,9 @@ namespace avdecc_lib
                 while (b_next->m_type == b_first->m_type)
                 {
                     m_backbround_read_pending.pop_front();
+                    log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d", utility->aem_desc_value_to_name(b_next->m_type), b_next->m_index);
                     read_desc_init(b_next->m_type, b_next->m_index);
-                    b_next->m_timer.start(200);       // 200 ms timeout
+                    b_next->m_timer.start(750);       // 750 ms timeout (1722.1 timeout is 250ms)
                     m_backbround_read_inflight.push_back(b_next);
                     if (m_backbround_read_pending.empty())
                     {
