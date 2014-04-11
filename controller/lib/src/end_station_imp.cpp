@@ -371,7 +371,7 @@ namespace avdecc_lib
 
     void end_station_imp::background_read_update_timeouts(void)
     {
-        std::list<background_read_request *>::const_iterator ii;
+        std::list<background_read_request *>::iterator ii;
         background_read_request *b;
 
         ii = m_backbround_read_inflight.begin();
@@ -395,7 +395,7 @@ namespace avdecc_lib
 
     void end_station_imp::background_read_update_inflight(uint16_t desc_type, void *frame, ssize_t read_desc_offset)
     {
-        std::list<background_read_request *>::const_iterator ii;
+        std::list<background_read_request *>::iterator ii;
         background_read_request *b;
         uint16_t desc_index;
 
