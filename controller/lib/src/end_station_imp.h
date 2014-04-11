@@ -28,13 +28,25 @@
  */
 
 #pragma once
+#include <list>
 
 #include "entity_descriptor_imp.h"
 #include "end_station.h"
+#include "timer.h"
 
 namespace avdecc_lib
 {
     class adp;
+
+	class background_read_request
+	{
+	public:
+		background_read_request(uint16_t t, uint16_t I) :
+            m_type(t), m_index(I) {};
+		uint16_t m_type;
+		uint16_t m_index;
+        timer m_timer;
+	};
 
     class end_station_imp : public virtual end_station
     {
@@ -48,70 +60,17 @@ namespace avdecc_lib
         uint16_t selected_entity_index; // The controller-selected entity index
         uint16_t selected_config_index; // The controller-selected configuraition descriptor index
 
-        enum read_top_level_desc_in_config_states
-        {
-            READ_TOP_LEVEL_DESC_IN_CONFIG_IDLE,
-            READ_TOP_LEVEL_DESC_IN_CONFIG_RUNNING,
-            READ_TOP_LEVEL_DESC_IN_CONFIG_DONE
-        };
-
-        enum read_top_level_desc_in_config_states read_top_level_desc_in_config_state; // States used for processing the top level descriptors present in the CONFIGURATION descriptor.
-
-        enum read_desc_in_locale_states
-        {
-            READ_DESC_IN_LOCALE_IDLE,
-            READ_DESC_IN_LOCALE_RUNNING,
-            READ_DESC_IN_LOCALE_DONE
-        };
-
-        enum read_desc_in_locale_states read_desc_in_locale_state;
-
-        enum read_desc_in_audio_unit_states
-        {
-            READ_DESC_IN_AUDIO_UNIT_IDLE,
-            READ_DESC_IN_AUDIO_UNIT_STARTING,
-            READ_DESC_IN_AUDIO_UNIT_RUNNING,
-            READ_DESC_IN_AUDIO_UNIT_DONE
-        };
-
-        enum read_desc_in_audio_unit_states read_desc_in_audio_unit_state; 
-
-        enum read_desc_in_stream_port_input_states
-        {
-            READ_DESC_IN_STREAM_PORT_INPUT_IDLE,
-            READ_DESC_IN_STREAM_PORT_INPUT_RUNNING,
-            READ_DESC_IN_STREAM_PORT_INPUT_DONE
-        };
-
-        enum read_desc_in_stream_port_input_states read_desc_in_stream_port_input_state;
-
-        enum read_desc_in_stream_port_output_states
-        {
-            READ_DESC_IN_STREAM_PORT_OUTPUT_IDLE,
-            READ_DESC_IN_STREAM_PORT_OUTPUT_RUNNING,
-            READ_DESC_IN_STREAM_PORT_OUTPUT_DONE
-        };
-
-        enum read_desc_in_stream_port_output_states read_desc_in_stream_port_output_state;
-
-        uint16_t desc_type_from_config; // The top level descriptor type present in the CONFIGURATION descriptor
-        uint16_t desc_type_index_from_config; // The top level descriptor type index present in the CONFIGURATION descriptor
-        uint16_t desc_count_from_config; // The top level descriptor count present in the CONFIGURATION descriptor
-        uint16_t desc_count_index_from_config; // The top level descriptor count index present in the CONFIGURATION descriptor
-
-        uint32_t read_desc_count; // A counter for the number of READ_DESCRIPTOR commands sent used to match up with the number of responses for these commands
-        bool read_top_level_desc_done; // Send READ_DESCRIPTOR command for each top level descriptor present in the CONFIGURATION descriptor
-        bool read_desc_in_locale_done; // Send READ_DESCRIPTOR command for STRINGS descriptor
-        bool read_desc_in_audio_unit_done; // Send READ_DESCRIPTOR command for STREAM_PORT_INPUT and STREAM_PORT_OUTPUT descriptors
-        bool read_desc_in_stream_port_input_done; // Send READ_DESCRIPTOR command for AUDIO_CLUSTER, AUDIO_MAP, and CONTROL descriptors
-        bool read_desc_in_stream_port_output_done; // Send READ_DESCRIPTOR command for AUDIO_CLUSTER, AUDIO_MAP, and CONTROL descriptors
-
-        uint16_t desc_type_index_from_audio_unit;
-        uint16_t desc_type_index_from_stream_port_input;
-        uint16_t desc_type_index_from_stream_port_output;
+		std::list<background_read_request *> m_backbround_read_pending; // Store a list of background reads
+        std::list<background_read_request *> m_backbround_read_inflight; // Store a list of background reads that are inflight
 
         adp *adp_ref; // ADP associated with the End Station
         std::vector<entity_descriptor_imp *> entity_desc_vec; // Store a list of ENTITY descriptor objects
+
+        void queue_background_read_request(uint16_t desc_type, uint16_t desc_base_index, uint16_t count);  ///< Generate "count" read requests
+        void background_read_deduce_next(configuration_descriptor *cd, uint16_t desc_type, void *frame, ssize_t pos); ///< Deduce what else needs to be read from the rx'd frame
+        void background_read_update_inflight(uint16_t desc_type, void *frame, ssize_t read_desc_offset); ///< Remove rx'd frame from background read inflight list
+
+        bool desc_index_from_frame(uint16_t desc_type, void *frame, ssize_t read_desc_offset, uint16_t &desc_index);
 
     public:
         end_station_imp(const uint8_t *frame, size_t frame_len);
@@ -152,6 +111,9 @@ namespace avdecc_lib
                                         uint8_t memory_data[]);
         int STDCALL send_identify(void *notification_id, bool turn_on);
         int proc_set_control_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+
+        void background_read_update_timeouts(void); ///< update timeout conditions
+        void background_read_submit_pending(void); ///< Submit pending background reads
 
         /**
          * Process response received for the corresponding AECP Address Access command.

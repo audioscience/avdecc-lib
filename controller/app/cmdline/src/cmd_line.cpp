@@ -103,7 +103,6 @@ cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uin
     sys = avdecc_lib::create_system(avdecc_lib::system::LAYER2_MULTITHREADED_CALLBACK, netif, controller_obj);
 
     atomic_cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
-    atomic_cout << "(c) AudioScience, Inc. 2013\n"<< std::endl;
     print_interfaces_and_select(interface);
     sys->process_start();
 }
