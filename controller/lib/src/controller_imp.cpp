@@ -223,6 +223,13 @@ namespace avdecc_lib
         {
             end_station_vec.at(disconnected_end_station_index)->set_disconnected();
         }
+
+        /* tick updates to background read of descriptors */
+        for (uint32_t i = 0; i < end_station_vec.size(); i++)
+        {
+            end_station_vec.at(i)->background_read_update_timeouts();
+            end_station_vec.at(i)->background_read_submit_pending();
+        }
     }
 
     int controller_imp::find_in_end_station(struct jdksavdecc_eui64 &other_entity_id, const uint8_t *frame)

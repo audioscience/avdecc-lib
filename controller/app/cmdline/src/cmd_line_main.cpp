@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
     int error = 0;
     char *interface = NULL;
     int c = 0;
-    int32_t log_level = 0;
+    int32_t log_level = avdecc_lib::LOGGING_LEVEL_ERROR;
 
     while ((c = getopt(argc, argv, "ti:l:")) != -1) {
         switch (c) {
