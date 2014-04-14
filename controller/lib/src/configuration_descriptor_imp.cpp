@@ -76,6 +76,8 @@ namespace avdecc_lib
         std::for_each(audio_map_desc_vec.begin(), audio_map_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(clock_domain_desc_vec.begin(), clock_domain_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
         std::for_each(control_desc_vec.begin(), control_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+        std::for_each(external_port_input_desc_vec.begin(), external_port_input_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+        std::for_each(external_port_output_desc_vec.begin(), external_port_output_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
     }
 
     uint16_t STDCALL configuration_descriptor_imp::descriptor_type() const
@@ -169,10 +171,13 @@ namespace avdecc_lib
         typename std::vector<T*>::iterator it;
 
         it = std::find_if(
-            desc_vec.begin(),
-            desc_vec.end(),
-            [d](T const* n){return *d == *n;}
-            );
+                 desc_vec.begin(),
+                 desc_vec.end(),
+                 [d](T const* n)
+        {
+            return *d == *n;
+        }
+             );
 
         if (it != desc_vec.end())
         {
@@ -188,7 +193,10 @@ namespace avdecc_lib
             std::sort(
                 desc_vec.begin(),
                 desc_vec.end(),
-                [](T const* a, T const* b){return *a < *b;});
+                [](T const* a, T const* b)
+            {
+                return *a < *b;
+            });
         }
     }
 
@@ -286,6 +294,18 @@ namespace avdecc_lib
         add_or_replace_descriptor_and_sort(d, control_desc_vec);
     }
 
+    void configuration_descriptor_imp::store_external_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
+    {
+        external_port_input_descriptor_imp *d = new external_port_input_descriptor_imp(end_station_obj, frame, pos, frame_len);
+        add_or_replace_descriptor_and_sort(d, external_port_input_desc_vec);
+    }
+
+    void configuration_descriptor_imp::store_external_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
+    {
+        external_port_output_descriptor_imp *d = new external_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len);
+        add_or_replace_descriptor_and_sort(d, external_port_output_desc_vec);
+    }
+
     size_t STDCALL configuration_descriptor_imp::audio_unit_desc_count()
     {
         return audio_unit_desc_vec.size();
@@ -363,6 +383,16 @@ namespace avdecc_lib
     size_t STDCALL configuration_descriptor_imp::control_desc_count()
     {
         return control_desc_vec.size();
+    }
+
+    size_t STDCALL configuration_descriptor_imp::external_port_input_desc_count()
+    {
+        return external_port_input_desc_vec.size();
+    }
+
+    size_t STDCALL configuration_descriptor_imp::external_port_output_desc_count()
+    {
+        return external_port_output_desc_vec.size();
     }
 
     audio_unit_descriptor * STDCALL configuration_descriptor_imp::get_audio_unit_desc_by_index(size_t audio_unit_desc_index)
@@ -632,6 +662,38 @@ namespace avdecc_lib
         if(is_valid)
         {
             return control_desc_vec.at(control_desc_index);
+        }
+        else
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_control_desc_by_index error", base_end_station_imp_ref->entity_id());
+        }
+
+        return NULL;
+    }
+
+    external_port_input_descriptor * STDCALL configuration_descriptor_imp::get_external_port_input_desc_by_index(size_t index)
+    {
+        bool is_valid = (index < external_port_input_desc_vec.size());
+
+        if (is_valid)
+        {
+            return external_port_input_desc_vec.at(index);
+        }
+        else
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_control_desc_by_index error", base_end_station_imp_ref->entity_id());
+        }
+
+        return NULL;
+    }
+
+    external_port_output_descriptor * STDCALL configuration_descriptor_imp::get_external_port_output_desc_by_index(size_t index)
+    {
+        bool is_valid = (index < external_port_output_desc_vec.size());
+
+        if (is_valid)
+        {
+            return external_port_output_desc_vec.at(index);
         }
         else
         {

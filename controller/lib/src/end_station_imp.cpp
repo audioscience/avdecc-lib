@@ -337,6 +337,14 @@ namespace avdecc_lib
                         config_desc_imp_ref->store_control_desc(this, frame, read_desc_offset, frame_len);
                         break;
 
+                    case JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_INPUT:
+                        config_desc_imp_ref->store_external_port_input_desc(this, frame, read_desc_offset, frame_len);
+                        break;
+
+                    case JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_OUTPUT:
+                        config_desc_imp_ref->store_external_port_output_desc(this, frame, read_desc_offset, frame_len);
+                        break;
+
                     default:
                         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Descriptor %s is not yet implemented in avdecc-lib.", utility->aem_desc_value_to_name(desc_type));
                         break;
