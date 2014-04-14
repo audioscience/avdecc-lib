@@ -54,6 +54,8 @@
 #include "audio_cluster_descriptor.h"
 #include "audio_map_descriptor.h"
 #include "clock_domain_descriptor.h"
+#include "external_port_input_descriptor.h"
+#include "external_port_output_descriptor.h"
 #include "cmd_line.h"
 #include "cli_argument.h"
 #include "cli_command.h"
@@ -186,7 +188,7 @@ int cmd_line::get_current_end_station(avdecc_lib::end_station **end_station) con
 }
 
 int cmd_line::get_current_entity_and_descriptor(avdecc_lib::end_station *end_station,
-        avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **configuration)
+                                                avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **configuration)
 {
     *entity = NULL;
     *configuration = NULL;
@@ -213,7 +215,7 @@ int cmd_line::get_current_entity_and_descriptor(avdecc_lib::end_station *end_sta
 }
 
 int cmd_line::get_current_end_station_entity_and_descriptor(avdecc_lib::end_station **end_station,
-        avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **configuration)
+                                                            avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **configuration)
 {
     if (get_current_end_station(end_station))
         return 1;
@@ -237,15 +239,15 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("help", help_cmd);
 
     cli_command_format *help_one_fmt = new cli_command_format(
-                                    "Display details of specified command.",
-                                    &cmd_line::cmd_help_one);
+        "Display details of specified command.",
+        &cmd_line::cmd_help_one);
     help_one_fmt->add_argument(new cli_argument_string(this, "cmd", "the command for which to show details", "", 1, UINT_MAX));
     help_cmd->add_format(help_one_fmt);
 
     cli_command_format *help_all_fmt = new cli_command_format(
-                                    "Display a list of valid commands.\n" \
-                                    "Use \"help -a\" to display a complete list of commands",
-                                    &cmd_line::cmd_help_all);
+        "Display a list of valid commands.\n" \
+        "Use \"help -a\" to display a complete list of commands",
+        &cmd_line::cmd_help_all);
     help_cmd->add_format(help_all_fmt);
 
     // version
@@ -253,8 +255,8 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("version", version_cmd);
 
     cli_command_format *version_format = new cli_command_format(
-                                    "Display the current AVDECC Controller build release version.",
-                                    &cmd_line::cmd_version);
+        "Display the current AVDECC Controller build release version.",
+        &cmd_line::cmd_version);
     version_cmd->add_format(version_format);
 
     // list
@@ -262,8 +264,8 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("list", list_cmd);
 
     cli_command_format *list_fmt = new cli_command_format(
-                                    "Display a table with information about each End Station.",
-                                    &cmd_line::cmd_list);
+        "Display a table with information about each End Station.",
+        &cmd_line::cmd_list);
     list_cmd->add_format(list_fmt);
 
     // select
@@ -271,16 +273,16 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("select", select_cmd);
 
     cli_command_format *select_fmt = new cli_command_format(
-                                    "Change the setting of End Station, entity, and configuration.",
-                                    &cmd_line::cmd_select);
+        "Change the setting of End Station, entity, and configuration.",
+        &cmd_line::cmd_select);
     select_fmt->add_argument(new cli_argument_end_station(this, "e_s", END_STATION_HELP));
     select_fmt->add_argument(new cli_argument_int(this, "e_i", "the entity index"));
     select_fmt->add_argument(new cli_argument_int(this, "c_i", "the configuration index"));
     select_cmd->add_format(select_fmt);
 
     cli_command_format *show_select_fmt = new cli_command_format(
-                                    "Display the current End Station, Entity, and Configuration setting.",
-                                    &cmd_line::cmd_show_select);
+        "Display the current End Station, Entity, and Configuration setting.",
+        &cmd_line::cmd_show_select);
     select_cmd->add_format(show_select_fmt);
 
     // log
@@ -288,8 +290,8 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("log", log_cmd);
 
     cli_command_format *log_fmt = new cli_command_format(
-                                    "Redirect output to a specified file.",
-                                    &cmd_line::cmd_log);
+        "Redirect output to a specified file.",
+        &cmd_line::cmd_log);
     log_fmt->add_argument(new cli_argument_string(this, "f_n", "the file name"));
     log_cmd->add_format(log_fmt);
 
@@ -298,10 +300,10 @@ void cmd_line::cmd_line_commands_init()
     log_cmd->add_sub_command("level", log_level_cmd);
 
     cli_command_format *log_level_fmt = new cli_command_format(
-                                    "Update the base log level for messages to be logged by the logging callback.",
-                                    &cmd_line::cmd_log_level);
+        "Update the base log level for messages to be logged by the logging callback.",
+        &cmd_line::cmd_log_level);
     log_level_fmt->add_argument(new cli_argument_int(this, "n_l_l", "the new log level",
-                                    log_level_help));
+                                                     log_level_help));
     log_level_cmd->add_format(log_level_fmt);
 
     // unlog
@@ -309,8 +311,8 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("unlog", unlog_cmd);
 
     cli_command_format *unlog_fmt = new cli_command_format(
-                                    "Set output scheme back to console screen.",
-                                    &cmd_line::cmd_unlog);
+        "Set output scheme back to console screen.",
+        &cmd_line::cmd_unlog);
     unlog_cmd->add_format(unlog_fmt);
 
     // view
@@ -322,8 +324,8 @@ void cmd_line::cmd_line_commands_init()
     view_cmd->add_sub_command("all", view_all_cmd);
 
     cli_command_format *view_all_fmt = new cli_command_format(
-                                    "Display all the top level descriptors present in all End Stations.",
-                                    &cmd_line::cmd_view_all);
+        "Display all the top level descriptors present in all End Stations.",
+        &cmd_line::cmd_view_all);
     view_all_cmd->add_format(view_all_fmt);
 
     // view media
@@ -335,8 +337,8 @@ void cmd_line::cmd_line_commands_init()
     view_media_cmd->add_sub_command("clock", view_media_clock_cmd);
 
     cli_command_format *view_media_clock_fmt = new cli_command_format(
-                                    "Display a list of descriptors that has the Clock Sync Source flag set.",
-                                    &cmd_line::cmd_view_media_clock);
+        "Display a list of descriptors that has the Clock Sync Source flag set.",
+        &cmd_line::cmd_view_media_clock);
     view_media_clock_cmd->add_format(view_media_clock_fmt);
 
     // view details
@@ -344,19 +346,19 @@ void cmd_line::cmd_line_commands_init()
     view_cmd->add_sub_command("details", view_details_cmd);
 
     cli_command_format *view_details_fmt = new cli_command_format("Display all descriptors in the specified End Station.",
-                                                     &cmd_line::cmd_view_details);
+                                                                  &cmd_line::cmd_view_details);
     view_details_fmt->add_argument(new cli_argument_end_station(this, "e_s", END_STATION_HELP));
     view_details_cmd->add_format(view_details_fmt);
 
     // view descriptor
     cli_command *view_descriptor_cmd = new cli_command(
-                                    "To see a list of valid descriptor types and corresponding indexes,\n" \
-                                    "use the \"view all\" command.");
+        "To see a list of valid descriptor types and corresponding indexes,\n" \
+        "use the \"view all\" command.");
     view_cmd->add_sub_command("descriptor", view_descriptor_cmd);
 
     cli_command_format *view_descriptor_fmt = new cli_command_format(
-                                    "Display information for the specified descriptor using the current setting.",
-                                    &cmd_line::cmd_view_descriptor);
+        "Display information for the specified descriptor using the current setting.",
+        &cmd_line::cmd_view_descriptor);
     view_descriptor_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
     view_descriptor_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index"));
     view_descriptor_cmd->add_format(view_descriptor_fmt);
@@ -370,8 +372,8 @@ void cmd_line::cmd_line_commands_init()
     show_cmd->add_sub_command("connections", show_connections_cmd);
 
     cli_command_format *show_connections_fmt = new cli_command_format(
-                                    "Show all active connections.",
-                                    &cmd_line::cmd_show_connections);
+        "Show all active connections.",
+        &cmd_line::cmd_show_connections);
     show_connections_cmd->add_format(show_connections_fmt);
 
     // connect
@@ -379,28 +381,28 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("connect", connect_cmd);
 
     cli_command_format *connect_rx_fmt = new cli_command_format(
-                                    "Connect an instream to an outstream.",
-                                    &cmd_line::cmd_connect_rx);
+        "Connect an instream to an outstream.",
+        &cmd_line::cmd_connect_rx);
     connect_rx_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
     connect_rx_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
     connect_rx_fmt->add_argument(new cli_argument_end_station(this, "d_e_s", DST_END_STATION_HELP));
     connect_rx_fmt->add_argument(new cli_argument_int(this, "d_d_i", "the destination descriptor index"));
     connect_rx_fmt->add_argument(new cli_argument_string(this, "f", "the set of flags",
-                                    "Valid flags are class_b, fast_connect, saved_state, streaming_wait,\n" \
-                                    "supports_encrypted, encrypted_pdu, and talker_failed.", 0, UINT_MAX));
+                                                         "Valid flags are class_b, fast_connect, saved_state, streaming_wait,\n" \
+                                                         "supports_encrypted, encrypted_pdu, and talker_failed.", 0, UINT_MAX));
     connect_cmd->add_format(connect_rx_fmt);
 
     cli_command_format *connect_dst_fmt = new cli_command_format(
-                                    "Display all the available outstreams for all End Stations that can connect with\n" \
-                                    "the instreams.",
-                                    &cmd_line::cmd_connect_dst);
+        "Display all the available outstreams for all End Stations that can connect with\n" \
+        "the instreams.",
+        &cmd_line::cmd_connect_dst);
     connect_dst_fmt->add_argument(new cli_argument_end_station(this, "d_e_s", DST_END_STATION_HELP));
     connect_dst_fmt->add_argument(new cli_argument_int(this, "d_d_i", "the destination descriptor index"));
     connect_cmd->add_format(connect_dst_fmt);
 
     cli_command_format *connect_none_fmt = new cli_command_format(
-                                    "Display all the available instreams for all End Stations.",
-                                    &cmd_line::cmd_connect);
+        "Display all the available instreams for all End Stations.",
+        &cmd_line::cmd_connect);
     connect_cmd->add_format(connect_none_fmt);
 
     // disconnect
@@ -408,8 +410,8 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("disconnect", disconnect_cmd);
 
     cli_command_format *disconnect_fmt = new cli_command_format(
-                                    "Send a CONNECT_RX command to disconnect Listener sink stream.",
-                                    &cmd_line::cmd_disconnect_rx);
+        "Send a CONNECT_RX command to disconnect Listener sink stream.",
+        &cmd_line::cmd_disconnect_rx);
     disconnect_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
     disconnect_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
     disconnect_fmt->add_argument(new cli_argument_end_station(this, "d_e_s", DST_END_STATION_HELP));
@@ -429,8 +431,8 @@ void cmd_line::cmd_line_commands_init()
     get_rx_cmd->add_sub_command("state", get_rx_state_cmd);
 
     cli_command_format *get_rx_state_fmt = new cli_command_format(
-                                    "Send a GET_RX_STATE command to get Listener sink stream connection state.",
-                                    &cmd_line::cmd_get_rx_state);
+        "Send a GET_RX_STATE command to get Listener sink stream connection state.",
+        &cmd_line::cmd_get_rx_state);
     get_rx_state_fmt->add_argument(new cli_argument_end_station(this, "d_e_s", DST_END_STATION_HELP));
     get_rx_state_fmt->add_argument(new cli_argument_int(this, "d_d_i", "the destination descriptor index"));
     get_rx_state_cmd->add_format(get_rx_state_fmt);
@@ -444,8 +446,8 @@ void cmd_line::cmd_line_commands_init()
     get_tx_cmd->add_sub_command("state", get_tx_state_cmd);
 
     cli_command_format *get_tx_state_fmt = new cli_command_format(
-                                    "Send a GET_TX_STATE command to get Talker source stream connection state.",
-                                    &cmd_line::cmd_get_tx_state);
+        "Send a GET_TX_STATE command to get Talker source stream connection state.",
+        &cmd_line::cmd_get_tx_state);
     get_tx_state_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
     get_tx_state_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
     get_tx_state_cmd->add_format(get_tx_state_fmt);
@@ -455,9 +457,9 @@ void cmd_line::cmd_line_commands_init()
     get_tx_cmd->add_sub_command("connection", get_tx_connection_cmd);
 
     cli_command_format *get_tx_connection_fmt = new cli_command_format(
-                                    "Send a GET_TX_CONNECTION command with a notification id to get a specific\n" \
-                                    "Talker connection information.",
-                                    &cmd_line::cmd_get_tx_connection);
+        "Send a GET_TX_CONNECTION command with a notification id to get a specific\n" \
+        "Talker connection information.",
+        &cmd_line::cmd_get_tx_connection);
     get_tx_connection_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
     get_tx_connection_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
     get_tx_state_cmd->add_format(get_tx_connection_fmt);
@@ -468,19 +470,19 @@ void cmd_line::cmd_line_commands_init()
 
     // entity acquire
     cli_command *entity_acquire_cmd = new cli_command(
-                                    );
+    );
     entity_cmd->add_sub_command("acquire", entity_acquire_cmd);
 
     cli_command_format *entity_acquire_fmt = new cli_command_format(
-                                    "Send a ACQUIRE_ENTITY command to obtain exclusive access to an entire Entity\n" \
-                                    "or a sub-tree of objects using the current setting.",
-                                    &cmd_line::cmd_acquire_entity);
+        "Send a ACQUIRE_ENTITY command to obtain exclusive access to an entire Entity\n" \
+        "or a sub-tree of objects using the current setting.",
+        &cmd_line::cmd_acquire_entity);
     entity_acquire_fmt->add_argument(new cli_argument_string(this, "a_e_f", "the Acquire Entity Flag",
-                                    "Valid Acquire Entity Flags are acquire, persistent, and release."));
+                                                             "Valid Acquire Entity Flags are acquire, persistent, and release."));
     entity_acquire_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
     entity_acquire_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                          "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                          "\"view all\" command."));
     entity_acquire_cmd->add_format(entity_acquire_fmt);
 
     // acquire
@@ -498,15 +500,15 @@ void cmd_line::cmd_line_commands_init()
     entity_cmd->add_sub_command("lock", entity_lock_cmd);
 
     cli_command_format *entity_lock_fmt = new cli_command_format(
-                                    "Send a LOCK_ENTITY command to provide short term exclusive access to the\n" \
-                                    "AVDECC Entity to perform atomic operations using the current setting.",
-                                    &cmd_line::cmd_lock_entity);
+        "Send a LOCK_ENTITY command to provide short term exclusive access to the\n" \
+        "AVDECC Entity to perform atomic operations using the current setting.",
+        &cmd_line::cmd_lock_entity);
     entity_lock_fmt->add_argument(new cli_argument_string(this, "l_e_f", "the Lock Entity Flag",
-                                    "Valid Lock Entity Flags are lock and unlock."));
+                                                          "Valid Lock Entity Flags are lock and unlock."));
     entity_lock_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
     entity_lock_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                       "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                       "\"view all\" command."));
     entity_lock_cmd->add_format(entity_lock_fmt);
 
     // lock
@@ -524,9 +526,9 @@ void cmd_line::cmd_line_commands_init()
     entity_cmd->add_sub_command("available", entity_available_cmd);
 
     cli_command_format *entity_available_fmt = new cli_command_format(
-                                    "Send a ENTITY_AVAILABLE command to determine if another AVDECC Entity is\n" \
-                                    "still alive and responding to commands.",
-                                    &cmd_line::cmd_entity_avail);
+        "Send a ENTITY_AVAILABLE command to determine if another AVDECC Entity is\n" \
+        "still alive and responding to commands.",
+        &cmd_line::cmd_entity_avail);
     entity_available_cmd->add_format(entity_available_fmt);
 
     // entity reboot
@@ -535,8 +537,8 @@ void cmd_line::cmd_line_commands_init()
 
 
     cli_command_format *reboot_fmt = new cli_command_format(
-                                    "Send a REBOOT command to an AVDECC Entity",
-                                    &cmd_line::cmd_reboot);
+        "Send a REBOOT command to an AVDECC Entity",
+        &cmd_line::cmd_reboot);
     entity_reboot_cmd->add_format(reboot_fmt);
 
 
@@ -559,9 +561,9 @@ void cmd_line::cmd_line_commands_init()
     controller_cmd->add_sub_command("available", controller_available_cmd);
 
     cli_command_format *controller_available_fmt = new cli_command_format(
-                                    "Send a CONTROLLER_AVAILABLE command to determine if an AVDECC Controller is\n" \
-                                    "still alive.",
-                                    &cmd_line::cmd_controller_avail);
+        "Send a CONTROLLER_AVAILABLE command to determine if an AVDECC Controller is\n" \
+        "still alive.",
+        &cmd_line::cmd_controller_avail);
     controller_available_cmd->add_format(controller_available_fmt);
 
     // read
@@ -573,13 +575,13 @@ void cmd_line::cmd_line_commands_init()
     read_cmd->add_sub_command("descriptor", read_descriptor_cmd);
 
     cli_command_format *read_descriptor_fmt = new cli_command_format(
-                                    "Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity\n" \
-                                    "using the current setting.",
-                                    &cmd_line::cmd_read_descriptor);
+        "Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity\n" \
+        "using the current setting.",
+        &cmd_line::cmd_read_descriptor);
     read_descriptor_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
     read_descriptor_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                           "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                           "\"view all\" command."));
     read_descriptor_cmd->add_format(read_descriptor_fmt);
 
     // set
@@ -591,14 +593,14 @@ void cmd_line::cmd_line_commands_init()
     set_cmd->add_sub_command("stream_format", set_stream_format_cmd);
 
     cli_command_format *set_stream_format_fmt = new cli_command_format(
-                                    "Send a SET_STREAM_FORMAT command to change the format of a stream using the\n" \
-                                    "current setting.",
-                                    &cmd_line::cmd_set_stream_format);
+        "Send a SET_STREAM_FORMAT command to change the format of a stream using the\n" \
+        "current setting.",
+        &cmd_line::cmd_set_stream_format);
     set_stream_format_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                    "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."));
+                                                                "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."));
     set_stream_format_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                             "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                             "\"view all\" command."));
     set_stream_format_fmt->add_argument(new cli_argument_string(this, "s_f", "the stream format"));
     set_stream_format_cmd->add_format(set_stream_format_fmt);
 
@@ -607,13 +609,13 @@ void cmd_line::cmd_line_commands_init()
     get_cmd->add_sub_command("stream_format", get_stream_format_cmd);
 
     cli_command_format *get_stream_format_fmt = new cli_command_format(
-                                    "Send a GET_STREAM_FORMAT command to display the current format of a stream\n" \
-                                    "using the current setting.",
-                                    &cmd_line::cmd_get_stream_format);
+        "Send a GET_STREAM_FORMAT command to display the current format of a stream\n" \
+        "using the current setting.",
+        &cmd_line::cmd_get_stream_format);
     get_stream_format_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
     get_stream_format_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                             "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                             "\"view all\" command."));
     get_stream_format_cmd->add_format(get_stream_format_fmt);
 
     // set stream_info
@@ -621,13 +623,13 @@ void cmd_line::cmd_line_commands_init()
     set_cmd->add_sub_command("stream_info", set_stream_info_cmd);
 
     cli_command_format *set_stream_info_fmt = new cli_command_format(
-                                    "Use the SET_STREAM_INFO to change the current setting.",
-                                    &cmd_line::cmd_set_stream_info);
+        "Use the SET_STREAM_INFO to change the current setting.",
+        &cmd_line::cmd_set_stream_info);
     set_stream_info_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                    "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."));
+                                                              "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."));
     set_stream_info_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                           "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                           "\"view all\" command."));
     set_stream_info_fmt->add_argument(new cli_argument_string(this, "flag", "the setting to adjust"));
     set_stream_info_fmt->add_argument(new cli_argument_string(this, "value", "the value to set"));
     set_stream_info_cmd->add_format(set_stream_info_fmt);
@@ -637,13 +639,13 @@ void cmd_line::cmd_line_commands_init()
     get_cmd->add_sub_command("stream_info", get_stream_info_cmd);
 
     cli_command_format *get_stream_info_fmt = new cli_command_format(
-                                    "Display the GET_STREAM_INFO result using the current setting.",
-                                    &cmd_line::cmd_get_stream_info);
+        "Display the GET_STREAM_INFO result using the current setting.",
+        &cmd_line::cmd_get_stream_info);
     get_stream_info_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                    "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."));
+                                                              "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."));
     get_stream_info_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                           "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                           "\"view all\" command."));
     get_stream_info_cmd->add_format(get_stream_info_fmt);
 
     // set sampling_rate
@@ -651,13 +653,13 @@ void cmd_line::cmd_line_commands_init()
     set_cmd->add_sub_command("sampling_rate", set_sampling_rate_cmd);
 
     cli_command_format *set_sampling_rate_fmt = new cli_command_format(
-                                    "Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.",
-                                    &cmd_line::cmd_set_sampling_rate);
+        "Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.",
+        &cmd_line::cmd_set_sampling_rate);
     set_sampling_rate_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                    "Valid descriptor types are AUDIO_UNIT, VIDEO_CLUSTER, SENSOR_CLUSTER."));
+                                                                "Valid descriptor types are AUDIO_UNIT, VIDEO_CLUSTER, SENSOR_CLUSTER."));
     set_sampling_rate_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                             "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                             "\"view all\" command."));
     set_sampling_rate_fmt->add_argument(new cli_argument_int(this, "rate", "the new rate to set"));
     set_sampling_rate_cmd->add_format(set_sampling_rate_fmt);
 
@@ -666,14 +668,14 @@ void cmd_line::cmd_line_commands_init()
     get_cmd->add_sub_command("sampling_rate", get_sampling_rate_cmd);
 
     cli_command_format *get_sampling_rate_fmt = new cli_command_format(
-                                    "Send a GET_SAMPLING_RATE command to get the current sampling rate of a\n" \
-                                    "port or unit.",
-                                    &cmd_line::cmd_get_sampling_rate);
+        "Send a GET_SAMPLING_RATE command to get the current sampling rate of a\n" \
+        "port or unit.",
+        &cmd_line::cmd_get_sampling_rate);
     get_sampling_rate_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                    "Valid descriptor types are AUDIO_UNIT, VIDEO_CLUSTER, SENSOR_CLUSTER."));
+                                                                "Valid descriptor types are AUDIO_UNIT, VIDEO_CLUSTER, SENSOR_CLUSTER."));
     get_sampling_rate_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                             "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                             "\"view all\" command."));
     get_sampling_rate_cmd->add_format(get_sampling_rate_fmt);
 
     // set clock_source
@@ -681,13 +683,13 @@ void cmd_line::cmd_line_commands_init()
     set_cmd->add_sub_command("clock_source", set_clock_source_cmd);
 
     cli_command_format *set_clock_source_fmt = new cli_command_format(
-                                    "Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.",
-                                    &cmd_line::cmd_set_clock_source);
+        "Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.",
+        &cmd_line::cmd_set_clock_source);
     set_clock_source_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                    "Valid descriptor type is CLOCK_DOMAIN."));
+                                                               "Valid descriptor type is CLOCK_DOMAIN."));
     set_clock_source_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                            "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                            "\"view all\" command."));
     set_clock_source_fmt->add_argument(new cli_argument_int(this, "c_s_i", "the Clock Source Index"));
     set_clock_source_cmd->add_format(set_clock_source_fmt);
 
@@ -696,13 +698,13 @@ void cmd_line::cmd_line_commands_init()
     get_cmd->add_sub_command("clock_source", get_clock_source_cmd);
 
     cli_command_format *get_clock_source_fmt = new cli_command_format(
-                                    "Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.",
-                                    &cmd_line::cmd_get_clock_source);
+        "Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.",
+        &cmd_line::cmd_get_clock_source);
     get_clock_source_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                    "Valid descriptor type is CLOCK_DOMAIN."));
+                                                               "Valid descriptor type is CLOCK_DOMAIN."));
     get_clock_source_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                            "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                            "\"view all\" command."));
     get_clock_source_cmd->add_format(get_clock_source_fmt);
 
     // start
@@ -714,15 +716,15 @@ void cmd_line::cmd_line_commands_init()
     start_cmd->add_sub_command("streaming", start_streaming_cmd);
 
     cli_command_format *start_streaming_fmt = new cli_command_format(
-                                    "Send a START_STREAMING command to start streaming on a previously connected\n" \
-                                    "stream that was connected via ACMP or has previously been stopped with the\n" \
-                                    "STOP_STREAMING command.",
-                                    &cmd_line::cmd_start_streaming);
+        "Send a START_STREAMING command to start streaming on a previously connected\n" \
+        "stream that was connected via ACMP or has previously been stopped with the\n" \
+        "STOP_STREAMING command.",
+        &cmd_line::cmd_start_streaming);
     start_streaming_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                    "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."));
+                                                              "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."));
     start_streaming_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                           "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                           "\"view all\" command."));
     start_streaming_cmd->add_format(start_streaming_fmt);
 
     // stop
@@ -734,15 +736,15 @@ void cmd_line::cmd_line_commands_init()
     stop_cmd->add_sub_command("streaming", stop_streaming_cmd);
 
     cli_command_format *stop_streaming_fmt = new cli_command_format(
-                                    "Send a START_STREAMING command to start streaming on a previously connected\n" \
-                                    "stream that was connected via ACMP or has previously been stopped with the\n" \
-                                    "STOP_STREAMING command.",
-                                    &cmd_line::cmd_stop_streaming);
+        "Send a START_STREAMING command to start streaming on a previously connected\n" \
+        "stream that was connected via ACMP or has previously been stopped with the\n" \
+        "STOP_STREAMING command.",
+        &cmd_line::cmd_stop_streaming);
     stop_streaming_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                    "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."));
+                                                             "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."));
     stop_streaming_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                          "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                          "\"view all\" command."));
     stop_streaming_cmd->add_format(stop_streaming_fmt);
 
     // identify
@@ -754,8 +756,8 @@ void cmd_line::cmd_line_commands_init()
     identify_cmd->add_sub_command("on", identify_on_cmd);
 
     cli_command_format *identify_on_fmt = new cli_command_format(
-                                    "Send an IDENTIFY packet to enable identification.",
-                                    &cmd_line::cmd_identify_on);
+        "Send an IDENTIFY packet to enable identification.",
+        &cmd_line::cmd_identify_on);
     identify_on_fmt->add_argument(new cli_argument_end_station(this, "e_s", END_STATION_HELP));
     identify_on_cmd->add_format(identify_on_fmt);
 
@@ -764,8 +766,8 @@ void cmd_line::cmd_line_commands_init()
     identify_cmd->add_sub_command("off", identify_off_cmd);
 
     cli_command_format *identify_off_fmt = new cli_command_format(
-                                    "Send an IDENTIFY packet to disable identification.",
-                                    &cmd_line::cmd_identify_off);
+        "Send an IDENTIFY packet to disable identification.",
+        &cmd_line::cmd_identify_off);
     identify_off_fmt->add_argument(new cli_argument_end_station(this, "e_s", END_STATION_HELP));
     identify_off_cmd->add_format(identify_off_fmt);
 
@@ -774,14 +776,14 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("path", path_cmd);
 
     cli_command_format *set_path_fmt = new cli_command_format(
-                                    "Change the location of the redirected output file.",
-                                    &cmd_line::cmd_set_path);
+        "Change the location of the redirected output file.",
+        &cmd_line::cmd_set_path);
     set_path_fmt->add_argument(new cli_argument_string(this, "path", "the new path to set"));
     path_cmd->add_format(set_path_fmt);
 
     cli_command_format *show_path_fmt = new cli_command_format(
-                                    "Display the location of the redirected output file.",
-                                    &cmd_line::cmd_show_path);
+        "Display the location of the redirected output file.",
+        &cmd_line::cmd_show_path);
     path_cmd->add_format(show_path_fmt);
 
     // clr
@@ -789,8 +791,8 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("clr", clr_cmd);
 
     cli_command_format *clr_fmt = new cli_command_format(
-                                    "Clear the console screen.",
-                                    &cmd_line::cmd_clr);
+        "Clear the console screen.",
+        &cmd_line::cmd_clr);
     clr_cmd->add_format(clr_fmt);
 
     // quit
@@ -799,8 +801,8 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("q", quit_cmd);
 
     cli_command_format *quit_fmt = new cli_command_format(
-                                    "Quit the controller.",
-                                    &cmd_line::cmd_quit);
+        "Quit the controller.",
+        &cmd_line::cmd_quit);
     quit_cmd->add_format(quit_fmt);
 
     // param
@@ -808,16 +810,16 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("param", param_cmd);
 
     cli_command_format *param_fmt = new cli_command_format(
-                                    "Param",
-                                    &cmd_line::cmd_connect_rx);
+        "Param",
+        &cmd_line::cmd_connect_rx);
     param_fmt->add_argument(new cli_argument_end_station(this, "e_s_i", END_STATION_HELP,
-                                    "To see a list of valid End Stations, enter \"list\" command."));
+                                                         "To see a list of valid End Stations, enter \"list\" command."));
     param_fmt->add_argument(new cli_argument_int(this, "e_i", "the Entity index"));
     param_fmt->add_argument(new cli_argument_int(this, "c_i", "the Configuration index"));
     param_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
     param_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                    "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                    "\"view all\" command."));
+                                                 "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                 "\"view all\" command."));
     param_cmd->add_format(param_fmt);
 
     // upgrade
@@ -825,8 +827,8 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("upgrade", upgrade_cmd);
 
     cli_command_format *upgrade_cmd_fmt = new cli_command_format(
-                                    "Perform the EFU process on the end station to upgrade a firmware image",
-                                    &cmd_line::cmd_firmware_upgrade);
+        "Perform the EFU process on the end station to upgrade a firmware image",
+        &cmd_line::cmd_firmware_upgrade);
     upgrade_cmd_fmt->add_argument(new cli_argument_string(this, "upgrade_image_path", "the path to the upgrade image file"));
     upgrade_cmd->add_format(upgrade_cmd_fmt);
 }
@@ -875,10 +877,10 @@ int cmd_line::cmd_version(int total_matched, std::vector<cli_argument*> args)
 int cmd_line::cmd_list(int total_matched, std::vector<cli_argument*> args)
 {
     atomic_cout << "\n" << "End Station" << "  |  "
-                        << "Name" << std::setw(21)  << "  |  "
-                        << "Entity ID" << std::setw(12) << "  |  "
-                        << "Firmware Version" << "  |  "
-                        << "MAC" << std::endl;
+                << "Name" << std::setw(21)  << "  |  "
+                << "Entity ID" << std::setw(12) << "  |  "
+                << "Firmware Version" << "  |  "
+                << "MAC" << std::endl;
     atomic_cout << std::string(100, '-') << std::endl;
 
     for(unsigned int i = 0; i < controller_obj->get_end_station_count(); i++)
@@ -903,11 +905,11 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument*> args)
             }
             uint64_t end_station_mac = end_station->mac();
             atomic_cout << (std::stringstream() << end_station->get_connection_status()
-                        << std::setw(10) << std::dec << std::setfill(' ') << i << "  |  "
-                        << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
-                        << std::setw(16) << std::hex << std::setfill('0') << end_station_entity_id << "  |  "
-                        << std::setw(16) << std::hex << std::setfill(' ') << (ent_desc ? fw_ver : "UNKNOWN") << "  |  "
-                        << std::setw(12) << std::hex << std::setfill('0') << end_station_mac).rdbuf() << std::endl;
+                            << std::setw(10) << std::dec << std::setfill(' ') << i << "  |  "
+                            << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc ? end_station_name : "UNKNOWN") << "  |  0x"
+                            << std::setw(16) << std::hex << std::setfill('0') << end_station_entity_id << "  |  "
+                            << std::setw(16) << std::hex << std::setfill(' ') << (ent_desc ? fw_ver : "UNKNOWN") << "  |  "
+                            << std::setw(12) << std::hex << std::setfill('0') << end_station_mac).rdbuf() << std::endl;
         }
     }
 
@@ -1272,6 +1274,24 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::audio_map_descriptor *audio_map_desc_ref = configuration->get_audio_map_desc_by_index(j);
                     print_desc_type_index_name_row(*audio_map_desc_ref,
                                                    configuration->get_strings_desc_string_by_reference(audio_map_desc_ref->localized_description()),
+                                                   *locale);
+                }
+
+            case avdecc_lib::AEM_DESC_EXTERNAL_PORT_INPUT:
+                for (unsigned int j = 0; j < configuration->external_port_input_desc_count(); j++)
+                {
+                    avdecc_lib::external_port_input_descriptor *desc_ref = configuration->get_external_port_input_desc_by_index(j);
+                    print_desc_type_index_name_row(*desc_ref,
+                                                   configuration->get_strings_desc_string_by_reference(desc_ref->localized_description()),
+                                                   *locale);
+                }
+
+            case avdecc_lib::AEM_DESC_EXTERNAL_PORT_OUTPUT:
+                for (unsigned int j = 0; j < configuration->external_port_output_desc_count(); j++)
+                {
+                    avdecc_lib::external_port_output_descriptor *desc_ref = configuration->get_external_port_output_desc_by_index(j);
+                    print_desc_type_index_name_row(*desc_ref,
+                                                   configuration->get_strings_desc_string_by_reference(desc_ref->localized_description()),
                                                    *locale);
                 }
 
@@ -1923,7 +1943,7 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                             atomic_cout << "map[" << i << "].stream_channel = " << std::dec << map.stream_channel << std::endl;
                             atomic_cout << "map[" << i << "].cluster_offset = " << std::dec << map.cluster_offset << std::endl;
                             atomic_cout << "map[" << i << "].cluster_channel = " << std::dec << map.cluster_channel << std::endl;
-                       }
+                        }
                     }
                 }
             }
@@ -1946,6 +1966,47 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                     {
                         atomic_cout << "\tclock_sources = " << std::dec << clk_domain_desc->get_clock_source_by_index(i) << std::endl;
                     }
+                }
+            }
+            break;
+        case avdecc_lib::AEM_DESC_EXTERNAL_PORT_INPUT:
+            {
+                if (!configuration)
+                    break;
+
+                avdecc_lib::external_port_input_descriptor *desc = configuration->get_external_port_input_desc_by_index(desc_index);
+                if (desc)
+                {
+                    atomic_cout << "\nport_flags = " << std::hex << desc->port_flags();
+                    atomic_cout << "\nclock_domain_index = " << std::dec << desc->clock_domain_index();
+                    atomic_cout << "\nnumber_of_controls = " << std::dec << desc->number_of_controls();
+                    atomic_cout << "\nbase_control = " << std::dec << desc->base_control();
+                    atomic_cout << "\nsignal_type = " << std::dec << desc->signal_type();
+                    atomic_cout << "\nsignal_index = " << std::dec << desc->signal_index();
+                    atomic_cout << "\nsignal_output = " << std::dec << desc->signal_output();
+                    atomic_cout << "\nblock_latency = " << std::dec << desc->block_latency();
+                    atomic_cout << "\njack_index = " << std::dec << desc->jack_index();
+                }
+            }
+            break;
+
+        case avdecc_lib::AEM_DESC_EXTERNAL_PORT_OUTPUT:
+            {
+                if (!configuration)
+                    break;
+
+                avdecc_lib::external_port_output_descriptor *desc = configuration->get_external_port_output_desc_by_index(desc_index);
+                if (desc)
+                {
+                    atomic_cout << "\nport_flags = " << std::hex << desc->port_flags();
+                    atomic_cout << "\nclock_domain_index = " << std::dec << desc->clock_domain_index();
+                    atomic_cout << "\nnumber_of_controls = " << std::dec << desc->number_of_controls();
+                    atomic_cout << "\nbase_control = " << std::dec << desc->base_control();
+                    atomic_cout << "\nsignal_type = " << std::dec << desc->signal_type();
+                    atomic_cout << "\nsignal_index = " << std::dec << desc->signal_index();
+                    atomic_cout << "\nsignal_output = " << std::dec << desc->signal_output();
+                    atomic_cout << "\nblock_latency = " << std::dec << desc->block_latency();
+                    atomic_cout << "\njack_index = " << std::dec << desc->jack_index();
                 }
             }
             break;
@@ -2121,7 +2182,7 @@ int cmd_line::cmd_connect_rx(int total_matched, std::vector<cli_argument*> args)
     avdecc_lib::configuration_descriptor *in_descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
     avdecc_lib::configuration_descriptor *out_descriptor = controller_obj->get_current_config_desc(outstream_end_station_index, false);
     bool is_valid = (in_descriptor && out_descriptor &&
-                    (test_mode || (instream_end_station_index != outstream_end_station_index)) &&
+                     (test_mode || (instream_end_station_index != outstream_end_station_index)) &&
                      (instream_end_station_index < controller_obj->get_end_station_count()) &&
                      (outstream_end_station_index < controller_obj->get_end_station_count()) &&
                      (instream_desc_index < in_descriptor->stream_input_desc_count()) &&
@@ -2724,7 +2785,8 @@ int cmd_line::cmd_set_stream_info(int total_matched, std::vector<cli_argument*> 
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
     {
-        if (stream_info_field == "stream_vlan_id") {
+        if (stream_info_field == "stream_vlan_id")
+        {
             uint16_t vlan_id = (uint16_t)atoi(new_stream_info_field_value.c_str());
             intptr_t cmd_notification_id = get_next_notification_id();
             sys->set_wait_for_next_cmd((void *)cmd_notification_id);
@@ -2736,9 +2798,11 @@ int cmd_line::cmd_set_stream_info(int total_matched, std::vector<cli_argument*> 
                 atomic_cout << "cmd_set_stream_info error" << std::endl;
                 return 0;
             }
-        } else {
+        }
+        else
+        {
             atomic_cout << "Supported fields are:" << std::endl <<
-                "stream_vlan_id" << std::endl ;
+                        "stream_vlan_id" << std::endl ;
         }
     }
     else
@@ -2808,14 +2872,14 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
             }
             atomic_cout << "Flags: 0x" << std::hex << stream_output_desc_ref->get_stream_info_flags() << std::endl;
             if (stream_output_desc_ref->get_stream_info_flag("STREAM_ID_VALID"))
-              atomic_cout << "Stream ID: 0x" << std::hex << std::setfill('0') << std::setw(16) <<
-                stream_output_desc_ref->get_stream_info_stream_id() << std::endl;
+                atomic_cout << "Stream ID: 0x" << std::hex << std::setfill('0') << std::setw(16) <<
+                            stream_output_desc_ref->get_stream_info_stream_id() << std::endl;
             if (stream_output_desc_ref->get_stream_info_flag("STREAM_DEST_MAC_VALID"))
-              atomic_cout << "Stream Destination MAC: " << std::hex <<
-                stream_output_desc_ref->get_stream_info_stream_dest_mac() << std::endl;
+                atomic_cout << "Stream Destination MAC: " << std::hex <<
+                            stream_output_desc_ref->get_stream_info_stream_dest_mac() << std::endl;
             if (stream_output_desc_ref->get_stream_info_flag("STREAM_VLAN_ID_VALID"))
-              atomic_cout << "Stream VLAN ID: " <<
-                stream_output_desc_ref->get_stream_info_stream_vlan_id() << std::endl;
+                atomic_cout << "Stream VLAN ID: " <<
+                            stream_output_desc_ref->get_stream_info_stream_vlan_id() << std::endl;
         }
     }
     else
@@ -3230,15 +3294,15 @@ bool cmd_line::get_end_station_index(std::string arg, uint32_t &end_station_inde
     entity_entity_id = strtoull(str, &end, 16);
     if (end != str)
     {
-      bool found = controller_obj->is_end_station_found_by_entity_id(entity_entity_id, end_station_index);
-      if (found)
-        return true;
+        bool found = controller_obj->is_end_station_found_by_entity_id(entity_entity_id, end_station_index);
+        if (found)
+            return true;
     }
 
     // Not a valid Entity ID, so assume it is an index
     end_station_index = strtoul(str, &end, 10);
     if (end != str)
-      return true;
+        return true;
 
     return false;
 }
