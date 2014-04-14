@@ -1504,6 +1504,29 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
                 do_view_descriptor(desc_name, desc_index);
             }
 
+        case avdecc_lib::AEM_DESC_EXTERNAL_PORT_INPUT:
+            for(unsigned int j = 0; j < configuration->external_port_input_desc_count(); j++)
+            {
+                avdecc_lib::external_port_input_descriptor *port_desc_ref = configuration->get_external_port_input_desc_by_index(j);
+                std::string desc_name = utility->aem_desc_value_to_name(port_desc_ref->descriptor_type());
+                uint16_t desc_index = port_desc_ref->descriptor_index();
+
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
+                do_view_descriptor(desc_name, desc_index);
+            }
+
+        case avdecc_lib::AEM_DESC_EXTERNAL_PORT_OUTPUT:
+            for(unsigned int j = 0; j < configuration->external_port_output_desc_count(); j++)
+            {
+                avdecc_lib::external_port_output_descriptor *port_desc_ref = configuration->get_external_port_output_desc_by_index(j);
+                std::string desc_name = utility->aem_desc_value_to_name(port_desc_ref->descriptor_type());
+                uint16_t desc_index = port_desc_ref->descriptor_index();
+
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
+                do_view_descriptor(desc_name, desc_index);
+            }
+
+
             break;
     }
 
