@@ -56,6 +56,8 @@
 #include "clock_domain_descriptor.h"
 #include "external_port_input_descriptor.h"
 #include "external_port_output_descriptor.h"
+#include "descriptor_field.h"
+#include "descriptor_field_flags.h"
 #include "cmd_line.h"
 #include "cli_argument.h"
 #include "cli_command.h"
@@ -1553,6 +1555,45 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
     get_current_entity_and_descriptor(end_station, &entity, &configuration);
+
+    // test field output
+    if (desc_type_value == avdecc_lib::AEM_DESC_EXTERNAL_PORT_INPUT)
+    {
+        avdecc_lib::descriptor_base *desc = configuration->get_external_port_input_desc_by_index(desc_index);
+
+        for (unsigned int i = 0; i < desc->field_count(); i++)
+        {
+            avdecc_lib::descriptor_field *f = desc->field(i);
+            switch (f->get_type())
+            {
+                case avdecc_lib::descriptor_field::TYPE_CHAR:
+                    atomic_cout << "\n" << f->get_name() << " = " << f->get_char();
+                case avdecc_lib::descriptor_field::TYPE_UINT16:
+                    atomic_cout << "\n" << f->get_name() << " = " << f->get_uint16();
+                case avdecc_lib::descriptor_field::TYPE_UINT32:
+                    atomic_cout << "\n" << f->get_name() << " = " << f->get_uint32();
+                case avdecc_lib::descriptor_field::TYPE_FLAGS16:
+                case avdecc_lib::descriptor_field::TYPE_FLAGS32:
+                    uint32_t v ;
+                    if (f->get_type() == avdecc_lib::descriptor_field::TYPE_FLAGS16)
+                        v = f->get_uint16();
+                    else
+                        v = f->get_uint32();
+                    atomic_cout << "\nFlags " << f->get_name() << " = 0x" << std::hex << v;
+                    for (unsigned int j = 0; j < f->get_flags_count(); j++)
+                    {
+                        uint32_t the_bit;
+                        avdecc_lib::descriptor_field_flags *fl = f->get_flag_by_index(j);
+
+                        the_bit = ((v & fl->get_flag_mask()) != 0);
+                        atomic_cout << "\n\t" << fl->get_flag_name() << " = " << the_bit << "(mask 0x" << std::hex << fl->get_flag_mask() << ")";
+                    }
+                default:
+                    atomic_cout << "\nUNHANDLED FIELD TYPE";
+            }
+        }
+        return 0;
+    }
 
     switch(desc_type_value)
     {

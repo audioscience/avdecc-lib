@@ -22,40 +22,30 @@
  */
 
 /**
- * external_port_input_descriptor_imp.h
+ * descriptor_field_flags_imp.h
  *
- * Public EXTERNAL PORT INPUT descriptor implementation class
+ * Public descriptor base interface class
  */
 
 #pragma once
 
 #include <stdint.h>
 #include "build.h"
-#include "descriptor_base_imp.h"
-#include "external_port_input_descriptor.h"
+
+#include "descriptor_field_flags.h"
 
 namespace avdecc_lib
 {
-    class external_port_input_descriptor_imp : public external_port_input_descriptor, public virtual descriptor_base_imp
-    {
-    private:
-        struct jdksavdecc_descriptor_external_port desc;
-    public:
-        external_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-        virtual ~external_port_input_descriptor_imp();
+	class descriptor_field_flags_imp : public descriptor_field_flags
+	{
+	public:
+		descriptor_field_flags_imp(char * name, uint32_t mask);
 
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
-
-        uint16_t STDCALL port_flags();
-        uint16_t STDCALL clock_domain_index();
-        uint16_t STDCALL number_of_controls();
-        uint16_t STDCALL base_control();
-        uint16_t STDCALL signal_type();
-        uint16_t STDCALL signal_index();
-        uint16_t STDCALL signal_output();
-        uint32_t STDCALL block_latency();
-        uint16_t STDCALL jack_index();
-    };
+		char * STDCALL get_flag_name(void) const;
+		uint32_t STDCALL get_flag_mask(void) const;
+	private:
+		uint32_t m_mask;
+		char *m_name;
+	};
 }
 
