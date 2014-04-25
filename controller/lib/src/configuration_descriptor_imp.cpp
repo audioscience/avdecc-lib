@@ -32,6 +32,7 @@
 #include <vector>
 #include "enumeration.h"
 #include "log_imp.h"
+#include "util_imp.h"
 #include "end_station_imp.h"
 #include "descriptor_base_imp.h"
 #include "configuration_descriptor_imp.h"
@@ -60,24 +61,33 @@ namespace avdecc_lib
 
     configuration_descriptor_imp::~configuration_descriptor_imp()
     {
-        std::for_each(audio_unit_desc_vec.begin(), audio_unit_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(stream_input_desc_vec.begin(), stream_input_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(stream_output_desc_vec.begin(), stream_output_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(jack_input_desc_vec.begin(), jack_input_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(jack_output_desc_vec.begin(), jack_output_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(avb_interface_desc_vec.begin(), avb_interface_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(clock_source_desc_vec.begin(), clock_source_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(memory_object_desc_vec.begin(), memory_object_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(locale_desc_vec.begin(), locale_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(strings_desc_vec.begin(), strings_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(stream_port_input_desc_vec.begin(), stream_port_input_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(stream_port_output_desc_vec.begin(), stream_port_output_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(audio_cluster_desc_vec.begin(), audio_cluster_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(audio_map_desc_vec.begin(), audio_map_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(clock_domain_desc_vec.begin(), clock_domain_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(control_desc_vec.begin(), control_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(external_port_input_desc_vec.begin(), external_port_input_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
-        std::for_each(external_port_output_desc_vec.begin(), external_port_output_desc_vec.end(), delete_pointed_to<descriptor_base_imp>);
+        std::map<uint16_t, DITEM>::iterator it;
+        for (it = m_all_desc.begin(); it != m_all_desc.end(); ++it)
+            std::for_each(it->second.begin(), it->second.end(), delete_pointed_to<descriptor_base_imp>);
+        m_all_desc.clear();
+    }
+
+    size_t configuration_descriptor_imp::desc_count(uint16_t desc_type)
+    {
+        if (m_all_desc.find(desc_type) == m_all_desc.end())
+            return 0;
+        else
+            return m_all_desc[desc_type].size();
+    }
+    descriptor_base_imp *configuration_descriptor_imp::lookup_desc(uint16_t desc_type, size_t index)
+    {
+        if (desc_count(desc_type) < index)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, lookup_desc(%s,%d) error",
+                                      base_end_station_imp_ref->entity_id(),
+                                      utility->aem_desc_value_to_name(desc_type),
+                                      index);
+            return NULL;
+        }
+        else
+        {
+            return m_all_desc[desc_type].at(index);
+        }
     }
 
     uint16_t STDCALL configuration_descriptor_imp::descriptor_type() const
@@ -165,6 +175,7 @@ namespace avdecc_lib
         return desc_count_vec.at(desc_index);
     }
 
+    /*
     template <class T>
     static void add_or_replace_descriptor_and_sort(T *d, std::vector<T *> &desc_vec)
     {
@@ -199,360 +210,248 @@ namespace avdecc_lib
             });
         }
     }
+    */
+
+    void configuration_descriptor_imp::update_desc_database(descriptor_base_imp *desc)
+    {
+        uint16_t desc_type = desc->descriptor_type();
+        uint16_t desc_index = desc->descriptor_index();
+
+        if (m_all_desc[desc_type].size() <= desc_index)
+            m_all_desc[desc_type].resize(desc_index + 1);
+        if (m_all_desc[desc_type][desc_index])
+            delete m_all_desc[desc_type][desc_index];
+        m_all_desc[desc_type][desc_index] = desc;
+    }
+
 
     void configuration_descriptor_imp::store_audio_unit_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        audio_unit_descriptor_imp *d = new audio_unit_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, audio_unit_desc_vec);
+        update_desc_database(new audio_unit_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_stream_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        stream_input_descriptor_imp *d = new stream_input_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, stream_input_desc_vec);
+        update_desc_database(new stream_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_stream_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        stream_output_descriptor_imp *d = new stream_output_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, stream_output_desc_vec);
+        update_desc_database(new stream_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_jack_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        jack_input_descriptor_imp *d = new jack_input_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, jack_input_desc_vec);
+        update_desc_database(new jack_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_jack_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        jack_output_descriptor_imp *d = new jack_output_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, jack_output_desc_vec);
+        update_desc_database(new jack_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_avb_interface_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        avb_interface_descriptor_imp *d = new avb_interface_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, avb_interface_desc_vec);
+        new avb_interface_descriptor_imp(end_station_obj, frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_clock_source_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        clock_source_descriptor_imp *d = new clock_source_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, clock_source_desc_vec);
+        update_desc_database(new clock_source_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_memory_object_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        memory_object_descriptor_imp *d = new memory_object_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, memory_object_desc_vec);
+        update_desc_database(new memory_object_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_locale_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        locale_descriptor_imp *d = new locale_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, locale_desc_vec);
+        update_desc_database(new locale_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_strings_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        strings_descriptor_imp *d = new strings_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, strings_desc_vec);
+        update_desc_database(new strings_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_stream_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        stream_port_input_desc_vec.push_back(new stream_port_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new stream_port_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_stream_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        stream_port_output_desc_vec.push_back(new stream_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new stream_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_audio_cluster_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        audio_cluster_descriptor_imp *d = new audio_cluster_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, audio_cluster_desc_vec);
+        update_desc_database(new audio_cluster_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_audio_map_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        audio_map_descriptor_imp *d = new audio_map_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, audio_map_desc_vec);
+        update_desc_database(new audio_map_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_clock_domain_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        clock_domain_descriptor_imp *d = new clock_domain_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, clock_domain_desc_vec);
+        update_desc_database(new clock_domain_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_control_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        control_descriptor_imp *d = new control_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, control_desc_vec);
+        update_desc_database(new control_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_external_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        external_port_input_descriptor_imp *d = new external_port_input_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, external_port_input_desc_vec);
+        update_desc_database(new external_port_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_external_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        external_port_output_descriptor_imp *d = new external_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len);
-        add_or_replace_descriptor_and_sort(d, external_port_output_desc_vec);
+        update_desc_database(new external_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     size_t STDCALL configuration_descriptor_imp::audio_unit_desc_count()
     {
-        return audio_unit_desc_vec.size();
+        return desc_count(AEM_DESC_AUDIO_UNIT);
     }
 
     size_t STDCALL configuration_descriptor_imp::stream_input_desc_count()
     {
-        return stream_input_desc_vec.size();
+        return desc_count(AEM_DESC_STREAM_INPUT);
     }
     size_t STDCALL configuration_descriptor_imp::stream_output_desc_count()
     {
-        return stream_output_desc_vec.size();
+        return desc_count(AEM_DESC_STREAM_OUTPUT);
     }
 
     size_t STDCALL configuration_descriptor_imp::jack_input_desc_count()
     {
-        return jack_input_desc_vec.size();
+        return desc_count(AEM_DESC_JACK_INPUT);
     }
 
     size_t STDCALL configuration_descriptor_imp::jack_output_desc_count()
     {
-        return jack_output_desc_vec.size();
+        return desc_count(AEM_DESC_JACK_OUTPUT);
     }
 
     size_t STDCALL configuration_descriptor_imp::avb_interface_desc_count()
     {
-        return avb_interface_desc_vec.size();
+        return desc_count(AEM_DESC_AVB_INTERFACE);
     }
 
     size_t STDCALL configuration_descriptor_imp::clock_source_desc_count()
     {
-        return clock_source_desc_vec.size();
+        return desc_count(AEM_DESC_CLOCK_SOURCE);
     }
 
     size_t STDCALL configuration_descriptor_imp::memory_object_desc_count()
     {
-        return memory_object_desc_vec.size();
+        return desc_count(AEM_DESC_MEMORY_OBJECT);
     }
 
     size_t STDCALL configuration_descriptor_imp::locale_desc_count()
     {
-        return locale_desc_vec.size();
+        return desc_count(AEM_DESC_LOCALE);
     }
 
     size_t STDCALL configuration_descriptor_imp::strings_desc_count()
     {
-        return strings_desc_vec.size();
+        return desc_count(AEM_DESC_STRINGS);
     }
 
     size_t STDCALL configuration_descriptor_imp::stream_port_input_desc_count()
     {
-        return stream_port_input_desc_vec.size();
+        return desc_count(AEM_DESC_STREAM_PORT_INPUT);
     }
 
     size_t STDCALL configuration_descriptor_imp::stream_port_output_desc_count()
     {
-        return stream_port_output_desc_vec.size();
+        return desc_count(AEM_DESC_STREAM_PORT_OUTPUT);
     }
 
     size_t STDCALL configuration_descriptor_imp::audio_cluster_desc_count()
     {
-        return audio_cluster_desc_vec.size();
+        return desc_count(AEM_DESC_AUDIO_CLUSTER);
     }
 
     size_t STDCALL configuration_descriptor_imp::audio_map_desc_count()
     {
-        return audio_map_desc_vec.size();
+        return desc_count(AEM_DESC_AUDIO_MAP);
     }
 
     size_t STDCALL configuration_descriptor_imp::clock_domain_desc_count()
     {
-        return clock_domain_desc_vec.size();
+        return desc_count(AEM_DESC_CLOCK_DOMAIN);
     }
 
     size_t STDCALL configuration_descriptor_imp::control_desc_count()
     {
-        return control_desc_vec.size();
+        return desc_count(AEM_DESC_CONTROL);
     }
 
     size_t STDCALL configuration_descriptor_imp::external_port_input_desc_count()
     {
-        return external_port_input_desc_vec.size();
+        return desc_count(AEM_DESC_EXTERNAL_PORT_INPUT);
     }
 
     size_t STDCALL configuration_descriptor_imp::external_port_output_desc_count()
     {
-        return external_port_output_desc_vec.size();
+        return desc_count(AEM_DESC_EXTERNAL_PORT_OUTPUT);
     }
 
     audio_unit_descriptor * STDCALL configuration_descriptor_imp::get_audio_unit_desc_by_index(size_t audio_unit_desc_index)
     {
-        bool is_valid = (audio_unit_desc_index < audio_unit_desc_vec.size());
-
-        if(is_valid)
-        {
-            return audio_unit_desc_vec.at(audio_unit_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_audio_unit_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<audio_unit_descriptor *>(lookup_desc(AEM_DESC_AUDIO_UNIT, audio_unit_desc_index));
     }
 
     stream_input_descriptor * STDCALL configuration_descriptor_imp::get_stream_input_desc_by_index(size_t stream_input_desc_index)
     {
-        bool is_valid = (stream_input_desc_index < stream_input_desc_vec.size());
-
-        if(is_valid)
-        {
-            return stream_input_desc_vec.at(stream_input_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_input_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<stream_input_descriptor *>(lookup_desc(AEM_DESC_STREAM_INPUT, stream_input_desc_index));
     }
 
     stream_output_descriptor * STDCALL configuration_descriptor_imp::get_stream_output_desc_by_index(size_t stream_output_desc_index)
     {
-        bool is_valid = (stream_output_desc_index < stream_output_desc_vec.size());
-
-        if(is_valid)
-        {
-            return stream_output_desc_vec.at(stream_output_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_output_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<stream_output_descriptor *>(lookup_desc(AEM_DESC_STREAM_OUTPUT, stream_output_desc_index));
     }
 
     jack_input_descriptor * STDCALL configuration_descriptor_imp::get_jack_input_desc_by_index(size_t jack_input_desc_index)
     {
-        bool is_valid = (jack_input_desc_index < jack_input_desc_vec.size());
-
-        if(is_valid)
-        {
-            return jack_input_desc_vec.at(jack_input_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_jack_input_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<jack_input_descriptor *>(lookup_desc(AEM_DESC_JACK_INPUT, jack_input_desc_index));
     }
 
     jack_output_descriptor * STDCALL configuration_descriptor_imp::get_jack_output_desc_by_index(size_t jack_output_desc_index)
     {
-        bool is_valid = (jack_output_desc_index < jack_output_desc_vec.size());
-
-        if(is_valid)
-        {
-            return jack_output_desc_vec.at(jack_output_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_jack_output_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<jack_output_descriptor *>(lookup_desc(AEM_DESC_JACK_OUTPUT, jack_output_desc_index));
     }
 
     avb_interface_descriptor * STDCALL configuration_descriptor_imp::get_avb_interface_desc_by_index(size_t avb_interface_desc_index)
     {
-        bool is_valid = (avb_interface_desc_index < avb_interface_desc_vec.size());
-
-        if(is_valid)
-        {
-            return avb_interface_desc_vec.at(avb_interface_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_avb_interface_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<avb_interface_descriptor *>(lookup_desc(AEM_DESC_AVB_INTERFACE, avb_interface_desc_index));
     }
 
     clock_source_descriptor * STDCALL configuration_descriptor_imp::get_clock_source_desc_by_index(size_t clock_source_desc_index)
     {
-        bool is_valid = (clock_source_desc_index < clock_source_desc_vec.size());
-
-        if(is_valid)
-        {
-            return clock_source_desc_vec.at(clock_source_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_clock_source_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<clock_source_descriptor *>(lookup_desc(AEM_DESC_CLOCK_SOURCE, clock_source_desc_index));
     }
 
     memory_object_descriptor * STDCALL configuration_descriptor_imp::get_memory_object_desc_by_index(size_t memory_object_desc_index)
     {
-        bool is_valid = (memory_object_desc_index < memory_object_desc_vec.size());
-
-        if(is_valid)
-        {
-            return memory_object_desc_vec.at(memory_object_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_memory_object_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<memory_object_descriptor *>(lookup_desc(AEM_DESC_MEMORY_OBJECT, memory_object_desc_index));
     }
 
     locale_descriptor * STDCALL configuration_descriptor_imp::get_locale_desc_by_index(size_t locale_desc_index)
     {
-        bool is_valid = (locale_desc_index < locale_desc_vec.size());
-
-        if(is_valid)
-        {
-            return locale_desc_vec.at(locale_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_locale_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<locale_descriptor *>(lookup_desc(AEM_DESC_LOCALE, locale_desc_index));
     }
 
     strings_descriptor * STDCALL configuration_descriptor_imp::get_strings_desc_by_index(size_t strings_desc_index)
     {
-        bool is_valid = (strings_desc_index < strings_desc_vec.size());
-
-        if(is_valid)
-        {
-            return strings_desc_vec.at(strings_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_strings_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<strings_descriptor *>(lookup_desc(AEM_DESC_STRINGS, strings_desc_index));
     }
 
     uint8_t * STDCALL configuration_descriptor_imp::get_strings_desc_string_by_reference(size_t reference)
@@ -577,129 +476,41 @@ namespace avdecc_lib
 
     stream_port_input_descriptor * STDCALL configuration_descriptor_imp::get_stream_port_input_desc_by_index(size_t stream_port_input_desc_index)
     {
-        bool is_valid = (stream_port_input_desc_index < stream_port_input_desc_vec.size());
-
-        if(is_valid)
-        {
-            return stream_port_input_desc_vec.at(stream_port_input_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_port_input_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<stream_port_input_descriptor *>(lookup_desc(AEM_DESC_STREAM_PORT_INPUT, stream_port_input_desc_index));
     }
 
     stream_port_output_descriptor * STDCALL configuration_descriptor_imp::get_stream_port_output_desc_by_index(size_t stream_port_output_desc_index)
     {
-        bool is_valid = (stream_port_output_desc_index < stream_port_output_desc_vec.size());
-
-        if(is_valid)
-        {
-            return stream_port_output_desc_vec.at(stream_port_output_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_stream_port_output_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<stream_port_output_descriptor *>(lookup_desc(AEM_DESC_STREAM_PORT_OUTPUT, stream_port_output_desc_index));
     }
 
     audio_cluster_descriptor * STDCALL configuration_descriptor_imp::get_audio_cluster_desc_by_index(size_t audio_cluster_desc_index)
     {
-        bool is_valid = (audio_cluster_desc_index < audio_cluster_desc_vec.size());
-
-        if(is_valid)
-        {
-            return audio_cluster_desc_vec.at(audio_cluster_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_audio_cluster_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<audio_cluster_descriptor *>(lookup_desc(AEM_DESC_AUDIO_CLUSTER, audio_cluster_desc_index));
     }
 
     audio_map_descriptor * STDCALL configuration_descriptor_imp::get_audio_map_desc_by_index(size_t audio_map_desc_index)
     {
-        bool is_valid = (audio_map_desc_index < audio_map_desc_vec.size());
-
-        if(is_valid)
-        {
-            return audio_map_desc_vec.at(audio_map_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_audio_map_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<audio_map_descriptor *>(lookup_desc(AEM_DESC_AUDIO_MAP, audio_map_desc_index));
     }
 
     clock_domain_descriptor * STDCALL configuration_descriptor_imp::get_clock_domain_desc_by_index(size_t clock_domain_desc_index)
     {
-        bool is_valid = (clock_domain_desc_index < clock_domain_desc_vec.size());
-
-        if(is_valid)
-        {
-            return clock_domain_desc_vec.at(clock_domain_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_clock_domain_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<clock_domain_descriptor *>(lookup_desc(AEM_DESC_CLOCK_DOMAIN, clock_domain_desc_index));
     }
 
     control_descriptor * STDCALL configuration_descriptor_imp::get_control_desc_by_index(size_t control_desc_index)
     {
-        bool is_valid = (control_desc_index < control_desc_vec.size());
-
-        if(is_valid)
-        {
-            return control_desc_vec.at(control_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_control_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<control_descriptor *>(lookup_desc(AEM_DESC_CONTROL, control_desc_index));
     }
 
     external_port_input_descriptor * STDCALL configuration_descriptor_imp::get_external_port_input_desc_by_index(size_t index)
     {
-        bool is_valid = (index < external_port_input_desc_vec.size());
-
-        if (is_valid)
-        {
-            return external_port_input_desc_vec.at(index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_control_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<external_port_input_descriptor *>(lookup_desc(AEM_DESC_EXTERNAL_PORT_INPUT, index));
     }
 
     external_port_output_descriptor * STDCALL configuration_descriptor_imp::get_external_port_output_desc_by_index(size_t index)
     {
-        bool is_valid = (index < external_port_output_desc_vec.size());
-
-        if (is_valid)
-        {
-            return external_port_output_desc_vec.at(index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_control_desc_by_index error", base_end_station_imp_ref->entity_id());
-        }
-
-        return NULL;
+        return dynamic_cast<external_port_output_descriptor *>(lookup_desc(AEM_DESC_EXTERNAL_PORT_OUTPUT, index));
     }
 }
