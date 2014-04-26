@@ -1091,7 +1091,7 @@ void cmd_line::print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
                                               const uint8_t *localized_desc_string,
                                               avdecc_lib::locale_descriptor &locale)
 {
-    const uint8_t localized_string_max_index = 7;
+    //const uint8_t localized_string_max_index = 7;
 
     atomic_cout << std::setw(20) << utility->aem_desc_value_to_name(desc.descriptor_type())
                 << "   "<<  std::setw(16) << std::dec << desc.descriptor_index();
@@ -2615,7 +2615,7 @@ int cmd_line::cmd_lock_entity(int total_matched, std::vector<cli_argument*> args
 {
     std::string flag_name = args[0]->get_value_str();
     std::string desc_name = args[1]->get_value_str();
-    uint16_t desc_index = args[2]->get_value_int();
+    //uint16_t desc_index = args[2]->get_value_int();
 
     uint16_t desc_type_value = utility->aem_desc_name_to_value(desc_name.c_str());;
 

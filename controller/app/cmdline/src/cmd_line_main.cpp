@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
     std::vector<std::string> input_argv;
     size_t pos = 0;
     bool done = false;
-    bool is_input_valid = false;
+    //bool is_input_valid = false;
     std::string cmd_input_orig;
 #if defined(__MACH__) || defined(__linux__)
     char* input;
@@ -328,7 +328,7 @@ int main(int argc, char *argv[])
 
         done = avdecc_cmd_line_ref.handle(input_argv);
 
-        is_input_valid = false;
+        //is_input_valid = false;
         input_argv.clear();
 #if defined(__MACH__) || defined(__linux__)
         free(input);
