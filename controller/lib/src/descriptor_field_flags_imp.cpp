@@ -27,8 +27,6 @@
  * Implementation of a class to describe a single flag bit.
  */
 
-#pragma once
-
 #include <stdint.h>
 #include "build.h"
 
@@ -36,15 +34,23 @@
 
 namespace avdecc_lib
 {
-		descriptor_field_flags_imp::descriptor_field_flags_imp(char * name, uint32_t mask) :
-			m_name(name), m_mask(mask)
-		{
-		}
-		char * STDCALL descriptor_field_flags_imp::get_flag_name(void) const {
-			return m_name;
-		}
-		uint32_t STDCALL descriptor_field_flags_imp::get_flag_mask(void) const {
-			return m_mask;
-		}
+    descriptor_field_flags_imp::descriptor_field_flags_imp(const char * name, uint32_t mask) :
+            m_mask(mask), m_name(name)
+    {
+    }
+
+    descriptor_field_flags_imp::~descriptor_field_flags_imp()
+    {
+    }
+
+    const char * STDCALL descriptor_field_flags_imp::get_flag_name(void) const
+    {
+        return m_name;
+    }
+
+    uint32_t STDCALL descriptor_field_flags_imp::get_flag_mask(void) const
+    {
+        return m_mask;
+    }
 }
 
