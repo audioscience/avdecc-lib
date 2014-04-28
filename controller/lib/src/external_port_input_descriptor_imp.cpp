@@ -50,7 +50,7 @@ namespace avdecc_lib
 
 		m_fields.push_back(new descriptor_field_imp("clock_domain_index", descriptor_field::TYPE_UINT16, &desc.clock_domain_index));
 
-		f = new descriptor_field_imp("port_flags", descriptor_field::TYPE_UINT16, &desc.port_flags);
+		f = new descriptor_field_imp("port_flags", descriptor_field::TYPE_FLAGS16, &desc.port_flags);
 		f->append_field(new descriptor_field_flags_imp("CLOCK_SYNC_SOURCE", 1 << 15));
 		f->append_field(new descriptor_field_flags_imp("ASYNC_SAMPLE_RATE_CONVERTER", 1 << 14));
 		f->append_field(new descriptor_field_flags_imp("SYNC_SAMPLE_RATE_CONVERTER", 1 << 13));

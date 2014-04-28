@@ -1560,6 +1560,7 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
     if (desc_type_value == avdecc_lib::AEM_DESC_EXTERNAL_PORT_INPUT)
     {
         avdecc_lib::descriptor_base *desc = configuration->get_external_port_input_desc_by_index(desc_index);
+        uint32_t v = 0;
 
         for (unsigned int i = 0; i < desc->field_count(); i++)
         {
@@ -1568,26 +1569,28 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
             {
                 case avdecc_lib::descriptor_field::TYPE_CHAR:
                     atomic_cout << "\n" << f->get_name() << " = " << f->get_char();
+                    break;
                 case avdecc_lib::descriptor_field::TYPE_UINT16:
                     atomic_cout << "\n" << f->get_name() << " = " << f->get_uint16();
+                    break;
                 case avdecc_lib::descriptor_field::TYPE_UINT32:
                     atomic_cout << "\n" << f->get_name() << " = " << f->get_uint32();
+                    break;
+                // Don't have to handle these separately here, but internal to the library they have different types.
                 case avdecc_lib::descriptor_field::TYPE_FLAGS16:
                 case avdecc_lib::descriptor_field::TYPE_FLAGS32:
-                    uint32_t v ;
-                    if (f->get_type() == avdecc_lib::descriptor_field::TYPE_FLAGS16)
-                        v = f->get_uint16();
-                    else
-                        v = f->get_uint32();
-                    atomic_cout << "\nFlags " << f->get_name() << " = 0x" << std::hex << v;
+                    v = f->get_flags();
+                    atomic_cout << "\nFlags " << f->get_name() << " = 0x" << std::setfill('0') << std::setw(8) << std::hex << v;
                     for (unsigned int j = 0; j < f->get_flags_count(); j++)
                     {
                         uint32_t the_bit;
                         avdecc_lib::descriptor_field_flags *fl = f->get_flag_by_index(j);
 
                         the_bit = ((v & fl->get_flag_mask()) != 0);
-                        atomic_cout << "\n\t" << fl->get_flag_name() << " = " << the_bit << "(mask 0x" << std::hex << fl->get_flag_mask() << ")";
+                        atomic_cout << "\n\t" << std::setw(32) << fl->get_flag_name() << " = " << the_bit <<
+                            " (mask is 0x" << std::setfill('0') << std::setw(8) << std::hex << fl->get_flag_mask() << ")";
                     }
+                    break;
                 default:
                     atomic_cout << "\nUNHANDLED FIELD TYPE";
             }
