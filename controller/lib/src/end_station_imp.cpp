@@ -550,7 +550,6 @@ namespace avdecc_lib
         stream_port_output_descriptor *spod;
         audio_unit_descriptor *aud;
         uint16_t total_num_of_desc = 0;
-        uint16_t index = 0;
         uint16_t desc_index;
 
         bool have_index = desc_index_from_frame(desc_type, frame, read_desc_offset, desc_index);
@@ -1396,7 +1395,7 @@ namespace avdecc_lib
 
         status = jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE);
 
-        uint16_t sequence_id = jdksavdecc_aecp_aa_get_sequence_id(frame, ETHER_HDR_SIZE);
+        //uint16_t sequence_id = jdksavdecc_aecp_aa_get_sequence_id(frame, ETHER_HDR_SIZE);
         uint16_t tlv_count = jdksavdecc_aecp_aa_get_tlv_count(frame, ETHER_HDR_SIZE);
 
         if (tlv_count != 1)
@@ -1410,7 +1409,7 @@ namespace avdecc_lib
         uint16_t mode_length = jdksavdecc_aecp_aa_tlv_get_mode_length(frame, tlv_data_offset);
 
         unsigned mode = (mode_length >> 12) & 0xF;
-        unsigned length = mode_length & 0xFFF;
+        //unsigned length = mode_length & 0xFFF;
 
         switch (mode)
         {
@@ -1422,8 +1421,8 @@ namespace avdecc_lib
                 break;
         }
 
-        uint32_t address_upper = jdksavdecc_aecp_aa_tlv_get_address_upper(frame, tlv_data_offset);
-        uint32_t address_lower = jdksavdecc_aecp_aa_tlv_get_address_lower(frame, tlv_data_offset);
+        //uint32_t address_upper = jdksavdecc_aecp_aa_tlv_get_address_upper(frame, tlv_data_offset);
+        //uint32_t address_lower = jdksavdecc_aecp_aa_tlv_get_address_lower(frame, tlv_data_offset);
 
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE, false, &cmd_frame);
 

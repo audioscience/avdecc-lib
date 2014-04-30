@@ -32,6 +32,7 @@
 #include "log_imp.h"
 #include "end_station_imp.h"
 #include "external_port_input_descriptor_imp.h"
+#include "descriptor_field_imp.h"
 
 namespace avdecc_lib
 {
@@ -43,7 +44,28 @@ namespace avdecc_lib
         {
             throw avdecc_read_descriptor_error("jdksavdecc_descriptor_external_port_read error");
         }
-    }
+
+		// fields
+		descriptor_field_imp *f;
+
+		m_fields.push_back(new descriptor_field_imp("clock_domain_index", descriptor_field::TYPE_UINT16, &desc.clock_domain_index));
+
+		f = new descriptor_field_imp("port_flags", descriptor_field::TYPE_FLAGS16, &desc.port_flags);
+		f->append_field(new descriptor_field_flags_imp("CLOCK_SYNC_SOURCE", 1 << 15));
+		f->append_field(new descriptor_field_flags_imp("ASYNC_SAMPLE_RATE_CONVERTER", 1 << 14));
+		f->append_field(new descriptor_field_flags_imp("SYNC_SAMPLE_RATE_CONVERTER", 1 << 13));
+		m_fields.push_back(f);
+
+		m_fields.push_back(new descriptor_field_imp("number_of_controls", descriptor_field::TYPE_UINT16, &desc.number_of_controls));
+		m_fields.push_back(new descriptor_field_imp("base_control", descriptor_field::TYPE_UINT16, &desc.base_control));
+
+		m_fields.push_back(new descriptor_field_imp("signal_type", descriptor_field::TYPE_UINT16, &desc.signal_type));
+		m_fields.push_back(new descriptor_field_imp("signal_index", descriptor_field::TYPE_UINT16, &desc.signal_index));
+		m_fields.push_back(new descriptor_field_imp("signal_output", descriptor_field::TYPE_UINT16, &desc.signal_output));
+
+		m_fields.push_back(new descriptor_field_imp("block_latency", descriptor_field::TYPE_UINT16, &desc.block_latency));
+		m_fields.push_back(new descriptor_field_imp("jack_index", descriptor_field::TYPE_UINT16, &desc.jack_index));
+ }
 
     external_port_input_descriptor_imp::~external_port_input_descriptor_imp() {}
 

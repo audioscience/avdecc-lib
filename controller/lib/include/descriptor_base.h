@@ -34,6 +34,8 @@
 
 namespace avdecc_lib
 {
+    class descriptor_field;
+
     class descriptor_base
     {
     public:
@@ -46,6 +48,16 @@ namespace avdecc_lib
          * \return The index of the descriptor.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL descriptor_index() const = 0;
+
+        /**
+        * \return The number of fields in the descriptor.
+        */
+        AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL field_count() const = 0;
+
+        /**
+        * \return The indicated field in the descriptor.
+        */
+        AVDECC_CONTROLLER_LIB32_API virtual descriptor_field * STDCALL field(size_t index) const = 0;
 
         /**
          * \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
