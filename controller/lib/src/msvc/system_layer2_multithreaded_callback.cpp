@@ -96,7 +96,12 @@ namespace avdecc_lib
     {
         struct poll_thread_data thread_data;
 
-        thread_data.frame = (uint8_t *)malloc(1600);
+        assert(frame_len < 2048);
+        thread_data.frame = new uint8_t[2048];
+        if (!thread_data.frame)
+        {
+            exit(EXIT_FAILURE);
+        }
         thread_data.frame_len = frame_len;
         memcpy(thread_data.frame, frame, frame_len);
         thread_data.notification_id = notification_id;
@@ -151,8 +156,17 @@ namespace avdecc_lib
 
             if (status > 0)
             {
+                if (length > 2048)
+                {
+                    log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "wpcap returned packet larger than 1600 bytes");
+                    continue;
+                }
                 thread_data.frame_len = length;
-                thread_data.frame = (uint8_t *)malloc(1600);
+                thread_data.frame = new uint8_t[2048];
+                if (!thread_data.frame)
+                {
+                    exit(EXIT_FAILURE);
+                }
                 memcpy(thread_data.frame, frame, thread_data.frame_len);
                 poll_rx.rx_queue->queue_push(&thread_data);
             }
@@ -299,15 +313,18 @@ namespace avdecc_lib
                         assert(status == 0);
                         ReleaseSemaphore(waiting_sem, 1, NULL);
                     }
-                    free(thread_data.frame);
+                    delete[] thread_data.frame;
                 }
                 break;
 
             case WAIT_OBJECT_0 + WPCAP_TX_PACKET:
                 poll_tx.tx_queue->queue_pop_nowait(&thread_data);
 
-                controller_obj_in_system->tx_packet_event(thread_data.notification_id, thread_data.notification_flag, thread_data.frame, thread_data.frame_len);
-
+                controller_obj_in_system->tx_packet_event(thread_data.notification_id,
+                            thread_data.notification_flag,
+                            thread_data.frame,
+                            thread_data.frame_len);
+                delete[] thread_data.frame;
                 break;
 
             case WAIT_OBJECT_0 + KILL_ALL: // Exit or kill event

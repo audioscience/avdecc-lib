@@ -22,40 +22,43 @@
  */
 
 /**
- * external_port_input_descriptor_imp.h
+ * descriptor_field.h
  *
- * Public EXTERNAL PORT INPUT descriptor implementation class
+ * Public descriptor base interface class
  */
 
 #pragma once
 
+#include <vector>
 #include <stdint.h>
 #include "build.h"
-#include "descriptor_base_imp.h"
-#include "external_port_input_descriptor.h"
+
+#include "descriptor_field_flags_imp.h"
+#include "descriptor_field.h"
 
 namespace avdecc_lib
 {
-    class external_port_input_descriptor_imp : public external_port_input_descriptor, public virtual descriptor_base_imp
+    class descriptor_field_imp : public descriptor_field
     {
-    private:
-        struct jdksavdecc_descriptor_external_port desc;
     public:
-        external_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-        virtual ~external_port_input_descriptor_imp();
+        descriptor_field_imp(const char * name, enum aem_desc_field_types the_type, void * v);
+        virtual ~descriptor_field_imp();
 
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
+        void append_field(descriptor_field_flags_imp *bit_field);
 
-        uint16_t STDCALL port_flags();
-        uint16_t STDCALL clock_domain_index();
-        uint16_t STDCALL number_of_controls();
-        uint16_t STDCALL base_control();
-        uint16_t STDCALL signal_type();
-        uint16_t STDCALL signal_index();
-        uint16_t STDCALL signal_output();
-        uint32_t STDCALL block_latency();
-        uint16_t STDCALL jack_index();
+        const char * STDCALL get_name() const;
+        enum descriptor_field::aem_desc_field_types STDCALL get_type() const;
+        char * STDCALL get_char() const;
+        uint16_t STDCALL get_uint16() const;
+        uint32_t STDCALL get_uint32() const;
+        uint32_t STDCALL get_flags() const;
+        uint32_t STDCALL get_flags_count() const;
+        descriptor_field_flags * STDCALL get_flag_by_index(uint32_t index) const;
+    private:
+        const char * m_name;
+        void * m_value;
+        enum aem_desc_field_types m_type;
+        std::vector<descriptor_field_flags_imp *> m_fields;
     };
 }
 

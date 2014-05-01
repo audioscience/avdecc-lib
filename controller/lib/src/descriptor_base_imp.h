@@ -37,6 +37,7 @@
 #include "jdksavdecc_aem_command.h"
 #include "jdksavdecc_aem_descriptor.h"
 #include "descriptor_base.h"
+#include "descriptor_field_imp.h"
 
 namespace avdecc_lib
 {
@@ -46,6 +47,7 @@ namespace avdecc_lib
     {
     protected:
         end_station_imp *base_end_station_imp_ref;
+        std::vector<descriptor_field_imp *>m_fields;
 
     public:
         descriptor_base_imp(end_station_imp *base);
@@ -55,6 +57,19 @@ namespace avdecc_lib
         virtual uint16_t STDCALL descriptor_index() const;
         virtual uint8_t * STDCALL object_name();
         virtual uint16_t STDCALL localized_description();
+
+        size_t STDCALL field_count() const
+        {
+            return m_fields.size();
+        };
+
+        descriptor_field * STDCALL field(size_t index) const
+        {
+            if (index < m_fields.size())
+                return m_fields.at(index);
+            else
+                return nullptr;
+        };
 
         /**
          * Get the flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
@@ -79,7 +94,7 @@ namespace avdecc_lib
         virtual int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag);
         virtual int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
-		int default_send_acquire_entity_cmd(descriptor_base_imp *desc_base_imp_ref, void *notification_id, uint32_t acquire_entity_flag);
+        int default_send_acquire_entity_cmd(descriptor_base_imp *desc_base_imp_ref, void *notification_id, uint32_t acquire_entity_flag);
         int default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp,
                                              void *&notification_id,
                                              const uint8_t *frame,
@@ -101,10 +116,10 @@ namespace avdecc_lib
 
         int default_send_reboot_cmd(descriptor_base_imp *descriptor_base_imp_ref, void *notification_id);
         int default_proc_reboot_resp(struct jdksavdecc_aem_command_reboot_response &aem_cmd_reboot_resp,
-                                      void *&notification_id,
-                                      const uint8_t *frame,
-                                      size_t frame_len,
-                                      int &status);
+                                     void *&notification_id,
+                                     const uint8_t *frame,
+                                     size_t frame_len,
+                                     int &status);
 
         virtual int STDCALL send_set_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index, char * new_name);
         virtual int proc_set_name_resp(uint8_t *base_pointer, uint16_t frame_len);

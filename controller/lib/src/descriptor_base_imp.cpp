@@ -27,6 +27,7 @@
  * Descriptor base implementation
  */
 
+#include <algorithm>
 #include <iostream>
 #include "enumeration.h"
 #include "log_imp.h"
@@ -38,12 +39,20 @@
 
 namespace avdecc_lib
 {
-    descriptor_base_imp::descriptor_base_imp(end_station_imp *base)
+	static void delete_field(descriptor_field_imp *f)
+	{
+		delete f;
+	}
+	descriptor_base_imp::descriptor_base_imp(end_station_imp *base)
     {
         base_end_station_imp_ref = base;
     }
 
-    descriptor_base_imp::~descriptor_base_imp() {}
+    descriptor_base_imp::~descriptor_base_imp()
+	{
+		std::for_each(m_fields.begin(), m_fields.end(), delete_field);
+		m_fields.clear();
+	}
 
     bool operator== (const descriptor_base_imp &n1, const descriptor_base_imp &n2)
     {
