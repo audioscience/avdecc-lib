@@ -440,6 +440,7 @@ namespace avdecc_lib
         struct jdksavdecc_frame packet_frame;
 
         packet_frame.length = (uint16_t)frame_len;
+        assert(frame_len <= sizeof(packet_frame.payload));
         memcpy(packet_frame.payload, frame, frame_len);
 
         if(subtype == JDKSAVDECC_SUBTYPE_AECP)
