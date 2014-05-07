@@ -41,7 +41,7 @@
 #include <sys/ioctl.h>
 #include <net/bpf.h>
 
-#include "util_imp.h"
+#include "util.h"
 #include "enumeration.h"
 #include "log_imp.h"
 #include "jdksavdecc_pdu.h"
@@ -203,7 +203,7 @@ namespace avdecc_lib
         ifm = (struct if_msghdr *)buf;
         sdl = (struct sockaddr_dl *)(ifm + 1);
         ptr = (unsigned char *)LLADDR(sdl);
-        utility->convert_eui48_to_uint64(ptr, mac);
+        utility::convert_eui48_to_uint64(ptr, mac);
 
         char mac_str[20];
         snprintf(mac_str, (size_t)20, "%02x:%02x:%02x:%02x:%02x:%02x", *ptr, *(ptr+1), *(ptr+2),

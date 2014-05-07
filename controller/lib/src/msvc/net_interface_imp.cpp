@@ -29,7 +29,7 @@
 
 #include <winsock2.h>
 #include <iphlpapi.h>
-#include "util_imp.h"
+#include "util.h"
 #include "enumeration.h"
 #include "log_imp.h"
 #include "jdksavdecc_pdu.h"
@@ -166,7 +166,7 @@ namespace avdecc_lib
                 my_ip = inet_addr(Current->IpAddressList.IpAddress.String);
                 len = sizeof(tmp);
                 SendARP(my_ip ,INADDR_ANY, tmp, &len);
-                utility->convert_eui48_to_uint64(&tmp[0], mac);
+                utility::convert_eui48_to_uint64(&tmp[0], mac);
             }
         }
 

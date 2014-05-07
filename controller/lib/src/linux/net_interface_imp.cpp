@@ -45,7 +45,7 @@
 #include <netdb.h>
 #include <ifaddrs.h>
 
-#include "util_imp.h"
+#include "util.h"
 #include "enumeration.h"
 #include "log.h"
 #include "jdksavdecc_util.h"
@@ -213,7 +213,7 @@ namespace avdecc_lib
         sll.sll_protocol = htons(ETH_P_ALL);
         bind(rawsock, (struct sockaddr *)&sll, sizeof(sll));
 
-        utility->convert_eui48_to_uint64((uint8_t *)if_mac.ifr_hwaddr.sa_data, mac);
+        utility::convert_eui48_to_uint64((uint8_t *)if_mac.ifr_hwaddr.sa_data, mac);
 
 
         uint16_t etypes[1] = {0x22f0};

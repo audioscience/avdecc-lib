@@ -32,9 +32,9 @@
 #include <algorithm>
 #include <string.h>
 #include "enumeration.h"
-#include "util_imp.h"
+#include "util.h"
 
-namespace avdecc_lib
+namespace utility
 {
     const char *aem_cmds_names[] =
     {
@@ -243,14 +243,14 @@ namespace avdecc_lib
 
     struct acmp_command_and_timeout acmp_command_and_timeout_table[] =
     {
-        {CONNECT_TX_COMMAND, ACMP_CONNECT_TX_COMMAND_TIMEOUT_MS},
-        {DISCONNECT_TX_COMMAND, ACMP_DISCONNECT_TX_COMMAND_TIMEOUT_MS},
-        {GET_TX_STATE_COMMAND, ACMP_GET_TX_STATE_COMMAND_TIMEOUT_MS},
-        {CONNECT_RX_COMMAND, ACMP_CONNECT_RX_COMMAND_TIMEOUT_MS},
-        {DISCONNECT_RX_COMMAND, ACMP_DISCONNECT_RX_COMMAND_TIMEOUT_MS},
-        {GET_RX_STATE_COMMAND, ACMP_GET_RX_STATE_COMMAND_TIMEOUT_MS},
-        {GET_TX_CONNECTION_COMMAND, ACMP_GET_TX_CONNECTION_COMMAND_TIMEOUT_MS},
-        {AEM_ACMP_ERROR, 0xffff}
+        {avdecc_lib::CONNECT_TX_COMMAND, avdecc_lib::ACMP_CONNECT_TX_COMMAND_TIMEOUT_MS},
+        {avdecc_lib::DISCONNECT_TX_COMMAND, avdecc_lib::ACMP_DISCONNECT_TX_COMMAND_TIMEOUT_MS},
+        {avdecc_lib::GET_TX_STATE_COMMAND, avdecc_lib::ACMP_GET_TX_STATE_COMMAND_TIMEOUT_MS},
+        {avdecc_lib::CONNECT_RX_COMMAND, avdecc_lib::ACMP_CONNECT_RX_COMMAND_TIMEOUT_MS},
+        {avdecc_lib::DISCONNECT_RX_COMMAND, avdecc_lib::ACMP_DISCONNECT_RX_COMMAND_TIMEOUT_MS},
+        {avdecc_lib::GET_RX_STATE_COMMAND, avdecc_lib::ACMP_GET_RX_STATE_COMMAND_TIMEOUT_MS},
+        {avdecc_lib::GET_TX_CONNECTION_COMMAND, avdecc_lib::ACMP_GET_TX_CONNECTION_COMMAND_TIMEOUT_MS},
+        {avdecc_lib::AEM_ACMP_ERROR, 0xffff}
     };
 
     struct ieee1722_format
@@ -272,25 +272,9 @@ namespace avdecc_lib
         {UINT64_C(0x0000000000000000), "UNKNOWN"}
     };
 
-    util_imp *utility = new util_imp();
-
-    util * STDCALL create_util()
+    const char * STDCALL aem_cmd_value_to_name(uint16_t cmd_value)
     {
-        return utility;
-    }
-
-    util_imp::util_imp() {}
-
-    util_imp::~util_imp() {}
-
-    void STDCALL util_imp::destroy()
-    {
-        delete this;
-    }
-
-    const char * STDCALL util_imp::aem_cmd_value_to_name(uint16_t cmd_value)
-    {
-        if(cmd_value < TOTAL_NUM_OF_AEM_CMDS)
+        if(cmd_value < avdecc_lib::TOTAL_NUM_OF_AEM_CMDS)
         {
             return aem_cmds_names[cmd_value];
         }
@@ -298,14 +282,14 @@ namespace avdecc_lib
         return "UNKNOWN";
     }
 
-    uint16_t STDCALL util_imp::aem_cmd_name_to_value(const char *cmd_name)
+    uint16_t STDCALL aem_cmd_name_to_value(const char *cmd_name)
     {
         std::string cmd_name_string;
         cmd_name_string = cmd_name;
 
         std::transform(cmd_name_string.begin(), cmd_name_string.end(), cmd_name_string.begin(), ::toupper);
 
-        for(uint32_t i = 0; i < TOTAL_NUM_OF_AEM_CMDS; i++)
+        for(uint32_t i = 0; i < avdecc_lib::TOTAL_NUM_OF_AEM_CMDS; i++)
         {
             if(cmd_name_string == aem_cmds_names[i])
             {
@@ -313,12 +297,12 @@ namespace avdecc_lib
             }
         }
 
-        return (uint16_t)AEM_CMD_ERROR;
+        return (uint16_t)avdecc_lib::AEM_CMD_ERROR;
     }
 
-    const char * STDCALL util_imp::aem_desc_value_to_name(uint16_t desc_value)
+    const char * STDCALL aem_desc_value_to_name(uint16_t desc_value)
     {
-        if(desc_value < TOTAL_NUM_OF_AEM_DESCS)
+        if(desc_value < avdecc_lib::TOTAL_NUM_OF_AEM_DESCS)
         {
             return aem_descs_names[desc_value];
         }
@@ -326,14 +310,14 @@ namespace avdecc_lib
         return "UNKNOWN";
     }
 
-    uint16_t STDCALL util_imp::aem_desc_name_to_value(const char * desc_name)
+    uint16_t STDCALL aem_desc_name_to_value(const char * desc_name)
     {
         std::string desc_name_string;
         desc_name_string = desc_name;
 
         std::transform(desc_name_string.begin(), desc_name_string.end(), desc_name_string.begin(), ::toupper);
 
-        for(uint32_t i = 0; i < TOTAL_NUM_OF_AEM_DESCS; i++)
+        for(uint32_t i = 0; i < avdecc_lib::TOTAL_NUM_OF_AEM_DESCS; i++)
         {
             if(desc_name_string.compare(aem_descs_names[i]) == 0)
             {
@@ -341,20 +325,20 @@ namespace avdecc_lib
             }
         }
 
-        return (uint16_t)AEM_DESC_ERROR;
+        return (uint16_t)avdecc_lib::AEM_DESC_ERROR;
     }
 
-    const char * STDCALL util_imp::aem_cmd_status_value_to_name(uint32_t aem_cmd_status_value)
+    const char * STDCALL aem_cmd_status_value_to_name(uint32_t aem_cmd_status_value)
     {
-        if(aem_cmd_status_value < TOTAL_NUM_OF_AEM_CMDS_STATUS)
+        if(aem_cmd_status_value < avdecc_lib::TOTAL_NUM_OF_AEM_CMDS_STATUS)
         {
             return aem_cmds_status_names[aem_cmd_status_value];
         }
-        else if(aem_cmd_status_value == AVDECC_LIB_STATUS_INVALID)
+        else if(aem_cmd_status_value == avdecc_lib::AVDECC_LIB_STATUS_INVALID)
         {
             return "AVDECC_LIB_STATUS_INVALID";
         }
-        else if(aem_cmd_status_value == AVDECC_LIB_STATUS_TICK_TIMEOUT)
+        else if(aem_cmd_status_value == avdecc_lib::AVDECC_LIB_STATUS_TICK_TIMEOUT)
         {
             return "AVDECC_LIB_STATUS_TICK_TIMEOUT";
         }
@@ -362,9 +346,9 @@ namespace avdecc_lib
         return "UNKNOWN";
     }
 
-    const char * STDCALL util_imp::acmp_cmd_value_to_name(uint32_t cmd_value)
+    const char * STDCALL acmp_cmd_value_to_name(uint32_t cmd_value)
     {
-        if(cmd_value < TOTAL_NUM_OF_ACMP_CMDS)
+        if(cmd_value < avdecc_lib::TOTAL_NUM_OF_ACMP_CMDS)
         {
             return acmp_cmds_names[cmd_value];
         }
@@ -372,14 +356,14 @@ namespace avdecc_lib
         return "UNKNOWN";
     }
 
-    uint16_t STDCALL util_imp::acmp_cmd_name_to_value(const char *cmd_name)
+    uint16_t STDCALL acmp_cmd_name_to_value(const char *cmd_name)
     {
         std::string cmd_name_string;
         cmd_name_string = cmd_name;
 
         std::transform(cmd_name_string.begin(), cmd_name_string.end(), cmd_name_string.begin(), ::toupper);
 
-        for(uint32_t i = 0; i < TOTAL_NUM_OF_ACMP_CMDS; i++)
+        for(uint32_t i = 0; i < avdecc_lib::TOTAL_NUM_OF_ACMP_CMDS; i++)
         {
             if(cmd_name_string == acmp_cmds_names[i])
             {
@@ -387,12 +371,12 @@ namespace avdecc_lib
             }
         }
 
-        return (uint16_t)AEM_CMD_ERROR;
+        return (uint16_t)avdecc_lib::AEM_CMD_ERROR;
     }
 
-    const char * STDCALL util_imp::acmp_cmd_status_value_to_name(uint32_t acmp_cmd_status_value)
+    const char * STDCALL acmp_cmd_status_value_to_name(uint32_t acmp_cmd_status_value)
     {
-        if(acmp_cmd_status_value < TOTAL_NUM_OF_ACMP_CMDS_STATUS)
+        if(acmp_cmd_status_value < avdecc_lib::TOTAL_NUM_OF_ACMP_CMDS_STATUS)
         {
             return acmp_cmds_status_names[acmp_cmd_status_value];
         }
@@ -400,9 +384,9 @@ namespace avdecc_lib
         return "UNKNOWN";
     }
 
-    const char * STDCALL util_imp::notification_value_to_name(uint16_t notification_value)
+    const char * STDCALL notification_value_to_name(uint16_t notification_value)
     {
-        if(notification_value < TOTAL_NUM_OF_NOTIFICATIONS)
+        if(notification_value < avdecc_lib::TOTAL_NUM_OF_NOTIFICATIONS)
         {
             return notification_names[notification_value];
         }
@@ -410,9 +394,9 @@ namespace avdecc_lib
         return "UNKNOWN";
     }
 
-    const char * STDCALL util_imp::logging_level_value_to_name(uint16_t logging_level_value)
+    const char * STDCALL logging_level_value_to_name(uint16_t logging_level_value)
     {
-        if(logging_level_value < TOTAL_NUM_OF_LOGGING_LEVELS)
+        if(logging_level_value < avdecc_lib::TOTAL_NUM_OF_LOGGING_LEVELS)
         {
             return logging_level_names[logging_level_value];
         }
@@ -420,11 +404,11 @@ namespace avdecc_lib
         return "UNKNOWN";
     }
 
-    uint32_t STDCALL util_imp::acmp_cmd_to_timeout(const uint32_t acmp_cmd)
+    uint32_t STDCALL acmp_cmd_to_timeout(const uint32_t acmp_cmd)
     {
         struct acmp_command_and_timeout *p = &acmp_command_and_timeout_table[0];
 
-        while(p->cmd != AEM_ACMP_ERROR)
+        while(p->cmd != avdecc_lib::AEM_ACMP_ERROR)
         {
             if(p->cmd == acmp_cmd)
             {
@@ -437,7 +421,7 @@ namespace avdecc_lib
         return (uint32_t)0xffff;
     }
 
-    uint64_t STDCALL util_imp::ieee1722_format_name_to_value(const char *format_name)
+    uint64_t STDCALL ieee1722_format_name_to_value(const char *format_name)
     {
         struct ieee1722_format *p = &ieee1722_format_table[0];
 
@@ -454,7 +438,7 @@ namespace avdecc_lib
         return (uint64_t)0xffff;
     }
 
-    const char * STDCALL util_imp::ieee1722_format_value_to_name(uint64_t format)
+    const char * STDCALL ieee1722_format_value_to_name(uint64_t format)
     {
         struct ieee1722_format *p = &ieee1722_format_table[0];
 
@@ -471,7 +455,7 @@ namespace avdecc_lib
         return "UNKNOWN";
     }
 
-    const char * STDCALL util_imp::end_station_mac_to_string(uint64_t end_station_mac)
+    const char * STDCALL end_station_mac_to_string(uint64_t end_station_mac)
     {
         static std::string mac_substring;
         std::stringstream mac_to_string;
@@ -483,7 +467,7 @@ namespace avdecc_lib
         return mac_substring.c_str(); 
     }
 
-    void util_imp::convert_uint64_to_eui48(const uint64_t value, uint8_t new_value[6])
+    void convert_uint64_to_eui48(const uint64_t value, uint8_t new_value[6])
     {
         for(uint32_t i = 0; i < 6; i++)
         {
@@ -491,7 +475,7 @@ namespace avdecc_lib
         }
     }
 
-    void util_imp::convert_eui48_to_uint64(const uint8_t value[6], uint64_t &new_value)
+    void convert_eui48_to_uint64(const uint8_t value[6], uint64_t &new_value)
     {
         new_value = 0;
 

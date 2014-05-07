@@ -72,19 +72,19 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
 
         if(cmd_type < avdecc_lib::CMD_LOOKUP)
         {
-            cmd_name = cmd_line::utility->aem_cmd_value_to_name(cmd_type);
-            desc_name = cmd_line::utility->aem_desc_value_to_name(desc_type);
-            cmd_status_name = cmd_line::utility->aem_cmd_status_value_to_name(cmd_status);
+            cmd_name = utility::aem_cmd_value_to_name(cmd_type);
+            desc_name = utility::aem_desc_value_to_name(desc_type);
+            cmd_status_name = utility::aem_cmd_status_value_to_name(cmd_status);
         }
         else
         {
-            cmd_name = cmd_line::utility->acmp_cmd_value_to_name(cmd_type - avdecc_lib::CMD_LOOKUP);
+            cmd_name = utility::acmp_cmd_value_to_name(cmd_type - avdecc_lib::CMD_LOOKUP);
             desc_name = "NULL";
-            cmd_status_name = cmd_line::utility->acmp_cmd_status_value_to_name(cmd_status);
+            cmd_status_name = utility::acmp_cmd_status_value_to_name(cmd_status);
         }
 
         printf("\n[NOTIFICATION] (%s, 0x%"  PRIx64 ", %s, %s, %d, %s, %p)\n",
-               cmd_line::utility->notification_value_to_name(notification_type),
+               utility::notification_value_to_name(notification_type),
                entity_id,
                cmd_name,
                desc_name,
@@ -95,7 +95,7 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
     else
     {
         printf("\n[NOTIFICATION] (%s, 0x%"  PRIx64 ", %d, %d, %d, %d, %p)\n",
-               cmd_line::utility->notification_value_to_name(notification_type),
+               utility::notification_value_to_name(notification_type),
                entity_id,
                cmd_type,
                desc_type,
@@ -107,7 +107,7 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
 
 extern "C" void log_callback(void *user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms)
 {
-    printf("\n[LOG] %s (%s)\n", cmd_line::utility->logging_level_value_to_name(log_level), log_msg);
+    printf("\n[LOG] %s (%s)\n", utility::logging_level_value_to_name(log_level), log_msg);
 }
 
 #if defined(__MACH__) || defined(__linux__)
