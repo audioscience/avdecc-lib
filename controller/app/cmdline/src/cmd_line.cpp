@@ -948,7 +948,7 @@ int cmd_line::cmd_view_media_clock(int total_matched, std::vector<cli_argument*>
                         desc_index = stream_input_desc->descriptor_index();
 
                         atomic_cout << std::setw(8) << i << std::setw(5) << "" << std::setw(20) << desc_obj_name
-                                    << "  " << std::setw(18) << utility::aem_desc_value_to_name(desc_type_value)
+                                    << "  " << std::setw(18) << avdecc_lib::utility::aem_desc_value_to_name(desc_type_value)
                                     << "  " << std::setw(16) << std::dec << desc_index << std::endl;
                     }
                 }
@@ -967,7 +967,7 @@ int cmd_line::cmd_view_media_clock(int total_matched, std::vector<cli_argument*>
                         desc_index = stream_output_desc->descriptor_index();
 
                         atomic_cout << std::setw(8) << i << std::setw(5) << "" << std::setw(20) << desc_obj_name
-                                    << "  " << std::setw(18) << std::hex << utility::aem_desc_value_to_name(desc_type_value)
+                                    << "  " << std::setw(18) << std::hex << avdecc_lib::utility::aem_desc_value_to_name(desc_type_value)
                                     << "  " << std::setw(16) << std::dec << desc_index << std::endl;
                     }
                 }
@@ -1090,7 +1090,7 @@ void cmd_line::print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
 {
     //const uint8_t localized_string_max_index = 7;
 
-    atomic_cout << std::setw(20) << utility::aem_desc_value_to_name(desc.descriptor_type())
+    atomic_cout << std::setw(20) << avdecc_lib::utility::aem_desc_value_to_name(desc.descriptor_type())
                 << "   "<<  std::setw(16) << std::dec << desc.descriptor_index();
 
     if((desc.descriptor_type() == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT) ||
@@ -1139,14 +1139,14 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
         {
             case avdecc_lib::AEM_DESC_ENTITY:
                 {
-                    atomic_cout << std::setw(20) << std::hex << utility::aem_desc_value_to_name(entity->descriptor_type())
+                    atomic_cout << std::setw(20) << std::hex << avdecc_lib::utility::aem_desc_value_to_name(entity->descriptor_type())
                                 << "   " << std::setw(16) << std::dec << entity->descriptor_index()
                                 << "   " << std::setw(20) << std::hex << entity->entity_name() << std::endl;
                 }
 
             case avdecc_lib::AEM_DESC_CONFIGURATION:
                 {
-                    atomic_cout << std::setw(20) << utility::aem_desc_value_to_name(configuration->descriptor_type())
+                    atomic_cout << std::setw(20) << avdecc_lib::utility::aem_desc_value_to_name(configuration->descriptor_type())
                                 << "   " << std::setw(16) << std::dec << configuration->descriptor_index()
                                 << "   " << std::setw(20) << std::hex << configuration->object_name() << std::endl;
                     atomic_cout << "\nTop Level Descriptors" << std::endl;
@@ -1228,7 +1228,7 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                 for(unsigned int j = 0; j < configuration->locale_desc_count(); j++)
                 {
                     avdecc_lib::locale_descriptor *locale_def_ref = configuration->get_locale_desc_by_index(j);
-                    atomic_cout << std::setw(20) << utility::aem_desc_value_to_name(locale->descriptor_type())
+                    atomic_cout << std::setw(20) << avdecc_lib::utility::aem_desc_value_to_name(locale->descriptor_type())
                                 << "   "<<  std::setw(16) << std::hex << locale_def_ref->descriptor_index()
                                 << "   " << std::setw(20) << std::hex << locale_def_ref->locale_identifier() << std::endl;
                 }
@@ -1332,7 +1332,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
     {
         case avdecc_lib::AEM_DESC_ENTITY:
             {
-                std::string desc_name = utility::aem_desc_value_to_name(entity->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(entity->descriptor_type());
                 uint16_t desc_index = entity->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1341,7 +1341,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
 
         case avdecc_lib::AEM_DESC_CONFIGURATION:
             {
-                std::string desc_name = utility::aem_desc_value_to_name(configuration->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(configuration->descriptor_type());
                 uint16_t desc_index = configuration->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1352,7 +1352,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->audio_unit_desc_count(); j++)
             {
                 avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = configuration->get_audio_unit_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(audio_unit_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(audio_unit_desc_ref->descriptor_type());
                 uint16_t desc_index = audio_unit_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1364,7 +1364,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->stream_input_desc_count(); j++)
             {
                 avdecc_lib::stream_input_descriptor *stream_input_desc_ref = configuration->get_stream_input_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(stream_input_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(stream_input_desc_ref->descriptor_type());
                 uint16_t desc_index = stream_input_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1375,7 +1375,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->stream_output_desc_count(); j++)
             {
                 avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(stream_output_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(stream_output_desc_ref->descriptor_type());
                 uint16_t desc_index = stream_output_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1386,7 +1386,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->jack_input_desc_count(); j++)
             {
                 avdecc_lib::jack_input_descriptor *jack_input_desc_ref = configuration->get_jack_input_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(jack_input_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(jack_input_desc_ref->descriptor_type());
                 uint16_t desc_index = jack_input_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1397,7 +1397,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->jack_output_desc_count(); j++)
             {
                 avdecc_lib::jack_output_descriptor *jack_output_desc_ref = configuration->get_jack_output_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(jack_output_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(jack_output_desc_ref->descriptor_type());
                 uint16_t desc_index = jack_output_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1408,7 +1408,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->avb_interface_desc_count(); j++)
             {
                 avdecc_lib::avb_interface_descriptor *avb_interface_desc_ref = configuration->get_avb_interface_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(avb_interface_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(avb_interface_desc_ref->descriptor_type());
                 uint16_t desc_index = avb_interface_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1419,7 +1419,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->clock_source_desc_count(); j++)
             {
                 avdecc_lib::clock_source_descriptor *clk_src_desc_ref = configuration->get_clock_source_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(clk_src_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(clk_src_desc_ref->descriptor_type());
                 uint16_t desc_index = clk_src_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1430,7 +1430,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->locale_desc_count(); j++)
             {
                 avdecc_lib::locale_descriptor *locale_def_ref = configuration->get_locale_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(locale_def_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(locale_def_ref->descriptor_type());
                 uint16_t desc_index = locale_def_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1441,7 +1441,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->strings_desc_count(); j++)
             {
                 avdecc_lib::strings_descriptor *strings = configuration->get_strings_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(strings->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(strings->descriptor_type());
                 uint16_t desc_index = strings->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1452,7 +1452,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->stream_port_input_desc_count(); j++)
             {
                 avdecc_lib::stream_port_input_descriptor *stream_port_input_desc_ref = configuration->get_stream_port_input_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(stream_port_input_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(stream_port_input_desc_ref->descriptor_type());
                 uint16_t desc_index = stream_port_input_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1463,7 +1463,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->stream_port_output_desc_count(); j++)
             {
                 avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref = configuration->get_stream_port_output_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(stream_port_output_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(stream_port_output_desc_ref->descriptor_type());
                 uint16_t desc_index = stream_port_output_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1474,7 +1474,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->audio_cluster_desc_count(); j++)
             {
                 avdecc_lib::audio_cluster_descriptor *audio_cluster_desc_ref = configuration->get_audio_cluster_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(audio_cluster_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(audio_cluster_desc_ref->descriptor_type());
                 uint16_t desc_index = audio_cluster_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1485,7 +1485,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->audio_map_desc_count(); j++)
             {
                 avdecc_lib::audio_map_descriptor *audio_map_desc_ref = configuration->get_audio_map_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(audio_map_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(audio_map_desc_ref->descriptor_type());
                 uint16_t desc_index = audio_map_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1496,7 +1496,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->clock_domain_desc_count(); j++)
             {
                 avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = configuration->get_clock_domain_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(clk_domain_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(clk_domain_desc_ref->descriptor_type());
                 uint16_t desc_index = clk_domain_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1507,7 +1507,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->external_port_input_desc_count(); j++)
             {
                 avdecc_lib::external_port_input_descriptor *port_desc_ref = configuration->get_external_port_input_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(port_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(port_desc_ref->descriptor_type());
                 uint16_t desc_index = port_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1518,7 +1518,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
             for(unsigned int j = 0; j < configuration->external_port_output_desc_count(); j++)
             {
                 avdecc_lib::external_port_output_descriptor *port_desc_ref = configuration->get_external_port_output_desc_by_index(j);
-                std::string desc_name = utility::aem_desc_value_to_name(port_desc_ref->descriptor_type());
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(port_desc_ref->descriptor_type());
                 uint16_t desc_index = port_desc_ref->descriptor_index();
 
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
@@ -1544,9 +1544,9 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
     if (get_current_end_station(&end_station))
         return 0;
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
 
-    atomic_cout << "\ndescriptor_type: " << utility::aem_desc_value_to_name(desc_type_value);
+    atomic_cout << "\ndescriptor_type: " << avdecc_lib::utility::aem_desc_value_to_name(desc_type_value);
     atomic_cout << "\ndescriptor_index: " << std::dec << desc_index;
 
     avdecc_lib::entity_descriptor *entity;
@@ -1646,7 +1646,7 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                             desc_count_from_config = configuration->get_desc_count_from_config_by_index(i);
 
                             atomic_cout << "\tdesc_type = 0x" << std::hex << desc_type_from_config << " ("
-                                        << utility::aem_desc_value_to_name(desc_type_from_config) << ")" << std::endl;
+                                        << avdecc_lib::utility::aem_desc_value_to_name(desc_type_from_config) << ")" << std::endl;
                             atomic_cout << "\tdesc_count = " << std::dec << desc_count_from_config << std::endl;
                         }
                     }
@@ -2092,7 +2092,7 @@ int cmd_line::cmd_read_descriptor(int total_matched, std::vector<cli_argument*> 
     if (get_current_end_station(&end_station))
         return 0;
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
     intptr_t cmd_notification_id = 0;
 
     if(desc_type_value < avdecc_lib::TOTAL_NUM_OF_AEM_DESCS)
@@ -2141,7 +2141,7 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
             format = input_descriptor->current_format();
 
             atomic_cout << std::setw(5) << i << std::setw(20) << instream_end_station_name
-                        << utility::end_station_mac_to_string(end_station_mac) << "   "
+                        << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
                         << std::setw(3) << j << std::setw(19) << desc_desc_name << "   "
                         << std::setw(14) << format << std::endl;
         }
@@ -2169,7 +2169,7 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
             format = output_descriptor->current_format();
 
             atomic_cout << std::setw(5) << i << std::setw(20) << outstream_end_station_name
-                        << utility::end_station_mac_to_string(end_station_mac) << "   "
+                        << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
                         << std::setw(3) << j << std::setw(19) << src_desc_name << "   "
                         << std::setw(15) << format << std::endl;
         }
@@ -2220,7 +2220,7 @@ int cmd_line::cmd_connect_dst(int total_matched, std::vector<cli_argument*> args
                     format = output_descriptor->current_format();
 
                     atomic_cout << std::setw(5) << i << std::setw(20) << outstream_end_station_name
-                                << utility::end_station_mac_to_string(end_station_mac)
+                                << avdecc_lib::utility::end_station_mac_to_string(end_station_mac)
                                 << "   " << std::setw(2) << j << std::setw(19) << src_desc_name
                                 << "   " << std::setw(10) << format << std::endl;
                 }
@@ -2553,7 +2553,7 @@ int cmd_line::cmd_acquire_entity(int total_matched, std::vector<cli_argument*> a
     std::string desc_name = args[1]->get_value_str();
     uint16_t desc_index = args[2]->get_value_int();
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
     uint32_t flag_id = 0;
 
     if(flag_name == "acquire")
@@ -2617,7 +2617,7 @@ int cmd_line::cmd_lock_entity(int total_matched, std::vector<cli_argument*> args
     std::string desc_name = args[1]->get_value_str();
     //uint16_t desc_index = args[2]->get_value_int();
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());;
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());;
 
     uint32_t flag_id;
     if(flag_name == "lock")
@@ -2702,9 +2702,9 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument*
     uint16_t desc_index = args[1]->get_value_int();
     std::string new_stream_format_name = args[2]->get_value_str();
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
     std::string stream_format_substring = new_stream_format_name.substr(20);
-    uint64_t stream_format_value = utility::ieee1722_format_name_to_value(("IEC..." + stream_format_substring).c_str());
+    uint64_t stream_format_value = avdecc_lib::utility::ieee1722_format_name_to_value(("IEC..." + stream_format_substring).c_str());
     std::string stream_format;
 
     avdecc_lib::end_station *end_station;
@@ -2723,7 +2723,7 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument*
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            stream_format = utility::ieee1722_format_value_to_name(stream_input_desc_ref->set_stream_format_stream_format());
+            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_input_desc_ref->set_stream_format_stream_format());
             if(stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->set_stream_format_stream_format() << std::endl;
@@ -2744,7 +2744,7 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument*
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            stream_format = utility::ieee1722_format_value_to_name(stream_output_desc_ref->set_stream_format_stream_format());
+            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_output_desc_ref->set_stream_format_stream_format());
             if(stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_format_stream_format() << std::endl;
@@ -2768,7 +2768,7 @@ int cmd_line::cmd_get_stream_format(int total_matched, std::vector<cli_argument*
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
     std::string stream_format;
 
     avdecc_lib::end_station *end_station;
@@ -2787,7 +2787,7 @@ int cmd_line::cmd_get_stream_format(int total_matched, std::vector<cli_argument*
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            stream_format = utility::ieee1722_format_value_to_name(stream_input_desc_ref->get_stream_format_stream_format());
+            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_input_desc_ref->get_stream_format_stream_format());
             if(stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->get_stream_format_stream_format() << std::endl;
@@ -2808,7 +2808,7 @@ int cmd_line::cmd_get_stream_format(int total_matched, std::vector<cli_argument*
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            stream_format = utility::ieee1722_format_value_to_name(stream_output_desc_ref->get_stream_format_stream_format());
+            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_output_desc_ref->get_stream_format_stream_format());
             if(stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_format_stream_format() << std::endl;
@@ -2834,7 +2834,7 @@ int cmd_line::cmd_set_stream_info(int total_matched, std::vector<cli_argument*> 
     std::string stream_info_field = args[2]->get_value_str();
     std::string new_stream_info_field_value = args[3]->get_value_str();
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
     std::string stream_format;
 
     avdecc_lib::end_station *end_station;
@@ -2882,7 +2882,7 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
     std::string stream_format;
 
     avdecc_lib::end_station *end_station;
@@ -2901,7 +2901,7 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            stream_format = utility::ieee1722_format_value_to_name(stream_input_desc_ref->get_stream_info_stream_format());
+            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_input_desc_ref->get_stream_info_stream_format());
             if(stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->get_stream_info_stream_format() << std::endl;
@@ -2925,7 +2925,7 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            stream_format = utility::ieee1722_format_value_to_name(stream_output_desc_ref->get_stream_info_stream_format());
+            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_output_desc_ref->get_stream_info_stream_format());
             if(stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->get_stream_info_stream_format() << std::endl;
@@ -2974,7 +2974,7 @@ int cmd_line::cmd_set_sampling_rate(int total_matched, std::vector<cli_argument*
     uint16_t desc_index = args[1]->get_value_int();
     uint32_t new_sampling_rate = args[2]->get_value_int();
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
 
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
@@ -3016,7 +3016,7 @@ int cmd_line::cmd_get_sampling_rate(int total_matched, std::vector<cli_argument*
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
 
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
@@ -3124,7 +3124,7 @@ int cmd_line::cmd_start_streaming(int total_matched, std::vector<cli_argument*> 
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
     intptr_t cmd_notification_id = 0;
 
     avdecc_lib::end_station *end_station;
@@ -3162,7 +3162,7 @@ int cmd_line::cmd_stop_streaming(int total_matched, std::vector<cli_argument*> a
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
 
-    uint16_t desc_type_value = utility::aem_desc_name_to_value(desc_name.c_str());
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
     intptr_t cmd_notification_id = 0;
 
     avdecc_lib::end_station *end_station;
