@@ -28,7 +28,7 @@
  */
 
 #include <vector>
-#include "util_imp.h"
+#include "util.h"
 #include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -161,7 +161,7 @@ namespace avdecc_lib
     const char * STDCALL stream_input_descriptor_imp::current_format()
     {
         uint64_t current_format = jdksavdecc_uint64_get(&stream_input_desc.current_format, 0);
-        return utility->ieee1722_format_value_to_name(current_format);
+        return utility::ieee1722_format_value_to_name(current_format);
     }
 
     uint16_t stream_input_descriptor_imp::formats_offset()
@@ -264,7 +264,7 @@ namespace avdecc_lib
     uint64_t STDCALL stream_input_descriptor_imp::get_stream_info_stream_dest_mac()
     {
         uint64_t stream_dest_mac;
-        utility->convert_eui48_to_uint64(aem_cmd_get_stream_info_resp.stream_dest_mac.value, stream_dest_mac);
+        utility::convert_eui48_to_uint64(aem_cmd_get_stream_info_resp.stream_dest_mac.value, stream_dest_mac);
 
         return stream_dest_mac;
     }
@@ -302,7 +302,7 @@ namespace avdecc_lib
     uint64_t STDCALL stream_input_descriptor_imp::get_rx_state_stream_dest_mac()
     {
         uint64_t stream_dest_mac;
-        utility->convert_eui48_to_uint64(acmp_cmd_get_rx_state_resp.stream_dest_mac.value, stream_dest_mac); 
+        utility::convert_eui48_to_uint64(acmp_cmd_get_rx_state_resp.stream_dest_mac.value, stream_dest_mac); 
 
         return stream_dest_mac;
     }

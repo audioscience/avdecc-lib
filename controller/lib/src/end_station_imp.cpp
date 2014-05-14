@@ -33,7 +33,7 @@
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
-#include "util_imp.h"
+#include "util.h"
 #include "adp.h"
 #include "acmp_controller_state_machine.h"
 #include "aecp_controller_state_machine.h"
@@ -50,7 +50,7 @@ namespace avdecc_lib
         struct jdksavdecc_eui64 entity_id;
         entity_id = adp_ref->get_entity_entity_id();
         end_station_entity_id = jdksavdecc_uint64_get(&entity_id, 0);
-        utility->convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
+        utility::convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
         end_station_init();
     }
 
@@ -346,7 +346,7 @@ namespace avdecc_lib
                         break;
 
                     default:
-                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Descriptor %s is not yet implemented in avdecc-lib.", utility->aem_desc_value_to_name(desc_type));
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Descriptor %s is not yet implemented in avdecc-lib.", utility::aem_desc_value_to_name(desc_type));
                         break;
                 }
             }
@@ -389,7 +389,7 @@ namespace avdecc_lib
             // check inflight timeout
             if (b->m_timer.timeout())
             {
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Background read timeout reading descriptor %s index %d\n", utility->aem_desc_value_to_name(b->m_type), b->m_index);
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Background read timeout reading descriptor %s index %d\n", utility::aem_desc_value_to_name(b->m_type), b->m_index);
                 ii = m_backbround_read_inflight.erase(ii);
                 delete b;
             }
@@ -434,7 +434,7 @@ namespace avdecc_lib
         {
             background_read_request *b_first = m_backbround_read_pending.front();
             m_backbround_read_pending.pop_front();
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d", utility->aem_desc_value_to_name(b_first->m_type), b_first->m_index);
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d", utility::aem_desc_value_to_name(b_first->m_type), b_first->m_index);
             read_desc_init(b_first->m_type, b_first->m_index);
             b_first->m_timer.start(750);       // 750 ms timeout (1722.1 timeout is 250ms)
             m_backbround_read_inflight.push_back(b_first);
@@ -445,7 +445,7 @@ namespace avdecc_lib
                 while (b_next->m_type == b_first->m_type)
                 {
                     m_backbround_read_pending.pop_front();
-                    log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d", utility->aem_desc_value_to_name(b_next->m_type), b_next->m_index);
+                    log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d", utility::aem_desc_value_to_name(b_next->m_type), b_next->m_index);
                     read_desc_init(b_next->m_type, b_next->m_index);
                     b_next->m_timer.start(750);       // 750 ms timeout (1722.1 timeout is 250ms)
                     m_backbround_read_inflight.push_back(b_next);

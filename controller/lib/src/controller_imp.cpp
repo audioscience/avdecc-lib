@@ -36,7 +36,7 @@
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
-#include "util_imp.h"
+#include "util.h"
 #include "adp.h"
 #include "system_tx_queue.h"
 #include "end_station_imp.h"
@@ -261,7 +261,7 @@ namespace avdecc_lib
                                         bool &is_operation_id_valid)
     {
         uint64_t dest_mac_addr;
-        utility->convert_eui48_to_uint64(frame, dest_mac_addr);
+        utility::convert_eui48_to_uint64(frame, dest_mac_addr);
         is_operation_id_valid = false;
 
         if((dest_mac_addr == net_interface_ref->mac_addr()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address

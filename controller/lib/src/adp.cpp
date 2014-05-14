@@ -33,7 +33,7 @@
 #include "net_interface_imp.h"
 #include "enumeration.h"
 #include "log_imp.h"
-#include "util_imp.h"
+#include "util.h"
 #include "adp.h"
 
 namespace avdecc_lib
