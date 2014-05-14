@@ -32,7 +32,7 @@
 #include <vector>
 #include "enumeration.h"
 #include "log_imp.h"
-#include "util_imp.h"
+#include "util.h"
 #include "end_station_imp.h"
 #include "descriptor_base_imp.h"
 #include "configuration_descriptor_imp.h"
@@ -80,7 +80,7 @@ namespace avdecc_lib
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, lookup_desc(%s,%d) error",
                                       base_end_station_imp_ref->entity_id(),
-                                      utility->aem_desc_value_to_name(desc_type),
+                                      utility::aem_desc_value_to_name(desc_type),
                                       index);
             return NULL;
         }
