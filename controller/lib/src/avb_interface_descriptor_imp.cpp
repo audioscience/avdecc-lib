@@ -30,7 +30,7 @@
 #include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
-#include "util_imp.h"
+#include "util.h"
 #include "end_station_imp.h"
 #include "avb_interface_descriptor_imp.h"
 
@@ -72,7 +72,7 @@ namespace avdecc_lib
     uint64_t STDCALL avb_interface_descriptor_imp::mac_addr()
     {
         uint64_t mac_addr;
-        utility->convert_eui48_to_uint64(avb_interface_desc.mac_address.value, mac_addr);
+        utility::convert_eui48_to_uint64(avb_interface_desc.mac_address.value, mac_addr);
 
         return mac_addr;
     }

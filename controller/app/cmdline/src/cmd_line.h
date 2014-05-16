@@ -86,7 +86,6 @@ private:
     bool output_redirected;
 
 public:
-    static avdecc_lib::util *utility;
     static std::string log_path;
 
     cmd_line();
