@@ -31,7 +31,7 @@
 #include <vector>
 #include "jdksavdecc_acmp.h"
 #include "net_interface_imp.h"
-#include "util_imp.h"
+#include "util.h"
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
@@ -58,7 +58,7 @@ namespace avdecc_lib
 
         /************************************************************ Ethernet Frame ********************************************************/
         cmd_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value); // Send from the Controller MAC address
+        utility::convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value); // Send from the Controller MAC address
         cmd_frame->dest_address = jdksavdecc_multicast_adp_acmp; // Send to the ACMP multicast destination MAC address
         cmd_frame->length = ACMP_FRAME_LEN; // Length of ACMP packet is 70 bytes
 
@@ -132,7 +132,7 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
                                       "Command Timeout, 0x%llx, %s, %s, %s, %d",
                                       end_station_entity_id,
-                                      utility->acmp_cmd_value_to_name(msg_type),
+                                      utility::acmp_cmd_value_to_name(msg_type),
                                       "NULL",
                                       "NULL",
                                       inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
@@ -160,7 +160,7 @@ namespace avdecc_lib
         {
             uint16_t this_seq_id = acmp_seq_id;
             uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(cmd_frame->payload, ETHER_HDR_SIZE);
-            uint32_t timeout_ms = utility->acmp_cmd_to_timeout(msg_type); // ACMP command timeout lookup
+            uint32_t timeout_ms = utility::acmp_cmd_to_timeout(msg_type); // ACMP command timeout lookup
             jdksavdecc_acmpdu_set_sequence_id(acmp_seq_id++, cmd_frame->payload, ETHER_HDR_SIZE);
 
             inflight in_flight = inflight(cmd_frame,
@@ -267,10 +267,10 @@ namespace avdecc_lib
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
                                           "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %s, %d",
                                           end_station_entity_id,
-                                          utility->acmp_cmd_value_to_name(msg_type),
+                                          utility::acmp_cmd_value_to_name(msg_type),
                                           "NULL",
                                           "NULL",  
-                                          utility->acmp_cmd_status_value_to_name(status),
+                                          utility::acmp_cmd_status_value_to_name(status),
                                           seq_id);
             }
         }
@@ -295,10 +295,10 @@ namespace avdecc_lib
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
                                           "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %s, %d",
                                           end_station_entity_id,
-                                          utility->acmp_cmd_value_to_name(msg_type),
+                                          utility::acmp_cmd_value_to_name(msg_type),
                                           "NULL",
                                           "NULL",  
-                                          utility->acmp_cmd_status_value_to_name(status),
+                                          utility::acmp_cmd_status_value_to_name(status),
                                           seq_id);
             }
         }
@@ -310,10 +310,10 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %s, %d",
                                       end_station_entity_id,
-                                      utility->acmp_cmd_value_to_name(msg_type),
+                                      utility::acmp_cmd_value_to_name(msg_type),
                                       "NULL",
                                       "NULL",  
-                                      utility->acmp_cmd_status_value_to_name(status),
+                                      utility::acmp_cmd_status_value_to_name(status),
                                       seq_id);
         }
         else
@@ -323,10 +323,10 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "COMMAND_SENT, 0x%llx, %s, %s, %s, %s, %d",
                                       end_station_entity_id,
-                                      utility->acmp_cmd_value_to_name(msg_type),
+                                      utility::acmp_cmd_value_to_name(msg_type),
                                       "NULL",
                                       "NULL",
-                                      utility->acmp_cmd_status_value_to_name(status),
+                                      utility::acmp_cmd_status_value_to_name(status),
                                       seq_id);
         }
 

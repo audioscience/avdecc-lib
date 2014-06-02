@@ -140,6 +140,30 @@ Prerequisites
 The following environment variables must be defined:
 * WPCAP_DIR the directory where WinPcap is installed
 
+Get the lib from github:
+* Make and enter the project directory
+* git clone git://github.com/audioscience/avdecc-lib
+* cd avdecc-lib
+* git submodule init
+* Edit in .git/config, change url = git@github.com:jdkoftinoff/jdksavdecc-c.git to url = git ://github.com/jdkoftinoff/jdksavdecc-c.git
+* git submodule update
+
+Compile
+* Open command window to "project folder" AVDECC-Lib
+* Initialize compiler environment : "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86
+* cmake .
+* msbuild ALL_BUILD.vcxproj
+* cd controller
+* cmake .
+* msbuild ALL_BUILD.vcxproj
+
+Run
+* controller.dll located in : AVDECC-Lib\avdecc-lib\controller\lib\Debug
+* command line app located in : AVDECC-Lib\avdecc-lib\controller\app\cmdline\Debug
+* Copy controller.dll to app folder
+* Run application
+
+
 ### Linux ###
 
 Prerequisites

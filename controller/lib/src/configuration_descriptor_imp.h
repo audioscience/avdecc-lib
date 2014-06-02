@@ -55,31 +55,19 @@ namespace avdecc_lib
     class configuration_descriptor_imp : public configuration_descriptor, public virtual descriptor_base_imp
     {
     private:
+        typedef std::vector<descriptor_base_imp *> DITEM;
+
         struct jdksavdecc_descriptor_configuration config_desc; // Structure containing the config_desc fields
 
         std::vector<uint16_t> desc_type_vec; // Store descriptor types present in the CONFIGURATION descriptor
         std::vector<uint16_t> desc_count_vec; // Store descriptor counts present in the CONFIGURATION descriptor
+        std::map<uint16_t, DITEM> m_all_desc; // Store all descriptors in a map of vectors
 
-        std::vector<audio_unit_descriptor_imp *> audio_unit_desc_vec;  // Store a list of AUDIO UNIT descriptor objects
-        std::vector<stream_input_descriptor_imp *> stream_input_desc_vec; // Store a list of STREAM INPUT descriptor objects
-        std::vector<stream_output_descriptor_imp *> stream_output_desc_vec; // Store a list of STREAM OUTPUT descriptor objects
-        std::vector<jack_input_descriptor_imp *> jack_input_desc_vec; // Store a list of JACK INPUT descriptor objects
-        std::vector<jack_output_descriptor_imp *> jack_output_desc_vec; // Store a list of JACK OUTPUT descriptor objects
-        std::vector<avb_interface_descriptor_imp *> avb_interface_desc_vec; // Store a list of AVB INTERFACE descriptor objects
-        std::vector<clock_source_descriptor_imp *> clock_source_desc_vec; // Store a list of CLOCK SOURCE descriptor objects
-        std::vector<memory_object_descriptor_imp *> memory_object_desc_vec; // Store a list of MEMORY_OBJECT descriptor objects
-        std::vector<locale_descriptor_imp *> locale_desc_vec; // Store a list of LOCALE descriptor objects
-        std::vector<strings_descriptor_imp *> strings_desc_vec; // Store a list of Strings descriptor objects
-        std::vector<stream_port_input_descriptor_imp *> stream_port_input_desc_vec; // Store a list of Stream Port Input descriptor objects
-        std::vector<stream_port_output_descriptor_imp *> stream_port_output_desc_vec; // Store a list of Stream Port Output descriptor objects
-        std::vector<audio_cluster_descriptor_imp *> audio_cluster_desc_vec; // Store a list of Audio Cluster descriptor objects
-        std::vector<audio_map_descriptor_imp *> audio_map_desc_vec; // Store a list of Audio Map descriptor objects
-        std::vector<clock_domain_descriptor_imp *> clock_domain_desc_vec; // Store a list of CLOCK DOMAIN descriptor objects
-        std::vector<control_descriptor_imp *> control_desc_vec; // Store a list of CONTROL descriptor objects
-        std::vector<external_port_input_descriptor_imp *> external_port_input_desc_vec; // Store a list of EXTERNAL_PORT_INPUT descriptor objects
-        std::vector<external_port_output_descriptor_imp *> external_port_output_desc_vec; // Store a list of EXTERNAL_PORT_OUTPUT descriptor objects
+        size_t desc_count(uint16_t type);
+        descriptor_base_imp *lookup_desc(uint16_t desc_type, size_t index);
+        void update_desc_database(descriptor_base_imp *desc);
 
-    public:
+	public:
         configuration_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
         virtual ~configuration_descriptor_imp();

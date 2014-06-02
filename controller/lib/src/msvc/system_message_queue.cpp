@@ -50,6 +50,9 @@ namespace avdecc_lib
         {
             free(buf);
         }
+        CloseHandle(space_avail);
+        CloseHandle(data_avail);
+        DeleteCriticalSection(&critical_section_obj);
     }
 
     void system_message_queue::queue_push(void *thread_data)

@@ -12,8 +12,9 @@ elseif(WIN32)
 	elseif( CMAKE_SIZEOF_VOID_P EQUAL 4 )
       link_directories($ENV{WPCAP_DIR}/Lib)
 	endif()
-	
-  add_definitions(-DAVDECC_CONTROLLER_LIB32_EXPORTS -D_CRT_SECURE_NO_WARNINGS)
+
+  # /W4800 disables cast to bool performance warning
+  add_definitions(-DAVDECC_CONTROLLER_LIB32_EXPORTS -D_CRT_SECURE_NO_WARNINGS /wd4800)
   include_directories( include src src/msvc ../../jdksavdecc-c/include $ENV{WPCAP_DIR}/Include )
 endif()
 

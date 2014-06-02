@@ -31,7 +31,7 @@
 #include <vector>
 #include "jdksavdecc_aem_command.h"
 #include "net_interface_imp.h"
-#include "util_imp.h"
+#include "util.h"
 #include "enumeration.h"
 #include "notification_imp.h"
 #include "log_imp.h"
@@ -58,8 +58,8 @@ namespace avdecc_lib
 
         /**************************************** Ethernet Frame *************************************/
         cmd_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value);
-        utility->convert_uint64_to_eui48(end_station_mac, cmd_frame->dest_address.value);
+        utility::convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value);
+        utility::convert_uint64_to_eui48(end_station_mac, cmd_frame->dest_address.value);
 		cmd_frame->length = len;
 
         /****************** Fill frame payload with Ethernet frame information ****************/
@@ -204,8 +204,8 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
                                       "Command Timeout, 0x%llx, %s, %s, %d, %d",
                                       jdksavdecc_uint64_get(&id, 0),
-                                      utility->aem_cmd_value_to_name(cmd_type),
-                                      utility->aem_desc_value_to_name(desc_type),
+                                      utility::aem_cmd_value_to_name(cmd_type),
+                                      utility::aem_desc_value_to_name(desc_type),
                                       desc_index,
                                       inflight_cmds.at(inflight_cmd_index).cmd_seq_id);
 
@@ -406,7 +406,7 @@ namespace avdecc_lib
             break;
 
         default:
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "NO_MATCH_FOUND for %s", utility->aem_cmd_value_to_name(cmd_type));
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "NO_MATCH_FOUND for %s", utility::aem_cmd_value_to_name(cmd_type));
             break;
         }
 
@@ -428,11 +428,11 @@ namespace avdecc_lib
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
                                           "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
                                           jdksavdecc_uint64_get(&id, 0),
-                                          utility->aem_cmd_value_to_name(cmd_type),
-                                          utility->aem_desc_value_to_name(desc_type),
+                                          utility::aem_cmd_value_to_name(cmd_type),
+                                          utility::aem_desc_value_to_name(desc_type),
                                           desc_index,
                                           jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
-                                          utility->aem_cmd_status_value_to_name(status));
+                                          utility::aem_cmd_status_value_to_name(status));
             }
         }
         else if(((notification_flag == CMD_WITH_NOTIFICATION) || (notification_flag == CMD_WITHOUT_NOTIFICATION)) &&
@@ -441,8 +441,8 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                       "COMMAND_SENT, 0x%llx, %s, %s, %d, %d",
                                       jdksavdecc_uint64_get(&id, 0),
-                                      utility->aem_cmd_value_to_name(cmd_type),
-                                      utility->aem_desc_value_to_name(desc_type),
+                                      utility::aem_cmd_value_to_name(cmd_type),
+                                      utility::aem_desc_value_to_name(desc_type),
                                       desc_index,
                                       jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE));
         }
@@ -455,22 +455,22 @@ namespace avdecc_lib
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
                                           "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
                                           jdksavdecc_uint64_get(&id, 0),
-                                          utility->aem_cmd_value_to_name(cmd_type),
-                                          utility->aem_desc_value_to_name(desc_type),
+                                          utility::aem_cmd_value_to_name(cmd_type),
+                                          utility::aem_desc_value_to_name(desc_type),
                                           desc_index,
                                           jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
-                                          utility->aem_cmd_status_value_to_name(status));
+                                          utility::aem_cmd_status_value_to_name(status));
             }
             else
             {
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
                                           "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
                                           jdksavdecc_uint64_get(&id, 0),
-                                          utility->aem_cmd_value_to_name(cmd_type),
-                                          utility->aem_desc_value_to_name(desc_type),
+                                          utility::aem_cmd_value_to_name(cmd_type),
+                                          utility::aem_desc_value_to_name(desc_type),
                                           desc_index,
                                           jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
-                                          utility->aem_cmd_status_value_to_name(status));
+                                          utility::aem_cmd_status_value_to_name(status));
             }
         }
 

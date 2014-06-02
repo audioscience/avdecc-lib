@@ -30,7 +30,7 @@
 #include "net_interface_imp.h"
 #include "enumeration.h"
 #include "log_imp.h"
-#include "util_imp.h"
+#include "util.h"
 #include "end_station.h"
 #include "adp.h"
 #include "aecp.h"
@@ -63,8 +63,8 @@ namespace avdecc_lib
 
         /************************************************ Ethernet Frame *************************************/
         ether_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
-        utility->convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
-        utility->convert_uint64_to_eui48(end_station->get_mac(), ether_frame->dest_address.value);
+        utility::convert_uint64_to_eui48(net_interface_ref->get_mac(), ether_frame->src_address.value);
+        utility::convert_uint64_to_eui48(end_station->get_mac(), ether_frame->dest_address.value);
         ether_frame->length = AECP_FRAME_LEN; // Length of AECP packet is 64 bytes
 
         /*********************** Fill frame payload with Ethernet frame information ********************/
