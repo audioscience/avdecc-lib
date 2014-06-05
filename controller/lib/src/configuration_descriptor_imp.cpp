@@ -464,7 +464,7 @@ namespace avdecc_lib
 
         if(desc)
         {
-            return desc->get_string_by_index(reference & 0x3);
+            return desc->get_string_by_index(reference & 0x7);
         }
 
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
