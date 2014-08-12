@@ -174,7 +174,16 @@ Prerequisites
 
 ### OSX ###
 
-ToDo
+Prerequisites: cmake installed (http://www.cmake.org/):
+
+Get the lib from github:
+* Make and enter the project directory
+* git clone git://github.com/audioscience/avdecc-lib --recursive
+
+Compile
+* cd avdecc-lib
+* cmake .
+* make
 
 
 Operations
