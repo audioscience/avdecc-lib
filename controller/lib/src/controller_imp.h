@@ -33,10 +33,12 @@
 
 namespace avdecc_lib
 {
+    class end_stations;
+
     class controller_imp : public virtual controller
     {
     private:
-        std::vector<end_station_imp *> end_station_vec; // Store a list of End Station objects
+        end_stations *end_station_array;
 
         /**
          * Find an end station that matches the entity and controller IDs
