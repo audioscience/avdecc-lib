@@ -1328,8 +1328,6 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                                                    configuration->get_strings_desc_string_by_reference(control_desc_ref->localized_description()),
                                                    *locale);
                 }
-                    
-
                 break;
         }
     }
@@ -2134,7 +2132,7 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                // atomic_cout << "\nvalue_details = " << std::dec << control_desc->value_details();
             }
         }
-            break;
+        break;
 
 
         default:
