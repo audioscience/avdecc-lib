@@ -44,7 +44,7 @@ namespace avdecc_lib
          * Find an end station that matches the entity and controller IDs
          */
         int find_in_end_station(struct jdksavdecc_eui64 &entity_entity_id, const uint8_t *frame);
-
+    
     public:
         /**
          * A constructor for controller_imp used for constructing an object with notification, and post_log_msg callback functions.

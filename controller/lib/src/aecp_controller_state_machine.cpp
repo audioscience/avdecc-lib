@@ -404,6 +404,14 @@ namespace avdecc_lib
             desc_type = jdksavdecc_aem_command_stop_streaming_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
             desc_index = jdksavdecc_aem_command_stop_streaming_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
             break;
+        
+        case JDKSAVDECC_AEM_COMMAND_GET_COUNTERS:
+            desc_type = jdksavdecc_aem_command_get_counters_response_get_descriptor_type(frame,ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_get_counters_response_get_descriptor_index(frame,ETHER_HDR_SIZE);
+            break;
+        
+        case JDKSAVDECC_AEM_COMMAND_REGISTER_UNSOLICITED_NOTIFICATION:
+            break;
 
         default:
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "NO_MATCH_FOUND for %s", utility::aem_cmd_value_to_name(cmd_type));

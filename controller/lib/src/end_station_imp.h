@@ -65,7 +65,7 @@ namespace avdecc_lib
 
         adp *adp_ref; // ADP associated with the End Station
         std::vector<entity_descriptor_imp *> entity_desc_vec; // Store a list of ENTITY descriptor objects
-
+        
         void queue_background_read_request(uint16_t desc_type, uint16_t desc_base_index, uint16_t count);  ///< Generate "count" read requests
         void background_read_deduce_next(configuration_descriptor *cd, uint16_t desc_type, void *frame, ssize_t pos); ///< Deduce what else needs to be read from the rx'd frame
         void background_read_update_inflight(uint16_t desc_type, void *frame, ssize_t read_desc_offset); ///< Remove rx'd frame from background read inflight list

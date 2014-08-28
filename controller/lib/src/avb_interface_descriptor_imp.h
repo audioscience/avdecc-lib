@@ -32,12 +32,21 @@
 #include "descriptor_base_imp.h"
 #include "avb_interface_descriptor.h"
 
+
 namespace avdecc_lib
 {
     class avb_interface_descriptor_imp : public avb_interface_descriptor, public virtual descriptor_base_imp
     {
     private:
         struct jdksavdecc_descriptor_avb_interface avb_interface_desc; // Structure containing the avb_interface_desc fields
+        struct jdksavdecc_aem_command_get_counters_response aem_cmd_get_counters_resp; // Store the response received after sending a GET_COUNTERS command.
+        struct get_counters_response_with_block
+        {
+            jdksavdecc_aem_command_get_counters_response aem_cmd_get_counters_response;
+            uint32_t counters_block [31];
+        };
+        
+        struct get_counters_response_with_block counters_response;
 
     public:
         avb_interface_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
@@ -60,6 +69,10 @@ namespace avdecc_lib
         uint8_t STDCALL log_announce_interval();
         uint8_t STDCALL log_pdelay_interval();
         uint16_t STDCALL port_number();
+        uint32_t STDCALL get_counters_valid(int name);
+        uint32_t STDCALL get_counters_by_name(int name);
+        int STDCALL send_get_counters_cmd(void *notification_id);
+        int proc_get_counters_resp(void *&notification_id, const uint8_t *fram, size_t frame_len, int &status);
     };
 }
 

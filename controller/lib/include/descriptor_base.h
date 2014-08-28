@@ -77,7 +77,7 @@ namespace avdecc_lib
          * \return The flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL acquire_entity_flags() = 0;
-
+        
         /**
          * \return The owner id after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
          */

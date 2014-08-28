@@ -32,6 +32,9 @@
 #include "log_imp.h"
 #include "end_station_imp.h"
 #include "entity_descriptor_imp.h"
+#include "aecp_controller_state_machine.h"
+#include "adp.h"
+#include "system_tx_queue.h"
 
 namespace avdecc_lib
 {
@@ -53,7 +56,7 @@ namespace avdecc_lib
             delete config_desc_vec.at(config_vec_index);
         }
     }
-
+    
     uint16_t STDCALL entity_descriptor_imp::descriptor_type() const
     {
         assert(entity_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_ENTITY);
@@ -135,7 +138,7 @@ namespace avdecc_lib
     {
         return entity_desc.model_name_string;
     }
-
+    
     uint8_t * STDCALL entity_descriptor_imp::firmware_version()
     {
         return entity_desc.firmware_version.value;

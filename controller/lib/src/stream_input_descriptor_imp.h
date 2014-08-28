@@ -59,11 +59,19 @@ namespace avdecc_lib
         struct jdksavdecc_aem_command_get_stream_format_response aem_cmd_get_stream_format_resp; // Store the response received after sending a GET_STREAM_FORMAT command.
         struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp; // Store the response received after sending a SET_STREAM_INFO command.
         struct jdksavdecc_aem_command_get_stream_info_response aem_cmd_get_stream_info_resp; // Store the response received after sending a GET_STREAM_INFO command.
+        struct jdksavdecc_aem_command_get_counters_response aem_cmd_get_counters_resp;
+        struct get_counters_response_with_block
+        {
+            jdksavdecc_aem_command_get_counters_response aem_cmd_get_counters_response;
+            uint32_t counters_block [31];
+        };
+        
+        struct get_counters_response_with_block counters_response;
 
         struct jdksavdecc_acmpdu acmp_cmd_connect_rx_resp; // Store the response received after sending a CONNECT_RX command.
         struct jdksavdecc_acmpdu acmp_cmd_disconnect_rx_resp; // Store the response received after sending a DISCONNECT_RX command.
         struct jdksavdecc_acmpdu acmp_cmd_get_rx_state_resp; // Store the response received after sending a GET_RX_STATE command.
-
+        
     public:
         stream_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~stream_input_descriptor_imp();
@@ -115,6 +123,10 @@ namespace avdecc_lib
         uint16_t STDCALL get_rx_state_connection_count();
         uint16_t STDCALL get_rx_state_flags();
         uint16_t STDCALL get_rx_state_stream_vlan_id();
+        uint32_t STDCALL get_counters_valid(int name);
+        uint32_t STDCALL get_counters_by_name(int name);
+        int STDCALL send_get_counters_cmd(void *notification_id);
+        int proc_get_counters_resp(void *&notification_id, const uint8_t *fram, size_t frame_len, int &status);
         
 		int STDCALL send_set_stream_format_cmd(void *notification_id, uint64_t new_stream_format);
         int proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
