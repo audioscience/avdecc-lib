@@ -76,7 +76,7 @@ namespace avdecc_lib
     }
     descriptor_base_imp *configuration_descriptor_imp::lookup_desc(uint16_t desc_type, size_t index)
     {
-        if (desc_count(desc_type) < index)
+        if (desc_count(desc_type) <= index)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, lookup_desc(%s,%d) error",
                                       base_end_station_imp_ref->entity_id(),
