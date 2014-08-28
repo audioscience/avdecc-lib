@@ -252,7 +252,7 @@ namespace avdecc_lib
 
     void configuration_descriptor_imp::store_avb_interface_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        new avb_interface_descriptor_imp(end_station_obj, frame, pos, frame_len);
+        update_desc_database(new avb_interface_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_clock_source_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
