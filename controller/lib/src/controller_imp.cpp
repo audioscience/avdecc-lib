@@ -80,9 +80,8 @@ namespace avdecc_lib
         end_station_imp *at(size_t i)
         {
             end_station_imp * ep;
-            locker.lock();
+            std::lock_guard<std::mutex> guard(locker);
             ep = end_station_vec.at(i);
-            locker.unlock();
             return ep;
         };
         void push_back(end_station_imp *ep)
