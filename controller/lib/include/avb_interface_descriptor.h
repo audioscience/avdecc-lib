@@ -117,11 +117,15 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_counters_cmd(void *notification_id) = 0;
         
         /**
+         * \param name avdecc_lib::counter_labels
+         *
          * \return the avb counters valid after the GET_COUNTERS command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counters_valid(int name) = 0;
         
         /**
+         * \param name avdecc_lib::counter_labels
+         *
          * \return the avb counters by name after the GET_COUNTERS command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counters_by_name(int name) = 0;

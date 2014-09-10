@@ -1,5 +1,9 @@
 .DS_Store
 
+# Ignore Doxygen sub directories 
+html/
+latex/
+
 # Compiled Object files
 *.slo
 *.lo

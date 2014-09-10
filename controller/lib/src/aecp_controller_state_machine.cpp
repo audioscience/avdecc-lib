@@ -406,8 +406,8 @@ namespace avdecc_lib
             break;
         
         case JDKSAVDECC_AEM_COMMAND_GET_COUNTERS:
-            desc_type = jdksavdecc_aem_command_get_counters_response_get_descriptor_type(frame,ETHER_HDR_SIZE);
-            desc_index = jdksavdecc_aem_command_get_counters_response_get_descriptor_index(frame,ETHER_HDR_SIZE);
+            desc_type = jdksavdecc_aem_command_get_counters_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_get_counters_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
             break;
         
         case JDKSAVDECC_AEM_COMMAND_REGISTER_UNSOLICITED_NOTIFICATION:

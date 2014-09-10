@@ -63,8 +63,6 @@
 #include "cli_command.h"
 #include "cli_command_format.h"
 
-
-
 #if defined _WIN32 || defined _WIN64
 #ifdef _MSC_VER
 #define strtoull(str, end, base) _strtoui64 (str, end, base)
@@ -1345,7 +1343,6 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
     atomic_cout << "Configuration: " << end_station->get_current_config_index() << std::endl;
     atomic_cout << "------------------------------------------------------------------------------" << std::endl;
 
-
     switch(0)
     {
         case avdecc_lib::AEM_DESC_ENTITY:
@@ -1543,8 +1540,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
                 do_view_descriptor(desc_name, desc_index);
             }
 
-
-            break;
+        break;
     }
 
     return 0;
@@ -3097,20 +3093,20 @@ int cmd_line::cmd_get_counters(int total_matched, std::vector<cli_argument*> arg
 
             if(status == avdecc_lib::AEM_STATUS_SUCCESS)
             {
-                if(avb_desc_ref->get_counters_valid(avdecc_lib::AVB_LINK_UP))
-                    atomic_cout << "Link up Counter: " << avb_desc_ref->get_counters_by_name(avdecc_lib::AVB_LINK_UP)
+                if(avb_desc_ref->get_counters_valid(avdecc_lib::AVB_INTERFACE_LINK_UP))
+                    atomic_cout << "Link up Counter: " << avb_desc_ref->get_counters_by_name(avdecc_lib::AVB_INTERFACE_LINK_UP)
                         << std::endl;
-                if(avb_desc_ref->get_counters_valid(avdecc_lib::AVB_LINK_DOWN))
-                    atomic_cout << "Link down Counter: " << avb_desc_ref->get_counters_by_name(avdecc_lib::AVB_LINK_DOWN)
+                if(avb_desc_ref->get_counters_valid(avdecc_lib::AVB_INTERFACE_LINK_DOWN))
+                    atomic_cout << "Link down Counter: " << avb_desc_ref->get_counters_by_name(avdecc_lib::AVB_INTERFACE_LINK_DOWN)
                         << std::endl;
-                if(avb_desc_ref->get_counters_valid(avdecc_lib::AVB_FRAMES_TX))
-                    atomic_cout << "Link up Counter: " << avb_desc_ref->get_counters_by_name(avdecc_lib::AVB_FRAMES_TX)
+                if(avb_desc_ref->get_counters_valid(avdecc_lib::AVB_INTERFACE_FRAMES_TX))
+                    atomic_cout << "Link up Counter: " << avb_desc_ref->get_counters_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_TX)
                         << std::endl;
-                if(avb_desc_ref->get_counters_valid(avdecc_lib::AVB_FRAMES_RX))
-                    atomic_cout << "Link down Counter: " << avb_desc_ref->get_counters_by_name(avdecc_lib::AVB_FRAMES_RX)
+                if(avb_desc_ref->get_counters_valid(avdecc_lib::AVB_INTERFACE_FRAMES_RX))
+                    atomic_cout << "Link down Counter: " << avb_desc_ref->get_counters_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_RX)
                         << std::endl;
-                if(avb_desc_ref->get_counters_valid(avdecc_lib::AVB_RX_CRC_ERROR))
-                    atomic_cout << "Link up Counter: " << avb_desc_ref->get_counters_by_name(avdecc_lib::AVB_RX_CRC_ERROR)
+                if(avb_desc_ref->get_counters_valid(avdecc_lib::AVB_INTERFACE_RX_CRC_ERROR))
+                    atomic_cout << "Link up Counter: " << avb_desc_ref->get_counters_by_name(avdecc_lib::AVB_INTERFACE_RX_CRC_ERROR)
                         << std::endl;
                 if(avb_desc_ref->get_counters_valid(avdecc_lib::AVB_GPTP_GM_CHANGED))
                     atomic_cout << "Link down Counter: " << avb_desc_ref->get_counters_by_name(avdecc_lib::AVB_GPTP_GM_CHANGED)

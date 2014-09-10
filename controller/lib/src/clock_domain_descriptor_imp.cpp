@@ -362,10 +362,8 @@ namespace avdecc_lib
         {
             case CLOCK_DOMAIN_LOCKED:
                 return counters_response.counters_block[0];
-                break;
             case CLOCK_DOMAIN_UNLOCKED:
                 return counters_response.counters_block[1];
-                break;
         }
         return 0;
     }
@@ -376,10 +374,8 @@ namespace avdecc_lib
         {
             case CLOCK_DOMAIN_LOCKED:
                 return aem_cmd_get_counters_resp.counters_valid & 0x01;
-                break;
             case CLOCK_DOMAIN_UNLOCKED:
                 return aem_cmd_get_counters_resp.counters_valid >> 1 & 0x01;
-                break;
         }
         return 0;
     }

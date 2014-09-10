@@ -289,13 +289,13 @@ namespace avdecc_lib
         TOTAL_NUM_OF_LOGGING_LEVELS = 6
     };
     
-    enum counter_labels
+    enum counter_labels ///Counter Labels for GET_COUNTERS command
     {
-        AVB_LINK_UP,
-        AVB_LINK_DOWN,
-        AVB_FRAMES_TX,
-        AVB_FRAMES_RX,
-        AVB_RX_CRC_ERROR,
+        AVB_INTERFACE_LINK_UP,
+        AVB_INTERFACE_LINK_DOWN,
+        AVB_INTERFACE_FRAMES_TX,
+        AVB_INTERFACE_FRAMES_RX,
+        AVB_INTERFACE_RX_CRC_ERROR,
         AVB_GPTP_GM_CHANGED,
         CLOCK_DOMAIN_LOCKED,
         CLOCK_DOMAIN_UNLOCKED,

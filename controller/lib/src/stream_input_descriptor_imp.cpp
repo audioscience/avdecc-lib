@@ -56,8 +56,7 @@ namespace avdecc_lib
         memset(&aem_cmd_set_stream_info_resp, 0, sizeof(struct jdksavdecc_aem_command_set_stream_info_response));
         memset(&aem_cmd_get_stream_info_resp, 0, sizeof(struct jdksavdecc_aem_command_get_stream_info_response));
         memset(&aem_cmd_get_counters_resp, 0, sizeof(struct jdksavdecc_aem_command_get_counters_response));
-
-
+        
         memset(&acmp_cmd_get_rx_state_resp, 0, sizeof(struct jdksavdecc_acmpdu));
 
         stream_flags_init();
@@ -978,43 +977,30 @@ namespace avdecc_lib
         {
             case STREAM_INPUT_MEDIA_LOCKED:
                 return counters_response.counters_block[0];
-                break;
             case STREAM_INPUT_MEDIA_UNLOCKED:
                 return counters_response.counters_block[1];
-                break;
             case STREAM_INPUT_STREAM_RESET:
                 return counters_response.counters_block[2];
-                break;
             case STREAM_INPUT_SEQ_NUM_MISMATCH:
                 return counters_response.counters_block[3];
-                break;
             case STREAM_INPUT_MEDIA_RESET:
                 return counters_response.counters_block[4];
-                break;
             case STREAM_INPUT_TIMESTAMP_UNCERTAIN:
                 return counters_response.counters_block[5];
-                break;
             case STREAM_INPUT_TIMESTAMP_VALID:
                 return counters_response.counters_block[6];
-                break;
             case STREAM_INPUT_TIMESTAMP_NOT_VALID:
                 return counters_response.counters_block[7];
-                break;
             case STREAM_INPUT_UNSUPPORTED_FORMAT:
                 return counters_response.counters_block[8];
-                break;
             case STREAM_INPUT_LATE_TIMESTAMP:
                 return counters_response.counters_block[9];
-                break;
             case STREAM_INPUT_EARLY_TIMESTAMP:
                 return counters_response.counters_block[10];
-                break;
             case STREAM_INPUT_FRAMES_RX:
                 return counters_response.counters_block[12];
-                break;
             case STREAM_INPUT_FRAMES_TX:
                 return counters_response.counters_block[13];
-                break;
         }
         return 0;
     }
@@ -1025,43 +1011,30 @@ namespace avdecc_lib
         {
             case STREAM_INPUT_MEDIA_LOCKED:
                 return aem_cmd_get_counters_resp.counters_valid & 0x01;
-                break;
             case STREAM_INPUT_MEDIA_UNLOCKED:
                 return aem_cmd_get_counters_resp.counters_valid >> 1 & 0x01;
-                break;
             case STREAM_INPUT_STREAM_RESET:
                 return aem_cmd_get_counters_resp.counters_valid >> 2 & 0x01;
-                break;
             case STREAM_INPUT_SEQ_NUM_MISMATCH:
                 return aem_cmd_get_counters_resp.counters_valid >> 3 & 0x01;
-                break;
             case STREAM_INPUT_MEDIA_RESET:
                 return aem_cmd_get_counters_resp.counters_valid >> 4 & 0x01;
-                break;
             case STREAM_INPUT_TIMESTAMP_UNCERTAIN:
                 return aem_cmd_get_counters_resp.counters_valid >> 5 & 0x01;
-                break;
             case STREAM_INPUT_TIMESTAMP_VALID:
                 return aem_cmd_get_counters_resp.counters_valid >> 6 & 0x01;
-                break;
             case STREAM_INPUT_TIMESTAMP_NOT_VALID:
                 return aem_cmd_get_counters_resp.counters_valid >> 7 & 0x01;
-                break;
             case STREAM_INPUT_UNSUPPORTED_FORMAT:
                 return aem_cmd_get_counters_resp.counters_valid >> 8 & 0x01;
-                break;
             case STREAM_INPUT_LATE_TIMESTAMP:
                 return aem_cmd_get_counters_resp.counters_valid >> 9 & 0x01;
-                break;
             case STREAM_INPUT_EARLY_TIMESTAMP:
                 return aem_cmd_get_counters_resp.counters_valid >> 10 & 0x01;
-                break;
             case STREAM_INPUT_FRAMES_RX:
                 return aem_cmd_get_counters_resp.counters_valid >> 11 & 0x01;
-                break;
             case STREAM_INPUT_FRAMES_TX:
                 return aem_cmd_get_counters_resp.counters_valid >> 12 & 0x01;
-                break;
         }
 
         return 0;

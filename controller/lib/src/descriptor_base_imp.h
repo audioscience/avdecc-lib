@@ -90,7 +90,7 @@ namespace avdecc_lib
          * Get the locked entity id after sending a LOCK_ENTITY command and receiving a response back for the command.
          */
         virtual uint64_t STDCALL lock_entity_locked_entity_id();
-                
+
         virtual int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag);
         virtual int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 

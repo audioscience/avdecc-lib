@@ -320,7 +320,7 @@ private:
     int cmd_get_sampling_rate(int total_matched, std::vector<cli_argument*> args);
     
     /**
-     * Send a GET_COUNTERS command to get the current sampling rate of a port or unit.
+     * Send a GET_COUNTERS command to get the current counters of a descriptor.
      */
     int cmd_get_counters(int total_matched, std::vector<cli_argument*> args);
 

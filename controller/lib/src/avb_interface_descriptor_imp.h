@@ -32,7 +32,6 @@
 #include "descriptor_base_imp.h"
 #include "avb_interface_descriptor.h"
 
-
 namespace avdecc_lib
 {
     class avb_interface_descriptor_imp : public avb_interface_descriptor, public virtual descriptor_base_imp

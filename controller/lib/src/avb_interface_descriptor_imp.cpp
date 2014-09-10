@@ -230,24 +230,18 @@ namespace avdecc_lib
     {
         switch(name)
         {
-            case AVB_LINK_UP:
+            case AVB_INTERFACE_LINK_UP:
                 return counters_response.counters_block[0];
-                break;
-            case AVB_LINK_DOWN:
+            case AVB_INTERFACE_LINK_DOWN:
                 return counters_response.counters_block[1];
-                break;
-            case AVB_FRAMES_TX:
+            case AVB_INTERFACE_FRAMES_TX:
                 return counters_response.counters_block[2];
-                break;
-            case AVB_FRAMES_RX:
+            case AVB_INTERFACE_FRAMES_RX:
                 return counters_response.counters_block[3];
-                break;
-            case AVB_RX_CRC_ERROR:
+            case AVB_INTERFACE_RX_CRC_ERROR:
                 return counters_response.counters_block[4];
-                break;
             case AVB_GPTP_GM_CHANGED:
                 return counters_response.counters_block[5];
-                break;
         }
         return 0;
     }
@@ -256,24 +250,18 @@ namespace avdecc_lib
     {
         switch(name)
         {
-            case AVB_LINK_UP:
+            case AVB_INTERFACE_LINK_UP:
                 return aem_cmd_get_counters_resp.counters_valid & 0x01;
-                break;
-            case AVB_LINK_DOWN:
+            case AVB_INTERFACE_LINK_DOWN:
                 return aem_cmd_get_counters_resp.counters_valid >> 1 & 0x01;
-                break;
-            case AVB_FRAMES_TX:
+            case AVB_INTERFACE_FRAMES_TX:
                 return aem_cmd_get_counters_resp.counters_valid >> 2 & 0x01;
-                break;
-            case AVB_FRAMES_RX:
+            case AVB_INTERFACE_FRAMES_RX:
                 return aem_cmd_get_counters_resp.counters_valid >> 3 & 0x01;
-                break;
-            case AVB_RX_CRC_ERROR:
+            case AVB_INTERFACE_RX_CRC_ERROR:
                 return aem_cmd_get_counters_resp.counters_valid >> 4 & 0x01;
-                break;
             case AVB_GPTP_GM_CHANGED:
                 return aem_cmd_get_counters_resp.counters_valid >> 5 & 0x01;
-                break;
         }
         return 0;
     }
