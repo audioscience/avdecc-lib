@@ -344,9 +344,10 @@ void cmd_line::cmd_line_commands_init()
     cli_command *view_details_cmd = new cli_command("To see a list of valid End Stations, enter \"list\" command.");
     view_cmd->add_sub_command("details", view_details_cmd);
 
-    cli_command_format *view_details_fmt = new cli_command_format("Display all descriptors in the specified End Station.",
+    cli_command_format *view_details_fmt = new cli_command_format("Display all descriptors in the currently selected configuration.",
                                                                   &cmd_line::cmd_view_details);
-    view_details_fmt->add_argument(new cli_argument_end_station(this, "e_s", END_STATION_HELP));
+    //view_details_fmt->add_argument(new cli_argument_end_station(this, "e_s", END_STATION_HELP));
+    //commented out for new 'view_details' format (just views currently selected entity/endpoint
     view_details_cmd->add_format(view_details_fmt);
 
     // view descriptor
@@ -1018,9 +1019,9 @@ int cmd_line::do_select(uint32_t new_end_station, uint16_t new_entity, uint16_t 
         if((current_end_station == new_end_station) && (current_entity == new_entity) && (current_config == new_config))
         {
             atomic_cout << "Same setting" << std::endl;
-            atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
-            atomic_cout << "\tEntity: " << std::dec << current_entity << std::endl;
-            atomic_cout << "\tConfiguration: " << std::dec << current_config << std::endl;
+            atomic_cout << "\tEnd Station Index: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
+            atomic_cout << "\tEntity Index: " << std::dec << current_entity << std::endl;
+            atomic_cout << "\tConfiguration Index: " << std::dec << current_config << std::endl;
         }
         else
         {
@@ -1028,9 +1029,9 @@ int cmd_line::do_select(uint32_t new_end_station, uint16_t new_entity, uint16_t 
             end_station->set_current_entity_index(new_entity);
             end_station->set_current_config_index(new_config);
             atomic_cout << "New setting" << std::endl;
-            atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
-            atomic_cout << "\tEntity: " << std::dec << current_entity << std::endl;
-            atomic_cout << "\tConfiguration: " << std::dec << current_config << std::endl;
+            atomic_cout << "\tEnd Station Index: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
+            atomic_cout << "\tEntity Index: " << std::dec << current_entity << std::endl;
+            atomic_cout << "\tConfiguration Index: " << std::dec << current_config << std::endl;
         }
     }
     else
@@ -1312,20 +1313,18 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
 
 int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> args)
 {
-    uint32_t end_station_index = args[0]->get_value_uint();
-    if (end_station_index >= controller_obj->get_end_station_count())
-    {
-        atomic_cout << "Invalid End Station" << std::endl;
-        return 0;
-    }
-
+    uint32_t end_station_index = current_end_station;
+ 
     avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(end_station_index);
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
+    
     if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
         return 0;
 
-    atomic_cout << "\nEnd Station: " << end_station_index << " (" << entity->entity_name() << ")" << std::endl;
+    atomic_cout << "\nEnd Station: " << " (" << entity->entity_name() << ")" << std::endl;
+    atomic_cout << "Entity Index: " << end_station->get_current_entity_index() << "  Entity ID: 0x" << std::hex <<entity->entity_id() << std::endl;
+    atomic_cout << "Configuration: " << end_station->get_current_config_index() << std::endl;
     atomic_cout << "------------------------------------------------------------------------------" << std::endl;
 
     switch(0)
@@ -1525,8 +1524,7 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
                 do_view_descriptor(desc_name, desc_index);
             }
 
-
-            break;
+        break;
     }
 
     return 0;
