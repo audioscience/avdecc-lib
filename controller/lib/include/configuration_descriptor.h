@@ -58,7 +58,7 @@ namespace avdecc_lib
     class control_descriptor;
     class external_port_input_descriptor;
     class external_port_output_descriptor;
-   
+
     class configuration_descriptor : public virtual descriptor_base
     {
     public:
