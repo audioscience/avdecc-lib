@@ -62,6 +62,7 @@
 #include "cli_argument.h"
 #include "cli_command.h"
 #include "cli_command_format.h"
+#include "control_descriptor.h"
 
 #if defined _WIN32 || defined _WIN64
 #ifdef _MSC_VER
@@ -1319,8 +1320,15 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                                                    configuration->get_strings_desc_string_by_reference(clk_domain_desc_ref->localized_description()),
                                                    *locale);
                 }
-
-                break;
+            case avdecc_lib::AEM_DESC_CONTROL:
+                for(unsigned int j = 0; j < configuration->control_desc_count(); j++)
+                {
+                    avdecc_lib::control_descriptor *control_desc_ref = configuration->get_control_desc_by_index(j);
+                    print_desc_type_index_name_row(*control_desc_ref,
+                                                   configuration->get_strings_desc_string_by_reference(control_desc_ref->localized_description()),
+                                                   *locale);
+                }
+            break;
         }
     }
 
@@ -1539,6 +1547,17 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 do_view_descriptor(desc_name, desc_index);
             }
+        case avdecc_lib::AEM_DESC_CONTROL:
+            for(unsigned int j = 0; j < configuration->control_desc_count(); j++)
+            {
+                avdecc_lib::control_descriptor *control_desc_ref = configuration->get_control_desc_by_index(j);
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(control_desc_ref->descriptor_type());
+                uint16_t desc_index = control_desc_ref->descriptor_index();
+                
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
+                do_view_descriptor(desc_name, desc_index);
+            }
+
 
         break;
     }
@@ -2085,6 +2104,32 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                     atomic_cout << "\nsignal_output = " << std::dec << desc->signal_output();
                     atomic_cout << "\nblock_latency = " << std::dec << desc->block_latency();
                     atomic_cout << "\njack_index = " << std::dec << desc->jack_index();
+                }
+            }
+            break;
+            
+        case avdecc_lib::AEM_DESC_CONTROL:
+            {
+                if (!configuration)
+                    break;
+            
+                avdecc_lib::control_descriptor *control_desc = configuration->get_control_desc_by_index(desc_index);
+                if (control_desc)
+                {
+                    atomic_cout << "\nobject_name = " << std::hex << control_desc->object_name();
+                    atomic_cout << "\nlocalized_description= " << control_desc->localized_description();
+                    atomic_cout << "\nblock_latency= " << std::dec << control_desc->block_latency();
+                    atomic_cout << "\ncontrol_latency= " << std::dec << control_desc->control_latency();
+                    atomic_cout << "\ncontrol_domain = " << std::dec << control_desc->control_domain();
+                    atomic_cout << "\ncontrol_value_type = " << std::dec << control_desc->control_value_type();
+                    atomic_cout << "\ncontrol_type = " << std::dec << control_desc->control_type();
+                    atomic_cout << "\nreset_time = " << std::dec << control_desc->reset_time();
+                    atomic_cout << "\nvalues_offset = " << std::dec << control_desc->values_offset();
+                    atomic_cout << "\nnumber_of_values = " << std::dec << control_desc->number_of_values();
+                    atomic_cout << "\nsignal_type = " << std::dec << control_desc->signal_type();
+                    atomic_cout << "\nsignal_index = " << std::dec << control_desc->signal_index();
+                    atomic_cout << "\nsignal_output = " << std::dec << control_desc->signal_output();
+                    // atomic_cout << "\nvalue_details = " << std::dec << control_desc->value_details();
                 }
             }
             break;
