@@ -364,6 +364,8 @@ namespace avdecc_lib
                 return counters_response.counters_block[0];
             case CLOCK_DOMAIN_UNLOCKED:
                 return counters_response.counters_block[1];
+            default:
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
         }
         return 0;
     }
@@ -376,6 +378,8 @@ namespace avdecc_lib
                 return aem_cmd_get_counters_resp.counters_valid & 0x01;
             case CLOCK_DOMAIN_UNLOCKED:
                 return aem_cmd_get_counters_resp.counters_valid >> 1 & 0x01;
+            default:
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
         }
         return 0;
     }

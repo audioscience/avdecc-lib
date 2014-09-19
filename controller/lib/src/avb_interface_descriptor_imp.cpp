@@ -242,6 +242,8 @@ namespace avdecc_lib
                 return counters_response.counters_block[4];
             case AVB_GPTP_GM_CHANGED:
                 return counters_response.counters_block[5];
+            default:
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found\n");
         }
         return 0;
     }
@@ -262,6 +264,8 @@ namespace avdecc_lib
                 return aem_cmd_get_counters_resp.counters_valid >> 4 & 0x01;
             case AVB_GPTP_GM_CHANGED:
                 return aem_cmd_get_counters_resp.counters_valid >> 5 & 0x01;
+            default:
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found\n");
         }
         return 0;
     }

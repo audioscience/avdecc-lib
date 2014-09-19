@@ -1001,6 +1001,8 @@ namespace avdecc_lib
                 return counters_response.counters_block[12];
             case STREAM_INPUT_FRAMES_TX:
                 return counters_response.counters_block[13];
+            default:
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
         }
         return 0;
     }
@@ -1035,8 +1037,9 @@ namespace avdecc_lib
                 return aem_cmd_get_counters_resp.counters_valid >> 11 & 0x01;
             case STREAM_INPUT_FRAMES_TX:
                 return aem_cmd_get_counters_resp.counters_valid >> 12 & 0x01;
+            default:
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
         }
-
         return 0;
     }
 }
