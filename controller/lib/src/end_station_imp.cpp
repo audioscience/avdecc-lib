@@ -1064,6 +1064,61 @@ namespace avdecc_lib
                     }
                 }
                 break;
+            
+            case JDKSAVDECC_AEM_COMMAND_GET_COUNTERS:
+                {
+                    desc_type = jdksavdecc_aem_command_get_counters_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                    desc_index = jdksavdecc_aem_command_get_counters_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+                
+                    if(desc_type == JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE)
+                    {
+                        avb_interface_descriptor_imp *avb_desc_imp_ref =
+                        dynamic_cast<avb_interface_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_avb_interface_desc_by_index(desc_index));
+                        
+                        if(avb_desc_imp_ref)
+                        {
+                            avb_desc_imp_ref->proc_get_counters_resp(notification_id, frame, frame_len, status);
+                        }
+                        else
+                        {
+                            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base avb_interface_descriptor to derived avb_interface_descriptor_imp error");
+                        }
+                    }
+                    else if(desc_type == JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN)
+                    {
+                        clock_domain_descriptor_imp *clock_domain_desc_imp_ref =
+                        dynamic_cast<clock_domain_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_clock_domain_desc_by_index(desc_index));
+                        
+                        if(clock_domain_desc_imp_ref)
+                        {
+                            clock_domain_desc_imp_ref->proc_get_counters_resp(notification_id, frame, frame_len, status);
+                        }
+                        else
+                        {
+                            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base clock_domain_descriptor to derived clock_domain_descriptor_imp error");
+                        }
+                    }
+                    else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_INPUT)
+                    {
+                        stream_input_descriptor_imp *stream_input_desc_imp_ref =
+                        dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
+                        
+                        if(stream_input_desc_imp_ref)
+                        {
+                            stream_input_desc_imp_ref->proc_get_counters_resp(notification_id, frame, frame_len, status);
+                        }
+                        else
+                        {
+                            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_input_descriptor to derived stream_input_descriptor_imp error");
+                        }
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Descriptor type %d is not implemented.", desc_type);
+                    }
+
+                }
+                break;
 
             case JDKSAVDECC_AEM_COMMAND_SET_CLOCK_SOURCE:
                 {

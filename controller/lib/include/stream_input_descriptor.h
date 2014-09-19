@@ -367,6 +367,26 @@ namespace avdecc_lib
          *                         this corresponds to the id of the STREAM OUTPUT descriptor.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_rx_state_cmd(void *notification_id) = 0;
+        
+        /**
+         * Send a GET_COUNTERS command to get the counters of the AVDECC Entity.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_counters_cmd(void *notification_id) = 0;
+        
+        /**
+         * \param name avdecc_lib::counter_labels
+         *
+         * \return the stream_input counters valid after the GET_COUNTERS command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counters_valid(int name) = 0;
+        
+        /**
+         * \param name avdecc_lib::counter_labels
+         *
+         * \return the stream_input counters after the GET_COUNTERS command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counters_by_name(int name) = 0;
+
     };
 }
 

@@ -32,6 +32,9 @@
 #include "log_imp.h"
 #include "end_station_imp.h"
 #include "entity_descriptor_imp.h"
+#include "aecp_controller_state_machine.h"
+#include "adp.h"
+#include "system_tx_queue.h"
 
 namespace avdecc_lib
 {

@@ -55,7 +55,8 @@ namespace avdecc_lib
         memset(&aem_cmd_get_stream_format_resp, 0, sizeof(struct jdksavdecc_aem_command_get_stream_format_response));
         memset(&aem_cmd_set_stream_info_resp, 0, sizeof(struct jdksavdecc_aem_command_set_stream_info_response));
         memset(&aem_cmd_get_stream_info_resp, 0, sizeof(struct jdksavdecc_aem_command_get_stream_info_response));
-
+        memset(&aem_cmd_get_counters_resp, 0, sizeof(struct jdksavdecc_aem_command_get_counters_response));
+        
         memset(&acmp_cmd_get_rx_state_resp, 0, sizeof(struct jdksavdecc_acmpdu));
 
         stream_flags_init();
@@ -885,6 +886,160 @@ namespace avdecc_lib
 
         acmp_controller_state_machine_ref->state_resp(notification_id, &cmd_frame);
 
+        return 0;
+    }
+    
+    int STDCALL stream_input_descriptor_imp::send_get_counters_cmd(void *notification_id)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_get_counters aem_cmd_get_stream_input_counters;
+        memset(&aem_cmd_get_stream_input_counters,0,sizeof(aem_cmd_get_stream_input_counters));
+        ssize_t aem_cmd_get_stream_input_counters_returned;
+        
+        /******************************************** AECP Common Data *********************************************/
+        aem_cmd_get_stream_input_counters.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
+        // Fill aem_cmd_get_counters.sequence_id in AEM Controller State Machine
+        aem_cmd_get_stream_input_counters.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_GET_COUNTERS;
+        
+        /****************** AECP Message Specific Data *****************/
+        aem_cmd_get_stream_input_counters.descriptor_type = descriptor_type();
+        aem_cmd_get_stream_input_counters.descriptor_index = descriptor_index();
+        
+        /******************************* Fill frame payload with AECP data and send the frame **************************/
+        aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
+                                                            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_COMMAND_LEN);
+        aem_cmd_get_stream_input_counters_returned = jdksavdecc_aem_command_get_counters_write(&aem_cmd_get_stream_input_counters,
+                                                                                         cmd_frame.payload,
+                                                                                         ETHER_HDR_SIZE,
+                                                                                         sizeof(cmd_frame.payload));
+        
+        if(aem_cmd_get_stream_input_counters_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_input_counters_write error\n");
+            assert(aem_cmd_get_stream_input_counters_returned >= 0);
+            return -1;
+        }
+        
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                           &cmd_frame,
+                                                           base_end_station_imp_ref->entity_id(),
+                                                           JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
+        
+        return 0;
+    }
+    
+    int stream_input_descriptor_imp::proc_get_counters_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        ssize_t aem_cmd_get_stream_input_counters_resp_returned;
+        uint32_t msg_type;
+        bool u_field;
+        int i = 0;
+        int r = 0;
+        
+        memcpy(cmd_frame.payload, frame, frame_len);
+        
+        aem_cmd_get_stream_input_counters_resp_returned = jdksavdecc_aem_command_get_counters_response_read(&aem_cmd_get_counters_resp,
+                                                                                                      frame,
+                                                                                                      ETHER_HDR_SIZE,
+                                                                                                      frame_len);
+        
+        for(i = 0; i<31; i++){
+            r = jdksavdecc_uint32_read(&counters_response.counters_block[i], frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_BLOCK + 4 * i,
+                                       frame_len);
+            
+            if (r < 0)
+                break;
+        }
+
+        
+        if(aem_cmd_get_stream_input_counters_resp_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_input_counters_resp_read error\n");
+            assert(aem_cmd_get_stream_input_counters_resp_returned >= 0);
+            return -1;
+        }
+        
+        msg_type = aem_cmd_get_counters_resp.aem_header.aecpdu_header.header.message_type;
+        status = aem_cmd_get_counters_resp.aem_header.aecpdu_header.header.status;
+        u_field = aem_cmd_get_counters_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        
+        aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
+        
+        return 0;
+    }
+    
+    uint32_t STDCALL stream_input_descriptor_imp::get_counters_by_name(int name)
+    {
+        switch(name)
+        {
+            case STREAM_INPUT_MEDIA_LOCKED:
+                return counters_response.counters_block[0];
+            case STREAM_INPUT_MEDIA_UNLOCKED:
+                return counters_response.counters_block[1];
+            case STREAM_INPUT_STREAM_RESET:
+                return counters_response.counters_block[2];
+            case STREAM_INPUT_SEQ_NUM_MISMATCH:
+                return counters_response.counters_block[3];
+            case STREAM_INPUT_MEDIA_RESET:
+                return counters_response.counters_block[4];
+            case STREAM_INPUT_TIMESTAMP_UNCERTAIN:
+                return counters_response.counters_block[5];
+            case STREAM_INPUT_TIMESTAMP_VALID:
+                return counters_response.counters_block[6];
+            case STREAM_INPUT_TIMESTAMP_NOT_VALID:
+                return counters_response.counters_block[7];
+            case STREAM_INPUT_UNSUPPORTED_FORMAT:
+                return counters_response.counters_block[8];
+            case STREAM_INPUT_LATE_TIMESTAMP:
+                return counters_response.counters_block[9];
+            case STREAM_INPUT_EARLY_TIMESTAMP:
+                return counters_response.counters_block[10];
+            case STREAM_INPUT_FRAMES_RX:
+                return counters_response.counters_block[12];
+            case STREAM_INPUT_FRAMES_TX:
+                return counters_response.counters_block[13];
+            default:
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
+        }
+        return 0;
+    }
+    
+    uint32_t STDCALL stream_input_descriptor_imp::get_counters_valid(int name)
+    {
+        switch(name)
+        {
+            case STREAM_INPUT_MEDIA_LOCKED:
+                return aem_cmd_get_counters_resp.counters_valid & 0x01;
+            case STREAM_INPUT_MEDIA_UNLOCKED:
+                return aem_cmd_get_counters_resp.counters_valid >> 1 & 0x01;
+            case STREAM_INPUT_STREAM_RESET:
+                return aem_cmd_get_counters_resp.counters_valid >> 2 & 0x01;
+            case STREAM_INPUT_SEQ_NUM_MISMATCH:
+                return aem_cmd_get_counters_resp.counters_valid >> 3 & 0x01;
+            case STREAM_INPUT_MEDIA_RESET:
+                return aem_cmd_get_counters_resp.counters_valid >> 4 & 0x01;
+            case STREAM_INPUT_TIMESTAMP_UNCERTAIN:
+                return aem_cmd_get_counters_resp.counters_valid >> 5 & 0x01;
+            case STREAM_INPUT_TIMESTAMP_VALID:
+                return aem_cmd_get_counters_resp.counters_valid >> 6 & 0x01;
+            case STREAM_INPUT_TIMESTAMP_NOT_VALID:
+                return aem_cmd_get_counters_resp.counters_valid >> 7 & 0x01;
+            case STREAM_INPUT_UNSUPPORTED_FORMAT:
+                return aem_cmd_get_counters_resp.counters_valid >> 8 & 0x01;
+            case STREAM_INPUT_LATE_TIMESTAMP:
+                return aem_cmd_get_counters_resp.counters_valid >> 9 & 0x01;
+            case STREAM_INPUT_EARLY_TIMESTAMP:
+                return aem_cmd_get_counters_resp.counters_valid >> 10 & 0x01;
+            case STREAM_INPUT_FRAMES_RX:
+                return aem_cmd_get_counters_resp.counters_valid >> 11 & 0x01;
+            case STREAM_INPUT_FRAMES_TX:
+                return aem_cmd_get_counters_resp.counters_valid >> 12 & 0x01;
+            default:
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
+        }
         return 0;
     }
 }

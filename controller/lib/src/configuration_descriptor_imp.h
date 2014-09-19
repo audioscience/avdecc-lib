@@ -30,6 +30,7 @@
 #pragma once
 
 #include "descriptor_base_imp.h"
+#include "entity_descriptor_imp.h"
 #include "audio_unit_descriptor_imp.h"
 #include "stream_input_descriptor_imp.h"
 #include "stream_output_descriptor_imp.h"
@@ -83,7 +84,8 @@ namespace avdecc_lib
          * This field is set to 74 for this version of AEM.
          */
         uint16_t descriptor_counts_offset();
-
+        
+        void store_entity_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         void store_audio_unit_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         void store_stream_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         void store_stream_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
@@ -102,7 +104,8 @@ namespace avdecc_lib
         void store_control_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         void store_external_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         void store_external_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-
+        
+        size_t STDCALL entity_desc_count();
         size_t STDCALL audio_unit_desc_count();
         size_t STDCALL stream_input_desc_count();
         size_t STDCALL stream_output_desc_count();
@@ -125,8 +128,9 @@ namespace avdecc_lib
         uint16_t STDCALL get_desc_type_from_config_by_index(int desc_index);
         uint16_t STDCALL get_desc_count_from_config_by_index(int desc_index);
         bool STDCALL are_desc_type_and_index_in_config(int desc_type, int desc_count_index);
+        
+        entity_descriptor * STDCALL get_entity_descriptor_by_index(size_t entity_desc_index);
         audio_unit_descriptor * STDCALL get_audio_unit_desc_by_index(size_t audio_unit_desc_index);
-
         stream_input_descriptor * STDCALL get_stream_input_desc_by_index(size_t stream_input_desc_index);
         stream_output_descriptor * STDCALL get_stream_output_desc_by_index(size_t stream_output_desc_index);
         jack_input_descriptor * STDCALL get_jack_input_desc_by_index(size_t jack_input_desc_index);

@@ -224,6 +224,10 @@ namespace avdecc_lib
         m_all_desc[desc_type][desc_index] = desc;
     }
 
+    void configuration_descriptor_imp::store_entity_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
+    {
+        update_desc_database(new entity_descriptor_imp(end_station_obj, frame, pos, frame_len));
+    }
 
     void configuration_descriptor_imp::store_audio_unit_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
@@ -314,7 +318,12 @@ namespace avdecc_lib
     {
         update_desc_database(new external_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
-
+    
+    size_t STDCALL configuration_descriptor_imp::entity_desc_count()
+    {
+        return desc_count(AEM_DESC_ENTITY);
+    }
+    
     size_t STDCALL configuration_descriptor_imp::audio_unit_desc_count()
     {
         return desc_count(AEM_DESC_AUDIO_UNIT);
@@ -324,6 +333,7 @@ namespace avdecc_lib
     {
         return desc_count(AEM_DESC_STREAM_INPUT);
     }
+    
     size_t STDCALL configuration_descriptor_imp::stream_output_desc_count()
     {
         return desc_count(AEM_DESC_STREAM_OUTPUT);
@@ -404,6 +414,11 @@ namespace avdecc_lib
         return desc_count(AEM_DESC_EXTERNAL_PORT_OUTPUT);
     }
 
+    entity_descriptor * STDCALL configuration_descriptor_imp::get_entity_descriptor_by_index(size_t entity_desc_index)
+    {
+        return dynamic_cast<entity_descriptor *>(lookup_desc(AEM_DESC_ENTITY, entity_desc_index));
+    }
+    
     audio_unit_descriptor * STDCALL configuration_descriptor_imp::get_audio_unit_desc_by_index(size_t audio_unit_desc_index)
     {
         return dynamic_cast<audio_unit_descriptor *>(lookup_desc(AEM_DESC_AUDIO_UNIT, audio_unit_desc_index));
