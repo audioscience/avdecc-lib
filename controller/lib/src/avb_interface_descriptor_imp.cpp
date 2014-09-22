@@ -226,7 +226,7 @@ namespace avdecc_lib
         return 0;
     }
     
-    uint32_t STDCALL avb_interface_descriptor_imp::get_counters_by_name(int name)
+    uint32_t STDCALL avb_interface_descriptor_imp::get_counter_by_name(int name)
     {
         switch(name)
         {
@@ -248,7 +248,7 @@ namespace avdecc_lib
         return 0;
     }
     
-    uint32_t STDCALL avb_interface_descriptor_imp::get_counters_valid(int name)
+    uint32_t STDCALL avb_interface_descriptor_imp::get_counter_valid(int name)
     {
         switch(name)
         {

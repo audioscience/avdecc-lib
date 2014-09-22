@@ -119,16 +119,16 @@ namespace avdecc_lib
         /**
          * \param name avdecc_lib::counter_labels
          *
-         * \return the avb counters valid after the GET_COUNTERS command.
+         * \return the avb counter valid after the GET_COUNTERS command.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counters_valid(int name) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_valid(int name) = 0;
         
         /**
          * \param name avdecc_lib::counter_labels
          *
-         * \return the avb counters by name after the GET_COUNTERS command.
+         * \return the avb counter by name after the GET_COUNTERS command.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counters_by_name(int name) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_by_name(int name) = 0;
         
 
     };

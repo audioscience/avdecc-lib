@@ -69,8 +69,8 @@ namespace avdecc_lib
         int proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
         int STDCALL send_get_clock_source_cmd(void *notification_id);
         int proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
-        uint32_t STDCALL get_counters_valid(int name);
-        uint32_t STDCALL get_counters_by_name(int name);
+        uint32_t STDCALL get_counter_valid(int name);
+        uint32_t STDCALL get_counter_by_name(int name);
         int STDCALL send_get_counters_cmd(void *notification_id);
         int proc_get_counters_resp(void *&notification_id, const uint8_t *fram, size_t frame_len, int &status);
 
