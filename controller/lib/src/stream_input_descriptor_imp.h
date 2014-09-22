@@ -123,8 +123,8 @@ namespace avdecc_lib
         uint16_t STDCALL get_rx_state_connection_count();
         uint16_t STDCALL get_rx_state_flags();
         uint16_t STDCALL get_rx_state_stream_vlan_id();
-        uint32_t STDCALL get_counters_valid(int name);
-        uint32_t STDCALL get_counters_by_name(int name);
+        uint32_t STDCALL get_counter_valid(int name);
+        uint32_t STDCALL get_counter_by_name(int name);
         int STDCALL send_get_counters_cmd(void *notification_id);
         int proc_get_counters_resp(void *&notification_id, const uint8_t *fram, size_t frame_len, int &status);
         
