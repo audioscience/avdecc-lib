@@ -32,48 +32,32 @@
 #include "descriptor_base_imp.h"
 #include "configuration_descriptor_imp.h"
 #include "entity_descriptor.h"
+#include "entity_descriptor_response_imp.h"
 
 namespace avdecc_lib
 {
     class entity_descriptor_imp : public entity_descriptor, public virtual descriptor_base_imp
     {
     private:
-        struct jdksavdecc_descriptor_entity entity_desc; // Structure containing the entity_desc fields
-        ssize_t desc_entity_read_returned; // Status of extracting ENTITY descriptor information from a network buffer
         std::vector<configuration_descriptor_imp *> config_desc_vec; // Store a list of CONFIGURATION descriptor objects
-
         struct jdksavdecc_aem_command_acquire_entity_response aem_cmd_acquire_entity_resp; // Store the response received after sending a ACQUIRE_ENTITY command.
         struct jdksavdecc_aem_command_lock_entity_response aem_cmd_lock_entity_resp; // Store the response received after sending a LOCK_ENTITY command.
         struct jdksavdecc_aem_command_reboot_response aem_cmd_reboot_resp;
-
+        uint16_t m_type;
+        uint16_t m_index;
     public:
         entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~entity_descriptor_imp();
+        
+        entity_descriptor_response_imp *resp;
 
         uint16_t STDCALL descriptor_type() const;
         uint16_t STDCALL descriptor_index() const;
-        uint64_t STDCALL entity_id();
-        uint32_t STDCALL vendor_id();
-        uint32_t STDCALL entity_model_id();
-        uint32_t STDCALL entity_capabilities();
-        uint16_t STDCALL talker_stream_sources();
-        uint16_t STDCALL talker_capabilities();
-        uint16_t STDCALL listener_stream_sinks();
-        uint16_t STDCALL listener_capabilities();
-        uint32_t STDCALL controller_capabilities();
-        uint32_t STDCALL available_index();
-        uint64_t STDCALL association_id();
-        uint8_t * STDCALL entity_name();
-        uint16_t STDCALL vendor_name_string();
-        uint16_t STDCALL model_name_string();
-        uint8_t * STDCALL firmware_version();
-        uint8_t * STDCALL group_name();
-        uint8_t * STDCALL serial_number();
-        uint16_t STDCALL configurations_count();
         uint16_t STDCALL current_configuration();
         void store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         size_t STDCALL config_desc_count();
         configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index);
+        entity_descriptor_response * STDCALL get_entity_response();
         uint32_t STDCALL acquire_entity_flags();
         uint64_t STDCALL acquire_entity_owner_entity_id();
         uint32_t STDCALL lock_entity_flags();
@@ -95,4 +79,3 @@ namespace avdecc_lib
         int proc_get_config_resp();
     };
 }
-

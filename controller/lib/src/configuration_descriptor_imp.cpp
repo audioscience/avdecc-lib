@@ -39,7 +39,7 @@
 
 namespace avdecc_lib
 {
-    configuration_descriptor_imp::configuration_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    configuration_descriptor_imp::configuration_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
     {
         ssize_t ret = jdksavdecc_descriptor_configuration_read(&config_desc, frame, pos, frame_len);
 
@@ -212,7 +212,7 @@ namespace avdecc_lib
     }
     */
 
-    void configuration_descriptor_imp::update_desc_database(descriptor_base_imp *desc)
+    void configuration_descriptor_imp::update_desc_database(descriptor_base_imp *desc, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
         uint16_t desc_type = desc->descriptor_type();
         uint16_t desc_index = desc->descriptor_index();
@@ -220,103 +220,111 @@ namespace avdecc_lib
         if (m_all_desc[desc_type].size() <= desc_index)
             m_all_desc[desc_type].resize(desc_index + 1);
         if (m_all_desc[desc_type][desc_index])
-            delete m_all_desc[desc_type][desc_index];
-        m_all_desc[desc_type][desc_index] = desc;
+        {
+            // exists
+            desc->replace_frame(frame, pos, frame_len);
+            delete desc;
+        }
+        else
+        {
+            // does not exist
+            m_all_desc[desc_type][desc_index] = desc;
+        }
     }
 
     void configuration_descriptor_imp::store_entity_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new entity_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new entity_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_audio_unit_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new audio_unit_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new audio_unit_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_stream_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new stream_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new stream_input_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_stream_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new stream_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new stream_output_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_jack_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new jack_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new jack_input_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_jack_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new jack_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new jack_output_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_avb_interface_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new avb_interface_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new avb_interface_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_clock_source_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new clock_source_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new clock_source_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_memory_object_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new memory_object_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new memory_object_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_locale_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new locale_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new locale_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_strings_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new strings_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new strings_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_stream_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new stream_port_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new stream_port_input_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_stream_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new stream_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new stream_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_audio_cluster_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new audio_cluster_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new audio_cluster_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_audio_map_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new audio_map_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new audio_map_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_clock_domain_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new clock_domain_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new clock_domain_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_control_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new control_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new control_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_external_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new external_port_input_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new external_port_input_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
 
     void configuration_descriptor_imp::store_external_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        update_desc_database(new external_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
+        update_desc_database(new external_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len), frame, pos, frame_len);
     }
     
     size_t STDCALL configuration_descriptor_imp::entity_desc_count()
@@ -479,7 +487,9 @@ namespace avdecc_lib
 
         if(desc)
         {
-            return desc->get_string_by_index(reference & 0x7);
+            strings_descriptor_response *strings_resp_ref = desc->get_strings_response();
+            return strings_resp_ref->get_string_by_index(reference & 0x7);
+            free(strings_resp_ref);
         }
 
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,

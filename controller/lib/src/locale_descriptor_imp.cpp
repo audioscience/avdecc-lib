@@ -34,41 +34,28 @@
 
 namespace avdecc_lib
 {
-    locale_descriptor_imp::locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    locale_descriptor_imp::locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
     {
-        ssize_t ret = jdksavdecc_descriptor_locale_read(&locale_desc, frame, pos, frame_len);
-
-        if (ret < 0)
-        {
-            throw avdecc_read_descriptor_error("locale_desc_read error");
-        }
+        m_type = jdksavdecc_descriptor_locale_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
+        m_index = jdksavdecc_descriptor_locale_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
-    locale_descriptor_imp::~locale_descriptor_imp() {}
+    locale_descriptor_imp::~locale_descriptor_imp(){}
+
+    locale_descriptor_response * STDCALL locale_descriptor_imp::get_locale_response()
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new locale_descriptor_response_imp(resp_ref->get_buffer(), resp_ref->get_size(), resp_ref->get_pos());
+    }
 
     uint16_t STDCALL locale_descriptor_imp::descriptor_type() const
     {
-        assert(locale_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_LOCALE);
-        return locale_desc.descriptor_type;
+        return m_type;
     }
 
     uint16_t STDCALL locale_descriptor_imp::descriptor_index() const
     {
-        return locale_desc.descriptor_index;
-    }
+        return m_index;
 
-    uint8_t * STDCALL locale_descriptor_imp::locale_identifier()
-    {
-        return locale_desc.locale_identifier.value;
-    }
-
-    uint16_t STDCALL locale_descriptor_imp::number_of_strings()
-    {
-        return locale_desc.number_of_strings;
-    }
-
-    uint16_t STDCALL locale_descriptor_imp::base_strings()
-    {
-        return locale_desc.base_strings;
     }
 }

@@ -35,18 +35,14 @@
 #include "aecp_controller_state_machine.h"
 #include "adp.h"
 #include "system_tx_queue.h"
+#include "util.h"
 
 namespace avdecc_lib
 {
-    entity_descriptor_imp::entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    entity_descriptor_imp::entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
     {
-        desc_entity_read_returned = jdksavdecc_descriptor_entity_read(&entity_desc, frame, pos, frame_len);
-
-        if(desc_entity_read_returned < 0)
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, entity_desc_read error", end_station_obj->entity_id());
-            assert(desc_entity_read_returned >= 0);
-        }
+        m_type = jdksavdecc_descriptor_entity_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
+        m_index = jdksavdecc_descriptor_entity_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     entity_descriptor_imp::~entity_descriptor_imp()
@@ -59,110 +55,26 @@ namespace avdecc_lib
 
     uint16_t STDCALL entity_descriptor_imp::descriptor_type() const
     {
-        assert(entity_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_ENTITY);
-        return entity_desc.descriptor_type;
+        assert(m_type == JDKSAVDECC_DESCRIPTOR_ENTITY);
+        return m_type;
     }
 
     uint16_t STDCALL entity_descriptor_imp::descriptor_index() const
     {
-        assert(entity_desc.descriptor_index == 0);
-        return entity_desc.descriptor_index;
+        assert(m_index == 0);
+        return m_index;
     }
-
-    uint64_t STDCALL entity_descriptor_imp::entity_id()
-    {
-        return jdksavdecc_uint64_get(&entity_desc.entity_entity_id, 0);
-    }
-
-    uint32_t STDCALL entity_descriptor_imp::vendor_id()
-    {
-        return entity_desc.vendor_id;
-    }
-
-    uint32_t STDCALL entity_descriptor_imp::entity_model_id()
-    {
-        return entity_desc.entity_model_id;
-    }
-
-    uint32_t STDCALL entity_descriptor_imp::entity_capabilities()
-    {
-        return entity_desc.entity_capabilities;
-    }
-
-    uint16_t STDCALL entity_descriptor_imp::talker_stream_sources()
-    {
-        return entity_desc.talker_stream_sources;
-    }
-
-    uint16_t STDCALL entity_descriptor_imp::talker_capabilities()
-    {
-        return entity_desc.talker_capabilities;
-    }
-
-    uint16_t STDCALL entity_descriptor_imp::listener_stream_sinks()
-    {
-        return entity_desc.listener_stream_sinks;
-    }
-
-    uint16_t STDCALL entity_descriptor_imp::listener_capabilities()
-    {
-        return entity_desc.listener_capabilities;
-    }
-
-    uint32_t STDCALL entity_descriptor_imp::controller_capabilities()
-    {
-        return entity_desc.controller_capabilities;
-    }
-
-    uint32_t STDCALL entity_descriptor_imp::available_index()
-    {
-        return entity_desc.available_index;
-    }
-
-    uint64_t STDCALL entity_descriptor_imp::association_id()
-    {
-        return jdksavdecc_uint64_get(&entity_desc.association_id, 0);
-    }
-
-    uint8_t * STDCALL entity_descriptor_imp::entity_name()
-    {
-        return entity_desc.entity_name.value;
-    }
-
-    uint16_t STDCALL entity_descriptor_imp::vendor_name_string()
-    {
-        return entity_desc.vendor_name_string;
-    }
-
-    uint16_t STDCALL entity_descriptor_imp::model_name_string()
-    {
-        return entity_desc.model_name_string;
-    }
-
-    uint8_t * STDCALL entity_descriptor_imp::firmware_version()
-    {
-        return entity_desc.firmware_version.value;
-    }
-
-    uint8_t * STDCALL entity_descriptor_imp::group_name()
-    {
-        return entity_desc.group_name.value;
-    }
-
-    uint8_t * STDCALL entity_descriptor_imp::serial_number()
-    {
-        return entity_desc.serial_number.value;
-    }
-
-    uint16_t STDCALL entity_descriptor_imp::configurations_count()
-    {
-        assert(entity_desc.configurations_count >= 1);
-        return entity_desc.configurations_count;
-    }
-
+    
     uint16_t STDCALL entity_descriptor_imp::current_configuration()
     {
-        return entity_desc.current_configuration;
+        return jdksavdecc_descriptor_entity_get_current_configuration(resp_ref->get_buffer(), resp_ref->get_pos());
+    }
+
+    entity_descriptor_response * STDCALL entity_descriptor_imp::get_entity_response()
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new entity_descriptor_response_imp(resp_ref->get_buffer(),
+                                                                resp_ref->get_size(), resp_ref->get_pos());
     }
 
     void entity_descriptor_imp::store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)

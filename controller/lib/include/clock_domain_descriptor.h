@@ -37,6 +37,9 @@
 #include <stdint.h>
 #include "build.h"
 #include "descriptor_base.h"
+#include "clock_domain_descriptor_response.h"
+#include "clock_domain_counters_response.h"
+#include "clock_domain_get_clock_source_response.h"
 
 namespace avdecc_lib
 {
@@ -44,33 +47,19 @@ namespace avdecc_lib
     {
     public:
         /**
-         * \return The descriptor index of the CLOCK SOURCE descriptor describing the current CLOCK SOURCE
-         *	       for the CLOCK DOMAIN.
+         * \return the clock_domain descriptor response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_source_index() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual clock_domain_descriptor_response * STDCALL get_clock_domain_response() = 0;
+        
+        /**
+         * \return the clock_domain descriptor counters.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual clock_domain_counters_response * STDCALL get_clock_domain_counters_response() = 0;
 
         /**
-         * \return The number of CLOCK SOURCE indexes in the clock sources field. The maximum value for this field
-         *	       is 249 for this version of AEM.
+         * \return the clock_domain get clock source response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_sources_count() = 0;
-
-        /**
-         * \return The corresponding Clock Sources by index present in the CLOCK DOMAIN.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_by_index(size_t clk_src_index) = 0;
-
-        /**
-         * \return The CLOCK SOURCE index of the requested CLOCK DOMAIN after sending a
-         *	       SET_CLOCK_SOURCE command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL set_clock_source_clock_source_index() = 0;
-
-        /**
-         * \return The CLOCK SOURCE index of the requested CLOCK DOMAIN after sending a
-         *	       GET_CLOCK_SOURCE command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_clock_source_index() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual clock_domain_get_clock_source_response * STDCALL get_clock_domain_get_clock_source_response() = 0;
 
         /**
          * Send a SET_CLOCK_SOURCE command to change the CLOCK SOURCE of a CLOCK DOMAIN.
@@ -98,24 +87,8 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_clock_source_cmd(void *notification_id) = 0;
         
         /**
-         * Send a GET_COUNTERS command to get the counters of the AVDECC Entity.
+         * Send a GET_COUNTERS command to get the clock_domain counters of the AVDECC Entity.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_counters_cmd(void *notification_id) = 0;
-        
-        /**
-         * \param name avdecc_lib::counter_labels
-         *
-         * \return the clock_domain counters after the GET_COUNTERS command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_valid(int name) = 0;
-        
-        /**
-         * \param name avdecc_lib::counter_labels
-         *
-         * \return the clock_domain counters block after the GET_COUNTERS command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_by_name(int name) = 0;
-
     };
 }
-

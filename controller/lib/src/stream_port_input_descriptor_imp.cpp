@@ -35,67 +35,30 @@
 
 namespace avdecc_lib
 {
-    stream_port_input_descriptor_imp::stream_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    stream_port_input_descriptor_imp::stream_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
     {
-        ssize_t ret = jdksavdecc_descriptor_stream_port_read(&stream_port_input_desc, frame, pos, frame_len);
-
-        if (ret < 0)
-        {
-            throw avdecc_read_descriptor_error("stream_port_input_desc_read error");
-        }
+        m_type = jdksavdecc_descriptor_stream_port_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
+        m_index = jdksavdecc_descriptor_stream_port_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     stream_port_input_descriptor_imp::~stream_port_input_descriptor_imp() {}
+    
+    
+    stream_port_input_descriptor_response * STDCALL stream_port_input_descriptor_imp::get_stream_port_input_response()
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new stream_port_input_descriptor_response_imp(resp_ref->get_buffer(),
+                                                             resp_ref->get_size(), resp_ref->get_pos());
+    }
 
     uint16_t STDCALL stream_port_input_descriptor_imp::descriptor_type() const
     {
-        assert(stream_port_input_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT);
-        return stream_port_input_desc.descriptor_type;
+        assert(m_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT);
+        return m_type;
     }
 
     uint16_t STDCALL stream_port_input_descriptor_imp::descriptor_index() const
     {
-        //assert(stream_port_input_desc.descriptor_index == 0);
-        return stream_port_input_desc.descriptor_index;
-    }
-
-    uint16_t STDCALL stream_port_input_descriptor_imp::clock_domain_index()
-    {
-        return stream_port_input_desc.clock_domain_index;
-    }
-
-    uint16_t STDCALL stream_port_input_descriptor_imp::port_flags()
-    {
-        return stream_port_input_desc.port_flags;
-    }
-
-    uint16_t STDCALL stream_port_input_descriptor_imp::number_of_controls()
-    {
-        return stream_port_input_desc.number_of_controls;
-    }
-
-    uint16_t STDCALL stream_port_input_descriptor_imp::base_control()
-    {
-        return stream_port_input_desc.base_control;
-    }
-
-    uint16_t STDCALL stream_port_input_descriptor_imp::number_of_clusters()
-    {
-        return stream_port_input_desc.number_of_clusters;
-    }
-
-    uint16_t STDCALL stream_port_input_descriptor_imp::base_cluster()
-    {
-        return stream_port_input_desc.base_cluster;
-    }
-
-    uint16_t STDCALL stream_port_input_descriptor_imp::number_of_maps()
-    {
-        return stream_port_input_desc.number_of_maps;
-    }
-
-    uint16_t STDCALL stream_port_input_descriptor_imp::base_map()
-    {
-        return stream_port_input_desc.base_map;
+        return m_index;
     }
 }

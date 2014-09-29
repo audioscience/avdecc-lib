@@ -35,6 +35,7 @@
 #include <stdint.h>
 #include "build.h"
 #include "descriptor_base.h"
+#include "clock_source_descriptor_response.h"
 
 namespace avdecc_lib
 {
@@ -42,36 +43,8 @@ namespace avdecc_lib
     {
     public:
         /**
-         * The flags describing the capabilities or features of the CLOCK SOURCE.
-         *
-         * \return 1 (Stream ID) if the Input Stream CLOCK SOURCE is identified by the stream ID. \n
-         *	       2 (Local ID) if the Input Stream CLOCK SOURCE is identified by it's local ID.
+         * \return the clock_source descriptor response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_source_flags() = 0;
-
-        /**
-         * The type of CLOCK SOURCE.
-         *
-         * \return 0 (Internal) if the clock is sourced from within the entity such as from a crystal oscillator. \n
-         *	       1 (External) if the clock is sourced from an external connection on the entity via a Jack. \n
-         *	       2 (Input Stream) if the clock is sourced from the media clock of an Input Stream.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_source_type() = 0;
-
-        /**
-         * \return The identifier of the CLOCK SOURCE.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL clock_source_identifier() = 0;
-
-        /**
-         * \return The descriptor type of the object that this CLOCK SOURCE is associated with.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_source_location_type() = 0;
-
-        /**
-         * \return The descriptor index of the object that this CLOCK SOURCE is associated with.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_source_location_index() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual clock_source_descriptor_response * STDCALL get_clock_source_response() = 0;
     };
 }
-

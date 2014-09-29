@@ -31,29 +31,24 @@
 
 #include "descriptor_base_imp.h"
 #include "stream_port_input_descriptor.h"
+#include "stream_port_input_descriptor_response_imp.h"
 
 namespace avdecc_lib
 {
     class stream_port_input_descriptor_imp : public stream_port_input_descriptor, public virtual descriptor_base_imp
     {
     private:
-        struct jdksavdecc_descriptor_stream_port stream_port_input_desc; // Structure containing the stream_port_input_desc fields
-
+        uint16_t m_type;
+        uint16_t m_index;
     public:
         stream_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
 		virtual ~stream_port_input_descriptor_imp();
+        
+        stream_port_input_descriptor_response_imp *resp;
 
+        stream_port_input_descriptor_response * STDCALL get_stream_port_input_response();
         uint16_t STDCALL descriptor_type() const;
         uint16_t STDCALL descriptor_index() const;
-        uint16_t STDCALL clock_domain_index();
-
-		uint16_t STDCALL port_flags();
-        uint16_t STDCALL number_of_controls();
-        uint16_t STDCALL base_control();
-        uint16_t STDCALL number_of_clusters();
-        uint16_t STDCALL base_cluster();
-        uint16_t STDCALL number_of_maps();
-        uint16_t STDCALL base_map();
     };
 }
 

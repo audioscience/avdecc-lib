@@ -31,20 +31,23 @@
 
 #include "descriptor_base_imp.h"
 #include "strings_descriptor.h"
+#include "strings_descriptor_response_imp.h"
 
 namespace avdecc_lib
 {
     class strings_descriptor_imp : public strings_descriptor, public virtual descriptor_base_imp
     {
     private:
-        struct jdksavdecc_descriptor_strings strings_desc; // Structure containing the strings_desc fields
-
+        uint16_t m_type;
+        uint16_t m_index;
     public:
         strings_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~strings_descriptor_imp();
+        
+        strings_descriptor_response_imp *resp;
 
+        strings_descriptor_response * STDCALL get_strings_response();
         uint16_t STDCALL descriptor_type() const;
         uint16_t STDCALL descriptor_index() const;
-        uint8_t * STDCALL get_string_by_index(size_t string_index);
     };
 }

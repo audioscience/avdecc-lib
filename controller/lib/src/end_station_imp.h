@@ -76,6 +76,7 @@ namespace avdecc_lib
         end_station_imp(const uint8_t *frame, size_t frame_len);
         virtual ~end_station_imp();
 
+        std::mutex locker;
         const char STDCALL get_connection_status() const;
 
         /**

@@ -57,7 +57,6 @@ namespace avdecc_lib
     {
     private:
         typedef std::vector<descriptor_base_imp *> DITEM;
-
         struct jdksavdecc_descriptor_configuration config_desc; // Structure containing the config_desc fields
 
         std::vector<uint16_t> desc_type_vec; // Store descriptor types present in the CONFIGURATION descriptor
@@ -66,11 +65,10 @@ namespace avdecc_lib
 
         size_t desc_count(uint16_t type);
         descriptor_base_imp *lookup_desc(uint16_t desc_type, size_t index);
-        void update_desc_database(descriptor_base_imp *desc);
+        void update_desc_database(descriptor_base_imp *desc, const uint8_t *frame, ssize_t pos, size_t frame_len);
 
-	public:
+    public:
         configuration_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-
         virtual ~configuration_descriptor_imp();
 
         uint16_t STDCALL descriptor_type() const;

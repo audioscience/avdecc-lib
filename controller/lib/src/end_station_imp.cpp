@@ -546,9 +546,10 @@ namespace avdecc_lib
      */
     void end_station_imp::background_read_deduce_next(configuration_descriptor *cd, uint16_t desc_type, void *frame, ssize_t read_desc_offset)
     {
-        stream_port_input_descriptor *spid;
-        stream_port_output_descriptor *spod;
-        audio_unit_descriptor *aud;
+        stream_port_input_descriptor_response *spid;
+        stream_port_output_descriptor_response *spod;
+        audio_unit_descriptor_response *aud;
+        locale_descriptor_response *ldr;
         uint16_t total_num_of_desc = 0;
         uint16_t desc_index;
 
@@ -580,14 +581,16 @@ namespace avdecc_lib
                 break;
 
             case JDKSAVDECC_DESCRIPTOR_LOCALE:
+                ldr = cd->get_locale_desc_by_index(0)->get_locale_response();
                 queue_background_read_request(
                     JDKSAVDECC_DESCRIPTOR_STRINGS,
                     0,
-                    cd->get_locale_desc_by_index(0)->number_of_strings());
+                    ldr->number_of_strings());
+                free(ldr);
                 break;
 
             case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
-                aud = cd->get_audio_unit_desc_by_index(desc_index);
+                aud = cd->get_audio_unit_desc_by_index(desc_index)->get_audio_unit_response();
                 // stream port inputs
                 queue_background_read_request(
                     JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT,
@@ -614,10 +617,11 @@ namespace avdecc_lib
                     aud->base_control_block(),
                     aud->number_of_control_blocks());
                 // TODO: other descriptor types in AUDIO_UNIT
+                free(aud);
                 break;
 
             case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
-                spid = cd->get_stream_port_input_desc_by_index(desc_index);
+                spid = cd->get_stream_port_input_desc_by_index(desc_index)->get_stream_port_input_response();
                 // controls
                 queue_background_read_request(
                     JDKSAVDECC_DESCRIPTOR_CONTROL,
@@ -633,10 +637,11 @@ namespace avdecc_lib
                     JDKSAVDECC_DESCRIPTOR_AUDIO_MAP,
                     spid->base_map(),
                     spid->number_of_maps());
+                free(spid);
                 break;
 
             case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
-                spod = cd->get_stream_port_output_desc_by_index(desc_index);
+                spod = cd->get_stream_port_output_desc_by_index(desc_index)->get_stream_port_output_response();
                 // controls
                 queue_background_read_request(
                     JDKSAVDECC_DESCRIPTOR_CONTROL,
@@ -652,6 +657,7 @@ namespace avdecc_lib
                     JDKSAVDECC_DESCRIPTOR_AUDIO_MAP,
                     spod->base_map(),
                     spod->number_of_maps());
+                free(spod);
                 break;
         }
     }
@@ -1077,15 +1083,15 @@ namespace avdecc_lib
                 {
                     desc_type = jdksavdecc_aem_command_get_counters_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
                     desc_index = jdksavdecc_aem_command_get_counters_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                
+
                     if(desc_type == JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE)
                     {
-                        avb_interface_descriptor_imp *avb_desc_imp_ref =
+                        avb_interface_descriptor_imp *avb_interface_desc_ref =
                         dynamic_cast<avb_interface_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_avb_interface_desc_by_index(desc_index));
                         
-                        if(avb_desc_imp_ref)
+                        if(avb_interface_desc_ref)
                         {
-                            avb_desc_imp_ref->proc_get_counters_resp(notification_id, frame, frame_len, status);
+                            avb_interface_desc_ref->proc_get_counters_resp(notification_id, frame, frame_len, status);
                         }
                         else
                         {

@@ -31,38 +31,24 @@
 
 #include "descriptor_base_imp.h"
 #include "jack_input_descriptor.h"
+#include "jack_input_descriptor_response_imp.h"
 
 namespace avdecc_lib
 {
     class jack_input_descriptor_imp : public jack_input_descriptor, public virtual descriptor_base_imp
     {
     private:
-        struct jdksavdecc_descriptor_jack jack_input_desc; // Structure containing the jack_input_desc fields
-
-        struct jack_input_desc_jack_flags
-        {
-            bool clock_sync_source;
-            bool captive;
-        };
-
-        struct jack_input_desc_jack_flags jack_input_flags;
-
+        uint16_t m_type;
+        uint16_t m_index;
     public:
         jack_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~jack_input_descriptor_imp();
+        
+        jack_input_descriptor_response_imp *resp;
 
         uint16_t STDCALL descriptor_type() const;
         uint16_t STDCALL descriptor_index() const;
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL localized_description();
-
-		uint16_t STDCALL jack_flags();
-        uint16_t STDCALL jack_flag_clock_sync_source();
-        uint16_t STDCALL jack_flag_captive();
-        uint16_t STDCALL jack_type();
-        uint16_t STDCALL number_of_controls();
-        uint16_t STDCALL base_control();
-    
+        jack_input_descriptor_response * STDCALL get_jack_input_response();
     private:
         /**
          * Store the jack flags componenets of the JACK INPUT descriptor object in a vector.

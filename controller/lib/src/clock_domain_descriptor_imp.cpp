@@ -39,90 +39,47 @@
 
 namespace avdecc_lib
 {
-    clock_domain_descriptor_imp::clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    clock_domain_descriptor_imp::clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
     {
-        ssize_t ret = jdksavdecc_descriptor_clock_domain_read(&clock_domain_desc, frame, pos, frame_len);
-
-        if (ret < 0)
-        {
-            throw avdecc_read_descriptor_error("clock_domain_desc_read error");
-        }
-
-        store_clock_sources(frame, pos);
         memset(&aem_cmd_set_clk_src_resp, 0, sizeof(struct jdksavdecc_aem_command_set_clock_source_response));
-        memset(&aem_cmd_get_clk_src_resp, 0, sizeof(struct jdksavdecc_aem_command_get_clock_source_response));
-        memset(&aem_cmd_get_counters_resp, 0, sizeof(struct jdksavdecc_aem_command_get_counters_response));
+
+        m_type = jdksavdecc_descriptor_clock_domain_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
+        m_index = jdksavdecc_descriptor_clock_domain_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     clock_domain_descriptor_imp::~clock_domain_descriptor_imp() {}
+    
+    clock_domain_descriptor_response * STDCALL clock_domain_descriptor_imp::get_clock_domain_response()
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new clock_domain_descriptor_response_imp(resp_ref->get_buffer(),
+                                                               resp_ref->get_size(), resp_ref->get_pos());
+    }
+
+    clock_domain_counters_response * STDCALL clock_domain_descriptor_imp::get_clock_domain_counters_response()
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return counters_resp = new clock_domain_counters_response_imp(resp_ref->get_buffer(),
+                                                                      resp_ref->get_size(), resp_ref->get_pos());
+    }
+    
+    clock_domain_get_clock_source_response * STDCALL clock_domain_descriptor_imp::get_clock_domain_get_clock_source_response()
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return clock_source_resp = new clock_domain_get_clock_source_response_imp(resp_ref->get_buffer(),
+                                                                                  resp_ref->get_size(), resp_ref->get_pos());
+    }
+
 
     uint16_t STDCALL clock_domain_descriptor_imp::descriptor_type() const
     {
-        assert(clock_domain_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN);
-        return clock_domain_desc.descriptor_type;
+        assert(m_type == JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN);
+        return m_type;
     }
 
     uint16_t STDCALL clock_domain_descriptor_imp::descriptor_index() const
     {
-        return clock_domain_desc.descriptor_index;
-    }
-
-    uint8_t * STDCALL clock_domain_descriptor_imp::object_name()
-    {
-        return clock_domain_desc.object_name.value;
-    }
-
-    uint16_t STDCALL clock_domain_descriptor_imp::localized_description()
-    {
-        return clock_domain_desc.localized_description;
-    }
-
-    uint16_t STDCALL clock_domain_descriptor_imp::clock_source_index()
-    {
-        return clock_domain_desc.clock_source_index;
-    }
-
-    uint16_t clock_domain_descriptor_imp::clock_sources_offset()
-    {
-        assert(clock_domain_desc.clock_sources_offset == 76);
-        return clock_domain_desc.clock_sources_offset;
-    }
-
-    uint16_t STDCALL clock_domain_descriptor_imp::clock_sources_count()
-    {
-        assert(clock_domain_desc.clock_sources_count <= 249);
-        return clock_domain_desc.clock_sources_count;
-    }
-
-    void clock_domain_descriptor_imp::store_clock_sources(const uint8_t *frame, size_t pos)
-    {
-        uint16_t offset = 0;
-
-        for(uint32_t i = 0; i < clock_sources_count(); i++)
-        {
-            clk_src_vec.push_back(jdksavdecc_uint16_get(frame, clock_sources_offset() + pos + offset));
-            offset += 0x2;
-        }
-    }
-
-    uint16_t STDCALL clock_domain_descriptor_imp::get_clock_source_by_index(size_t clk_src_index)
-    {
-        return clk_src_vec.at(clk_src_index);
-    }
-
-    uint16_t STDCALL clock_domain_descriptor_imp::set_clock_source_clock_source_index()
-    {
-        return aem_cmd_set_clk_src_resp.clock_source_index;
-    }
-
-    void clock_domain_descriptor_imp::update_clock_source_index(uint16_t clock_source_index)
-    {
-        clock_domain_desc.clock_source_index = clock_source_index;
-    }
-
-    uint16_t STDCALL clock_domain_descriptor_imp::get_clock_source_clock_source_index()
-    {
-        return aem_cmd_get_clk_src_resp.clock_source_index;
+        return m_index;
     }
 
     int STDCALL clock_domain_descriptor_imp::send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index)
@@ -194,11 +151,13 @@ namespace avdecc_lib
         u_field = aem_cmd_set_clk_src_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
-
+        
+        /*
         if(status == AEM_STATUS_SUCCESS)
         {
             update_clock_source_index(aem_cmd_set_clk_src_resp.clock_source_index);
         }
+        */
 
         return 0;
     }
@@ -248,6 +207,7 @@ namespace avdecc_lib
     int clock_domain_descriptor_imp::proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_get_clock_source_response aem_cmd_get_clk_src_resp;
         ssize_t aem_cmd_get_clk_src_resp_returned;
         uint32_t msg_type;
         bool u_field;
@@ -266,6 +226,8 @@ namespace avdecc_lib
             return -1;
         }
 
+        replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+        
         msg_type = aem_cmd_get_clk_src_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_get_clk_src_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_get_clk_src_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
@@ -319,27 +281,17 @@ namespace avdecc_lib
     int clock_domain_descriptor_imp::proc_get_counters_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_get_counters_response clock_domain_counters_resp;
         ssize_t aem_cmd_get_counters_resp_returned;
         uint32_t msg_type;
         bool u_field;
-        int i = 0;
-        int r = 0;
         
         memcpy(cmd_frame.payload, frame, frame_len);
-        
-        aem_cmd_get_counters_resp_returned = jdksavdecc_aem_command_get_counters_response_read(&aem_cmd_get_counters_resp,
-                                                                                                      frame,
-                                                                                                      ETHER_HDR_SIZE,
-                                                                                                      frame_len);
-        for(i = 0; i<31; i++){
-            r = jdksavdecc_uint32_read(&counters_response.counters_block[i], frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_BLOCK + 4 * i,
-                                       frame_len);
-            
-            if (r < 0)
-                break;
-        }
 
-        
+        aem_cmd_get_counters_resp_returned = jdksavdecc_aem_command_get_counters_response_read(&clock_domain_counters_resp,
+                                                                                               frame,
+                                                                                               ETHER_HDR_SIZE,
+                                                                                               frame_len);
         if(aem_cmd_get_counters_resp_returned < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_clock_domain_counters_resp_read error\n");
@@ -347,40 +299,14 @@ namespace avdecc_lib
             return -1;
         }
         
-        msg_type = aem_cmd_get_counters_resp.aem_header.aecpdu_header.header.message_type;
-        status = aem_cmd_get_counters_resp.aem_header.aecpdu_header.header.status;
-        u_field = aem_cmd_get_counters_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+        
+        msg_type = clock_domain_counters_resp.aem_header.aecpdu_header.header.message_type;
+        status = clock_domain_counters_resp.aem_header.aecpdu_header.header.status;
+        u_field = clock_domain_counters_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
         
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
         
-        return 0;
-    }
-    
-    uint32_t STDCALL clock_domain_descriptor_imp::get_counter_valid(int name)
-    {
-        switch(name)
-        {
-            case CLOCK_DOMAIN_LOCKED:
-                return aem_cmd_get_counters_resp.counters_valid & 0x01;
-            case CLOCK_DOMAIN_UNLOCKED:
-                return aem_cmd_get_counters_resp.counters_valid >> 1 & 0x01;
-            default:
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
-        }
-        return 0;
-    }
-    
-    uint32_t STDCALL clock_domain_descriptor_imp::get_counter_by_name(int name)
-    {
-        switch(name)
-        {
-            case CLOCK_DOMAIN_LOCKED:
-                return counters_response.counters_block[0];
-            case CLOCK_DOMAIN_UNLOCKED:
-                return counters_response.counters_block[1];
-            default:
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
-        }
         return 0;
     }
 }

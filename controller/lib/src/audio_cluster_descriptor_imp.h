@@ -31,30 +31,23 @@
 
 #include "descriptor_base_imp.h"
 #include "audio_cluster_descriptor.h"
+#include "audio_cluster_descriptor_response_imp.h"
 
 namespace avdecc_lib
 {
     class audio_cluster_descriptor_imp : public audio_cluster_descriptor, public virtual descriptor_base_imp
     {
     private:
-        struct jdksavdecc_descriptor_audio_cluster audio_cluster_desc; // Structure containing the audio_cluster_desc fields
-
+        uint16_t m_type;
+        uint16_t m_index;
     public:
         audio_cluster_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-
         virtual ~audio_cluster_descriptor_imp();
+        
+        audio_cluster_descriptor_response_imp *resp;
 
         uint16_t STDCALL descriptor_type() const;
         uint16_t STDCALL descriptor_index() const;
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL localized_description();
-        uint16_t STDCALL signal_type();
-        uint16_t STDCALL signal_index();
-        uint16_t STDCALL signal_output();
-        uint32_t STDCALL path_latency();
-        uint32_t STDCALL block_latency();
-        uint16_t STDCALL channel_count();
-        uint8_t STDCALL format();
+        audio_cluster_descriptor_response * STDCALL get_audio_cluster_response();
     };
 }
-

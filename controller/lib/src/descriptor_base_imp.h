@@ -42,15 +42,17 @@
 namespace avdecc_lib
 {
     class end_station_imp;
+    class response_frame;
 
     class descriptor_base_imp : public virtual descriptor_base
     {
     protected:
         end_station_imp *base_end_station_imp_ref;
         std::vector<descriptor_field_imp *>m_fields;
+        response_frame *resp_ref;
 
     public:
-        descriptor_base_imp(end_station_imp *base);
+        descriptor_base_imp(end_station_imp *base, const uint8_t *frame, size_t size, ssize_t pos);
         virtual ~descriptor_base_imp();
 
         virtual uint16_t STDCALL descriptor_type() const;
@@ -70,6 +72,11 @@ namespace avdecc_lib
             else
                 return nullptr;
         };
+        /**
+         * Replace the frame stored in response_frame on descriptor construction and whenenver descriptor type
+         * and index are already in the internal database
+         */
+        virtual void STDCALL replace_frame(const uint8_t *frame, ssize_t pos, size_t size);
 
         /**
          * Get the flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.

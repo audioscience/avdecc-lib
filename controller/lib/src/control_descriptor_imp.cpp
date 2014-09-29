@@ -35,94 +35,30 @@
 
 namespace avdecc_lib
 {
-    control_descriptor_imp::control_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    control_descriptor_imp::control_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
     {
-        ssize_t ret = jdksavdecc_descriptor_control_read(&control_desc, frame, pos, frame_len);
-
-        if (ret < 0)
-        {
-            throw avdecc_read_descriptor_error("control_desc_read error");
-        }
+        m_type = jdksavdecc_descriptor_control_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
+        m_index = jdksavdecc_descriptor_control_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
 
-    control_descriptor_imp::~control_descriptor_imp()
+    control_descriptor_imp::~control_descriptor_imp(){}
+    
+    control_descriptor_response * STDCALL control_descriptor_imp::get_control_response()
     {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new control_descriptor_response_imp(resp_ref->get_buffer(),
+                                                               resp_ref->get_size(), resp_ref->get_pos());
     }
 
     uint16_t STDCALL control_descriptor_imp::descriptor_type() const
     {
-        assert(control_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_CONTROL);
-        return control_desc.descriptor_type;
+        assert(m_type == JDKSAVDECC_DESCRIPTOR_CONTROL);
+        return m_type;
     }
 
     uint16_t STDCALL control_descriptor_imp::descriptor_index() const
     {
-        return control_desc.descriptor_index;
-    }
-
-    uint8_t * STDCALL control_descriptor_imp::object_name()
-    {
-        return control_desc.object_name.value;
-    }
-
-    uint16_t STDCALL control_descriptor_imp::localized_description()
-    {
-        return control_desc.localized_description;
-    }
-
-    uint32_t STDCALL control_descriptor_imp::block_latency()
-    {
-        return control_desc.block_latency;
-    }
-
-    uint32_t STDCALL control_descriptor_imp::control_latency()
-    {
-        return control_desc.control_latency;
-    }
-
-    uint16_t STDCALL control_descriptor_imp::control_domain()
-    {
-        return control_desc.control_domain;
-    }
-
-    uint16_t STDCALL control_descriptor_imp::control_value_type()
-    {
-        return control_desc.control_value_type;
-    }
-
-    uint64_t STDCALL control_descriptor_imp::control_type()
-    {
-        return jdksavdecc_uint64_get(&control_desc.control_type, 0);
-    }
-
-    uint32_t STDCALL control_descriptor_imp::reset_time()
-    {
-        return control_desc.reset_time;
-    }
-
-    uint16_t STDCALL control_descriptor_imp::values_offset()
-    {
-        return control_desc.values_offset;
-    }
-
-    uint16_t STDCALL control_descriptor_imp::number_of_values()
-    {
-        return control_desc.number_of_values;
-    }
-
-    uint16_t STDCALL control_descriptor_imp::signal_type()
-    {
-        return control_desc.signal_type;
-    }
-
-    uint16_t STDCALL control_descriptor_imp::signal_index()
-    {
-        return control_desc.signal_index;
-    }
-
-    uint16_t STDCALL control_descriptor_imp::signal_output()
-    {
-        return control_desc.signal_output;
+        return m_index;
     }
 }

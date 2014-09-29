@@ -201,11 +201,12 @@ namespace avdecc_lib
     {
         for (uint32_t i = 0; i < end_station_array->size(); i++)
         {
+            entity_descriptor_response *entity_resp_ref = end_station_array->at(i)->get_entity_desc_by_index(entity_index)->get_entity_response();
             uint64_t end_station_entity_id = end_station_array->at(i)->entity_id();
             if(end_station_entity_id == entity_entity_id)
             {
                 bool is_valid = ((entity_index < end_station_array->at(i)->entity_desc_count()) &&
-                                 (config_index < end_station_array->at(i)->get_entity_desc_by_index(entity_index)->configurations_count()));
+                                 (config_index < entity_resp_ref->configurations_count()));
                 if(is_valid)
                 {
                     configuration_descriptor * configuration;
@@ -218,8 +219,8 @@ namespace avdecc_lib
                     log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_entity_id error");
                 }
             }
+            free(entity_resp_ref);
         }
-
         return NULL;
     }
 

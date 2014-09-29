@@ -35,66 +35,29 @@
 
 namespace avdecc_lib
 {
-    strings_descriptor_imp::strings_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
+    strings_descriptor_imp::strings_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
     {
-        ssize_t ret = jdksavdecc_descriptor_strings_read(&strings_desc, frame, pos, frame_len);
-
-        if (ret < 0)
-        {
-            throw avdecc_read_descriptor_error("strings_desc_read error");
-        }
+        m_type = jdksavdecc_descriptor_strings_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
+        m_index = jdksavdecc_descriptor_strings_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     strings_descriptor_imp::~strings_descriptor_imp() {}
+    
+    strings_descriptor_response * STDCALL strings_descriptor_imp::get_strings_response()
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new strings_descriptor_response_imp(resp_ref->get_buffer(),
+                                                                    resp_ref->get_size(), resp_ref->get_pos());
+    }
 
     uint16_t STDCALL strings_descriptor_imp::descriptor_type() const
     {
-        assert(strings_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_STRINGS);
-        return strings_desc.descriptor_type;
+        assert(m_type == JDKSAVDECC_DESCRIPTOR_STRINGS);
+        return m_type;
     }
 
     uint16_t STDCALL strings_descriptor_imp::descriptor_index() const
     {
-        return strings_desc.descriptor_index;
-    }
-
-    uint8_t * STDCALL strings_descriptor_imp::get_string_by_index(size_t string_index)
-    {
-        switch(string_index)
-        {
-            case 0:
-                return strings_desc.string_0.value;
-                break;
-
-            case 1:
-                return strings_desc.string_1.value;
-                break;
-
-            case 2:
-                return strings_desc.string_2.value;
-                break;
-
-            case 3:
-                return strings_desc.string_3.value;
-                break;
-
-            case 4:
-                return strings_desc.string_4.value;
-                break;
-
-            case 5:
-                return strings_desc.string_5.value;
-                break;
-
-            case 6:
-                return strings_desc.string_6.value;
-                break;
-
-            default:
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_string_by_index error");
-                break;
-        }
-
-        return 0;
+        return m_index;
     }
 }
