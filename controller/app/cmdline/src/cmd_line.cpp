@@ -3145,16 +3145,16 @@ int cmd_line::cmd_get_counters(int total_matched, std::vector<cli_argument*> arg
                     atomic_cout << "Link down Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_LINK_DOWN)
                         << std::endl;
                 if(avb_desc_ref->get_counter_valid(avdecc_lib::AVB_INTERFACE_FRAMES_TX))
-                    atomic_cout << "Link up Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_TX)
+                    atomic_cout << "Frames TX Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_TX)
                         << std::endl;
                 if(avb_desc_ref->get_counter_valid(avdecc_lib::AVB_INTERFACE_FRAMES_RX))
-                    atomic_cout << "Link down Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_RX)
+                    atomic_cout << "Frames RX Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_RX)
                         << std::endl;
                 if(avb_desc_ref->get_counter_valid(avdecc_lib::AVB_INTERFACE_RX_CRC_ERROR))
-                    atomic_cout << "Link up Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_RX_CRC_ERROR)
+                    atomic_cout << "RX crc error Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_RX_CRC_ERROR)
                         << std::endl;
                 if(avb_desc_ref->get_counter_valid(avdecc_lib::AVB_GPTP_GM_CHANGED))
-                    atomic_cout << "Link down Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_GPTP_GM_CHANGED)
+                    atomic_cout << "GPTP changed Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_GPTP_GM_CHANGED)
                         << std::endl;
             }
         }
