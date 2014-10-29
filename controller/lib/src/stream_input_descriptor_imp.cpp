@@ -998,9 +998,9 @@ namespace avdecc_lib
             case STREAM_INPUT_EARLY_TIMESTAMP:
                 return counters_response.counters_block[10];
             case STREAM_INPUT_FRAMES_RX:
-                return counters_response.counters_block[12];
+                return counters_response.counters_block[11];
             case STREAM_INPUT_FRAMES_TX:
-                return counters_response.counters_block[13];
+                return counters_response.counters_block[12];
             default:
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
         }
