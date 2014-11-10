@@ -306,7 +306,7 @@ namespace avdecc_lib
 
         if((dest_mac_addr == net_interface_ref->mac_addr()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address
         {
-            uint8_t subtype = jdksavdecc_common_control_header_get_subtype(frame,ETHER_HDR_SIZE);
+            uint8_t subtype = jdksavdecc_common_control_header_get_subtype(frame, ETHER_HDR_SIZE);
 
             switch(subtype)
             {
@@ -342,7 +342,6 @@ namespace avdecc_lib
                             end_station = end_station_array->at(i);
                         }
                     }
-
 
                     if(jdksavdecc_eui64_convert_to_uint64(&adpdu.header.entity_id) != 0)
                     {
@@ -384,51 +383,50 @@ namespace avdecc_lib
                 case JDKSAVDECC_SUBTYPE_AECP:
                 {
                     int found_end_station_index = -1;
-                    bool found_aecp_in_end_station = false;
                     uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
                     struct jdksavdecc_eui64 entity_entity_id = jdksavdecc_common_control_header_get_stream_id(frame, ETHER_HDR_SIZE);
-
+                    uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
+                    
+                    /* check dest mac address is ours */
                     if (dest_mac_addr == net_interface_ref->mac_addr())
-                    {    /**
-                         * Check if an AECP object is already in the system. If yes, process response for the AECP packet.
-                         */
-                        found_end_station_index = find_in_end_station(entity_entity_id, frame);
-                        if (found_end_station_index >= 0) found_aecp_in_end_station = true;
-                    }
-
-                    if (!found_aecp_in_end_station)
                     {
-                        status = AVDECC_LIB_STATUS_INVALID;
-                        break;
-                    }
-
-                    switch (msg_type)
-                    {
-                        case JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE:
+                        if (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND &&
+                             cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
                         {
-                            uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
-                            cmd_type &= 0x7FFF;
-
-                            if(cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
+                            send_controller_avail_response(frame, frame_len);
+                        }
+                        else
+                        {
+                            /**
+                             * Check if an AECP object is already in the system. If yes, process response for the AECP packet.
+                             */
+                            found_end_station_index = find_in_end_station(entity_entity_id, frame);
+                            if (found_end_station_index >= 0)
                             {
-                                proc_controller_avail_resp(notification_id, frame, frame_len, status);
+                                switch(msg_type)
+                                {
+                                    
+                                    case JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE:
+                                    {
+                                        end_station_array->at(found_end_station_index)->proc_rcvd_aem_resp(notification_id, frame, frame_len, status, operation_id, is_operation_id_valid);
+    
+                                        is_notification_id_valid = true;
+                                        break;
+                                    }
+                                    case JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE:
+                                    {
+                                        end_station_array->at(found_end_station_index)->proc_rcvd_aecp_aa_resp(notification_id, frame, frame_len, status);
+                                        
+                                        is_notification_id_valid = true;
+                                        break;
+                                    }
+                                }
                             }
                             else
                             {
-                                end_station_array->at(found_end_station_index)->proc_rcvd_aem_resp(notification_id, frame, frame_len, status, operation_id, is_operation_id_valid);
+                                status = AVDECC_LIB_STATUS_INVALID;
                             }
-
-                            is_notification_id_valid = true;
-                            break;
                         }
-                        case JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE:
-                        {
-                            end_station_array->at(found_end_station_index)->proc_rcvd_aecp_aa_resp(notification_id, frame, frame_len, status);
-
-                            is_notification_id_valid = true;
-                            break;
-                        }
-
                     }
                 }
                 break;
@@ -533,6 +531,52 @@ namespace avdecc_lib
                                                             JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
+        return 0;
+    }
+    
+    int STDCALL controller_imp::send_controller_avail_response(const uint8_t *frame, size_t frame_len)
+    {
+        struct jdksavdecc_eui48 dest_address;
+        struct jdksavdecc_eui48 src_address;
+        struct jdksavdecc_eui48 temp_address;
+        int send_frame_returned = 0;
+        size_t pos = 0;
+        uint8_t * tx_frame = new uint8_t[frame_len];
+        
+        if (tx_frame == NULL)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "unable to allocate response frame");
+            return -1;
+        }
+        
+        memcpy(tx_frame, frame, frame_len);
+        
+        dest_address = jdksavdecc_eui48_get(tx_frame, pos + 0);
+        src_address = jdksavdecc_eui48_get(tx_frame, pos + 6);
+        
+        // swap MAC addresses
+        temp_address = src_address;
+        src_address = dest_address;
+        dest_address = temp_address;
+        
+        jdksavdecc_eui48_set(dest_address, tx_frame, pos + 0);
+        jdksavdecc_eui48_set(src_address, tx_frame, pos + 6);
+        
+        //set message type
+        jdksavdecc_common_control_header_set_control_data(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE,
+                                                          tx_frame,
+                                                          pos + ETHER_HDR_SIZE);
+        
+        //send packet
+        send_frame_returned = net_interface_ref->send_frame(tx_frame, frame_len);
+        
+        if(send_frame_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "netif_send_frame error");
+            assert(send_frame_returned >= 0);
+        }
+        
+        delete [] tx_frame;
         return 0;
     }
 
