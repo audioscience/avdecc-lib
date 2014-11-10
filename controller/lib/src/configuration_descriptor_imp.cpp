@@ -76,7 +76,7 @@ namespace avdecc_lib
     }
     descriptor_base_imp *configuration_descriptor_imp::lookup_desc(uint16_t desc_type, size_t index)
     {
-        if (desc_count(desc_type) < index)
+        if (desc_count(desc_type) <= index)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, lookup_desc(%s,%d) error",
                                       base_end_station_imp_ref->entity_id(),
@@ -224,6 +224,10 @@ namespace avdecc_lib
         m_all_desc[desc_type][desc_index] = desc;
     }
 
+    void configuration_descriptor_imp::store_entity_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
+    {
+        update_desc_database(new entity_descriptor_imp(end_station_obj, frame, pos, frame_len));
+    }
 
     void configuration_descriptor_imp::store_audio_unit_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
@@ -252,7 +256,7 @@ namespace avdecc_lib
 
     void configuration_descriptor_imp::store_avb_interface_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
     {
-        new avb_interface_descriptor_imp(end_station_obj, frame, pos, frame_len);
+        update_desc_database(new avb_interface_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
 
     void configuration_descriptor_imp::store_clock_source_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
@@ -314,7 +318,12 @@ namespace avdecc_lib
     {
         update_desc_database(new external_port_output_descriptor_imp(end_station_obj, frame, pos, frame_len));
     }
-
+    
+    size_t STDCALL configuration_descriptor_imp::entity_desc_count()
+    {
+        return desc_count(AEM_DESC_ENTITY);
+    }
+    
     size_t STDCALL configuration_descriptor_imp::audio_unit_desc_count()
     {
         return desc_count(AEM_DESC_AUDIO_UNIT);
@@ -324,6 +333,7 @@ namespace avdecc_lib
     {
         return desc_count(AEM_DESC_STREAM_INPUT);
     }
+    
     size_t STDCALL configuration_descriptor_imp::stream_output_desc_count()
     {
         return desc_count(AEM_DESC_STREAM_OUTPUT);
@@ -404,6 +414,11 @@ namespace avdecc_lib
         return desc_count(AEM_DESC_EXTERNAL_PORT_OUTPUT);
     }
 
+    entity_descriptor * STDCALL configuration_descriptor_imp::get_entity_descriptor_by_index(size_t entity_desc_index)
+    {
+        return dynamic_cast<entity_descriptor *>(lookup_desc(AEM_DESC_ENTITY, entity_desc_index));
+    }
+    
     audio_unit_descriptor * STDCALL configuration_descriptor_imp::get_audio_unit_desc_by_index(size_t audio_unit_desc_index)
     {
         return dynamic_cast<audio_unit_descriptor *>(lookup_desc(AEM_DESC_AUDIO_UNIT, audio_unit_desc_index));
@@ -464,7 +479,7 @@ namespace avdecc_lib
 
         if(desc)
         {
-            return desc->get_string_by_index(reference & 0x3);
+            return desc->get_string_by_index(reference & 0x7);
         }
 
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,

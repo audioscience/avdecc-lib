@@ -33,10 +33,12 @@
 
 namespace avdecc_lib
 {
+    class end_stations;
+
     class controller_imp : public virtual controller
     {
     private:
-        std::vector<end_station_imp *> end_station_vec; // Store a list of End Station objects
+        end_stations *end_station_array;
 
         /**
          * Find an end station that matches the entity and controller IDs
@@ -97,6 +99,8 @@ namespace avdecc_lib
         void tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len);
 
         int STDCALL send_controller_avail_cmd(void *notification_id, uint32_t end_station_index);
+        
+        int STDCALL send_controller_avail_response(const uint8_t *frame, size_t frame_len);
 
         /**
          * Process a CONTROLLER_AVAILABLE response for the CONTROLLER_AVAILABLE command.

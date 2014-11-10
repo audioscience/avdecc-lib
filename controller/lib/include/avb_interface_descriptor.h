@@ -110,6 +110,27 @@ namespace avdecc_lib
          * \return The port number field as used by the functionality of the AVB INTERFACE if supported, 0 otherwise.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL port_number() = 0;
+        
+        /**
+         * Send a GET_COUNTERS command to get the counters of the AVDECC Entity.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_counters_cmd(void *notification_id) = 0;
+        
+        /**
+         * \param name avdecc_lib::counter_labels
+         *
+         * \return the avb counter valid after the GET_COUNTERS command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_valid(int name) = 0;
+        
+        /**
+         * \param name avdecc_lib::counter_labels
+         *
+         * \return the avb counter by name after the GET_COUNTERS command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_by_name(int name) = 0;
+        
+
     };
 }
 

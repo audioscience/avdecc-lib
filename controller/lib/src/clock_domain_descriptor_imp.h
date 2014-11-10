@@ -42,6 +42,14 @@ namespace avdecc_lib
 
         struct jdksavdecc_aem_command_set_clock_source_response aem_cmd_set_clk_src_resp; // Store the response received after sending a SET_CLOCK_SOURCE command
         struct jdksavdecc_aem_command_get_clock_source_response aem_cmd_get_clk_src_resp; // Store the response received after sending a GET_CLOCK_SOURCE command
+        struct jdksavdecc_aem_command_get_counters_response aem_cmd_get_counters_resp;
+        struct get_counters_response_with_block
+        {
+            jdksavdecc_aem_command_get_counters_response aem_cmd_get_counters_response;
+            uint32_t counters_block [31];
+        };
+        
+        struct get_counters_response_with_block counters_response;
 
     public:
         clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
@@ -61,6 +69,10 @@ namespace avdecc_lib
         int proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
         int STDCALL send_get_clock_source_cmd(void *notification_id);
         int proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+        uint32_t STDCALL get_counter_valid(int name);
+        uint32_t STDCALL get_counter_by_name(int name);
+        int STDCALL send_get_counters_cmd(void *notification_id);
+        int proc_get_counters_resp(void *&notification_id, const uint8_t *fram, size_t frame_len, int &status);
 
     private:
         /**

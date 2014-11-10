@@ -96,6 +96,26 @@ namespace avdecc_lib
          * \see get_clock_source_clock_source_index()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_clock_source_cmd(void *notification_id) = 0;
+        
+        /**
+         * Send a GET_COUNTERS command to get the counters of the AVDECC Entity.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_counters_cmd(void *notification_id) = 0;
+        
+        /**
+         * \param name avdecc_lib::counter_labels
+         *
+         * \return the clock_domain counters after the GET_COUNTERS command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_valid(int name) = 0;
+        
+        /**
+         * \param name avdecc_lib::counter_labels
+         *
+         * \return the clock_domain counters block after the GET_COUNTERS command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_by_name(int name) = 0;
+
     };
 }
 

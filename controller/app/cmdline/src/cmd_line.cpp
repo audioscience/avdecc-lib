@@ -62,6 +62,7 @@
 #include "cli_argument.h"
 #include "cli_command.h"
 #include "cli_command_format.h"
+#include "control_descriptor.h"
 
 #if defined _WIN32 || defined _WIN64
 #ifdef _MSC_VER
@@ -344,9 +345,10 @@ void cmd_line::cmd_line_commands_init()
     cli_command *view_details_cmd = new cli_command("To see a list of valid End Stations, enter \"list\" command.");
     view_cmd->add_sub_command("details", view_details_cmd);
 
-    cli_command_format *view_details_fmt = new cli_command_format("Display all descriptors in the specified End Station.",
+    cli_command_format *view_details_fmt = new cli_command_format("Display all descriptors in the currently selected configuration.",
                                                                   &cmd_line::cmd_view_details);
-    view_details_fmt->add_argument(new cli_argument_end_station(this, "e_s", END_STATION_HELP));
+    //view_details_fmt->add_argument(new cli_argument_end_station(this, "e_s", END_STATION_HELP));
+    //commented out for new 'view_details' format (just views currently selected entity/endpoint
     view_details_cmd->add_format(view_details_fmt);
 
     // view descriptor
@@ -676,6 +678,22 @@ void cmd_line::cmd_line_commands_init()
                                                              "To see a list of valid descriptor types and corresponding indexes, enter\n" \
                                                              "\"view all\" command."));
     get_sampling_rate_cmd->add_format(get_sampling_rate_fmt);
+    
+    // get counters
+    cli_command *get_counters_cmd = new cli_command();
+    get_cmd->add_sub_command("counters", get_counters_cmd);
+    
+    cli_command_format *get_counters_fmt = new cli_command_format(
+                                                                       "Send a GET_COUNTERS command to get a current counter for a descriptor.\n" \
+                                                                       "port or unit.",
+                                                                       &cmd_line::cmd_get_counters);
+    get_counters_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
+                                                                "Valid descriptor types are AVB_INTERFACE, CLOCK_DOMAIN, STREAM_INPUT."));
+    get_counters_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
+                                                             "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                             "\"view all\" command."));
+    get_counters_cmd->add_format(get_counters_fmt);
+
 
     // set clock_source
     cli_command *set_clock_source_cmd = new cli_command();
@@ -1018,9 +1036,9 @@ int cmd_line::do_select(uint32_t new_end_station, uint16_t new_entity, uint16_t 
         if((current_end_station == new_end_station) && (current_entity == new_entity) && (current_config == new_config))
         {
             atomic_cout << "Same setting" << std::endl;
-            atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
-            atomic_cout << "\tEntity: " << std::dec << current_entity << std::endl;
-            atomic_cout << "\tConfiguration: " << std::dec << current_config << std::endl;
+            atomic_cout << "\tEnd Station Index: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
+            atomic_cout << "\tEntity Index: " << std::dec << current_entity << std::endl;
+            atomic_cout << "\tConfiguration Index: " << std::dec << current_config << std::endl;
         }
         else
         {
@@ -1028,9 +1046,9 @@ int cmd_line::do_select(uint32_t new_end_station, uint16_t new_entity, uint16_t 
             end_station->set_current_entity_index(new_entity);
             end_station->set_current_config_index(new_config);
             atomic_cout << "New setting" << std::endl;
-            atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
-            atomic_cout << "\tEntity: " << std::dec << current_entity << std::endl;
-            atomic_cout << "\tConfiguration: " << std::dec << current_config << std::endl;
+            atomic_cout << "\tEnd Station Index: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
+            atomic_cout << "\tEntity Index: " << std::dec << current_entity << std::endl;
+            atomic_cout << "\tConfiguration Index: " << std::dec << current_config << std::endl;
         }
     }
     else
@@ -1302,8 +1320,15 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                                                    configuration->get_strings_desc_string_by_reference(clk_domain_desc_ref->localized_description()),
                                                    *locale);
                 }
-
-                break;
+            case avdecc_lib::AEM_DESC_CONTROL:
+                for(unsigned int j = 0; j < configuration->control_desc_count(); j++)
+                {
+                    avdecc_lib::control_descriptor *control_desc_ref = configuration->get_control_desc_by_index(j);
+                    print_desc_type_index_name_row(*control_desc_ref,
+                                                   configuration->get_strings_desc_string_by_reference(control_desc_ref->localized_description()),
+                                                   *locale);
+                }
+            break;
         }
     }
 
@@ -1312,20 +1337,18 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
 
 int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> args)
 {
-    uint32_t end_station_index = args[0]->get_value_uint();
-    if (end_station_index >= controller_obj->get_end_station_count())
-    {
-        atomic_cout << "Invalid End Station" << std::endl;
-        return 0;
-    }
-
+    uint32_t end_station_index = current_end_station;
+ 
     avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(end_station_index);
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
+    
     if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
         return 0;
 
-    atomic_cout << "\nEnd Station: " << end_station_index << " (" << entity->entity_name() << ")" << std::endl;
+    atomic_cout << "\nEnd Station: " << " (" << entity->entity_name() << ")" << std::endl;
+    atomic_cout << "Entity Index: " << end_station->get_current_entity_index() << "  Entity ID: 0x" << std::hex <<entity->entity_id() << std::endl;
+    atomic_cout << "Configuration: " << end_station->get_current_config_index() << std::endl;
     atomic_cout << "------------------------------------------------------------------------------" << std::endl;
 
     switch(0)
@@ -1524,9 +1547,19 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 do_view_descriptor(desc_name, desc_index);
             }
+        case avdecc_lib::AEM_DESC_CONTROL:
+            for(unsigned int j = 0; j < configuration->control_desc_count(); j++)
+            {
+                avdecc_lib::control_descriptor *control_desc_ref = configuration->get_control_desc_by_index(j);
+                std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(control_desc_ref->descriptor_type());
+                uint16_t desc_index = control_desc_ref->descriptor_index();
+                
+                atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
+                do_view_descriptor(desc_name, desc_index);
+            }
 
 
-            break;
+        break;
     }
 
     return 0;
@@ -2071,6 +2104,32 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                     atomic_cout << "\nsignal_output = " << std::dec << desc->signal_output();
                     atomic_cout << "\nblock_latency = " << std::dec << desc->block_latency();
                     atomic_cout << "\njack_index = " << std::dec << desc->jack_index();
+                }
+            }
+            break;
+            
+        case avdecc_lib::AEM_DESC_CONTROL:
+            {
+                if (!configuration)
+                    break;
+            
+                avdecc_lib::control_descriptor *control_desc = configuration->get_control_desc_by_index(desc_index);
+                if (control_desc)
+                {
+                    atomic_cout << "\nobject_name = " << std::hex << control_desc->object_name();
+                    atomic_cout << "\nlocalized_description= " << control_desc->localized_description();
+                    atomic_cout << "\nblock_latency= " << std::dec << control_desc->block_latency();
+                    atomic_cout << "\ncontrol_latency= " << std::dec << control_desc->control_latency();
+                    atomic_cout << "\ncontrol_domain = " << std::dec << control_desc->control_domain();
+                    atomic_cout << "\ncontrol_value_type = " << std::dec << control_desc->control_value_type();
+                    atomic_cout << "\ncontrol_type = " << std::dec << control_desc->control_type();
+                    atomic_cout << "\nreset_time = " << std::dec << control_desc->reset_time();
+                    atomic_cout << "\nvalues_offset = " << std::dec << control_desc->values_offset();
+                    atomic_cout << "\nnumber_of_values = " << std::dec << control_desc->number_of_values();
+                    atomic_cout << "\nsignal_type = " << std::dec << control_desc->signal_type();
+                    atomic_cout << "\nsignal_index = " << std::dec << control_desc->signal_index();
+                    atomic_cout << "\nsignal_output = " << std::dec << control_desc->signal_output();
+                    // atomic_cout << "\nvalue_details = " << std::dec << control_desc->value_details();
                 }
             }
             break;
@@ -3050,6 +3109,124 @@ int cmd_line::cmd_get_sampling_rate(int total_matched, std::vector<cli_argument*
         atomic_cout << "cmd_get_sampling_rate error" << std::endl;
     }
 
+    return 0;
+}
+
+int cmd_line::cmd_get_counters(int total_matched, std::vector<cli_argument*> args)
+{
+    std::string desc_name = args[0]->get_value_str();
+    uint16_t desc_index = args[1]->get_value_int();
+    
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
+    
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+    
+    if(desc_type_value == avdecc_lib::AEM_DESC_AVB_INTERFACE)
+    {
+        avdecc_lib::avb_interface_descriptor *avb_desc_ref = configuration->get_avb_interface_desc_by_index(desc_index);
+        
+        if(avb_desc_ref)
+        {
+            intptr_t cmd_notification_id = get_next_notification_id();
+            sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+            avb_desc_ref->send_get_counters_cmd((void *)cmd_notification_id);
+            int status = sys->get_last_resp_status();
+
+            if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+            {
+                if(avb_desc_ref->get_counter_valid(avdecc_lib::AVB_INTERFACE_LINK_UP))
+                    atomic_cout << "Link up Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_LINK_UP)
+                        << std::endl;
+                if(avb_desc_ref->get_counter_valid(avdecc_lib::AVB_INTERFACE_LINK_DOWN))
+                    atomic_cout << "Link down Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_LINK_DOWN)
+                        << std::endl;
+                if(avb_desc_ref->get_counter_valid(avdecc_lib::AVB_INTERFACE_FRAMES_TX))
+                    atomic_cout << "Frames TX Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_TX)
+                        << std::endl;
+                if(avb_desc_ref->get_counter_valid(avdecc_lib::AVB_INTERFACE_FRAMES_RX))
+                    atomic_cout << "Frames RX Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_RX)
+                        << std::endl;
+                if(avb_desc_ref->get_counter_valid(avdecc_lib::AVB_INTERFACE_RX_CRC_ERROR))
+                    atomic_cout << "RX crc error Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_INTERFACE_RX_CRC_ERROR)
+                        << std::endl;
+                if(avb_desc_ref->get_counter_valid(avdecc_lib::AVB_GPTP_GM_CHANGED))
+                    atomic_cout << "GPTP changed Counter: " << avb_desc_ref->get_counter_by_name(avdecc_lib::AVB_GPTP_GM_CHANGED)
+                        << std::endl;
+            }
+        }
+    }
+
+    else if(desc_type_value == avdecc_lib::AEM_DESC_CLOCK_DOMAIN)
+    {
+        avdecc_lib::clock_domain_descriptor *clock_domain_desc_ref = configuration->get_clock_domain_desc_by_index(desc_index);
+        
+        if(clock_domain_desc_ref)
+        {
+            intptr_t cmd_notification_id = get_next_notification_id();
+            sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+            clock_domain_desc_ref->send_get_counters_cmd((void *)cmd_notification_id);
+            int status = sys->get_last_resp_status();
+
+            if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+            {
+                if(clock_domain_desc_ref->get_counter_valid(avdecc_lib::CLOCK_DOMAIN_LOCKED))
+                    atomic_cout << "Locked Counter: " << clock_domain_desc_ref->get_counter_by_name(avdecc_lib::CLOCK_DOMAIN_LOCKED) << std::endl;
+                if(clock_domain_desc_ref->get_counter_valid(avdecc_lib::CLOCK_DOMAIN_UNLOCKED))
+                    atomic_cout << "Unlocked Counter: " << clock_domain_desc_ref->get_counter_by_name(avdecc_lib::CLOCK_DOMAIN_UNLOCKED) << std::endl;
+            }
+        }
+    }
+                
+    else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
+    {
+        avdecc_lib::stream_input_descriptor *stream_input_desc_ref = configuration->get_stream_input_desc_by_index(desc_index);
+        
+        if(stream_input_desc_ref)
+        {
+            intptr_t cmd_notification_id = get_next_notification_id();
+            sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+            stream_input_desc_ref->send_get_counters_cmd((void *)cmd_notification_id);
+            int status = sys->get_last_resp_status();
+            
+            if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+            {
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_MEDIA_LOCKED))
+                    atomic_cout << "Media Locked Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_MEDIA_LOCKED) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_MEDIA_UNLOCKED))
+                    atomic_cout << "Media Unlocked Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_MEDIA_UNLOCKED) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_STREAM_RESET))
+                    atomic_cout << "Stream Reset Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_STREAM_RESET) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_SEQ_NUM_MISMATCH))
+                    atomic_cout << "Seq Num Mismatch Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_SEQ_NUM_MISMATCH) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_MEDIA_RESET))
+                    atomic_cout << "Media Reset Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_MEDIA_RESET) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_TIMESTAMP_UNCERTAIN))
+                    atomic_cout << "Timestamp Uncertain Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_TIMESTAMP_UNCERTAIN) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_TIMESTAMP_VALID))
+                    atomic_cout << "Timestamp Valid Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_TIMESTAMP_VALID) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_TIMESTAMP_NOT_VALID))
+                    atomic_cout << "Timestamp Not Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_TIMESTAMP_NOT_VALID) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_UNSUPPORTED_FORMAT))
+                    atomic_cout << "Unsupported Format Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_UNSUPPORTED_FORMAT) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_LATE_TIMESTAMP))
+                    atomic_cout << "Late Timestamp Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_LATE_TIMESTAMP) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_EARLY_TIMESTAMP))
+                    atomic_cout << "Early Timestamp Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_EARLY_TIMESTAMP) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_FRAMES_RX))
+                    atomic_cout << "Frames RX Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_FRAMES_RX) << std::endl;
+                if(stream_input_desc_ref->get_counter_valid(avdecc_lib::STREAM_INPUT_FRAMES_TX))
+                    atomic_cout << "Frames TX Counter: " << stream_input_desc_ref->get_counter_by_name(avdecc_lib::STREAM_INPUT_FRAMES_TX) << std::endl;
+            }
+        }
+    }
+    else
+    {
+        atomic_cout << "Invalid Descriptor" << std::endl;
+    }
     return 0;
 }
 
