@@ -127,6 +127,12 @@ namespace avdecc_lib
         void STDCALL set_current_config_index(uint16_t entity_index);
         uint16_t STDCALL get_current_config_index() const;
 
+        int STDCALL send_register_unsolicited_cmd(void *notification_id);
+        int proc_register_unsolicited_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+        
+        int STDCALL send_deregister_unsolicited_cmd(void *notification_id);
+        int proc_deregister_unsolicited_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+        
     private:
         /**
          * Initialize End Station with Entity and Configuration descriptors information.

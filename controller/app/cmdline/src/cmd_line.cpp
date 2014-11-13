@@ -649,6 +649,28 @@ void cmd_line::cmd_line_commands_init()
                                                            "\"view all\" command."));
     get_stream_info_cmd->add_format(get_stream_info_fmt);
 
+    // unsolicited
+    cli_command *unsolicited_cmd = new cli_command();
+    commands.add_sub_command("unsolicited", unsolicited_cmd);
+    
+    //register unsolicited notifications
+    cli_command *register_unsolicited_notif = new cli_command();
+    unsolicited_cmd->add_sub_command("register", register_unsolicited_notif);
+    
+    cli_command_format *register_unsolicited_fmt = new cli_command_format(
+                                                                     "Add the controller as being interested in receiving unsolicited response notifications.",
+                                                                     &cmd_line::cmd_register_unsolicited_notif);
+    register_unsolicited_notif->add_format(register_unsolicited_fmt);
+    
+    //deregister unsolicited notifications
+    cli_command *deregister_unsolicited_notif = new cli_command();
+    unsolicited_cmd->add_sub_command("deregister", deregister_unsolicited_notif);
+    
+    cli_command_format *deregister_unsolicited_fmt = new cli_command_format(
+                                                                          "Remove the controller as being interested in receiving unsolicited response notifications.",
+                                                                          &cmd_line::cmd_deregister_unsolicited_notif);
+    deregister_unsolicited_notif->add_format(deregister_unsolicited_fmt);
+
     // set sampling_rate
     cli_command *set_sampling_rate_cmd = new cli_command();
     set_cmd->add_sub_command("sampling_rate", set_sampling_rate_cmd);
@@ -2723,6 +2745,34 @@ int cmd_line::cmd_entity_avail(int total_matched, std::vector<cli_argument*> arg
     end_station->send_entity_avail_cmd((void *)cmd_notification_id);
     sys->get_last_resp_status();
 
+    return 0;
+}
+
+int cmd_line::cmd_register_unsolicited_notif(int total_matched, std::vector<cli_argument*> args)
+{
+    intptr_t cmd_notification_id = get_next_notification_id();
+    avdecc_lib::end_station *end_station;
+    if (get_current_end_station(&end_station))
+        return 0;
+
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+    end_station->send_register_unsolicited_cmd((void *)cmd_notification_id);
+    sys->get_last_resp_status();
+    
+    return 0;
+}
+
+int cmd_line::cmd_deregister_unsolicited_notif(int total_matched, std::vector<cli_argument*> args)
+{
+    intptr_t cmd_notification_id = get_next_notification_id();
+    avdecc_lib::end_station *end_station;
+    if (get_current_end_station(&end_station))
+        return 0;
+    
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+    end_station->send_deregister_unsolicited_cmd((void *)cmd_notification_id);
+    sys->get_last_resp_status();
+    
     return 0;
 }
 

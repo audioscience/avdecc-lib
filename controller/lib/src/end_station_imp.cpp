@@ -864,6 +864,14 @@ namespace avdecc_lib
             case JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR:
                 proc_read_desc_resp(notification_id, frame, frame_len, status);
                 break;
+            
+            case JDKSAVDECC_AEM_COMMAND_REGISTER_UNSOLICITED_NOTIFICATION:
+                proc_register_unsolicited_resp(notification_id, frame, frame_len, status);
+                break;
+            
+            case JDKSAVDECC_AEM_COMMAND_DEREGISTER_UNSOLICITED_NOTIFICATION:
+                proc_deregister_unsolicited_resp(notification_id, frame, frame_len, status);
+                break;
 
             case JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT:
                 {
@@ -1387,6 +1395,144 @@ namespace avdecc_lib
 
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
+        return 0;
+    }
+
+    int STDCALL end_station_imp::send_register_unsolicited_cmd(void *notification_id)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_register_unsolicited_notification aem_cmd_reg_unsolicited;
+        ssize_t aem_cmd_reg_unsolicited_returned;
+        memset(&aem_cmd_reg_unsolicited,0,sizeof(aem_cmd_reg_unsolicited));
+        
+        /*************************************************** AECP Common Data **************************************************/
+        aem_cmd_reg_unsolicited.aem_header.aecpdu_header.controller_entity_id = adp_ref->get_controller_entity_id();
+        // Fill aem_cmd_controller_avail.sequence_id in AEM Controller State Machine
+        aem_cmd_reg_unsolicited.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_REGISTER_UNSOLICITED_NOTIFICATION;
+        
+        /******************************** Fill frame payload with AECP data and send the frame ***************************/
+        aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
+                                                            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_REGISTER_UNSOLICITED_NOTIFICATION);
+        aem_cmd_reg_unsolicited_returned = jdksavdecc_aem_command_register_unsolicited_notification_write(&aem_cmd_reg_unsolicited,
+                                                                                                          cmd_frame.payload,
+                                                                                                          ETHER_HDR_SIZE,
+                                                                                                          sizeof(cmd_frame.payload));
+        
+        if(aem_cmd_reg_unsolicited_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_write error\n");
+            assert(aem_cmd_reg_unsolicited_returned >= 0);
+            return -1;
+        }
+        
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                           &cmd_frame,
+                                                           end_station_entity_id,
+                                                           JDKSAVDECC_AEM_COMMAND_REGISTER_UNSOLICITED_NOTIFICATION_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
+        
+        return 0;
+    }
+    
+    int end_station_imp::proc_register_unsolicited_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_register_unsolicited_notification_response aem_cmd_reg_unsolicited_resp;
+        ssize_t aem_cmd_reg_unsolicited_returned = 0;
+        uint32_t msg_type = 0;
+        bool u_field = false;
+        
+        memset(&aem_cmd_reg_unsolicited_resp, 0, sizeof(aem_cmd_reg_unsolicited_resp));
+        memcpy(cmd_frame.payload, frame, frame_len);
+        
+        aem_cmd_reg_unsolicited_returned = jdksavdecc_aem_command_register_unsolicited_notification_response_read(&aem_cmd_reg_unsolicited_resp,
+                                                                                                                  frame,
+                                                                                                                  ETHER_HDR_SIZE,
+                                                                                                                  frame_len);
+        
+        if(aem_cmd_reg_unsolicited_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_resp_read error\n");
+            assert(aem_cmd_reg_unsolicited_returned >= 0);
+            return -1;
+        }
+        
+        msg_type = aem_cmd_reg_unsolicited_resp.aem_header.aecpdu_header.header.message_type;
+        status = aem_cmd_reg_unsolicited_resp.aem_header.aecpdu_header.header.status;
+        u_field = aem_cmd_reg_unsolicited_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        
+        aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
+        
+        return 0;
+    }
+    
+    int STDCALL end_station_imp::send_deregister_unsolicited_cmd(void *notification_id)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_deregister_unsolicited_notification aem_cmd_dereg_unsolicited;
+        ssize_t aem_cmd_dereg_unsolicited_returned;
+        memset(&aem_cmd_dereg_unsolicited,0,sizeof(aem_cmd_dereg_unsolicited));
+        
+        /*************************************************** AECP Common Data **************************************************/
+        aem_cmd_dereg_unsolicited.aem_header.aecpdu_header.controller_entity_id = adp_ref->get_controller_entity_id();
+        // Fill aem_cmd_controller_avail.sequence_id in AEM Controller State Machine
+        aem_cmd_dereg_unsolicited.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_DEREGISTER_UNSOLICITED_NOTIFICATION;
+        
+        /******************************** Fill frame payload with AECP data and send the frame ***************************/
+        aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
+                                                            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_DEREGISTER_UNSOLICITED_NOTIFICATION);
+        aem_cmd_dereg_unsolicited_returned = jdksavdecc_aem_command_deregister_unsolicited_notification_write(&aem_cmd_dereg_unsolicited,
+                                                                                                          cmd_frame.payload,
+                                                                                                          ETHER_HDR_SIZE,
+                                                                                                          sizeof(cmd_frame.payload));
+        
+        if(aem_cmd_dereg_unsolicited_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_write error\n");
+            assert(aem_cmd_dereg_unsolicited_returned >= 0);
+            return -1;
+        }
+        
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                           &cmd_frame,
+                                                           end_station_entity_id,
+                                                           JDKSAVDECC_AEM_COMMAND_DEREGISTER_UNSOLICITED_NOTIFICATION_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
+        
+        return 0;
+    }
+    
+    int end_station_imp::proc_deregister_unsolicited_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_deregister_unsolicited_notification_response aem_cmd_dereg_unsolicited_resp;
+        ssize_t aem_cmd_dereg_unsolicited_returned = 0;
+        uint32_t msg_type = 0;
+        bool u_field = false;
+        
+        memset(&aem_cmd_dereg_unsolicited_resp, 0, sizeof(aem_cmd_dereg_unsolicited_resp));
+        memcpy(cmd_frame.payload, frame, frame_len);
+        
+        aem_cmd_dereg_unsolicited_returned = jdksavdecc_aem_command_deregister_unsolicited_notification_response_read(&aem_cmd_dereg_unsolicited_resp,
+                                                                                                                  frame,
+                                                                                                                  ETHER_HDR_SIZE,
+                                                                                                                  frame_len);
+        
+        if(aem_cmd_dereg_unsolicited_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_resp_read error\n");
+            assert(aem_cmd_dereg_unsolicited_returned >= 0);
+            return -1;
+        }
+        
+        msg_type = aem_cmd_dereg_unsolicited_resp.aem_header.aecpdu_header.header.message_type;
+        status = aem_cmd_dereg_unsolicited_resp.aem_header.aecpdu_header.header.status;
+        u_field = aem_cmd_dereg_unsolicited_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        
+        aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
+        
         return 0;
     }
 
