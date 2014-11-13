@@ -224,7 +224,8 @@ namespace avdecc_lib
             "END_STATION_DISCONNECTED",
             "COMMAND_TIMEOUT",
             "RESPONSE_RECEIVED",
-            "END_STATION_READ_COMPLETED"
+            "END_STATION_READ_COMPLETED",
+            "UNSOLICITED_RESPONSE_RECEIVED"
         };
 
         const char *logging_level_names[] =
