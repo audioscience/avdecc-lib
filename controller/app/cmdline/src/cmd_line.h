@@ -263,6 +263,18 @@ private:
      * Send a ENTITY_AVAILABLE command to determine if another AVDECC Entity is still alive.
      */
     int cmd_entity_avail(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a REGISTER_UNSOLICITED_NOTIFICATION command to add the controller as being interested
+     * in receiving unsolicited response notifications.
+     */
+    int cmd_register_unsolicited_notif(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a DEREGISTER_UNSOLICITED_NOTIFICATION command to remove the controller as being interested
+     * in receiving unsolicited response notifications.
+     */
+    int cmd_deregister_unsolicited_notif(int total_matched, std::vector<cli_argument*> args);
 
     /**
      * Send a REBOOT command to reboot the entity

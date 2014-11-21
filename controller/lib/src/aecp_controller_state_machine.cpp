@@ -137,11 +137,14 @@ namespace avdecc_lib
         return 0;
     }
 
-    int aecp_controller_state_machine::proc_unsolicited(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
+    int aecp_controller_state_machine::proc_unsolicited(struct jdksavdecc_frame *cmd_frame)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "proc_unsolicited is not implemented.");
-
-        return 0;
+        void * notification_id = NULL;
+        uint32_t notification_flag = CMD_WITHOUT_NOTIFICATION;
+        
+        callback(notification_id, notification_flag, cmd_frame->payload);
+        
+        return 1;
     }
 
     int aecp_controller_state_machine::proc_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
@@ -169,9 +172,9 @@ namespace avdecc_lib
        return tx_cmd(notification_id, notification_flag, cmd_frame, false);
     }
 
-    int aecp_controller_state_machine::state_rcvd_unsolicited(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
+    int aecp_controller_state_machine::state_rcvd_unsolicited(struct jdksavdecc_frame *cmd_frame)
     {
-       return proc_unsolicited(notification_id, cmd_frame);
+       return proc_unsolicited(cmd_frame);
     }
 
     int aecp_controller_state_machine::state_rcvd_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame)
@@ -188,7 +191,7 @@ namespace avdecc_lib
         if(is_retried)
         {
             jdksavdecc_eui64 id = jdksavdecc_common_control_header_get_stream_id(frame.payload, ETHER_HDR_SIZE);
-            uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame.payload, ETHER_HDR_SIZE );
+            uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame.payload, ETHER_HDR_SIZE);
             cmd_type &= 0x7FFF;
             uint16_t desc_type = jdksavdecc_aem_command_read_descriptor_get_descriptor_type(frame.payload, ETHER_HDR_SIZE);
             uint16_t desc_index = jdksavdecc_aem_command_read_descriptor_get_descriptor_index(frame.payload, ETHER_HDR_SIZE);
@@ -243,8 +246,7 @@ namespace avdecc_lib
             case JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE: // Fallthrough intentional
                 if (u_field)
                 {
-                    state_rcvd_unsolicited(notification_id, cmd_frame);
-                    state_rcvd_resp(notification_id, cmd_frame);
+                    state_rcvd_unsolicited(cmd_frame);
                 }
                 else
                 {
@@ -321,7 +323,8 @@ namespace avdecc_lib
         uint32_t status = jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE);
         uint16_t desc_type = 0;
         uint16_t desc_index = 0;
-
+        bool is_unsolicited = cmd_type >> 15 & 0x01;
+        
         switch(cmd_type)
         {
         case JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY:
@@ -412,6 +415,9 @@ namespace avdecc_lib
         
         case JDKSAVDECC_AEM_COMMAND_REGISTER_UNSOLICITED_NOTIFICATION:
             break;
+        
+        case JDKSAVDECC_AEM_COMMAND_DEREGISTER_UNSOLICITED_NOTIFICATION:
+            break;
 
         default:
             log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "NO_MATCH_FOUND for %s", utility::aem_cmd_value_to_name(cmd_type));
@@ -458,27 +464,40 @@ namespace avdecc_lib
                 ((msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE) ||
                 (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE)))
         {
-            if(status == AEM_STATUS_SUCCESS)
+            if(is_unsolicited)
             {
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
-                                          "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
-                                          jdksavdecc_uint64_get(&id, 0),
-                                          utility::aem_cmd_value_to_name(cmd_type),
-                                          utility::aem_desc_value_to_name(desc_type),
-                                          desc_index,
-                                          jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
-                                          utility::aem_cmd_status_value_to_name(status));
+                notification_imp_ref->post_notification_msg(UNSOLICITED_RESPONSE_RECEIVED,
+                                                            jdksavdecc_uint64_get(&id, 0),
+                                                            cmd_type,
+                                                            desc_type,
+                                                            desc_index,
+                                                            status,
+                                                            notification_id);
             }
             else
             {
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
-                                          "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
-                                          jdksavdecc_uint64_get(&id, 0),
-                                          utility::aem_cmd_value_to_name(cmd_type),
-                                          utility::aem_desc_value_to_name(desc_type),
-                                          desc_index,
-                                          jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
-                                          utility::aem_cmd_status_value_to_name(status));
+                if(status == AEM_STATUS_SUCCESS)
+                {
+                    log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
+                                              "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
+                                              jdksavdecc_uint64_get(&id, 0),
+                                              utility::aem_cmd_value_to_name(cmd_type),
+                                              utility::aem_desc_value_to_name(desc_type),
+                                              desc_index,
+                                              jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
+                                              utility::aem_cmd_status_value_to_name(status));
+                }
+                else
+                {
+                    log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
+                                              "RESPONSE_RECEIVED, 0x%llx, %s, %s, %d, %d, %s",
+                                              jdksavdecc_uint64_get(&id, 0),
+                                              utility::aem_cmd_value_to_name(cmd_type),
+                                              utility::aem_desc_value_to_name(desc_type),
+                                              desc_index,
+                                              jdksavdecc_aecpdu_common_get_sequence_id(frame, ETHER_HDR_SIZE),
+                                              utility::aem_cmd_status_value_to_name(status));
+                }
             }
         }
 

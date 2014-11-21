@@ -66,7 +66,7 @@ namespace avdecc_lib
         /**
          * Process the Received Unsolicited state of the AEM Controller State Machine.
          */
-        int state_rcvd_unsolicited(void *&notification_id, struct jdksavdecc_frame *cmd_frame);
+        int state_rcvd_unsolicited(struct jdksavdecc_frame *cmd_frame);
 
         /**
          * Process the Received Response state of the AEM Controller State Machine.
@@ -102,7 +102,7 @@ namespace avdecc_lib
         /**
          * Handle the receipt and processing of a received unsolicited response for a command sent.
          */
-        int proc_unsolicited(void *&notification_id, struct jdksavdecc_frame *cmd_frame);
+        int proc_unsolicited(struct jdksavdecc_frame *cmd_frame);
 
         /**
          * Handle the receipt and processing of a received response for a command sent.

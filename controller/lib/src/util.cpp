@@ -33,6 +33,7 @@
 #include <string.h>
 #include "enumeration.h"
 #include "util.h"
+#include "cassert.h"
 
 namespace avdecc_lib
 {
@@ -224,7 +225,8 @@ namespace avdecc_lib
             "END_STATION_DISCONNECTED",
             "COMMAND_TIMEOUT",
             "RESPONSE_RECEIVED",
-            "END_STATION_READ_COMPLETED"
+            "END_STATION_READ_COMPLETED",
+            "UNSOLICITED_RESPONSE_RECEIVED"
         };
 
         const char *logging_level_names[] =
@@ -388,6 +390,8 @@ namespace avdecc_lib
 
         const char * STDCALL notification_value_to_name(uint16_t notification_value)
         {
+            compile_time_assert(ARRAY_SIZE(notification_names) == TOTAL_NUM_OF_NOTIFICATIONS, assert_notification_names_size);
+            
             if(notification_value < avdecc_lib::TOTAL_NUM_OF_NOTIFICATIONS)
             {
                 return notification_names[notification_value];
