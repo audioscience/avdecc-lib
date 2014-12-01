@@ -41,6 +41,7 @@ namespace avdecc_lib
         uint8_t *adp_frame; // Point to a raw memory buffer to read from
         ssize_t frame_read_returned; // Status of extracting Ethernet Frame information from a network buffer
         ssize_t adpdu_read_returned; // Status of extracting ADPDU information from a network buffer
+        int proc_adpdu_returned; //result of ADP update
 
     public:
         /**
