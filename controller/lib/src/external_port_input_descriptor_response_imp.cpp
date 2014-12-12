@@ -72,7 +72,10 @@ namespace avdecc_lib
         m_fields.push_back(new descriptor_field_imp("jack_index", descriptor_field::TYPE_UINT16, &desc.jack_index));
     }
     
-    external_port_input_descriptor_response_imp::~external_port_input_descriptor_response_imp() {}
+    external_port_input_descriptor_response_imp::~external_port_input_descriptor_response_imp()
+    {
+        free(buffer);
+    }
     
     uint16_t STDCALL external_port_input_descriptor_response_imp::clock_domain_index()
     {

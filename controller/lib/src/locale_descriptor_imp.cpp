@@ -34,11 +34,7 @@
 
 namespace avdecc_lib
 {
-    locale_descriptor_imp::locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
-    {
-        m_type = jdksavdecc_descriptor_locale_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-        m_index = jdksavdecc_descriptor_locale_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
+    locale_descriptor_imp::locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
     locale_descriptor_imp::~locale_descriptor_imp(){}
 
@@ -50,12 +46,12 @@ namespace avdecc_lib
 
     uint16_t STDCALL locale_descriptor_imp::descriptor_type() const
     {
-        return m_type;
+        return jdksavdecc_descriptor_locale_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     uint16_t STDCALL locale_descriptor_imp::descriptor_index() const
     {
-        return m_index;
+        return jdksavdecc_descriptor_locale_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
 
     }
 }

@@ -24,7 +24,7 @@
 /**
  * stream_output_get_tx_state_response_imp.h
  *
- * STREAM OUTPUT tx state response implementation class
+ * STREAM OUTPUT get tx state response implementation class
  */
 
 #pragma once

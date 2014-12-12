@@ -29,13 +29,13 @@
 
 #pragma once
 
-#include "descriptor_base_imp.h"
 #include "configuration_descriptor_imp.h"
 #include "entity_descriptor_response.h"
+#include "jdksavdecc_aem_descriptor.h"
 
 namespace avdecc_lib
 {
-    class entity_descriptor_response_imp : public entity_descriptor_response, public virtual descriptor_base_imp
+    class entity_descriptor_response_imp : public entity_descriptor_response
     {
     private:
         uint8_t * buffer;

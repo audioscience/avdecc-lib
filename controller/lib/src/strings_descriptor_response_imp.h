@@ -24,19 +24,19 @@
 /**
  * strings_descriptor_response_imp.h
  *
- * STREAM OUTPUT descriptor response implementation class
+ * STRINGS descriptor response implementation class
  */
 
 #pragma once
 
-#include "descriptor_base_imp.h"
 #include "strings_descriptor_response.h"
 #include "log_imp.h"
+#include "jdksavdecc_aem_descriptor.h"
 #include "enumeration.h"
 
 namespace avdecc_lib
 {
-    class strings_descriptor_response_imp : public strings_descriptor_response, public virtual descriptor_base_imp
+    class strings_descriptor_response_imp : public strings_descriptor_response
     {
     private:
         uint8_t * buffer;

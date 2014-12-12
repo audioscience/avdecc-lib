@@ -323,7 +323,6 @@ namespace avdecc_lib
         uint32_t status = jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE);
         uint16_t desc_type = 0;
         uint16_t desc_index = 0;
-        
         bool is_unsolicited = cmd_type >> 15 & 0x01;
         
         switch(cmd_type)

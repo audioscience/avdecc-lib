@@ -219,7 +219,7 @@ namespace avdecc_lib
                     log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_entity_id error");
                 }
             }
-            free(entity_resp_ref);
+            delete entity_resp_ref;
         }
         return NULL;
     }

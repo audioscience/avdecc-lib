@@ -29,12 +29,12 @@
 
 #pragma once
 
-#include "descriptor_base_imp.h"
 #include "stream_port_output_descriptor_response.h"
+#include "jdksavdecc_aem_descriptor.h"
 
 namespace avdecc_lib
 {
-    class stream_port_output_descriptor_response_imp : public stream_port_output_descriptor_response, public virtual descriptor_base_imp
+    class stream_port_output_descriptor_response_imp : public stream_port_output_descriptor_response
     {
     private:
         uint8_t* buffer;

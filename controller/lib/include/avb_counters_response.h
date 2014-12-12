@@ -24,7 +24,7 @@
 /**
  * avb_counters_response.h
  *
- * AVB counters response base class
+ * AVB INTERFACE counters response base class
  */
 
 #pragma once
@@ -37,6 +37,7 @@ namespace avdecc_lib
     class avb_counters_response
     {
     public:
+        virtual ~avb_counters_response(){};
         /**
          * \param name avdecc_lib::counter_labels
          *

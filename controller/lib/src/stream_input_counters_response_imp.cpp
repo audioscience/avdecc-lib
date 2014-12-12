@@ -52,7 +52,10 @@ namespace avdecc_lib
         }
     }
     
-    stream_input_counters_response_imp::~stream_input_counters_response_imp(){}
+    stream_input_counters_response_imp::~stream_input_counters_response_imp()
+    {
+        free(m_frame);
+    }
     
     uint32_t STDCALL stream_input_counters_response_imp::get_counter_valid(int name)
     {

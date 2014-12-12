@@ -42,9 +42,6 @@ namespace avdecc_lib
     clock_domain_descriptor_imp::clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
     {
         memset(&aem_cmd_set_clk_src_resp, 0, sizeof(struct jdksavdecc_aem_command_set_clock_source_response));
-
-        m_type = jdksavdecc_descriptor_clock_domain_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-        m_index = jdksavdecc_descriptor_clock_domain_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     clock_domain_descriptor_imp::~clock_domain_descriptor_imp() {}
@@ -73,13 +70,13 @@ namespace avdecc_lib
 
     uint16_t STDCALL clock_domain_descriptor_imp::descriptor_type() const
     {
-        assert(m_type == JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN);
-        return m_type;
+        assert(jdksavdecc_descriptor_clock_domain_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos()) == JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN);
+        return jdksavdecc_descriptor_clock_domain_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     uint16_t STDCALL clock_domain_descriptor_imp::descriptor_index() const
     {
-        return m_index;
+        return jdksavdecc_descriptor_clock_domain_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     int STDCALL clock_domain_descriptor_imp::send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index)
@@ -151,13 +148,6 @@ namespace avdecc_lib
         u_field = aem_cmd_set_clk_src_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
-        
-        /*
-        if(status == AEM_STATUS_SUCCESS)
-        {
-            update_clock_source_index(aem_cmd_set_clk_src_resp.clock_source_index);
-        }
-        */
 
         return 0;
     }

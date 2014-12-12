@@ -36,13 +36,27 @@
 
 #include <stdint.h>
 #include "build.h"
-#include "descriptor_base.h"
 
 namespace avdecc_lib
 {
-    class clock_domain_descriptor_response : public virtual descriptor_base
+    class clock_domain_descriptor_response
     {
     public:
+        virtual ~clock_domain_descriptor_response(){};
+        /**
+         * \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
+         *	   The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+         *	   defined value being provided in a localized form via the localized descripton field. By leaving
+         *	   this field blank an AVDECC Controller can determine if the user has overridden the name and can
+         *	   use this name rather than the localized name.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL object_name() = 0;
+        
+        /**
+         * \return The localized string reference pointing to the localized descriptor name.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL localized_description() = 0;
+
         /**
          * \return The descriptor index of the CLOCK SOURCE descriptor describing the current CLOCK SOURCE
          *	       for the CLOCK DOMAIN.

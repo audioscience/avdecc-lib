@@ -29,12 +29,12 @@
 
 #pragma once
 
-#include "descriptor_base_imp.h"
 #include "control_descriptor_response.h"
+#include "jdksavdecc_aem_descriptor.h"
 
 namespace avdecc_lib
 {
-    class control_descriptor_response_imp : public control_descriptor_response, public virtual descriptor_base_imp
+    class control_descriptor_response_imp : public control_descriptor_response
     {
     private:
         uint8_t * buffer;

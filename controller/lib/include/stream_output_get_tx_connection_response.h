@@ -37,7 +37,7 @@ namespace avdecc_lib
     class stream_output_get_tx_connection_response
     {
     public:
-        
+        virtual ~stream_output_get_tx_connection_response(){};
         /**
          * \return The stream id field used to identify and transfer the associated stream ID where suitable
          *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.

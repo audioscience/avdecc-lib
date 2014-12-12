@@ -33,7 +33,7 @@
 
 namespace avdecc_lib
 {
-    audio_unit_descriptor_response_imp::audio_unit_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) : descriptor_base_imp(nullptr, frame, frame_len, pos)
+    audio_unit_descriptor_response_imp::audio_unit_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
     {
         frame_size = frame_len;
         buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
@@ -43,16 +43,19 @@ namespace avdecc_lib
         sampling_rates_init(frame);
     }
     
-    audio_unit_descriptor_response_imp::~audio_unit_descriptor_response_imp() {}
+    audio_unit_descriptor_response_imp::~audio_unit_descriptor_response_imp()
+    {
+        free(buffer);
+    }
     
     void audio_unit_descriptor_response_imp::sampling_rates_init(const uint8_t *frame)
     {
-        uint16_t offset = 0;
+        uint16_t offset = ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN + sampling_rates_offset();
         uint32_t sampling_rate = 0;
         
         for(uint32_t i = 0; i < sampling_rates_count(); i++)
         {
-            sampling_rate = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN + sampling_rates_offset() + offset);
+            sampling_rate = jdksavdecc_uint32_get(frame, offset);
             sample_rates_vec.push_back(sampling_rate);
             offset += 0x4;
         }

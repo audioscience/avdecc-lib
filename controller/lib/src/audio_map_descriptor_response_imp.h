@@ -29,12 +29,12 @@
 
 #pragma once
 
-#include "descriptor_base_imp.h"
 #include "audio_map_descriptor_response.h"
+#include "jdksavdecc_aem_descriptor.h"
 
 namespace avdecc_lib
 {
-    class audio_map_descriptor_response_imp : public audio_map_descriptor_response, public virtual descriptor_base_imp
+    class audio_map_descriptor_response_imp : public audio_map_descriptor_response
     {
     private:
         uint8_t * buffer;
@@ -47,6 +47,6 @@ namespace avdecc_lib
         
         uint16_t mappings_offset();
         uint16_t STDCALL number_of_mappings();
-        int STDCALL mapping(size_t index, struct audio_map_mapping &map);
+        int const STDCALL mapping(size_t index, struct audio_map_mapping &map);
     };
 }

@@ -37,6 +37,7 @@ namespace avdecc_lib
     class stream_input_counters_response
     {
     public:
+        virtual ~stream_input_counters_response(){};
         /**
          * \param name avdecc_lib::counter_labels
          *

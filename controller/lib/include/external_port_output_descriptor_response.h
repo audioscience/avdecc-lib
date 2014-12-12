@@ -31,13 +31,13 @@
 
 #include <stdint.h>
 #include "build.h"
-#include "descriptor_base.h"
 
 namespace avdecc_lib
 {
-    class external_port_output_descriptor_response : public virtual descriptor_base
+    class external_port_output_descriptor_response
     {
     public:
+        virtual ~external_port_output_descriptor_response(){};
         /**
          * \return The flags describing the capabilities or features of the port.
          */

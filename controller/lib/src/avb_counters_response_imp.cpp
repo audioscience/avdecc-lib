@@ -52,7 +52,10 @@ namespace avdecc_lib
         }
     }
     
-    avb_counters_response_imp::~avb_counters_response_imp(){}
+    avb_counters_response_imp::~avb_counters_response_imp()
+    {
+        free(m_frame);
+    }
 
     uint32_t STDCALL avb_counters_response_imp::get_counter_valid(int name)
     {

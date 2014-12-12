@@ -586,7 +586,7 @@ namespace avdecc_lib
                     JDKSAVDECC_DESCRIPTOR_STRINGS,
                     0,
                     ldr->number_of_strings());
-                free(ldr);
+                delete ldr;
                 break;
 
             case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
@@ -617,7 +617,7 @@ namespace avdecc_lib
                     aud->base_control_block(),
                     aud->number_of_control_blocks());
                 // TODO: other descriptor types in AUDIO_UNIT
-                free(aud);
+                delete aud;
                 break;
 
             case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT:
@@ -637,7 +637,7 @@ namespace avdecc_lib
                     JDKSAVDECC_DESCRIPTOR_AUDIO_MAP,
                     spid->base_map(),
                     spid->number_of_maps());
-                free(spid);
+                delete spid;
                 break;
 
             case JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT:
@@ -657,7 +657,7 @@ namespace avdecc_lib
                     JDKSAVDECC_DESCRIPTOR_AUDIO_MAP,
                     spod->base_map(),
                     spod->number_of_maps());
-                free(spod);
+                delete spod;
                 break;
         }
     }

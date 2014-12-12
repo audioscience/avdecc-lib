@@ -32,7 +32,7 @@
 
 namespace avdecc_lib
 {
-    audio_cluster_descriptor_response_imp::audio_cluster_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) : descriptor_base_imp(nullptr, frame, frame_len, pos)
+    audio_cluster_descriptor_response_imp::audio_cluster_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
     {
         frame_size = frame_len;
         buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
@@ -40,7 +40,10 @@ namespace avdecc_lib
         position = pos;
     }
     
-    audio_cluster_descriptor_response_imp::~audio_cluster_descriptor_response_imp() {}
+    audio_cluster_descriptor_response_imp::~audio_cluster_descriptor_response_imp()
+    {
+        free(buffer);
+    }
     
     uint8_t * STDCALL audio_cluster_descriptor_response_imp::object_name()
     {

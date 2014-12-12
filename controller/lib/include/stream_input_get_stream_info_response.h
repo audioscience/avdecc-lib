@@ -37,6 +37,7 @@ namespace avdecc_lib
     class stream_input_get_stream_info_response
     {
     public:
+        virtual ~stream_input_get_stream_info_response(){};
         /**
          * \return The stream info flags of a stream after sending a GET_STREAM_INFO command and
          *	       receiving a response back for the command.

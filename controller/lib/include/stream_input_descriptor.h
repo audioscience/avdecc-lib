@@ -50,7 +50,7 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual stream_input_descriptor_response * STDCALL get_stream_input_response() = 0;
         
         /**
-         * \return the stream_input descriptor counters.
+         * \return the stream_input descriptor counters response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual stream_input_counters_response * STDCALL get_stream_input_counters_response() = 0;
 
@@ -68,8 +68,7 @@ namespace avdecc_lib
          * \return the stream_input get_rx_state response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual stream_input_get_rx_state_response * STDCALL get_stream_input_get_rx_state_response() = 0;
-        
-        
+
         /**
          * \return The stream format of a stream after sending a SET_STREAM_FORMAT command and
          *	       receiving a response back for the command.

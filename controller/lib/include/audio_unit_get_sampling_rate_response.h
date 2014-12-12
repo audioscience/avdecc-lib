@@ -37,6 +37,7 @@ namespace avdecc_lib
     class audio_unit_get_sampling_rate_response
     {
     public:
+        virtual ~audio_unit_get_sampling_rate_response(){};
         /**
          * \return The sampling rate of a port or unit after sending a GET_SAMPLING_RATE command and
          *	       receiving a response back for the command.

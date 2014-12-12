@@ -37,9 +37,6 @@ namespace avdecc_lib
 {
     class strings_descriptor_imp : public strings_descriptor, public virtual descriptor_base_imp
     {
-    private:
-        uint16_t m_type;
-        uint16_t m_index;
     public:
         strings_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~strings_descriptor_imp();

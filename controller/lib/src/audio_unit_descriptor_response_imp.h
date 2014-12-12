@@ -29,12 +29,13 @@
 
 #pragma once
 
-#include "descriptor_base_imp.h"
 #include "audio_unit_descriptor_response.h"
+#include "jdksavdecc_aem_descriptor.h"
+#include "jdksavdecc_aem_command.h"
 
 namespace avdecc_lib
 {
-    class audio_unit_descriptor_response_imp : public audio_unit_descriptor_response, public virtual descriptor_base_imp
+    class audio_unit_descriptor_response_imp : public audio_unit_descriptor_response
     {
     private:
         uint8_t * buffer;

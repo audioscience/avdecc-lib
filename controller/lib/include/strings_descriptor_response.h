@@ -31,14 +31,15 @@
 #pragma once
 
 #include <stdint.h>
+#include <cstddef>
 #include "build.h"
-#include "descriptor_base.h"
 
 namespace avdecc_lib
 {
-    class strings_descriptor_response : public virtual descriptor_base
+    class strings_descriptor_response
     {
     public:
+        virtual ~strings_descriptor_response(){};
         /**
          * \return The corresponding localized string of the Strings descriptor.
          */

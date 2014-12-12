@@ -32,7 +32,7 @@
 
 namespace avdecc_lib
 {
-    audio_map_descriptor_response_imp::audio_map_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) : descriptor_base_imp(nullptr, frame, frame_len, pos)
+    audio_map_descriptor_response_imp::audio_map_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
     {
         frame_size = frame_len;
         buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
@@ -53,7 +53,10 @@ namespace avdecc_lib
         }
     }
     
-    audio_map_descriptor_response_imp::~audio_map_descriptor_response_imp() {}
+    audio_map_descriptor_response_imp::~audio_map_descriptor_response_imp()
+    {
+        free(buffer);
+    }
     
     uint16_t audio_map_descriptor_response_imp::mappings_offset()
     {
@@ -65,7 +68,7 @@ namespace avdecc_lib
         return jdksavdecc_descriptor_audio_map_get_number_of_mappings(buffer, position);
     }
     
-    int STDCALL audio_map_descriptor_response_imp::mapping(size_t index, struct audio_map_mapping &map)
+    int const STDCALL audio_map_descriptor_response_imp::mapping(size_t index, struct audio_map_mapping &map)
     {
         if (index >= number_of_mappings())
             return -1;

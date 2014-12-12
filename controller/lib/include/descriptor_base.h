@@ -40,6 +40,7 @@ namespace avdecc_lib
     class descriptor_base
     {
     public:
+        virtual ~descriptor_base(){}
         /**
          * \return The type of the descriptor.
          */

@@ -24,7 +24,7 @@
 /**
  * clock_domain_get_clock_source_response.h
  *
- * CLOCK DOMAIN stream format response base class
+ * CLOCK DOMAIN get clock source response base class
  */
 
 #pragma once
@@ -37,6 +37,7 @@ namespace avdecc_lib
     class clock_domain_get_clock_source_response
     {
     public:
+        virtual ~clock_domain_get_clock_source_response(){};
         /**
          * \return The stream format of a stream after sending a GET_clock_source command and
          *	       receiving a response back for the command.

@@ -33,6 +33,7 @@
 #include "build.h"
 #include "descriptor_base_imp.h"
 #include "external_port_input_descriptor_response.h"
+#include "jdksavdecc_aem_descriptor.h"
 
 namespace avdecc_lib
 {

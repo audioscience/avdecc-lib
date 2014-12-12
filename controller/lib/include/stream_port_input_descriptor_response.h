@@ -32,13 +32,13 @@
 
 #include <stdint.h>
 #include "build.h"
-#include "descriptor_base.h"
 
 namespace avdecc_lib
 {
-    class stream_port_input_descriptor_response : public virtual descriptor_base
+    class stream_port_input_descriptor_response
     {
     public:
+        virtual ~stream_port_input_descriptor_response(){};
         /**
          * \return The descriptor index of the CLOCK DOMAIN descriptor describing the CLOCK DOMAIN for the port.
          */

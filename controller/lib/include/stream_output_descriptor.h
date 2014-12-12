@@ -74,7 +74,7 @@ namespace avdecc_lib
          *	       receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL set_stream_format_stream_format() = 0;
-       
+
         /**
          * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
          *

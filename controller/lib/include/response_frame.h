@@ -46,7 +46,7 @@ namespace avdecc_lib
         size_t frame_size;
         ssize_t position;
         
-        void replace_frame(const uint8_t* frame, ssize_t pos, size_t size);
+        int replace_frame(const uint8_t* frame, ssize_t pos, size_t size);
         uint8_t * get_buffer(); //methods to fetch frame info
         ssize_t get_pos();
         size_t get_size();

@@ -37,10 +37,6 @@ namespace avdecc_lib
 {
     class memory_object_descriptor_imp : public memory_object_descriptor, public virtual descriptor_base_imp
     {
-    private:
-        uint16_t m_type;
-        uint16_t m_index;
-
     public:
         memory_object_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~memory_object_descriptor_imp();

@@ -28,6 +28,8 @@
  */
 
 #include "response_frame.h"
+#include "log_imp.h"
+#include "enumeration.h"
 #include "build.h"
 #include <stdlib.h>
 #include <iostream>
@@ -36,31 +38,45 @@ namespace avdecc_lib {
     
     response_frame::response_frame(const uint8_t *frame, size_t size, ssize_t pos)
     {
-        buffer = (uint8_t *)malloc(size * sizeof(uint8_t)); //allocate space for the frame
-        replace_frame(frame, pos, size);
+        position = pos;
+        frame_size = size;
+        buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t)); //allocate space for the new frame
+        memcpy(buffer, frame, frame_size);
     }
-    
+
     response_frame::~response_frame()
     {
         free(buffer);
     }
     
-    void response_frame::replace_frame(const uint8_t *frame, ssize_t pos, size_t size)
+    int response_frame::replace_frame(const uint8_t *frame, ssize_t pos, size_t size)
     {
-        if(size > frame_size)
-        {
-            buffer = (uint8_t *)malloc(size * sizeof(uint8_t)); //allocate space for the new frame
-            memcpy(buffer, frame, size);
+        uint8_t * replaced_buffer = NULL;
 
+        if(size <= frame_size)
+        {
+            assert(size <= frame_size);
+            memcpy(buffer, frame, size);
         }
         else
         {
-            assert(size <= frame_size);
-            memcpy(buffer, frame, size); //copy the new frame
+            replaced_buffer = (uint8_t *) realloc (buffer, size * sizeof(uint8_t));
+            if(replaced_buffer != NULL)
+            {
+                buffer = replaced_buffer;
+                memcpy(buffer, frame, size);
+            }
+            else
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Error reallocating memory");
+                free(buffer);
+                return -1;
+            }
         }
-        
         position = pos;
         frame_size = size;
+        
+        return 0;
     }
 
     uint8_t * response_frame::get_buffer()

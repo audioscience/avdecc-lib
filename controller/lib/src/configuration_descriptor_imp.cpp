@@ -487,9 +487,11 @@ namespace avdecc_lib
 
         if(desc)
         {
+            uint8_t * string;
             strings_descriptor_response *strings_resp_ref = desc->get_strings_response();
-            return strings_resp_ref->get_string_by_index(reference & 0x7);
-            free(strings_resp_ref);
+            string = strings_resp_ref->get_string_by_index(reference & 0x7);
+            delete strings_resp_ref;
+            return string;
         }
 
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,

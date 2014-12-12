@@ -38,6 +38,7 @@ namespace avdecc_lib
     class external_port_input_descriptor_response : public virtual descriptor_base
     {
     public:
+        virtual ~external_port_input_descriptor_response(){};
         /**
          * \return The flags describing the capabilities or features of the port.
          */

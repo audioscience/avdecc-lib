@@ -42,20 +42,17 @@ namespace avdecc_lib
     audio_unit_descriptor_imp::audio_unit_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
     {
         memset(&aem_cmd_set_sampling_rate_resp, 0, sizeof(struct jdksavdecc_aem_command_set_sampling_rate_response));
-        
-        m_type = jdksavdecc_descriptor_audio_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-        m_index = jdksavdecc_descriptor_audio_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     audio_unit_descriptor_imp::~audio_unit_descriptor_imp() {}
-    
+
     audio_unit_descriptor_response * STDCALL audio_unit_descriptor_imp::get_audio_unit_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
         return resp = new audio_unit_descriptor_response_imp(resp_ref->get_buffer(),
                                                              resp_ref->get_size(), resp_ref->get_pos());
     }
-    
+
     audio_unit_get_sampling_rate_response * STDCALL audio_unit_descriptor_imp::get_audio_unit_get_sampling_rate_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
@@ -65,13 +62,13 @@ namespace avdecc_lib
 
     uint16_t STDCALL audio_unit_descriptor_imp::descriptor_type() const
     {
-        assert(m_type == JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT);
-        return m_type;
+        assert(jdksavdecc_descriptor_audio_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos()) == JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT);
+        return jdksavdecc_descriptor_audio_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     uint16_t STDCALL audio_unit_descriptor_imp::descriptor_index() const
     {
-        return m_index;
+        return jdksavdecc_descriptor_audio_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     int STDCALL audio_unit_descriptor_imp::send_set_sampling_rate_cmd(void *notification_id, uint32_t new_sampling_rate)

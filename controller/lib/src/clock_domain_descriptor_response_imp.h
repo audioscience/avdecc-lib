@@ -29,12 +29,12 @@
 
 #pragma once
 
-#include "descriptor_base_imp.h"
 #include "clock_domain_descriptor_response.h"
+#include "jdksavdecc_aem_descriptor.h"
 
 namespace avdecc_lib
 {
-    class clock_domain_descriptor_response_imp : public clock_domain_descriptor_response, public virtual descriptor_base_imp
+    class clock_domain_descriptor_response_imp : public clock_domain_descriptor_response
     {
     private:
         std::vector<uint16_t> clk_src_vec; // Store clock sources in a vector

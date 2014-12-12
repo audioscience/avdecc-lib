@@ -39,7 +39,7 @@
 
 namespace avdecc_lib
 {
-    entity_descriptor_response_imp::entity_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) : descriptor_base_imp(nullptr, frame, frame_len, pos)
+    entity_descriptor_response_imp::entity_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
     {
         frame_size = frame_len;
         buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
@@ -47,7 +47,10 @@ namespace avdecc_lib
         position = pos;
     }
     
-    entity_descriptor_response_imp::~entity_descriptor_response_imp() {}
+    entity_descriptor_response_imp::~entity_descriptor_response_imp()
+    {
+        free(buffer);
+    }
 
     uint64_t STDCALL entity_descriptor_response_imp::entity_id()
     {
@@ -107,9 +110,7 @@ namespace avdecc_lib
         
         utility::convert_eui48_to_uint64(&buffer[position +
                                                  JDKSAVDECC_DESCRIPTOR_ENTITY_OFFSET_ASSOCIATION_ID], association_id);
-        
         return association_id;
-
     }
     
     uint8_t * STDCALL entity_descriptor_response_imp::entity_name()

@@ -34,16 +34,15 @@
 using namespace std;
 
 #include "jdksavdecc_acmp.h"
-#include "descriptor_base_imp.h"
 #include "stream_output_descriptor_response.h"
+#include "jdksavdecc_aem_descriptor.h"
 
 namespace avdecc_lib
 {
-    class stream_output_descriptor_response_imp : public stream_output_descriptor_response, public virtual descriptor_base_imp
+    class stream_output_descriptor_response_imp : public stream_output_descriptor_response
     {
     private:
         std::map <string, int> stream_info_flags;
-        
         struct stream_output_desc_stream_flags
         {
             bool clock_sync_source;

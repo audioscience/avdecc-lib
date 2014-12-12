@@ -24,7 +24,7 @@
 /**
  * stream_output_get_stream_format_response_imp.cpp
  *
- * STREAM output counters response implementation
+ * STREAM OUTPUT get stream format response implementation
  */
 
 #include "enumeration.h"
@@ -42,7 +42,10 @@ namespace avdecc_lib
         memcpy(m_frame, frame, m_size);
     }
     
-    stream_output_get_stream_format_response_imp::~stream_output_get_stream_format_response_imp(){}
+    stream_output_get_stream_format_response_imp::~stream_output_get_stream_format_response_imp()
+    {
+        free(m_frame);
+    }
     
     uint64_t STDCALL stream_output_get_stream_format_response_imp::get_stream_format()
     {

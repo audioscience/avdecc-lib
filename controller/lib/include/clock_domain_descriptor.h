@@ -52,7 +52,7 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual clock_domain_descriptor_response * STDCALL get_clock_domain_response() = 0;
         
         /**
-         * \return the clock_domain descriptor counters.
+         * \return the clock_domain descriptor counters response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual clock_domain_counters_response * STDCALL get_clock_domain_counters_response() = 0;
 

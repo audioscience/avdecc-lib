@@ -33,7 +33,7 @@
 
 namespace avdecc_lib
 {
-    clock_source_descriptor_response_imp::clock_source_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) : descriptor_base_imp(nullptr, frame, frame_len, pos)
+    clock_source_descriptor_response_imp::clock_source_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
     {
         frame_size = frame_len;
         buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
@@ -41,7 +41,10 @@ namespace avdecc_lib
         position = pos;
     }
     
-    clock_source_descriptor_response_imp::~clock_source_descriptor_response_imp() {}
+    clock_source_descriptor_response_imp::~clock_source_descriptor_response_imp()
+    {
+        free(buffer);
+    }
     
     uint8_t * STDCALL clock_source_descriptor_response_imp::object_name()
     {
@@ -69,7 +72,6 @@ namespace avdecc_lib
         
         utility::convert_eui48_to_uint64(&buffer[position +
                                                  JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE_OFFSET_CLOCK_SOURCE_IDENTIFIER], clock_source_identifier);
-        
         return clock_source_identifier;
     }
     

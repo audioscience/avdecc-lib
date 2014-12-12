@@ -37,6 +37,7 @@ namespace avdecc_lib
     class clock_domain_counters_response
     {
     public:
+        virtual ~clock_domain_counters_response(){};
         /**
          * \param name avdecc_lib::counter_labels
          *

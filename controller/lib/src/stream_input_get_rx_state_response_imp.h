@@ -24,7 +24,7 @@
 /**
  * stream_input_get_rx_state_response_imp.h
  *
- * STREAM INPUT stream format response implementation class
+ * STREAM INPUT rx state response implementation class
  */
 
 #pragma once

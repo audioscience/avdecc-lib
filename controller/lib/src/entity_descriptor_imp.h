@@ -43,8 +43,6 @@ namespace avdecc_lib
         struct jdksavdecc_aem_command_acquire_entity_response aem_cmd_acquire_entity_resp; // Store the response received after sending a ACQUIRE_ENTITY command.
         struct jdksavdecc_aem_command_lock_entity_response aem_cmd_lock_entity_resp; // Store the response received after sending a LOCK_ENTITY command.
         struct jdksavdecc_aem_command_reboot_response aem_cmd_reboot_resp;
-        uint16_t m_type;
-        uint16_t m_index;
     public:
         entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~entity_descriptor_imp();

@@ -37,9 +37,6 @@ namespace avdecc_lib
 {
     class jack_input_descriptor_imp : public jack_input_descriptor, public virtual descriptor_base_imp
     {
-    private:
-        uint16_t m_type;
-        uint16_t m_index;
     public:
         jack_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~jack_input_descriptor_imp();

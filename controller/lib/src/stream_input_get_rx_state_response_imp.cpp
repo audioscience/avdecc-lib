@@ -24,7 +24,7 @@
 /**
  * stream_input_get_rx_state_response_imp.cpp
  *
- * STREAM INPUT get stream format response implementation
+ * STREAM INPUT get rx state response implementation
  */
 
 #include "enumeration.h"
@@ -42,9 +42,11 @@ namespace avdecc_lib
         memcpy(m_frame, frame, m_size);
     }
     
-    stream_input_get_rx_state_response_imp::~stream_input_get_rx_state_response_imp(){}
-    
-    
+    stream_input_get_rx_state_response_imp::~stream_input_get_rx_state_response_imp()
+    {
+        free(m_frame);
+    }
+
     uint64_t STDCALL stream_input_get_rx_state_response_imp::get_rx_state_stream_id()
     {
         jdksavdecc_eui64 stream_id;

@@ -30,12 +30,12 @@
 #pragma once
 
 #include "jdksavdecc_acmp.h"
-#include "descriptor_base_imp.h"
 #include "stream_input_descriptor_response.h"
+#include "jdksavdecc_aem_descriptor.h"
 
 namespace avdecc_lib
 {
-    class stream_input_descriptor_response_imp : public stream_input_descriptor_response, public virtual descriptor_base_imp
+    class stream_input_descriptor_response_imp : public stream_input_descriptor_response
     {
     private:
         struct stream_input_desc_stream_flags

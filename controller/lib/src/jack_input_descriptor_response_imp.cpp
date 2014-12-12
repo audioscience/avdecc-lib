@@ -35,7 +35,7 @@
 
 namespace avdecc_lib
 {
-    jack_input_descriptor_response_imp::jack_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) : descriptor_base_imp(nullptr, frame, frame_len, pos)
+    jack_input_descriptor_response_imp::jack_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
     {
         frame_size = frame_len;
         buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
@@ -45,7 +45,10 @@ namespace avdecc_lib
         jack_flags_init();
     }
     
-    jack_input_descriptor_response_imp::~jack_input_descriptor_response_imp() {}
+    jack_input_descriptor_response_imp::~jack_input_descriptor_response_imp()
+    {
+        free(buffer);
+    }
     
     void jack_input_descriptor_response_imp::jack_flags_init()
     {

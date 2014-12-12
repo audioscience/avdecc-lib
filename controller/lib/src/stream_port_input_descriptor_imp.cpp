@@ -35,15 +35,10 @@
 
 namespace avdecc_lib
 {
-    stream_port_input_descriptor_imp::stream_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
-    {
-        m_type = jdksavdecc_descriptor_stream_port_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-        m_index = jdksavdecc_descriptor_stream_port_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
+    stream_port_input_descriptor_imp::stream_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
     stream_port_input_descriptor_imp::~stream_port_input_descriptor_imp() {}
-    
-    
+
     stream_port_input_descriptor_response * STDCALL stream_port_input_descriptor_imp::get_stream_port_input_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
@@ -53,12 +48,12 @@ namespace avdecc_lib
 
     uint16_t STDCALL stream_port_input_descriptor_imp::descriptor_type() const
     {
-        assert(m_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT);
-        return m_type;
+        assert(jdksavdecc_descriptor_stream_port_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos()) == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT);
+        return jdksavdecc_descriptor_stream_port_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     uint16_t STDCALL stream_port_input_descriptor_imp::descriptor_index() const
     {
-        return m_index;
+        return jdksavdecc_descriptor_stream_port_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 }

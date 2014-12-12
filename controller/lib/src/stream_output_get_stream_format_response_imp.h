@@ -24,7 +24,7 @@
 /**
  * stream_output_get_stream_format_response_imp.h
  *
- * STREAM output stream format response implementation class
+ * STREAM output get stream format response implementation class
  */
 
 #pragma once

@@ -24,18 +24,18 @@
 /**
  * locale_descriptor_response_imp.h
  *
- * LOCALE descriptor implementation class
+ * LOCALE descriptor response implementation class
  */
 
 #pragma once
 
-#include "descriptor_base_imp.h"
 #include "locale_descriptor_response.h"
 #include "jdksavdecc_aem_command.h"
+#include "jdksavdecc_aem_descriptor.h"
 
 namespace avdecc_lib
 {
-    class locale_descriptor_response_imp : public locale_descriptor_response, public virtual descriptor_base_imp
+    class locale_descriptor_response_imp : public locale_descriptor_response
     {
     private:
         uint8_t * buffer;

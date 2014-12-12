@@ -37,9 +37,6 @@ namespace avdecc_lib
 {
     class audio_cluster_descriptor_imp : public audio_cluster_descriptor, public virtual descriptor_base_imp
     {
-    private:
-        uint16_t m_type;
-        uint16_t m_index;
     public:
         audio_cluster_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~audio_cluster_descriptor_imp();

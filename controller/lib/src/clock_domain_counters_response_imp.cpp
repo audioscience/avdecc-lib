@@ -52,7 +52,10 @@ namespace avdecc_lib
         }
     }
     
-    clock_domain_counters_response_imp::~clock_domain_counters_response_imp(){}
+    clock_domain_counters_response_imp::~clock_domain_counters_response_imp()
+    {
+        free(m_frame);
+    }
     
     uint32_t STDCALL clock_domain_counters_response_imp::get_counter_valid(int name)
     {

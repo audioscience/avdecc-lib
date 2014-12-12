@@ -35,14 +35,10 @@
 
 namespace avdecc_lib
 {
-    jack_output_descriptor_imp::jack_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
-    {
-        m_type = jdksavdecc_descriptor_jack_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-        m_index = jdksavdecc_descriptor_jack_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
+    jack_output_descriptor_imp::jack_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
     jack_output_descriptor_imp::~jack_output_descriptor_imp() {}
-    
+
     jack_output_descriptor_response * STDCALL jack_output_descriptor_imp::get_jack_output_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
@@ -52,12 +48,12 @@ namespace avdecc_lib
 
     uint16_t STDCALL jack_output_descriptor_imp::descriptor_type() const
     {
-        assert(m_type == JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT);
-        return m_type;
+        assert(jdksavdecc_descriptor_jack_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos()) == JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT);
+        return jdksavdecc_descriptor_jack_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     uint16_t STDCALL jack_output_descriptor_imp::descriptor_index() const
     {
-        return m_index;
+        return jdksavdecc_descriptor_jack_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 }

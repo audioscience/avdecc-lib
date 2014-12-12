@@ -43,12 +43,12 @@ namespace avdecc_lib
     {
     public:
         /**
-         * \return the avb_interface descriptor response class.
+         * \return the audio_unit descriptor response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual audio_unit_descriptor_response * STDCALL get_audio_unit_response() = 0;
         
         /**
-         * \return the avb_interface get_sampling_rate response class.
+         * \return the audio_unit get_sampling_rate response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual audio_unit_get_sampling_rate_response * STDCALL get_audio_unit_get_sampling_rate_response() = 0;
         

@@ -24,7 +24,7 @@
 /**
  * stream_input_get_stream_info_response_imp.h
  *
- * STREAM INPUT stream info response implementation class
+ * STREAM INPUT get stream info response implementation class
  */
 
 #pragma once

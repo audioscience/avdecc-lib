@@ -42,7 +42,10 @@ namespace avdecc_lib
         memcpy(m_frame, frame, m_size);
     }
     
-    clock_domain_get_clock_source_response_imp::~clock_domain_get_clock_source_response_imp(){}
+    clock_domain_get_clock_source_response_imp::~clock_domain_get_clock_source_response_imp()
+    {
+        free(m_frame);
+    }
     
     uint16_t STDCALL clock_domain_get_clock_source_response_imp::get_clock_source_clock_source_index()
     {

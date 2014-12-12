@@ -43,9 +43,6 @@ namespace avdecc_lib
     class stream_input_descriptor_imp : public stream_input_descriptor, public virtual descriptor_base_imp
     {
     private:
-        uint16_t m_type;
-        uint16_t m_index;
-
         struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp; // Store the response received after sending a SET_STREAM_FORMAT command.
         struct jdksavdecc_acmpdu acmp_cmd_connect_rx_resp; // Store the response received after sending a CONNECT_RX command.
         struct jdksavdecc_acmpdu acmp_cmd_disconnect_rx_resp; // Store the response received after sending a DISCONNECT_RX command.

@@ -50,7 +50,7 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual avb_interface_descriptor_response * STDCALL get_avb_interface_response() = 0;
         
         /**
-         * \return the avb_interface descriptor counters.
+         * \return the avb_interface descriptor counters response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual avb_counters_response * STDCALL get_avb_interface_counters_response() = 0;
         

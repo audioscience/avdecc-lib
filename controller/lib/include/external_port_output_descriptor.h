@@ -40,7 +40,7 @@ namespace avdecc_lib
     {
     public:
         /**
-         * \return the external port input descriptor response class.
+         * \return the external port output descriptor response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual STDCALL external_port_output_descriptor_response * get_external_port_output_response() = 0;
     };

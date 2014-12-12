@@ -22,9 +22,9 @@
  */
 
 /**
- * stream_input_descriptor_imp.cpp
+ * stream_input_descriptor_response_imp.cpp
  *
- * STREAM INPUT descriptor implementation
+ * STREAM INPUT descriptor response implementation
  */
 
 #include <vector>
@@ -41,18 +41,20 @@
 
 namespace avdecc_lib
 {
-    stream_input_descriptor_response_imp::stream_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) : descriptor_base_imp(nullptr, frame, frame_len, pos)
+    stream_input_descriptor_response_imp::stream_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
     {
         memset(&stream_input_flags, 0, sizeof(struct stream_input_desc_stream_flags));
         frame_size = frame_len;
         buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
         memcpy(buffer, frame, frame_size);
         position = pos;
-
         stream_flags_init();
     }
     
-    stream_input_descriptor_response_imp::~stream_input_descriptor_response_imp() {}
+    stream_input_descriptor_response_imp::~stream_input_descriptor_response_imp()
+    {
+        free(buffer);
+    }
     
     void stream_input_descriptor_response_imp::stream_flags_init()
     {
@@ -143,7 +145,6 @@ namespace avdecc_lib
         uint64_t current_format;
         current_format = jdksavdecc_uint64_get(&buffer[position +
                                             JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT], 0);
-
         return utility::ieee1722_format_value_to_name(current_format);
     }
     
