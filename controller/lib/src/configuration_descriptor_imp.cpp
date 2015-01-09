@@ -222,7 +222,7 @@ namespace avdecc_lib
         if (m_all_desc[desc_type][desc_index])
         {
             // exists
-            desc->replace_frame(frame, pos, frame_len);
+            desc->replace_desc_frame(frame, pos, frame_len);
             delete desc;
         }
         else

@@ -44,9 +44,7 @@ namespace avdecc_lib
         
         avb_interface_descriptor_response_imp *resp;
         avb_counters_response_imp *counters_resp;
-        
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
+
         avb_interface_descriptor_response * STDCALL get_avb_interface_response();
         avb_counters_response * STDCALL get_avb_interface_counters_response();
         int STDCALL send_get_counters_cmd(void *notification_id);

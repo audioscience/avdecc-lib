@@ -41,17 +41,6 @@ namespace avdecc_lib
     locale_descriptor_response * STDCALL locale_descriptor_imp::get_locale_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-        return resp = new locale_descriptor_response_imp(resp_ref->get_buffer(), resp_ref->get_size(), resp_ref->get_pos());
-    }
-
-    uint16_t STDCALL locale_descriptor_imp::descriptor_type() const
-    {
-        return jdksavdecc_descriptor_locale_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
-
-    uint16_t STDCALL locale_descriptor_imp::descriptor_index() const
-    {
-        return jdksavdecc_descriptor_locale_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
-
+        return resp = new locale_descriptor_response_imp(resp_ref->get_desc_buffer(), resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 }

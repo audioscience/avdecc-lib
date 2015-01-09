@@ -48,18 +48,6 @@ namespace avdecc_lib
         }
     }
 
-    uint16_t STDCALL entity_descriptor_imp::descriptor_type() const
-    {
-        assert(jdksavdecc_descriptor_entity_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos()) == JDKSAVDECC_DESCRIPTOR_ENTITY);
-        return jdksavdecc_descriptor_entity_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
-
-    uint16_t STDCALL entity_descriptor_imp::descriptor_index() const
-    {
-        assert(jdksavdecc_descriptor_entity_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos()) == 0);
-        return jdksavdecc_descriptor_entity_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
-    
     uint16_t STDCALL entity_descriptor_imp::current_configuration()
     {
         return jdksavdecc_descriptor_entity_get_current_configuration(resp_ref->get_buffer(), resp_ref->get_pos());
@@ -68,8 +56,8 @@ namespace avdecc_lib
     entity_descriptor_response * STDCALL entity_descriptor_imp::get_entity_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-        return resp = new entity_descriptor_response_imp(resp_ref->get_buffer(),
-                                                         resp_ref->get_size(), resp_ref->get_pos());
+        return resp = new entity_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                         resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 
     void entity_descriptor_imp::store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)

@@ -48,9 +48,7 @@ namespace avdecc_lib
         clock_domain_descriptor_response_imp *resp;
         clock_domain_counters_response_imp *counters_resp;
         clock_domain_get_clock_source_response_imp *clock_source_resp;
-        
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
+
         clock_domain_descriptor_response * STDCALL get_clock_domain_response();
         clock_domain_counters_response * STDCALL get_clock_domain_counters_response();
         clock_domain_get_clock_source_response * STDCALL get_clock_domain_get_clock_source_response();

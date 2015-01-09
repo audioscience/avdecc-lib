@@ -44,7 +44,5 @@ namespace avdecc_lib
         strings_descriptor_response_imp *resp;
 
         strings_descriptor_response * STDCALL get_strings_response();
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
     };
 }

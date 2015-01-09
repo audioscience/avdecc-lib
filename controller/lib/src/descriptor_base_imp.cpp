@@ -47,6 +47,8 @@ namespace avdecc_lib
     {
         base_end_station_imp_ref = base;
         resp_ref = new response_frame(frame, size, pos);
+        desc_type = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR);
+        desc_index = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR + 2);
     }
 
     descriptor_base_imp::~descriptor_base_imp()
@@ -71,15 +73,21 @@ namespace avdecc_lib
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock the end station
         resp_ref->replace_frame(frame, pos, size);
     }
+    
+    void STDCALL descriptor_base_imp::replace_desc_frame(const uint8_t *frame, ssize_t pos, size_t size)
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock the end station
+        resp_ref->replace_desc_frame(frame, pos, size);
+    }
 
     uint16_t STDCALL descriptor_base_imp::descriptor_type() const
     {
-        return 0;
+        return desc_type;
     }
 
     uint16_t STDCALL descriptor_base_imp::descriptor_index() const
     {
-        return 0;
+        return desc_index;
     }
 
     uint8_t * STDCALL descriptor_base_imp::object_name()

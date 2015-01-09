@@ -47,19 +47,8 @@ namespace avdecc_lib
     memory_object_descriptor_response * STDCALL memory_object_descriptor_imp::get_memory_object_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-        return resp = new memory_object_descriptor_response_imp(resp_ref->get_buffer(),
-                                                              resp_ref->get_size(), resp_ref->get_pos());
-    }
-
-    uint16_t STDCALL memory_object_descriptor_imp::descriptor_type() const
-    {
-        assert(jdksavdecc_descriptor_jack_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos()) == JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT);
-        return jdksavdecc_descriptor_jack_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
-
-    uint16_t STDCALL memory_object_descriptor_imp::descriptor_index() const
-    {
-        return jdksavdecc_descriptor_jack_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
+        return resp = new memory_object_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                                resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 
     int STDCALL memory_object_descriptor_imp::start_operation_cmd(void *notification_id, uint16_t operation_type)
@@ -114,9 +103,9 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_start_operation_response aem_cmd_start_operation_resp;
-        memset(&aem_cmd_start_operation_resp,0,sizeof(aem_cmd_start_operation_resp));
 
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_start_operation_resp,0,sizeof(aem_cmd_start_operation_resp));
 
         ssize_t aem_cmd_start_operation_resp_returned = jdksavdecc_aem_command_start_operation_response_read(&aem_cmd_start_operation_resp,
                                                                                                              frame,

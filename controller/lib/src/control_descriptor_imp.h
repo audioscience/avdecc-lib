@@ -42,9 +42,7 @@ namespace avdecc_lib
         control_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~control_descriptor_imp();
         control_descriptor_response_imp *resp;
-        
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
+
         control_descriptor_response * STDCALL get_control_response();
     };
 }

@@ -42,11 +42,17 @@ namespace avdecc_lib {
         frame_size = size;
         buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t)); //allocate space for the new frame
         memcpy(buffer, frame, frame_size);
+        
+        desc_frame_size = size;
+        desc_position = pos;
+        desc_buffer = (uint8_t *)malloc(desc_frame_size * sizeof(uint8_t));
+        memcpy(desc_buffer, frame, desc_frame_size);
     }
 
     response_frame::~response_frame()
     {
         free(buffer);
+        free(desc_buffer);
     }
     
     int response_frame::replace_frame(const uint8_t *frame, ssize_t pos, size_t size)
@@ -78,19 +84,66 @@ namespace avdecc_lib {
         
         return 0;
     }
+    
+    int response_frame::replace_desc_frame(const uint8_t *frame, ssize_t pos, size_t size)
+    {
+        uint8_t * replaced_buffer = NULL;
+
+        if(size <= desc_frame_size)
+        {
+            assert(size <= desc_frame_size);
+            memcpy(desc_buffer, frame, size);
+        }
+        else
+        {
+            replaced_buffer = (uint8_t *) realloc (desc_buffer, size * sizeof(uint8_t));
+            if(replaced_buffer != NULL)
+            {
+                desc_buffer = replaced_buffer;
+                memcpy(desc_buffer, frame, size);
+            }
+            else
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Error reallocating memory");
+                free(desc_buffer);
+                return -1;
+            }
+        }
+        desc_position = pos;
+        desc_frame_size = size;
+        
+        return 0;
+    }
+
 
     uint8_t * response_frame::get_buffer()
     {
         return buffer;
     }
     
+    uint8_t * response_frame::get_desc_buffer()
+    {
+        return desc_buffer;
+    }
+
     ssize_t response_frame::get_pos()
     {
         return position;
     }
     
+    ssize_t response_frame::get_desc_pos()
+    {
+        return desc_position;
+    }
+
     size_t response_frame::get_size()
     {
         return frame_size;
     }
+    
+    size_t response_frame::get_desc_size()
+    {
+        return desc_frame_size;
+    }
+
 }

@@ -49,8 +49,8 @@ namespace avdecc_lib
     clock_domain_descriptor_response * STDCALL clock_domain_descriptor_imp::get_clock_domain_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-        return resp = new clock_domain_descriptor_response_imp(resp_ref->get_buffer(),
-                                                               resp_ref->get_size(), resp_ref->get_pos());
+        return resp = new clock_domain_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                               resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 
     clock_domain_counters_response * STDCALL clock_domain_descriptor_imp::get_clock_domain_counters_response()
@@ -65,18 +65,6 @@ namespace avdecc_lib
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
         return clock_source_resp = new clock_domain_get_clock_source_response_imp(resp_ref->get_buffer(),
                                                                                   resp_ref->get_size(), resp_ref->get_pos());
-    }
-
-
-    uint16_t STDCALL clock_domain_descriptor_imp::descriptor_type() const
-    {
-        assert(jdksavdecc_descriptor_clock_domain_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos()) == JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN);
-        return jdksavdecc_descriptor_clock_domain_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
-
-    uint16_t STDCALL clock_domain_descriptor_imp::descriptor_index() const
-    {
-        return jdksavdecc_descriptor_clock_domain_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     int STDCALL clock_domain_descriptor_imp::send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index)
@@ -157,7 +145,6 @@ namespace avdecc_lib
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_get_clock_source aem_cmd_get_clk_src;
         ssize_t aem_cmd_get_clk_src_returned;
-
         memset(&aem_cmd_get_clk_src,0,sizeof(aem_cmd_get_clk_src));
 
         /***************************************** AECP Common Data ******************************************/
@@ -203,6 +190,7 @@ namespace avdecc_lib
         bool u_field;
 
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_get_clk_src_resp, 0, sizeof(jdksavdecc_aem_command_get_clock_source_response));
 
         aem_cmd_get_clk_src_resp_returned = jdksavdecc_aem_command_get_clock_source_response_read(&aem_cmd_get_clk_src_resp,
                                                                                                   frame,
@@ -277,6 +265,7 @@ namespace avdecc_lib
         bool u_field;
         
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&clock_domain_counters_resp, 0, sizeof(jdksavdecc_aem_command_get_counters_response));
 
         aem_cmd_get_counters_resp_returned = jdksavdecc_aem_command_get_counters_response_read(&clock_domain_counters_resp,
                                                                                                frame,

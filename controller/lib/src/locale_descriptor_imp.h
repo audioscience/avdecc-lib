@@ -43,9 +43,7 @@ namespace avdecc_lib
         virtual ~locale_descriptor_imp();
         
         locale_descriptor_response_imp *resp;
-        
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
+
         locale_descriptor_response * STDCALL get_locale_response();
     };
 }

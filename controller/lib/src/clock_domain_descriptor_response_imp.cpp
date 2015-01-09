@@ -38,7 +38,7 @@ namespace avdecc_lib
         buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
         memcpy(buffer, frame, frame_size);
         position = pos;
-        store_clock_sources(frame, pos);
+        store_clock_sources();
     }
     
     clock_domain_descriptor_response_imp::~clock_domain_descriptor_response_imp()
@@ -73,13 +73,13 @@ namespace avdecc_lib
         return jdksavdecc_descriptor_clock_domain_get_clock_sources_count(buffer, position);
     }
     
-    void clock_domain_descriptor_response_imp::store_clock_sources(const uint8_t *frame, size_t pos)
+    void clock_domain_descriptor_response_imp::store_clock_sources()
     {
         uint16_t offset = 0;
-        
+    
         for(uint32_t i = 0; i < clock_sources_count(); i++)
         {
-            clk_src_vec.push_back(jdksavdecc_uint16_get(frame, clock_sources_offset() + pos + offset));
+            clk_src_vec.push_back(jdksavdecc_uint16_get(buffer, clock_sources_offset() + position + offset));
             offset += 0x2;
         }
     }

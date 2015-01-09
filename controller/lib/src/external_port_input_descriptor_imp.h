@@ -44,9 +44,7 @@ namespace avdecc_lib
         virtual ~external_port_input_descriptor_imp();
 
         external_port_input_descriptor_response_imp *resp;
-        
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
+
         external_port_input_descriptor_response * STDCALL get_external_port_input_response();
     };
 }

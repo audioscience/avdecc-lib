@@ -52,15 +52,15 @@ namespace avdecc_lib
     stream_output_descriptor_response * STDCALL stream_output_descriptor_imp::get_stream_output_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-        return resp = new stream_output_descriptor_response_imp(resp_ref->get_buffer(),
-                                                               resp_ref->get_size(), resp_ref->get_pos());
+        return resp = new stream_output_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                                resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 
     stream_output_get_stream_format_response * STDCALL stream_output_descriptor_imp::get_stream_output_get_stream_format_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
         return get_format_resp  = new stream_output_get_stream_format_response_imp(resp_ref->get_buffer(),
-                                                                                  resp_ref->get_size(), resp_ref->get_pos());
+                                                                                   resp_ref->get_size(), resp_ref->get_pos());
     }
 
     stream_output_get_stream_info_response * STDCALL stream_output_descriptor_imp::get_stream_output_get_stream_info_response()
@@ -82,17 +82,6 @@ namespace avdecc_lib
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
         return get_tx_connection_resp  = new stream_output_get_tx_connection_response_imp(resp_ref->get_buffer(),
                                                                                 resp_ref->get_size(), resp_ref->get_pos());
-    }
-
-    uint16_t STDCALL stream_output_descriptor_imp::descriptor_type() const
-    {
-        assert(jdksavdecc_descriptor_stream_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos()) == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT);
-        return jdksavdecc_descriptor_stream_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
-
-    uint16_t STDCALL stream_output_descriptor_imp::descriptor_index() const
-    {
-        return jdksavdecc_descriptor_stream_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
     }
 
     uint64_t STDCALL stream_output_descriptor_imp::set_stream_format_stream_format()
@@ -225,6 +214,7 @@ namespace avdecc_lib
         bool u_field;
 
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_get_stream_format_resp, 0, sizeof(jdksavdecc_aem_command_get_stream_format_response));
 
         aem_cmd_get_stream_format_resp_returned = jdksavdecc_aem_command_get_stream_format_response_read(&aem_cmd_get_stream_format_resp,
                                                                                                          frame,
@@ -376,6 +366,8 @@ namespace avdecc_lib
         bool u_field;
 
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_get_stream_info_resp, 0, sizeof(jdksavdecc_aem_command_get_stream_info_response));
+        
         aem_cmd_get_stream_info_resp_returned = jdksavdecc_aem_command_get_stream_info_response_read(&aem_cmd_get_stream_info_resp,
                                                                                                      frame,
                                                                                                      ETHER_HDR_SIZE,
@@ -405,7 +397,7 @@ namespace avdecc_lib
         struct jdksavdecc_aem_command_start_streaming aem_cmd_start_streaming;
         ssize_t aem_cmd_start_streaming_returned;
 
-        memset(&aem_cmd_start_streaming,0,sizeof(aem_cmd_start_streaming));
+        memset(&aem_cmd_start_streaming, 0, sizeof(aem_cmd_start_streaming));
         /******************************************** AECP Common Data *******************************************/
         aem_cmd_start_streaming.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_start_streaming.sequence_id in AEM Controller State Machine
@@ -448,8 +440,9 @@ namespace avdecc_lib
         uint32_t msg_type;
         bool u_field;
 
-        memset(&aem_cmd_start_streaming_resp,0,sizeof(aem_cmd_start_streaming_resp));
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_start_streaming_resp,0,sizeof(aem_cmd_start_streaming_resp));
+
         aem_cmd_start_streaming_resp_returned = jdksavdecc_aem_command_start_streaming_response_read(&aem_cmd_start_streaming_resp,
                                                                                                      frame,
                                                                                                      ETHER_HDR_SIZE,
@@ -520,8 +513,9 @@ namespace avdecc_lib
         uint32_t msg_type;
         bool u_field;
 
-        memset(&aem_cmd_stop_streaming_resp,0,sizeof(aem_cmd_stop_streaming_resp));
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_stop_streaming_resp,0,sizeof(aem_cmd_stop_streaming_resp));
+
         aem_cmd_stop_streaming_resp_returned = jdksavdecc_aem_command_stop_streaming_response_read(&aem_cmd_stop_streaming_resp,
                                                                                                    frame,
                                                                                                    ETHER_HDR_SIZE,

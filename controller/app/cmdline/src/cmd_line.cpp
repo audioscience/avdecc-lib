@@ -737,7 +737,7 @@ void cmd_line::cmd_line_commands_init()
     get_cmd->add_sub_command("clock_source", get_clock_source_cmd);
 
     cli_command_format *get_clock_source_fmt = new cli_command_format(
-        "Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.",
+        "Send a GET_CLOCK_SOURCE command to change the clock source of a clock domain.",
         &cmd_line::cmd_get_clock_source);
     get_clock_source_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
                                                                "Valid descriptor type is CLOCK_DOMAIN."));
@@ -2578,6 +2578,7 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument*>
             avdecc_lib::stream_input_get_rx_state_response *stream_input_resp_ref = instream->get_stream_input_get_rx_state_response();
             if (!stream_input_resp_ref->get_rx_state_connection_count())
                 continue;
+            delete stream_input_resp_ref;
 
             for(uint32_t out_index = 0; out_index < controller_obj->get_end_station_count(); out_index++)
             {
@@ -2590,6 +2591,7 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument*>
                 size_t stream_output_desc_count = out_descriptor->stream_output_desc_count();
                 for(uint32_t out_stream_index = 0; out_stream_index < stream_output_desc_count; out_stream_index++)
                 {
+                    avdecc_lib::stream_input_get_rx_state_response *stream_input_resp_ref = instream->get_stream_input_get_rx_state_response();
                     avdecc_lib::stream_output_descriptor *outstream = out_descriptor->get_stream_output_desc_by_index(out_stream_index);
                     avdecc_lib::stream_output_get_tx_state_response *stream_output_resp_ref = outstream->get_stream_output_get_tx_state_response();
                     if (!stream_output_resp_ref->get_tx_state_connection_count() ||
@@ -3447,20 +3449,20 @@ int cmd_line::cmd_get_clock_source(int total_matched, std::vector<cli_argument*>
 
     if (!clk_domain_desc_ref)
         return 0;
-
+    
+    avdecc_lib::clock_domain_descriptor_response *clk_domain_resp_ref = clk_domain_desc_ref->get_clock_domain_response();
     clk_domain_desc_ref->send_get_clock_source_cmd((void *)cmd_notification_id);
     int status = sys->get_last_resp_status();
-    avdecc_lib::clock_domain_descriptor_response *clk_domain_desc_resp = clk_domain_desc_ref->get_clock_domain_response();
-    avdecc_lib::clock_domain_get_clock_source_response *clk_domain_stream_resp_ref = clk_domain_desc_ref->get_clock_domain_get_clock_source_response();
     
+    avdecc_lib::clock_domain_get_clock_source_response *clk_domain_stream_resp_ref = clk_domain_desc_ref->get_clock_domain_get_clock_source_response();
     clk_src_index = clk_domain_stream_resp_ref->get_clock_source_clock_source_index();
 
     if(status == avdecc_lib::AEM_STATUS_SUCCESS)
     {
-        atomic_cout << "Clock source index : " << std::dec << clk_domain_desc_resp->get_clock_source_by_index(clk_src_index) << std::endl;
+        atomic_cout << "Clock source index : " << std::dec << clk_domain_resp_ref->get_clock_source_by_index(clk_src_index) << std::endl;
     }
 
-    delete clk_domain_desc_resp;
+    delete clk_domain_resp_ref;
     delete clk_domain_stream_resp_ref;
     return 0;
 }

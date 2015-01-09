@@ -589,8 +589,8 @@ namespace avdecc_lib
         uint32_t msg_type = 0;
         bool u_field = false;
 
-        memset(&aem_cmd_controller_avail_resp, 0, sizeof(aem_cmd_controller_avail_resp));
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_controller_avail_resp, 0, sizeof(aem_cmd_controller_avail_resp));
 
         aem_cmd_controller_avail_resp_returned = jdksavdecc_aem_command_controller_available_response_read(&aem_cmd_controller_avail_resp,
                                                                                                            frame,

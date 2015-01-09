@@ -43,8 +43,6 @@ namespace avdecc_lib
         
         memory_object_descriptor_response_imp *resp;
 
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
         memory_object_descriptor_response * STDCALL get_memory_object_response();
 
         int STDCALL start_operation_cmd(void *notification_id, uint16_t operation_type);

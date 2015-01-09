@@ -44,8 +44,6 @@ namespace avdecc_lib
         stream_port_input_descriptor_response_imp *resp;
 
         stream_port_input_descriptor_response * STDCALL get_stream_port_input_response();
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
     };
 }
 

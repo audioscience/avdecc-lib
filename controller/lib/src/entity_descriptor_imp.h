@@ -49,8 +49,6 @@ namespace avdecc_lib
         
         entity_descriptor_response_imp *resp;
 
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
         uint16_t STDCALL current_configuration();
         void store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         size_t STDCALL config_desc_count();

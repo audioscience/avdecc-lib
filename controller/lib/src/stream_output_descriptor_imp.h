@@ -60,8 +60,6 @@ namespace avdecc_lib
         stream_output_get_tx_state_response_imp *get_tx_state_resp;
         stream_output_get_tx_connection_response_imp *get_tx_connection_resp;
 
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
         stream_output_descriptor_response * STDCALL get_stream_output_response();
         stream_output_get_stream_format_response * STDCALL get_stream_output_get_stream_format_response();
         stream_output_get_stream_info_response * STDCALL get_stream_output_get_stream_info_response();

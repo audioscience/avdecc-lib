@@ -42,13 +42,28 @@ namespace avdecc_lib
         response_frame(const uint8_t *frame, size_t size, ssize_t pos);
         virtual ~response_frame();
         
-        uint8_t * buffer; //buffer to store the current descriptor frame
+        /*
+         * Buffer to store counters and command response frames.  Will be updated
+         * by command response processing methods.
+         */
+        uint8_t * buffer;
+        /*
+         * Buffer to store descriptor response frames.  Will be updated by
+         * update_desc_database() method in configuration descriptor.
+         */
+        uint8_t * desc_buffer;
         size_t frame_size;
+        size_t desc_frame_size;
         ssize_t position;
+        ssize_t desc_position;
         
         int replace_frame(const uint8_t* frame, ssize_t pos, size_t size);
-        uint8_t * get_buffer(); //methods to fetch frame info
+        int replace_desc_frame(const uint8_t *frame, ssize_t pos, size_t size);
+        uint8_t * get_buffer();
+        uint8_t * get_desc_buffer();
         ssize_t get_pos();
+        ssize_t get_desc_pos();
         size_t get_size();
+        size_t get_desc_size();
     };
 }

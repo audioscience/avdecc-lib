@@ -49,8 +49,8 @@ namespace avdecc_lib
     audio_unit_descriptor_response * STDCALL audio_unit_descriptor_imp::get_audio_unit_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-        return resp = new audio_unit_descriptor_response_imp(resp_ref->get_buffer(),
-                                                             resp_ref->get_size(), resp_ref->get_pos());
+        return resp = new audio_unit_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                             resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 
     audio_unit_get_sampling_rate_response * STDCALL audio_unit_descriptor_imp::get_audio_unit_get_sampling_rate_response()
@@ -60,23 +60,11 @@ namespace avdecc_lib
                                                              resp_ref->get_size(), resp_ref->get_pos());
     }
 
-    uint16_t STDCALL audio_unit_descriptor_imp::descriptor_type() const
-    {
-        assert(jdksavdecc_descriptor_audio_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos()) == JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT);
-        return jdksavdecc_descriptor_audio_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::descriptor_index() const
-    {
-        return jdksavdecc_descriptor_audio_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
-
     int STDCALL audio_unit_descriptor_imp::send_set_sampling_rate_cmd(void *notification_id, uint32_t new_sampling_rate)
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_set_sampling_rate aem_cmd_set_sampling_rate;
         ssize_t aem_cmd_set_sampling_rate_returned;
-
         memset(&aem_cmd_set_sampling_rate, 0, sizeof(aem_cmd_set_sampling_rate));
 
         /******************************************* AECP Common Data **********************************************/
@@ -195,6 +183,7 @@ namespace avdecc_lib
         bool u_field;
 
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_get_sampling_rate_resp, 0, sizeof(jdksavdecc_aem_command_get_sampling_rate_response));
 
         aem_cmd_get_sampling_rate_resp_returned = jdksavdecc_aem_command_get_sampling_rate_response_read(&aem_cmd_get_sampling_rate_resp,
                                                                                                          frame,
@@ -207,7 +196,6 @@ namespace avdecc_lib
             assert(aem_cmd_get_sampling_rate_resp_returned >= 0);
             return -1;
         }
-        
         replace_frame(frame, ETHER_HDR_SIZE, frame_len);
 
         msg_type = aem_cmd_get_sampling_rate_resp.aem_header.aecpdu_header.header.message_type;

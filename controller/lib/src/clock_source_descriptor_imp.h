@@ -42,9 +42,7 @@ namespace avdecc_lib
         virtual ~clock_source_descriptor_imp();
 
         clock_source_descriptor_response_imp *resp;
-        
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
+
         clock_source_descriptor_response * STDCALL get_clock_source_response();
     };
 }

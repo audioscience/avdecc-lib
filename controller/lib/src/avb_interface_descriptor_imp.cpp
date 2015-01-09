@@ -46,8 +46,8 @@ namespace avdecc_lib
     avb_interface_descriptor_response * STDCALL avb_interface_descriptor_imp::get_avb_interface_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-        return resp = new avb_interface_descriptor_response_imp(resp_ref->get_buffer(),
-                                                                resp_ref->get_size(), resp_ref->get_pos());
+        return resp = new avb_interface_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                                resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 
     avb_counters_response * STDCALL avb_interface_descriptor_imp::get_avb_interface_counters_response()
@@ -57,17 +57,6 @@ namespace avdecc_lib
                                                              resp_ref->get_size(), resp_ref->get_pos());
     }
 
-    uint16_t STDCALL avb_interface_descriptor_imp::descriptor_type() const
-    {
-        assert(jdksavdecc_descriptor_avb_interface_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos()) == JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE);
-        return jdksavdecc_descriptor_avb_interface_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
-
-    uint16_t STDCALL avb_interface_descriptor_imp::descriptor_index() const
-    {
-        return jdksavdecc_descriptor_avb_interface_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
-    
     int STDCALL avb_interface_descriptor_imp::send_get_counters_cmd(void *notification_id)
     {
         struct jdksavdecc_frame cmd_frame;
@@ -117,21 +106,22 @@ namespace avdecc_lib
         bool u_field;
         
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&avb_interface_counters_resp, 0, sizeof(jdksavdecc_aem_command_get_counters_response));
 
         aem_cmd_get_counters_resp_returned = jdksavdecc_aem_command_get_counters_response_read(&avb_interface_counters_resp,
                                                                                                frame,
                                                                                                ETHER_HDR_SIZE,
                                                                                                frame_len);
-        
+
         if(aem_cmd_get_counters_resp_returned < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_avb_counters_resp_read error\n");
             assert(aem_cmd_get_counters_resp_returned >= 0);
             return -1;
         }
-        
+
         replace_frame(frame, ETHER_HDR_SIZE, frame_len);
-        
+
         msg_type = avb_interface_counters_resp.aem_header.aecpdu_header.header.message_type;
         status = avb_interface_counters_resp.aem_header.aecpdu_header.header.status;
         u_field = avb_interface_counters_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type

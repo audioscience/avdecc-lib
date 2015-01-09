@@ -43,8 +43,6 @@ namespace avdecc_lib
         
         jack_input_descriptor_response_imp *resp;
 
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
         jack_input_descriptor_response * STDCALL get_jack_input_response();
     private:
         /**

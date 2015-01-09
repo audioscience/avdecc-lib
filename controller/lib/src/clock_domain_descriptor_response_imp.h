@@ -44,7 +44,7 @@ namespace avdecc_lib
         /**
          * Store the Clock Sources of the CLOCK DOMAIN object.
          */
-        void store_clock_sources(const uint8_t *frame, size_t pos);
+        void store_clock_sources();
 
     public:
         clock_domain_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);

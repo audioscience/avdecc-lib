@@ -46,9 +46,7 @@ namespace avdecc_lib
         
         audio_unit_descriptor_response_imp *resp;
         audio_unit_get_sampling_rate_response_imp *sampling_rate_resp;
-        
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
+
         audio_unit_descriptor_response * STDCALL get_audio_unit_response();
         audio_unit_get_sampling_rate_response * STDCALL get_audio_unit_get_sampling_rate_response();
         int STDCALL send_set_sampling_rate_cmd(void *notification_id, uint32_t new_sampling_rate);

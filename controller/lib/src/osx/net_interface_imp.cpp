@@ -259,6 +259,10 @@ namespace avdecc_lib
         for(uint32_t index_j = 0; index_j < 1; index_j++)
         {
             ether_packet = pcap_next(pcap_interface, &pcap_header);
+            if(!ether_packet)
+            {
+                break;
+            }
         }
 
         return 0;
