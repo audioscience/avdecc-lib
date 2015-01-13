@@ -27,7 +27,9 @@
  * ENTITY descriptor implementation
  */
 
+#include <mutex>
 #include <vector>
+
 #include "enumeration.h"
 #include "log_imp.h"
 #include "end_station_imp.h"

@@ -27,7 +27,9 @@
  * STREAM OUTPUT descriptor implementation
  */
 
+#include <mutex>
 #include <vector>
+
 #include "util.h"
 #include "avdecc_error.h"
 #include "enumeration.h"

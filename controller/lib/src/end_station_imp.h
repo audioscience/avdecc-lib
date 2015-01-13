@@ -28,6 +28,7 @@
  */
 
 #pragma once
+#include <mutex>
 #include <list>
 
 #include "entity_descriptor_imp.h"

@@ -27,7 +27,9 @@
  * AUDIO UNIT descriptor implementation
  */
 
+#include <mutex>
 #include <vector>
+
 #include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"

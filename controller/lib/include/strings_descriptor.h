@@ -43,6 +43,6 @@ namespace avdecc_lib
         /**
          * \return the strings descriptor response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual STDCALL strings_descriptor_response * get_strings_response() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual strings_descriptor_response * STDCALL get_strings_response() = 0;
     };
 }

@@ -43,6 +43,6 @@ namespace avdecc_lib
         /**
          * \return the stream port input descriptor response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual STDCALL stream_port_input_descriptor_response * get_stream_port_input_response() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual stream_port_input_descriptor_response * STDCALL get_stream_port_input_response() = 0;
     };
 }

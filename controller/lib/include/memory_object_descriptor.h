@@ -43,7 +43,7 @@ namespace avdecc_lib
         /**
          * \return the memory object descriptor response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual STDCALL memory_object_descriptor_response * get_memory_object_response() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual memory_object_descriptor_response * STDCALL get_memory_object_response() = 0;
 
         /**
          * Send a START_OPERATION command with a notification id to begin an operation on the memory object

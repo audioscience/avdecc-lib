@@ -36,7 +36,7 @@
 
 namespace avdecc_lib {
     
-    response_frame::response_frame(const uint8_t *frame, size_t size, ssize_t pos)
+    response_frame::response_frame(const uint8_t *frame, size_t size, size_t pos)
     {
         position = pos;
         frame_size = size;
@@ -55,7 +55,7 @@ namespace avdecc_lib {
         free(desc_buffer);
     }
     
-    int response_frame::replace_frame(const uint8_t *frame, ssize_t pos, size_t size)
+    int response_frame::replace_frame(const uint8_t *frame, size_t pos, size_t size)
     {
         uint8_t * replaced_buffer = NULL;
 
@@ -85,7 +85,7 @@ namespace avdecc_lib {
         return 0;
     }
     
-    int response_frame::replace_desc_frame(const uint8_t *frame, ssize_t pos, size_t size)
+    int response_frame::replace_desc_frame(const uint8_t *frame, size_t pos, size_t size)
     {
         uint8_t * replaced_buffer = NULL;
 
@@ -126,12 +126,12 @@ namespace avdecc_lib {
         return desc_buffer;
     }
 
-    ssize_t response_frame::get_pos()
+    size_t response_frame::get_pos()
     {
         return position;
     }
     
-    ssize_t response_frame::get_desc_pos()
+    size_t response_frame::get_desc_pos()
     {
         return desc_position;
     }

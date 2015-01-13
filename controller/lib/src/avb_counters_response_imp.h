@@ -47,7 +47,7 @@ namespace avdecc_lib
         avb_counters_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
         virtual ~avb_counters_response_imp();
  
-        uint32_t get_counter_valid(int name);
-        uint32_t get_counter_by_name(int name);
+        uint32_t STDCALL get_counter_valid(int name);
+        uint32_t STDCALL get_counter_by_name(int name);
     };
 }

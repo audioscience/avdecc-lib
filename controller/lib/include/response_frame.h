@@ -39,7 +39,7 @@ namespace avdecc_lib
     class response_frame
     {
     public:
-        response_frame(const uint8_t *frame, size_t size, ssize_t pos);
+        response_frame(const uint8_t *frame, size_t size, size_t pos);
         virtual ~response_frame();
         
         /*
@@ -54,15 +54,15 @@ namespace avdecc_lib
         uint8_t * desc_buffer;
         size_t frame_size;
         size_t desc_frame_size;
-        ssize_t position;
-        ssize_t desc_position;
+        size_t position;
+        size_t desc_position;
         
-        int replace_frame(const uint8_t* frame, ssize_t pos, size_t size);
-        int replace_desc_frame(const uint8_t *frame, ssize_t pos, size_t size);
+        int replace_frame(const uint8_t* frame, size_t pos, size_t size);
+        int replace_desc_frame(const uint8_t *frame, size_t pos, size_t size);
         uint8_t * get_buffer();
         uint8_t * get_desc_buffer();
-        ssize_t get_pos();
-        ssize_t get_desc_pos();
+        size_t get_pos();
+        size_t get_desc_pos();
         size_t get_size();
         size_t get_desc_size();
     };
