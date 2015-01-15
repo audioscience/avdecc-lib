@@ -211,6 +211,18 @@ To read the name of the first input jack, one would go:
 
 	controller->end_station(0)->entity(0)->configuration(0)->input_stream(0)->get_name(name)
 
+Release 0.6 update:
+
+To avoid the possible issue of an asynchronous response thread updating a descriptor value while it is being read
+in the cmdline, a new AEM descriptor read process has been implemented.  All the methods required to read each descriptor
+are separated into response classes, which read the descriptor values from a stored response frame. 
+
+To read the current sampling rate from an audio unit descriptor:
+    
+    avdecc_lib::audio_unit_descriptor_response *audio_unit_resp_ref = audio_unit_desc_ref->get_audio_unit_response();
+    audio_unit_resp_ref->current_sampling_rate();
+    delete audio_unit_resp_ref;
+
 AVDECC AEM commands
 -------------------
 
@@ -234,6 +246,19 @@ sequence is to wait for the callback to complete in-line, ie:
 
 The above examples place an uint32_t notify_id in a "void *" container. If the application writer is careful about
 object creation and destruction, they may choose to place a C++ (or other language) object in the notify_id field.
+
+Release 0.6 update:
+
+Similar to descriptors, AVDECC command response processing has been altered to account for the possibility of an
+asynchronous response writing to a memory location while it is being read in the cmdline.  So far, GET_ commands 
+that return a value (e.g. get_counters) have been updated to return their response in a response class.
+
+To read the locked counter from clock domain counters:
+
+    avdecc_lib::clock_domain_counters_response *clock_domain_counters_resp = clock_domain_desc_ref->get_clock_domain_counters_response();
+    if(clock_domain_counters_resp->get_counter_valid(avdecc_lib::CLOCK_DOMAIN_LOCKED))
+        atomic_cout << "Locked Counter: " << clock_domain_counters_resp->get_counter_by_name(avdecc_lib::CLOCK_DOMAIN_LOCKED) << std::endl;
+    delete clock_domain_counters_resp;
 
 Callbacks
 ---------

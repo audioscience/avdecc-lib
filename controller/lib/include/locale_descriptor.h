@@ -34,6 +34,7 @@
 #include <stdint.h>
 #include "build.h"
 #include "descriptor_base.h"
+#include "locale_descriptor_response.h"
 
 namespace avdecc_lib
 {
@@ -41,25 +42,8 @@ namespace avdecc_lib
     {
     public:
         /**
-         * The identifier is a UTF-8 string that contains one to three components such as a
-         * language code, a region code, or a variant code, separated by the dash character.
-         * Examples of valid locale identifiers are en-US for English in the US, en-AU for
-         * English in Australia, haw-US for Hawaiian in the US, and fr-CA for French in Canada.
-         *
-         * \return The identifier of the LOCALE.
+         *  \return the locale descriptor response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL locale_identifier() = 0;
-
-        /**
-         * \return The number of Strings descriptor in this locale. This is the same value for
-         *	       all locales in an AVDECC Entity.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_strings() = 0;
-
-        /**
-         * \return The descriptor index of the first Strings descriptor for this LOCALE.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_strings() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual locale_descriptor_response * STDCALL get_locale_response() = 0;
     };
 }
-

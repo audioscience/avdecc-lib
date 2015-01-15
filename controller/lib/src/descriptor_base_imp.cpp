@@ -27,8 +27,10 @@
  * Descriptor base implementation
  */
 
+#include <mutex>
 #include <algorithm>
 #include <iostream>
+
 #include "enumeration.h"
 #include "log_imp.h"
 #include "adp.h"
@@ -43,15 +45,19 @@ namespace avdecc_lib
 	{
 		delete f;
 	}
-	descriptor_base_imp::descriptor_base_imp(end_station_imp *base)
+	descriptor_base_imp::descriptor_base_imp(end_station_imp *base, const uint8_t *frame, size_t size, ssize_t pos)
     {
         base_end_station_imp_ref = base;
+        resp_ref = new response_frame(frame, size, pos);
+        desc_type = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR);
+        desc_index = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR + 2);
     }
 
     descriptor_base_imp::~descriptor_base_imp()
 	{
 		std::for_each(m_fields.begin(), m_fields.end(), delete_field);
 		m_fields.clear();
+        delete resp_ref;
 	}
 
     bool operator== (const descriptor_base_imp &n1, const descriptor_base_imp &n2)
@@ -63,15 +69,27 @@ namespace avdecc_lib
     {
         return n1.descriptor_index() < n2.descriptor_index();
     }
+    
+    void STDCALL descriptor_base_imp::replace_frame(const uint8_t *frame, ssize_t pos, size_t size)
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock the end station
+        resp_ref->replace_frame(frame, pos, size);
+    }
+    
+    void STDCALL descriptor_base_imp::replace_desc_frame(const uint8_t *frame, ssize_t pos, size_t size)
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock the end station
+        resp_ref->replace_desc_frame(frame, pos, size);
+    }
 
     uint16_t STDCALL descriptor_base_imp::descriptor_type() const
     {
-        return 0;
+        return desc_type;
     }
 
     uint16_t STDCALL descriptor_base_imp::descriptor_index() const
     {
-        return 0;
+        return desc_index;
     }
 
     uint8_t * STDCALL descriptor_base_imp::object_name()

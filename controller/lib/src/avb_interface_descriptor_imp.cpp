@@ -27,6 +27,8 @@
  * AVB INTERFACE descriptor implementation
  */
 
+#include <mutex>
+
 #include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -39,117 +41,30 @@
 
 namespace avdecc_lib
 {
-    avb_interface_descriptor_imp::avb_interface_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
-    {
-        ssize_t ret = jdksavdecc_descriptor_avb_interface_read(&avb_interface_desc, frame, pos, frame_len);
-
-        if (ret < 0)
-        {
-            throw avdecc_read_descriptor_error("avb_interface_desc_read error");
-        }
-        
-        memset(&aem_cmd_get_counters_resp, 0, sizeof(struct jdksavdecc_aem_command_get_counters_response));
-        memset(&counters_response, 0, sizeof(struct get_counters_response_with_block));
-    }
-
-    avb_interface_descriptor_imp::~avb_interface_descriptor_imp() {}
-
-    uint16_t STDCALL avb_interface_descriptor_imp::descriptor_type() const
-    {
-        //assert(avb_interface_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE);
-        return avb_interface_desc.descriptor_type;
-    }
-
-    uint16_t STDCALL avb_interface_descriptor_imp::descriptor_index() const
-    {
-        return avb_interface_desc.descriptor_index;
-    }
-
-    uint8_t * STDCALL avb_interface_descriptor_imp::object_name()
-    {
-        return avb_interface_desc.object_name.value;
-    }
-
-    uint16_t STDCALL avb_interface_descriptor_imp::localized_description()
-    {
-        return avb_interface_desc.localized_description;
-    }
-
-    uint64_t STDCALL avb_interface_descriptor_imp::mac_addr()
-    {
-        uint64_t mac_addr;
-        utility::convert_eui48_to_uint64(avb_interface_desc.mac_address.value, mac_addr);
-
-        return mac_addr;
-    }
-
-    uint16_t STDCALL avb_interface_descriptor_imp::interface_flags()
-    {
-        return avb_interface_desc.interface_flags;
-    }
-
-    uint64_t STDCALL avb_interface_descriptor_imp::clock_identity()
-    {
-        return jdksavdecc_uint64_get(&avb_interface_desc.clock_identity, 0);
-    }
-
-    uint8_t STDCALL avb_interface_descriptor_imp::priority1()
-    {
-        return avb_interface_desc.priority1;
-    }
-
-    uint8_t STDCALL avb_interface_descriptor_imp::clock_class()
-    {
-        return avb_interface_desc.clock_class;
-    }
-
-    uint16_t STDCALL avb_interface_descriptor_imp::offset_scaled_log_variance()
-    {
-        return avb_interface_desc.offset_scaled_log_variance;
-    }
-
-    uint8_t STDCALL avb_interface_descriptor_imp::clock_accuracy()
-    {
-        return avb_interface_desc.clock_accuracy;
-    }
-
-    uint8_t STDCALL avb_interface_descriptor_imp::priority2()
-    {
-        return avb_interface_desc.priority2;
-    }
-
-    uint8_t STDCALL avb_interface_descriptor_imp::domain_number()
-    {
-        return avb_interface_desc.domain_number;
-    }
-
-    uint8_t STDCALL avb_interface_descriptor_imp::log_sync_interval()
-    {
-        return avb_interface_desc.log_sync_interval;
-    }
-
-    uint8_t STDCALL avb_interface_descriptor_imp::log_announce_interval()
-    {
-        return avb_interface_desc.log_announce_interval;
-    }
-
-    uint8_t STDCALL avb_interface_descriptor_imp::log_pdelay_interval()
-    {
-        return avb_interface_desc.log_pdelay_interval;
-    }
-
-    uint16_t STDCALL avb_interface_descriptor_imp::port_number()
-    {
-        return avb_interface_desc.port_number;
-    }
+    avb_interface_descriptor_imp::avb_interface_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
     
+    avb_interface_descriptor_imp::~avb_interface_descriptor_imp(){}
+
+    avb_interface_descriptor_response * STDCALL avb_interface_descriptor_imp::get_avb_interface_response()
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new avb_interface_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                                resp_ref->get_desc_size(), resp_ref->get_desc_pos());
+    }
+
+    avb_counters_response * STDCALL avb_interface_descriptor_imp::get_avb_interface_counters_response()
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return counters_resp = new avb_counters_response_imp(resp_ref->get_buffer(),
+                                                             resp_ref->get_size(), resp_ref->get_pos());
+    }
+
     int STDCALL avb_interface_descriptor_imp::send_get_counters_cmd(void *notification_id)
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_get_counters aem_cmd_get_counters;
         memset(&aem_cmd_get_counters,0,sizeof(aem_cmd_get_counters));
         ssize_t aem_cmd_get_counters_returned;
-        
         /******************************************** AECP Common Data *********************************************/
         aem_cmd_get_counters.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_get_counters.sequence_id in AEM Controller State Machine
@@ -183,90 +98,38 @@ namespace avdecc_lib
         
         return 0;
     }
-    
+
     int avb_interface_descriptor_imp::proc_get_counters_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_get_counters_response avb_interface_counters_resp;
         ssize_t aem_cmd_get_counters_resp_returned;
         uint32_t msg_type;
         bool u_field;
-        int r = 0;
-        int i = 0;
         
         memcpy(cmd_frame.payload, frame, frame_len);
-        
-        aem_cmd_get_counters_resp_returned = jdksavdecc_aem_command_get_counters_response_read(&aem_cmd_get_counters_resp,
-                                                                                                      frame,
-                                                                                                      ETHER_HDR_SIZE,
-                                                                                                      frame_len);
-        
-        
-        for(i = 0; i<31; i++){
-            r = jdksavdecc_uint32_read(&counters_response.counters_block[i], frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_BLOCK + 4 * i,
-                frame_len);
-            
-            if (r < 0)
-                break;
-        }
-        
-        
+        memset(&avb_interface_counters_resp, 0, sizeof(jdksavdecc_aem_command_get_counters_response));
+
+        aem_cmd_get_counters_resp_returned = jdksavdecc_aem_command_get_counters_response_read(&avb_interface_counters_resp,
+                                                                                               frame,
+                                                                                               ETHER_HDR_SIZE,
+                                                                                               frame_len);
+
         if(aem_cmd_get_counters_resp_returned < 0)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_avb_counters_resp_read error\n");
             assert(aem_cmd_get_counters_resp_returned >= 0);
             return -1;
         }
-        
-        msg_type = aem_cmd_get_counters_resp.aem_header.aecpdu_header.header.message_type;
-        status = aem_cmd_get_counters_resp.aem_header.aecpdu_header.header.status;
-        u_field = aem_cmd_get_counters_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+
+        replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+
+        msg_type = avb_interface_counters_resp.aem_header.aecpdu_header.header.message_type;
+        status = avb_interface_counters_resp.aem_header.aecpdu_header.header.status;
+        u_field = avb_interface_counters_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
         
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
         
-        return 0;
-    }
-    
-    uint32_t STDCALL avb_interface_descriptor_imp::get_counter_by_name(int name)
-    {
-        switch(name)
-        {
-            case AVB_INTERFACE_LINK_UP:
-                return counters_response.counters_block[0];
-            case AVB_INTERFACE_LINK_DOWN:
-                return counters_response.counters_block[1];
-            case AVB_INTERFACE_FRAMES_TX:
-                return counters_response.counters_block[2];
-            case AVB_INTERFACE_FRAMES_RX:
-                return counters_response.counters_block[3];
-            case AVB_INTERFACE_RX_CRC_ERROR:
-                return counters_response.counters_block[4];
-            case AVB_GPTP_GM_CHANGED:
-                return counters_response.counters_block[5];
-            default:
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found\n");
-        }
-        return 0;
-    }
-    
-    uint32_t STDCALL avb_interface_descriptor_imp::get_counter_valid(int name)
-    {
-        switch(name)
-        {
-            case AVB_INTERFACE_LINK_UP:
-                return aem_cmd_get_counters_resp.counters_valid & 0x01;
-            case AVB_INTERFACE_LINK_DOWN:
-                return aem_cmd_get_counters_resp.counters_valid >> 1 & 0x01;
-            case AVB_INTERFACE_FRAMES_TX:
-                return aem_cmd_get_counters_resp.counters_valid >> 2 & 0x01;
-            case AVB_INTERFACE_FRAMES_RX:
-                return aem_cmd_get_counters_resp.counters_valid >> 3 & 0x01;
-            case AVB_INTERFACE_RX_CRC_ERROR:
-                return aem_cmd_get_counters_resp.counters_valid >> 4 & 0x01;
-            case AVB_GPTP_GM_CHANGED:
-                return aem_cmd_get_counters_resp.counters_valid >> 5 & 0x01;
-            default:
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found\n");
-        }
         return 0;
     }
 }

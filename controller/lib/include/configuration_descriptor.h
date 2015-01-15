@@ -278,4 +278,3 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual external_port_output_descriptor * STDCALL get_external_port_output_desc_by_index(size_t index) = 0;
     };
 }
-

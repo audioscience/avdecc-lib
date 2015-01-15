@@ -31,6 +31,7 @@
 
 #include <stdint.h>
 #include "build.h"
+#include "response_frame.h"
 
 namespace avdecc_lib
 {
@@ -39,6 +40,7 @@ namespace avdecc_lib
     class descriptor_base
     {
     public:
+        virtual ~descriptor_base(){}
         /**
          * \return The type of the descriptor.
          */
@@ -154,4 +156,3 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index) = 0;
     };
 }
-

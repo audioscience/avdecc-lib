@@ -33,6 +33,11 @@
 #include <stdint.h>
 #include "build.h"
 #include "descriptor_base.h"
+#include "stream_output_descriptor_response.h"
+#include "stream_output_get_stream_format_response.h"
+#include "stream_output_get_stream_info_response.h"
+#include "stream_output_get_tx_state_response.h"
+#include "stream_output_get_tx_connection_response.h"
 
 namespace avdecc_lib
 {
@@ -40,258 +45,35 @@ namespace avdecc_lib
     {
     public:
         /**
-         * \return The descriptor index of the CLOCK DOMAIN descriptor providing the media clock for the stream.
+         * \return the stream_output descriptor response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_domain_index() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual stream_output_descriptor_response * STDCALL get_stream_output_response() = 0;
+        
+        /**
+         * \return the stream_output get_stream_format response class.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual stream_output_get_stream_format_response * STDCALL get_stream_output_get_stream_format_response() = 0;
 
         /**
-         * \return The flags describing the capabilities or features of the stream.
+         * \return the stream_output get_stream_info response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL stream_flags() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual stream_output_get_stream_info_response * STDCALL get_stream_output_get_stream_info_response() = 0;
 
         /**
-         * \return True if the stream can be used as a clock synchronization source.
+         * \return the stream_output get_tx_state response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_clock_sync_source() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual stream_output_get_tx_state_response * STDCALL get_stream_output_get_tx_state_response() = 0;
 
         /**
-         * \return True if the stream supports streaming at Class A.
+         * \return the stream_output get_tx_connection response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_class_a() = 0;
-
-        /**
-         * \return True if the stream supports streaming at Class B.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_class_b() = 0;
-
-        /**
-         * \return True if the stream supports streaming with encrypted PDUs.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_supports_encrypted() = 0;
-
-        /**
-         * \return True if the primary backup AVDECC Talker's Entity ID and primary backup AVDECC Talker's Unique ID are supported.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_primary_backup_supported() = 0;
-
-        /**
-         * \return True if the primary backup AVDECC Talker's Entity ID and primary backup AVDECC Talker's Unique ID are valid.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_primary_backup_valid() = 0;
-
-        /**
-         * \return True if the secondary backup AVDECC Talker's Entity ID and secondary backup AVDECC Talker's Unique ID are supported.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_secondary_backup_supported() = 0;
-
-        /**
-         * \return True if the secondary backup AVDECC Talker's Entity ID and secondary backup AVDECC Talker's Unique ID are valid.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_secondary_backup_valid() = 0;
-
-        /**
-         * \return True if the tertiary backup AVDECC Talker's Entity ID and tertiary backup AVDECC Talker's Unique ID are supported.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_tertiary_backup_supported() = 0;
-
-        /**
-         * \return True if the tertiary backup AVDECC Talker's Entity ID and tertiary backup AVDECC Talker's Unique ID are valid.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_tertiary_backup_valid() = 0;
-
-        /**
-         * \return The current format of the stream.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL current_format() = 0;
-
-        /**
-         * \return The number of formats supported by this audio stream. The maximum value
-         *	       for this field is 47 for this version of AEM.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_formats() = 0;
-
-        /**
-         * \return The primary backup AVDECC Talker's Entity ID.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL backup_talker_entity_id_0() = 0;
-
-        /**
-         * \return The primary backup AVDECC Talker's Unique ID.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL backup_talker_unique_0() = 0;
-
-        /**
-         * \return The secondary backup AVDECC Talker's Entity ID.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL backup_talker_entity_id_1() = 0;
-
-        /**
-         * \return The secondary backup AVDECC Talker's Unique ID.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL backup_talker_unique_1() = 0;
-
-        /**
-         * \return The tertiary backup AVDECC Talker's Entity ID.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL backup_talker_entity_id_2() = 0;
-
-        /**
-         * \return The tertiary backup AVDECC Talker's Unique ID.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL backup_talker_unique_2() = 0;
-
-        /**
-         * \return The Entity ID of the AVDECC Talker that this stream is backing up.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL backedup_talker_entity_id() = 0;
-
-        /**
-         * \return The Unique ID of the AVDECC Talker that this stream is backing up.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL backedup_talker_unique() = 0;
-
-        /**
-         * \return The descriptor index of the AVB INTERFACE descriptor from which this stream
-         *	       is sourced or to which it is sinked.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL avb_interface_index() = 0;
-
-        /**
-         * \return The length in nanoseconds of the MAC's ingress buffer size.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL buffer_length() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual stream_output_get_tx_connection_response * STDCALL get_stream_output_get_tx_connection_response() = 0;
 
         /**
          * \return The stream format of a stream after sending a SET_STREAM_FORMAT command and
          *	       receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL set_stream_format_stream_format() = 0;
-
-        /**
-         * \return The stream format of a stream after sending a GET_STREAM_FORMAT command and
-         *	       receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_format_stream_format() = 0;
-
-        /**
-         * \return The stream info flags of a stream after sending a GET_STREAM_INFO command and
-         *	       receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_info_flags() = 0;
-
-        /**
-         * \return The stream info stream format of a stream after sending a GET_STREAM_INFO command and
-         *	       receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_stream_format() = 0;
-
-        /**
-         * \return The stream info stream id of a stream after sending a GET_STREAM_INFO command and
-         *	       receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_stream_id() = 0;
-
-        /**
-         * \return The stream info MSRP accumulated latency of a stream after sending a GET_STREAM_INFO command and
-         *	       receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_info_msrp_accumulated_latency() = 0;
-
-        /**
-         * \return The stream info stream destination MAC of a stream after sending a GET_STREAM_INFO command and
-         *	       receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_stream_dest_mac() = 0;
-
-        /**
-         * \return The stream info MSRP failure code of a stream after sending a GET_STREAM_INFO command and
-         *	       receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_stream_info_msrp_failure_code() = 0;
-
-        /**
-         * \return The stream info MSRP failure bridge id of a stream after sending a GET_STREAM_INFO command and
-         *	       receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_info_msrp_failure_bridge_id() = 0;
-
-	    /**
-         * \return The stream info vlan ID of a stream after sending a GET_STREAM_INFO command and
-         *	       receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_stream_info_stream_vlan_id() = 0;
-
-        /**
-         * \return The stream id field used to identify and transfer the associated stream ID where suitable 
-         * after sending a GET_TX_STATE command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_state_stream_id() = 0;
-
-        /**
-         * \return The stream destination MAC address used to convey the destination MAC address for a stream
-         *         from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
-         *         sending a GET_TX_STATE command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_state_stream_dest_mac() = 0;
-
-        /**
-         * \return The connection count used by the state commands to return the number of connections an AVDECC Talker
-         *         thinks it has on its stream source after sending a GET_TX_STATE command and receiving a response
-         *         back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_state_connection_count() = 0;
-
-        /**
-         * \return The stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
-         *         or from either to the AVDECC Controller after sending a GET_TX_STATE command and receiving a response
-         *         back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_state_stream_vlan_id() = 0;
-
-        /**
-         * \return The stream id field used to identify and transfer the associated stream ID where suitable 
-         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_connection_stream_id() = 0;
-
-        /**
-         * \return The Talker unique ID used to uniquely identify the stream source of the AVDECC Talker 
-         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_talker_unique_id() = 0;
-
-        /**
-         * \return The Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener   
-         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_listener_unique_id() = 0;
-
-        /**
-         * \return The Listener entity ID of the stream sink of the AVDECC Talker   
-         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_connection_listener_entity_id() = 0;
-
-        /**
-         * \return The stream destination MAC address used to convey the destination MAC address for a stream
-         *         from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
-         *         sending a GET_TX_CONNECTION command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_connection_stream_dest_mac() = 0;
-
-        /**
-         * \return The connection count used by the state commands to return the number of connections an AVDECC Talker
-         *         thinks it has on its stream source after sending a GET_TX_CONNECTION command and receiving a response
-         *         back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_connection_count() = 0;
-
-        /**
-         * \return The stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
-         *         or from either to the AVDECC Controller after sending a GET_TX_CONNECTION command and receiving a response
-         *         back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_stream_vlan_id() = 0;
 
         /**
          * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
@@ -339,21 +121,6 @@ namespace avdecc_lib
          *      get_stream_info_msrp_failure_code(), get_stream_info_msrp_failure_bridge_id()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void *notification_id) = 0;
-
-		 /**
-         * Tests state of a flag returned by last GET_STREAM_INFO command.
-         *
-         * \param flag The flag to check. Valid values are: 
-		 * CLASS_B, FAST_CONNECT, SAVED_STATE, STREAMING_WAIT, ENCRYPTED_PDU, STREAM_VLAN_ID_VALID
-		 * CONNECTED, MSRP_FAILURE_VALID, STREAM_DEST_MAC_VALID, MSRP_ACC_LAT_VALID, STREAM_ID_VALID,
-		 * STREAM_FORMAT_VALID.
-         *
-         * \see get_stream_info_flags(), get_stream_info_stream_format(), get_stream_info_stream_id(),
-         *      get_stream_info_msrp_accumulated_latency(), get_stream_info_stream_dest_mac(),
-         *      get_stream_info_msrp_failure_code(), get_stream_info_msrp_failure_bridge_id()
-         */
-
-        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_info_flag(const char *flag) = 0;
 
         /**
          * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected

@@ -31,59 +31,32 @@
 
 #include "descriptor_base_imp.h"
 #include "clock_domain_descriptor.h"
+#include "clock_domain_descriptor_response_imp.h"
+#include "clock_domain_counters_response_imp.h"
+#include "clock_domain_get_clock_source_response_imp.h"
 
 namespace avdecc_lib
 {
     class clock_domain_descriptor_imp : public clock_domain_descriptor, public virtual descriptor_base_imp
     {
     private:
-        struct jdksavdecc_descriptor_clock_domain clock_domain_desc; // Store the CLOCK DOMAIN Descriptor fields
-        std::vector<uint16_t> clk_src_vec; // Store clock sources in a vector
-
         struct jdksavdecc_aem_command_set_clock_source_response aem_cmd_set_clk_src_resp; // Store the response received after sending a SET_CLOCK_SOURCE command
-        struct jdksavdecc_aem_command_get_clock_source_response aem_cmd_get_clk_src_resp; // Store the response received after sending a GET_CLOCK_SOURCE command
-        struct jdksavdecc_aem_command_get_counters_response aem_cmd_get_counters_resp;
-        struct get_counters_response_with_block
-        {
-            jdksavdecc_aem_command_get_counters_response aem_cmd_get_counters_response;
-            uint32_t counters_block [31];
-        };
-        
-        struct get_counters_response_with_block counters_response;
-
     public:
         clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~clock_domain_descriptor_imp();
+        
+        clock_domain_descriptor_response_imp *resp;
+        clock_domain_counters_response_imp *counters_resp;
+        clock_domain_get_clock_source_response_imp *clock_source_resp;
 
-		uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL localized_description();
-        uint16_t STDCALL clock_source_index();
-        uint16_t clock_sources_offset();
-        uint16_t STDCALL clock_sources_count();
-        uint16_t STDCALL get_clock_source_by_index(size_t clk_src_index);
-        uint16_t STDCALL set_clock_source_clock_source_index();
-        uint16_t STDCALL get_clock_source_clock_source_index();
+        clock_domain_descriptor_response * STDCALL get_clock_domain_response();
+        clock_domain_counters_response * STDCALL get_clock_domain_counters_response();
+        clock_domain_get_clock_source_response * STDCALL get_clock_domain_get_clock_source_response();
         int STDCALL send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index);
         int proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
         int STDCALL send_get_clock_source_cmd(void *notification_id);
         int proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
-        uint32_t STDCALL get_counter_valid(int name);
-        uint32_t STDCALL get_counter_by_name(int name);
         int STDCALL send_get_counters_cmd(void *notification_id);
         int proc_get_counters_resp(void *&notification_id, const uint8_t *fram, size_t frame_len, int &status);
-
-    private:
-        /**
-        * Store the Clock Sources of the CLOCK DOMAIN object.
-        */
-        void store_clock_sources(const uint8_t *frame, size_t pos);
-
-        /**
-         * Update the internal CLOCK DOMAIN's clock source field.
-         */
-        void update_clock_source_index(uint16_t clock_source_index);
     };
 }
-

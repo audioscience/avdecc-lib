@@ -36,6 +36,8 @@
 #include <stdint.h>
 #include "build.h"
 #include "descriptor_base.h"
+#include "avb_interface_descriptor_response.h"
+#include "avb_counters_response.h"
 
 namespace avdecc_lib
 {
@@ -43,94 +45,18 @@ namespace avdecc_lib
     {
     public:
         /**
-         * \return The MAC address of the interface.
+         * \return the avb_interface descriptor response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL mac_addr() = 0;
-
-        /**
-         * The flags describing the features of the interface.
-         *
-         * \return 1 (GPTP Grandmaster Supported) if the interface supports the grandmaster functionality.
-         * \return 2 (GPTP Supported) if the interface supports the functionality.
-         * \return 4 (SRP Supported) if the interface supports the "Stream Reservation Protocol (SRP)" functionality.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL interface_flags() = 0;
-
-        /**
-         * \return The clock identity of the interface.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL clock_identity() = 0;
-
-        /**
-         * \return The priority1 field of the grandmaster functionality of the AVB INTERFACE if supported, 0xff otherwise.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL priority1() = 0;
-
-        /**
-         * \return The clock class field of the grandmaster functionality of the AVB INTERFACE if supported, 0xff otherwise.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL clock_class() = 0;
-
-        /**
-         * \return The offset scaled log variance field of the grandmaster functionality of the AVB INTERFACE if supported, 0 otherwise.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL offset_scaled_log_variance() = 0;
-
-        /**
-         * \return The clock accuracy field of the grandmaster functionality of the AVB INTERFACE if supported, 0xff otherwise.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL clock_accuracy() = 0;
-
-        /**
-         * \return The priority2 field of the grandmaster functionality of the AVB INTERFACE if supported, 0xff otherwise.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL priority2() = 0;
-
-        /**
-         * \return The domain number field of the grandmaster functionality of the AVB INTERFACE if supported, 0 otherwise.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL domain_number() = 0;
-
-        /**
-         * \return The current log sync interval field of the grandmaster functionality of the AVB INTERFACE if supported, 0 otherwise.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL log_sync_interval() = 0;
-
-        /**
-         * \return The current log announce interval field of the grandmaster functionality of the AVB INTERFACE if supported, 0 otherwise.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL log_announce_interval() = 0;
-
-        /**
-         * \return The current log pdelay interval field of the grandmaster functionality of the AVB INTERFACE if supported, 0 otherwise.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL log_pdelay_interval() = 0;
-
-        /**
-         * \return The port number field as used by the functionality of the AVB INTERFACE if supported, 0 otherwise.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL port_number() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual avb_interface_descriptor_response * STDCALL get_avb_interface_response() = 0;
         
         /**
-         * Send a GET_COUNTERS command to get the counters of the AVDECC Entity.
+         * \return the avb_interface descriptor counters response class.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual avb_counters_response * STDCALL get_avb_interface_counters_response() = 0;
+        
+        /**
+         * Send a GET_COUNTERS command to get the avb_interface counters of the AVDECC Entity.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_counters_cmd(void *notification_id) = 0;
-        
-        /**
-         * \param name avdecc_lib::counter_labels
-         *
-         * \return the avb counter valid after the GET_COUNTERS command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_valid(int name) = 0;
-        
-        /**
-         * \param name avdecc_lib::counter_labels
-         *
-         * \return the avb counter by name after the GET_COUNTERS command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_by_name(int name) = 0;
-        
-
     };
 }
-

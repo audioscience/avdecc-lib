@@ -123,4 +123,3 @@ namespace avdecc_lib
 
     extern aecp_controller_state_machine *aecp_controller_state_machine_ref;
 }
-

@@ -506,7 +506,7 @@ namespace avdecc_lib
 
     bool aecp_controller_state_machine::is_inflight_cmd_with_notification_id(void *notification_id)
     {
-       std::vector<inflight>::iterator j =
+        std::vector<inflight>::iterator j =
             std::find_if(inflight_cmds.begin(), inflight_cmds.end(), NotificationComp(notification_id));
 
         if(j != inflight_cmds.end()) // found?

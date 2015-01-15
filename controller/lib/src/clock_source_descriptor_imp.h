@@ -31,27 +31,18 @@
 
 #include "descriptor_base_imp.h"
 #include "clock_source_descriptor.h"
+#include "clock_source_descriptor_response_imp.h"
 
 namespace avdecc_lib
 {
     class clock_source_descriptor_imp : public clock_source_descriptor, public virtual descriptor_base_imp
     {
-    private:
-        struct jdksavdecc_descriptor_clock_source clock_source_desc; // Structure containing the clock_source_desc fields
-
     public:
         clock_source_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~clock_source_descriptor_imp();
 
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL localized_description();
-        uint16_t STDCALL clock_source_flags();
-        uint16_t STDCALL clock_source_type();
-        uint64_t STDCALL clock_source_identifier();
-        uint16_t STDCALL clock_source_location_type();
-        uint16_t STDCALL clock_source_location_index();
+        clock_source_descriptor_response_imp *resp;
+
+        clock_source_descriptor_response * STDCALL get_clock_source_response();
     };
 }
-

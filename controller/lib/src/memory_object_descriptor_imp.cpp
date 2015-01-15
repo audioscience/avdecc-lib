@@ -27,6 +27,8 @@
  * MEMORY OBJECT descriptor implementation
  */
 
+#include <mutex>
+
 #include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -40,88 +42,15 @@
 
 namespace avdecc_lib
 {
-    #define MEMORY_OBJECT_NUM_STRINGS 6
-    const char *memory_object_type_str[] =
-    {
-        "FIRMWARE_IMAGE",
-        "VENDOR_SPECIFIC",
-        "CRASH_DUMP",
-        "LOG_OBJECT",
-        "AUTOSTART_SETTINGS",
-        "SNAPSHOT_SETTINGS"
-    };
-
-    memory_object_descriptor_imp::memory_object_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
-    {
-        ssize_t ret = jdksavdecc_descriptor_memory_object_read(&memory_object_desc, frame, pos, frame_len);
-
-        if (ret < 0)
-        {
-            throw avdecc_read_descriptor_error("memory_object_desc_read error");
-        }
-    }
+    memory_object_descriptor_imp::memory_object_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
     memory_object_descriptor_imp::~memory_object_descriptor_imp() {}
-
-    uint16_t STDCALL memory_object_descriptor_imp::descriptor_type() const
+    
+    memory_object_descriptor_response * STDCALL memory_object_descriptor_imp::get_memory_object_response()
     {
-        assert(memory_object_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT);
-        return memory_object_desc.descriptor_type;
-    }
-
-    uint16_t STDCALL memory_object_descriptor_imp::descriptor_index() const
-    {
-        return memory_object_desc.descriptor_index;
-    }
-
-    uint8_t * STDCALL memory_object_descriptor_imp::object_name()
-    {
-        return memory_object_desc.object_name.value;
-    }
-
-    uint16_t STDCALL memory_object_descriptor_imp::localized_description()
-    {
-        return memory_object_desc.localized_description;
-    }
-
-    uint16_t STDCALL memory_object_descriptor_imp::memory_object_type()
-    {
-        return memory_object_desc.memory_object_type;
-    }
-
-    uint16_t STDCALL memory_object_descriptor_imp::target_descriptor_type()
-    {
-        return memory_object_desc.target_descriptor_type;
-    }
-
-    uint16_t STDCALL memory_object_descriptor_imp::target_descriptor_index()
-    {
-        return memory_object_desc.target_descriptor_index;
-    }
-
-    uint64_t STDCALL memory_object_descriptor_imp::start_address()
-    {
-        return memory_object_desc.start_address;
-    }
-
-    uint64_t STDCALL memory_object_descriptor_imp::maximum_length()
-    {
-        return memory_object_desc.maximum_length;
-    }
-
-    uint64_t STDCALL memory_object_descriptor_imp::length()
-    {
-        return memory_object_desc.length;
-    }
-
-    const char * STDCALL memory_object_descriptor_imp::memory_object_type_to_str()
-    {
-        if(memory_object_desc.memory_object_type < MEMORY_OBJECT_NUM_STRINGS)
-        {
-            return memory_object_type_str[memory_object_desc.memory_object_type];
-        }
-
-        return "UNKNOWN";
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new memory_object_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                                resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 
     int STDCALL memory_object_descriptor_imp::start_operation_cmd(void *notification_id, uint16_t operation_type)
@@ -176,9 +105,9 @@ namespace avdecc_lib
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_start_operation_response aem_cmd_start_operation_resp;
-        memset(&aem_cmd_start_operation_resp,0,sizeof(aem_cmd_start_operation_resp));
 
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_start_operation_resp,0,sizeof(aem_cmd_start_operation_resp));
 
         ssize_t aem_cmd_start_operation_resp_returned = jdksavdecc_aem_command_start_operation_response_read(&aem_cmd_start_operation_resp,
                                                                                                              frame,

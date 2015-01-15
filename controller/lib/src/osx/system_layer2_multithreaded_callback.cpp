@@ -357,6 +357,10 @@ namespace avdecc_lib
         int rc;
 
         rc = ((system_layer2_multithreaded_callback *)param)->proc_poll_loop();
+        if(rc == -1)
+        {
+            perror("Process Poll Loop error");
+        }
 
         return 0;
     }

@@ -27,6 +27,8 @@
  * JACK OUTPUT descriptor implementation
  */
 
+#include <mutex>
+
 #include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -35,74 +37,14 @@
 
 namespace avdecc_lib
 {
-    jack_output_descriptor_imp::jack_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
-    {
-        ssize_t ret = jdksavdecc_descriptor_jack_read(&jack_output_desc, frame, pos, frame_len);
-
-        if (ret < 0)
-        {
-            throw avdecc_read_descriptor_error("jack_output_desc_read error");
-        }
-
-        jack_flags_init();
-    }
+    jack_output_descriptor_imp::jack_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
     jack_output_descriptor_imp::~jack_output_descriptor_imp() {}
 
-    void jack_output_descriptor_imp::jack_flags_init()
+    jack_output_descriptor_response * STDCALL jack_output_descriptor_imp::get_jack_output_response()
     {
-        jack_output_flags.clock_sync_source = jack_output_desc.jack_flags >> 1 & 0x01;
-        jack_output_flags.captive = jack_output_desc.jack_flags >> 2 & 0x01;
-    }
-
-    uint16_t STDCALL jack_output_descriptor_imp::descriptor_type() const
-    {
-        assert(jack_output_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_JACK_OUTPUT);
-        return jack_output_desc.descriptor_type;
-    }
-
-    uint16_t STDCALL jack_output_descriptor_imp::descriptor_index() const
-    {
-        return jack_output_desc.descriptor_index;
-    }
-
-    uint8_t * STDCALL jack_output_descriptor_imp::object_name()
-    {
-        return jack_output_desc.object_name.value;
-    }
-
-    uint16_t STDCALL jack_output_descriptor_imp::localized_description()
-    {
-        return jack_output_desc.localized_description;
-    }
-
-    uint16_t STDCALL jack_output_descriptor_imp::jack_flags()
-    {
-        return jack_output_desc.jack_flags;
-    }
-
-    uint16_t STDCALL jack_output_descriptor_imp::jack_flag_clock_sync_source()
-    {
-        return jack_output_flags.clock_sync_source;
-    }
-
-    uint16_t STDCALL jack_output_descriptor_imp::jack_flag_captive()
-    {
-        return jack_output_flags.captive;
-    }
-
-    uint16_t STDCALL jack_output_descriptor_imp::jack_type()
-    {
-        return jack_output_desc.jack_type;
-    }
-
-    uint16_t STDCALL jack_output_descriptor_imp::number_of_controls()
-    {
-        return jack_output_desc.number_of_controls;
-    }
-
-    uint16_t STDCALL jack_output_descriptor_imp::base_control()
-    {
-        return jack_output_desc.base_control;
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new jack_output_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                             resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 }
