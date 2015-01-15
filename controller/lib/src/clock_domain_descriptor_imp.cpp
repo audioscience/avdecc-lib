@@ -47,7 +47,7 @@ namespace avdecc_lib
     }
 
     clock_domain_descriptor_imp::~clock_domain_descriptor_imp() {}
-    
+
     clock_domain_descriptor_response * STDCALL clock_domain_descriptor_imp::get_clock_domain_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
@@ -61,7 +61,7 @@ namespace avdecc_lib
         return counters_resp = new clock_domain_counters_response_imp(resp_ref->get_buffer(),
                                                                       resp_ref->get_size(), resp_ref->get_pos());
     }
-    
+
     clock_domain_get_clock_source_response * STDCALL clock_domain_descriptor_imp::get_clock_domain_get_clock_source_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station

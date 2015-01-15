@@ -43,8 +43,6 @@ namespace avdecc_lib
         
         audio_cluster_descriptor_response_imp *resp;
 
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
         audio_cluster_descriptor_response * STDCALL get_audio_cluster_response();
     };
 }

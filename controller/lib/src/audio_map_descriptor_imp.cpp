@@ -47,15 +47,4 @@ namespace avdecc_lib
         return resp = new audio_map_descriptor_response_imp(resp_ref->get_buffer(),
                                                             resp_ref->get_size(), resp_ref->get_pos());
     }
-
-    uint16_t STDCALL audio_map_descriptor_imp::descriptor_type() const
-    {
-        assert(jdksavdecc_descriptor_audio_map_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos()) == JDKSAVDECC_DESCRIPTOR_AUDIO_MAP);
-        return jdksavdecc_descriptor_audio_map_get_descriptor_type(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
-
-    uint16_t STDCALL audio_map_descriptor_imp::descriptor_index() const
-    {
-        return jdksavdecc_descriptor_audio_map_get_descriptor_index(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
 }
