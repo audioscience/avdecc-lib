@@ -50,8 +50,6 @@ namespace avdecc_lib
     uint32_t STDCALL audio_unit_get_sampling_rate_response_imp::get_sampling_rate_sampling_rate()
     {
         uint32_t sampling_rate;
-        sampling_rate = jdksavdecc_aem_command_get_sampling_rate_response_get_sampling_rate(m_frame, m_position);
-        
-        return sampling_rate;
+        return sampling_rate = jdksavdecc_aem_command_get_sampling_rate_response_get_sampling_rate(m_frame, m_position);
     }
 }

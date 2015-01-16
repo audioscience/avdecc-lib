@@ -2930,15 +2930,17 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument*
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_input_desc_ref->set_stream_format_stream_format());
+            avdecc_lib::stream_input_descriptor_response *stream_input_resp_ref = stream_input_desc_ref->get_stream_input_response();
+            stream_format = stream_input_resp_ref->current_format();
             if(stream_format == "UNKNOWN")
             {
-                atomic_cout << "Stream format: 0x" << std::hex << stream_input_desc_ref->set_stream_format_stream_format() << std::endl;
+                atomic_cout << "Stream format: 0x" << std::hex << stream_input_resp_ref->current_format() << std::endl;
             }
             else
             {
                 atomic_cout << "Stream format: " << stream_format << std::endl;
             }
+            delete stream_input_resp_ref;
         }
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
@@ -2951,15 +2953,17 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument*
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_output_desc_ref->set_stream_format_stream_format());
+            avdecc_lib::stream_output_descriptor_response *stream_output_resp_ref = stream_output_desc_ref->get_stream_output_response();
+            stream_format = stream_output_resp_ref->current_format();
             if(stream_format == "UNKNOWN")
             {
-                atomic_cout << "Stream format: 0x" << std::hex << stream_output_desc_ref->set_stream_format_stream_format() << std::endl;
+                atomic_cout << "Stream format: 0x" << std::hex << stream_output_resp_ref->current_format() << std::endl;
             }
             else
             {
                 atomic_cout << "Stream format: " << stream_format << std::endl;
             }
+            delete stream_output_resp_ref;
         }
     }
     else
@@ -3205,9 +3209,9 @@ int cmd_line::cmd_set_sampling_rate(int total_matched, std::vector<cli_argument*
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            /*
-            atomic_cout << "Sampling rate: " << std::dec << audio_unit_desc_ref->set_sampling_rate_sampling_rate();
-            */
+            avdecc_lib::audio_unit_descriptor_response *audio_unit_resp_ref = audio_unit_desc_ref->get_audio_unit_response();
+            atomic_cout << "Sampling rate: " << std::dec << audio_unit_resp_ref->current_sampling_rate();
+            delete audio_unit_resp_ref;
         }
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_VIDEO_CLUSTER)
@@ -3249,8 +3253,8 @@ int cmd_line::cmd_get_sampling_rate(int total_matched, std::vector<cli_argument*
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            avdecc_lib::audio_unit_get_sampling_rate_response *audio_unit_resp_ref = audio_unit_desc_ref->get_audio_unit_get_sampling_rate_response();
-            atomic_cout << "Sampling rate: " << std::dec << audio_unit_resp_ref->get_sampling_rate_sampling_rate();
+            avdecc_lib::audio_unit_descriptor_response *audio_unit_resp_ref = audio_unit_desc_ref->get_audio_unit_response();
+            atomic_cout << "Set sampling rate: " << std::dec << audio_unit_resp_ref->current_sampling_rate();
             delete audio_unit_resp_ref;
         }
     }
@@ -3418,9 +3422,10 @@ int cmd_line::cmd_set_clock_source(int total_matched, std::vector<cli_argument*>
     int status = sys->get_last_resp_status();
 
     if(status == avdecc_lib::AEM_STATUS_SUCCESS)
-    {   /*
-        atomic_cout << "Clock source index : " << std::dec << clk_domain_desc_ref->set_clock_source_clock_source_index() << std::endl;
-        */
+    {
+        avdecc_lib::clock_domain_descriptor_response *clk_domain_resp_ref = clk_domain_desc_ref->get_clock_domain_response();
+        atomic_cout << "Set clock source index : " << std::dec << clk_domain_resp_ref->clock_source_index() << std::endl;
+        delete clk_domain_resp_ref;
     }
 
     return 0;

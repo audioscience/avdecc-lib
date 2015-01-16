@@ -38,8 +38,6 @@ namespace avdecc_lib
 {
     class audio_unit_descriptor_imp : public audio_unit_descriptor, public virtual descriptor_base_imp
     {
-    private:
-        struct jdksavdecc_aem_command_set_sampling_rate_response aem_cmd_set_sampling_rate_resp; // Store the response received after sending a SET_SAMPLING_RATE command.
     public:
         audio_unit_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~audio_unit_descriptor_imp();
