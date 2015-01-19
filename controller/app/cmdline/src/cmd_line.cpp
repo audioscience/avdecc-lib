@@ -464,7 +464,7 @@ void cmd_line::cmd_line_commands_init()
         &cmd_line::cmd_get_tx_connection);
     get_tx_connection_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
     get_tx_connection_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
-    get_tx_state_cmd->add_format(get_tx_connection_fmt);
+    get_tx_connection_cmd->add_format(get_tx_connection_fmt);
 
     // entity
     cli_command *entity_cmd = new cli_command();
