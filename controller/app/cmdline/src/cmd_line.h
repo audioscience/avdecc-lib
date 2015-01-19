@@ -111,6 +111,7 @@ private:
 
     void print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
                                         const uint8_t *localized_desc_string,
+                                        const uint8_t *object_name,
                                         avdecc_lib::locale_descriptor &locale);
 
 public:
