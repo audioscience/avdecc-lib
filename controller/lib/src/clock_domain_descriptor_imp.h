@@ -39,8 +39,6 @@ namespace avdecc_lib
 {
     class clock_domain_descriptor_imp : public clock_domain_descriptor, public virtual descriptor_base_imp
     {
-    private:
-        struct jdksavdecc_aem_command_set_clock_source_response aem_cmd_set_clk_src_resp; // Store the response received after sending a SET_CLOCK_SOURCE command
     public:
         clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~clock_domain_descriptor_imp();

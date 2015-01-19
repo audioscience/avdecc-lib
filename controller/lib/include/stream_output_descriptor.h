@@ -70,12 +70,6 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual stream_output_get_tx_connection_response * STDCALL get_stream_output_get_tx_connection_response() = 0;
 
         /**
-         * \return The stream format of a stream after sending a SET_STREAM_FORMAT command and
-         *	       receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL set_stream_format_stream_format() = 0;
-
-        /**
          * Send a SET_STREAM_FORMAT command with a notification id to change the format of a stream.
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.

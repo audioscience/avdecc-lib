@@ -45,7 +45,6 @@ namespace avdecc_lib
 {
     stream_output_descriptor_imp::stream_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos)
     {
-        memset(&aem_cmd_set_stream_format_resp, 0, sizeof(struct jdksavdecc_aem_command_set_stream_format_response));
         memset(&aem_cmd_set_stream_info_resp, 0, sizeof(struct jdksavdecc_aem_command_set_stream_info_response));
     }
 
@@ -84,11 +83,6 @@ namespace avdecc_lib
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
         return get_tx_connection_resp  = new stream_output_get_tx_connection_response_imp(resp_ref->get_buffer(),
                                                                                 resp_ref->get_size(), resp_ref->get_pos());
-    }
-
-    uint64_t STDCALL stream_output_descriptor_imp::set_stream_format_stream_format()
-    {
-        return jdksavdecc_uint64_get(&aem_cmd_set_stream_format_resp.stream_format, 0);
     }
 
     int STDCALL stream_output_descriptor_imp::send_set_stream_format_cmd(void *notification_id, uint64_t new_stream_format)
@@ -136,11 +130,14 @@ namespace avdecc_lib
     int stream_output_descriptor_imp::proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp;
         ssize_t aem_cmd_set_stream_format_resp_returned;
         uint32_t msg_type;
         bool u_field;
+        uint8_t * buffer;
 
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_set_stream_format_resp, 0, sizeof(struct jdksavdecc_aem_command_set_stream_format_response));
 
         aem_cmd_set_stream_format_resp_returned = jdksavdecc_aem_command_set_stream_format_response_read(&aem_cmd_set_stream_format_resp,
                                                                                                          frame,
@@ -154,7 +151,13 @@ namespace avdecc_lib
             return -1;
         }
 
-        replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+        buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
+        memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
+        jdksavdecc_descriptor_stream_set_current_format(aem_cmd_set_stream_format_resp.stream_format,
+                                                        buffer, resp_ref->get_desc_pos()); //set stream format
+        
+        replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size()); //replace frame
+
         
         msg_type = aem_cmd_set_stream_format_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_set_stream_format_resp.aem_header.aecpdu_header.header.status;
@@ -162,6 +165,7 @@ namespace avdecc_lib
 
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
+        free(buffer);
         return 0;
     }
 

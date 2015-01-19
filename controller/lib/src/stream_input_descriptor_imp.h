@@ -43,7 +43,6 @@ namespace avdecc_lib
     class stream_input_descriptor_imp : public stream_input_descriptor, public virtual descriptor_base_imp
     {
     private:
-        struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp; // Store the response received after sending a SET_STREAM_FORMAT command.
         struct jdksavdecc_acmpdu acmp_cmd_connect_rx_resp; // Store the response received after sending a CONNECT_RX command.
         struct jdksavdecc_acmpdu acmp_cmd_disconnect_rx_resp; // Store the response received after sending a DISCONNECT_RX command.
     public:
@@ -61,9 +60,7 @@ namespace avdecc_lib
         stream_input_get_stream_format_response * STDCALL get_stream_input_get_stream_format_response();
         stream_input_get_stream_info_response * STDCALL get_stream_input_get_stream_info_response();
         stream_input_get_rx_state_response * STDCALL get_stream_input_get_rx_state_response();
-        
-        uint64_t STDCALL set_stream_format_stream_format();
-        
+
 		int STDCALL send_set_stream_format_cmd(void *notification_id, uint64_t new_stream_format);
         int proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
         

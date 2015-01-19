@@ -48,7 +48,6 @@ namespace avdecc_lib
     class stream_output_descriptor_imp : public stream_output_descriptor, public virtual descriptor_base_imp
     {
     private:
-        struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp; // Store the response received after sending a SET_STREAM_FORMAT command.
         struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp; // Store the response received after sending a SET_STREAM_INFO command.
     public:
         stream_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
@@ -65,8 +64,6 @@ namespace avdecc_lib
         stream_output_get_stream_info_response * STDCALL get_stream_output_get_stream_info_response();
         stream_output_get_tx_state_response * STDCALL get_stream_output_get_tx_state_response();
         stream_output_get_tx_connection_response * STDCALL get_stream_output_get_tx_connection_response();
-        
-        uint64_t STDCALL set_stream_format_stream_format();
 
 		int STDCALL send_set_stream_format_cmd(void *notification_id, uint64_t new_stream_format);
         int proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
