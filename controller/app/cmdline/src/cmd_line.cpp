@@ -769,7 +769,7 @@ void cmd_line::cmd_line_commands_init()
 
     // stop
     cli_command *stop_cmd = new cli_command();
-    commands.add_sub_command("stop", start_cmd);
+    commands.add_sub_command("stop", stop_cmd);
 
     // stop streaming
     cli_command *stop_streaming_cmd = new cli_command();
