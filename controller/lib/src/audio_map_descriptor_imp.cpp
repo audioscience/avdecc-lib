@@ -44,7 +44,7 @@ namespace avdecc_lib
     audio_map_descriptor_response * STDCALL audio_map_descriptor_imp::get_audio_map_response()
     {
         std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-        return resp = new audio_map_descriptor_response_imp(resp_ref->get_buffer(),
-                                                            resp_ref->get_size(), resp_ref->get_pos());
+        return resp = new audio_map_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 }
