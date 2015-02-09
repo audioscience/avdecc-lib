@@ -2516,7 +2516,7 @@ int cmd_line::cmd_disconnect_rx(int total_matched, std::vector<cli_argument*> ar
     uint16_t instream_desc_index = args[3]->get_value_int();
 
     avdecc_lib::configuration_descriptor *in_descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
-    avdecc_lib::configuration_descriptor *out_descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
+    avdecc_lib::configuration_descriptor *out_descriptor = controller_obj->get_current_config_desc(outstream_end_station_index, false);
     bool is_valid = (in_descriptor && out_descriptor &&
                      (test_mode || (instream_end_station_index != outstream_end_station_index)) &&
                      (instream_end_station_index < controller_obj->get_end_station_count()) &&
