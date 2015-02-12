@@ -2293,8 +2293,8 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
     size_t stream_output_desc_count = 0;
     uint64_t end_station_mac;
 
-    atomic_cout << "\n" << "End Station" << std::setw(26) << "" << "Instream" << std::setw(16) << "" << "Stream Format" << std::endl;
-    atomic_cout << "------------------------------------------------------------------------------" << std::endl;
+    atomic_cout << "\n" << "End Station" << std::setw(28) << "" << "Instream" << std::setw(19) << "" << "Stream Format" << std::endl;
+    atomic_cout << "---------------------------------------------------------------------------------" << std::endl;
 
     for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
     {
@@ -2303,28 +2303,42 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
         avdecc_lib::configuration_descriptor *configuration;
         if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
             continue;
-
+        
+        avdecc_lib::entity_descriptor_response *entity_desc_resp = entity->get_entity_response();
         end_station_mac = end_station->mac();
-        instream_end_station_name = entity->get_entity_response()->entity_name();
+        instream_end_station_name = entity_desc_resp->entity_name();
         stream_input_desc_count = configuration->stream_input_desc_count();
 
         for(uint32_t j = 0; j < stream_input_desc_count; j++)
         {
             avdecc_lib::stream_input_descriptor *input_descriptor = configuration->get_stream_input_desc_by_index(j);
             avdecc_lib::stream_input_descriptor_response *stream_input_resp_ref = input_descriptor->get_stream_input_response();
-            uint8_t *desc_desc_name = stream_input_resp_ref->object_name();
             format = stream_input_resp_ref->current_format();
+            uint8_t *desc_desc_name = stream_input_resp_ref->object_name();
+            uint8_t *input_stream_name;
+            if(desc_desc_name[0] == '\0')
+            {
+                input_stream_name = configuration->get_strings_desc_string_by_reference(stream_input_resp_ref->
+                                                                                        localized_description());
+            }
+            else
+            {
+                input_stream_name = desc_desc_name;
+            }
 
-            atomic_cout << std::setw(5) << i << std::setw(20) << instream_end_station_name
-                        << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
-                        << std::setw(3) << j << std::setw(19) << desc_desc_name << "   "
-                        << std::setw(14) << format << std::endl;
-            delete(stream_input_resp_ref);
+            
+            atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
+            << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
+            << std::setw(3) << j << std::setw(19) << input_stream_name << "   "
+            << std::setw(14) << format << std::endl;
+
+            delete stream_input_resp_ref;
         }
+        delete entity_desc_resp;
     }
 
-    atomic_cout << "\n" << "End Station" << std::setw(26) << "" << "Outstream" << std::setw(15) << "" << "Stream Format" << std::endl;
-    atomic_cout << "------------------------------------------------------------------------------" << std::endl;
+    atomic_cout << "\n" << "End Station" << std::setw(28) << "" << "Outstream" << std::setw(15) << "" << "Stream Format" << std::endl;
+    atomic_cout << "---------------------------------------------------------------------------------" << std::endl;
 
     for(uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
     {
@@ -2333,24 +2347,36 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
         avdecc_lib::configuration_descriptor *configuration;
         if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
             continue;
-
+        
+        avdecc_lib::entity_descriptor_response *entity_desc_resp = entity->get_entity_response();
         end_station_mac = end_station->mac();
-        outstream_end_station_name = entity->get_entity_response()->entity_name();
+        outstream_end_station_name = entity_desc_resp->entity_name();
         stream_output_desc_count = configuration->stream_output_desc_count();
 
         for(uint32_t j = 0; j < stream_output_desc_count; j++)
         {
             avdecc_lib::stream_output_descriptor *output_descriptor = configuration->get_stream_output_desc_by_index(j);
             avdecc_lib::stream_output_descriptor_response *stream_output_resp_ref = output_descriptor->get_stream_output_response();
-            uint8_t *src_desc_name = stream_output_resp_ref->object_name();
             format = stream_output_resp_ref->current_format();
+            uint8_t *src_desc_name = stream_output_resp_ref->object_name();
+            uint8_t *output_stream_name;
+            if(src_desc_name[0] == '\0')
+            {
+                output_stream_name = configuration->get_strings_desc_string_by_reference(stream_output_resp_ref->localized_description());
+            }
+            else
+            {
+                output_stream_name = src_desc_name;
+            }
+            
+            atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
+            << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
+            << std::setw(3) << j << std::setw(19) << output_stream_name
+            << "   " << std::setw(14) << format << std::endl;
 
-            atomic_cout << std::setw(5) << i << std::setw(20) << outstream_end_station_name
-                        << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
-                        << std::setw(3) << j << std::setw(19) << src_desc_name << "   "
-                        << std::setw(15) << format << std::endl;
-            delete(stream_output_resp_ref);
+            delete stream_output_resp_ref;
         }
+        delete entity_desc_resp;
     }
 
     return 0;
