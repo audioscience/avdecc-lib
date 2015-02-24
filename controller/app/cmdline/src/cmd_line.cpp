@@ -3612,7 +3612,7 @@ int cmd_line::cmd_firmware_upgrade(int total_matched, std::vector<cli_argument*>
             sys->set_wait_for_next_cmd((void *)cmd_notification_id);
             end_station->send_aecp_address_access_cmd((void *)cmd_notification_id,
                                                       1,
-                                                      is.gcount(),
+                                                      (unsigned int)is.gcount(),
                                                       int(current),
                                                       (uint8_t *)buffer);
             status = sys->get_last_resp_status();
