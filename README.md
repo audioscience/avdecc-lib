@@ -1,7 +1,7 @@
 
 Build status
 
-[![Build Status](https://travis-ci.org/andrew-elder/avdecc-lib.svg?branch=staging)](https://travis-ci.org/andrew-elder/avdecc-lib)
+[![Build Status](https://travis-ci.org/audioscience/avdecc-lib.svg?branch=staging)](https://travis-ci.org/audioscience/avdecc-lib)
 
 avdecc-lib
 ==========
