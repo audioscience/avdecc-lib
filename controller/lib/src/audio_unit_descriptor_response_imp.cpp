@@ -27,6 +27,7 @@
  * AUDIO UNIT descriptor response implementation
  */
 
+#include <cstddef>
 #include <vector>
 #include "enumeration.h"
 #include "audio_unit_descriptor_response_imp.h"

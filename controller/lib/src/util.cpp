@@ -390,8 +390,17 @@ namespace avdecc_lib
 
         const char * STDCALL notification_value_to_name(uint16_t notification_value)
         {
+
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#endif
+
             compile_time_assert(ARRAY_SIZE(notification_names) == TOTAL_NUM_OF_NOTIFICATIONS, assert_notification_names_size);
-            
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif           
             if(notification_value < avdecc_lib::TOTAL_NUM_OF_NOTIFICATIONS)
             {
                 return notification_names[notification_value];

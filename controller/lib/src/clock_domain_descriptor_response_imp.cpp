@@ -27,6 +27,7 @@
  * CLOCK DOMAIN descriptor response implementation
  */
 
+#include <cstddef>
 #include <vector>
 #include "clock_domain_descriptor_response_imp.h"
 

@@ -27,6 +27,7 @@
  * AUDIO MAP descriptor response implementation
  */
 
+#include <cstddef>
 #include <vector>
 #include "audio_map_descriptor_response_imp.h"
 
