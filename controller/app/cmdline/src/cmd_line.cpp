@@ -394,6 +394,14 @@ void cmd_line::cmd_line_commands_init()
                                                          "supports_encrypted, encrypted_pdu, and talker_failed.", 0, UINT_MAX));
     connect_cmd->add_format(connect_rx_fmt);
 
+    // view stream format
+    cli_command *view_stream_formats_cmd = new cli_command();
+    view_cmd->add_sub_command("stream_formats", view_stream_formats_cmd);
+    
+    cli_command_format *view_stream_formats_fmt = new cli_command_format("Display all possible stream formats.",
+                                                                         &cmd_line::cmd_view_stream_formats);
+    view_stream_formats_cmd->add_format(view_stream_formats_fmt);
+
     cli_command_format *connect_dst_fmt = new cli_command_format(
         "Display all the available outstreams for all End Stations that can connect with\n" \
         "the instreams.",
@@ -595,15 +603,18 @@ void cmd_line::cmd_line_commands_init()
     set_cmd->add_sub_command("stream_format", set_stream_format_cmd);
 
     cli_command_format *set_stream_format_fmt = new cli_command_format(
-        "Send a SET_STREAM_FORMAT command to change the format of a stream using the\n" \
-        "current setting.",
+        "Send a SET_STREAM_FORMAT command to change the format of a stream",
         &cmd_line::cmd_set_stream_format);
     set_stream_format_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
                                                                 "Valid descriptor types are STREAM_INPUT and STREAM_OUTPUT."));
     set_stream_format_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
                                                              "To see a list of valid descriptor types and corresponding indexes, enter\n" \
                                                              "\"view all\" command."));
-    set_stream_format_fmt->add_argument(new cli_argument_string(this, "s_f", "the stream format"));
+    set_stream_format_fmt->add_argument(new cli_argument_string(this, "fmt", "the stream format input type",
+                                                                "Enter index from List or full 1722.1 Format Name\n" \
+                                                                "To see a list of valid stream formats, enter \n" \
+                                                                "\"view stream_formats\" command."));
+
     set_stream_format_cmd->add_format(set_stream_format_fmt);
 
     // get stream_format
@@ -1404,6 +1415,23 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                 }
             break;
         }
+    }
+
+    return 0;
+}
+
+int cmd_line::cmd_view_stream_formats(int total_matched, std::vector<cli_argument*> args)
+{
+    unsigned int format_table_size = avdecc_lib::utility::get_ieee1722_format_table_size();
+
+    atomic_cout << "   " << "Stream Type" << std::setw(4) << "|" << "    " << "Stream Description" << std::setw(10) << std::endl;
+    atomic_cout << "----------------------------------------------------" << std::endl;
+
+    for(unsigned int i = 0; i < format_table_size - 1; i++)
+    {
+        atomic_cout << i << " ";
+        atomic_cout << avdecc_lib::utility::ieee1722_format_index_to_name(i) << " ";
+        atomic_cout << avdecc_lib::utility::ieee1722_format_index_to_description(i) << std::endl;
     }
 
     return 0;
@@ -2955,12 +2983,23 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument*
 {
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
-    std::string new_stream_format_name = args[2]->get_value_str();
+    std::string new_stream_format = args[2]->get_value_str();
 
     uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
-    std::string stream_format_substring = new_stream_format_name.substr(20);
-    uint64_t stream_format_value = avdecc_lib::utility::ieee1722_format_name_to_value(("IEC..." + stream_format_substring).c_str());
+    unsigned int stream_format_index = 0;
+    uint64_t stream_format_value = 0;
     std::string stream_format;
+    
+    if(new_stream_format.at(0) == 'I')
+    {
+        std::string stream_format_substring = new_stream_format.substr(20);
+        stream_format_value = avdecc_lib::utility::ieee1722_format_name_to_value(("IEC..." + stream_format_substring).c_str());
+    }
+    else
+    {
+        stream_format_index = atoi(new_stream_format.c_str());
+        stream_format_value = avdecc_lib::utility::ieee1722_format_index_to_value(stream_format_index);
+    }
 
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;

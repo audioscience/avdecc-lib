@@ -261,19 +261,20 @@ namespace avdecc_lib
         {
             uint64_t fmt;
             const char *str;
+            const char * description;
         };
 
         struct ieee1722_format ieee1722_format_table[] =
         {
-            {UINT64_C(0x00a0020140000100), "IEC...48KHZ_1CH"}, // IEC61883_AM824_MBLA_48KHZ_1CH
-            {UINT64_C(0x00a0020240000200), "IEC...48KHZ_2CH"}, // IEC61883_AM824_MBLA_48KHZ_2CH
-            {UINT64_C(0x00a0020440000400), "IEC...48KHZ_4CH"}, // IEC61883_AM824_MBLA_48KHZ_4CH
-            {UINT64_C(0x00a0020840000800), "IEC...48KHZ_8CH"}, // IEC61883_AM824_MBLA_48KHZ_8CH
-            {UINT64_C(0x00a0040140000100), "IEC...96KHZ_1CH"}, // IEC61883_AM824_MBLA_96KHZ_1CH
-            {UINT64_C(0x00a0040240000200), "IEC...96KHZ_2CH"}, // IEC61883_AM824_MBLA_96KHZ_2CH
-            {UINT64_C(0x00a0040440000400), "IEC...96KHZ_4CH"}, // IEC61883_AM824_MBLA_96KHZ_4CH
-            {UINT64_C(0x00a0040840000800), "IEC...96KHZ_8CH"}, // IEC61883_AM824_MBLA_96KHZ_8CH
-            {UINT64_C(0x0000000000000000), "UNKNOWN"}
+            {UINT64_C(0x00a0020140000100), "IEC...48KHZ_1CH", "IEC61883_AM824_MBLA_48KHZ_1CH"},
+            {UINT64_C(0x00a0020240000200), "IEC...48KHZ_2CH", "IEC61883_AM824_MBLA_48KHZ_2CH"},
+            {UINT64_C(0x00a0020440000400), "IEC...48KHZ_4CH", "IEC61883_AM824_MBLA_48KHZ_4CH"},
+            {UINT64_C(0x00a0020840000800), "IEC...48KHZ_8CH", "IEC61883_AM824_MBLA_48KHZ_8CH"},
+            {UINT64_C(0x00a0040140000100), "IEC...96KHZ_1CH", "IEC61883_AM824_MBLA_96KHZ_1CH"},
+            {UINT64_C(0x00a0040240000200), "IEC...96KHZ_2CH", "IEC61883_AM824_MBLA_96KHZ_2CH"},
+            {UINT64_C(0x00a0040440000400), "IEC...96KHZ_4CH", "IEC61883_AM824_MBLA_96KHZ_4CH"},
+            {UINT64_C(0x00a0040840000800), "IEC...96KHZ_8CH", "IEC61883_AM824_MBLA_96KHZ_8CH"},
+            {UINT64_C(0x0000000000000000), "UNKNOWN", "UNKNOWN"}
         };
 
         const char * STDCALL aem_cmd_value_to_name(uint16_t cmd_value)
@@ -468,6 +469,59 @@ namespace avdecc_lib
             }
 
             return "UNKNOWN";
+        }
+        
+        uint64_t STDCALL ieee1722_format_index_to_value(unsigned int index)
+        {
+            struct ieee1722_format *p;
+            unsigned int format_table_size = (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
+            
+            if(index < format_table_size)
+            {
+                p = &ieee1722_format_table[index];
+                return p->fmt;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        
+        const char * STDCALL ieee1722_format_index_to_description(unsigned int index)
+        {
+            struct ieee1722_format *p;
+            unsigned int format_table_size = (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
+            
+            if(index < format_table_size)
+            {
+                p = &ieee1722_format_table[index];
+                return p->description;
+            }
+            else
+            {
+                return "UNKNOWN";
+            }
+        }
+
+        const char * STDCALL ieee1722_format_index_to_name(unsigned int index)
+        {
+            struct ieee1722_format *p;
+            int format_table_size = (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
+            
+            if(index < format_table_size)
+            {
+                p = &ieee1722_format_table[index];
+                return p->str;
+            }
+            else
+            {
+                return "UNKNOWN";
+            }
+        }
+
+        unsigned int STDCALL get_ieee1722_format_table_size()
+        {
+            return (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
         }
 
         const char * STDCALL end_station_mac_to_string(uint64_t end_station_mac)
