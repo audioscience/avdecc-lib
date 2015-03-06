@@ -95,7 +95,7 @@ namespace avdecc_lib
         /******************************************** AECP Common Data *********************************************/
         aem_cmd_set_stream_format.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
         // Fill aem_cmd_set_stream_format.sequence_id in AEM Controller State Machine
-        aem_cmd_set_stream_format.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT;
+        aem_cmd_set_stream_format.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT;
 
         /**************************************** AECP Message Specific Data *************************************/
         aem_cmd_set_stream_format.descriptor_type = descriptor_type();
@@ -104,7 +104,7 @@ namespace avdecc_lib
 
         /******************************** Fill frame payload with AECP data and send the frame ***************************/
         aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-						ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_COMMAND_LEN);
+						ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT_COMMAND_LEN);
         aem_cmd_set_stream_format_returned = jdksavdecc_aem_command_set_stream_format_write(&aem_cmd_set_stream_format,
                                                                                             cmd_frame.payload,
                                                                                             ETHER_HDR_SIZE,
