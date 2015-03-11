@@ -56,17 +56,13 @@ namespace avdecc_lib
     {
         uint64_t entity_id;
         return entity_id = jdksavdecc_uint64_get(&buffer[position +
-                                                JDKSAVDECC_DESCRIPTOR_ENTITY_OFFSET_ENTITY_ENTITY_ID], 0);
+                                                JDKSAVDECC_DESCRIPTOR_ENTITY_OFFSET_ENTITY_ID], 0);
     }
     
-    uint32_t STDCALL entity_descriptor_response_imp::vendor_id()
+    uint64_t STDCALL entity_descriptor_response_imp::entity_model_id()
     {
-        return jdksavdecc_descriptor_entity_get_vendor_id(buffer, position);
-    }
-    
-    uint32_t STDCALL entity_descriptor_response_imp::entity_model_id()
-    {
-        return jdksavdecc_descriptor_entity_get_entity_model_id(buffer, position);
+		jdksavdecc_eui64 eui = jdksavdecc_descriptor_entity_get_entity_model_id(buffer, position);
+		return jdksavdecc_eui64_convert_to_uint64(&eui);
     }
     
     uint32_t STDCALL entity_descriptor_response_imp::entity_capabilities()

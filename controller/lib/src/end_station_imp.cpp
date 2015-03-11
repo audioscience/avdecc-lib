@@ -493,7 +493,7 @@ namespace avdecc_lib
                 break;
 
             case JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT:
-                desc_index = jdksavdecc_descriptor_audio_get_descriptor_index(frame, read_desc_offset);
+                desc_index = jdksavdecc_descriptor_audio_unit_get_descriptor_index(frame, read_desc_offset);
                 break;
 
             case JDKSAVDECC_DESCRIPTOR_STREAM_INPUT:

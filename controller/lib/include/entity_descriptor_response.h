@@ -47,14 +47,9 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL entity_id() = 0;
         
         /**
-         * \return The vendor id of the AVDECC Entity.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL vendor_id() = 0;
-        
-        /**
          * \return The AVDECC Entity model id for the AVDECC Entity.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL entity_model_id() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL entity_model_id() = 0;
         
         /**
          * \return The capabilities of the AVDECC Entity.

@@ -64,182 +64,182 @@ namespace avdecc_lib
     
     uint8_t * STDCALL audio_unit_descriptor_response_imp::object_name()
     {
-        return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_AUDIO_OFFSET_OBJECT_NAME];
+        return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT_OFFSET_OBJECT_NAME];
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::localized_description()
     {
-        return jdksavdecc_descriptor_audio_get_localized_description(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_localized_description(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::clock_domain_index()
     {
-        return jdksavdecc_descriptor_audio_get_clock_domain_index(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_clock_domain_index(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_stream_input_ports()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_stream_input_ports(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_stream_input_ports(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_stream_input_port()
     {
-        return jdksavdecc_descriptor_audio_get_base_stream_input_port(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_stream_input_port(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_stream_output_ports()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_stream_output_ports(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_stream_output_ports(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_stream_output_port()
     {
-        return jdksavdecc_descriptor_audio_get_base_stream_output_port(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_stream_output_port(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_external_input_ports()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_external_input_ports(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_external_input_ports(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_external_input_port()
     {
-        return jdksavdecc_descriptor_audio_get_base_external_input_port(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_external_input_port(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_external_output_ports()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_external_output_ports(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_external_output_ports(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_external_output_port()
     {
-        return jdksavdecc_descriptor_audio_get_base_external_output_port(buffer, position);    }
+        return jdksavdecc_descriptor_audio_unit_get_base_external_output_port(buffer, position);    }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_internal_input_ports()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_internal_input_ports(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_internal_input_ports(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_internal_input_port()
     {
-        return jdksavdecc_descriptor_audio_get_base_internal_input_port(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_internal_input_port(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_internal_output_ports()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_internal_output_ports(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_internal_output_ports(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_internal_output_port()
     {
-        return jdksavdecc_descriptor_audio_get_base_internal_output_port(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_internal_output_port(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_controls()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_controls(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_controls(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_control()
     {
-        return jdksavdecc_descriptor_audio_get_base_control(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_control(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_signal_selectors()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_signal_selectors(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_signal_selectors(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_signal_selector()
     {
-        return jdksavdecc_descriptor_audio_get_base_signal_selector(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_signal_selector(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_mixers()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_mixers(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_mixers(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_mixer()
     {
-        return jdksavdecc_descriptor_audio_get_base_mixer(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_mixer(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_matrices()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_matrices(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_matrices(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_matrix()
     {
-        return jdksavdecc_descriptor_audio_get_base_matrix(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_matrix(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_splitters()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_splitters(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_splitters(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_splitter()
     {
-        return jdksavdecc_descriptor_audio_get_base_splitter(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_splitter(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_combiners()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_combiners(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_combiners(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_combiner()
     {
-        return jdksavdecc_descriptor_audio_get_base_combiner(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_combiner(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_demultiplexers()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_demultiplexers(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_demultiplexers(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_demultiplexer()
     {
-        return jdksavdecc_descriptor_audio_get_base_demultiplexer(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_demultiplexer(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_multiplexers()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_multiplexers(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_multiplexers(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_multiplexer()
     {
-        return jdksavdecc_descriptor_audio_get_base_multiplexer(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_multiplexer(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_transcoders()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_transcoders(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_transcoders(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_transcoder()
     {
-        return jdksavdecc_descriptor_audio_get_base_transcoder(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_transcoder(buffer, position);
 
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_control_blocks()
     {
-        return jdksavdecc_descriptor_audio_get_number_of_control_blocks(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_number_of_control_blocks(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::base_control_block()
     {
-        return jdksavdecc_descriptor_audio_get_base_control_block(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_base_control_block(buffer, position);
     }
     
     uint32_t STDCALL audio_unit_descriptor_response_imp::current_sampling_rate()
     {
-        return jdksavdecc_descriptor_audio_get_current_sampling_rate(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_current_sampling_rate(buffer, position);
     }
     
     uint32_t STDCALL audio_unit_descriptor_response_imp::get_sampling_rate_by_index(size_t sampling_rate_index)
@@ -249,11 +249,11 @@ namespace avdecc_lib
     
     uint16_t audio_unit_descriptor_response_imp::sampling_rates_offset()
     {
-        return jdksavdecc_descriptor_audio_get_sampling_rates_offset(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_sampling_rates_offset(buffer, position);
     }
     
     uint16_t STDCALL audio_unit_descriptor_response_imp::sampling_rates_count()
     {
-        return jdksavdecc_descriptor_audio_get_sampling_rates_count(buffer, position);
+        return jdksavdecc_descriptor_audio_unit_get_sampling_rates_count(buffer, position);
     }
 }

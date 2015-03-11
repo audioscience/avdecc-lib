@@ -128,7 +128,7 @@ namespace avdecc_lib
         
         buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
         memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
-        jdksavdecc_descriptor_audio_set_current_sampling_rate(aem_cmd_set_sampling_rate_resp.sampling_rate, buffer, resp_ref->get_desc_pos()); //set clk source
+        jdksavdecc_descriptor_audio_unit_set_current_sampling_rate(aem_cmd_set_sampling_rate_resp.sampling_rate, buffer, resp_ref->get_desc_pos()); //set clk source
 
         replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size()); //replace frame
 
