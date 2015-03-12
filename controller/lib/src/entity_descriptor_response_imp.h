@@ -46,8 +46,7 @@ namespace avdecc_lib
         virtual ~entity_descriptor_response_imp();
 
         uint64_t STDCALL entity_id();
-        uint32_t STDCALL vendor_id();
-        uint32_t STDCALL entity_model_id();
+        uint64_t STDCALL entity_model_id();
         uint32_t STDCALL entity_capabilities();
         uint16_t STDCALL talker_stream_sources();
         uint16_t STDCALL talker_capabilities();

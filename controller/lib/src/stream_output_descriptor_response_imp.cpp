@@ -183,7 +183,7 @@ namespace avdecc_lib
     
     uint16_t STDCALL stream_output_descriptor_response_imp::backup_talker_unique_0()
     {
-        return jdksavdecc_descriptor_stream_get_backup_talker_unique_0(buffer, position);
+        return jdksavdecc_descriptor_stream_get_backup_talker_unique_id_0(buffer, position);
     }
     
     uint64_t STDCALL stream_output_descriptor_response_imp::backup_talker_entity_id_1()
@@ -195,7 +195,7 @@ namespace avdecc_lib
     
     uint16_t STDCALL stream_output_descriptor_response_imp::backup_talker_unique_1()
     {
-        return jdksavdecc_descriptor_stream_get_backup_talker_unique_1(buffer, position);
+        return jdksavdecc_descriptor_stream_get_backup_talker_unique_id_1(buffer, position);
     }
     
     uint64_t STDCALL stream_output_descriptor_response_imp::backup_talker_entity_id_2()
@@ -207,7 +207,7 @@ namespace avdecc_lib
     
     uint16_t STDCALL stream_output_descriptor_response_imp::backup_talker_unique_2()
     {
-        return jdksavdecc_descriptor_stream_get_backup_talker_unique_2(buffer, position);
+        return jdksavdecc_descriptor_stream_get_backup_talker_unique_id_2(buffer, position);
     }
     
     uint64_t STDCALL stream_output_descriptor_response_imp::backedup_talker_entity_id()

@@ -1741,7 +1741,6 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                 {
                     avdecc_lib::entity_descriptor_response *entity_desc_resp = entity->get_entity_response();
                     atomic_cout << "\nentity_id = 0x" << std::hex << entity_desc_resp->entity_id();
-                    atomic_cout << "\nvendor_id = " << std::dec << entity_desc_resp->vendor_id();
                     atomic_cout << "\nentity_model_id = " << std::dec << entity_desc_resp->entity_model_id();
                     atomic_cout << "\nentity_capabilities = 0x" << std::hex << entity_desc_resp->entity_capabilities();
                     atomic_cout << "\ntalker_stream_sources = " << std::dec << entity_desc_resp->talker_stream_sources();
