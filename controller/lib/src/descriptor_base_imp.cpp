@@ -59,6 +59,20 @@ namespace avdecc_lib
 		m_fields.clear();
         delete resp_ref;
 	}
+    
+    descriptor_response_base * STDCALL descriptor_base_imp::get_descriptor_response()
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp_base = new descriptor_response_base_imp(resp_ref->get_desc_buffer(), resp_ref->get_desc_size(),
+                                                            resp_ref->get_desc_pos());
+    }
+    
+    descriptor_base_get_name_response * STDCALL descriptor_base_imp::get_name_response()
+    {
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return get_name_resp = new descriptor_base_get_name_response_imp(resp_ref->get_buffer(), resp_ref->get_size(),
+                                                                         resp_ref->get_pos());
+    }
 
     bool operator== (const descriptor_base_imp &n1, const descriptor_base_imp &n2)
     {
@@ -90,11 +104,6 @@ namespace avdecc_lib
     uint16_t STDCALL descriptor_base_imp::descriptor_index() const
     {
         return desc_index;
-    }
-
-    uint8_t * STDCALL descriptor_base_imp::object_name()
-    {
-        return NULL;
     }
 
     uint16_t STDCALL descriptor_base_imp::localized_description()
@@ -389,31 +398,214 @@ namespace avdecc_lib
         return 0;
     }
 
-    int STDCALL descriptor_base_imp::send_set_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index, char * name)
+    int STDCALL descriptor_base_imp::send_set_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index, const struct avdecc_lib_name_string64 * name)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override SET_NAME command.");
+        return default_send_set_name_cmd(this, notification_id, name_index, config_index, name);
+    }
 
+    int descriptor_base_imp::proc_set_name_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+    {
+        struct jdksavdecc_aem_command_set_name_response aem_cmd_set_name_resp;
+        return default_proc_set_name_resp(aem_cmd_set_name_resp, notification_id, frame, frame_len, status);
+    }
+    
+    int descriptor_base_imp::default_send_set_name_cmd(descriptor_base_imp *desc_base_imp_ref, void *notification_id, uint16_t name_index, uint16_t config_index, const struct avdecc_lib_name_string64 * name)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_set_name aem_cmd_set_name;
+        ssize_t aem_cmd_set_name_returned;
+        
+        /***************************************** AECP Common Data ******************************************/
+        aem_cmd_set_name.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
+        // Fill aem_cmd_set_name.sequence_id in AEM Controller State Machine
+        aem_cmd_set_name.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_SET_NAME;
+        
+        /****************************** AECP Message Specific Data ****************************/
+        aem_cmd_set_name.descriptor_type = desc_base_imp_ref->descriptor_type();
+        aem_cmd_set_name.descriptor_index = desc_base_imp_ref->descriptor_index();
+        aem_cmd_set_name.configuration_index = config_index;
+        aem_cmd_set_name.name_index = name_index;
+        memcpy(aem_cmd_set_name.name.value, name->value, sizeof(aem_cmd_set_name.name.value));
+        
+        /**************************** Fill frame payload with AECP data and send the frame **********************/
+        aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
+                                                            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_NAME_COMMAND_LEN);
+        aem_cmd_set_name_returned = jdksavdecc_aem_command_set_name_write(&aem_cmd_set_name,
+                                                                            cmd_frame.payload,
+                                                                            ETHER_HDR_SIZE,
+                                                                            sizeof(cmd_frame.payload));
+        
+        if(aem_cmd_set_name_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_name_write error\n");
+            assert(aem_cmd_set_name_returned >= 0);
+            return -1;
+        }
+        
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                           &cmd_frame,
+                                                           base_end_station_imp_ref->entity_id(),
+                                                           JDKSAVDECC_AEM_COMMAND_SET_NAME_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
+        return 0;
+    }
+    
+    int descriptor_base_imp::default_proc_set_name_resp(struct jdksavdecc_aem_command_set_name_response &aem_cmd_set_name_resp,
+                                                        void *&notification_id,
+                                                        const uint8_t *frame,
+                                                        size_t frame_len,
+                                                        int &status)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        ssize_t aem_cmd_set_name_resp_returned = 0;
+        uint32_t msg_type = 0;
+        bool u_field = false;
+        uint16_t desc_type = 0;
+        uint8_t * buffer;
+
+        memcpy(cmd_frame.payload, frame, frame_len);
+
+        aem_cmd_set_name_resp_returned = jdksavdecc_aem_command_set_name_response_read(&aem_cmd_set_name_resp,
+                                                                                       frame,
+                                                                                       ETHER_HDR_SIZE,
+                                                                                       frame_len);
+        
+        if(aem_cmd_set_name_resp_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_name_resp_read error\n");
+            assert(aem_cmd_set_name_resp_returned >= 0);
+            return -1;
+        }
+        
+        msg_type = aem_cmd_set_name_resp.aem_header.aecpdu_header.header.message_type;
+        status = aem_cmd_set_name_resp.aem_header.aecpdu_header.header.status;
+        u_field = aem_cmd_set_name_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        
+        desc_type = jdksavdecc_aem_command_set_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+
+        if(desc_type == AEM_DESC_ENTITY)
+        {
+            buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
+            memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
+            
+            if(aem_cmd_set_name_resp.name_index == 0) //entity name
+            {
+                jdksavdecc_descriptor_entity_set_entity_name(aem_cmd_set_name_resp.name, buffer, resp_ref->get_desc_pos());
+            }
+            else if(aem_cmd_set_name_resp.name_index == 1) //group name
+            {
+                jdksavdecc_descriptor_entity_set_group_name(aem_cmd_set_name_resp.name, buffer, resp_ref->get_desc_pos());
+            }
+            else
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "invalid SET_NAME name index\n");
+            }
+        }
+        else
+        {
+            buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
+            memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
+    
+            jdksavdecc_aem_command_set_name_set_name(aem_cmd_set_name_resp.name, buffer, ETHER_HDR_SIZE);
+        }
+
+        replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size());
+        
+        aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
+
+        free(buffer);
         return 0;
     }
 
-    int descriptor_base_imp::proc_set_name_resp(uint8_t *base_pointer, uint16_t frame_len)
+    
+    int descriptor_base_imp::default_send_get_name_cmd(descriptor_base_imp *desc_base_imp_ref, void *notification_id, uint16_t name_index, uint16_t config_index)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override SET_NAME response.");
-
+        struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_get_name aem_cmd_get_name;
+        ssize_t aem_cmd_get_name_returned;
+        
+        /***************************************** AECP Common Data ******************************************/
+        aem_cmd_get_name.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
+        // Fill aem_cmd_set_name.sequence_id in AEM Controller State Machine
+        aem_cmd_get_name.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_GET_NAME;
+        
+        /****************************** AECP Message Specific Data ****************************/
+        aem_cmd_get_name.descriptor_type = desc_base_imp_ref->descriptor_type();
+        aem_cmd_get_name.descriptor_index = desc_base_imp_ref->descriptor_index();
+        aem_cmd_get_name.configuration_index = config_index;
+        aem_cmd_get_name.name_index = name_index;
+        
+        /**************************** Fill frame payload with AECP data and send the frame **********************/
+        aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
+                                                            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_NAME_COMMAND_LEN);
+        aem_cmd_get_name_returned = jdksavdecc_aem_command_get_name_write(&aem_cmd_get_name,
+                                                                          cmd_frame.payload,
+                                                                          ETHER_HDR_SIZE,
+                                                                          sizeof(cmd_frame.payload));
+        
+        if(aem_cmd_get_name_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_name_write error\n");
+            assert(aem_cmd_get_name_returned >= 0);
+            return -1;
+        }
+        
+        aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                           &cmd_frame,
+                                                           base_end_station_imp_ref->entity_id(),
+                                                           JDKSAVDECC_AEM_COMMAND_GET_NAME_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+        system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
         return 0;
     }
 
+    int descriptor_base_imp::default_proc_get_name_resp(struct jdksavdecc_aem_command_get_name_response &aem_cmd_get_name_resp,
+                                                        void *&notification_id,
+                                                        const uint8_t *frame,
+                                                        size_t frame_len,
+                                                        int &status)
+    {
+        struct jdksavdecc_frame cmd_frame;
+        ssize_t aem_cmd_get_name_resp_returned = 0;
+        uint32_t msg_type = 0;
+        bool u_field = false;
+        
+        memcpy(cmd_frame.payload, frame, frame_len);
+        
+        aem_cmd_get_name_resp_returned = jdksavdecc_aem_command_get_name_response_read(&aem_cmd_get_name_resp,
+                                                                                       frame,
+                                                                                       ETHER_HDR_SIZE,
+                                                                                       frame_len);
+        
+        if(aem_cmd_get_name_resp_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_name_resp_read error\n");
+            assert(aem_cmd_get_name_resp_returned >= 0);
+            return -1;
+        }
+        
+        replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+        
+        msg_type = aem_cmd_get_name_resp.aem_header.aecpdu_header.header.message_type;
+        status = aem_cmd_get_name_resp.aem_header.aecpdu_header.header.status;
+        u_field = aem_cmd_get_name_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        
+        aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
+
+        return 0;
+    }
+    
+    
     int STDCALL descriptor_base_imp::send_get_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override GET_NAME command.");
-
-        return 0;
+        return default_send_get_name_cmd(this, notification_id, name_index, config_index);
     }
-
-    int descriptor_base_imp::proc_get_name_resp(uint8_t *base_pointer, uint16_t frame_len)
+    
+    int descriptor_base_imp::proc_get_name_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override GET_NAME response.");
-
-        return 0;
+        struct jdksavdecc_aem_command_get_name_response aem_cmd_get_name_resp;
+        memset(&aem_cmd_get_name_resp, 0, sizeof(jdksavdecc_aem_command_get_name_response));
+        return default_proc_get_name_resp(aem_cmd_get_name_resp, notification_id, frame, frame_len, status);
     }
 }

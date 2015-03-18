@@ -1,7 +1,7 @@
 /*
  * Licensed under the MIT License (MIT)
  *
- * Copyright (c) 2014 AudioScience Inc.
+ * Copyright (c) 2015 AudioScience Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,33 +22,34 @@
  */
 
 /**
- * stream_port_output_descriptor_response_imp.h
+ * descriptor_response_base.h
  *
- * Stream Port Output descriptor response implementation class
+ * Public descriptor response base interface class
  */
 
 #pragma once
 
-#include "stream_port_output_descriptor_response.h"
-#include "jdksavdecc_aem_descriptor.h"
-#include "descriptor_response_base_imp.h"
+#include <stdint.h>
+#include "build.h"
 
 namespace avdecc_lib
 {
-    class stream_port_output_descriptor_response_imp : public stream_port_output_descriptor_response, public virtual descriptor_response_base_imp
+    struct avdecc_lib_name_string64
+    {
+        uint8_t value[64];
+    };
+
+    class descriptor_response_base
     {
     public:
-        stream_port_output_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~stream_port_output_descriptor_response_imp();
-        
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL clock_domain_index();
-        uint16_t STDCALL port_flags();
-        uint16_t STDCALL number_of_controls();
-        uint16_t STDCALL base_control();
-        uint16_t STDCALL number_of_clusters();
-        uint16_t STDCALL base_cluster();
-        uint16_t STDCALL number_of_maps();
-        uint16_t STDCALL base_map();
+        virtual ~descriptor_response_base() {};
+        /**
+         * \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
+         *	   The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+         *	   defined value being provided in a localized form via the localized descripton field. By leaving
+         *	   this field blank an AVDECC Controller can determine if the user has overridden the name and can
+         *	   use this name rather than the localized name.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL object_name() = 0;
     };
 }

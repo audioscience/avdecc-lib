@@ -150,6 +150,11 @@ private:
      * Display a detailed description of a command.
      */
     int cmd_quit(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Display the name at index name_index for a given descriptor.
+     */
+    int cmd_display_desc_name(avdecc_lib::descriptor_base *desc, uint16_t name_index, bool is_entity);
 
     /**
      * Display the current build release version.
@@ -320,12 +325,22 @@ private:
     /**
      * Send a SET_NAME command to change the value of a name field within a descriptor.
      */
-    int cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name);
+    int cmd_set_name(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a SET_GROUP_NAME command to change the value of the Entity descriptor group name.
+     */
+    int cmd_set_group_name(int total_matched, std::vector<cli_argument*> args);
 
     /**
      * Send a GET_NAME command to fetch the value of a name field within a descriptor.
      */
-    int cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index);
+    int cmd_get_name(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a GET_GROUP_NAME command to fetch the group name of the ENTITY descriptor.
+     */
+    int cmd_get_group_name(int total_matched, std::vector<cli_argument*> args);
 
     /**
      * Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.

@@ -32,10 +32,11 @@
 #include <stdint.h>
 #include "build.h"
 #include "descriptor_base.h"
+#include "descriptor_response_base.h"
 
 namespace avdecc_lib
 {
-    class external_port_input_descriptor_response : public virtual descriptor_base
+    class external_port_input_descriptor_response : public virtual descriptor_base, public virtual descriptor_response_base
     {
     public:
         virtual ~external_port_input_descriptor_response(){};

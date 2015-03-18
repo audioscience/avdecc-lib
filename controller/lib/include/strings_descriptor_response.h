@@ -33,10 +33,11 @@
 #include <stdint.h>
 #include <cstddef>
 #include "build.h"
+#include "descriptor_response_base.h"
 
 namespace avdecc_lib
 {
-    class strings_descriptor_response
+    class strings_descriptor_response : public virtual descriptor_response_base
     {
     public:
         virtual ~strings_descriptor_response(){};

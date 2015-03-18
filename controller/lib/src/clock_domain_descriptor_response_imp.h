@@ -31,16 +31,15 @@
 
 #include "clock_domain_descriptor_response.h"
 #include "jdksavdecc_aem_descriptor.h"
+#include "descriptor_response_base_imp.h"
 
 namespace avdecc_lib
 {
-    class clock_domain_descriptor_response_imp : public clock_domain_descriptor_response
+    class clock_domain_descriptor_response_imp : public clock_domain_descriptor_response, public virtual descriptor_response_base_imp
+
     {
     private:
         std::vector<uint16_t> clk_src_vec; // Store clock sources in a vector
-        uint8_t * buffer;
-        ssize_t position;
-        size_t frame_size;
         /**
          * Store the Clock Sources of the CLOCK DOMAIN object.
          */

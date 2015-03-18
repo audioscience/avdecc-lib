@@ -33,13 +33,9 @@
 
 namespace avdecc_lib
 {
-    audio_map_descriptor_response_imp::audio_map_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
+    audio_map_descriptor_response_imp::audio_map_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+        descriptor_response_base_imp(frame, frame_len, pos)
     {
-        frame_size = frame_len;
-        buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
-        memcpy(buffer, frame, frame_size);
-        position = pos;
-        
         ssize_t offset = pos + mappings_offset();
         for (unsigned int i = 0; i < (unsigned int)number_of_mappings(); i++)
         {
@@ -54,9 +50,11 @@ namespace avdecc_lib
         }
     }
     
-    audio_map_descriptor_response_imp::~audio_map_descriptor_response_imp()
+    audio_map_descriptor_response_imp::~audio_map_descriptor_response_imp() {}
+
+    uint8_t * STDCALL audio_map_descriptor_response_imp::object_name()
     {
-        free(buffer);
+        return NULL;
     }
     
     uint16_t audio_map_descriptor_response_imp::mappings_offset()

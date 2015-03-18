@@ -34,20 +34,13 @@
 
 namespace avdecc_lib
 {
-    audio_unit_descriptor_response_imp::audio_unit_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
+    audio_unit_descriptor_response_imp::audio_unit_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+        descriptor_response_base_imp(frame, frame_len, pos)
     {
-        frame_size = frame_len;
-        buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
-        memcpy(buffer, frame, frame_size);
-        position = pos;
-        
         sampling_rates_init(frame);
     }
     
-    audio_unit_descriptor_response_imp::~audio_unit_descriptor_response_imp()
-    {
-        free(buffer);
-    }
+    audio_unit_descriptor_response_imp::~audio_unit_descriptor_response_imp() {}
     
     void audio_unit_descriptor_response_imp::sampling_rates_init(const uint8_t *frame)
     {

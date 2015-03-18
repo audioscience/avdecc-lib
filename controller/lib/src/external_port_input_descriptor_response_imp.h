@@ -34,20 +34,19 @@
 #include "descriptor_base_imp.h"
 #include "external_port_input_descriptor_response.h"
 #include "jdksavdecc_aem_descriptor.h"
+#include "descriptor_response_base_imp.h"
 
 namespace avdecc_lib
 {
-    class external_port_input_descriptor_response_imp : public external_port_input_descriptor_response, public virtual descriptor_base_imp
+    class external_port_input_descriptor_response_imp : public external_port_input_descriptor_response, public virtual descriptor_base_imp, public virtual descriptor_response_base_imp
     {
     private:
         struct jdksavdecc_descriptor_external_port desc;
-        uint8_t * buffer;
-        ssize_t position;
-        size_t frame_size;
     public:
         external_port_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
         virtual ~external_port_input_descriptor_response_imp();
         
+        uint8_t * STDCALL object_name();
         uint16_t STDCALL port_flags();
         uint16_t STDCALL clock_domain_index();
         uint16_t STDCALL number_of_controls();

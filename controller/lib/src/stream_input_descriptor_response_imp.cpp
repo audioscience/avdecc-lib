@@ -41,20 +41,14 @@
 
 namespace avdecc_lib
 {
-    stream_input_descriptor_response_imp::stream_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
+    stream_input_descriptor_response_imp::stream_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+        descriptor_response_base_imp(frame, frame_len, pos)
     {
         memset(&stream_input_flags, 0, sizeof(struct stream_input_desc_stream_flags));
-        frame_size = frame_len;
-        buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
-        memcpy(buffer, frame, frame_size);
-        position = pos;
         stream_flags_init();
     }
     
-    stream_input_descriptor_response_imp::~stream_input_descriptor_response_imp()
-    {
-        free(buffer);
-    }
+    stream_input_descriptor_response_imp::~stream_input_descriptor_response_imp() {}
     
     void stream_input_descriptor_response_imp::stream_flags_init()
     {

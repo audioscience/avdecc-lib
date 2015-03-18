@@ -32,10 +32,11 @@
 
 #include <stdint.h>
 #include "build.h"
+#include "descriptor_response_base.h"
 
 namespace avdecc_lib
 {
-    class stream_port_output_descriptor_response
+    class stream_port_output_descriptor_response : public virtual descriptor_response_base
     {
     public:
         virtual ~stream_port_output_descriptor_response(){};

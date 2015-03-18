@@ -32,15 +32,13 @@
 #include "configuration_descriptor_imp.h"
 #include "entity_descriptor_response.h"
 #include "jdksavdecc_aem_descriptor.h"
+#include "descriptor_response_base_imp.h"
 
 namespace avdecc_lib
 {
-    class entity_descriptor_response_imp : public entity_descriptor_response
+    class entity_descriptor_response_imp : public entity_descriptor_response, public virtual
+        descriptor_response_base_imp
     {
-    private:
-        uint8_t * buffer;
-        ssize_t position;
-        size_t frame_size;
     public:
         entity_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
         virtual ~entity_descriptor_response_imp();

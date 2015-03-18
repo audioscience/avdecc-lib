@@ -36,6 +36,7 @@
 
 #include <stdint.h>
 #include "build.h"
+#include "descriptor_response_base.h"
 
 namespace avdecc_lib
 {
@@ -46,7 +47,7 @@ namespace avdecc_lib
         uint16_t cluster_channel;
     };
     
-    class audio_map_descriptor_response
+    class audio_map_descriptor_response : public virtual descriptor_response_base
     {
     public:
         virtual ~audio_map_descriptor_response(){};
