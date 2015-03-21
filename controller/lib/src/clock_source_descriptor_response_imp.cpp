@@ -33,19 +33,11 @@
 
 namespace avdecc_lib
 {
-    clock_source_descriptor_response_imp::clock_source_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
-    {
-        frame_size = frame_len;
-        buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
-        memcpy(buffer, frame, frame_size);
-        position = pos;
-    }
+    clock_source_descriptor_response_imp::clock_source_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+        descriptor_response_base_imp(frame, frame_len, pos) {}
     
-    clock_source_descriptor_response_imp::~clock_source_descriptor_response_imp()
-    {
-        free(buffer);
-    }
-    
+    clock_source_descriptor_response_imp::~clock_source_descriptor_response_imp() {}
+
     uint8_t * STDCALL clock_source_descriptor_response_imp::object_name()
     {
         return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE_OFFSET_OBJECT_NAME];

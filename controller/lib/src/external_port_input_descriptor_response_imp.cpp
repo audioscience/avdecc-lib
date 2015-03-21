@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-    external_port_input_descriptor_response_imp::external_port_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) : descriptor_base_imp(nullptr, frame, frame_len, pos)
+    external_port_input_descriptor_response_imp::external_port_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) : descriptor_base_imp(nullptr, frame, frame_len, pos), descriptor_response_base_imp(frame, frame_len, pos)
     {
         ssize_t ret = jdksavdecc_descriptor_external_port_read(&desc, frame, pos, frame_len);
         
@@ -44,11 +44,6 @@ namespace avdecc_lib
         {
             throw avdecc_read_descriptor_error("jdksavdecc_descriptor_external_port_read error");
         }
-
-        frame_size = frame_len;
-        buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
-        memcpy(buffer, frame, frame_size);
-        position = pos;
         
         // fields
         descriptor_field_imp *f;
@@ -72,9 +67,11 @@ namespace avdecc_lib
         m_fields.push_back(new descriptor_field_imp("jack_index", descriptor_field::TYPE_UINT16, &desc.jack_index));
     }
     
-    external_port_input_descriptor_response_imp::~external_port_input_descriptor_response_imp()
+    external_port_input_descriptor_response_imp::~external_port_input_descriptor_response_imp() {}
+    
+    uint8_t * STDCALL external_port_input_descriptor_response_imp::object_name()
     {
-        free(buffer);
+        return NULL;
     }
     
     uint16_t STDCALL external_port_input_descriptor_response_imp::clock_domain_index()

@@ -38,6 +38,8 @@
 #include "jdksavdecc_aem_descriptor.h"
 #include "descriptor_base.h"
 #include "descriptor_field_imp.h"
+#include "descriptor_response_base_imp.h"
+#include "descriptor_base_get_name_response_imp.h"
 
 namespace avdecc_lib
 {
@@ -47,6 +49,8 @@ namespace avdecc_lib
     class descriptor_base_imp : public virtual descriptor_base
     {
     protected:
+        descriptor_response_base_imp *resp_base;
+        descriptor_base_get_name_response_imp *get_name_resp;
         end_station_imp *base_end_station_imp_ref;
         std::vector<descriptor_field_imp *>m_fields;
         response_frame *resp_ref;
@@ -59,7 +63,6 @@ namespace avdecc_lib
 
         uint16_t STDCALL descriptor_type() const;
         uint16_t STDCALL descriptor_index() const;
-        virtual uint8_t * STDCALL object_name();
         virtual uint16_t STDCALL localized_description();
 
         size_t STDCALL field_count() const
@@ -134,11 +137,49 @@ namespace avdecc_lib
                                      size_t frame_len,
                                      int &status);
 
-        virtual int STDCALL send_set_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index, char * new_name);
-        virtual int proc_set_name_resp(uint8_t *base_pointer, uint16_t frame_len);
+        virtual int STDCALL send_set_name_cmd(void *notification_id,
+                                              uint16_t name_index,
+                                              uint16_t config_index,
+                                              const struct avdecc_lib_name_string64 * new_name);
+        virtual int proc_set_name_resp(void *&notification_id,
+                                       const uint8_t *frame,
+                                       size_t frame_len,
+                                       int &status);
 
-        virtual int STDCALL send_get_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index);
-        virtual int proc_get_name_resp(uint8_t *base_pointer, uint16_t frame_len);
+        int default_send_set_name_cmd(descriptor_base_imp *desc_base_imp_ref,
+                                      void *notification_id,
+                                      uint16_t name_index,
+                                      uint16_t config_index,
+                                      const struct avdecc_lib_name_string64 * name);
+
+        int default_proc_set_name_resp(struct jdksavdecc_aem_command_set_name_response &aem_cmd_set_name_resp,
+                                       void *&notification_id,
+                                       const uint8_t *frame,
+                                       size_t frame_len,
+                                       int &status);
+
+        virtual int STDCALL send_get_name_cmd(void *notification_id,
+                                              uint16_t name_index,
+                                              uint16_t config_index);
+        
+        virtual int proc_get_name_resp(void *&notification_id,
+                                       const uint8_t *frame,
+                                       size_t frame_len,
+                                       int &status);
+        
+        int default_send_get_name_cmd(descriptor_base_imp *desc_base_imp_ref,
+                                      void *notification_id,
+                                      uint16_t name_index,
+                                     uint16_t config_index);
+        
+        int default_proc_get_name_resp(struct jdksavdecc_aem_command_get_name_response &aem_cmd_get_name_resp,
+                                       void *&notification_id,
+                                       const uint8_t *frame,
+                                       size_t frame_len,
+                                       int &status);
+        
+        descriptor_response_base * STDCALL get_descriptor_response();
+        descriptor_base_get_name_response * STDCALL get_name_response();
     };
 
     bool operator== (const descriptor_base_imp &n1, const descriptor_base_imp &n2);

@@ -32,10 +32,11 @@
 #include "jdksavdecc_acmp.h"
 #include "stream_input_descriptor_response.h"
 #include "jdksavdecc_aem_descriptor.h"
+#include "descriptor_response_base_imp.h"
 
 namespace avdecc_lib
 {
-    class stream_input_descriptor_response_imp : public stream_input_descriptor_response
+    class stream_input_descriptor_response_imp : public stream_input_descriptor_response, public virtual descriptor_response_base_imp
     {
     private:
         struct stream_input_desc_stream_flags
@@ -51,10 +52,6 @@ namespace avdecc_lib
             bool tertiary_backup_supported;
             bool tertiary_backup_valid;
         };
-        
-        uint8_t * buffer;
-        ssize_t position;
-        size_t frame_size;
         struct stream_input_desc_stream_flags stream_input_flags;
     public:
         stream_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);

@@ -431,6 +431,27 @@ void cmd_line::cmd_line_commands_init()
     // get
     cli_command *get_cmd = new cli_command();
     commands.add_sub_command("get", get_cmd);
+    
+    // get name
+    cli_command *get_name_cmd = new cli_command();
+    get_cmd->add_sub_command("name", get_name_cmd);
+
+    cli_command_format *get_name_state_fmt = new cli_command_format(
+                                                                    "Send a GET_NAME command to fetch the value of a name field within a descriptor.",
+                                                                    &cmd_line::cmd_get_name);
+    get_name_state_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
+    get_name_state_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index"));
+    get_name_cmd->add_format(get_name_state_fmt);
+    
+    // get group name
+    cli_command *get_group_name_cmd = new cli_command();
+    get_cmd->add_sub_command("group_name", get_group_name_cmd);
+    
+    cli_command_format *get_group_name_state_fmt = new cli_command_format(
+                                                                    "Send a GET_GROUP_NAME command to fetch the group name of an ENTITY descriptor.",
+                                                                    &cmd_line::cmd_get_group_name);
+    get_group_name_cmd->add_format(get_group_name_state_fmt);
+
 
     // get rx
     cli_command *get_rx_cmd = new cli_command();
@@ -598,6 +619,27 @@ void cmd_line::cmd_line_commands_init()
     cli_command *set_cmd = new cli_command();
     commands.add_sub_command("set", set_cmd);
 
+    // set name
+    cli_command *set_name_cmd = new cli_command();
+    set_cmd->add_sub_command("name", set_name_cmd);
+    
+    cli_command_format *set_name_state_fmt = new cli_command_format(
+                                                                    "Send a SET_NAME command to change the value of a name field within a descriptor.",
+                                                                      &cmd_line::cmd_set_name);
+    set_name_state_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
+    set_name_state_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index"));
+    set_name_state_fmt->add_argument(new cli_argument_string(this, "o_n", "the new name"));
+    set_name_cmd->add_format(set_name_state_fmt);
+    
+    //set group name
+    cli_command *set_group_name_cmd = new cli_command();
+    set_cmd->add_sub_command("group_name", set_group_name_cmd);
+    
+    cli_command_format *set_group_name_state_fmt = new cli_command_format(
+                                                                    "Send a SET_GROUP_NAME command to change the group name of an ENTITY descriptor.",                                                                    &cmd_line::cmd_set_group_name);
+    set_group_name_state_fmt->add_argument(new cli_argument_string(this, "o_n", "the new group name"));
+    set_group_name_cmd->add_format(set_group_name_state_fmt);
+    
     // set stream_format
     cli_command *set_stream_format_cmd = new cli_command();
     set_cmd->add_sub_command("stream_format", set_stream_format_cmd);
@@ -997,7 +1039,8 @@ int cmd_line::cmd_view_media_clock(int total_matched, std::vector<cli_argument*>
                     is_clock_sync_source_set = stream_input_resp_ref->stream_flags_clock_sync_source();
                     if(is_clock_sync_source_set)
                     {
-                        desc_obj_name = stream_input_desc->object_name();
+                        
+                        desc_obj_name = stream_input_resp_ref->object_name();
                         desc_type_value = stream_input_desc->descriptor_type();
                         desc_index = stream_input_desc->descriptor_index();
 
@@ -1038,19 +1081,22 @@ int cmd_line::cmd_view_media_clock(int total_matched, std::vector<cli_argument*>
 int cmd_line::cmd_show_select(int total_matched, std::vector<cli_argument*> args)
 {
     avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor_response *entity_desc_resp;
     if (get_current_end_station(&end_station))
         return 0;
 
     uint16_t current_entity = end_station->get_current_entity_index();
     uint16_t current_config = end_station->get_current_config_index();
+    entity_desc_resp = end_station->get_entity_desc_by_index(current_entity)->get_entity_response();
 
     atomic_cout << "Current setting" << std::endl;
-    atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << end_station->get_entity_desc_by_index(current_entity)->get_entity_response()->entity_name()
+    atomic_cout << "\tEnd Station: " << std::dec << current_end_station << " (" << entity_desc_resp->entity_name()
                 << ", " << "0x" << std::setw(16) << std::hex << std::setfill('0') << end_station->entity_id()
                 << ")" << std::endl;
     atomic_cout << "\tEntity: " << std::dec << current_entity << std::endl;
     atomic_cout << "\tConfiguration: " << std::dec << current_config << std::endl;
 
+    delete entity_desc_resp;
     return 0;
 }
 
@@ -1070,7 +1116,9 @@ int cmd_line::do_select(uint32_t new_end_station, uint16_t new_entity, uint16_t 
         avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(new_end_station);
         uint16_t current_entity = end_station->get_current_entity_index();
         uint16_t current_config = end_station->get_current_config_index();
-        uint8_t *end_station_name = end_station->get_entity_desc_by_index(current_entity)->get_entity_response()->entity_name();
+        avdecc_lib::entity_descriptor_response *entity_desc_resp = end_station->get_entity_desc_by_index(current_entity)->get_entity_response();
+
+        uint8_t *end_station_name = entity_desc_resp->entity_name();
 
         if((current_end_station == new_end_station) && (current_entity == new_entity) && (current_config == new_config))
         {
@@ -1089,6 +1137,7 @@ int cmd_line::do_select(uint32_t new_end_station, uint16_t new_entity, uint16_t 
             atomic_cout << "\tEntity Index: " << std::dec << current_entity << std::endl;
             atomic_cout << "\tConfiguration Index: " << std::dec << current_config << std::endl;
         }
+        delete entity_desc_resp;
     }
     else
     {
@@ -1333,20 +1382,24 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                 for(unsigned int j = 0; j < configuration->stream_port_input_desc_count(); j++)
                 {
                     avdecc_lib::stream_port_input_descriptor *stream_port_input_desc_ref = configuration->get_stream_port_input_desc_by_index(j);
+                    avdecc_lib::stream_port_input_descriptor_response *input_resp_ref = stream_port_input_desc_ref->get_stream_port_input_response();
                     print_desc_type_index_name_row(*stream_port_input_desc_ref,
                                                    configuration->get_strings_desc_string_by_reference(stream_port_input_desc_ref->localized_description()),
-                                                   stream_port_input_desc_ref->object_name(),
+                                                   input_resp_ref->object_name(),
                                                    *locale);
+                    delete input_resp_ref;
                 }
 
             case avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT:
                 for(unsigned int j = 0; j < configuration->stream_port_output_desc_count(); j++)
                 {
                     avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref = configuration->get_stream_port_output_desc_by_index(j);
+                    avdecc_lib::stream_port_output_descriptor_response *output_resp_ref = stream_port_output_desc_ref->get_stream_port_output_response();
                     print_desc_type_index_name_row(*stream_port_output_desc_ref,
                                                    configuration->get_strings_desc_string_by_reference(stream_port_output_desc_ref->localized_description()),
-                                                   stream_port_output_desc_ref->object_name(),
+                                                   output_resp_ref->object_name(),
                                                    *locale);
+                    delete output_resp_ref;
                 }
 
             case avdecc_lib::AEM_DESC_AUDIO_CLUSTER:
@@ -1365,30 +1418,36 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                 for(unsigned int j = 0; j < configuration->audio_map_desc_count(); j++)
                 {
                     avdecc_lib::audio_map_descriptor *audio_map_desc_ref = configuration->get_audio_map_desc_by_index(j);
+                    avdecc_lib::audio_map_descriptor_response *audio_map_resp_ref = audio_map_desc_ref->get_audio_map_response();
                     print_desc_type_index_name_row(*audio_map_desc_ref,
                                                    configuration->get_strings_desc_string_by_reference(audio_map_desc_ref->localized_description()),
-                                                   audio_map_desc_ref->object_name(),
+                                                   audio_map_resp_ref->object_name(),
                                                    *locale);
+                    delete audio_map_resp_ref;
                 }
 
             case avdecc_lib::AEM_DESC_EXTERNAL_PORT_INPUT:
                 for (unsigned int j = 0; j < configuration->external_port_input_desc_count(); j++)
                 {
                     avdecc_lib::external_port_input_descriptor *desc_ref = configuration->get_external_port_input_desc_by_index(j);
+                    avdecc_lib::external_port_input_descriptor_response *resp_ref = desc_ref->get_external_port_input_response();
                     print_desc_type_index_name_row(*desc_ref,
                                                    configuration->get_strings_desc_string_by_reference(desc_ref->localized_description()),
-                                                   desc_ref->object_name(),
+                                                   resp_ref->object_name(),
                                                    *locale);
+                    delete resp_ref;
                 }
 
             case avdecc_lib::AEM_DESC_EXTERNAL_PORT_OUTPUT:
                 for (unsigned int j = 0; j < configuration->external_port_output_desc_count(); j++)
                 {
                     avdecc_lib::external_port_output_descriptor *desc_ref = configuration->get_external_port_output_desc_by_index(j);
+                    avdecc_lib::external_port_output_descriptor_response *resp_ref = desc_ref->get_external_port_output_response();
                     print_desc_type_index_name_row(*desc_ref,
                                                    configuration->get_strings_desc_string_by_reference(desc_ref->localized_description()),
-                                                   desc_ref->object_name(),
+                                                   resp_ref->object_name(),
                                                    *locale);
+                    delete resp_ref;
                 }
 
             case avdecc_lib::AEM_DESC_CLOCK_DOMAIN:
@@ -2272,6 +2331,7 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                     atomic_cout << "\nsignal_index = " << std::dec << control_resp_ref->signal_index();
                     atomic_cout << "\nsignal_output = " << std::dec << control_resp_ref->signal_output();
                     // atomic_cout << "\nvalue_details = " << std::dec << control_desc->value_details();
+                    delete(control_resp_ref);
                 }
             }
             break;
@@ -2448,7 +2508,7 @@ int cmd_line::cmd_connect_dst(int total_matched, std::vector<cli_argument*> args
                 {
                     avdecc_lib::stream_output_descriptor *output_descriptor = configuration_i->get_stream_output_desc_by_index(j);
                     avdecc_lib::stream_output_descriptor_response *stream_output_resp_ref = output_descriptor->get_stream_output_response();
-                    src_desc_name = output_descriptor->object_name();
+                    src_desc_name = stream_output_resp_ref->object_name();
                     format = stream_output_resp_ref->current_format();
 
                     atomic_cout << std::setw(5) << i << std::setw(20) << outstream_end_station_name
@@ -3256,18 +3316,291 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
     return 0;
 }
 
-int cmd_line::cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name)
+int cmd_line::cmd_set_group_name(int total_matched, std::vector<cli_argument*> args)
 {
+    int status = avdecc_lib::AEM_STATUS_NOT_IMPLEMENTED;
+    std::string new_name = args[0]->get_value_str();
+    uint16_t name_index = 0;
 
-    atomic_cout << "Need to implement cmd_set_name" << std::endl;
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    avdecc_lib::descriptor_base *desc_base = NULL;
+    
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity,
+                                                      &configuration))
+        return 0;
+    
+    desc_base = entity;
+
+    if(!desc_base)
+    {
+        atomic_cout << "cmd_set_name cannot lookup descriptor" << std::endl;
+        return 0;
+    }
+    
+    name_index = 1;
+    struct avdecc_lib::avdecc_lib_name_string64 new_name64 = {{0}};
+    strncpy((char *)new_name64.value, new_name.c_str(),
+            sizeof(new_name64.value));
+    
+    intptr_t cmd_notification_id = get_next_notification_id();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+    desc_base->send_set_name_cmd((void *)cmd_notification_id, name_index, 0,
+                                 + &new_name64);
+    status = sys->get_last_resp_status();
+    
+    if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+    {
+        cmd_display_desc_name(desc_base, name_index, true);
+    }
+    else
+    {
+        atomic_cout << "cmd_set_group_name failed with AEM status: " <<
+        avdecc_lib::utility::aem_cmd_status_value_to_name(status) <<
+        std::endl;
+    }
+    
+    return 0;
+}
+
+
+int cmd_line::cmd_set_name(int total_matched, std::vector<cli_argument*> args)
+{
+    int status = avdecc_lib::AEM_STATUS_NOT_IMPLEMENTED;
+    std::string desc_name = args[0]->get_value_str();
+    uint16_t desc_index = args[1]->get_value_int();
+    std::string new_name = args[2]->get_value_str();
+    bool is_entity = false;
+    
+    uint16_t desc_type =
+    avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
+    
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    avdecc_lib::descriptor_base *desc_base = NULL;
+    
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity,
+                                                      &configuration))
+        return 0;
+    
+    if(desc_type == avdecc_lib::AEM_DESC_ENTITY)
+    {
+        desc_base = entity;
+        is_entity = true;
+    }
+    else if(desc_type == avdecc_lib::AEM_DESC_CONFIGURATION)
+    {
+        desc_base = dynamic_cast<avdecc_lib::descriptor_base *>(configuration);
+    }
+    else
+    {
+        desc_base = configuration->lookup_desc(desc_type, desc_index);
+    }
+
+    if(!desc_base)
+    {
+        atomic_cout << "cmd_set_name cannot lookup descriptor" << std::endl;
+        return 0;
+    }
+    
+    uint16_t name_index = 0;
+    struct avdecc_lib::avdecc_lib_name_string64 new_name64 = {{0}};
+    strncpy((char *)new_name64.value, new_name.c_str(),
+              sizeof(new_name64.value));
+
+    intptr_t cmd_notification_id = get_next_notification_id();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+    desc_base->send_set_name_cmd((void *)cmd_notification_id, name_index, 0,
+                                   + &new_name64);
+    status = sys->get_last_resp_status();
+    
+    if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+    {
+        cmd_display_desc_name(desc_base, name_index, is_entity);
+    }
+    else
+    {
+        atomic_cout << "cmd_set_name failed with AEM status: " <<
+            avdecc_lib::utility::aem_cmd_status_value_to_name(status) <<
+            std::endl;
+    }
 
     return 0;
 }
 
-int cmd_line::cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index)
+int cmd_line::cmd_display_desc_name(avdecc_lib::descriptor_base *desc, uint16_t name_index, bool is_entity)
 {
-    atomic_cout << "Need to implement cmd_get_name" << std::endl;
+    uint8_t * name;
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
 
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity,
+                                                      &configuration))
+        return 0;
+
+    if(is_entity == true)
+    {
+        avdecc_lib::entity_descriptor_response *entity_resp_ref = entity->get_entity_response();
+        if(name_index == 0)
+        {
+            name = entity_resp_ref->entity_name();
+        }
+        else
+        {
+            name = entity_resp_ref->group_name();
+        }
+        delete entity_resp_ref;
+    }
+    else
+    {
+        avdecc_lib::descriptor_response_base *desc_resp_base = desc->get_descriptor_response();
+        name = desc_resp_base->object_name();
+        delete desc_resp_base;
+    }
+    
+    if(!name)
+    {
+        atomic_cout << "cmd_set_name() failed" << std::endl;
+    }
+    else
+    {
+        atomic_cout << "Descriptor " <<
+            avdecc_lib::utility::aem_desc_value_to_name(desc->descriptor_type()) <<
+            "." << desc->descriptor_index() <<
+            " name at index " << name_index << ": " <<
+            std::dec << name << std::endl;
+    }
+
+    return 0;
+}
+
+int cmd_line::cmd_get_name(int total_matched, std::vector<cli_argument*> args)
+{
+    int status = avdecc_lib::AEM_STATUS_NOT_IMPLEMENTED;
+    std::string desc_name = args[0]->get_value_str();
+    uint16_t desc_index = args[1]->get_value_int();
+    
+    uint16_t desc_type = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
+    
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    avdecc_lib::descriptor_base *desc_base = NULL;
+
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity,
+                                                      &configuration))
+        return 0;
+
+    if(desc_type == avdecc_lib::AEM_DESC_ENTITY)
+    {
+        desc_base = dynamic_cast<avdecc_lib::descriptor_base *>(entity);
+    }
+    else if(desc_type == avdecc_lib::AEM_DESC_CONFIGURATION)
+    {
+        desc_base = dynamic_cast<avdecc_lib::descriptor_base *>(configuration);
+    }
+    else
+    {
+        desc_base = configuration->lookup_desc(desc_type, desc_index);
+    }
+    
+    if(!desc_base)
+    {
+        atomic_cout << "cmd_get_name cannot lookup descriptor" << std::endl;
+        return 0;
+    }
+
+    uint16_t name_index = 0;
+    intptr_t cmd_notification_id = get_next_notification_id();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+    desc_base->send_get_name_cmd((void *)cmd_notification_id, name_index, 0);
+    status = sys->get_last_resp_status();
+    
+    if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+    {
+        avdecc_lib::descriptor_base_get_name_response *get_name_resp = desc_base->get_name_response();
+        uint8_t * name = get_name_resp->get_name();
+        if(!name)
+        {
+            atomic_cout << "cmd_get_name get_name() failed" << std::endl;
+        }
+        else
+        {
+            atomic_cout << "Descriptor " <<
+            avdecc_lib::utility::aem_desc_value_to_name(desc_base->descriptor_type()) <<
+            "." << desc_base->descriptor_index() <<
+            " name at index " << name_index << ": " <<
+            std::dec << name << std::endl;
+        }
+        
+        delete get_name_resp;
+    }
+    else
+    {
+        atomic_cout << "cmd_get_name failed with AEM status: " <<
+        avdecc_lib::utility::aem_cmd_status_value_to_name(status) << std::endl;
+    }
+
+    return 0;
+}
+
+int cmd_line::cmd_get_group_name(int total_matched, std::vector<cli_argument*> args)
+{
+    int status = avdecc_lib::AEM_STATUS_NOT_IMPLEMENTED;
+
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    avdecc_lib::descriptor_base *desc_base = NULL;
+    
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity,
+                                                      &configuration))
+        return 0;
+    
+
+    desc_base = dynamic_cast<avdecc_lib::descriptor_base *>(entity);
+
+    
+    if(!desc_base)
+    {
+        atomic_cout << "cmd_get_name cannot lookup descriptor" << std::endl;
+        return 0;
+    }
+    
+    uint16_t name_index = 1;
+    intptr_t cmd_notification_id = get_next_notification_id();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+    desc_base->send_get_name_cmd((void *)cmd_notification_id, name_index, 0);
+    status = sys->get_last_resp_status();
+    
+    if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+    {
+        avdecc_lib::descriptor_base_get_name_response *get_name_resp = desc_base->get_name_response();
+        uint8_t * name = get_name_resp->get_name();
+        if(!name)
+        {
+            atomic_cout << "cmd_get_group_name get group_name() failed" << std::endl;
+        }
+        else
+        {
+            atomic_cout << "Descriptor " <<
+            avdecc_lib::utility::aem_desc_value_to_name(desc_base->descriptor_type()) <<
+            "." << desc_base->descriptor_index() <<
+            " name at index " << name_index << ": " <<
+            std::dec << name << std::endl;
+        }
+        
+        delete get_name_resp;
+    }
+    else
+    {
+        atomic_cout << "cmd_get_name failed with AEM status: " <<
+        avdecc_lib::utility::aem_cmd_status_value_to_name(status) << std::endl;
+    }
+    
     return 0;
 }
 

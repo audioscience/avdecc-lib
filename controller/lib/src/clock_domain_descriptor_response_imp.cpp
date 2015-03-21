@@ -33,19 +33,13 @@
 
 namespace avdecc_lib
 {
-    clock_domain_descriptor_response_imp::clock_domain_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
+    clock_domain_descriptor_response_imp::clock_domain_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+        descriptor_response_base_imp(frame, frame_len, pos)
     {
-        frame_size = frame_len;
-        buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
-        memcpy(buffer, frame, frame_size);
-        position = pos;
         store_clock_sources();
     }
     
-    clock_domain_descriptor_response_imp::~clock_domain_descriptor_response_imp()
-    {
-        free(buffer);
-    }
+    clock_domain_descriptor_response_imp::~clock_domain_descriptor_response_imp() {}
     
     uint8_t * STDCALL clock_domain_descriptor_response_imp::object_name()
     {

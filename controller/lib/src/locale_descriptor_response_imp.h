@@ -32,19 +32,17 @@
 #include "locale_descriptor_response.h"
 #include "jdksavdecc_aem_command.h"
 #include "jdksavdecc_aem_descriptor.h"
+#include "descriptor_response_base_imp.h"
 
 namespace avdecc_lib
 {
-    class locale_descriptor_response_imp : public locale_descriptor_response
+    class locale_descriptor_response_imp : public locale_descriptor_response, public virtual descriptor_response_base_imp
     {
-    private:
-        uint8_t * buffer;
-        ssize_t position;
-        size_t frame_size;
     public:
         locale_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
         virtual ~locale_descriptor_response_imp();
 
+        uint8_t * STDCALL object_name();
         uint8_t * STDCALL locale_identifier();
         uint16_t STDCALL number_of_strings();
         uint16_t STDCALL base_strings();

@@ -41,13 +41,10 @@
 
 namespace avdecc_lib
 {
-    stream_output_descriptor_response_imp::stream_output_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
+    stream_output_descriptor_response_imp::stream_output_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+        descriptor_response_base_imp(frame, frame_len, pos)
     {
         memset(&stream_output_flags, 0, sizeof(struct stream_output_desc_stream_flags));
-        frame_size = frame_len;
-        buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
-        memcpy(buffer, frame, frame_size);
-        position = pos;
         stream_flags_init();
         
         stream_info_flags["CLASS_B"]                  = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_CLASS_B;
@@ -64,10 +61,7 @@ namespace avdecc_lib
         stream_info_flags["STREAM_FORMAT_VALID"]      = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_FORMAT_VALID;
     }
     
-    stream_output_descriptor_response_imp::~stream_output_descriptor_response_imp()
-    {
-        free(buffer);
-    }
+    stream_output_descriptor_response_imp::~stream_output_descriptor_response_imp() {}
     
     void stream_output_descriptor_response_imp::stream_flags_init()
     {

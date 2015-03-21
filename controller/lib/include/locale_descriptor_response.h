@@ -33,10 +33,11 @@
 
 #include <stdint.h>
 #include "build.h"
+#include "descriptor_response_base.h"
 
 namespace avdecc_lib
 {
-    class locale_descriptor_response
+    class locale_descriptor_response : public virtual descriptor_response_base
     {
     public:
         virtual ~locale_descriptor_response(){};

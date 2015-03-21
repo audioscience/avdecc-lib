@@ -34,10 +34,11 @@
 
 #include <stdint.h>
 #include "build.h"
+#include "descriptor_response_base.h"
 
 namespace avdecc_lib
 {
-    class entity_descriptor_response
+    class entity_descriptor_response : public virtual descriptor_response_base
     {
     public:
         virtual ~entity_descriptor_response(){};

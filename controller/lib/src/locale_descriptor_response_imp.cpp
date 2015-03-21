@@ -34,17 +34,14 @@
 
 namespace avdecc_lib
 {
-    locale_descriptor_response_imp::locale_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
-    {
-        frame_size = frame_len;
-        buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));
-        memcpy(buffer, frame, frame_size);
-        position = pos;
-    }
+    locale_descriptor_response_imp::locale_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+    descriptor_response_base_imp(frame, frame_len, pos) {}
 
-    locale_descriptor_response_imp::~locale_descriptor_response_imp()
+    locale_descriptor_response_imp::~locale_descriptor_response_imp() {}
+    
+    uint8_t * STDCALL locale_descriptor_response_imp::object_name()
     {
-        free(buffer);
+        return NULL;
     }
 
     uint8_t * STDCALL locale_descriptor_response_imp::locale_identifier()

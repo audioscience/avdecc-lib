@@ -1040,17 +1040,65 @@ namespace avdecc_lib
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_SET_NAME:
-                //desc_type = jdksavdecc_aem_command_set_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                //desc_index = jdksavdecc_aem_command_set_name_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_NAME command.");
-
+            {
+                desc_type = jdksavdecc_aem_command_set_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_set_name_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+                descriptor_base_imp *desc_base_imp_ref = NULL;
+                
+                if(desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY)
+                {
+                    desc_base_imp_ref = entity_desc_vec.at(current_entity_desc);
+                }
+                else if(desc_type == JDKSAVDECC_DESCRIPTOR_CONFIGURATION)
+                {
+                    desc_base_imp_ref = dynamic_cast<configuration_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc));
+                }
+                else
+                {
+                    configuration_descriptor_imp *cfg_desc_imp = dynamic_cast<configuration_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc));
+                    assert(cfg_desc_imp != NULL);
+                    desc_base_imp_ref = cfg_desc_imp->lookup_desc_imp(desc_type, desc_index);
+                }
+                if(desc_base_imp_ref)
+                {
+                    desc_base_imp_ref->proc_set_name_resp(notification_id, frame, frame_len, status);
+                }
+                else
+                {
+                    log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Cannot lookup entity descriptor");
+                }
+            }
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_GET_NAME:
-                //desc_type = jdksavdecc_aem_command_get_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-                //desc_index = jdksavdecc_aem_command_get_name_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_NAME command.");
-
+            {
+                desc_type = jdksavdecc_aem_command_get_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_get_name_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+                descriptor_base_imp *desc_base_imp_ref = NULL;
+                
+                if(desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY)
+                {
+                    desc_base_imp_ref = entity_desc_vec.at(current_entity_desc);
+                }
+                else if(desc_type == JDKSAVDECC_DESCRIPTOR_CONFIGURATION)
+                {
+                    desc_base_imp_ref = dynamic_cast<configuration_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc));
+                }
+                else
+                {
+                    configuration_descriptor_imp *cfg_desc_imp = dynamic_cast<configuration_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc));
+                    assert(cfg_desc_imp != NULL);
+                    desc_base_imp_ref = cfg_desc_imp->lookup_desc_imp(desc_type, desc_index);
+                }
+                if(desc_base_imp_ref)
+                {
+                    desc_base_imp_ref->proc_get_name_resp(notification_id, frame, frame_len, status);
+                }
+                else
+                {
+                    log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Cannot lookup entity descriptor");
+                }
+            }
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE:

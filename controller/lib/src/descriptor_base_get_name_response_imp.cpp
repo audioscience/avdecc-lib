@@ -1,7 +1,7 @@
 /*
  * Licensed under the MIT License (MIT)
  *
- * Copyright (c) 2014 AudioScience Inc.
+ * Copyright (c) 2015 AudioScience Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,33 +22,33 @@
  */
 
 /**
- * stream_port_output_descriptor_response_imp.h
+ * descriptor_base_get_name_response_imp.cpp
  *
- * Stream Port Output descriptor response implementation class
+ * Descriptor base GET_NAME response implementation class
  */
 
-#pragma once
-
-#include "stream_port_output_descriptor_response.h"
-#include "jdksavdecc_aem_descriptor.h"
-#include "descriptor_response_base_imp.h"
+#include "enumeration.h"
+#include "log_imp.h"
+#include "descriptor_base_get_name_response_imp.h"
+#include "util.h"
 
 namespace avdecc_lib
 {
-    class stream_port_output_descriptor_response_imp : public stream_port_output_descriptor_response, public virtual descriptor_response_base_imp
+    descriptor_base_get_name_response_imp::descriptor_base_get_name_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos)
     {
-    public:
-        stream_port_output_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~stream_port_output_descriptor_response_imp();
-        
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL clock_domain_index();
-        uint16_t STDCALL port_flags();
-        uint16_t STDCALL number_of_controls();
-        uint16_t STDCALL base_control();
-        uint16_t STDCALL number_of_clusters();
-        uint16_t STDCALL base_cluster();
-        uint16_t STDCALL number_of_maps();
-        uint16_t STDCALL base_map();
-    };
+        m_position = pos;
+        m_size = frame_len;
+        m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
+        memcpy(m_frame, frame, m_size);
+    }
+    
+    descriptor_base_get_name_response_imp::~descriptor_base_get_name_response_imp()
+    {
+        free(m_frame);
+    }
+    
+    uint8_t * STDCALL descriptor_base_get_name_response_imp::get_name()
+    {
+        return (uint8_t *) &m_frame[m_position + JDKSAVDECC_AEM_COMMAND_GET_NAME_RESPONSE_OFFSET_NAME];
+    }
 }

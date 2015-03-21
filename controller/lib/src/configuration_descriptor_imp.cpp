@@ -74,7 +74,7 @@ namespace avdecc_lib
         else
             return m_all_desc[desc_type].size();
     }
-    descriptor_base_imp *configuration_descriptor_imp::lookup_desc(uint16_t desc_type, size_t index)
+    descriptor_base_imp * configuration_descriptor_imp::lookup_desc_imp(uint16_t desc_type, size_t index)
     {
         if (desc_count(desc_type) <= index)
         {
@@ -88,6 +88,12 @@ namespace avdecc_lib
         {
             return m_all_desc[desc_type].at(index);
         }
+    }
+    
+    descriptor_base * configuration_descriptor_imp::lookup_desc(uint16_t desc_type, size_t index)
+    {
+        descriptor_base_imp *imp = lookup_desc_imp(desc_type, index);
+        return imp;
     }
 
     uint16_t STDCALL configuration_descriptor_imp::descriptor_type() const

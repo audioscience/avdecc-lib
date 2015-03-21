@@ -63,6 +63,14 @@ namespace avdecc_lib
     {
     public:
         /**
+         * \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
+         *	   The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+         *	   defined value being provided in a localized form via the localized descripton field. By leaving
+         *	   this field blank an AVDECC Controller can determine if the user has overridden the name and can
+         *	   use this name rather than the localized name.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL object_name() = 0;
+        /**
          * \return The number of descriptor counts. The maximum value for this field is 108 for this version of AEM.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL descriptor_counts_count() = 0;
@@ -182,6 +190,11 @@ namespace avdecc_lib
         */
         AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL external_port_output_desc_count() = 0;
 
+        /**
+         * \return A descriptor by type and index.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual descriptor_base * STDCALL lookup_desc(uint16_t desc_type, size_t index) = 0;
+        
         /**
          * \return The corresponding ENTITY descriptor by index.
          */
