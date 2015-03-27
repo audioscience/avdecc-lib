@@ -286,6 +286,88 @@ void cmd_line::cmd_line_commands_init()
         &cmd_line::cmd_show_select);
     select_cmd->add_format(show_select_fmt);
 
+    // audio mappings
+    cli_command *audio_mappings = new cli_command();
+    commands.add_sub_command("audio_mappings", audio_mappings);
+    
+    // remove audio mappings
+    cli_command *remove_audio_mappings_cmd = new cli_command();
+    audio_mappings->add_sub_command("remove", remove_audio_mappings_cmd);
+    cli_command_format *remove_audio_mappings_fmt = new cli_command_format(
+                                                                        "Send a REMOVE_AUDIO_MAPPINGS command to remove the queued mapping entries\n" \
+                                                                        "from the dynamic mapping between the Audio Clusters and Input/Output Streams\n",\
+                                                                        &cmd_line::cmd_remove_audio_mappings);
+    remove_audio_mappings_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
+                                                                 "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
+    remove_audio_mappings_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
+                                                              "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                              "\"view all\" command."));
+    remove_audio_mappings_cmd->add_format(remove_audio_mappings_fmt);
+
+    // store pending audio mapping
+    cli_command *store_pending_audio_mapping_cmd = new cli_command();
+    audio_mappings->add_sub_command("store_pending", store_pending_audio_mapping_cmd);
+    
+    cli_command_format *store_pending_audio_mapping_fmt = new cli_command_format(
+                                                                        "Send an ADD_PENDING_AUDIO_MAPPING command to add mapping entries to a local queue.\n" \
+                                                                        "for adding or removal\n", \
+                                                                        &cmd_line::cmd_store_pending_audio_mapping);
+    store_pending_audio_mapping_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
+                                                                 "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
+    store_pending_audio_mapping_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
+                                                              "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                              "\"view all\" command."));
+    
+    store_pending_audio_mapping_fmt->add_argument(new cli_argument_int(this, "s_i", "the stream index."));
+    store_pending_audio_mapping_fmt->add_argument(new cli_argument_int(this, "s_c", "the stream channel"));
+    store_pending_audio_mapping_fmt->add_argument(new cli_argument_int(this, "c_o", "the cluster offset."));
+    store_pending_audio_mapping_fmt->add_argument(new cli_argument_int(this, "c_c", "the cluster channel."));
+    
+    store_pending_audio_mapping_cmd->add_format(store_pending_audio_mapping_fmt);
+    
+    // view pending audio mappings
+    cli_command *view_pending_audio_mappings_cmd = new cli_command();
+    audio_mappings->add_sub_command("view_pending", view_pending_audio_mappings_cmd);
+    
+    cli_command_format *view_pending_audio_mappings_fmt = new cli_command_format(
+                                                                                 "Send an VIEW_PENDING_AUDIO_MAPPINGS command to view queued entries.",
+                                                                                 &cmd_line::cmd_view_pending_audio_mappings);
+    view_pending_audio_mappings_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
+                                                                          "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
+    view_pending_audio_mappings_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
+                                                                       "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                                       "\"view all\" command."));
+    view_pending_audio_mappings_cmd->add_format(view_pending_audio_mappings_fmt);
+    
+    // clear pending audio mappings
+    cli_command *clear_pending_audio_mappings_cmd = new cli_command();
+    audio_mappings->add_sub_command("clear_pending", clear_pending_audio_mappings_cmd);
+    
+    cli_command_format *clear_pending_audio_mappings_fmt = new cli_command_format(
+                                                                                 "Send an CLEAR_PENDING_AUDIO_MAPPINGS command to clear queued entries.",
+                                                                                 &cmd_line::cmd_clear_pending_audio_mappings);
+    clear_pending_audio_mappings_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
+                                                                          "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
+    clear_pending_audio_mappings_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
+                                                                       "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                                       "\"view all\" command."));
+    clear_pending_audio_mappings_cmd->add_format(clear_pending_audio_mappings_fmt);
+
+    // add audio mappings
+    cli_command *add_audio_mappings_cmd = new cli_command();
+    audio_mappings->add_sub_command("add", add_audio_mappings_cmd);
+    
+    cli_command_format *add_audio_mappings_fmt = new cli_command_format(
+                                                                        "Send an ADD_AUDIO_MAPPINGS command to add queued mapping entries to the dynamic\n" \
+                                                                        "mapping between the Audio Clusters and Input/Output Streams\n", \
+                                                                        &cmd_line::cmd_add_audio_mappings);
+    add_audio_mappings_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
+                                                              "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
+    add_audio_mappings_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
+                                                           "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                           "\"view all\" command."));
+    add_audio_mappings_cmd->add_format(add_audio_mappings_fmt);
+
     // log
     cli_command *log_cmd = new cli_command();
     commands.add_sub_command("log", log_cmd);
@@ -364,6 +446,15 @@ void cmd_line::cmd_line_commands_init()
     view_descriptor_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
     view_descriptor_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index"));
     view_descriptor_cmd->add_format(view_descriptor_fmt);
+    
+    // view stream format
+    cli_command *view_stream_formats_cmd = new cli_command();
+    view_cmd->add_sub_command("stream_formats", view_stream_formats_cmd);
+    
+    cli_command_format *view_stream_formats_fmt = new cli_command_format("Display all possible stream formats.",
+                                                                         &cmd_line::cmd_view_stream_formats);
+    view_stream_formats_cmd->add_format(view_stream_formats_fmt);
+
 
     // show
     cli_command *show_cmd = new cli_command();
@@ -393,14 +484,6 @@ void cmd_line::cmd_line_commands_init()
                                                          "Valid flags are class_b, fast_connect, saved_state, streaming_wait,\n" \
                                                          "supports_encrypted, encrypted_pdu, and talker_failed.", 0, UINT_MAX));
     connect_cmd->add_format(connect_rx_fmt);
-
-    // view stream format
-    cli_command *view_stream_formats_cmd = new cli_command();
-    view_cmd->add_sub_command("stream_formats", view_stream_formats_cmd);
-    
-    cli_command_format *view_stream_formats_fmt = new cli_command_format("Display all possible stream formats.",
-                                                                         &cmd_line::cmd_view_stream_formats);
-    view_stream_formats_cmd->add_format(view_stream_formats_fmt);
 
     cli_command_format *connect_dst_fmt = new cli_command_format(
         "Display all the available outstreams for all End Stations that can connect with\n" \
@@ -658,6 +741,22 @@ void cmd_line::cmd_line_commands_init()
                                                                 "\"view stream_formats\" command."));
 
     set_stream_format_cmd->add_format(set_stream_format_fmt);
+
+    // get audio_map
+    cli_command *get_audio_map_cmd = new cli_command();
+    audio_mappings->add_sub_command("get", get_audio_map_cmd);
+    
+    cli_command_format *get_audio_map_fmt = new cli_command_format(
+        "Send a GET_AUDIO_MAP command to fetch the dynamic mapping between the Audio Clusters\n" \
+        "and the input or output streams.",
+        &cmd_line::cmd_get_audio_map);
+    get_audio_map_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
+                                                            "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
+    get_audio_map_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
+                                                         "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                         "\"view all\" command."));
+    get_audio_map_fmt->add_argument(new cli_argument_int(this, "m_i", "the map index"));
+    get_audio_map_cmd->add_format(get_audio_map_fmt);
 
     // get stream_format
     cli_command *get_stream_format_cmd = new cli_command();
@@ -3035,6 +3134,285 @@ int cmd_line::cmd_controller_avail(int total_matched, std::vector<cli_argument*>
     controller_obj->send_controller_avail_cmd((void *)cmd_notification_id, current_end_station);
     sys->get_last_resp_status();
 
+    return 0;
+}
+
+int cmd_line::cmd_get_audio_map(int total_matched, std::vector<cli_argument*> args)
+{
+    std::string desc_name = args[0]->get_value_str();
+    uint16_t desc_index = args[1]->get_value_int();
+    uint16_t map_index = args[2]->get_value_int();
+    
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
+    
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+    
+    if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT)
+    {
+        intptr_t cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+        avdecc_lib::stream_port_input_descriptor *stream_port_input_desc_ref = configuration->get_stream_port_input_desc_by_index(desc_index);
+        stream_port_input_desc_ref->send_get_audio_map_cmd((void *)cmd_notification_id, map_index);
+        int status = sys->get_last_resp_status();
+
+        if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+        {
+            avdecc_lib::stream_port_input_get_audio_map_response *stream_port_input_resp_ref = stream_port_input_desc_ref->
+            get_stream_port_input_audio_map_response();
+            struct avdecc_lib::stream_port_input_audio_mapping map;
+        
+            map = stream_port_input_resp_ref->mapping();
+            atomic_cout << "map[" << map_index << "].stream_index = " << std::dec << map.stream_index << std::endl;
+            atomic_cout << "map[" << map_index << "].stream_channel = " << std::dec << map.stream_channel << std::endl;
+            atomic_cout << "map[" << map_index << "].cluster_offset = " << std::dec << map.cluster_offset << std::endl;
+            atomic_cout << "map[" << map_index << "].cluster_channel = " << std::dec << map.cluster_channel << std::endl;
+        
+            delete stream_port_input_resp_ref;
+        }
+    }
+    
+    else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT)
+    {
+        intptr_t cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+        avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref = configuration->get_stream_port_output_desc_by_index(desc_index);
+        stream_port_output_desc_ref->send_get_audio_map_cmd((void *)cmd_notification_id, map_index);
+        int status = sys->get_last_resp_status();
+        
+        if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+        {
+            avdecc_lib::stream_port_output_get_audio_map_response *stream_port_output_resp_ref = stream_port_output_desc_ref->
+            get_stream_port_output_audio_map_response();
+            struct avdecc_lib::stream_port_output_audio_mapping map;
+            
+            map = stream_port_output_resp_ref->mapping();
+            atomic_cout << "map[" << map_index << "].stream_index = " << std::dec << map.stream_index << std::endl;
+            atomic_cout << "map[" << map_index << "].stream_channel = " << std::dec << map.stream_channel << std::endl;
+            atomic_cout << "map[" << map_index << "].cluster_offset = " << std::dec << map.cluster_offset << std::endl;
+            atomic_cout << "map[" << map_index << "].cluster_channel = " << std::dec << map.cluster_channel << std::endl;
+            
+            delete stream_port_output_resp_ref;
+        }
+    }
+    
+    else
+    {
+        atomic_cout << "Invalid Descriptor" << std::endl;
+    }
+
+    return 0;
+}
+
+int cmd_line::cmd_store_pending_audio_mapping(int total_matched, std::vector<cli_argument*> args)
+{
+    std::string desc_name = args[0]->get_value_str();
+    uint16_t desc_index = args[1]->get_value_int();
+    
+    uint16_t stream_index = args[2]->get_value_int();
+    uint16_t stream_channel = args[3]->get_value_int();
+    uint16_t cluster_offset = args[4]->get_value_int();
+    uint16_t cluster_channel = args[5]->get_value_int();
+    
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
+    
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+
+    struct avdecc_lib::audio_map_mapping map;
+
+    map.stream_index = stream_index;
+    map.stream_channel = stream_channel;
+    map.cluster_offset = cluster_offset;
+    map.cluster_channel = cluster_channel;
+    
+    if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT)
+    {
+        avdecc_lib::stream_port_input_descriptor *stream_port_input_desc = configuration->get_stream_port_input_desc_by_index(desc_index);
+        stream_port_input_desc->store_pending_map(map);
+    }
+    else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT)
+    {
+        avdecc_lib::stream_port_output_descriptor *stream_port_output_desc = configuration->get_stream_port_output_desc_by_index(desc_index);
+        stream_port_output_desc->store_pending_map(map);
+    }
+    else
+    {
+        std::cout << "invalid descriptor" << std::endl;
+    }
+
+    return 0;
+}
+
+int cmd_line::cmd_view_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args)
+{
+    std::string desc_name = args[0]->get_value_str();
+    uint16_t desc_index = args[1]->get_value_int();
+    
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
+    
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+    
+    if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT)
+    {
+        avdecc_lib::stream_port_input_descriptor *stream_port_input_desc = configuration->get_stream_port_input_desc_by_index(desc_index);
+        
+        for (int i = 0; i < (int)stream_port_input_desc->get_number_of_pending_maps(); i++)
+        {
+            struct avdecc_lib::audio_map_mapping map;
+            
+            int ret = stream_port_input_desc->view_pending_maps(i, map);
+            
+            if (ret == 0)
+            {
+                atomic_cout << "map[" << i << "].stream_index = " << std::dec << map.stream_index << std::endl;
+                atomic_cout << "map[" << i << "].stream_channel = " << std::dec << map.stream_channel << std::endl;
+                atomic_cout << "map[" << i << "].cluster_offset = " << std::dec << map.cluster_offset << std::endl;
+                atomic_cout << "map[" << i << "].cluster_channel = " << std::dec << map.cluster_channel << std::endl;
+            }
+        }
+    }
+    else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT)
+    {
+        avdecc_lib::stream_port_output_descriptor *stream_port_output_desc = configuration->get_stream_port_output_desc_by_index(desc_index);
+        
+        for (int i = 0; i < (int)stream_port_output_desc->get_number_of_pending_maps(); i++)
+        {
+            struct avdecc_lib::audio_map_mapping map;
+            
+            int ret = stream_port_output_desc->view_pending_maps(i, map);
+            
+            if (ret == 0)
+            {
+                atomic_cout << "map[" << i << "].stream_index = " << std::dec << map.stream_index << std::endl;
+                atomic_cout << "map[" << i << "].stream_channel = " << std::dec << map.stream_channel << std::endl;
+                atomic_cout << "map[" << i << "].cluster_offset = " << std::dec << map.cluster_offset << std::endl;
+                atomic_cout << "map[" << i << "].cluster_channel = " << std::dec << map.cluster_channel << std::endl;
+            }
+        }
+    }
+    else
+    {
+        std::cout << "invalid descriptor" << std::endl;
+    }
+
+    return 0;
+}
+
+int cmd_line::cmd_clear_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args)
+{
+    std::string desc_name = args[0]->get_value_str();
+    uint16_t desc_index = args[1]->get_value_int();
+    
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
+    
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+    
+    if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT)
+    {
+        avdecc_lib::stream_port_input_descriptor *stream_port_input_desc = configuration->get_stream_port_input_desc_by_index(desc_index);
+        
+        stream_port_input_desc->clear_pending_maps();
+    }
+    else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT)
+    {
+        avdecc_lib::stream_port_output_descriptor *stream_port_output_desc = configuration->get_stream_port_output_desc_by_index(desc_index);
+        
+        stream_port_output_desc->clear_pending_maps();
+    }
+    else
+    {
+        std::cout << "invalid descriptor" << std::endl;
+    }
+    
+    return 0;
+}
+
+int cmd_line::cmd_add_audio_mappings(int total_matched, std::vector<cli_argument*> args)
+{
+    std::string desc_name = args[0]->get_value_str();
+    uint16_t desc_index = args[1]->get_value_int();
+
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
+    
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+
+    if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT)
+    {
+        intptr_t cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+        avdecc_lib::stream_port_input_descriptor *stream_port_input_desc_ref= configuration->get_stream_port_input_desc_by_index(desc_index);
+        stream_port_input_desc_ref->send_add_audio_mappings_cmd((void *)cmd_notification_id);
+        sys->get_last_resp_status();
+    }
+    else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT)
+    {
+        intptr_t cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+        avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref= configuration->get_stream_port_output_desc_by_index(desc_index);
+        stream_port_output_desc_ref->send_add_audio_mappings_cmd((void *)cmd_notification_id);
+        sys->get_last_resp_status();
+    }
+    else
+    {
+        atomic_cout << "Invalid Descriptor" << std::endl;
+    }
+
+    return 0;
+}
+
+int cmd_line::cmd_remove_audio_mappings(int total_matched, std::vector<cli_argument*> args)
+{
+    std::string desc_name = args[0]->get_value_str();
+    uint16_t desc_index = args[1]->get_value_int();
+    
+    uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
+    
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+    
+    if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT)
+    {
+        intptr_t cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+        avdecc_lib::stream_port_input_descriptor *stream_port_input_desc_ref= configuration->get_stream_port_input_desc_by_index(desc_index);
+        stream_port_input_desc_ref->send_remove_audio_mappings_cmd((void *)cmd_notification_id);
+        sys->get_last_resp_status();
+    }
+    else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT)
+    {
+        intptr_t cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+        avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref= configuration->get_stream_port_output_desc_by_index(desc_index);
+        stream_port_output_desc_ref->send_remove_audio_mappings_cmd((void *)cmd_notification_id);
+        sys->get_last_resp_status();
+    }
+    else
+    {
+        atomic_cout << "Invalid Descriptor" << std::endl;
+    }
+    
     return 0;
 }
 

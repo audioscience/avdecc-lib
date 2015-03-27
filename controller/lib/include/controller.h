@@ -32,6 +32,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "build.h"
+#include "net_interface.h"
 
 class net_interface;
 

@@ -34,6 +34,7 @@
 #include "build.h"
 #include "descriptor_base.h"
 #include "stream_port_input_descriptor_response.h"
+#include "stream_port_input_get_audio_map_response.h"
 
 namespace avdecc_lib
 {
@@ -44,5 +45,56 @@ namespace avdecc_lib
          * \return the stream port input descriptor response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual stream_port_input_descriptor_response * STDCALL get_stream_port_input_response() = 0;
+        
+        /**
+         * \return the audio_map get_audio_map response class.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual stream_port_input_get_audio_map_response * STDCALL get_stream_port_input_audio_map_response() = 0;
+        
+        /**
+         * \param map The audio_map pending for adding/removal.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int store_pending_map(struct audio_map_mapping &map) = 0;
+        
+        /**
+         *  View pending audio mappings.
+         *
+         * \param index The index of the queued audio mapping.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int view_pending_maps(size_t index, struct audio_map_mapping &map) = 0;
+        
+        /**
+         * \return the number of pending audio mappings.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual size_t get_number_of_pending_maps() = 0;
+        
+        /**
+         *  Clear pending audio mappings.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int clear_pending_maps() = 0;
+        
+        /**
+         * Send a GET_AUDIO_MAP command to fetch the dynamic mapping between the Audio Clusters and
+         * the input or output streams.
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_audio_map_cmd(void *notification_id, uint16_t mapping_index) = 0;
+        
+        /**
+         * Send a ADD_AUDIO_MAPPINGS command to add mapping entries to the dynamic mappings between the Audio
+         * Clusters and the input or output Streams
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_add_audio_mappings_cmd(void *notification_id) = 0;
+        
+        /**
+         * Send a REMOVE_AUDIO_MAPPINGS command to remove mapping entries to the dynamic mappings between the Audio
+         * Clusters and the input or output Streams
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_remove_audio_mappings_cmd(void *notification_id) = 0;
     };
 }

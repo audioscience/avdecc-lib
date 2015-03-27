@@ -137,7 +137,7 @@ namespace avdecc_lib
         buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
         memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
         jdksavdecc_descriptor_clock_domain_set_clock_source_index(aem_cmd_set_clk_src_resp.clock_source_index,
-                                                                  buffer, resp_ref->get_desc_pos()); //set sampling rate
+                                                                  buffer, resp_ref->get_desc_pos()); //set clock source
 
         replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size()); //replace frame
 

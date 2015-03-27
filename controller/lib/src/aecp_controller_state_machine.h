@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include <vector>
 #include "inflight.h"
 #include "operation.h"
 

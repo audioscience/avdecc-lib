@@ -303,6 +303,38 @@ private:
     int cmd_read_descriptor(int total_matched, std::vector<cli_argument*> args);
 
     /**
+     * Send a GET_AUDIO_MAP command to fetch the dynamic mapping between the Audio Clusters and
+     * the input or output Streams.
+     */
+    int cmd_get_audio_map(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a ADD_PENDING_AUDIO_MAPPING command to add a mapping entry to a library queue.
+     */
+    int cmd_store_pending_audio_mapping(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a VIEW_PENDING_AUDIO_MAPPINGS command to view queued mappings.
+     */
+    int cmd_view_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a CLEAR_PENDING_AUDIO_MAPPINGS command to clear queued mappings.
+     */
+    int cmd_clear_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a ADD_AUDIO_MAPPINGS command to send queued mapping entries indicating dynamic mappings
+     * between the Audio Clusters and the input or output Streams
+     */
+    int cmd_add_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a REMOVE_AUDIO_MAPPINGS command to remove the queued selected dynamic mappings.
+     */
+    int cmd_remove_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+
+    /**
      * Send a SET_STREAM_FORMAT command to change the format of a stream.
      */
     int cmd_set_stream_format(int total_matched, std::vector<cli_argument*> args);
