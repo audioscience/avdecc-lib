@@ -28,6 +28,7 @@
  */
 
 #pragma once
+#define MAX_MAPPINGS_PER_FRAME 62
 
 #include "descriptor_base_imp.h"
 #include "stream_port_output_descriptor.h"

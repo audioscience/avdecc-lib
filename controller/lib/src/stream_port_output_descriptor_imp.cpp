@@ -58,7 +58,7 @@ namespace avdecc_lib
     
     int stream_port_output_descriptor_imp::store_pending_map(struct audio_map_mapping &map)
     {
-        if (pending_maps.size() >= 62) //max number of pending maps for a frame
+        if (pending_maps.size() >= MAX_MAPPINGS_PER_FRAME) //max number of pending maps for a frame
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Too many pending audio maps.\n");
         }
@@ -157,7 +157,7 @@ namespace avdecc_lib
         
         if(aem_cmd_get_audio_map_resp_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_sampling_rate_resp_read error\n");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_audio_map_resp_read error\n");
             assert(aem_cmd_get_audio_map_resp_returned >= 0);
             return -1;
         }
@@ -232,8 +232,7 @@ namespace avdecc_lib
                                                            JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_LEN -
                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
-        
-        pending_maps.clear();
+
         return 0;
     }
     
@@ -255,7 +254,7 @@ namespace avdecc_lib
         
         if(aem_cmd_add_audio_mappings_resp_returned < 0)
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_sampling_rate_resp_read error\n");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_add_audio_mappings_resp_read error\n");
             assert(aem_cmd_add_audio_mappings_resp_returned >= 0);
             return -1;
         }
@@ -263,6 +262,11 @@ namespace avdecc_lib
         msg_type = aem_cmd_add_audio_mappings_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_add_audio_mappings_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_add_audio_mappings_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        
+        if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+        {
+            pending_maps.clear();
+        }
         
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
         
@@ -328,8 +332,7 @@ namespace avdecc_lib
                                                            JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_LEN -
                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
-        
-        pending_maps.clear();
+
         return 0;
     }
     
@@ -359,6 +362,11 @@ namespace avdecc_lib
         msg_type = aem_cmd_remove_audio_mappings_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_remove_audio_mappings_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_remove_audio_mappings_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+        
+        if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+        {
+            pending_maps.clear();
+        }
         
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
         

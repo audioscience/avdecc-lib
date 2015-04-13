@@ -3163,18 +3163,26 @@ int cmd_line::cmd_get_audio_map(int total_matched, std::vector<cli_argument*> ar
         {
             avdecc_lib::stream_port_input_get_audio_map_response *stream_port_input_resp_ref = stream_port_input_desc_ref->
             get_stream_port_input_audio_map_response();
-            struct avdecc_lib::stream_port_input_audio_mapping map;
-        
-            map = stream_port_input_resp_ref->mapping();
-            atomic_cout << "map[" << map_index << "].stream_index = " << std::dec << map.stream_index << std::endl;
-            atomic_cout << "map[" << map_index << "].stream_channel = " << std::dec << map.stream_channel << std::endl;
-            atomic_cout << "map[" << map_index << "].cluster_offset = " << std::dec << map.cluster_offset << std::endl;
-            atomic_cout << "map[" << map_index << "].cluster_channel = " << std::dec << map.cluster_channel << std::endl;
-        
+            uint16_t nmappings = stream_port_input_resp_ref->number_of_mappings();
+            
+            for (int i = 0; i < (int)nmappings; i++)
+            {
+                struct avdecc_lib::stream_port_input_audio_mapping map;
+                
+                int ret = stream_port_input_resp_ref->mapping(i, map);
+                
+                if (ret == 0)
+                {
+                    atomic_cout << "map[" << i << "].stream_index = " << std::dec << map.stream_index << std::endl;
+                    atomic_cout << "map[" << i << "].stream_channel = " << std::dec << map.stream_channel << std::endl;
+                    atomic_cout << "map[" << i << "].cluster_offset = " << std::dec << map.cluster_offset << std::endl;
+                    atomic_cout << "map[" << i << "].cluster_channel = " << std::dec << map.cluster_channel << std::endl;
+                }
+            }
+
             delete stream_port_input_resp_ref;
         }
     }
-    
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
@@ -3187,18 +3195,26 @@ int cmd_line::cmd_get_audio_map(int total_matched, std::vector<cli_argument*> ar
         {
             avdecc_lib::stream_port_output_get_audio_map_response *stream_port_output_resp_ref = stream_port_output_desc_ref->
             get_stream_port_output_audio_map_response();
-            struct avdecc_lib::stream_port_output_audio_mapping map;
+            uint16_t nmappings = stream_port_output_resp_ref->number_of_mappings();
             
-            map = stream_port_output_resp_ref->mapping();
-            atomic_cout << "map[" << map_index << "].stream_index = " << std::dec << map.stream_index << std::endl;
-            atomic_cout << "map[" << map_index << "].stream_channel = " << std::dec << map.stream_channel << std::endl;
-            atomic_cout << "map[" << map_index << "].cluster_offset = " << std::dec << map.cluster_offset << std::endl;
-            atomic_cout << "map[" << map_index << "].cluster_channel = " << std::dec << map.cluster_channel << std::endl;
+            for (int i = 0; i < (int)nmappings; i++)
+            {
+                struct avdecc_lib::stream_port_output_audio_mapping map;
+                
+                int ret = stream_port_output_resp_ref->mapping(i, map);
+                
+                if (ret == 0)
+                {
+                    atomic_cout << "map[" << i << "].stream_index = " << std::dec << map.stream_index << std::endl;
+                    atomic_cout << "map[" << i << "].stream_channel = " << std::dec << map.stream_channel << std::endl;
+                    atomic_cout << "map[" << i << "].cluster_offset = " << std::dec << map.cluster_offset << std::endl;
+                    atomic_cout << "map[" << i << "].cluster_channel = " << std::dec << map.cluster_channel << std::endl;
+                }
+            }
             
             delete stream_port_output_resp_ref;
         }
     }
-    
     else
     {
         atomic_cout << "Invalid Descriptor" << std::endl;

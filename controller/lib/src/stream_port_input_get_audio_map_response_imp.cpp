@@ -41,14 +41,19 @@ namespace avdecc_lib
         m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
         memcpy(m_frame, frame, m_size);
 
-        map_index = jdksavdecc_aem_command_get_audio_map_response_get_map_index(m_frame, m_position);
+        offset = m_position + JDKSAVDECC_AEM_COMMAND_GET_AUDIO_MAP_RESPONSE_OFFSET_MAPPINGS + (8 * map_index());
 
-        offset = m_position + JDKSAVDECC_AEM_COMMAND_GET_AUDIO_MAP_RESPONSE_OFFSET_MAPPINGS + (8 * map_index);
-
-        map.stream_index = jdksavdecc_uint16_get(frame, offset);
-        map.stream_channel = jdksavdecc_uint16_get(frame, offset + 2);
-        map.cluster_offset = jdksavdecc_uint16_get(frame, offset + 4);
-        map.cluster_channel = jdksavdecc_uint16_get(frame, offset + 6);
+        for (unsigned int i = 0; i < (unsigned int)number_of_mappings(); i++)
+        {
+            struct stream_port_input_audio_mapping map;
+            
+            map.stream_index = jdksavdecc_uint16_get(frame, offset);
+            map.stream_channel = jdksavdecc_uint16_get(frame, offset + 2);
+            map.cluster_offset = jdksavdecc_uint16_get(frame, offset + 4);
+            map.cluster_channel = jdksavdecc_uint16_get(frame, offset + 6);
+            maps.push_back(map);
+            offset += sizeof(struct stream_port_input_audio_mapping);
+        }
     }
     
     stream_port_input_get_audio_map_response_imp::~stream_port_input_get_audio_map_response_imp()
@@ -56,8 +61,22 @@ namespace avdecc_lib
         free(m_frame);
     }
     
-    stream_port_input_audio_mapping const STDCALL stream_port_input_get_audio_map_response_imp::mapping()
+    uint16_t stream_port_input_get_audio_map_response_imp::map_index()
     {
-        return map;
+        return jdksavdecc_aem_command_get_audio_map_response_get_map_index(m_frame, m_position);
+    }
+    
+    uint16_t stream_port_input_get_audio_map_response_imp::number_of_mappings()
+    {
+        return jdksavdecc_aem_command_get_audio_map_response_get_number_of_mappings(m_frame, m_position);
+    }
+    
+    int STDCALL stream_port_input_get_audio_map_response_imp::mapping(size_t index, struct stream_port_input_audio_mapping &map)
+    {
+        if (index >= number_of_mappings())
+            return -1;
+        
+        map = maps.at(index);
+        return 0;
     }
 }
