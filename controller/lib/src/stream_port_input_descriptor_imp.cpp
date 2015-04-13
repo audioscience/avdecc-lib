@@ -79,7 +79,7 @@ namespace avdecc_lib
         return pending_maps.size();
     }
     
-    int stream_port_input_descriptor_imp::view_pending_maps(size_t index, struct audio_map_mapping &map)
+    int stream_port_input_descriptor_imp::get_pending_maps(size_t index, struct audio_map_mapping &map)
     {
         if (index >= pending_maps.size())
             return -1;

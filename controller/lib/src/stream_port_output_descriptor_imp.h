@@ -62,7 +62,7 @@ namespace avdecc_lib
         
         int store_pending_map(struct audio_map_mapping &map);
         size_t get_number_of_pending_maps();
-        int view_pending_maps(size_t index, struct audio_map_mapping &map);
+        int get_pending_maps(size_t index, struct audio_map_mapping &map);
         int clear_pending_maps();
     };
 }

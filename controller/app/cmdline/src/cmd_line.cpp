@@ -326,18 +326,18 @@ void cmd_line::cmd_line_commands_init()
     store_pending_audio_mapping_cmd->add_format(store_pending_audio_mapping_fmt);
     
     // view pending audio mappings
-    cli_command *view_pending_audio_mappings_cmd = new cli_command();
-    audio_mappings->add_sub_command("view_pending", view_pending_audio_mappings_cmd);
+    cli_command *get_pending_audio_mappings_cmd = new cli_command();
+    audio_mappings->add_sub_command("get_pending", get_pending_audio_mappings_cmd);
     
-    cli_command_format *view_pending_audio_mappings_fmt = new cli_command_format(
-                                                                                 "Send an VIEW_PENDING_AUDIO_MAPPINGS command to view queued entries.",
-                                                                                 &cmd_line::cmd_view_pending_audio_mappings);
-    view_pending_audio_mappings_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
+    cli_command_format *get_pending_audio_mappings_fmt = new cli_command_format(
+                                                                                 "Send an GET_PENDING_AUDIO_MAPPINGS command to read queued entries.",
+                                                                                 &cmd_line::cmd_get_pending_audio_mappings);
+    get_pending_audio_mappings_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
                                                                           "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
-    view_pending_audio_mappings_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
+    get_pending_audio_mappings_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
                                                                        "To see a list of valid descriptor types and corresponding indexes, enter\n" \
                                                                        "\"view all\" command."));
-    view_pending_audio_mappings_cmd->add_format(view_pending_audio_mappings_fmt);
+    get_pending_audio_mappings_cmd->add_format(get_pending_audio_mappings_fmt);
     
     // clear pending audio mappings
     cli_command *clear_pending_audio_mappings_cmd = new cli_command();
@@ -3266,7 +3266,7 @@ int cmd_line::cmd_store_pending_audio_mapping(int total_matched, std::vector<cli
     return 0;
 }
 
-int cmd_line::cmd_view_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args)
+int cmd_line::cmd_get_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args)
 {
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
@@ -3287,7 +3287,7 @@ int cmd_line::cmd_view_pending_audio_mappings(int total_matched, std::vector<cli
         {
             struct avdecc_lib::audio_map_mapping map;
             
-            int ret = stream_port_input_desc->view_pending_maps(i, map);
+            int ret = stream_port_input_desc->get_pending_maps(i, map);
             
             if (ret == 0)
             {
@@ -3306,7 +3306,7 @@ int cmd_line::cmd_view_pending_audio_mappings(int total_matched, std::vector<cli
         {
             struct avdecc_lib::audio_map_mapping map;
             
-            int ret = stream_port_output_desc->view_pending_maps(i, map);
+            int ret = stream_port_output_desc->get_pending_maps(i, map);
             
             if (ret == 0)
             {

@@ -57,11 +57,11 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual int store_pending_map(struct audio_map_mapping &map) = 0;
         
         /**
-         *  View pending audio mappings.
+         *  Get pending audio mappings.
          *
          * \param index The index of the queued audio mapping.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual int view_pending_maps(size_t index, struct audio_map_mapping &map) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int get_pending_maps(size_t index, struct audio_map_mapping &map) = 0;
         
         /**
          * \return the number of pending audio mappings.
@@ -85,6 +85,9 @@ namespace avdecc_lib
          * Send a ADD_AUDIO_MAPPINGS command to add mapping entries to the dynamic mappings between the Audio
          * Clusters and the input or output Streams
          *
+         * The mappings to be added are stored in a local queue.
+         * \see store_pending_map().
+         *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_add_audio_mappings_cmd(void *notification_id) = 0;
@@ -92,6 +95,9 @@ namespace avdecc_lib
         /**
          * Send a REMOVE_AUDIO_MAPPINGS command to remove mapping entries to the dynamic mappings between the Audio
          * Clusters and the input or output Streams
+         *
+         * The mappings to be removed are stored in a local queue.
+         * \see store_pending_map().
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          */

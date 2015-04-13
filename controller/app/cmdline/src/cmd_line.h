@@ -314,9 +314,9 @@ private:
     int cmd_store_pending_audio_mapping(int total_matched, std::vector<cli_argument*> args);
     
     /**
-     * Send a VIEW_PENDING_AUDIO_MAPPINGS command to view queued mappings.
+     * Send a GET_PENDING_AUDIO_MAPPINGS command to view queued mappings.
      */
-    int cmd_view_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args);
     
     /**
      * Send a CLEAR_PENDING_AUDIO_MAPPINGS command to clear queued mappings.
