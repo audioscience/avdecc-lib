@@ -1036,7 +1036,113 @@ namespace avdecc_lib
                         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_output_descriptor_imp to base stream_output_descriptor error");
                     }
                 }
+                
+                break;
 
+
+            case JDKSAVDECC_AEM_COMMAND_GET_AUDIO_MAP:
+                desc_type = jdksavdecc_aem_command_get_audio_map_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_get_audio_map_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+
+                if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT)
+                {
+                    stream_port_input_descriptor_imp *stream_port_input_desc_imp_ref =
+                        dynamic_cast<stream_port_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_port_input_desc_by_index(desc_index));
+
+                    if(stream_port_input_desc_imp_ref)
+                    {
+                        stream_port_input_desc_imp_ref->proc_get_audio_map_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_port_input_descriptor_imp to base stream_port_input_descriptor error");
+                    }
+                }
+                else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT)
+                {
+                    stream_port_output_descriptor_imp *stream_port_output_desc_imp_ref =
+                        dynamic_cast<stream_port_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_port_output_desc_by_index(desc_index));
+
+                    if(stream_port_output_desc_imp_ref)
+                    {
+                        stream_port_output_desc_imp_ref->proc_get_audio_map_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_port_output_descriptor_imp to base stream_port_output_descriptor error");
+                    }
+                }
+
+                break;
+                
+            case JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS:
+                desc_type = jdksavdecc_aem_command_add_audio_mappings_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_add_audio_mappings_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+                
+                if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT)
+                {
+                    stream_port_input_descriptor_imp *stream_port_input_desc_imp_ref =
+                    dynamic_cast<stream_port_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_port_input_desc_by_index(desc_index));
+                    
+                    if(stream_port_input_desc_imp_ref)
+                    {
+                        stream_port_input_desc_imp_ref->proc_add_audio_mappings_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_port_input_descriptor_imp to base stream_port_input_descriptor error");
+                    }
+                }
+                else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT)
+                {
+                    stream_port_output_descriptor_imp *stream_port_output_desc_imp_ref =
+                    dynamic_cast<stream_port_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_port_output_desc_by_index(desc_index));
+                    
+                    if(stream_port_output_desc_imp_ref)
+                    {
+                        stream_port_output_desc_imp_ref->proc_add_audio_mappings_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_port_input_descriptor_imp to base stream_port_input_descriptor error");
+                    }
+                }
+                
+                break;
+                
+            case JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS:
+                desc_type = jdksavdecc_aem_command_remove_audio_mappings_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                desc_index = jdksavdecc_aem_command_remove_audio_mappings_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+                
+                if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT)
+                {
+                    stream_port_input_descriptor_imp *stream_port_input_desc_imp_ref =
+                    dynamic_cast<stream_port_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_port_input_desc_by_index(desc_index));
+                    
+                    if(stream_port_input_desc_imp_ref)
+                    {
+                        stream_port_input_desc_imp_ref->proc_remove_audio_mappings_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_port_input_descriptor_imp to base stream_port_input_descriptor error");
+                    }
+                }
+                else if(desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT)
+                {
+                    stream_port_output_descriptor_imp *stream_port_output_desc_imp_ref =
+                    dynamic_cast<stream_port_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_port_output_desc_by_index(desc_index));
+                    
+                    if(stream_port_output_desc_imp_ref)
+                    {
+                        stream_port_output_desc_imp_ref->proc_remove_audio_mappings_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_port_input_descriptor_imp to base stream_port_input_descriptor error");
+                    }
+                }
+                
                 break;
 
             case JDKSAVDECC_AEM_COMMAND_SET_NAME:

@@ -348,6 +348,21 @@ namespace avdecc_lib
             desc_index = jdksavdecc_aem_command_read_descriptor_get_descriptor_index(frame, ETHER_HDR_SIZE);
             break;
 
+        case JDKSAVDECC_AEM_COMMAND_GET_AUDIO_MAP:
+            desc_type = jdksavdecc_aem_command_get_audio_map_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_get_audio_map_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
+        
+        case JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS:
+            desc_type = jdksavdecc_aem_command_add_audio_mappings_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_add_audio_mappings_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
+                
+        case JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS:
+            desc_type = jdksavdecc_aem_command_remove_audio_mappings_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_remove_audio_mappings_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
+
         case JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT:
             desc_type = jdksavdecc_aem_command_set_stream_format_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
             desc_index = jdksavdecc_aem_command_set_stream_format_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
