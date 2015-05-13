@@ -141,9 +141,9 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL locale_desc_count() = 0;
 
         /**
-         * \return The a string from the list of Strings descriptors present in the current configuration.
+         * \return The strings descriptor index and the string index for the string corresponding to a particular localized description.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_strings_desc_string_by_reference(size_t reference) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL get_strings_desc_string_by_reference(size_t reference, size_t &string_desc_index, size_t &string_index) = 0;
 
         /**
          * \return The number of Strings descriptors present in the current configuration.

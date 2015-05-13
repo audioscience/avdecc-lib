@@ -1290,7 +1290,8 @@ int cmd_line::cmd_unlog(int total_matched, std::vector<cli_argument*> args)
 }
 
 void cmd_line::print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
-                                              const uint8_t *localized_desc_string,
+                                              avdecc_lib::configuration_descriptor &configuration,
+                                              size_t localized_description,
                                               const uint8_t *object_name,
                                               avdecc_lib::locale_descriptor &locale)
 {
@@ -1307,13 +1308,27 @@ void cmd_line::print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
     }
     else
     {
-        if(localized_desc_string)
+        if(object_name && object_name[0] != '\0')
         {
-            atomic_cout << "   " << std::setw(20) << std::hex << localized_desc_string << std::endl;
+            atomic_cout << "   " << std::setw(20) << std::hex << object_name << std::endl;
         }
         else
         {
-            atomic_cout << "   " << std::setw(20) << std::hex << object_name << std::endl;
+            size_t string_desc_index;
+            size_t string_index;
+            int ret = configuration.get_strings_desc_string_by_reference(localized_description,
+                                                                         string_desc_index, string_index);
+            if(ret == 0)
+            {
+                avdecc_lib::strings_descriptor * desc = configuration.get_strings_desc_by_index(string_desc_index);
+                avdecc_lib::strings_descriptor_response *strings_resp_ref = desc->get_strings_response();
+                atomic_cout << "   " << std::setw(20) << std::hex << strings_resp_ref->get_string_by_index(string_index) << std::endl;
+                delete strings_resp_ref;
+            }
+            else
+            {
+                atomic_cout << "   " << std::endl;
+            }
         }
     }
 }
@@ -1369,7 +1384,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::audio_unit_descriptor *audio_unit_desc_ref = configuration->get_audio_unit_desc_by_index(j);
                     avdecc_lib::audio_unit_descriptor_response *audio_unit_resp_ref = audio_unit_desc_ref->get_audio_unit_response();
                     print_desc_type_index_name_row(*audio_unit_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(audio_unit_resp_ref->localized_description()),
+                                                   *configuration,
+                                                   audio_unit_resp_ref->localized_description(),
                                                    audio_unit_resp_ref->object_name(),
                                                    *locale);
                     delete audio_unit_resp_ref;
@@ -1381,7 +1397,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::stream_input_descriptor *stream_input_desc_ref = configuration->get_stream_input_desc_by_index(j);
                     avdecc_lib::stream_input_descriptor_response *stream_input_resp_ref = stream_input_desc_ref->get_stream_input_response();
                     print_desc_type_index_name_row(*stream_input_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(stream_input_resp_ref->localized_description()),
+                                                   *configuration,
+                                                   stream_input_resp_ref->localized_description(),
                                                    stream_input_resp_ref->object_name(),
                                                    *locale);
                     delete stream_input_resp_ref;
@@ -1393,7 +1410,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(j);
                     avdecc_lib::stream_output_descriptor_response *stream_output_resp_ref = stream_output_desc_ref->get_stream_output_response();
                     print_desc_type_index_name_row(*stream_output_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(stream_output_resp_ref->localized_description()),
+                                                   *configuration,
+                                                   stream_output_resp_ref->localized_description(),
                                                    stream_output_resp_ref->object_name(),
                                                    *locale);
                     delete stream_output_resp_ref;
@@ -1405,7 +1423,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::jack_input_descriptor *jack_input_desc_ref = configuration->get_jack_input_desc_by_index(j);
                     avdecc_lib::jack_input_descriptor_response *jack_input_resp_ref = jack_input_desc_ref->get_jack_input_response();
                     print_desc_type_index_name_row(*jack_input_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(jack_input_resp_ref->localized_description()),
+                                                   *configuration,
+                                                   jack_input_resp_ref->localized_description(),
                                                    jack_input_resp_ref->object_name(),
                                                    *locale);
                     delete jack_input_resp_ref;
@@ -1417,7 +1436,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::jack_output_descriptor *jack_output_desc_ref = configuration->get_jack_output_desc_by_index(j);
                     avdecc_lib::jack_output_descriptor_response *jack_output_resp_ref = jack_output_desc_ref->get_jack_output_response();
                     print_desc_type_index_name_row(*jack_output_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(jack_output_resp_ref->localized_description()),
+                                                   *configuration,
+                                                   jack_output_resp_ref->localized_description(),
                                                    jack_output_resp_ref->object_name(),
                                                    *locale);
                     delete jack_output_resp_ref;
@@ -1429,7 +1449,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::avb_interface_descriptor *avb_interface_desc_ref = configuration->get_avb_interface_desc_by_index(j);
                     avdecc_lib::avb_interface_descriptor_response *avb_interface_resp_ref = avb_interface_desc_ref->get_avb_interface_response();
                     print_desc_type_index_name_row(*avb_interface_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(avb_interface_resp_ref->localized_description()),
+                                                   *configuration,
+                                                   avb_interface_resp_ref->localized_description(),
                                                    avb_interface_resp_ref->object_name(),
                                                    *locale);
                     delete avb_interface_resp_ref;
@@ -1441,7 +1462,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::clock_source_descriptor *clk_src_desc_ref = configuration->get_clock_source_desc_by_index(j);
                     avdecc_lib::clock_source_descriptor_response *clk_src_resp_ref = clk_src_desc_ref->get_clock_source_response();
                     print_desc_type_index_name_row(*clk_src_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(clk_src_resp_ref->localized_description()),
+                                                   *configuration,
+                                                   clk_src_resp_ref->localized_description(),
                                                    clk_src_resp_ref->object_name(),
                                                    *locale);
                     delete clk_src_resp_ref;
@@ -1453,7 +1475,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::memory_object_descriptor *mem_obj_desc_ref = configuration->get_memory_object_desc_by_index(j);
                     avdecc_lib::memory_object_descriptor_response *mem_obj_resp_ref = mem_obj_desc_ref->get_memory_object_response();
                     print_desc_type_index_name_row(*mem_obj_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(mem_obj_resp_ref->localized_description()),
+                                                   *configuration,
+                                                   mem_obj_resp_ref->localized_description(),
                                                    mem_obj_resp_ref->object_name(),
                                                    *locale);
                     delete mem_obj_resp_ref;
@@ -1483,7 +1506,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::stream_port_input_descriptor *stream_port_input_desc_ref = configuration->get_stream_port_input_desc_by_index(j);
                     avdecc_lib::stream_port_input_descriptor_response *input_resp_ref = stream_port_input_desc_ref->get_stream_port_input_response();
                     print_desc_type_index_name_row(*stream_port_input_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(stream_port_input_desc_ref->localized_description()),
+                                                   *configuration,
+                                                   stream_port_input_desc_ref->localized_description(),
                                                    input_resp_ref->object_name(),
                                                    *locale);
                     delete input_resp_ref;
@@ -1495,7 +1519,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref = configuration->get_stream_port_output_desc_by_index(j);
                     avdecc_lib::stream_port_output_descriptor_response *output_resp_ref = stream_port_output_desc_ref->get_stream_port_output_response();
                     print_desc_type_index_name_row(*stream_port_output_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(stream_port_output_desc_ref->localized_description()),
+                                                   *configuration,
+                                                   stream_port_output_desc_ref->localized_description(),
                                                    output_resp_ref->object_name(),
                                                    *locale);
                     delete output_resp_ref;
@@ -1507,7 +1532,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::audio_cluster_descriptor *audio_cluster_desc_ref = configuration->get_audio_cluster_desc_by_index(j);
                     avdecc_lib::audio_cluster_descriptor_response *audio_cluster_resp_ref = audio_cluster_desc_ref->get_audio_cluster_response();
                     print_desc_type_index_name_row(*audio_cluster_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(audio_cluster_resp_ref->localized_description()),
+                                                   *configuration,
+                                                   audio_cluster_resp_ref->localized_description(),
                                                    audio_cluster_resp_ref->object_name(),
                                                    *locale);
                     delete audio_cluster_resp_ref;
@@ -1519,7 +1545,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::audio_map_descriptor *audio_map_desc_ref = configuration->get_audio_map_desc_by_index(j);
                     avdecc_lib::audio_map_descriptor_response *audio_map_resp_ref = audio_map_desc_ref->get_audio_map_response();
                     print_desc_type_index_name_row(*audio_map_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(audio_map_desc_ref->localized_description()),
+                                                   *configuration,
+                                                   audio_map_desc_ref->localized_description(),
                                                    audio_map_resp_ref->object_name(),
                                                    *locale);
                     delete audio_map_resp_ref;
@@ -1531,7 +1558,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::external_port_input_descriptor *desc_ref = configuration->get_external_port_input_desc_by_index(j);
                     avdecc_lib::external_port_input_descriptor_response *resp_ref = desc_ref->get_external_port_input_response();
                     print_desc_type_index_name_row(*desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(desc_ref->localized_description()),
+                                                   *configuration,
+                                                   desc_ref->localized_description(),
                                                    resp_ref->object_name(),
                                                    *locale);
                     delete resp_ref;
@@ -1543,7 +1571,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::external_port_output_descriptor *desc_ref = configuration->get_external_port_output_desc_by_index(j);
                     avdecc_lib::external_port_output_descriptor_response *resp_ref = desc_ref->get_external_port_output_response();
                     print_desc_type_index_name_row(*desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(desc_ref->localized_description()),
+                                                   *configuration,
+                                                   desc_ref->localized_description(),
                                                    resp_ref->object_name(),
                                                    *locale);
                     delete resp_ref;
@@ -1555,7 +1584,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::clock_domain_descriptor *clk_domain_desc_ref = configuration->get_clock_domain_desc_by_index(j);
                     avdecc_lib::clock_domain_descriptor_response *clk_domain_resp_ref = clk_domain_desc_ref->get_clock_domain_response();
                     print_desc_type_index_name_row(*clk_domain_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(clk_domain_resp_ref->localized_description()),
+                                                   *configuration,
+                                                   clk_domain_resp_ref->localized_description(),
                                                    clk_domain_resp_ref->object_name(),
                                                    *locale);
                     delete clk_domain_resp_ref;
@@ -1566,7 +1596,8 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::control_descriptor *control_desc_ref = configuration->get_control_desc_by_index(j);
                     avdecc_lib::control_descriptor_response *control_resp_ref = control_desc_ref->get_control_response();
                     print_desc_type_index_name_row(*control_desc_ref,
-                                                   configuration->get_strings_desc_string_by_reference(control_resp_ref->localized_description()),
+                                                   *configuration,
+                                                   control_resp_ref->localized_description(),
                                                    control_resp_ref->object_name(),
                                                    *locale);
                     delete control_resp_ref;
@@ -2502,17 +2533,25 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
             format = stream_input_resp_ref->current_format();
             uint8_t *desc_desc_name = stream_input_resp_ref->object_name();
             uint8_t *input_stream_name;
+            size_t string_desc_index;
+            size_t string_index;
             if(desc_desc_name[0] == '\0')
             {
-                input_stream_name = configuration->get_strings_desc_string_by_reference(stream_input_resp_ref->
-                                                                                        localized_description());
+                int ret = configuration->get_strings_desc_string_by_reference(stream_input_resp_ref->localized_description(),
+                                                                              string_desc_index, string_index);
+                if(ret == 0)
+                {
+                    avdecc_lib::strings_descriptor * desc = configuration->get_strings_desc_by_index(string_desc_index);
+                    avdecc_lib::strings_descriptor_response *strings_resp_ref = desc->get_strings_response();
+                    input_stream_name = strings_resp_ref->get_string_by_index(string_index);
+                    delete strings_resp_ref;
+                }
             }
             else
             {
                 input_stream_name = desc_desc_name;
             }
 
-            
             atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
             << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
             << std::setw(3) << j << std::setw(19) << input_stream_name << "   "
@@ -2546,9 +2585,19 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
             format = stream_output_resp_ref->current_format();
             uint8_t *src_desc_name = stream_output_resp_ref->object_name();
             uint8_t *output_stream_name;
+            size_t string_desc_index;
+            size_t string_index;
             if(src_desc_name[0] == '\0')
             {
-                output_stream_name = configuration->get_strings_desc_string_by_reference(stream_output_resp_ref->localized_description());
+                int ret = configuration->get_strings_desc_string_by_reference(stream_output_resp_ref->localized_description(),
+                                                                              string_desc_index, string_index);
+                if(ret == 0)
+                {
+                    avdecc_lib::strings_descriptor * desc = configuration->get_strings_desc_by_index(string_desc_index);
+                    avdecc_lib::strings_descriptor_response *strings_resp_ref = desc->get_strings_response();
+                    output_stream_name = strings_resp_ref->get_string_by_index(string_index);
+                    delete strings_resp_ref;
+                }
             }
             else
             {
