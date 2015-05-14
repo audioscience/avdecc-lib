@@ -483,28 +483,17 @@ namespace avdecc_lib
         return dynamic_cast<strings_descriptor *>(lookup_desc(AEM_DESC_STRINGS, strings_desc_index));
     }
 
-    uint8_t * STDCALL configuration_descriptor_imp::get_strings_desc_string_by_reference(size_t reference)
+    int STDCALL configuration_descriptor_imp::get_strings_desc_string_by_reference(size_t reference, size_t &string_desc_index, size_t &string_index)
     {
         if (reference == 0xffff)
         {
-            return NULL;
-        }
-        strings_descriptor * desc = get_strings_desc_by_index(reference >> 3);
-
-        if(desc)
-        {
-            uint8_t * string;
-            strings_descriptor_response *strings_resp_ref = desc->get_strings_response();
-            string = strings_resp_ref->get_string_by_index(reference & 0x7);
-            delete strings_resp_ref;
-            return string;
+            return -1;
         }
 
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
-                                  "0x%llx, get_strings_desc_string_by_reference error, ref 0x%04x",
-                                  base_end_station_imp_ref->entity_id(),
-                                  (unsigned int)reference & 0xffff);
-        return NULL;
+        string_desc_index = reference >> 3;
+        string_index = reference & 0x7;
+
+        return 0;
     }
 
     stream_port_input_descriptor * STDCALL configuration_descriptor_imp::get_stream_port_input_desc_by_index(size_t stream_port_input_desc_index)

@@ -108,7 +108,7 @@ namespace avdecc_lib
 
     uint16_t STDCALL descriptor_base_imp::localized_description()
     {
-        return 0;
+        return 0xffff;
     }
 
     uint32_t STDCALL descriptor_base_imp::acquire_entity_flags()
