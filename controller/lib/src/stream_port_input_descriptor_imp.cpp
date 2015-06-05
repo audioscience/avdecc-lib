@@ -265,12 +265,8 @@ namespace avdecc_lib
         msg_type = aem_cmd_add_audio_mappings_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_add_audio_mappings_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_add_audio_mappings_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
-        
-        if(status == avdecc_lib::AEM_STATUS_SUCCESS)
-        {
-            pending_maps.clear();
-        }
-        
+
+        pending_maps.clear();
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
         
         return 0;
@@ -365,12 +361,8 @@ namespace avdecc_lib
         msg_type = aem_cmd_remove_audio_mappings_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_remove_audio_mappings_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_remove_audio_mappings_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
-        
-        if(status == avdecc_lib::AEM_STATUS_SUCCESS)
-        {
-            pending_maps.clear();
-        }
-        
+
+        pending_maps.clear();
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
         
         return 0;
