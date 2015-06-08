@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8) 
-project (controller)
+project (avdecc-lib_controller)
 enable_testing()
 
 if(APPLE)
@@ -30,15 +30,15 @@ elseif(WIN32)
   file(GLOB_RECURSE SYSTEM_SPEC_SRC "src/msvc/*.cpp")
 endif()
 
-add_library(controller SHARED ${CONTROLLERLIB_INCLUDES} ${CONTROLLERLIB_SRC} ${SYSTEM_SPEC_SRC})
+add_library(avdecc-lib_controller SHARED ${CONTROLLERLIB_INCLUDES} ${CONTROLLERLIB_SRC} ${SYSTEM_SPEC_SRC})
 
 if(APPLE)
-  target_link_libraries(controller pcap edit)
+  target_link_libraries(avdecc-lib_controller pcap edit)
 elseif(UNIX)
-  target_link_libraries(controller pcap)
-  target_link_libraries(controller pthread)
-  target_link_libraries(controller rt)
+  target_link_libraries(avdecc-lib_controller pcap)
+  target_link_libraries(avdecc-lib_controller pthread)
+  target_link_libraries(avdecc-lib_controller rt)
 elseif(WIN32)
-  target_link_libraries(controller wpcap Iphlpapi Ws2_32)
+  target_link_libraries(avdecc-lib_controller wpcap Iphlpapi Ws2_32)
 endif()
 

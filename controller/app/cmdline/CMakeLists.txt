@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8) 
-project (controller)
+project (avdecc-lib_controller)
 enable_testing()
 
 include_directories( src ../../lib/include ../../jdksavdecc-c/include )
@@ -32,7 +32,7 @@ elseif(WIN32)
   add_executable (avdecccmdline ${CMDLINE_INCLUDES} ${CMDLINE_SRC} ${SYSTEM_SPEC_SRC})
 endif()
 
-target_link_libraries(avdecccmdline controller)
+target_link_libraries(avdecccmdline avdecc-lib_controller)
 
 target_link_libraries(avdecccmdline ${PCAP_NAME})
 
