@@ -35,7 +35,7 @@
 #include <vector>
 #include <string>
 
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "net_interface.h"
 
 

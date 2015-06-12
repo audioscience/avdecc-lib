@@ -33,7 +33,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "descriptor_base.h"
 #include "clock_source_descriptor_response.h"
 

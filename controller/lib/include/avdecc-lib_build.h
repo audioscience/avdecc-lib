@@ -22,7 +22,7 @@
  */
 
 /**
- * build.h
+ * avdecc-lib_build.h
  *
  * Build file, which defines the API to be used.
  */
@@ -38,11 +38,21 @@
 
 #ifdef AVDECC_CONTROLLER_LIB32_EXPORTS
 #define AVDECC_CONTROLLER_LIB32_API __declspec(dllexport)
+#define STDCALL __stdcall
+
+#elif AVDECC_LIB_STATIC
+
+#define AVDECC_CONTROLLER_LIB32_API
+#define STDCALL
+
 #else
+
 #define AVDECC_CONTROLLER_LIB32_API __declspec(dllimport)
+#define STDCALL __stdcall
+
 #endif
 
-#define STDCALL __stdcall
+
 
 #endif
 

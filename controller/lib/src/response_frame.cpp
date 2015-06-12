@@ -30,7 +30,7 @@
 #include "response_frame.h"
 #include "log_imp.h"
 #include "enumeration.h"
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include <stdlib.h>
 #include <iostream>
 

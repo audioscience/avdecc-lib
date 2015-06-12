@@ -35,7 +35,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "descriptor_base.h"
 #include "clock_domain_descriptor_response.h"
 #include "clock_domain_counters_response.h"
