@@ -2544,19 +2544,24 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::strings_descriptor * desc = configuration->get_strings_desc_by_index(string_desc_index);
                     avdecc_lib::strings_descriptor_response *strings_resp_ref = desc->get_strings_response();
                     input_stream_name = strings_resp_ref->get_string_by_index(string_index);
+
+                    atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
+                    << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
+                    << std::setw(3) << j << std::setw(19) << input_stream_name << "   "
+                    << std::setw(14) << format << std::endl;
+
                     delete strings_resp_ref;
                 }
             }
             else
             {
                 input_stream_name = desc_desc_name;
+
+                atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
+                << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
+                << std::setw(3) << j << std::setw(19) << input_stream_name << "   "
+                << std::setw(14) << format << std::endl;
             }
-
-            atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
-            << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
-            << std::setw(3) << j << std::setw(19) << input_stream_name << "   "
-            << std::setw(14) << format << std::endl;
-
             delete stream_input_resp_ref;
         }
         delete entity_desc_resp;
@@ -2596,19 +2601,24 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
                     avdecc_lib::strings_descriptor * desc = configuration->get_strings_desc_by_index(string_desc_index);
                     avdecc_lib::strings_descriptor_response *strings_resp_ref = desc->get_strings_response();
                     output_stream_name = strings_resp_ref->get_string_by_index(string_index);
+
+                    atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
+                    << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
+                    << std::setw(3) << j << std::setw(19) << output_stream_name
+                    << "   " << std::setw(14) << format << std::endl;
+
                     delete strings_resp_ref;
                 }
             }
             else
             {
                 output_stream_name = src_desc_name;
-            }
-            
-            atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
-            << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
-            << std::setw(3) << j << std::setw(19) << output_stream_name
-            << "   " << std::setw(14) << format << std::endl;
 
+                atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
+                << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
+                << std::setw(3) << j << std::setw(19) << output_stream_name
+                << "   " << std::setw(14) << format << std::endl;
+            }
             delete stream_output_resp_ref;
         }
         delete entity_desc_resp;
