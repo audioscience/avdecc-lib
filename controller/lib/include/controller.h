@@ -31,7 +31,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "net_interface.h"
 
 class net_interface;

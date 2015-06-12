@@ -35,7 +35,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "descriptor_response_base.h"
 
 namespace avdecc_lib

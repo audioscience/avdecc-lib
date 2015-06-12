@@ -30,7 +30,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "response_frame.h"
 #include "descriptor_response_base.h"
 #include "descriptor_base_get_name_response.h"

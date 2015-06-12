@@ -30,7 +30,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "descriptor_base_imp.h"
 #include "external_port_input_descriptor_response.h"
 #include "jdksavdecc_aem_descriptor.h"

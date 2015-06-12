@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include <stdint.h>
 #include <cstring>
 #include <assert.h>

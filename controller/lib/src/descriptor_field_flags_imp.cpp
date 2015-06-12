@@ -28,7 +28,7 @@
  */
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 
 #include "descriptor_field_flags_imp.h"
 

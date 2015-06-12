@@ -34,7 +34,7 @@
 
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "descriptor_base.h"
 #include "avb_interface_descriptor_response.h"
 #include "avb_counters_response.h"

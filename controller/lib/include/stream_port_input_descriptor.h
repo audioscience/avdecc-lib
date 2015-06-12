@@ -31,7 +31,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "descriptor_base.h"
 #include "stream_port_input_descriptor_response.h"
 #include "stream_port_input_get_audio_map_response.h"

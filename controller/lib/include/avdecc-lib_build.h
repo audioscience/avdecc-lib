@@ -22,7 +22,7 @@
  */
 
 /**
- * build.h
+ * avdecc-lib_build.h
  *
  * Build file, which defines the API to be used.
  */
