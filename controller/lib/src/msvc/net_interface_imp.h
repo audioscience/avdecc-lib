@@ -33,7 +33,7 @@
 
 #include <stdint.h>
 #include <pcap.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "net_interface.h"
 
 namespace avdecc_lib
