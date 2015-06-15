@@ -165,6 +165,24 @@ namespace avdecc_lib
 
         return false;
     }
+    
+    bool STDCALL controller_imp::is_end_station_found_by_mac_addr(uint64_t mac_addr, uint32_t &end_station_index)
+    {
+        uint64_t end_station_mac_addr;
+        
+        for (uint32_t i = 0; i < end_station_array->size(); i++)
+        {
+            end_station_mac_addr = end_station_array->at(i)->mac();
+            
+            if(end_station_mac_addr == mac_addr)
+            {
+                end_station_index = i;
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     configuration_descriptor * STDCALL controller_imp::get_current_config_desc(size_t end_station_index, bool report_error)
     {

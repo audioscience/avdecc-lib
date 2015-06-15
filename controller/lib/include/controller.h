@@ -65,9 +65,14 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual end_station * STDCALL get_end_station_by_index(size_t end_station_index) = 0;
 
         /**
-         * \return Find a endstation's index by Entity ID.
+         * \return Find an endstation's index by Entity ID.
          */
         AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL is_end_station_found_by_entity_id(uint64_t entity_entity_id, uint32_t &end_station_index) = 0;
+        
+        /**
+         * \return Find an endstation's index by MAC Address.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL is_end_station_found_by_mac_addr(uint64_t mac_addr, uint32_t &end_station_index) = 0;
 
         /**
          * \return The corresponding CONFIGURATION descriptor by index.

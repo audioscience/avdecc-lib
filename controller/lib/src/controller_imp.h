@@ -64,9 +64,14 @@ namespace avdecc_lib
         end_station * STDCALL get_end_station_by_index(size_t end_station_index);
 
         /**
-         * Check if the corresponding End Station with the Entity ID exist.
+         * Check if the corresponding End Station with the Entity ID exists.
          */
         bool STDCALL is_end_station_found_by_entity_id(uint64_t entity_entity_id, uint32_t &end_station_index);
+        
+        /**
+         * Check if the corresponding End Station with the Mac Address exists.
+         */
+        bool STDCALL is_end_station_found_by_mac_addr(uint64_t mac_addr, uint32_t &end_station_index);
 
         configuration_descriptor * STDCALL get_current_config_desc(size_t end_station_index, bool report_error=true);
 
