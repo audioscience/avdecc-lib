@@ -9,8 +9,10 @@ elseif(UNIX)
 elseif(WIN32)
 	if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
       link_directories($ENV{WPCAP_DIR}/Lib/x64)
+	  set(avdecc-lib-name "avdecc-lib_controller64")
 	elseif( CMAKE_SIZEOF_VOID_P EQUAL 4 )
       link_directories($ENV{WPCAP_DIR}/Lib)
+	  set(avdecc-lib-name "avdecc-lib_controller32")
 	endif()
 
   # /W4800 disables cast to bool performance warning
@@ -31,6 +33,7 @@ elseif(WIN32)
 endif()
 
 add_library(avdecc-lib_controller SHARED ${CONTROLLERLIB_INCLUDES} ${CONTROLLERLIB_SRC} ${SYSTEM_SPEC_SRC})
+set_target_properties(avdecc-lib_controller PROPERTIES OUTPUT_NAME "${avdecc-lib-name}")
 
 if(APPLE)
   target_link_libraries(avdecc-lib_controller pcap edit)
