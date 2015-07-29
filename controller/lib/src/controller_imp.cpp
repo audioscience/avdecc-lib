@@ -103,6 +103,16 @@ namespace avdecc_lib
         net_interface_ref = dynamic_cast<net_interface_imp *>(netif);
 
         controller_imp_ref = new controller_imp(notification_callback, log_callback);
+		
+		//Start up state machines if previously deleted on a restart
+		if (!aecp_controller_state_machine_ref)
+			aecp_controller_state_machine_ref = new aecp_controller_state_machine();
+
+		if (!acmp_controller_state_machine_ref)
+			acmp_controller_state_machine_ref = new acmp_controller_state_machine();
+
+		if (!adp_discovery_state_machine_ref)
+			adp_discovery_state_machine_ref = new adp_discovery_state_machine();
 
         if(!net_interface_ref)
         {
@@ -123,9 +133,13 @@ namespace avdecc_lib
     controller_imp::~controller_imp()
     {
         delete end_station_array;
+		end_station_array = NULL;
         delete adp_discovery_state_machine_ref;
+		adp_discovery_state_machine_ref = NULL;
         delete acmp_controller_state_machine_ref;
+		acmp_controller_state_machine_ref = NULL;
         delete aecp_controller_state_machine_ref;
+		aecp_controller_state_machine_ref = NULL;
     }
 
     void STDCALL controller_imp::destroy()
@@ -274,14 +288,19 @@ namespace avdecc_lib
     {
         uint64_t end_station_entity_id;
         uint32_t disconnected_end_station_index;
-        aecp_controller_state_machine_ref->tick();
-        acmp_controller_state_machine_ref->tick();
+		if(aecp_controller_state_machine_ref)
+			aecp_controller_state_machine_ref->tick();
+		if (acmp_controller_state_machine_ref)
+			acmp_controller_state_machine_ref->tick();
 
-        if(adp_discovery_state_machine_ref->tick(end_station_entity_id) &&
-           is_end_station_found_by_entity_id(end_station_entity_id, disconnected_end_station_index))
-        {
-            end_station_array->at(disconnected_end_station_index)->set_disconnected();
-        }
+		if (adp_discovery_state_machine_ref)
+		{
+			if (adp_discovery_state_machine_ref->tick(end_station_entity_id) &&
+				is_end_station_found_by_entity_id(end_station_entity_id, disconnected_end_station_index))
+			{
+				end_station_array->at(disconnected_end_station_index)->set_disconnected();
+			}
+		}
 
         /* tick updates to background read of descriptors */
         for (uint32_t i = 0; i < end_station_array->size(); i++)
@@ -366,7 +385,8 @@ namespace avdecc_lib
                     {
                         if(!found_adp_in_end_station)
                         {
-                            adp_discovery_state_machine_ref->state_avail(frame, frame_len);
+							if (adp_discovery_state_machine_ref)
+								adp_discovery_state_machine_ref->state_avail(frame, frame_len);
                             end_station_array->push_back(new end_station_imp(frame, frame_len));
                             end_station_array->at(end_station_array->size() - 1)->set_connected();
                         }
@@ -384,11 +404,13 @@ namespace avdecc_lib
                             if(end_station->get_connection_status() == 'D')
                             {
                                 end_station->set_connected();
-                                adp_discovery_state_machine_ref->state_avail(frame, frame_len);
+								if (adp_discovery_state_machine_ref)
+									adp_discovery_state_machine_ref->state_avail(frame, frame_len);
                             }
                             else
                             {
-                                adp_discovery_state_machine_ref->state_avail(frame, frame_len);
+								if (adp_discovery_state_machine_ref)
+									adp_discovery_state_machine_ref->state_avail(frame, frame_len);
                             }
                         }
                     }
@@ -502,13 +524,19 @@ namespace avdecc_lib
 
         if(subtype == JDKSAVDECC_SUBTYPE_AECP)
         {
-            aecp_controller_state_machine_ref->state_send_cmd(notification_id, notification_flag, &packet_frame);
-            memcpy(frame, packet_frame.payload, frame_len); // Get the updated frame with sequence id
+			if (aecp_controller_state_machine_ref)
+			{
+				aecp_controller_state_machine_ref->state_send_cmd(notification_id, notification_flag, &packet_frame);
+				memcpy(frame, packet_frame.payload, frame_len); // Get the updated frame with sequence id
+			}
         }
         else if(subtype == JDKSAVDECC_SUBTYPE_ACMP)
         {
-            acmp_controller_state_machine_ref->state_command(notification_id, notification_flag, &packet_frame);
-            memcpy(frame, packet_frame.payload, frame_len); // Get the updated frame with sequence id
+			if (acmp_controller_state_machine_ref)
+			{
+				acmp_controller_state_machine_ref->state_command(notification_id, notification_flag, &packet_frame);
+				memcpy(frame, packet_frame.payload, frame_len); // Get the updated frame with sequence id
+			}
         }
         else
         {
