@@ -206,8 +206,13 @@ namespace avdecc_lib
             return -1;
         }
         
-        for (std::vector<struct audio_map_mapping>::iterator it = pending_maps.begin(); it != pending_maps.end(); ++it)
+        size_t num_pending_maps = pending_maps.size();
+        std::vector<struct audio_map_mapping>::iterator it = pending_maps.begin();
+        while(it != pending_maps.end())
         {
+            if(i >= num_pending_maps)
+                break;
+            
             struct avdecc_lib::audio_map_mapping map = *it;
             
             jdksavdecc_uint16_set(map.stream_index, cmd_frame.payload, ETHER_HDR_SIZE +
@@ -223,6 +228,7 @@ namespace avdecc_lib
                                   JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
                                   (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_CHANNEL));
             
+            pending_maps.erase(it);
             i++;
         }
         
@@ -232,8 +238,15 @@ namespace avdecc_lib
                                                            JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_LEN -
                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
-
-        return 0;
+        
+        if(num_pending_maps > AEM_MAX_MAPS)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
     }
     
     int stream_port_output_descriptor_imp::proc_add_audio_mappings_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
@@ -263,7 +276,6 @@ namespace avdecc_lib
         status = aem_cmd_add_audio_mappings_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_add_audio_mappings_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-        pending_maps.clear();
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
         
         return 0;
@@ -302,8 +314,13 @@ namespace avdecc_lib
             return -1;
         }
         
-        for (std::vector<struct audio_map_mapping>::iterator it = pending_maps.begin(); it != pending_maps.end(); ++it)
+        size_t num_pending_maps = pending_maps.size();
+        std::vector<struct audio_map_mapping>::iterator it = pending_maps.begin();
+        while(it != pending_maps.end())
         {
+            if(i >= num_pending_maps)
+                break;
+            
             struct avdecc_lib::audio_map_mapping map = *it;
             
             jdksavdecc_uint16_set(map.stream_index, cmd_frame.payload, ETHER_HDR_SIZE +
@@ -319,6 +336,7 @@ namespace avdecc_lib
                                   JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
                                   (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_CHANNEL));
             
+            pending_maps.erase(it);
             i++;
         }
         
@@ -328,8 +346,15 @@ namespace avdecc_lib
                                                            JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_LEN -
                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
-
-        return 0;
+        
+        if(num_pending_maps > AEM_MAX_MAPS)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
     }
     
     int stream_port_output_descriptor_imp::proc_remove_audio_mappings_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
@@ -359,7 +384,6 @@ namespace avdecc_lib
         status = aem_cmd_remove_audio_mappings_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_remove_audio_mappings_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-        pending_maps.clear();
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
         return 0;
