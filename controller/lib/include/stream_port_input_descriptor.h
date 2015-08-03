@@ -83,29 +83,32 @@ namespace avdecc_lib
         
         /**
          * Send an ADD_AUDIO_MAPPINGS command to add mapping entries to the dynamic mappings between the Audio
-         * Clusters and the input or output Streams.
+         * Clusters and the input or output Streams.  This command sends the maximum number of mappings
+         * specified by 1722.1.  If more mappings are pending, this command is called multiple times.
          *
          * The mappings to be added are stored in a local queue.
          * \see store_pending_map().
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          *
-         * \return 0 if the mappings to add fit one cmd frame. \n
-         *	       1 if there were more pending mappings than one frame could fit. \see AEM_MAX_MAPS
+         * \return 0 if there are no pending mappings after sending the command. \n
+         *	       1 if there are more pending mappings after sending the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_add_audio_mappings_cmd(void *notification_id) = 0;
         
         /**
          * Send a REMOVE_AUDIO_MAPPINGS command to remove mapping entries from the dynamic mappings
-         * between the Audio Clusters and the input or output Streams.
+         * between the Audio Clusters and the input or output Streams.  This command sends the maximum
+         * number of mappings specified by 1722.1.  If more mappings are pending, this command is called
+         * multiple times.
          *
          * The mappings to be removed are stored in a local queue.
          * \see store_pending_map().
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
          *
-         * \return 0 if the mappings to remove fit one cmd frame. \n
-         *	       1 if there were more pending mappings than one frame could fit. \see AEM_MAX_MAPS
+         * \return 0 if there are no pending mappings after sending the command. \n
+         *	       1 if there are more pending mappings after sending the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_remove_audio_mappings_cmd(void *notification_id) = 0;
     };
