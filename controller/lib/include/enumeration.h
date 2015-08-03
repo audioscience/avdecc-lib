@@ -248,6 +248,11 @@ namespace avdecc_lib
         ACMP_FRAME_LEN = 70, ///< Length of ACMP packet is 70 bytes
         AECP_FRAME_LEN = 64 ///< Length of AECP packet is 64 bytes
     };
+    
+    enum aem_max_maps
+    {
+        AEM_MAX_MAPS = 63 ///< 1722.1 max maps allowed per cmd frame for ADD/REMOVE audio mappings cmd
+    };
 
     enum timeouts
     {
