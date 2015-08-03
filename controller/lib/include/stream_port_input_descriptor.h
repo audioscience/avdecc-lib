@@ -83,8 +83,8 @@ namespace avdecc_lib
         
         /**
          * Send an ADD_AUDIO_MAPPINGS command to add mapping entries to the dynamic mappings between the Audio
-         * Clusters and the input or output Streams.  This command sends the maximum number of mappings
-         * specified by 1722.1.  If more mappings are pending, this command is called multiple times.
+         * Clusters and the input or output Streams.  This command sends up to the maximum number of mappings
+         * specified by 1722.1.  If more mappings are pending, this command should be called multiple times.
          *
          * The mappings to be added are stored in a local queue.
          * \see store_pending_map().
@@ -98,8 +98,8 @@ namespace avdecc_lib
         
         /**
          * Send a REMOVE_AUDIO_MAPPINGS command to remove mapping entries from the dynamic mappings
-         * between the Audio Clusters and the input or output Streams.  This command sends the maximum
-         * number of mappings specified by 1722.1.  If more mappings are pending, this command is called
+         * between the Audio Clusters and the input or output Streams.  This command sends up to the maximum
+         * number of mappings specified by 1722.1.  If more mappings are pending, this command should be called
          * multiple times.
          *
          * The mappings to be removed are stored in a local queue.
