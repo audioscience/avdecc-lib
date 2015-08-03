@@ -82,24 +82,30 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_audio_map_cmd(void *notification_id, uint16_t mapping_index) = 0;
         
         /**
-         * Send a ADD_AUDIO_MAPPINGS command to add mapping entries to the dynamic mappings between the Audio
-         * Clusters and the input or output Streams
+         * Send an ADD_AUDIO_MAPPINGS command to add mapping entries to the dynamic mappings between the Audio
+         * Clusters and the Input or Output Streams.
          *
          * The mappings to be added are stored in a local queue.
          * \see store_pending_map().
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * \return 0 if the mappings to add fit one cmd frame. \n
+         *	       1 if there were more pending mappings than one frame could fit. \see AEM_MAX_MAPS
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_add_audio_mappings_cmd(void *notification_id) = 0;
         
         /**
-         * Send a REMOVE_AUDIO_MAPPINGS command to remove mapping entries to the dynamic mappings between the Audio
-         * Clusters and the input or output Streams
+         * Send a REMOVE_AUDIO_MAPPINGS command to remove mapping entries from the dynamic mappings
+         * between the Audio Clusters and the input or output Streams.
          *
          * The mappings to be removed are stored in a local queue.
          * \see store_pending_map().
          *
          * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * \return 0 if the mappings to remove fit one cmd frame. \n
+         *	       1 if there were more pending mappings than one frame could fit. \see AEM_MAX_MAPS
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_remove_audio_mappings_cmd(void *notification_id) = 0;
     };
