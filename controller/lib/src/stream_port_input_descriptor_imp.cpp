@@ -62,7 +62,6 @@ namespace avdecc_lib
     int stream_port_input_descriptor_imp::store_pending_map(struct audio_map_mapping &map)
     {
         pending_maps.push_back(map);
-        std::cout << "new map pending, total maps pending: " << pending_maps.size() << std::endl;
 
         return 0;
     }
