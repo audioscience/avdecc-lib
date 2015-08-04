@@ -184,7 +184,14 @@ namespace avdecc_lib
         /****************** AECP Message Specific Data *****************/
         aem_cmd_add_audio_mappings.descriptor_type = descriptor_type();
         aem_cmd_add_audio_mappings.descriptor_index = descriptor_index();
-        aem_cmd_add_audio_mappings.number_of_mappings = pending_maps.size();
+        if (pending_maps.size() > AEM_MAX_MAPS)
+        {
+            aem_cmd_add_audio_mappings.number_of_mappings = AEM_MAX_MAPS;
+        }
+        else
+        {
+            aem_cmd_add_audio_mappings.number_of_mappings = pending_maps.size();
+        }
         
         /******************************* Fill frame payload with AECP data and send the frame **************************/
         aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
@@ -205,7 +212,7 @@ namespace avdecc_lib
         std::vector<struct audio_map_mapping>::iterator it = pending_maps.begin();
         while(it != pending_maps.end())
         {
-            if(i >= num_pending_maps)
+            if(i >= AEM_MAX_MAPS)
                 break;
             
             struct avdecc_lib::audio_map_mapping map = *it;
@@ -293,7 +300,14 @@ namespace avdecc_lib
         /****************** AECP Message Specific Data *****************/
         aem_cmd_remove_audio_mappings.descriptor_type = descriptor_type();
         aem_cmd_remove_audio_mappings.descriptor_index = descriptor_index();
-        aem_cmd_remove_audio_mappings.number_of_mappings = pending_maps.size();
+        if (pending_maps.size() > AEM_MAX_MAPS)
+        {
+            aem_cmd_remove_audio_mappings.number_of_mappings = AEM_MAX_MAPS;
+        }
+        else
+        {
+            aem_cmd_remove_audio_mappings.number_of_mappings = pending_maps.size();
+        }
         
         /******************************* Fill frame payload with AECP data and send the frame **************************/
         aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
@@ -314,7 +328,7 @@ namespace avdecc_lib
         std::vector<struct audio_map_mapping>::iterator it = pending_maps.begin();
         while(it != pending_maps.end())
         {
-            if(i >= num_pending_maps)
+            if(i >= AEM_MAX_MAPS)
                 break;
             
             struct avdecc_lib::audio_map_mapping map = *it;
