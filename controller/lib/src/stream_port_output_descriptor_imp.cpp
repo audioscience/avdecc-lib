@@ -58,16 +58,8 @@ namespace avdecc_lib
     
     int stream_port_output_descriptor_imp::store_pending_map(struct audio_map_mapping &map)
     {
-        if (pending_maps.size() >= MAX_MAPPINGS_PER_FRAME) //max number of pending maps for a frame
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Too many pending audio maps.\n");
-        }
-        else
-        {
-            pending_maps.push_back(map);
-            std::cout << "new map pending, total maps pending: " << pending_maps.size() << std::endl;
-        }
-        
+        pending_maps.push_back(map);
+
         return 0;
     }
 
