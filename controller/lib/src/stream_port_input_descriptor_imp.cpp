@@ -224,6 +224,7 @@ namespace avdecc_lib
                                   (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_CHANNEL));
 
             pending_maps.erase(it);
+            it = pending_maps.begin();
             i++;
         }
 
@@ -332,6 +333,7 @@ namespace avdecc_lib
                                   (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_CHANNEL));
             
             pending_maps.erase(it);
+            it = pending_maps.begin();
             i++;
         }
         
