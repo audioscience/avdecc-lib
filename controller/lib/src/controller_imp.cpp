@@ -361,7 +361,8 @@ namespace avdecc_lib
                     is_notification_id_valid = false;
 
                     if ((adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_GENERAL_CONTROLLER_IGNORE) ||
-                        (adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_ENTITY_NOT_READY))
+                        (adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_ENTITY_NOT_READY) ||
+                        !(adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_GPTP_SUPPORTED))
                     {
                         // The entity indicates that we should not enumerate it
                         break;
