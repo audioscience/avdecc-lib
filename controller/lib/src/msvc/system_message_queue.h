@@ -30,26 +30,24 @@
 #pragma once
 
 #include <stdint.h>
+#include <list>
 
 namespace avdecc_lib
 {
     class system_message_queue
     {
     private:
-        HANDLE space_avail;
         HANDLE data_avail;
         CRITICAL_SECTION critical_section_obj;
-        uint8_t *buf;
-        int in_pos;
-        int out_pos;
-        int entry_count;
+        std::list<const char *>m_msgs;
         int entry_size;
+        enum { max_msgs = 0xffff };
 
     public:
         /**
          * Constructor for System Message Queue object with an entry count and size.
          */
-        system_message_queue(int count, int size);
+        system_message_queue(int size);
 
         ~system_message_queue();
 
