@@ -3440,10 +3440,6 @@ int cmd_line::cmd_add_audio_mappings(int total_matched, std::vector<cli_argument
         while(more_maps_to_send)
         {
             more_maps_to_send = stream_port_input_desc_ref->send_add_audio_mappings_cmd((void *)cmd_notification_id);
-            if(!more_maps_to_send)
-            {
-                break;
-            }
             sys->get_last_resp_status();
         }
     }
@@ -3457,10 +3453,6 @@ int cmd_line::cmd_add_audio_mappings(int total_matched, std::vector<cli_argument
         while(more_maps_to_send)
         {
             more_maps_to_send = stream_port_output_desc_ref->send_add_audio_mappings_cmd((void *)cmd_notification_id);
-            if(!more_maps_to_send)
-            {
-                break;
-            }
             sys->get_last_resp_status();
         }
     }
@@ -3495,10 +3487,6 @@ int cmd_line::cmd_remove_audio_mappings(int total_matched, std::vector<cli_argum
         while(more_maps_to_send)
         {
             more_maps_to_send = stream_port_input_desc_ref->send_remove_audio_mappings_cmd((void *)cmd_notification_id);
-            if(!more_maps_to_send)
-            {
-                break;
-            }
             sys->get_last_resp_status();
         }
     }
@@ -3512,10 +3500,6 @@ int cmd_line::cmd_remove_audio_mappings(int total_matched, std::vector<cli_argum
         while(more_maps_to_send)
         {
             more_maps_to_send = stream_port_output_desc_ref->send_remove_audio_mappings_cmd((void *)cmd_notification_id);
-            if(!more_maps_to_send)
-            {
-                break;
-            }
             sys->get_last_resp_status();
         }
     }
