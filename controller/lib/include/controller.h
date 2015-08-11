@@ -90,10 +90,10 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_logging_level(int32_t new_log_level) = 0;
         
         /**
-         * Apply filters to exclude end stations from enumeration during discovery.
+         * Apply filters required to be true for an end station to be enumerated.
          *
-         * The fields to exclude are passed in.  If any exclude flag is not found to be
-         * true for an end station, the end station is not enumerated.
+         * The required filters are passed in.  If any of the required entity, talker,
+         * or listener flags are not true for an end station, the end station is not enumerated.
          *
          * \param entity_capabilities_flags avdecc_lib::end_station_entity_capabilities_flags
          * \param talker_capabilities_flags avdecc_lib::end_station_talker_capabilities_flags

@@ -344,7 +344,7 @@ namespace avdecc_lib
         STREAM_INPUT_ENTITY_SPECIFIC_8
     };
     
-    enum end_station_entity_capabilities_filters
+    enum entity_capabilities_filters
     {
         ENTITY_CAPABILITIES_EFU_MODE = 0x00000001,
         ENTITY_CAPABILITIES_ADDRESS_ACCESS_SUPPORTED = 0x00000002,
@@ -366,7 +366,7 @@ namespace avdecc_lib
         ENTITY_CAPABILITIES_ENTITY_NOT_READY = 0x00020000,
     };
     
-    enum end_station_talker_capabilities_filters
+    enum talker_capabilities_filters
     {
         TALKER_CAPABILITIES_IMPLEMENTED = 0x00000001,
         TALKER_CAPABILITIES_OTHER_SOURCE = 0x00000200,
@@ -378,7 +378,7 @@ namespace avdecc_lib
         TALKER_CAPABILITIES_VIDEO_SOURCE = 0x00008000,
     };
     
-    enum end_station_listener_capabilities_filters
+    enum listener_capabilities_filters
     {
         LISTENER_CAPABILITIES_IMPLEMENTED = 0x00000001,
         LISTENER_CAPABILITIES_OTHER_SINK = 0x00000200,
