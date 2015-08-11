@@ -88,6 +88,20 @@ namespace avdecc_lib
          * Update the base log level for messages to be logged by the post_log_msg callback.
          */
         AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_logging_level(int32_t new_log_level) = 0;
+        
+        /**
+         * Apply filters to exclude end stations from enumeration during discovery.
+         *
+         * The fields to exclude are passed in.  If any exclude flag is not found to be
+         * true for an end station, the end station is not enumerated.
+         *
+         * \param entity_capabilities_flags avdecc_lib::end_station_entity_capabilities_flags
+         * \param talker_capabilities_flags avdecc_lib::end_station_talker_capabilities_flags
+         * \param listener_capabilities_flags avdecc_lib::end_station_listener_capabilities_flags
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual void STDCALL apply_end_station_capabilities_filters(uint32_t entity_capabilities_flags,
+                                                                                                uint32_t talker_capabilities_flags,
+                                                                                                uint32_t listener_capabilities_flags) = 0;
 
         /**
          * \return The number of missed notifications that exceeds the notification buffer count.

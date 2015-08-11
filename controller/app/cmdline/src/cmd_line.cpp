@@ -104,8 +104,10 @@ cmd_line::cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uin
 
     netif = avdecc_lib::create_net_interface();
     controller_obj = avdecc_lib::create_controller(netif, notification_callback, log_callback, log_level);
-    sys = avdecc_lib::create_system(avdecc_lib::system::LAYER2_MULTITHREADED_CALLBACK, netif, controller_obj);
+    controller_obj->apply_end_station_capabilities_filters(avdecc_lib::ENTITY_CAPABILITIES_GPTP_SUPPORTED |
+                                                           avdecc_lib::ENTITY_CAPABILITIES_AEM_SUPPORTED, 0, 0);
 
+    sys = avdecc_lib::create_system(avdecc_lib::system::LAYER2_MULTITHREADED_CALLBACK, netif, controller_obj);
     atomic_cout << "AVDECC Controller version: " << controller_obj->get_version() << std::endl;
     print_interfaces_and_select(interface);
     sys->process_start();

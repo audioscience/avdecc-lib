@@ -128,6 +128,10 @@ namespace avdecc_lib
         notification_imp_ref->set_notification_callback(notification_callback, NULL);
         end_station_array = new end_stations();
         log_imp_ref->set_log_callback(log_callback, NULL);
+        
+        m_entity_capabilities_flags = 0x00000000;
+        m_talker_capabilities_flags = 0x00000000;
+        m_listener_capabilities_flags = 0x00000000;
     }
 
     controller_imp::~controller_imp()
@@ -273,6 +277,15 @@ namespace avdecc_lib
     {
         log_imp_ref->set_log_level(new_log_level);
     }
+    
+    void STDCALL controller_imp::apply_end_station_capabilities_filters(uint32_t entity_capabilities_flags,
+                                                                        uint32_t talker_capabilities_flags,
+                                                                        uint32_t listener_capabilities_flags)
+    {
+        m_entity_capabilities_flags = entity_capabilities_flags;
+        m_talker_capabilities_flags = talker_capabilities_flags;
+        m_listener_capabilities_flags = listener_capabilities_flags;
+    }
 
     uint32_t STDCALL controller_imp::missed_notification_count()
     {
@@ -361,13 +374,20 @@ namespace avdecc_lib
                     is_notification_id_valid = false;
 
                     if ((adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_GENERAL_CONTROLLER_IGNORE) ||
-                        (adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_ENTITY_NOT_READY) ||
-                        !(adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_GPTP_SUPPORTED))
+                        (adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_ENTITY_NOT_READY))
                     {
                         // The entity indicates that we should not enumerate it
                         break;
                     }
 
+                    if( (m_entity_capabilities_flags & adpdu.entity_capabilities) != m_entity_capabilities_flags ||
+                        (m_talker_capabilities_flags & adpdu.talker_capabilities) != m_talker_capabilities_flags ||
+                        (m_listener_capabilities_flags & adpdu.listener_capabilities) != m_listener_capabilities_flags)
+                    {
+                        //The entity has been filtered out by the user set exclusion flags
+                        break;
+                    }
+ 
                     /**
                      * Check if an ADP object is already in the system. If not, create a new End Station object storing the ADPDU information
                      * and add the End Station object to the system.
