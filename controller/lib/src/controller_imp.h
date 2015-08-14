@@ -39,6 +39,9 @@ namespace avdecc_lib
     {
     private:
         end_stations *end_station_array;
+        uint32_t m_entity_capabilities_flags;
+        uint32_t m_talker_capabilities_flags;
+        uint32_t m_listener_capabilities_flags;
 
         /**
          * Find an end station that matches the entity and controller IDs
@@ -85,6 +88,11 @@ namespace avdecc_lib
         bool is_active_operation_with_notification_id(void *notification_id);
 
         void STDCALL set_logging_level(int32_t new_log_level);
+        
+        void STDCALL apply_end_station_capabilities_filters(uint32_t entity_capabilities_flags,
+                                                            uint32_t talker_capabilities_flags,
+                                                            uint32_t listener_capabilities_flags);
+
         uint32_t STDCALL missed_notification_count();
         uint32_t STDCALL missed_log_count();
 
