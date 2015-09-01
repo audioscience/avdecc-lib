@@ -2873,7 +2873,10 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument*>
             avdecc_lib::stream_input_descriptor *instream = in_descriptor->get_stream_input_desc_by_index(in_stream_index);
             avdecc_lib::stream_input_get_rx_state_response *stream_input_resp_ref = instream->get_stream_input_get_rx_state_response();
             if (!stream_input_resp_ref->get_rx_state_connection_count())
+            {
+                delete stream_input_resp_ref;
                 continue;
+            }
             delete stream_input_resp_ref;
 
             for(uint32_t out_index = 0; out_index < controller_obj->get_end_station_count(); out_index++)
@@ -2893,6 +2896,9 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument*>
                     if (!stream_output_resp_ref->get_tx_state_connection_count() ||
                         (stream_input_resp_ref->get_rx_state_stream_id() != stream_output_resp_ref->get_tx_state_stream_id()))
                     {
+                        delete stream_input_resp_ref;
+                        delete stream_output_resp_ref;
+
                         continue;
                     }
 
@@ -2901,8 +2907,8 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument*>
                                 << "0x" << std::setw(16) << std::hex << std::setfill('0') << in_end_station->entity_id()
                                 << "[" << out_stream_index << "]" << std::endl;
 
-                    delete(stream_input_resp_ref);
-                    delete(stream_output_resp_ref);
+                    delete stream_input_resp_ref;
+                    delete stream_output_resp_ref;
                 }
             }
         }
