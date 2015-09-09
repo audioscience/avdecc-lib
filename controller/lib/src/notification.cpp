@@ -60,7 +60,8 @@ namespace avdecc_lib
 
         if(notification_type == NO_MATCH_FOUND || notification_type == END_STATION_CONNECTED ||
            notification_type == END_STATION_DISCONNECTED || notification_type == COMMAND_TIMEOUT ||
-           notification_type == RESPONSE_RECEIVED || notification_type == END_STATION_READ_COMPLETED)
+           notification_type == RESPONSE_RECEIVED || notification_type == END_STATION_READ_COMPLETED ||
+           notification_type == UNSOLICITED_RESPONSE_RECEIVED)
         {
             index = InterlockedExchangeAdd(&write_index, 1);
             notification_buf[index % NOTIFICATION_BUF_COUNT].notification_type = notification_type;
