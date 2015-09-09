@@ -46,7 +46,7 @@ namespace avdecc_lib
         /**
          * Find an end station that matches the entity and controller IDs
          */
-        int find_in_end_station(struct jdksavdecc_eui64 &entity_entity_id, const uint8_t *frame);
+        int find_in_end_station(struct jdksavdecc_eui64 &entity_entity_id, bool isUnsolicited, const uint8_t *frame);
 
     public:
         /**

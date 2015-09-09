@@ -323,7 +323,7 @@ namespace avdecc_lib
         }
     }
 
-    int controller_imp::find_in_end_station(struct jdksavdecc_eui64 &other_entity_id, const uint8_t *frame)
+    int controller_imp::find_in_end_station(struct jdksavdecc_eui64 &other_entity_id, bool isUnsolicited, const uint8_t *frame)
     {
         struct jdksavdecc_eui64 other_controller_id = jdksavdecc_acmpdu_get_controller_entity_id(frame, ETHER_HDR_SIZE);
 
@@ -331,12 +331,31 @@ namespace avdecc_lib
         {
             struct jdksavdecc_eui64 end_entity_id = end_station_array->at(i)->get_adp()->get_entity_entity_id();
             struct jdksavdecc_eui64 this_controller_id = end_station_array->at(i)->get_adp()->get_controller_entity_id();
+            bool entity_id_match = false;
+            bool controller_id_match = false;
+            
+            if(jdksavdecc_eui64_compare(&end_entity_id, &other_entity_id) == 0)
+            {
+                entity_id_match = true;
+            }
 
-            if((jdksavdecc_eui64_compare(&end_entity_id, &other_entity_id) == 0) &&
-                ((jdksavdecc_eui64_compare(&other_controller_id, &this_controller_id) == 0) ||
-                (jdksavdecc_eui64_compare(&other_controller_id, &end_entity_id) == 0)))
+            //Do not try to find the controller_id if it is an unsolicited response
+            if(isUnsolicited && entity_id_match)
             {
                 return i;
+            }
+            else
+            {
+                if(jdksavdecc_eui64_compare(&other_controller_id, &this_controller_id) == 0 ||
+                   jdksavdecc_eui64_compare(&other_controller_id, &end_entity_id) == 0)
+                {
+                    controller_id_match = true;
+                }
+                
+                if(entity_id_match && controller_id_match)
+                {
+                    return i;
+                }
             }
         }
 
@@ -448,6 +467,7 @@ namespace avdecc_lib
                     uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
                     struct jdksavdecc_eui64 entity_entity_id = jdksavdecc_common_control_header_get_stream_id(frame, ETHER_HDR_SIZE);
                     uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
+                    bool isUnsolicited = cmd_type >> 15 & 0x01;
                     
                     /* check dest mac address is ours */
                     if (dest_mac_addr == net_interface_ref->mac_addr())
@@ -462,7 +482,7 @@ namespace avdecc_lib
                             /**
                              * Check if an AECP object is already in the system. If yes, process response for the AECP packet.
                              */
-                            found_end_station_index = find_in_end_station(entity_entity_id, frame);
+                            found_end_station_index = find_in_end_station(entity_entity_id, isUnsolicited, frame);
                             if (found_end_station_index >= 0)
                             {
                                 switch(msg_type)
@@ -512,7 +532,7 @@ namespace avdecc_lib
                         entity_entity_id = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
                     }
 
-                    found_end_station_index = find_in_end_station(entity_entity_id, frame);
+                    found_end_station_index = find_in_end_station(entity_entity_id, false, frame);
                     if (found_end_station_index >= 0) found_acmp_in_end_station = true;
 
                     if(found_acmp_in_end_station)

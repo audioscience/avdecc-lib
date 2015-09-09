@@ -319,11 +319,11 @@ namespace avdecc_lib
         uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
 
         uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
-        cmd_type &= 0x7FFF;
         uint32_t status = jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE);
         uint16_t desc_type = 0;
         uint16_t desc_index = 0;
         bool is_unsolicited = cmd_type >> 15 & 0x01;
+        cmd_type &= 0x7FFF;
         
         switch(cmd_type)
         {
