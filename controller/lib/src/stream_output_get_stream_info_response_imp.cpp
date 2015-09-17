@@ -40,11 +40,58 @@ namespace avdecc_lib
         m_size = frame_len;
         m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
         memcpy(m_frame, frame, m_size);
+        stream_output_get_info_flags_init();
     }
     
     stream_output_get_stream_info_response_imp::~stream_output_get_stream_info_response_imp()
     {
         free(m_frame);
+    }
+    
+    void stream_output_get_stream_info_response_imp::stream_output_get_info_flags_init()
+    {
+        stream_output_info_flags.class_b = get_stream_info_flags() & 0x01;
+        stream_output_info_flags.fast_connect = get_stream_info_flags() >> 1 & 0x01;
+        stream_output_info_flags.saved_state = get_stream_info_flags() >> 2 & 0x01;
+        stream_output_info_flags.streaming_wait = get_stream_info_flags() >> 3 & 0x01;
+        stream_output_info_flags.encrypted_pdu = get_stream_info_flags() >> 4 & 0x01;
+        stream_output_info_flags.stream_vlan_id_valid = get_stream_info_flags() >> 25 & 0x01;
+        stream_output_info_flags.connected = get_stream_info_flags() >> 26 & 0x01;
+        stream_output_info_flags.msrp_failure_valid = get_stream_info_flags() >> 27 & 0x01;
+        stream_output_info_flags.stream_dest_mac_valid = get_stream_info_flags() >> 28 & 0x01;
+        stream_output_info_flags.msrp_acc_lat_valid = get_stream_info_flags() >> 29 & 0x01;
+        stream_output_info_flags.stream_id_valid = get_stream_info_flags() >> 30 & 0x01;
+        stream_output_info_flags.stream_format_valid = get_stream_info_flags() >> 31 & 0x01;
+    }
+    
+    bool STDCALL stream_output_get_stream_info_response_imp::get_stream_info_flags_stream_vlan_id_valid()
+    {
+        return stream_output_info_flags.stream_vlan_id_valid;
+    }
+    
+    bool STDCALL stream_output_get_stream_info_response_imp::get_stream_info_flags_msrp_failure_valid()
+    {
+        return stream_output_info_flags.msrp_failure_valid;
+    }
+    
+    bool STDCALL stream_output_get_stream_info_response_imp::get_stream_info_flags_stream_dest_mac_valid()
+    {
+        return stream_output_info_flags.stream_dest_mac_valid;
+    }
+    
+    bool STDCALL stream_output_get_stream_info_response_imp::get_stream_info_flags_msrp_acc_lat_valid()
+    {
+        return stream_output_info_flags.msrp_acc_lat_valid;
+    }
+    
+    bool STDCALL stream_output_get_stream_info_response_imp::get_stream_info_flags_stream_id_valid()
+    {
+        return stream_output_info_flags.stream_id_valid;
+    }
+    
+    bool STDCALL stream_output_get_stream_info_response_imp::get_stream_info_flags_stream_format_valid()
+    {
+        return stream_output_info_flags.stream_format_valid;
     }
     
     uint32_t STDCALL stream_output_get_stream_info_response_imp::get_stream_info_flags()
