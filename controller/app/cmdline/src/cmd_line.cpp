@@ -3753,8 +3753,22 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
                 atomic_cout << "Stream format: " << stream_format << std::endl;
             }
 
-            atomic_cout << "Stream ID: 0x" << std::hex << stream_input_resp_ref->get_stream_info_stream_id() << std::endl;
-            atomic_cout << "MSRP Accumulated Latency: " << std::dec << stream_input_resp_ref->get_stream_info_msrp_accumulated_latency() << std::endl;
+            if (stream_input_resp_ref->get_stream_info_flags_stream_id_valid())
+                atomic_cout << "Stream ID: 0x" << std::hex << std::setfill('0') << std::setw(16) <<
+                            stream_input_resp_ref->get_stream_info_stream_id() << std::endl;
+            if (stream_input_resp_ref->get_stream_info_flags_stream_dest_mac_valid())
+                atomic_cout << "Stream Destination MAC: " << std::hex <<
+                            stream_input_resp_ref->get_stream_info_stream_dest_mac() << std::endl;
+            if (stream_input_resp_ref->get_stream_info_flags_msrp_failure_valid())
+            {
+                atomic_cout << "Stream MSRP failure code: " <<
+                            stream_input_resp_ref->get_stream_info_msrp_failure_code() << std::endl;
+                atomic_cout << "Stream MSRP failure bridge id " <<
+                            stream_input_resp_ref->get_stream_info_msrp_failure_bridge_id() << std::endl;
+            }
+            if (stream_input_resp_ref->get_stream_info_flags_msrp_acc_lat_valid())
+                atomic_cout << "Stream MSRP accumulated latency: " <<
+                            stream_input_resp_ref->get_stream_info_msrp_accumulated_latency() << std::endl;
         }
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_OUTPUT)
@@ -3762,14 +3776,17 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
         intptr_t cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor *stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
-        avdecc_lib::stream_output_descriptor_response *stream_output_desc_resp = stream_output_desc_ref->get_stream_output_response();
         stream_output_desc_ref->send_get_stream_info_cmd((void *)cmd_notification_id);
         int status = sys->get_last_resp_status();
 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
-            avdecc_lib::stream_output_get_stream_info_response *stream_output_resp_ref = stream_output_desc_ref->get_stream_output_get_stream_info_response();
-            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_output_resp_ref->get_stream_info_stream_format());
+            avdecc_lib::stream_output_get_stream_info_response
+                *stream_output_resp_ref = stream_output_desc_ref->get_stream_output_get_stream_info_response();
+            
+            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_output_resp_ref->
+                                                                               get_stream_info_stream_format());
+            
             if(stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_output_resp_ref->get_stream_info_stream_format() << std::endl;
@@ -3778,16 +3795,26 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
             {
                 atomic_cout << "Stream format: " << stream_format << std::endl;
             }
-            atomic_cout << "Flags: 0x" << std::hex << stream_output_resp_ref->get_stream_info_flags() << std::endl;
-            if (stream_output_desc_resp->get_stream_info_flag("STREAM_ID_VALID"))
+
+            if (stream_output_resp_ref->get_stream_info_flags_stream_id_valid())
                 atomic_cout << "Stream ID: 0x" << std::hex << std::setfill('0') << std::setw(16) <<
                             stream_output_resp_ref->get_stream_info_stream_id() << std::endl;
-            if (stream_output_desc_resp->get_stream_info_flag("STREAM_DEST_MAC_VALID"))
+            if (stream_output_resp_ref->get_stream_info_flags_stream_dest_mac_valid())
                 atomic_cout << "Stream Destination MAC: " << std::hex <<
                             stream_output_resp_ref->get_stream_info_stream_dest_mac() << std::endl;
-            if (stream_output_desc_resp->get_stream_info_flag("STREAM_VLAN_ID_VALID"))
+            if (stream_output_resp_ref->get_stream_info_flags_stream_vlan_id_valid())
                 atomic_cout << "Stream VLAN ID: " <<
                             stream_output_resp_ref->get_stream_info_stream_vlan_id() << std::endl;
+            if (stream_output_resp_ref->get_stream_info_flags_msrp_failure_valid())
+            {
+                atomic_cout << "Stream MSRP failure code: " <<
+                            stream_output_resp_ref->get_stream_info_msrp_failure_code() << std::endl;
+                atomic_cout << "Stream MSRP failure bridge id " <<
+                            stream_output_resp_ref->get_stream_info_msrp_failure_bridge_id() << std::endl;
+            }
+            if (stream_output_resp_ref->get_stream_info_flags_msrp_acc_lat_valid())
+                atomic_cout << "Stream MSRP accumulated latency: " <<
+                            stream_output_resp_ref->get_stream_info_msrp_accumulated_latency() << std::endl;
         }
     }
     else

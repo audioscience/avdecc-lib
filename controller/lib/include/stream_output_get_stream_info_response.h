@@ -45,6 +45,36 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_stream_info_flags() = 0;
         
         /**
+         * \return True if the stream's stream_vlan_id field is valid.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_info_flags_stream_vlan_id_valid() = 0;
+        
+        /**
+         * \return True if the stream's msrp_failure_code and msrp_failure_id fields are valid.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_info_flags_msrp_failure_valid() = 0;
+        
+        /**
+         * \return True if the stream's stream_dest_mac field is valid.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_info_flags_stream_dest_mac_valid() = 0;
+        
+        /**
+         * \return True if the stream's msrp_accumulated_latency field is valid.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_info_flags_msrp_acc_lat_valid() = 0;
+        
+        /**
+         * \return True if the stream's stream_id field is valid.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_info_flags_stream_id_valid() = 0;
+        
+        /**
+         * \return True if the stream's stream_format field is valid.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_stream_info_flags_stream_format_valid() = 0;
+        
+        /**
          * \return The stream info stream format of a stream after sending a GET_STREAM_INFO command and
          *	       receiving a response back for the command.
          */
