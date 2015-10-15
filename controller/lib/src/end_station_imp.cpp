@@ -1343,6 +1343,25 @@ namespace avdecc_lib
                     }
                 }
                 break;
+             
+            case JDKSAVDECC_AEM_COMMAND_GET_AVB_INFO:
+                {
+                    //desc_type = jdksavdecc_aem_command_get_avb_info_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+                    desc_index = jdksavdecc_aem_command_get_avb_info_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+                    
+                    avb_interface_descriptor_imp *avb_interface_desc_imp_ref =
+                    dynamic_cast<avb_interface_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_avb_interface_desc_by_index(desc_index));
+                    
+                    if(avb_interface_desc_imp_ref)
+                    {
+                        avb_interface_desc_imp_ref->proc_get_avb_info_resp(notification_id, frame, frame_len, status);
+                    }
+                    else
+                    {
+                        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base avb_interface_descriptor to derived avb_interface_descriptor_imp error");
+                    }
+                }
+                break;
 
             case JDKSAVDECC_AEM_COMMAND_START_STREAMING:
                 {

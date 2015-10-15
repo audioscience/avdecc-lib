@@ -427,6 +427,11 @@ namespace avdecc_lib
             desc_type = jdksavdecc_aem_command_get_counters_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
             desc_index = jdksavdecc_aem_command_get_counters_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
             break;
+                
+        case JDKSAVDECC_AEM_COMMAND_GET_AVB_INFO:
+            desc_type = jdksavdecc_aem_command_get_avb_info_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
+            desc_index = jdksavdecc_aem_command_get_avb_info_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+            break;
         
         case JDKSAVDECC_AEM_COMMAND_REGISTER_UNSOLICITED_NOTIFICATION:
             break;

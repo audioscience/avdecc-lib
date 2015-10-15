@@ -900,6 +900,20 @@ void cmd_line::cmd_line_commands_init()
                                                             "To see a list of valid descriptor types and corresponding indexes, enter\n" \
                                                             "\"view all\" command."));
     get_clock_source_cmd->add_format(get_clock_source_fmt);
+    
+    // get avb_info
+    cli_command *get_avb_info_cmd = new cli_command();
+    get_cmd->add_sub_command("avb_info", get_avb_info_cmd);
+    
+    cli_command_format *get_avb_info_fmt = new cli_command_format(
+        "Send a GET_AVB_INFO command to get the dynamic AVB information for an AVB_INTERFACE.",
+        &cmd_line::cmd_get_avb_info);
+    get_avb_info_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
+                                                           "Valid descriptor type is AVB_INTERFACE."));
+    get_avb_info_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
+                                                        "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                        "\"view all\" command."));
+    get_avb_info_cmd->add_format(get_avb_info_fmt);
 
     // start
     cli_command *start_cmd = new cli_command();
@@ -4397,6 +4411,56 @@ int cmd_line::cmd_get_clock_source(int total_matched, std::vector<cli_argument*>
 
     delete clk_domain_resp_ref;
     delete clk_domain_stream_resp_ref;
+    return 0;
+}
+
+int cmd_line::cmd_get_avb_info(int total_matched, std::vector<cli_argument*> args)
+{
+    uint16_t desc_index = args[1]->get_value_int();
+    intptr_t cmd_notification_id = get_next_notification_id();
+
+    avdecc_lib::end_station *end_station;
+    avdecc_lib::entity_descriptor *entity;
+    avdecc_lib::configuration_descriptor *configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+    
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+    avdecc_lib::avb_interface_descriptor *avb_interface_desc_ref = configuration->get_avb_interface_desc_by_index(desc_index);
+    
+    if (!avb_interface_desc_ref)
+        return 0;
+
+    avb_interface_desc_ref->send_get_avb_info_cmd((void *)cmd_notification_id);
+    int status = sys->get_last_resp_status();
+    if(status == avdecc_lib::AEM_STATUS_SUCCESS)
+    {
+        avdecc_lib::avb_interface_get_avb_info_response
+            *get_avb_info_resp_ref = avb_interface_desc_ref->get_avb_interface_get_avb_info_response();
+        
+        atomic_cout << "gPTP Grandmaster ID: 0x" << std::hex << get_avb_info_resp_ref->get_gptp_grandmaster_id() << std::endl;
+        atomic_cout << "Propagation Delay: " << get_avb_info_resp_ref->get_propagation_delay() << std::endl;
+        atomic_cout << "gPTP Domain Number: " << std::dec << (unsigned int)get_avb_info_resp_ref->get_gptp_domain_number() << std::endl;
+        atomic_cout << "msrp mappings count: " << get_avb_info_resp_ref->get_msrp_mappings_count() << std::endl;
+        
+        if(get_avb_info_resp_ref->get_avb_info_flags_as_capable())
+            atomic_cout << "as_capable flag: TRUE" << std::endl;
+        else
+            atomic_cout << "as_capable flag: FALSE" << std::endl;
+        
+        if(get_avb_info_resp_ref->get_avb_info_flags_gptp_enabled())
+            atomic_cout << "gptp_enabled flag: TRUE" << std::endl;
+        else
+            atomic_cout << "gptp_enabled flag: FALSE" << std::endl;
+        
+        if(get_avb_info_resp_ref->get_avb_info_flags_srp_enabled())
+            atomic_cout << "srp_enabled flag: TRUE" << std::endl;
+        else
+            atomic_cout << "srp_enabled flag: FALSE" << std::endl;
+
+        delete get_avb_info_resp_ref;
+    }
+
     return 0;
 }
 
