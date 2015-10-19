@@ -399,6 +399,11 @@ private:
      * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
      */
     int cmd_get_clock_source(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a GET_AVB_INFO command to get the dynamic AVB information for an AVB_INTERFACE.
+     */
+    int cmd_get_avb_info(int total_matched, std::vector<cli_argument*> args);
 
     /**
      * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected

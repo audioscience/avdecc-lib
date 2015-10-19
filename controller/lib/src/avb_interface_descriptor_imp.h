@@ -33,6 +33,7 @@
 #include "avb_interface_descriptor_response_imp.h"
 #include "avb_interface_descriptor.h"
 #include "avb_counters_response_imp.h"
+#include "avb_interface_get_avb_info_response_imp.h"
 
 namespace avdecc_lib
 {
@@ -44,10 +45,14 @@ namespace avdecc_lib
         
         avb_interface_descriptor_response_imp *resp;
         avb_counters_response_imp *counters_resp;
+        avb_interface_get_avb_info_response_imp *get_avb_info_resp;
 
         avb_interface_descriptor_response * STDCALL get_avb_interface_response();
         avb_counters_response * STDCALL get_avb_interface_counters_response();
+        avb_interface_get_avb_info_response * STDCALL get_avb_interface_get_avb_info_response();
         int STDCALL send_get_counters_cmd(void *notification_id);
         int proc_get_counters_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+        int STDCALL send_get_avb_info_cmd(void *notification_id);
+        int proc_get_avb_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
     };
 }

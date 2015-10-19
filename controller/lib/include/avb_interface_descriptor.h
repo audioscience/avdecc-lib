@@ -38,6 +38,7 @@
 #include "descriptor_base.h"
 #include "avb_interface_descriptor_response.h"
 #include "avb_counters_response.h"
+#include "avb_interface_get_avb_info_response.h"
 
 namespace avdecc_lib
 {
@@ -55,8 +56,19 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual avb_counters_response * STDCALL get_avb_interface_counters_response() = 0;
         
         /**
+         * \return the avb_interface get avb info response class.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual avb_interface_get_avb_info_response *
+            STDCALL get_avb_interface_get_avb_info_response() = 0;
+        
+        /**
          * Send a GET_COUNTERS command to get the avb_interface counters of the AVDECC Entity.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_counters_cmd(void *notification_id) = 0;
+        
+        /**
+         * Send a GET_AVB_INFO command to get the dynamic AVB information for an AVB_INTERFACE.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_avb_info_cmd(void *notification_id) = 0;
     };
 }
