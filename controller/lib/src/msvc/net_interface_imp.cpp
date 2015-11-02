@@ -98,6 +98,21 @@ namespace avdecc_lib
     }
 
 
+    char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
+    {
+        uint32_t i;
+
+        for (dev = all_devs, i = 0; (i < dev_index) && (dev_index < total_devs); dev = dev->next, i++); // Get the selected interface
+
+        if (!dev->name)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Interface name is blank.");
+        }
+
+        return dev->name;
+    }
+
+
     int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     {
         uint32_t index;

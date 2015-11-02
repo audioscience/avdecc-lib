@@ -53,6 +53,11 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_desc_by_index(size_t dev_index) = 0;
 
         /**
+         * \return The corresponding network interface name by index.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_name_by_index(size_t dev_index) = 0;
+
+        /**
          * Select the corresponding interface by number.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL select_interface_by_num(uint32_t interface_num) = 0;
