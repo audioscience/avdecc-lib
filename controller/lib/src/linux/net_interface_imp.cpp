@@ -164,6 +164,11 @@ namespace avdecc_lib
         return (char *)ifnames[dev_index].c_str();
     }
 
+    char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
+	{
+		return get_dev_desc_by_index(dev_index);
+	}
+
     int net_interface_imp::get_fd()
     {
         return rawsock;

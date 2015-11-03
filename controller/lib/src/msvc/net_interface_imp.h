@@ -76,6 +76,11 @@ namespace avdecc_lib
         char * STDCALL get_dev_desc_by_index(size_t dev_index);
 
         /**
+         * Get the corresponding network interface name by index.
+         */
+        char * STDCALL get_dev_name_by_index(size_t dev_index);
+
+        /**
          * Select the corresponding interface by number.
          */
         int STDCALL select_interface_by_num(uint32_t interface_num);
