@@ -453,6 +453,23 @@ namespace avdecc_lib
 
             return (uint64_t)0xffff;
         }
+        
+        const char * STDCALL ieee1722_format_name_to_description(const char *format_name)
+        {
+            struct ieee1722_format *p = &ieee1722_format_table[0];
+            
+            while(p->fmt != UINT64_C(0x0000000000000000))
+            {
+                if(strcmp(p->str, format_name) == 0)
+                {
+                    return p->description;
+                }
+                
+                p++;
+            }
+            
+            return "UNKNOWN";
+        }
 
         const char * STDCALL ieee1722_format_value_to_name(uint64_t format)
         {
