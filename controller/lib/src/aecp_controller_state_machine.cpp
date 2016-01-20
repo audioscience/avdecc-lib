@@ -78,9 +78,9 @@ namespace avdecc_lib
         aecpdu_common_ctrl_hdr.subtype = JDKSAVDECC_SUBTYPE_AECP;
         aecpdu_common_ctrl_hdr.sv = 0;
         aecpdu_common_ctrl_hdr.version = 0;
-        aecpdu_common_ctrl_hdr.message_type = message_type;
+        aecpdu_common_ctrl_hdr.message_type = (uint8_t) message_type;
         aecpdu_common_ctrl_hdr.status = JDKSAVDECC_AEM_STATUS_SUCCESS;
-        aecpdu_common_ctrl_hdr.control_data_length = cd_len;
+        aecpdu_common_ctrl_hdr.control_data_length = (uint16_t) cd_len;
         jdksavdecc_uint64_write(target_entity_id, &aecpdu_common_ctrl_hdr.target_entity_id, 0, sizeof(uint64_t));
 
         /********************** Fill frame payload with AECP Common Control Header information *********************/

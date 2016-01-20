@@ -133,12 +133,20 @@ namespace avdecc_lib
 
     int STDCALL descriptor_base_imp::send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag)
     {
+        (void)notification_id; //unused
+        (void)acquire_entity_flag;
+
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override send_acquire_entity_cmd.\n");
         return 0;
     }
 
     int descriptor_base_imp::proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
+        (void)notification_id; //unused
+        (void)frame;
+        (void)frame_len;
+        (void)status;
+
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override proc_acquire_entity_resp.\n");
         return 0;
     }
@@ -221,6 +229,9 @@ namespace avdecc_lib
 
     int STDCALL descriptor_base_imp::send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag)
     {
+        (void)notification_id; //unused
+        (void)lock_entity_flag;
+
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override send_lock_entity_cmd.\n");
 
         return 0;
@@ -228,6 +239,11 @@ namespace avdecc_lib
 
     int descriptor_base_imp::proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
+        (void)notification_id; //unused
+        (void)frame;
+        (void)frame_len;
+        (void)status;
+
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override proc_lock_entity_resp.\n");
 
         return 0;
@@ -311,6 +327,8 @@ namespace avdecc_lib
 
     int STDCALL descriptor_base_imp::send_reboot_cmd(void *notification_id)
     {
+        (void)notification_id; //unused
+
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override send_reboot_cmd.\n");
 
         return 0;
@@ -319,6 +337,11 @@ namespace avdecc_lib
 
     int descriptor_base_imp::proc_reboot_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
+        (void)notification_id; //unused
+        (void)frame;
+        (void)frame_len;
+        (void)status;
+
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to override proc_reboot_resp.\n");
 
         return 0;

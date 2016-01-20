@@ -88,6 +88,7 @@ namespace avdecc_lib
 
     system * STDCALL create_system(system::system_type type, net_interface *netif, controller *controller_obj)
     {
+        (void)type;
         local_system = new system_layer2_multithreaded_callback(netif, controller_obj);
 
         return local_system;
