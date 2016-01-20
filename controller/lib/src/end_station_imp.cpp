@@ -684,7 +684,7 @@ namespace avdecc_lib
     {
         background_read_request *b;
 
-        for (int i = 0; i < desc_count; i++)
+        for (uint16_t i = 0; i < desc_count; i++)
         {
             b = new background_read_request(desc_type, desc_base_index + i);
             m_backbround_read_pending.push_back(b);
@@ -1553,8 +1553,9 @@ namespace avdecc_lib
         aecp_cmd_aa_header.sequence_id = 0;
         aecp_cmd_aa_header.tlv_count = 1;
 
-        aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
-                                                            ETHER_HDR_SIZE + JDKSAVDECC_AECPDU_AA_LEN + JDKSAVDECC_AECPDU_AA_TLV_LEN + length);
+        aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame, ETHER_HDR_SIZE +
+                                                            JDKSAVDECC_AECPDU_AA_LEN + JDKSAVDECC_AECPDU_AA_TLV_LEN +
+                                                            (uint16_t) length);
 
         ssize_t write_return_val = jdksavdecc_aecp_aa_write(&aecp_cmd_aa_header,
                                                             cmd_frame.payload,
@@ -1567,7 +1568,7 @@ namespace avdecc_lib
             return -1;
         }
 
-        aa_tlv.mode_length = (mode << 12) | (length & 0xFFF);
+        aa_tlv.mode_length = (uint16_t) (mode << 12) | (length & 0xFFF);
         aa_tlv.address_upper = address >> 32;
         aa_tlv.address_lower = address & 0xFFFFFFFF;
 
@@ -1780,6 +1781,8 @@ namespace avdecc_lib
 
     int end_station_imp::proc_set_control_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
+        (void)status; //unused
+
         struct jdksavdecc_frame cmd_frame;
         memcpy(cmd_frame.payload, frame, frame_len);
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE, false, &cmd_frame);
@@ -1924,7 +1927,7 @@ namespace avdecc_lib
                 break;
 
             default:
-                notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, msg_type, 0, 0, 0, 0);
+                notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, (uint16_t) msg_type, 0, 0, 0, 0);
                 break;
         }
 

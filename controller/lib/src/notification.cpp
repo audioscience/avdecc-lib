@@ -34,7 +34,17 @@
 namespace avdecc_lib
 {
     extern "C" void default_notification(void *notification_user_obj, int32_t notification_type, uint64_t entity_id, uint16_t cmd_type,
-                                         uint16_t desc_type, uint16_t desc_index, uint32_t status, void *notification_id) {}
+                                         uint16_t desc_type, uint16_t desc_index, uint32_t status, void *notification_id) 
+    {
+        (void)notification_user_obj; //unused
+        (void)notification_type;
+        (void)entity_id;
+        (void)cmd_type;
+        (void)desc_type;
+        (void)desc_index;
+        (void)status;
+        (void)notification_id;
+    }
 
     notification::notification()
     {

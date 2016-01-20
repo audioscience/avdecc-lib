@@ -523,7 +523,7 @@ namespace avdecc_lib
         const char * STDCALL ieee1722_format_index_to_name(unsigned int index)
         {
             struct ieee1722_format *p;
-            int format_table_size = (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
+            unsigned int format_table_size = (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
             
             if(index < format_table_size)
             {

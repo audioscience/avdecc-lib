@@ -187,13 +187,13 @@ namespace avdecc_lib
         }
         else
         {
-            aem_cmd_add_audio_mappings.number_of_mappings = pending_maps.size();
+            aem_cmd_add_audio_mappings.number_of_mappings = (uint16_t) pending_maps.size();
         }
 
         /******************************* Fill frame payload with AECP data and send the frame **************************/
         aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
                                                             ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_LEN +
-                                                            pending_maps.size() * JDKSAVDECC_AUDIO_MAPPING_LEN);
+                                                            (uint16_t) pending_maps.size() * JDKSAVDECC_AUDIO_MAPPING_LEN);
         aem_cmd_add_audio_mappings_returned = jdksavdecc_aem_command_add_audio_mappings_write(&aem_cmd_add_audio_mappings,
                                                                                               cmd_frame.payload,
                                                                                               ETHER_HDR_SIZE,
@@ -303,13 +303,13 @@ namespace avdecc_lib
         }
         else
         {
-            aem_cmd_remove_audio_mappings.number_of_mappings = pending_maps.size();
+            aem_cmd_remove_audio_mappings.number_of_mappings = (uint16_t) pending_maps.size();
         }
         
         /******************************* Fill frame payload with AECP data and send the frame **************************/
         aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
                                                             ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_LEN +
-                                                            pending_maps.size() * JDKSAVDECC_AUDIO_MAPPING_LEN);
+                                                            (uint16_t) pending_maps.size() * JDKSAVDECC_AUDIO_MAPPING_LEN);
         aem_cmd_remove_audio_mappings_returned = jdksavdecc_aem_command_remove_audio_mappings_write(&aem_cmd_remove_audio_mappings,
                                                                                                     cmd_frame.payload,
                                                                                                     ETHER_HDR_SIZE,

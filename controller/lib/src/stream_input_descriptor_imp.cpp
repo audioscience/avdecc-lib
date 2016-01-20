@@ -241,6 +241,8 @@ namespace avdecc_lib
 
     int STDCALL stream_input_descriptor_imp::send_set_stream_info_cmd(void *notification_id, void *new_stream_info_field)
     {
+        (void)notification_id; //unused
+        (void)new_stream_info_field;
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO command.");
 
         return 0;
@@ -248,6 +250,11 @@ namespace avdecc_lib
 
     int stream_input_descriptor_imp::proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
+        (void)notification_id;  //unused
+        (void)frame;
+        (void)frame_len;
+        (void)status;
+
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_STREAM_INFO response.");
 
         return 0;

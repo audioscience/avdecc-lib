@@ -287,7 +287,6 @@ namespace avdecc_lib
         system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
         return 0;
-        return 0;
     }
 
     int stream_output_descriptor_imp::proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
