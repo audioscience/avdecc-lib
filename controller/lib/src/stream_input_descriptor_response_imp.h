@@ -88,7 +88,7 @@ namespace avdecc_lib
         uint64_t STDCALL get_supported_stream_fmt_by_index(size_t stream_fmt_index);
     private:
         /**
-         * Store the stream flags componenets of the STREAM INPUT descriptor object in a vector.
+         * Store the stream flags components of the STREAM INPUT descriptor object in a vector.
          */
         void stream_flags_init();
         
