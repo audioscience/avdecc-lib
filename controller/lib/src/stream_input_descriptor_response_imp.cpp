@@ -46,6 +46,7 @@ namespace avdecc_lib
     {
         memset(&stream_input_flags, 0, sizeof(struct stream_input_desc_stream_flags));
         stream_flags_init();
+        store_supported_stream_fmts();
     }
     
     stream_input_descriptor_response_imp::~stream_input_descriptor_response_imp() {}
@@ -210,5 +211,20 @@ namespace avdecc_lib
     uint32_t STDCALL stream_input_descriptor_response_imp::buffer_length()
     {
         return jdksavdecc_descriptor_stream_get_buffer_length(buffer, position);
+    }
+
+    void stream_input_descriptor_response_imp::store_supported_stream_fmts()
+    {
+        uint64_t offset = 0;
+        for(int i = 0; i < number_of_formats(); i++)
+        {
+            stream_fmts_vec.push_back(jdksavdecc_uint64_get(&buffer[position + formats_offset() + offset], 0));
+            offset += 0x8;
+        }
+    }
+
+    uint64_t STDCALL stream_input_descriptor_response_imp::get_supported_stream_fmt_by_index(size_t supported_stream_fmt_index)
+    {
+        return stream_fmts_vec.at(supported_stream_fmt_index);
     }
 }

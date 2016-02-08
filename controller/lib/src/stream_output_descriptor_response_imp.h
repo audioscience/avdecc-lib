@@ -58,6 +58,7 @@ namespace avdecc_lib
             bool tertiary_backup_valid;
         };
         struct stream_output_desc_stream_flags stream_output_flags;
+        std::vector<uint64_t> stream_fmts_vec; // Store supported stream formats in a vector
     public:
         stream_output_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
         virtual ~stream_output_descriptor_response_imp();
@@ -90,10 +91,16 @@ namespace avdecc_lib
         uint16_t STDCALL avb_interface_index();
         uint32_t STDCALL buffer_length();
         bool STDCALL get_stream_info_flag(const char *flag);
+        uint64_t STDCALL get_supported_stream_fmt_by_index(size_t stream_fmt_index);
     private:
         /**
-         * Store the stream flags componenets of the STREAM INPUT descriptor object in a vector.
+         * Store the stream flags componenets of the STREAM OUTPUT descriptor object in a vector.
          */
         void stream_flags_init();
+
+        /**
+         * Store the supported stream formats for this STREAM OUTPUT descriptor.
+         */
+        void store_supported_stream_fmts();
     };
 }

@@ -2078,7 +2078,6 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                     atomic_cout << "\n\ttertiary_backup_supported = " << std::dec << stream_input_resp_ref->stream_flags_tertiary_backup_supported();
                     atomic_cout << "\n\ttertiary_backup_valid = " << std::dec << stream_input_resp_ref->stream_flags_tertiary_backup_valid();
                     atomic_cout << "\ncurrent_format = " << std::hex << stream_input_resp_ref->current_format();
-                    atomic_cout << "\nnumber_of_formats = " << std::dec << stream_input_resp_ref->number_of_formats();
                     atomic_cout << "\nbackup_talker_entity_id_0 = 0x" << std::hex << stream_input_resp_ref->backup_talker_entity_id_0();
                     atomic_cout << "\nbackup_talker_unique_0 = " << std::dec << stream_input_resp_ref->backup_talker_unique_0();
                     atomic_cout << "\nbackup_talker_entity_id_1 = 0x" << std::hex << stream_input_resp_ref->backup_talker_entity_id_1();
@@ -2088,7 +2087,14 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                     atomic_cout << "\nbackedup_talker_entity_id = 0x" << std::hex << stream_input_resp_ref->backedup_talker_entity_id();
                     atomic_cout << "\nbackedup_talker_unique = " << std::dec << stream_input_resp_ref->backedup_talker_unique();
                     atomic_cout << "\navb_interface_index = " << std::dec << stream_input_resp_ref->avb_interface_index();
-                    atomic_cout << "\nbuffer_length = " << std::dec << stream_input_resp_ref->buffer_length() << std::endl;
+                    atomic_cout << "\nbuffer_length = " << std::dec << stream_input_resp_ref->buffer_length();
+                    atomic_cout << "\nnumber_of_formats = " << std::dec << stream_input_resp_ref->number_of_formats() << std::endl;
+                    for(int i = 0; i < stream_input_resp_ref->number_of_formats(); i++)
+                    {
+                        atomic_cout << "\tstream_format_" << i << " = " << std::hex <<
+                            avdecc_lib::utility::ieee1722_format_value_to_name(stream_input_resp_ref->get_supported_stream_fmt_by_index(i)) << std::endl;
+                    }
+                    
                     delete(stream_input_resp_ref);
                 }
             }
@@ -2118,7 +2124,6 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                     atomic_cout << "\n\ttertiary_backup_supported = " << std::dec << stream_output_resp_ref->stream_flags_tertiary_backup_supported();
                     atomic_cout << "\n\ttertiary_backup_valid = " << std::dec << stream_output_resp_ref->stream_flags_tertiary_backup_valid();
                     atomic_cout << "\ncurrent_format = " << std::hex << stream_output_resp_ref->current_format();
-                    atomic_cout << "\nnumber_of_formats = " << std::dec << stream_output_resp_ref->number_of_formats();
                     atomic_cout << "\nbackup_talker_entity_id_0 = 0x" << std::hex << stream_output_resp_ref->backup_talker_entity_id_0();
                     atomic_cout << "\nbackup_talker_unique_0 = " << std::dec << stream_output_resp_ref->backup_talker_unique_0();
                     atomic_cout << "\nbackup_talker_entity_id_1 = 0x" << std::hex << stream_output_resp_ref->backup_talker_entity_id_1();
@@ -2128,7 +2133,14 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                     atomic_cout << "\nbackedup_talker_entity_id = 0x" << std::hex << stream_output_resp_ref->backedup_talker_entity_id();
                     atomic_cout << "\nbackedup_talker_unique = " << std::dec << stream_output_resp_ref->backedup_talker_unique();
                     atomic_cout << "\navb_interface_index = " << std::dec << stream_output_resp_ref->avb_interface_index();
-                    atomic_cout << "\nbuffer_length = " << std::dec << stream_output_resp_ref->buffer_length() << std::endl;
+                    atomic_cout << "\nbuffer_length = " << std::dec << stream_output_resp_ref->buffer_length();
+                    atomic_cout << "\nnumber_of_formats = " << std::dec << stream_output_resp_ref->number_of_formats() << std::endl;
+                    for(int i = 0; i < stream_output_resp_ref->number_of_formats(); i++)
+                    {
+                        atomic_cout << "\tstream_format_" << i << " = " << std::hex <<
+                            avdecc_lib::utility::ieee1722_format_value_to_name(stream_output_resp_ref->get_supported_stream_fmt_by_index(i)) << std::endl;
+                    }
+
                     delete(stream_output_resp_ref);
                 }
             }
