@@ -46,7 +46,8 @@ namespace avdecc_lib
     {
         memset(&stream_output_flags, 0, sizeof(struct stream_output_desc_stream_flags));
         stream_flags_init();
-        
+        store_supported_stream_fmts();
+
         stream_info_flags["CLASS_B"]                  = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_CLASS_B;
         stream_info_flags["FAST_CONNECT"]             = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_FAST_CONNECT;
         stream_info_flags["SAVED_STATE"]              = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_SAVED_STATE;
@@ -232,5 +233,20 @@ namespace avdecc_lib
         it = stream_info_flags.find(flag);
         assert(it != stream_info_flags.end());
         return it->second;
+    }
+
+    void stream_output_descriptor_response_imp::store_supported_stream_fmts()
+    {
+        uint64_t offset = 0;
+        for(int i = 0; i < number_of_formats(); i++)
+        {
+            stream_fmts_vec.push_back(jdksavdecc_uint64_get(&buffer[position + formats_offset() + offset], 0));
+            offset += 0x8;
+        }
+    }
+
+    uint64_t STDCALL stream_output_descriptor_response_imp::get_supported_stream_fmt_by_index(size_t supported_stream_fmt_index)
+    {
+        return stream_fmts_vec.at(supported_stream_fmt_index);
     }
 }

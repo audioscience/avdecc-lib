@@ -167,5 +167,10 @@ namespace avdecc_lib
          * \return The length in nanoseconds of the MAC's ingress buffer size.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL buffer_length() = 0;
+        
+        /**
+         * \return The supported stream format by index.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_supported_stream_fmt_by_index(size_t stream_fmt_index) = 0;
     };
 }
