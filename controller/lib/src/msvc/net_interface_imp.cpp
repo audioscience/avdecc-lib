@@ -60,12 +60,14 @@ namespace avdecc_lib
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "No interfaces found! Make sure WinPcap is installed.");
             exit(EXIT_FAILURE);
         }
+        pcap_interface = nullptr;
     }
 
     net_interface_imp::~net_interface_imp()
     {
         pcap_freealldevs(all_devs); // Free the device list
-        pcap_close(pcap_interface);
+        if (pcap_interface != nullptr)
+            pcap_close(pcap_interface);
     }
 
     void STDCALL net_interface_imp::destroy()
