@@ -35,33 +35,18 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "descriptor_base.h"
+#include "audio_map_descriptor_response.h"
 
 namespace avdecc_lib
 {
-    struct audio_map_mapping {
-        uint16_t stream_index;
-        uint16_t stream_channel;
-        uint16_t cluster_offset;
-        uint16_t cluster_channel;
-    };
-
     class audio_map_descriptor : public virtual descriptor_base
     {
     public:
         /**
-         * \return The number of channel mappings within the Audio Map. The maximum value
-         *	       of this field is 62 for this version of AEM.
+         * \return the audio_map descriptor response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_mappings() = 0;
-        /**
-         * \param index The index of the mapping to return.
-         * \param mapping The mapping structure that is filled in by this funtion.
-         * \return Returns 0 on success.
-        */
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL mapping(size_t index, struct audio_map_mapping &mapping) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual audio_map_descriptor_response * STDCALL get_audio_map_response() = 0;
     };
 }
-
-

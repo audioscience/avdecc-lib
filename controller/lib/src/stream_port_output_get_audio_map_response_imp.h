@@ -1,7 +1,7 @@
 /*
  * Licensed under the MIT License (MIT)
  *
- * Copyright (c) 2013 AudioScience Inc.
+ * Copyright (c) 2015 AudioScience Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,27 +22,35 @@
  */
 
 /**
- * build.h
+ * stream_port_output_get_audio_map_response_imp.h
  *
- * Build file, which defines the API to be used.
+ * STREAM PORT OUTPUT get audio map response implementation class
  */
 
 #pragma once
 
-#if defined __linux__ || defined __MACH__
+#include "stream_port_output_get_audio_map_response.h"
+#include <vector>
+#include "jdksavdecc_aem_command.h"
 
-#define AVDECC_CONTROLLER_LIB32_API
-#define STDCALL
-
-#elif defined _WIN32 || defined _WIN64
-
-#ifdef AVDECC_CONTROLLER_LIB32_EXPORTS
-#define AVDECC_CONTROLLER_LIB32_API __declspec(dllexport)
-#else
-#define AVDECC_CONTROLLER_LIB32_API __declspec(dllimport)
-#endif
-
-#define STDCALL __stdcall
-
-#endif
-
+namespace avdecc_lib
+{
+    class stream_port_output_get_audio_map_response_imp : public stream_port_output_get_audio_map_response
+    {
+    private:
+        std::vector<struct stream_port_output_audio_mapping> maps; // Store maps in a vector
+        
+        uint8_t * m_frame;
+        size_t m_size;
+        ssize_t m_position;
+        
+        size_t offset;
+    public:
+        stream_port_output_get_audio_map_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
+        virtual ~stream_port_output_get_audio_map_response_imp();
+        
+        uint16_t map_index();
+        uint16_t number_of_mappings();
+        int STDCALL mapping(size_t index, struct stream_port_output_audio_mapping &map);
+    };
+}

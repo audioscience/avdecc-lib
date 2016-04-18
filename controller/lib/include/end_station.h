@@ -30,7 +30,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 
 namespace avdecc_lib
 {
@@ -119,6 +119,22 @@ namespace avdecc_lib
          * \return The index of the currently selected config.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_current_config_index() const = 0;
+        
+        /**
+         * Send a REGISTER_UNSOLICITED_NOTIFICATION command to add the controller as being interested
+         * in receiving unsolicited response notifications
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_register_unsolicited_cmd(void *notification_id) = 0;
+        
+        /**
+         * Send a DEREGISTER_UNSOLICITED_NOTIFICATION command to remove the controller as being interested
+         * in receiving unsolicited response notifications
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_deregister_unsolicited_cmd(void *notification_id) = 0;
     };
 }
 

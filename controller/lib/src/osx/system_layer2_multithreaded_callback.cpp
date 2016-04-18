@@ -86,6 +86,7 @@ namespace avdecc_lib
 
     system * STDCALL create_system(system::system_type type, net_interface *netif, controller *controller_obj)
     {
+        (void)type;
         local_system = new system_layer2_multithreaded_callback(netif, controller_obj);
 
         return local_system;
@@ -357,6 +358,10 @@ namespace avdecc_lib
         int rc;
 
         rc = ((system_layer2_multithreaded_callback *)param)->proc_poll_loop();
+        if(rc == -1)
+        {
+            perror("Process Poll Loop error");
+        }
 
         return 0;
     }

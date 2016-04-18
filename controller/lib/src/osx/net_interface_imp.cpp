@@ -95,7 +95,7 @@ namespace avdecc_lib
         return mac;
     }
 
-    AVDECC_CONTROLLER_LIB32_API char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
+    char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
     {
         uint32_t index_i;
 
@@ -108,6 +108,11 @@ namespace avdecc_lib
         }
 
         return dev->name;
+    }
+
+    char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
+    {
+        return get_dev_desc_by_index(dev_index);
     }
 
     int net_interface_imp::get_fd()
@@ -259,6 +264,10 @@ namespace avdecc_lib
         for(uint32_t index_j = 0; index_j < 1; index_j++)
         {
             ether_packet = pcap_next(pcap_interface, &pcap_header);
+            if(!ether_packet)
+            {
+                break;
+            }
         }
 
         return 0;

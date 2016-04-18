@@ -30,48 +30,29 @@
 #pragma once
 
 #include "descriptor_base_imp.h"
+#include "avb_interface_descriptor_response_imp.h"
 #include "avb_interface_descriptor.h"
+#include "avb_counters_response_imp.h"
+#include "avb_interface_get_avb_info_response_imp.h"
 
 namespace avdecc_lib
 {
     class avb_interface_descriptor_imp : public avb_interface_descriptor, public virtual descriptor_base_imp
     {
-    private:
-        struct jdksavdecc_descriptor_avb_interface avb_interface_desc; // Structure containing the avb_interface_desc fields
-        struct jdksavdecc_aem_command_get_counters_response aem_cmd_get_counters_resp; // Store the response received after sending a GET_COUNTERS command.
-        struct get_counters_response_with_block
-        {
-            jdksavdecc_aem_command_get_counters_response aem_cmd_get_counters_response;
-            uint32_t counters_block [31];
-        };
-        
-        struct get_counters_response_with_block counters_response;
-
     public:
         avb_interface_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
         virtual ~avb_interface_descriptor_imp();
+        
+        avb_interface_descriptor_response_imp *resp;
+        avb_counters_response_imp *counters_resp;
+        avb_interface_get_avb_info_response_imp *get_avb_info_resp;
 
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL localized_description();
-        uint64_t STDCALL mac_addr();
-        uint16_t STDCALL interface_flags();
-        uint64_t STDCALL clock_identity();
-        uint8_t STDCALL priority1();
-        uint8_t STDCALL clock_class();
-        uint16_t STDCALL offset_scaled_log_variance();
-        uint8_t STDCALL clock_accuracy();
-        uint8_t STDCALL priority2();
-        uint8_t STDCALL domain_number();
-        uint8_t STDCALL log_sync_interval();
-        uint8_t STDCALL log_announce_interval();
-        uint8_t STDCALL log_pdelay_interval();
-        uint16_t STDCALL port_number();
-        uint32_t STDCALL get_counter_valid(int name);
-        uint32_t STDCALL get_counter_by_name(int name);
+        avb_interface_descriptor_response * STDCALL get_avb_interface_response();
+        avb_counters_response * STDCALL get_avb_interface_counters_response();
+        avb_interface_get_avb_info_response * STDCALL get_avb_interface_get_avb_info_response();
         int STDCALL send_get_counters_cmd(void *notification_id);
-        int proc_get_counters_resp(void *&notification_id, const uint8_t *fram, size_t frame_len, int &status);
+        int proc_get_counters_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+        int STDCALL send_get_avb_info_cmd(void *notification_id);
+        int proc_get_avb_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
     };
 }
-

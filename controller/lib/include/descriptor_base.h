@@ -30,7 +30,10 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
+#include "response_frame.h"
+#include "descriptor_response_base.h"
+#include "descriptor_base_get_name_response.h"
 
 namespace avdecc_lib
 {
@@ -39,6 +42,7 @@ namespace avdecc_lib
     class descriptor_base
     {
     public:
+        virtual ~descriptor_base(){}
         /**
          * \return The type of the descriptor.
          */
@@ -58,15 +62,6 @@ namespace avdecc_lib
         * \return The indicated field in the descriptor.
         */
         AVDECC_CONTROLLER_LIB32_API virtual descriptor_field * STDCALL field(size_t index) const = 0;
-
-        /**
-         * \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
-         *	   The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
-         *	   defined value being provided in a localized form via the localized descripton field. By leaving
-         *	   this field blank an AVDECC Controller can determine if the user has overridden the name and can
-         *	   use this name rather than the localized name.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL object_name() = 0;
 
         /**
          * \return The localized string reference pointing to the localized descriptor name.
@@ -140,7 +135,7 @@ namespace avdecc_lib
          * \param new_name The new name to be set. The name does not contain a trailing NULL, but if the name is less than 64 bytes
          *		   in length, then it is zero padded.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index, char * new_name) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index, const struct avdecc_lib_name_string64 * new_name) = 0;
 
         /**
          * Send a GET_NAME command to get the value of a name field within a descriptor. For descriptors with multiple names, this
@@ -152,6 +147,15 @@ namespace avdecc_lib
          *		       If the descriptor type field is either ENTITY or CONFIGURATION, then this field is set to 0.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_name_cmd(void *notification_id, uint16_t name_index, uint16_t config_index) = 0;
+
+        /**
+         * \return the descriptor base response class.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual descriptor_response_base * STDCALL get_descriptor_response() = 0;
+        
+        /**
+         * \return the GET_NAME response class.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual descriptor_base_get_name_response * STDCALL get_name_response() = 0;
     };
 }
-

@@ -110,7 +110,9 @@ private:
     void cmd_line_commands_init();
 
     void print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
-                                        const uint8_t *localized_desc_string,
+                                        avdecc_lib::configuration_descriptor &configuration,
+                                        size_t localized_description,
+                                        const uint8_t *object_name,
                                         avdecc_lib::locale_descriptor &locale);
 
 public:
@@ -149,6 +151,11 @@ private:
      * Display a detailed description of a command.
      */
     int cmd_quit(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Display the name at index name_index for a given descriptor.
+     */
+    int cmd_display_desc_name(avdecc_lib::descriptor_base *desc, uint16_t name_index, bool is_entity);
 
     /**
      * Display the current build release version.
@@ -201,6 +208,11 @@ private:
      * Display all the descriptors with details in the end station.
      */
     int cmd_view_details(int total_matched, std::vector<cli_argument*> args);
+
+    /**
+     * Display all stream formats.
+     */
+    int cmd_view_stream_formats(int total_matched, std::vector<cli_argument*> args);
 
     /**
      * Display information for the specified descriptor using the current end station, entity, and configuration setting.
@@ -263,6 +275,18 @@ private:
      * Send a ENTITY_AVAILABLE command to determine if another AVDECC Entity is still alive.
      */
     int cmd_entity_avail(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a REGISTER_UNSOLICITED_NOTIFICATION command to add the controller as being interested
+     * in receiving unsolicited response notifications.
+     */
+    int cmd_register_unsolicited_notif(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a DEREGISTER_UNSOLICITED_NOTIFICATION command to remove the controller as being interested
+     * in receiving unsolicited response notifications.
+     */
+    int cmd_deregister_unsolicited_notif(int total_matched, std::vector<cli_argument*> args);
 
     /**
      * Send a REBOOT command to reboot the entity
@@ -278,6 +302,38 @@ private:
      * Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity.
      */
     int cmd_read_descriptor(int total_matched, std::vector<cli_argument*> args);
+
+    /**
+     * Send a GET_AUDIO_MAP command to fetch the dynamic mapping between the Audio Clusters and
+     * the input or output Streams.
+     */
+    int cmd_get_audio_map(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a ADD_PENDING_AUDIO_MAPPING command to add a mapping entry to a library queue.
+     */
+    int cmd_store_pending_audio_mapping(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a GET_PENDING_AUDIO_MAPPINGS command to view queued mappings.
+     */
+    int cmd_get_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a CLEAR_PENDING_AUDIO_MAPPINGS command to clear queued mappings.
+     */
+    int cmd_clear_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a ADD_AUDIO_MAPPINGS command to send queued mapping entries indicating dynamic mappings
+     * between the Audio Clusters and the input or output Streams
+     */
+    int cmd_add_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a REMOVE_AUDIO_MAPPINGS command to remove the queued selected dynamic mappings.
+     */
+    int cmd_remove_audio_mappings(int total_matched, std::vector<cli_argument*> args);
 
     /**
      * Send a SET_STREAM_FORMAT command to change the format of a stream.
@@ -302,12 +358,22 @@ private:
     /**
      * Send a SET_NAME command to change the value of a name field within a descriptor.
      */
-    int cmd_set_name(std::string desc_name, uint16_t desc_index, uint16_t name_index, std::string new_name);
+    int cmd_set_name(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a SET_GROUP_NAME command to change the value of the Entity descriptor group name.
+     */
+    int cmd_set_group_name(int total_matched, std::vector<cli_argument*> args);
 
     /**
      * Send a GET_NAME command to fetch the value of a name field within a descriptor.
      */
-    int cmd_get_name(std::string desc_name, uint16_t desc_index, uint16_t name_index);
+    int cmd_get_name(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a GET_GROUP_NAME command to fetch the group name of the ENTITY descriptor.
+     */
+    int cmd_get_group_name(int total_matched, std::vector<cli_argument*> args);
 
     /**
      * Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.
@@ -333,6 +399,11 @@ private:
      * Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
      */
     int cmd_get_clock_source(int total_matched, std::vector<cli_argument*> args);
+    
+    /**
+     * Send a GET_AVB_INFO command to get the dynamic AVB information for an AVB_INTERFACE.
+     */
+    int cmd_get_avb_info(int total_matched, std::vector<cli_argument*> args);
 
     /**
      * Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected

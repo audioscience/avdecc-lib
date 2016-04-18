@@ -27,7 +27,9 @@
  * AUDIO UNIT descriptor implementation
  */
 
+#include <mutex>
 #include <vector>
+
 #include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -39,264 +41,29 @@
 
 namespace avdecc_lib
 {
-    audio_unit_descriptor_imp::audio_unit_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
-    {
-        ssize_t ret = jdksavdecc_descriptor_audio_read(&audio_unit_desc, frame, pos, frame_len);
-
-        if(ret < 0)
-        {
-            throw avdecc_read_descriptor_error("audio_unit_desc_read error");
-        }
-
-        sampling_rates_init(frame);
-
-        memset(&aem_cmd_set_sampling_rate_resp, 0, sizeof(struct jdksavdecc_aem_command_set_sampling_rate_response));
-        memset(&aem_cmd_get_sampling_rate_resp, 0, sizeof(struct jdksavdecc_aem_command_get_sampling_rate_response));
-    }
+    audio_unit_descriptor_imp::audio_unit_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
     audio_unit_descriptor_imp::~audio_unit_descriptor_imp() {}
 
-    uint16_t STDCALL audio_unit_descriptor_imp::descriptor_type() const
+    audio_unit_descriptor_response * STDCALL audio_unit_descriptor_imp::get_audio_unit_response()
     {
-        assert(audio_unit_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AUDIO_UNIT);
-        return audio_unit_desc.descriptor_type;
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new audio_unit_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                             resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 
-    void audio_unit_descriptor_imp::sampling_rates_init(const uint8_t *frame)
+    audio_unit_get_sampling_rate_response * STDCALL audio_unit_descriptor_imp::get_audio_unit_get_sampling_rate_response()
     {
-        uint16_t offset = 0;
-        uint32_t sampling_rate = 0;
-
-        for(uint32_t i = 0; i < sampling_rates_count(); i++)
-        {
-            sampling_rate = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN + sampling_rates_offset() + offset);
-            sample_rates_vec.push_back(sampling_rate);
-            offset += 0x4;
-        }
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return sampling_rate_resp = new audio_unit_get_sampling_rate_response_imp(resp_ref->get_buffer(),
+                                                             resp_ref->get_size(), resp_ref->get_pos());
     }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::descriptor_index() const
-    {
-        return audio_unit_desc.descriptor_index;
-    }
-
-    uint8_t * STDCALL audio_unit_descriptor_imp::object_name()
-    {
-        return audio_unit_desc.object_name.value;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::localized_description()
-    {
-        return audio_unit_desc.localized_description;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::clock_domain_index()
-    {
-        return audio_unit_desc.clock_domain_index;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_stream_input_ports()
-    {
-        return audio_unit_desc.number_of_stream_input_ports;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_stream_input_port()
-    {
-        return audio_unit_desc.base_stream_input_port;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_stream_output_ports()
-    {
-        return audio_unit_desc.number_of_stream_output_ports;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_stream_output_port()
-    {
-        return audio_unit_desc.base_stream_output_port;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_external_input_ports()
-    {
-        return audio_unit_desc.number_of_external_input_ports;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_external_input_port()
-    {
-        return audio_unit_desc.base_external_input_port;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_external_output_ports()
-    {
-        return audio_unit_desc.number_of_external_output_ports;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_external_output_port()
-    {
-        return audio_unit_desc.base_external_output_port;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_internal_input_ports()
-    {
-        return audio_unit_desc.number_of_internal_input_ports;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_internal_input_port()
-    {
-        return audio_unit_desc.base_internal_input_port;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_internal_output_ports()
-    {
-        return audio_unit_desc.number_of_internal_output_ports;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_internal_output_port()
-    {
-        return audio_unit_desc.base_internal_output_port;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_controls()
-    {
-        return audio_unit_desc.number_of_controls;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_control()
-    {
-        return audio_unit_desc.base_control;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_signal_selectors()
-    {
-        return audio_unit_desc.number_of_signal_selectors;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_signal_selector()
-    {
-        return audio_unit_desc.base_signal_selector;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_mixers()
-    {
-        return audio_unit_desc.number_of_mixers;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_mixer()
-    {
-        return audio_unit_desc.base_mixer;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_matrices()
-    {
-        return audio_unit_desc.number_of_matrices;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_matrix()
-    {
-        return audio_unit_desc.base_matrix;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_splitters()
-    {
-        return audio_unit_desc.number_of_splitters;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_splitter()
-    {
-        return audio_unit_desc.base_splitter;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_combiners()
-    {
-        return audio_unit_desc.number_of_combiners;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_combiner()
-    {
-        return audio_unit_desc.base_combiner;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_demultiplexers()
-    {
-        return audio_unit_desc.number_of_demultiplexers;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_demultiplexer()
-    {
-        return audio_unit_desc.base_demultiplexer;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_multiplexers()
-    {
-        return audio_unit_desc.number_of_multiplexers;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_multiplexer()
-    {
-        return audio_unit_desc.base_multiplexer;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_transcoders()
-    {
-        return audio_unit_desc.number_of_transcoders;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_transcoder()
-    {
-        return audio_unit_desc.base_transcoder;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::number_of_control_blocks()
-    {
-        return audio_unit_desc.number_of_control_blocks;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::base_control_block()
-    {
-        return audio_unit_desc.base_control_block;
-    }
-
-    uint32_t STDCALL audio_unit_descriptor_imp::current_sampling_rate()
-    {
-        return audio_unit_desc.current_sampling_rate;
-    }
-
-    uint32_t STDCALL audio_unit_descriptor_imp::get_sampling_rate_by_index(size_t sampling_rate_index)
-    {
-        return sample_rates_vec.at(sampling_rate_index);
-    }
-
-    uint16_t audio_unit_descriptor_imp::sampling_rates_offset()
-    {
-        return audio_unit_desc.sampling_rates_offset;
-    }
-
-    uint16_t STDCALL audio_unit_descriptor_imp::sampling_rates_count()
-    {
-        return audio_unit_desc.sampling_rates_count;
-    }
-
-    uint32_t STDCALL audio_unit_descriptor_imp::set_sampling_rate_sampling_rate()
-    {
-        return aem_cmd_set_sampling_rate_resp.sampling_rate;
-    }
-
-    void audio_unit_descriptor_imp::update_sampling_rate(uint32_t sampling_rate)
-    {
-        audio_unit_desc.current_sampling_rate = sampling_rate;
-    }
-
-    uint32_t STDCALL audio_unit_descriptor_imp::get_sampling_rate_sampling_rate()
-    {
-        return aem_cmd_get_sampling_rate_resp.sampling_rate;
-    }
-
 
     int STDCALL audio_unit_descriptor_imp::send_set_sampling_rate_cmd(void *notification_id, uint32_t new_sampling_rate)
     {
         struct jdksavdecc_frame cmd_frame;
         struct jdksavdecc_aem_command_set_sampling_rate aem_cmd_set_sampling_rate;
         ssize_t aem_cmd_set_sampling_rate_returned;
-
         memset(&aem_cmd_set_sampling_rate, 0, sizeof(aem_cmd_set_sampling_rate));
 
         /******************************************* AECP Common Data **********************************************/
@@ -338,11 +105,14 @@ namespace avdecc_lib
     int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_set_sampling_rate_response aem_cmd_set_sampling_rate_resp;
         ssize_t aem_cmd_set_sampling_rate_resp_returned;
         uint32_t msg_type;
         bool u_field;
+        uint8_t * buffer;
 
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_set_sampling_rate_resp, 0, sizeof(struct jdksavdecc_aem_command_set_sampling_rate_response));
 
         aem_cmd_set_sampling_rate_resp_returned = jdksavdecc_aem_command_set_sampling_rate_response_read(&aem_cmd_set_sampling_rate_resp,
                                                                                                          frame,
@@ -355,18 +125,20 @@ namespace avdecc_lib
             assert(aem_cmd_set_sampling_rate_resp_returned >= 0);
             return -1;
         }
+        
+        buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
+        memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
+        jdksavdecc_descriptor_audio_unit_set_current_sampling_rate(aem_cmd_set_sampling_rate_resp.sampling_rate, buffer, resp_ref->get_desc_pos()); //set clk source
+
+        replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size()); //replace frame
 
         msg_type = aem_cmd_set_sampling_rate_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_set_sampling_rate_resp.aem_header.aecpdu_header.header.status;
         u_field = aem_cmd_set_sampling_rate_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
         aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
-
-        if(status == AEM_STATUS_SUCCESS)
-        {
-            update_sampling_rate(aem_cmd_set_sampling_rate_resp.sampling_rate);
-        }
-
+        
+        free(buffer);
         return 0;
     }
 
@@ -411,15 +183,16 @@ namespace avdecc_lib
         return 0;
     }
 
-
     int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
     {
         struct jdksavdecc_frame cmd_frame;
+        struct jdksavdecc_aem_command_get_sampling_rate_response aem_cmd_get_sampling_rate_resp;
         ssize_t aem_cmd_get_sampling_rate_resp_returned;
         uint32_t msg_type;
         bool u_field;
 
         memcpy(cmd_frame.payload, frame, frame_len);
+        memset(&aem_cmd_get_sampling_rate_resp, 0, sizeof(jdksavdecc_aem_command_get_sampling_rate_response));
 
         aem_cmd_get_sampling_rate_resp_returned = jdksavdecc_aem_command_get_sampling_rate_response_read(&aem_cmd_get_sampling_rate_resp,
                                                                                                          frame,
@@ -432,6 +205,7 @@ namespace avdecc_lib
             assert(aem_cmd_get_sampling_rate_resp_returned >= 0);
             return -1;
         }
+        replace_frame(frame, ETHER_HDR_SIZE, frame_len);
 
         msg_type = aem_cmd_get_sampling_rate_resp.aem_header.aecpdu_header.header.message_type;
         status = aem_cmd_get_sampling_rate_resp.aem_header.aecpdu_header.header.status;

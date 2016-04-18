@@ -58,6 +58,7 @@ namespace avdecc_lib
 
     system * STDCALL create_system(system::system_type type, net_interface *netif, controller *controller_obj)
     {
+        (void)type; //unused
         local_system = new system_layer2_multithreaded_callback(netif, controller_obj);
 
         return local_system;
@@ -217,7 +218,7 @@ namespace avdecc_lib
 
     int system_layer2_multithreaded_callback::init_wpcap_thread()
     {
-        poll_rx.rx_queue = new system_message_queue(256, sizeof(struct poll_thread_data));
+        poll_rx.rx_queue = new system_message_queue(sizeof(struct poll_thread_data));
         poll_rx.queue_thread.kill_sem = CreateSemaphore(NULL, 0, 32767, NULL);
         poll_rx.timeout_event = CreateEvent(NULL, FALSE, FALSE, NULL);
         poll_events_array[WPCAP_TIMEOUT] = poll_rx.timeout_event;
@@ -236,7 +237,7 @@ namespace avdecc_lib
             exit(EXIT_FAILURE);
         }
 
-        poll_tx.tx_queue = new system_message_queue(256, sizeof(struct poll_thread_data));
+        poll_tx.tx_queue = new system_message_queue(sizeof(struct poll_thread_data));
         poll_tx.queue_thread.kill_sem = CreateSemaphore(NULL, 0, 32767, NULL);
         poll_tx.timeout_event = CreateEvent(NULL, FALSE, FALSE, NULL);
         poll_events_array[WPCAP_TX_PACKET] = poll_tx.tx_queue->queue_data_available_object();

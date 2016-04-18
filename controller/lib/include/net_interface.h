@@ -30,7 +30,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 
 namespace avdecc_lib
 {
@@ -51,6 +51,12 @@ namespace avdecc_lib
          * \return The corresponding network interface description by index.
          */
         AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_desc_by_index(size_t dev_index) = 0;
+
+        /** This function is OS dependant. In linux and OSX the return is the same as for a call to
+		 * get_dev_desc_by_index(). In Windows this function returns a GUID as a string.
+         * \return The corresponding network interface name by index.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_name_by_index(size_t dev_index) = 0;
 
         /**
          * Select the corresponding interface by number.

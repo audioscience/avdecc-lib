@@ -45,7 +45,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 
 namespace avdecc_lib
 {

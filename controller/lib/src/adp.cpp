@@ -43,7 +43,13 @@ namespace avdecc_lib
         adp_frame = (uint8_t *)malloc(frame_len * sizeof(uint8_t));
         memcpy(adp_frame, frame, frame_len);
 
-        assert(proc_adpdu(frame, frame_len) == 0);
+        proc_adpdu_returned = proc_adpdu(frame, frame_len);
+        
+        if(proc_adpdu_returned < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "ADP update error");
+            exit(EXIT_FAILURE);
+        }
     }
 
     adp::~adp()

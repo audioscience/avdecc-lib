@@ -33,6 +33,7 @@
 #include <string.h>
 #include "enumeration.h"
 #include "util.h"
+#include "cassert.h"
 
 namespace avdecc_lib
 {
@@ -224,7 +225,8 @@ namespace avdecc_lib
             "END_STATION_DISCONNECTED",
             "COMMAND_TIMEOUT",
             "RESPONSE_RECEIVED",
-            "END_STATION_READ_COMPLETED"
+            "END_STATION_READ_COMPLETED",
+            "UNSOLICITED_RESPONSE_RECEIVED"
         };
 
         const char *logging_level_names[] =
@@ -259,19 +261,26 @@ namespace avdecc_lib
         {
             uint64_t fmt;
             const char *str;
+            const char * description;
         };
 
         struct ieee1722_format ieee1722_format_table[] =
         {
-            {UINT64_C(0x00a0020140000100), "IEC...48KHZ_1CH"}, // IEC61883_AM824_MBLA_48KHZ_1CH
-            {UINT64_C(0x00a0020240000200), "IEC...48KHZ_2CH"}, // IEC61883_AM824_MBLA_48KHZ_2CH
-            {UINT64_C(0x00a0020440000400), "IEC...48KHZ_4CH"}, // IEC61883_AM824_MBLA_48KHZ_4CH
-            {UINT64_C(0x00a0020840000800), "IEC...48KHZ_8CH"}, // IEC61883_AM824_MBLA_48KHZ_8CH
-            {UINT64_C(0x00a0040140000100), "IEC...96KHZ_1CH"}, // IEC61883_AM824_MBLA_96KHZ_1CH
-            {UINT64_C(0x00a0040240000200), "IEC...96KHZ_2CH"}, // IEC61883_AM824_MBLA_96KHZ_2CH
-            {UINT64_C(0x00a0040440000400), "IEC...96KHZ_4CH"}, // IEC61883_AM824_MBLA_96KHZ_4CH
-            {UINT64_C(0x00a0040840000800), "IEC...96KHZ_8CH"}, // IEC61883_AM824_MBLA_96KHZ_8CH
-            {UINT64_C(0x0000000000000000), "UNKNOWN"}
+            {UINT64_C(0x00a0020140000100), "IEC...48KHZ_1CH", "IEC61883_AM824_MBLA_48KHZ_1CH"},
+            {UINT64_C(0x00a0020240000200), "IEC...48KHZ_2CH", "IEC61883_AM824_MBLA_48KHZ_2CH"},
+            {UINT64_C(0x00a0020440000400), "IEC...48KHZ_4CH", "IEC61883_AM824_MBLA_48KHZ_4CH"},
+            {UINT64_C(0x00a0020840000800), "IEC...48KHZ_8CH", "IEC61883_AM824_MBLA_48KHZ_8CH"},
+            {UINT64_C(0x00a0021040001000), "IEC...48KHZ_16CH", "IEC61883_AM824_MBLA_48KHZ_16CH"},
+            {UINT64_C(0x00a0021840001800), "IEC...48KHZ_24CH", "IEC61883_AM824_MBLA_48KHZ_24CH"},
+            {UINT64_C(0x00a0022040002000), "IEC...48KHZ_32CH", "IEC61883_AM824_MBLA_48KHZ_32CH"},
+            {UINT64_C(0x00a0040140000100), "IEC...96KHZ_1CH", "IEC61883_AM824_MBLA_96KHZ_1CH"},
+            {UINT64_C(0x00a0040240000200), "IEC...96KHZ_2CH", "IEC61883_AM824_MBLA_96KHZ_2CH"},
+            {UINT64_C(0x00a0040440000400), "IEC...96KHZ_4CH", "IEC61883_AM824_MBLA_96KHZ_4CH"},
+            {UINT64_C(0x00a0040840000800), "IEC...96KHZ_8CH", "IEC61883_AM824_MBLA_96KHZ_8CH"},
+            {UINT64_C(0x00a0041040001000), "IEC...96KHZ_16CH", "IEC61883_AM824_MBLA_96KHZ_16CH"},
+            {UINT64_C(0x00a0041840001800), "IEC...96KHZ_24CH", "IEC61883_AM824_MBLA_96KHZ_24CH"},
+            {UINT64_C(0x00a0042040002000), "IEC...96KHZ_32CH", "IEC61883_AM824_MBLA_96KHZ_32CH"},
+            {UINT64_C(0x0000000000000000), "UNKNOWN", "UNKNOWN"}
         };
 
         const char * STDCALL aem_cmd_value_to_name(uint16_t cmd_value)
@@ -388,6 +397,17 @@ namespace avdecc_lib
 
         const char * STDCALL notification_value_to_name(uint16_t notification_value)
         {
+
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#endif
+
+            compile_time_assert(ARRAY_SIZE(notification_names) == TOTAL_NUM_OF_NOTIFICATIONS, assert_notification_names_size);
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif           
             if(notification_value < avdecc_lib::TOTAL_NUM_OF_NOTIFICATIONS)
             {
                 return notification_names[notification_value];
@@ -439,6 +459,23 @@ namespace avdecc_lib
 
             return (uint64_t)0xffff;
         }
+        
+        const char * STDCALL ieee1722_format_name_to_description(const char *format_name)
+        {
+            struct ieee1722_format *p = &ieee1722_format_table[0];
+            
+            while(p->fmt != UINT64_C(0x0000000000000000))
+            {
+                if(strcmp(p->str, format_name) == 0)
+                {
+                    return p->description;
+                }
+                
+                p++;
+            }
+            
+            return "UNKNOWN";
+        }
 
         const char * STDCALL ieee1722_format_value_to_name(uint64_t format)
         {
@@ -455,6 +492,59 @@ namespace avdecc_lib
             }
 
             return "UNKNOWN";
+        }
+        
+        uint64_t STDCALL ieee1722_format_index_to_value(unsigned int index)
+        {
+            struct ieee1722_format *p;
+            unsigned int format_table_size = (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
+            
+            if(index < format_table_size)
+            {
+                p = &ieee1722_format_table[index];
+                return p->fmt;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        
+        const char * STDCALL ieee1722_format_index_to_description(unsigned int index)
+        {
+            struct ieee1722_format *p;
+            unsigned int format_table_size = (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
+            
+            if(index < format_table_size)
+            {
+                p = &ieee1722_format_table[index];
+                return p->description;
+            }
+            else
+            {
+                return "UNKNOWN";
+            }
+        }
+
+        const char * STDCALL ieee1722_format_index_to_name(unsigned int index)
+        {
+            struct ieee1722_format *p;
+            unsigned int format_table_size = (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
+            
+            if(index < format_table_size)
+            {
+                p = &ieee1722_format_table[index];
+                return p->str;
+            }
+            else
+            {
+                return "UNKNOWN";
+            }
+        }
+
+        unsigned int STDCALL get_ieee1722_format_table_size()
+        {
+            return (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
         }
 
         const char * STDCALL end_station_mac_to_string(uint64_t end_station_mac)

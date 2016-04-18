@@ -34,7 +34,17 @@
 namespace avdecc_lib
 {
     extern "C" void default_notification(void *notification_user_obj, int32_t notification_type, uint64_t entity_id, uint16_t cmd_type,
-                                         uint16_t desc_type, uint16_t desc_index, uint32_t status, void *notification_id) {}
+                                         uint16_t desc_type, uint16_t desc_index, uint32_t status, void *notification_id) 
+    {
+        (void)notification_user_obj; //unused
+        (void)notification_type;
+        (void)entity_id;
+        (void)cmd_type;
+        (void)desc_type;
+        (void)desc_index;
+        (void)status;
+        (void)notification_id;
+    }
 
     notification::notification()
     {
@@ -60,7 +70,8 @@ namespace avdecc_lib
 
         if(notification_type == NO_MATCH_FOUND || notification_type == END_STATION_CONNECTED ||
            notification_type == END_STATION_DISCONNECTED || notification_type == COMMAND_TIMEOUT ||
-           notification_type == RESPONSE_RECEIVED || notification_type == END_STATION_READ_COMPLETED)
+           notification_type == RESPONSE_RECEIVED || notification_type == END_STATION_READ_COMPLETED ||
+           notification_type == UNSOLICITED_RESPONSE_RECEIVED)
         {
             index = InterlockedExchangeAdd(&write_index, 1);
             notification_buf[index % NOTIFICATION_BUF_COUNT].notification_type = notification_type;

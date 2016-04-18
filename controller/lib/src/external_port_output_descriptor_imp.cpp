@@ -27,6 +27,8 @@
  * EXTERNAL_PORT_OUTPUT descriptor implementation
  */
 
+#include <mutex>
+
 #include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -35,65 +37,14 @@
 
 namespace avdecc_lib
 {
-    external_port_output_descriptor_imp::external_port_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
-    {
-        ssize_t ret = jdksavdecc_descriptor_external_port_read(&desc, frame, pos, frame_len);
-
-        if (ret < 0)
-        {
-            throw avdecc_read_descriptor_error("jdksavdecc_descriptor_external_port_read error");
-        }
-    }
+    external_port_output_descriptor_imp::external_port_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
     external_port_output_descriptor_imp::~external_port_output_descriptor_imp() {}
 
-    uint16_t STDCALL external_port_output_descriptor_imp::descriptor_type() const
+    external_port_output_descriptor_response * STDCALL external_port_output_descriptor_imp::get_external_port_output_response()
     {
-        assert(desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_OUTPUT);
-        return desc.descriptor_type;
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new external_port_output_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                                       resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
-
-    uint16_t STDCALL external_port_output_descriptor_imp::descriptor_index() const
-    {
-        return desc.descriptor_index;
-    }
-
-    uint16_t STDCALL external_port_output_descriptor_imp::port_flags()
-    {
-        return desc.port_flags;
-    }
-    uint16_t STDCALL external_port_output_descriptor_imp::clock_domain_index()
-    {
-        return desc.clock_domain_index;
-    }
-    uint16_t STDCALL external_port_output_descriptor_imp::number_of_controls()
-    {
-        return desc.number_of_controls;
-    }
-    uint16_t STDCALL external_port_output_descriptor_imp::base_control()
-    {
-        return desc.base_control;
-    }
-    uint16_t STDCALL external_port_output_descriptor_imp::signal_type()
-    {
-        return desc.signal_type;
-    }
-    uint16_t STDCALL external_port_output_descriptor_imp::signal_index()
-    {
-        return desc.signal_index;
-    }
-    uint16_t STDCALL external_port_output_descriptor_imp::signal_output()
-    {
-        return desc.signal_output;
-    }
-    uint32_t STDCALL external_port_output_descriptor_imp::block_latency()
-    {
-        return desc.block_latency;
-    }
-    uint16_t STDCALL external_port_output_descriptor_imp::jack_index()
-    {
-        return desc.jack_index;
-    }
-
-
 }

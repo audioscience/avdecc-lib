@@ -31,8 +31,9 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "descriptor_base.h"
+#include "strings_descriptor_response.h"
 
 namespace avdecc_lib
 {
@@ -40,9 +41,8 @@ namespace avdecc_lib
     {
     public:
         /**
-         * \return The corresponding localized string of the Strings descriptor.
+         * \return the strings descriptor response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_string_by_index(size_t string_index) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual strings_descriptor_response * STDCALL get_strings_response() = 0;
     };
 }
-

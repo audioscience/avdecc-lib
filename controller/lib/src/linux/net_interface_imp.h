@@ -35,7 +35,7 @@
 #include <vector>
 #include <string>
 
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "net_interface.h"
 
 
@@ -95,6 +95,11 @@ namespace avdecc_lib
          * Get network interface description by index.
          */
         char * STDCALL get_dev_desc_by_index(size_t dev_index);
+
+        /**
+         * Get the corresponding network interface name by index.
+         */
+        char * STDCALL get_dev_name_by_index(size_t dev_index);
 
         /**
          * Select network interface by number.

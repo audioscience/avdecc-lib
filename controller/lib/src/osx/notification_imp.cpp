@@ -89,6 +89,11 @@ namespace avdecc_lib
         while (true)
         {
             status = sem_wait(notify_waiting);
+            
+            if(status == -1)
+            {
+                perror("sem error");
+            }
 
             if((write_index - read_index) > 0)
             {

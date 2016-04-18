@@ -33,7 +33,7 @@
 
 #include <stdint.h>
 #include <pcap.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "net_interface.h"
 
 namespace avdecc_lib
@@ -75,7 +75,12 @@ namespace avdecc_lib
         /**
          * Get the corresponding network interface description by index.
          */
-        AVDECC_CONTROLLER_LIB32_API char * STDCALL get_dev_desc_by_index(size_t dev_index);
+        char * STDCALL get_dev_desc_by_index(size_t dev_index);
+
+        /**
+         * Get the corresponding network interface name by index.
+         */
+        char * STDCALL get_dev_name_by_index(size_t dev_index);
 
         /**
          * Select the corresponding interface by number.

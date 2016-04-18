@@ -27,6 +27,9 @@
  * Audio Cluster descriptor implementation
  */
 
+#include <thread>
+#include <mutex>
+
 #include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -35,71 +38,14 @@
 
 namespace avdecc_lib
 {
-    audio_cluster_descriptor_imp::audio_cluster_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
-    {
-        ssize_t ret = jdksavdecc_descriptor_audio_cluster_read(&audio_cluster_desc, frame, pos, frame_len);
-
-        if (ret < 0)
-        {
-            throw avdecc_read_descriptor_error("audio_cluster_desc_read error");
-        }
-    }
+    audio_cluster_descriptor_imp::audio_cluster_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
     audio_cluster_descriptor_imp::~audio_cluster_descriptor_imp() {}
 
-    uint16_t STDCALL audio_cluster_descriptor_imp::descriptor_type() const
+    audio_cluster_descriptor_response * STDCALL audio_cluster_descriptor_imp::get_audio_cluster_response()
     {
-        assert(audio_cluster_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER);
-        return audio_cluster_desc.descriptor_type;
-    }
-
-    uint16_t STDCALL audio_cluster_descriptor_imp::descriptor_index() const
-    {
-        return audio_cluster_desc.descriptor_index;
-    }
-
-    uint8_t * STDCALL audio_cluster_descriptor_imp::object_name()
-    {
-        return audio_cluster_desc.object_name.value;
-    }
-
-    uint16_t STDCALL audio_cluster_descriptor_imp::localized_description()
-    {
-        return audio_cluster_desc.localized_description;
-    }
-
-    uint16_t STDCALL audio_cluster_descriptor_imp::signal_type()
-    {
-        return audio_cluster_desc.signal_type;
-    }
-
-    uint16_t STDCALL audio_cluster_descriptor_imp::signal_index()
-    {
-        return audio_cluster_desc.signal_index;
-    }
-
-    uint16_t STDCALL audio_cluster_descriptor_imp::signal_output()
-    {
-        return audio_cluster_desc.signal_output;
-    }
-
-    uint32_t STDCALL audio_cluster_descriptor_imp::path_latency()
-    {
-        return audio_cluster_desc.path_latency;
-    }
-
-    uint32_t STDCALL audio_cluster_descriptor_imp::block_latency()
-    {
-        return audio_cluster_desc.block_latency;
-    }
-
-    uint16_t STDCALL audio_cluster_descriptor_imp::channel_count()
-    {
-        return audio_cluster_desc.channel_count;
-    }
-
-    uint8_t STDCALL audio_cluster_descriptor_imp::format()
-    {
-        return audio_cluster_desc.format;
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new audio_cluster_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                                resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
 }

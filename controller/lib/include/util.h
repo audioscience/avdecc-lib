@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include <stdint.h>
 
 namespace avdecc_lib
@@ -95,11 +95,36 @@ namespace avdecc_lib
           * Convert IEEE1722 format name to value.
           */
         AVDECC_CONTROLLER_LIB32_API uint64_t STDCALL ieee1722_format_name_to_value(const char *format_name);
+        
+        /**
+         * Convert IEEE1722 format name to description.
+         */
+        AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_name_to_description(const char *format_name);
+
+        /**
+         *  Return IEEE1722 format value by index
+         */
+        AVDECC_CONTROLLER_LIB32_API uint64_t STDCALL ieee1722_format_index_to_value(unsigned int index);
+        
+        /**
+         *  Return IEEE1722 format name by index
+         */
+        AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_index_to_name(unsigned int index);
+        
+        /**
+         *  Return IEEE1722 format description by index
+         */
+        AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_index_to_description(unsigned int index);
 
         /**
          * Convert IEEE1722 format value to name.
          */
         AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_value_to_name(uint64_t format_value);
+        
+        /**
+         * Get IEEE1722 format table size
+         */
+        AVDECC_CONTROLLER_LIB32_API unsigned int STDCALL get_ieee1722_format_table_size();
 
         /**
          * Convert End Station MAC address to a short string.

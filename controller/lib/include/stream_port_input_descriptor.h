@@ -31,8 +31,10 @@
 #pragma once
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "descriptor_base.h"
+#include "stream_port_input_descriptor_response.h"
+#include "stream_port_input_get_audio_map_response.h"
 
 namespace avdecc_lib
 {
@@ -40,53 +42,74 @@ namespace avdecc_lib
     {
     public:
         /**
-         * \return The descriptor index of the CLOCK DOMAIN descriptor describing the CLOCK DOMAIN for the port.
+         * \return the stream port input descriptor response class.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_domain_index() = 0;
-
+        AVDECC_CONTROLLER_LIB32_API virtual stream_port_input_descriptor_response * STDCALL get_stream_port_input_response() = 0;
+        
         /**
-         * The flags describing the capabilities or features of the port.
+         * \return the audio_map get_audio_map response class.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual stream_port_input_get_audio_map_response * STDCALL get_stream_port_input_audio_map_response() = 0;
+        
+        /**
+         * \param map The audio_map pending for adding/removal.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual int store_pending_map(struct audio_map_mapping &map) = 0;
+        
+        /**
+         *  Get pending audio mappings.
          *
-         * \return 1 (Clock Sync Source) if the port can be used as a clock synchronization source. \n
-         *	       2 (Async Sample Rate Conv) if the port has an asynchronous sample rate converter
-         *	         to convert sample rates between another CLOCK DOMAIN and the Unit's. \n
-         *	       3 (Sync Sample Rate Conv) if the port has a synchronous sample rate converter
-         *	         to convert between sample rates in the same CLOCK DOMAIN.
+         * \param index The index of the queued audio mapping.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL port_flags() = 0;
-
+        AVDECC_CONTROLLER_LIB32_API virtual int get_pending_maps(size_t index, struct audio_map_mapping &map) = 0;
+        
         /**
-         * \return The number of controls within the port.
+         * \return the number of pending audio mappings.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_controls() = 0;
-
+        AVDECC_CONTROLLER_LIB32_API virtual size_t get_number_of_pending_maps() = 0;
+        
         /**
-         * \return The index of the first Control descriptor.
+         *  Clear pending audio mappings.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_control() = 0;
-
+        AVDECC_CONTROLLER_LIB32_API virtual int clear_pending_maps() = 0;
+        
         /**
-         * \return The number of clusters within the port. This corresponds to the number of Audio Cluster,
-         *	       Video Cluster, and Sensor Cluster descriptors which represent these clusters.
+         * Send a GET_AUDIO_MAP command to fetch the dynamic mapping between the Audio Clusters and
+         * the input or output streams.
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_clusters() = 0;
-
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_audio_map_cmd(void *notification_id, uint16_t mapping_index) = 0;
+        
         /**
-         * \return The index of the first Audio Cluster, Video Cluster, or Sensor Cluster descriptor
-         *	       describing the clusters within the port.
+         * Send an ADD_AUDIO_MAPPINGS command to add mapping entries to the dynamic mappings between the Audio
+         * Clusters and the input or output Streams.  This command sends up to the maximum number of mappings
+         * specified by 1722.1.  If more mappings are pending, this command should be called multiple times.
+         *
+         * The mappings to be added are stored in a local queue.
+         * \see store_pending_map().
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * \return 0 if there are no pending mappings after sending the command. \n
+         *	       1 if there are more pending mappings after sending the command.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_cluster() = 0;
-
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_add_audio_mappings_cmd(void *notification_id) = 0;
+        
         /**
-         * \return The number of map descriptors used to define the mapping between the stream and the port.
+         * Send a REMOVE_AUDIO_MAPPINGS command to remove mapping entries from the dynamic mappings
+         * between the Audio Clusters and the input or output Streams.  This command sends up to the maximum
+         * number of mappings specified by 1722.1.  If more mappings are pending, this command should be called
+         * multiple times.
+         *
+         * The mappings to be removed are stored in a local queue.
+         * \see store_pending_map().
+         *
+         * \param notification_id A void pointer to the unique identifier associated with the command.
+         *
+         * \return 0 if there are no pending mappings after sending the command. \n
+         *	       1 if there are more pending mappings after sending the command.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_maps() = 0;
-
-        /**
-         * \return The index of the first Audio Map, Video Map, or Sensor Map, descriptor which defines
-         *	       the mappling between the stream and the port.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_map() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_remove_audio_mappings_cmd(void *notification_id) = 0;
     };
 }
-

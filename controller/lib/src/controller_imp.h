@@ -39,11 +39,14 @@ namespace avdecc_lib
     {
     private:
         end_stations *end_station_array;
+        uint32_t m_entity_capabilities_flags;
+        uint32_t m_talker_capabilities_flags;
+        uint32_t m_listener_capabilities_flags;
 
         /**
          * Find an end station that matches the entity and controller IDs
          */
-        int find_in_end_station(struct jdksavdecc_eui64 &entity_entity_id, const uint8_t *frame);
+        int find_in_end_station(struct jdksavdecc_eui64 &entity_entity_id, bool isUnsolicited, const uint8_t *frame);
 
     public:
         /**
@@ -64,9 +67,14 @@ namespace avdecc_lib
         end_station * STDCALL get_end_station_by_index(size_t end_station_index);
 
         /**
-         * Check if the corresponding End Station with the Entity ID exist.
+         * Check if the corresponding End Station with the Entity ID exists.
          */
         bool STDCALL is_end_station_found_by_entity_id(uint64_t entity_entity_id, uint32_t &end_station_index);
+        
+        /**
+         * Check if the corresponding End Station with the Mac Address exists.
+         */
+        bool STDCALL is_end_station_found_by_mac_addr(uint64_t mac_addr, uint32_t &end_station_index);
 
         configuration_descriptor * STDCALL get_current_config_desc(size_t end_station_index, bool report_error=true);
 
@@ -80,6 +88,11 @@ namespace avdecc_lib
         bool is_active_operation_with_notification_id(void *notification_id);
 
         void STDCALL set_logging_level(int32_t new_log_level);
+        
+        void STDCALL apply_end_station_capabilities_filters(uint32_t entity_capabilities_flags,
+                                                            uint32_t talker_capabilities_flags,
+                                                            uint32_t listener_capabilities_flags);
+
         uint32_t STDCALL missed_notification_count();
         uint32_t STDCALL missed_log_count();
 

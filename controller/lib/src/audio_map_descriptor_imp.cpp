@@ -27,6 +27,8 @@
  * Audio Map descriptor implementation
  */
 
+#include <mutex>
+
 #include "avdecc_error.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -35,61 +37,14 @@
 
 namespace avdecc_lib
 {
-    audio_map_descriptor_imp::audio_map_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj)
-    {
-        ssize_t ret = jdksavdecc_descriptor_audio_map_read(&audio_map_desc, frame, pos, frame_len);
-
-        if (ret < 0)
-        {
-            throw avdecc_read_descriptor_error("audio_map_desc_read error");
-        }
-
-        ssize_t offset = pos + mappings_offset();
-        for (unsigned int i = 0; i < (unsigned int)number_of_mappings(); i++)
-        {
-            struct audio_map_mapping map;
-
-            map.stream_index = jdksavdecc_uint16_get(frame, offset);
-            map.stream_channel = jdksavdecc_uint16_get(frame, offset + 2);
-            map.cluster_offset = jdksavdecc_uint16_get(frame, offset + 4);
-            map.cluster_channel = jdksavdecc_uint16_get(frame, offset + 6);
-            maps.push_back(map);
-            offset += sizeof(struct audio_map_mapping);
-        }
-    }
+    audio_map_descriptor_imp::audio_map_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
     audio_map_descriptor_imp::~audio_map_descriptor_imp() {}
-
-    uint16_t STDCALL audio_map_descriptor_imp::descriptor_type() const
-    {
-        assert(audio_map_desc.descriptor_type == JDKSAVDECC_DESCRIPTOR_AUDIO_MAP);
-        return audio_map_desc.descriptor_type;
-    }
-
-    uint16_t STDCALL audio_map_descriptor_imp::descriptor_index() const
-    {
-        return audio_map_desc.descriptor_index;
-    }
-
-    uint16_t audio_map_descriptor_imp::mappings_offset()
-    {
-        assert(audio_map_desc.mappings_offset == 8);
-        return audio_map_desc.mappings_offset;
-    }
-
-    uint16_t STDCALL audio_map_descriptor_imp::number_of_mappings()
-    {
-        return audio_map_desc.number_of_mappings;
-    }
     
-    int STDCALL audio_map_descriptor_imp::mapping(size_t index, struct audio_map_mapping &map)
+    audio_map_descriptor_response * STDCALL audio_map_descriptor_imp::get_audio_map_response()
     {
-        if (index >= audio_map_desc.number_of_mappings)
-            return -1;
-
-        map = maps.at(index);
-        return 0;
+        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+        return resp = new audio_map_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
     }
-
-
 }

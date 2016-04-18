@@ -34,7 +34,7 @@
 
 
 #include <stdint.h>
-#include "build.h"
+#include "avdecc-lib_build.h"
 #include "descriptor_base.h"
 
 namespace avdecc_lib
@@ -62,6 +62,14 @@ namespace avdecc_lib
     class configuration_descriptor : public virtual descriptor_base
     {
     public:
+        /**
+         * \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
+         *	   The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+         *	   defined value being provided in a localized form via the localized descripton field. By leaving
+         *	   this field blank an AVDECC Controller can determine if the user has overridden the name and can
+         *	   use this name rather than the localized name.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL object_name() = 0;
         /**
          * \return The number of descriptor counts. The maximum value for this field is 108 for this version of AEM.
          */
@@ -133,9 +141,9 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL locale_desc_count() = 0;
 
         /**
-         * \return The a string from the list of Strings descriptors present in the current configuration.
+         * \return The strings descriptor index and the string index for the string corresponding to a particular localized description.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_strings_desc_string_by_reference(size_t reference) = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL get_strings_desc_string_by_reference(size_t reference, size_t &string_desc_index, size_t &string_index) = 0;
 
         /**
          * \return The number of Strings descriptors present in the current configuration.
@@ -182,6 +190,11 @@ namespace avdecc_lib
         */
         AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL external_port_output_desc_count() = 0;
 
+        /**
+         * \return A descriptor by type and index.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual descriptor_base * STDCALL lookup_desc(uint16_t desc_type, size_t index) = 0;
+        
         /**
          * \return The corresponding ENTITY descriptor by index.
          */
@@ -278,4 +291,3 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual external_port_output_descriptor * STDCALL get_external_port_output_desc_by_index(size_t index) = 0;
     };
 }
-
