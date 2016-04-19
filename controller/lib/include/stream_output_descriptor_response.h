@@ -107,9 +107,14 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL stream_flags_tertiary_backup_valid() = 0;
         
         /**
-         * \return The current format of the stream.
+         * \return The current format name of the stream.
          */
-        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL current_format() = 0;
+        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL current_format_name() = 0;
+        
+        /**
+         * \return The current format value of the stream.
+         */
+        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL current_format_value() = 0;
         
         /**
          * \return The number of formats supported by this audio stream. The maximum value

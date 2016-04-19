@@ -77,7 +77,8 @@ namespace avdecc_lib
         bool STDCALL stream_flags_secondary_backup_valid();
         bool STDCALL stream_flags_tertiary_backup_supported();
         bool STDCALL stream_flags_tertiary_backup_valid();
-        const char * STDCALL current_format();
+        const char * STDCALL current_format_name();
+        uint64_t STDCALL current_format_value();
         uint16_t formats_offset();
         uint16_t STDCALL number_of_formats();
         uint64_t STDCALL backup_talker_entity_id_0();
