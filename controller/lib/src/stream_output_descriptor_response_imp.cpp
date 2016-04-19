@@ -148,13 +148,20 @@ namespace avdecc_lib
         return stream_output_flags.tertiary_backup_valid;
     }
     
-    const char * STDCALL stream_output_descriptor_response_imp::current_format()
+    const char * STDCALL stream_output_descriptor_response_imp::current_format_name()
     {
         uint64_t current_format;
         current_format = jdksavdecc_uint64_get(&buffer[position +
                                                        JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT], 0);
         
         return utility::ieee1722_format_value_to_name(current_format);
+    }
+    
+    uint64_t STDCALL stream_output_descriptor_response_imp::current_format_value()
+    {
+        uint64_t current_format;
+        return current_format = jdksavdecc_uint64_get(&buffer[position +
+                                                       JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT], 0);
     }
     
     uint16_t stream_output_descriptor_response_imp::formats_offset()
