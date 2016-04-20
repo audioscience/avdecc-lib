@@ -86,10 +86,10 @@ namespace avdecc_lib
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_entity_avail_cmd(void *notification_id) = 0;
 
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_aecp_address_access_cmd(void *notification_id,
-                                                                                    unsigned mode,
-                                                                                    unsigned length,
-                                                                                    uint64_t address,
-                                                                                    uint8_t memory_data[]) = 0;
+                                                                                     unsigned mode,
+                                                                                     unsigned length,
+                                                                                     uint64_t address,
+                                                                                     uint8_t memory_data[]) = 0;
 
         /**
          * Send a IDENTIFY command
@@ -119,7 +119,7 @@ namespace avdecc_lib
          * \return The index of the currently selected config.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_current_config_index() const = 0;
-        
+
         /**
          * Send a REGISTER_UNSOLICITED_NOTIFICATION command to add the controller as being interested
          * in receiving unsolicited response notifications
@@ -127,7 +127,7 @@ namespace avdecc_lib
          * \param notification_id A void pointer to the unique identifier associated with the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_register_unsolicited_cmd(void *notification_id) = 0;
-        
+
         /**
          * Send a DEREGISTER_UNSOLICITED_NOTIFICATION command to remove the controller as being interested
          * in receiving unsolicited response notifications

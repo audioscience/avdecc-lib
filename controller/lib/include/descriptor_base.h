@@ -42,7 +42,7 @@ namespace avdecc_lib
     class descriptor_base
     {
     public:
-        virtual ~descriptor_base(){}
+        virtual ~descriptor_base() {}
         /**
          * \return The type of the descriptor.
          */
@@ -152,7 +152,7 @@ namespace avdecc_lib
          * \return the descriptor base response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual descriptor_response_base * STDCALL get_descriptor_response() = 0;
-        
+
         /**
          * \return the GET_NAME response class.
          */

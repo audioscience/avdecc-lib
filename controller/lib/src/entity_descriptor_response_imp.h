@@ -36,31 +36,31 @@
 
 namespace avdecc_lib
 {
-    class entity_descriptor_response_imp : public entity_descriptor_response, public virtual
-        descriptor_response_base_imp
-    {
-    public:
-        entity_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~entity_descriptor_response_imp();
+class entity_descriptor_response_imp : public entity_descriptor_response, public virtual
+    descriptor_response_base_imp
+{
+public:
+    entity_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    virtual ~entity_descriptor_response_imp();
 
-        uint64_t STDCALL entity_id();
-        uint64_t STDCALL entity_model_id();
-        uint32_t STDCALL entity_capabilities();
-        uint16_t STDCALL talker_stream_sources();
-        uint16_t STDCALL talker_capabilities();
-        uint16_t STDCALL listener_stream_sinks();
-        uint16_t STDCALL listener_capabilities();
-        uint32_t STDCALL controller_capabilities();
-        uint32_t STDCALL available_index();
-        uint64_t STDCALL association_id();
-        uint8_t * STDCALL entity_name();
-        uint16_t STDCALL vendor_name_string();
-        uint16_t STDCALL model_name_string();
-        uint8_t * STDCALL firmware_version();
-        uint8_t * STDCALL group_name();
-        uint8_t * STDCALL serial_number();
-        uint16_t STDCALL configurations_count();
-        uint16_t STDCALL current_configuration();
-    };
+    uint64_t STDCALL entity_id();
+    uint64_t STDCALL entity_model_id();
+    uint32_t STDCALL entity_capabilities();
+    uint16_t STDCALL talker_stream_sources();
+    uint16_t STDCALL talker_capabilities();
+    uint16_t STDCALL listener_stream_sinks();
+    uint16_t STDCALL listener_capabilities();
+    uint32_t STDCALL controller_capabilities();
+    uint32_t STDCALL available_index();
+    uint64_t STDCALL association_id();
+    uint8_t * STDCALL entity_name();
+    uint16_t STDCALL vendor_name_string();
+    uint16_t STDCALL model_name_string();
+    uint8_t * STDCALL firmware_version();
+    uint8_t * STDCALL group_name();
+    uint8_t * STDCALL serial_number();
+    uint16_t STDCALL configurations_count();
+    uint16_t STDCALL current_configuration();
+};
 }
 

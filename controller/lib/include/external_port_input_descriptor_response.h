@@ -39,47 +39,47 @@ namespace avdecc_lib
     class external_port_input_descriptor_response : public virtual descriptor_base, public virtual descriptor_response_base
     {
     public:
-        virtual ~external_port_input_descriptor_response(){};
+        virtual ~external_port_input_descriptor_response() {};
         /**
          * \return The flags describing the capabilities or features of the port.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL port_flags() = 0;
-        
+
         /**
          * The index of the CLOCK_DOMAIN descriptor that describes the clock domain for the port.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_domain_index() = 0;
-        
+
         /**
          * \return The number of controls within this jack.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_controls() = 0;
-        
+
         /**
          * \return The index of the first Control descriptor.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_control() = 0;
-        
+
         /**
          * \return The signal type.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_type() = 0;
-        
+
         /**
          * \return The signal index.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_index() = 0;
-        
+
         /**
          * \return The signal output.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_output() = 0;
-        
+
         /**
          * \return Latency in nanoseconds.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL block_latency() = 0;
-        
+
         /**
          * \return The index of the jack connected to the port.
          */

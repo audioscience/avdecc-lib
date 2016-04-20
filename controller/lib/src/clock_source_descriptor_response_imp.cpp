@@ -33,47 +33,47 @@
 
 namespace avdecc_lib
 {
-    clock_source_descriptor_response_imp::clock_source_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-        descriptor_response_base_imp(frame, frame_len, pos) {}
-    
-    clock_source_descriptor_response_imp::~clock_source_descriptor_response_imp() {}
+clock_source_descriptor_response_imp::clock_source_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+    descriptor_response_base_imp(frame, frame_len, pos) {}
 
-    uint8_t * STDCALL clock_source_descriptor_response_imp::object_name()
-    {
-        return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE_OFFSET_OBJECT_NAME];
-    }
-    
-    uint16_t STDCALL clock_source_descriptor_response_imp::localized_description()
-    {
-        return jdksavdecc_descriptor_clock_source_get_localized_description(buffer, position);
-    }
-    
-    uint16_t STDCALL clock_source_descriptor_response_imp::clock_source_flags()
-    {
-        return jdksavdecc_descriptor_clock_source_get_clock_source_flags(buffer, position);
-    }
-    
-    uint16_t STDCALL clock_source_descriptor_response_imp::clock_source_type()
-    {
-        return jdksavdecc_descriptor_clock_source_get_clock_source_type(buffer, position);
-    }
-    
-    uint64_t STDCALL clock_source_descriptor_response_imp::clock_source_identifier()
-    {
-        uint64_t clock_source_identifier;
-        
-        utility::convert_eui48_to_uint64(&buffer[position +
-                                                 JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE_OFFSET_CLOCK_SOURCE_IDENTIFIER], clock_source_identifier);
-        return clock_source_identifier;
-    }
-    
-    uint16_t STDCALL clock_source_descriptor_response_imp::clock_source_location_type()
-    {
-        return jdksavdecc_descriptor_clock_source_get_clock_source_location_type(buffer, position);
-    }
-    
-    uint16_t STDCALL clock_source_descriptor_response_imp::clock_source_location_index()
-    {
-        return jdksavdecc_descriptor_clock_source_get_clock_source_location_index(buffer, position);
-    }
+clock_source_descriptor_response_imp::~clock_source_descriptor_response_imp() {}
+
+uint8_t * STDCALL clock_source_descriptor_response_imp::object_name()
+{
+    return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE_OFFSET_OBJECT_NAME];
+}
+
+uint16_t STDCALL clock_source_descriptor_response_imp::localized_description()
+{
+    return jdksavdecc_descriptor_clock_source_get_localized_description(buffer, position);
+}
+
+uint16_t STDCALL clock_source_descriptor_response_imp::clock_source_flags()
+{
+    return jdksavdecc_descriptor_clock_source_get_clock_source_flags(buffer, position);
+}
+
+uint16_t STDCALL clock_source_descriptor_response_imp::clock_source_type()
+{
+    return jdksavdecc_descriptor_clock_source_get_clock_source_type(buffer, position);
+}
+
+uint64_t STDCALL clock_source_descriptor_response_imp::clock_source_identifier()
+{
+    uint64_t clock_source_identifier;
+
+    utility::convert_eui48_to_uint64(&buffer[position +
+                                     JDKSAVDECC_DESCRIPTOR_CLOCK_SOURCE_OFFSET_CLOCK_SOURCE_IDENTIFIER], clock_source_identifier);
+    return clock_source_identifier;
+}
+
+uint16_t STDCALL clock_source_descriptor_response_imp::clock_source_location_type()
+{
+    return jdksavdecc_descriptor_clock_source_get_clock_source_location_type(buffer, position);
+}
+
+uint16_t STDCALL clock_source_descriptor_response_imp::clock_source_location_index()
+{
+    return jdksavdecc_descriptor_clock_source_get_clock_source_location_index(buffer, position);
+}
 }

@@ -41,68 +41,68 @@
 namespace avdecc_lib
 {
 #define MEMORY_OBJECT_NUM_STRINGS 6
-    const char *memory_object_type_str[] =
+const char *memory_object_type_str[] =
+{
+    "FIRMWARE_IMAGE",
+    "VENDOR_SPECIFIC",
+    "CRASH_DUMP",
+    "LOG_OBJECT",
+    "AUTOSTART_SETTINGS",
+    "SNAPSHOT_SETTINGS"
+};
+
+memory_object_descriptor_response_imp::memory_object_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+    descriptor_response_base_imp(frame, frame_len, pos) {}
+
+memory_object_descriptor_response_imp::~memory_object_descriptor_response_imp() {}
+
+uint8_t * STDCALL memory_object_descriptor_response_imp::object_name()
+{
+    return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT_OFFSET_OBJECT_NAME];
+}
+
+uint16_t STDCALL memory_object_descriptor_response_imp::localized_description()
+{
+    return jdksavdecc_descriptor_memory_object_get_localized_description(buffer, position);
+}
+
+uint16_t STDCALL memory_object_descriptor_response_imp::memory_object_type()
+{
+    return jdksavdecc_descriptor_memory_object_get_memory_object_type(buffer, position);
+}
+
+uint16_t STDCALL memory_object_descriptor_response_imp::target_descriptor_type()
+{
+    return jdksavdecc_descriptor_memory_object_get_target_descriptor_type(buffer, position);
+}
+
+uint16_t STDCALL memory_object_descriptor_response_imp::target_descriptor_index()
+{
+    return jdksavdecc_descriptor_memory_object_get_target_descriptor_index(buffer, position);
+}
+
+uint64_t STDCALL memory_object_descriptor_response_imp::start_address()
+{
+    return jdksavdecc_descriptor_memory_object_get_start_address(buffer, position);
+}
+
+uint64_t STDCALL memory_object_descriptor_response_imp::maximum_length()
+{
+    return jdksavdecc_descriptor_memory_object_get_maximum_length(buffer, position);
+}
+
+uint64_t STDCALL memory_object_descriptor_response_imp::length()
+{
+    return jdksavdecc_descriptor_memory_object_get_length(buffer, position);
+}
+
+const char * STDCALL memory_object_descriptor_response_imp::memory_object_type_to_str()
+{
+    if(memory_object_type() < MEMORY_OBJECT_NUM_STRINGS)
     {
-        "FIRMWARE_IMAGE",
-        "VENDOR_SPECIFIC",
-        "CRASH_DUMP",
-        "LOG_OBJECT",
-        "AUTOSTART_SETTINGS",
-        "SNAPSHOT_SETTINGS"
-    };
-    
-    memory_object_descriptor_response_imp::memory_object_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-        descriptor_response_base_imp(frame, frame_len, pos) {}
-    
-    memory_object_descriptor_response_imp::~memory_object_descriptor_response_imp() {}
-    
-    uint8_t * STDCALL memory_object_descriptor_response_imp::object_name()
-    {
-        return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_MEMORY_OBJECT_OFFSET_OBJECT_NAME];
+        return memory_object_type_str[memory_object_type()];
     }
-    
-    uint16_t STDCALL memory_object_descriptor_response_imp::localized_description()
-    {
-        return jdksavdecc_descriptor_memory_object_get_localized_description(buffer, position);
-    }
-    
-    uint16_t STDCALL memory_object_descriptor_response_imp::memory_object_type()
-    {
-        return jdksavdecc_descriptor_memory_object_get_memory_object_type(buffer, position);
-    }
-    
-    uint16_t STDCALL memory_object_descriptor_response_imp::target_descriptor_type()
-    {
-        return jdksavdecc_descriptor_memory_object_get_target_descriptor_type(buffer, position);
-    }
-    
-    uint16_t STDCALL memory_object_descriptor_response_imp::target_descriptor_index()
-    {
-        return jdksavdecc_descriptor_memory_object_get_target_descriptor_index(buffer, position);
-    }
-    
-    uint64_t STDCALL memory_object_descriptor_response_imp::start_address()
-    {
-        return jdksavdecc_descriptor_memory_object_get_start_address(buffer, position);
-    }
-    
-    uint64_t STDCALL memory_object_descriptor_response_imp::maximum_length()
-    {
-        return jdksavdecc_descriptor_memory_object_get_maximum_length(buffer, position);
-    }
-    
-    uint64_t STDCALL memory_object_descriptor_response_imp::length()
-    {
-        return jdksavdecc_descriptor_memory_object_get_length(buffer, position);
-    }
-    
-    const char * STDCALL memory_object_descriptor_response_imp::memory_object_type_to_str()
-    {
-        if(memory_object_type() < MEMORY_OBJECT_NUM_STRINGS)
-        {
-            return memory_object_type_str[memory_object_type()];
-        }
-        
-        return "UNKNOWN";
-    }
+
+    return "UNKNOWN";
+}
 }

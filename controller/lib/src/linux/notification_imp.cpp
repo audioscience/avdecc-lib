@@ -49,71 +49,71 @@
 
 namespace avdecc_lib
 {
-    notification_imp *notification_imp_ref = new notification_imp();
+notification_imp *notification_imp_ref = new notification_imp();
 
-    notification_imp::notification_imp()
+notification_imp::notification_imp()
+{
+    notification_thread_init(); // Start notification thread
+}
+
+notification_imp::~notification_imp()
+{
+    post_notification_event();
+}
+
+int notification_imp::notification_thread_init()
+{
+    int rc;
+
+    sem_init(&notify_waiting, 0, 0);
+
+    rc = pthread_create(&h_thread, NULL, &notification_imp::dispatch_thread, (void *)this);
+    if (rc)
     {
-        notification_thread_init(); // Start notification thread
+        printf("ERROR; return code from pthread_create() is %d\n", rc);
+        exit(-1);
     }
 
-    notification_imp::~notification_imp()
+    return 0;
+}
+
+void * notification_imp::dispatch_thread(void * param)
+{
+    return ((notification_imp *)param)->dispatch_callbacks();
+
+}
+
+
+void * notification_imp::dispatch_callbacks(void)
+{
+    while (true)
     {
-        post_notification_event();
-    }
+        sem_wait(&notify_waiting);
 
-    int notification_imp::notification_thread_init()
-    {
-        int rc;
-
-        sem_init(&notify_waiting, 0, 0);
-
-        rc = pthread_create(&h_thread, NULL, &notification_imp::dispatch_thread, (void *)this);
-        if (rc)
+        if((write_index - read_index) > 0)
         {
-            printf("ERROR; return code from pthread_create() is %d\n", rc);
-            exit(-1);
+            notification_callback(user_obj,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_type,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].entity_id,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_status,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id
+                                 );
+            read_index++;
         }
-
-        return 0;
-    }
-
-    void * notification_imp::dispatch_thread(void * param)
-    {
-        return ((notification_imp *)param)->dispatch_callbacks();
-
-    }
-
-
-    void * notification_imp::dispatch_callbacks(void)
-    {
-        while (true)
+        else
         {
-            sem_wait(&notify_waiting);
-
-            if((write_index - read_index) > 0)
-            {
-                notification_callback(user_obj,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_type,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].entity_id,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_status,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id
-                                     );
-                read_index++;
-            }
-            else
-            {
-                break;
-            }
+            break;
         }
-
-        return 0;
     }
 
-    void notification_imp::post_notification_event()
-    {
-        sem_post(&notify_waiting);
-    }
+    return 0;
+}
+
+void notification_imp::post_notification_event()
+{
+    sem_post(&notify_waiting);
+}
 }

@@ -34,23 +34,23 @@
 
 namespace avdecc_lib
 {
-    stream_output_get_stream_format_response_imp::stream_output_get_stream_format_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos)
-    {
-        m_position = pos;
-        m_size = frame_len;
-        m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
-        memcpy(m_frame, frame, m_size);
-    }
-    
-    stream_output_get_stream_format_response_imp::~stream_output_get_stream_format_response_imp()
-    {
-        free(m_frame);
-    }
-    
-    uint64_t STDCALL stream_output_get_stream_format_response_imp::get_stream_format()
-    {
-        jdksavdecc_eui64 format_eui64;
-        format_eui64 = jdksavdecc_eui64_get(m_frame, m_position + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_STREAM_FORMAT);
-        return jdksavdecc_eui64_convert_to_uint64(&format_eui64);
-    }
+stream_output_get_stream_format_response_imp::stream_output_get_stream_format_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos)
+{
+    m_position = pos;
+    m_size = frame_len;
+    m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
+    memcpy(m_frame, frame, m_size);
+}
+
+stream_output_get_stream_format_response_imp::~stream_output_get_stream_format_response_imp()
+{
+    free(m_frame);
+}
+
+uint64_t STDCALL stream_output_get_stream_format_response_imp::get_stream_format()
+{
+    jdksavdecc_eui64 format_eui64;
+    format_eui64 = jdksavdecc_eui64_get(m_frame, m_position + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_RESPONSE_OFFSET_STREAM_FORMAT);
+    return jdksavdecc_eui64_convert_to_uint64(&format_eui64);
+}
 }

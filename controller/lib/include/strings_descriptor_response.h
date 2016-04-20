@@ -40,7 +40,7 @@ namespace avdecc_lib
     class strings_descriptor_response : public virtual descriptor_response_base
     {
     public:
-        virtual ~strings_descriptor_response(){};
+        virtual ~strings_descriptor_response() {};
         /**
          * \return The corresponding localized string of the Strings descriptor.
          */

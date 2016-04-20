@@ -41,7 +41,7 @@ namespace avdecc_lib
     class audio_cluster_descriptor_response : public virtual descriptor_response_base
     {
     public:
-        virtual ~audio_cluster_descriptor_response(){};
+        virtual ~audio_cluster_descriptor_response() {};
         /**
          * \return The localized string reference pointing to the localized descriptor name.
          */
@@ -51,12 +51,12 @@ namespace avdecc_lib
          * \return The descriptor type for the signal source of the cluster.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_type() = 0;
-        
+
         /**
          * \return The descriptor index for the signal source of the cluster.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_index() = 0;
-        
+
         /**
          * \return The index of the output of the signal source of the cluster. For a signal type of
          *	       Signal Splitter or Signal Demultiplexer, this is which output of the object it is
@@ -64,7 +64,7 @@ namespace avdecc_lib
          *	       from and for any other signal type this is 0.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_output() = 0;
-        
+
         /**
          * \return The latency in nanoseconds between the timing reference plane and the opposite end
          *	       of the currently selected signal path. This does not include any latency added by a
@@ -73,7 +73,7 @@ namespace avdecc_lib
          *	       can be sample aligned.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL path_latency() = 0;
-        
+
         /**
          * \return The block latency of the Audio Cluster. For an Aduio Cluster attached to a Stream Port Input,
          *	       this is the latency in nanoseconds between the reference plane and the output of the cluster. For
@@ -82,12 +82,12 @@ namespace avdecc_lib
          *	       identified by the signal type and signal index fields.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL block_latency() = 0;
-        
+
         /**
          * \return The number of channels within the cluster.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL channel_count() = 0;
-        
+
         /**
          * The format for each channel of this cluster, all channels within the cluster have the same format.
          *

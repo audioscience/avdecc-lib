@@ -37,24 +37,24 @@
 
 namespace avdecc_lib
 {
-    class clock_domain_descriptor_imp : public clock_domain_descriptor, public virtual descriptor_base_imp
-    {
-    public:
-        clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-        virtual ~clock_domain_descriptor_imp();
-        
-        clock_domain_descriptor_response_imp *resp;
-        clock_domain_counters_response_imp *counters_resp;
-        clock_domain_get_clock_source_response_imp *clock_source_resp;
+class clock_domain_descriptor_imp : public clock_domain_descriptor, public virtual descriptor_base_imp
+{
+public:
+    clock_domain_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
+    virtual ~clock_domain_descriptor_imp();
 
-        clock_domain_descriptor_response * STDCALL get_clock_domain_response();
-        clock_domain_counters_response * STDCALL get_clock_domain_counters_response();
-        clock_domain_get_clock_source_response * STDCALL get_clock_domain_get_clock_source_response();
-        int STDCALL send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index);
-        int proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
-        int STDCALL send_get_clock_source_cmd(void *notification_id);
-        int proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
-        int STDCALL send_get_counters_cmd(void *notification_id);
-        int proc_get_counters_resp(void *&notification_id, const uint8_t *fram, size_t frame_len, int &status);
-    };
+    clock_domain_descriptor_response_imp *resp;
+    clock_domain_counters_response_imp *counters_resp;
+    clock_domain_get_clock_source_response_imp *clock_source_resp;
+
+    clock_domain_descriptor_response * STDCALL get_clock_domain_response();
+    clock_domain_counters_response * STDCALL get_clock_domain_counters_response();
+    clock_domain_get_clock_source_response * STDCALL get_clock_domain_get_clock_source_response();
+    int STDCALL send_set_clock_source_cmd(void *notification_id, uint16_t new_clk_src_index);
+    int proc_set_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+    int STDCALL send_get_clock_source_cmd(void *notification_id);
+    int proc_get_clock_source_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+    int STDCALL send_get_counters_cmd(void *notification_id);
+    int proc_get_counters_resp(void *&notification_id, const uint8_t *fram, size_t frame_len, int &status);
+};
 }

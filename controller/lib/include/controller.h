@@ -68,7 +68,7 @@ namespace avdecc_lib
          * \return Find an endstation's index by Entity ID.
          */
         AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL is_end_station_found_by_entity_id(uint64_t entity_entity_id, uint32_t &end_station_index) = 0;
-        
+
         /**
          * \return Find an endstation's index by MAC Address.
          */
@@ -88,7 +88,7 @@ namespace avdecc_lib
          * Update the base log level for messages to be logged by the post_log_msg callback.
          */
         AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_logging_level(int32_t new_log_level) = 0;
-        
+
         /**
          * Apply filters required to be true for an end station to be enumerated.
          *

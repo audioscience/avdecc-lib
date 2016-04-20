@@ -34,19 +34,19 @@
 
 namespace avdecc_lib
 {
-    class stream_output_get_tx_state_response_imp : public stream_output_get_tx_state_response
-    {
-    private:
-        uint8_t * m_frame;
-        size_t m_size;
-        ssize_t m_position;
-    public:
-        stream_output_get_tx_state_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~stream_output_get_tx_state_response_imp();
-        
-        uint64_t STDCALL get_tx_state_stream_id();
-        uint64_t STDCALL get_tx_state_stream_dest_mac();
-        uint16_t STDCALL get_tx_state_connection_count();
-        uint16_t STDCALL get_tx_state_stream_vlan_id();
-    };
+class stream_output_get_tx_state_response_imp : public stream_output_get_tx_state_response
+{
+private:
+    uint8_t * m_frame;
+    size_t m_size;
+    ssize_t m_position;
+public:
+    stream_output_get_tx_state_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
+    virtual ~stream_output_get_tx_state_response_imp();
+
+    uint64_t STDCALL get_tx_state_stream_id();
+    uint64_t STDCALL get_tx_state_stream_dest_mac();
+    uint16_t STDCALL get_tx_state_connection_count();
+    uint16_t STDCALL get_tx_state_stream_vlan_id();
+};
 }

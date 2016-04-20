@@ -35,20 +35,20 @@
 
 namespace avdecc_lib
 {
-    class jack_input_descriptor_imp : public jack_input_descriptor, public virtual descriptor_base_imp
-    {
-    public:
-        jack_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-        virtual ~jack_input_descriptor_imp();
-        
-        jack_input_descriptor_response_imp *resp;
+class jack_input_descriptor_imp : public jack_input_descriptor, public virtual descriptor_base_imp
+{
+public:
+    jack_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
+    virtual ~jack_input_descriptor_imp();
 
-        jack_input_descriptor_response * STDCALL get_jack_input_response();
-    private:
-        /**
-         * Store the jack flags componenets of the JACK INPUT descriptor object in a vector.
-         */
-        void jack_flags_init();
-    };
+    jack_input_descriptor_response_imp *resp;
+
+    jack_input_descriptor_response * STDCALL get_jack_input_response();
+private:
+    /**
+     * Store the jack flags componenets of the JACK INPUT descriptor object in a vector.
+     */
+    void jack_flags_init();
+};
 }
 

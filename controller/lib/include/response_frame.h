@@ -41,7 +41,7 @@ namespace avdecc_lib
     public:
         response_frame(const uint8_t *frame, size_t size, size_t pos);
         virtual ~response_frame();
-        
+
         /*
          * Buffer to store counters and command response frames.  Will be updated
          * by command response processing methods.
@@ -56,7 +56,7 @@ namespace avdecc_lib
         size_t desc_frame_size;
         size_t position;
         size_t desc_position;
-        
+
         int replace_frame(const uint8_t* frame, size_t pos, size_t size);
         int replace_desc_frame(const uint8_t *frame, size_t pos, size_t size);
         uint8_t * get_buffer();

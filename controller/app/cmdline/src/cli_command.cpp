@@ -102,7 +102,7 @@ void cli_command::print_help_all(std::string prefix, size_t depth) const
         {
             std::string sub_prefix(prefix);
             if (prefix.length())
-                 sub_prefix += " ";
+                sub_prefix += " ";
             sub_prefix += *iter;
 
             std::map<std::string, cli_command*>::const_iterator cmd_iter = m_sub_commands.find(*iter);

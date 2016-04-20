@@ -35,17 +35,17 @@
 
 namespace avdecc_lib
 {
-    class audio_map_descriptor_response_imp : public audio_map_descriptor_response, public virtual descriptor_response_base_imp
-    {
-    private:
-        std::vector<struct audio_map_mapping> maps; // Store maps in a vector
-    public:
-        audio_map_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~audio_map_descriptor_response_imp();
-        
-        uint8_t * STDCALL object_name();
-        uint16_t mappings_offset();
-        uint16_t STDCALL number_of_mappings();
-        int const STDCALL mapping(size_t index, struct audio_map_mapping &map);
-    };
+class audio_map_descriptor_response_imp : public audio_map_descriptor_response, public virtual descriptor_response_base_imp
+{
+private:
+    std::vector<struct audio_map_mapping> maps; // Store maps in a vector
+public:
+    audio_map_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    virtual ~audio_map_descriptor_response_imp();
+
+    uint8_t * STDCALL object_name();
+    uint16_t mappings_offset();
+    uint16_t STDCALL number_of_mappings();
+    int const STDCALL mapping(size_t index, struct audio_map_mapping &map);
+};
 }

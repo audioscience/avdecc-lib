@@ -156,7 +156,7 @@ char *command_generator(const char *text, int state)
                 (*iter)->get_completion_options(arg_options);
             }
             completion_options.insert(completion_options.end(),
-                    arg_options.begin(), arg_options.end());
+                                      arg_options.begin(), arg_options.end());
         }
     }
 
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
     }
 
     cmd_line avdecc_cmd_line_ref(notification_callback, log_callback,
-            test_mode, interface, log_level);
+                                 test_mode, interface, log_level);
 
     std::vector<std::string> input_argv;
     size_t pos = 0;
@@ -282,7 +282,7 @@ int main(int argc, char *argv[])
     // Override to prevent filename completion
 #if defined(__MACH__)
     rl_completion_entry_function = (Function *)null_completer;
-#elif defined(__linux__) 
+#elif defined(__linux__)
     rl_completion_entry_function = null_completer;
 #endif
 
@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
         std::string cmd_input(input);
         cmd_input_orig = cmd_input;
         add_history(input);
-#else 
+#else
         std::string cmd_input;
         printf("\n>");
         std::getline(std::cin, cmd_input);
@@ -311,7 +311,7 @@ int main(int argc, char *argv[])
         while((pos = cmd_input.find(" ")) != std::string::npos)
         {
             if (pos)
-              input_argv.push_back(cmd_input.substr(0, pos));
+                input_argv.push_back(cmd_input.substr(0, pos));
 
             cmd_input.erase(0, pos + 1);
         }

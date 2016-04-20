@@ -33,54 +33,54 @@
 
 namespace avdecc_lib
 {
-    clock_domain_descriptor_response_imp::clock_domain_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-        descriptor_response_base_imp(frame, frame_len, pos)
+clock_domain_descriptor_response_imp::clock_domain_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+    descriptor_response_base_imp(frame, frame_len, pos)
+{
+    store_clock_sources();
+}
+
+clock_domain_descriptor_response_imp::~clock_domain_descriptor_response_imp() {}
+
+uint8_t * STDCALL clock_domain_descriptor_response_imp::object_name()
+{
+    return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN_OFFSET_OBJECT_NAME];
+}
+
+uint16_t STDCALL clock_domain_descriptor_response_imp::localized_description()
+{
+    return jdksavdecc_descriptor_clock_domain_get_localized_description(buffer, position);
+}
+
+uint16_t STDCALL clock_domain_descriptor_response_imp::clock_source_index()
+{
+    return jdksavdecc_descriptor_clock_domain_get_clock_source_index(buffer, position);
+}
+
+uint16_t clock_domain_descriptor_response_imp::clock_sources_offset()
+{
+    assert(jdksavdecc_descriptor_clock_domain_get_clock_sources_offset(buffer, position) == 76);
+    return jdksavdecc_descriptor_clock_domain_get_clock_sources_offset(buffer, position);
+}
+
+uint16_t STDCALL clock_domain_descriptor_response_imp::clock_sources_count()
+{
+    assert(jdksavdecc_descriptor_clock_domain_get_clock_sources_count(buffer, position) <= 249);
+    return jdksavdecc_descriptor_clock_domain_get_clock_sources_count(buffer, position);
+}
+
+void clock_domain_descriptor_response_imp::store_clock_sources()
+{
+    uint16_t offset = 0;
+
+    for(uint32_t i = 0; i < clock_sources_count(); i++)
     {
-        store_clock_sources();
+        clk_src_vec.push_back(jdksavdecc_uint16_get(buffer, clock_sources_offset() + position + offset));
+        offset += 0x2;
     }
-    
-    clock_domain_descriptor_response_imp::~clock_domain_descriptor_response_imp() {}
-    
-    uint8_t * STDCALL clock_domain_descriptor_response_imp::object_name()
-    {
-        return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_CLOCK_DOMAIN_OFFSET_OBJECT_NAME];
-    }
-    
-    uint16_t STDCALL clock_domain_descriptor_response_imp::localized_description()
-    {
-        return jdksavdecc_descriptor_clock_domain_get_localized_description(buffer, position);
-    }
-    
-    uint16_t STDCALL clock_domain_descriptor_response_imp::clock_source_index()
-    {
-        return jdksavdecc_descriptor_clock_domain_get_clock_source_index(buffer, position);
-    }
-    
-    uint16_t clock_domain_descriptor_response_imp::clock_sources_offset()
-    {
-        assert(jdksavdecc_descriptor_clock_domain_get_clock_sources_offset(buffer, position) == 76);
-        return jdksavdecc_descriptor_clock_domain_get_clock_sources_offset(buffer, position);
-    }
-    
-    uint16_t STDCALL clock_domain_descriptor_response_imp::clock_sources_count()
-    {
-        assert(jdksavdecc_descriptor_clock_domain_get_clock_sources_count(buffer, position) <= 249);
-        return jdksavdecc_descriptor_clock_domain_get_clock_sources_count(buffer, position);
-    }
-    
-    void clock_domain_descriptor_response_imp::store_clock_sources()
-    {
-        uint16_t offset = 0;
-    
-        for(uint32_t i = 0; i < clock_sources_count(); i++)
-        {
-            clk_src_vec.push_back(jdksavdecc_uint16_get(buffer, clock_sources_offset() + position + offset));
-            offset += 0x2;
-        }
-    }
-    
-    uint16_t STDCALL clock_domain_descriptor_response_imp::get_clock_source_by_index(size_t clk_src_index)
-    {
-        return clk_src_vec.at(clk_src_index);
-    }
+}
+
+uint16_t STDCALL clock_domain_descriptor_response_imp::get_clock_source_by_index(size_t clk_src_index)
+{
+    return clk_src_vec.at(clk_src_index);
+}
 }

@@ -38,8 +38,8 @@
 #include "cli_argument.h"
 
 cli_argument::cli_argument(cmd_line *cmd_line_ptr, const std::string name,
-        const std::string help, const std::string hint,
-        size_t match_min, size_t match_max)
+                           const std::string help, const std::string hint,
+                           size_t match_min, size_t match_max)
     : m_cmd_line_ptr(cmd_line_ptr)
     , m_is_valid(false)
     , m_match_min(match_min)
@@ -135,8 +135,8 @@ size_t cli_argument::get_match_max() const
 }
 
 cli_argument_int::cli_argument_int(cmd_line *cmd_line_ptr, const std::string name,
-        const std::string help, const std::string hint,
-        size_t match_min, size_t match_max)
+                                   const std::string help, const std::string hint,
+                                   size_t match_min, size_t match_max)
     : cli_argument(cmd_line_ptr, name, help + " (type int)", hint, match_min, match_max)
 {}
 
@@ -184,8 +184,8 @@ std::vector<int> cli_argument_int::get_all_value_int() const
 }
 
 cli_argument_end_station::cli_argument_end_station(cmd_line *cmd_line_ptr, const std::string name,
-        const std::string help, const std::string hint,
-        size_t match_min, size_t match_max)
+                                                   const std::string help, const std::string hint,
+                                                   size_t match_min, size_t match_max)
     : cli_argument(cmd_line_ptr, name, help + " (index as int or Entity ID)", hint, match_min, match_max)
 {}
 
@@ -240,8 +240,8 @@ std::vector<uint32_t> cli_argument_end_station::get_all_value_uint() const
 }
 
 cli_argument_string::cli_argument_string(cmd_line *cmd_line_ptr, const std::string name,
-        const std::string help, const std::string hint,
-        size_t match_min, size_t match_max)
+                                         const std::string help, const std::string hint,
+                                         size_t match_min, size_t match_max)
     : cli_argument(cmd_line_ptr, name, help + " (type string)", hint, match_min, match_max)
 {}
 

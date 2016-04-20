@@ -35,20 +35,20 @@
 
 namespace avdecc_lib
 {
-    class audio_cluster_descriptor_response_imp : public audio_cluster_descriptor_response, public virtual descriptor_response_base_imp
-    {
-    public:
-        audio_cluster_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~audio_cluster_descriptor_response_imp();
+class audio_cluster_descriptor_response_imp : public audio_cluster_descriptor_response, public virtual descriptor_response_base_imp
+{
+public:
+    audio_cluster_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    virtual ~audio_cluster_descriptor_response_imp();
 
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL localized_description();
-        uint16_t STDCALL signal_type();
-        uint16_t STDCALL signal_index();
-        uint16_t STDCALL signal_output();
-        uint32_t STDCALL path_latency();
-        uint32_t STDCALL block_latency();
-        uint16_t STDCALL channel_count();
-        uint8_t STDCALL format();
-    };
+    uint8_t * STDCALL object_name();
+    uint16_t STDCALL localized_description();
+    uint16_t STDCALL signal_type();
+    uint16_t STDCALL signal_index();
+    uint16_t STDCALL signal_output();
+    uint32_t STDCALL path_latency();
+    uint32_t STDCALL block_latency();
+    uint16_t STDCALL channel_count();
+    uint8_t STDCALL format();
+};
 }

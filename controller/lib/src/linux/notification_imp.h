@@ -35,42 +35,42 @@
 
 namespace avdecc_lib
 {
-    class notification_imp : public virtual notification
-    {
-    private:
-        pthread_t h_thread;
-        sem_t notify_waiting;
+class notification_imp : public virtual notification
+{
+private:
+    pthread_t h_thread;
+    sem_t notify_waiting;
 
-    public:
-        /**
-         * An empty constructor for notification_imp
-         */
-        notification_imp();
+public:
+    /**
+     * An empty constructor for notification_imp
+     */
+    notification_imp();
 
-        /**
-         * Destructor for notification_imp used for destroying objects
-         */
-        virtual ~notification_imp();
+    /**
+     * Destructor for notification_imp used for destroying objects
+     */
+    virtual ~notification_imp();
 
-    private:
-        /**
-         * Create and initialize notification thread, event, and semaphore.
-         */
-        int notification_thread_init();
+private:
+    /**
+     * Create and initialize notification thread, event, and semaphore.
+     */
+    int notification_thread_init();
 
-        /**
-         * Start of the post_notification_msg thread used for generating notification messages.
-         */
-        static void * dispatch_thread(void * lpParam);
+    /**
+     * Start of the post_notification_msg thread used for generating notification messages.
+     */
+    static void * dispatch_thread(void * lpParam);
 
-        void * dispatch_callbacks(void);
+    void * dispatch_callbacks(void);
 
-    public:
-        /**
-         * Release sempahore so that notification callback function is called.
-         */
-        void post_notification_event();
-    };
+public:
+    /**
+     * Release sempahore so that notification callback function is called.
+     */
+    void post_notification_event();
+};
 
-    extern notification_imp *notification_imp_ref;
+extern notification_imp *notification_imp_ref;
 }

@@ -173,9 +173,9 @@ namespace avdecc_lib
         AEM_STATUS_STREAM_IS_RUNNING = 12, ///< The stream is currently streaming and the command is one which cannot be executed on a streaming stream
         TOTAL_NUM_OF_AEM_CMDS_STATUS = 13,  ///< The total number of AEM commands status currently supported in the 1722.1 specification
         AVDECC_LIB_STATUS_INVALID = 1023, ///< AVDECC library specific status, not part of the 1722.1 specification
-                                          ///< The response received has a subtype different from the subtype of the command sent
+        ///< The response received has a subtype different from the subtype of the command sent
         AVDECC_LIB_STATUS_TICK_TIMEOUT = 1024 ///< AVDECC library specific status, not part of the 1722.1 specification
-                                              ///< The response is not received within the timeout period after re-sending a command
+                                         ///< The response is not received within the timeout period after re-sending a command
     };
 
     enum acmp_cmds_values /// The command codes values for ACMP commands
@@ -206,7 +206,7 @@ namespace avdecc_lib
         ACMP_STATUS_TALKER_DEST_MAC_FAIL = 3, ///< Talker could not allocate a destination MAC for the steam
         ACMP_STATUS_TALKER_NO_STREAM_INDEX = 4, ///< Talker does not have an available stream index for the stream
         ACMP_STATUS_TALKER_NO_BANDWIDTH = 5, ///< Talker could not allocate bandwidth for the stream
-        ACMP_STATUS_TALKER_EXCLUSIVE = 6, ///< Talker already has an established stream and only supports one listener 
+        ACMP_STATUS_TALKER_EXCLUSIVE = 6, ///< Talker already has an established stream and only supports one listener
         ACMP_STATUS_LISTENER_TALKER_TIMEOUT = 7, ///< Listener had timeout for all retries when trying to send command to Talker
         ACMP_STATUS_LISTENER_EXCLUSIVE = 8, ///< Listener already has an established connection to a stream
         ACMP_STATUS_STATE_UNAVAILABLE = 9, ///< Could not get the state from the AVDECC Entity
@@ -218,7 +218,7 @@ namespace avdecc_lib
         ACMP_STATUS_RESERVED = 15, ///< Reserved field for new status
         ACMP_STATUS_CONTROLLER_NOT_AUTHORIZED = 16, ///< The AVDECC Controller with the specified Entity ID is not authorized to change stream connections
         ACMP_STATUS_INCOMPATIBLE_REQUEST = 17, ///< Listener is trying to connect a Talker that is already streaming with a different traffic class, etc, or
-                                               ///< does not support the request traffic class
+        ///< does not support the request traffic class
         ACMP_STATUS_LISTENER_INVALID_CONNECTION = 18,
         TOTAL_NUM_OF_ACMP_CMDS_STATUS = 19,  ///< The total number of AEM commands status currently supported in the 1722.1 specification
     };
@@ -248,7 +248,7 @@ namespace avdecc_lib
         ACMP_FRAME_LEN = 70, ///< Length of ACMP packet is 70 bytes
         AECP_FRAME_LEN = 64 ///< Length of AECP packet is 64 bytes
     };
-    
+
     enum aem_max_maps
     {
         AEM_MAX_MAPS = 63 ///< 1722.1 max maps allowed per cmd frame for ADD/REMOVE audio mappings cmd
@@ -294,7 +294,7 @@ namespace avdecc_lib
         LOGGING_LEVEL_VERBOSE = 5,
         TOTAL_NUM_OF_LOGGING_LEVELS = 6
     };
-    
+
     enum counter_labels ///Counter Labels for GET_COUNTERS command
     {
         AVB_INTERFACE_LINK_UP,
@@ -343,7 +343,7 @@ namespace avdecc_lib
         STREAM_INPUT_ENTITY_SPECIFIC_7,
         STREAM_INPUT_ENTITY_SPECIFIC_8
     };
-    
+
     enum entity_capabilities_filters
     {
         ENTITY_CAPABILITIES_EFU_MODE = 0x00000001,
@@ -365,7 +365,7 @@ namespace avdecc_lib
         ENTITY_CAPABILITIES_GENERAL_CONTROLLER_IGNORE = 0x00010000,
         ENTITY_CAPABILITIES_ENTITY_NOT_READY = 0x00020000,
     };
-    
+
     enum talker_capabilities_filters
     {
         TALKER_CAPABILITIES_IMPLEMENTED = 0x00000001,
@@ -377,7 +377,7 @@ namespace avdecc_lib
         TALKER_CAPABILITIES_AUDIO_SOURCE = 0x00004000,
         TALKER_CAPABILITIES_VIDEO_SOURCE = 0x00008000,
     };
-    
+
     enum listener_capabilities_filters
     {
         LISTENER_CAPABILITIES_IMPLEMENTED = 0x00000001,

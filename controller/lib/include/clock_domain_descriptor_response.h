@@ -43,7 +43,7 @@ namespace avdecc_lib
     class clock_domain_descriptor_response : public virtual descriptor_response_base
     {
     public:
-        virtual ~clock_domain_descriptor_response(){};
+        virtual ~clock_domain_descriptor_response() {};
 
         /**
          * \return The localized string reference pointing to the localized descriptor name.
@@ -55,7 +55,7 @@ namespace avdecc_lib
          *	       for the CLOCK DOMAIN.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_source_index() = 0;
-        
+
         /**
          * \return The number of CLOCK SOURCE indexes in the clock sources field. The maximum value for this field
          *	       is 249 for this version of AEM.

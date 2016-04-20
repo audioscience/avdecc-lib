@@ -37,14 +37,14 @@ namespace avdecc_lib
     class stream_input_counters_response
     {
     public:
-        virtual ~stream_input_counters_response(){};
+        virtual ~stream_input_counters_response() {};
         /**
          * \param name avdecc_lib::counter_labels
          *
          * \return the stream input counter valid after the GET_COUNTERS command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_valid(int name) = 0;
-        
+
         /**
          * \param name avdecc_lib::counter_labels
          *

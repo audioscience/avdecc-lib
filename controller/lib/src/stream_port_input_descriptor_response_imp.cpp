@@ -35,53 +35,53 @@
 
 namespace avdecc_lib
 {
-    stream_port_input_descriptor_response_imp::stream_port_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-        descriptor_response_base_imp(frame, frame_len, pos) {}
-    
-    stream_port_input_descriptor_response_imp::~stream_port_input_descriptor_response_imp() {}
-    
-    uint8_t * STDCALL stream_port_input_descriptor_response_imp::object_name()
-    {
-        return NULL;
-    }
-    
-    uint16_t STDCALL stream_port_input_descriptor_response_imp::clock_domain_index()
-    {
-        return jdksavdecc_descriptor_stream_port_get_clock_domain_index(buffer, position);
-    }
-    
-    uint16_t STDCALL stream_port_input_descriptor_response_imp::port_flags()
-    {
-        return jdksavdecc_descriptor_stream_port_get_port_flags(buffer, position);
-    }
-    
-    uint16_t STDCALL stream_port_input_descriptor_response_imp::number_of_controls()
-    {
-        return jdksavdecc_descriptor_stream_port_get_number_of_controls(buffer, position);
-    }
-    
-    uint16_t STDCALL stream_port_input_descriptor_response_imp::base_control()
-    {
-        return jdksavdecc_descriptor_stream_port_get_base_control(buffer, position);
-    }
-    
-    uint16_t STDCALL stream_port_input_descriptor_response_imp::number_of_clusters()
-    {
-        return jdksavdecc_descriptor_stream_port_get_number_of_clusters(buffer, position);
-    }
-    
-    uint16_t STDCALL stream_port_input_descriptor_response_imp::base_cluster()
-    {
-        return jdksavdecc_descriptor_stream_port_get_base_cluster(buffer, position);
-    }
-    
-    uint16_t STDCALL stream_port_input_descriptor_response_imp::number_of_maps()
-    {
-        return jdksavdecc_descriptor_stream_port_get_number_of_maps(buffer, position);
-    }
-    
-    uint16_t STDCALL stream_port_input_descriptor_response_imp::base_map()
-    {
-        return jdksavdecc_descriptor_stream_port_get_base_map(buffer, position);
-    }
+stream_port_input_descriptor_response_imp::stream_port_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+    descriptor_response_base_imp(frame, frame_len, pos) {}
+
+stream_port_input_descriptor_response_imp::~stream_port_input_descriptor_response_imp() {}
+
+uint8_t * STDCALL stream_port_input_descriptor_response_imp::object_name()
+{
+    return NULL;
+}
+
+uint16_t STDCALL stream_port_input_descriptor_response_imp::clock_domain_index()
+{
+    return jdksavdecc_descriptor_stream_port_get_clock_domain_index(buffer, position);
+}
+
+uint16_t STDCALL stream_port_input_descriptor_response_imp::port_flags()
+{
+    return jdksavdecc_descriptor_stream_port_get_port_flags(buffer, position);
+}
+
+uint16_t STDCALL stream_port_input_descriptor_response_imp::number_of_controls()
+{
+    return jdksavdecc_descriptor_stream_port_get_number_of_controls(buffer, position);
+}
+
+uint16_t STDCALL stream_port_input_descriptor_response_imp::base_control()
+{
+    return jdksavdecc_descriptor_stream_port_get_base_control(buffer, position);
+}
+
+uint16_t STDCALL stream_port_input_descriptor_response_imp::number_of_clusters()
+{
+    return jdksavdecc_descriptor_stream_port_get_number_of_clusters(buffer, position);
+}
+
+uint16_t STDCALL stream_port_input_descriptor_response_imp::base_cluster()
+{
+    return jdksavdecc_descriptor_stream_port_get_base_cluster(buffer, position);
+}
+
+uint16_t STDCALL stream_port_input_descriptor_response_imp::number_of_maps()
+{
+    return jdksavdecc_descriptor_stream_port_get_number_of_maps(buffer, position);
+}
+
+uint16_t STDCALL stream_port_input_descriptor_response_imp::base_map()
+{
+    return jdksavdecc_descriptor_stream_port_get_base_map(buffer, position);
+}
 }

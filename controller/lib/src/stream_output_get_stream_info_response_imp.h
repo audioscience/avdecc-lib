@@ -34,50 +34,50 @@
 
 namespace avdecc_lib
 {
-    class stream_output_get_stream_info_response_imp : public stream_output_get_stream_info_response
-    {
-    private:
-        uint8_t * m_frame;
-        size_t m_size;
-        ssize_t m_position;
-        
-        struct stream_output_stream_info_flags
-        {
-            bool class_b;
-            bool fast_connect;
-            bool saved_state;
-            bool streaming_wait;
-            bool encrypted_pdu;
-            bool stream_vlan_id_valid;
-            bool connected;
-            bool msrp_failure_valid;
-            bool stream_dest_mac_valid;
-            bool msrp_acc_lat_valid;
-            bool stream_id_valid;
-            bool stream_format_valid;
-        };
-        struct stream_output_stream_info_flags stream_output_info_flags;
-    public:
-        stream_output_get_stream_info_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~stream_output_get_stream_info_response_imp();
-        
-        bool STDCALL get_stream_info_flags_stream_vlan_id_valid();
-        bool STDCALL get_stream_info_flags_msrp_failure_valid();
-        bool STDCALL get_stream_info_flags_stream_dest_mac_valid();
-        bool STDCALL get_stream_info_flags_msrp_acc_lat_valid();
-        bool STDCALL get_stream_info_flags_stream_id_valid();
-        bool STDCALL get_stream_info_flags_stream_format_valid();
-        uint64_t STDCALL get_stream_format_stream_format();
-        uint32_t STDCALL get_stream_info_flags();
-        uint64_t STDCALL get_stream_info_stream_format();
-        uint64_t STDCALL get_stream_info_stream_id();
-        uint32_t STDCALL get_stream_info_msrp_accumulated_latency();
-        uint64_t STDCALL get_stream_info_stream_dest_mac();
-        uint8_t STDCALL get_stream_info_msrp_failure_code();
-        uint64_t STDCALL get_stream_info_msrp_failure_bridge_id();
-        uint16_t STDCALL get_stream_info_stream_vlan_id();
+class stream_output_get_stream_info_response_imp : public stream_output_get_stream_info_response
+{
+private:
+    uint8_t * m_frame;
+    size_t m_size;
+    ssize_t m_position;
 
-    private:
-        void stream_output_get_info_flags_init();
+    struct stream_output_stream_info_flags
+    {
+        bool class_b;
+        bool fast_connect;
+        bool saved_state;
+        bool streaming_wait;
+        bool encrypted_pdu;
+        bool stream_vlan_id_valid;
+        bool connected;
+        bool msrp_failure_valid;
+        bool stream_dest_mac_valid;
+        bool msrp_acc_lat_valid;
+        bool stream_id_valid;
+        bool stream_format_valid;
     };
+    struct stream_output_stream_info_flags stream_output_info_flags;
+public:
+    stream_output_get_stream_info_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
+    virtual ~stream_output_get_stream_info_response_imp();
+
+    bool STDCALL get_stream_info_flags_stream_vlan_id_valid();
+    bool STDCALL get_stream_info_flags_msrp_failure_valid();
+    bool STDCALL get_stream_info_flags_stream_dest_mac_valid();
+    bool STDCALL get_stream_info_flags_msrp_acc_lat_valid();
+    bool STDCALL get_stream_info_flags_stream_id_valid();
+    bool STDCALL get_stream_info_flags_stream_format_valid();
+    uint64_t STDCALL get_stream_format_stream_format();
+    uint32_t STDCALL get_stream_info_flags();
+    uint64_t STDCALL get_stream_info_stream_format();
+    uint64_t STDCALL get_stream_info_stream_id();
+    uint32_t STDCALL get_stream_info_msrp_accumulated_latency();
+    uint64_t STDCALL get_stream_info_stream_dest_mac();
+    uint8_t STDCALL get_stream_info_msrp_failure_code();
+    uint64_t STDCALL get_stream_info_msrp_failure_bridge_id();
+    uint16_t STDCALL get_stream_info_stream_vlan_id();
+
+private:
+    void stream_output_get_info_flags_init();
+};
 }

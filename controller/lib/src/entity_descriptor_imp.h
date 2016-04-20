@@ -36,42 +36,42 @@
 
 namespace avdecc_lib
 {
-    class entity_descriptor_imp : public entity_descriptor, public virtual descriptor_base_imp
-    {
-    private:
-        std::vector<configuration_descriptor_imp *> config_desc_vec; // Store a list of CONFIGURATION descriptor objects
-        struct jdksavdecc_aem_command_acquire_entity_response aem_cmd_acquire_entity_resp; // Store the response received after sending a ACQUIRE_ENTITY command.
-        struct jdksavdecc_aem_command_lock_entity_response aem_cmd_lock_entity_resp; // Store the response received after sending a LOCK_ENTITY command.
-        struct jdksavdecc_aem_command_reboot_response aem_cmd_reboot_resp;
-    public:
-        entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-        virtual ~entity_descriptor_imp();
-        
-        entity_descriptor_response_imp *resp;
+class entity_descriptor_imp : public entity_descriptor, public virtual descriptor_base_imp
+{
+private:
+    std::vector<configuration_descriptor_imp *> config_desc_vec; // Store a list of CONFIGURATION descriptor objects
+    struct jdksavdecc_aem_command_acquire_entity_response aem_cmd_acquire_entity_resp; // Store the response received after sending a ACQUIRE_ENTITY command.
+    struct jdksavdecc_aem_command_lock_entity_response aem_cmd_lock_entity_resp; // Store the response received after sending a LOCK_ENTITY command.
+    struct jdksavdecc_aem_command_reboot_response aem_cmd_reboot_resp;
+public:
+    entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
+    virtual ~entity_descriptor_imp();
 
-        uint16_t STDCALL current_configuration();
-        void store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-        size_t STDCALL config_desc_count();
-        configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index);
-        entity_descriptor_response * STDCALL get_entity_response();
-        uint32_t STDCALL acquire_entity_flags();
-        uint64_t STDCALL acquire_entity_owner_entity_id();
-        uint32_t STDCALL lock_entity_flags();
-        uint64_t STDCALL lock_entity_locked_entity_id();
+    entity_descriptor_response_imp *resp;
 
-        int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag);
-        int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+    uint16_t STDCALL current_configuration();
+    void store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
+    size_t STDCALL config_desc_count();
+    configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index);
+    entity_descriptor_response * STDCALL get_entity_response();
+    uint32_t STDCALL acquire_entity_flags();
+    uint64_t STDCALL acquire_entity_owner_entity_id();
+    uint32_t STDCALL lock_entity_flags();
+    uint64_t STDCALL lock_entity_locked_entity_id();
 
-        int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag);
-        int proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+    int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag);
+    int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
-        int STDCALL send_reboot_cmd(void *notification_id);
-        int proc_reboot_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+    int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag);
+    int proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
-        int STDCALL send_set_config_cmd();
-        int proc_set_config_resp();
+    int STDCALL send_reboot_cmd(void *notification_id);
+    int proc_reboot_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
-        int STDCALL send_get_config_cmd();
-        int proc_get_config_resp();
-    };
+    int STDCALL send_set_config_cmd();
+    int proc_set_config_resp();
+
+    int STDCALL send_get_config_cmd();
+    int proc_get_config_resp();
+};
 }
