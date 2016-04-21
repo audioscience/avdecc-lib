@@ -33,77 +33,77 @@
 
 namespace avdecc_lib
 {
-    control_descriptor_response_imp::control_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-        descriptor_response_base_imp(frame, frame_len, pos) {}
-    
-    control_descriptor_response_imp::~control_descriptor_response_imp() {}
-    
-    uint8_t * STDCALL control_descriptor_response_imp::object_name()
-    {
-        return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_CONTROL_OFFSET_OBJECT_NAME];
-    }
-    
-    uint16_t STDCALL control_descriptor_response_imp::localized_description()
-    {
-        return jdksavdecc_descriptor_control_get_localized_description(buffer, position);
-    }
-    
-    uint32_t STDCALL control_descriptor_response_imp::block_latency()
-    {
-        return jdksavdecc_descriptor_control_get_block_latency(buffer, position);
-    }
-    
-    uint32_t STDCALL control_descriptor_response_imp::control_latency()
-    {
-        return jdksavdecc_descriptor_control_get_control_latency(buffer, position);
-    }
-    
-    uint16_t STDCALL control_descriptor_response_imp::control_domain()
-    {
-        return jdksavdecc_descriptor_control_get_control_domain(buffer, position);
-    }
-    
-    uint16_t STDCALL control_descriptor_response_imp::control_value_type()
-    {
-        return jdksavdecc_descriptor_control_get_control_value_type(buffer, position);
-    }
-    
-    uint64_t STDCALL control_descriptor_response_imp::control_type()
-    {
-        uint64_t control_type;
-        
-        utility::convert_eui48_to_uint64(&buffer[position +
-                                                 JDKSAVDECC_DESCRIPTOR_CONTROL_OFFSET_CONTROL_TYPE], control_type);
-        return control_type;
-    }
-    
-    uint32_t STDCALL control_descriptor_response_imp::reset_time()
-    {
-        return jdksavdecc_descriptor_control_get_reset_time(buffer, position);
-    }
-    
-    uint16_t STDCALL control_descriptor_response_imp::values_offset()
-    {
-        return jdksavdecc_descriptor_control_get_values_offset(buffer, position);
-    }
-    
-    uint16_t STDCALL control_descriptor_response_imp::number_of_values()
-    {
-        return jdksavdecc_descriptor_control_get_number_of_values(buffer, position);
-    }
-    
-    uint16_t STDCALL control_descriptor_response_imp::signal_type()
-    {
-        return jdksavdecc_descriptor_control_get_signal_type(buffer, position);
-    }
-    
-    uint16_t STDCALL control_descriptor_response_imp::signal_index()
-    {
-        return jdksavdecc_descriptor_control_get_signal_index(buffer, position);
-    }
-    
-    uint16_t STDCALL control_descriptor_response_imp::signal_output()
-    {
-        return jdksavdecc_descriptor_control_get_signal_output(buffer, position);
-    }
+control_descriptor_response_imp::control_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+    descriptor_response_base_imp(frame, frame_len, pos) {}
+
+control_descriptor_response_imp::~control_descriptor_response_imp() {}
+
+uint8_t * STDCALL control_descriptor_response_imp::object_name()
+{
+    return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_CONTROL_OFFSET_OBJECT_NAME];
+}
+
+uint16_t STDCALL control_descriptor_response_imp::localized_description()
+{
+    return jdksavdecc_descriptor_control_get_localized_description(buffer, position);
+}
+
+uint32_t STDCALL control_descriptor_response_imp::block_latency()
+{
+    return jdksavdecc_descriptor_control_get_block_latency(buffer, position);
+}
+
+uint32_t STDCALL control_descriptor_response_imp::control_latency()
+{
+    return jdksavdecc_descriptor_control_get_control_latency(buffer, position);
+}
+
+uint16_t STDCALL control_descriptor_response_imp::control_domain()
+{
+    return jdksavdecc_descriptor_control_get_control_domain(buffer, position);
+}
+
+uint16_t STDCALL control_descriptor_response_imp::control_value_type()
+{
+    return jdksavdecc_descriptor_control_get_control_value_type(buffer, position);
+}
+
+uint64_t STDCALL control_descriptor_response_imp::control_type()
+{
+    uint64_t control_type;
+
+    utility::convert_eui48_to_uint64(&buffer[position +
+                                     JDKSAVDECC_DESCRIPTOR_CONTROL_OFFSET_CONTROL_TYPE], control_type);
+    return control_type;
+}
+
+uint32_t STDCALL control_descriptor_response_imp::reset_time()
+{
+    return jdksavdecc_descriptor_control_get_reset_time(buffer, position);
+}
+
+uint16_t STDCALL control_descriptor_response_imp::values_offset()
+{
+    return jdksavdecc_descriptor_control_get_values_offset(buffer, position);
+}
+
+uint16_t STDCALL control_descriptor_response_imp::number_of_values()
+{
+    return jdksavdecc_descriptor_control_get_number_of_values(buffer, position);
+}
+
+uint16_t STDCALL control_descriptor_response_imp::signal_type()
+{
+    return jdksavdecc_descriptor_control_get_signal_type(buffer, position);
+}
+
+uint16_t STDCALL control_descriptor_response_imp::signal_index()
+{
+    return jdksavdecc_descriptor_control_get_signal_index(buffer, position);
+}
+
+uint16_t STDCALL control_descriptor_response_imp::signal_output()
+{
+    return jdksavdecc_descriptor_control_get_signal_output(buffer, position);
+}
 }

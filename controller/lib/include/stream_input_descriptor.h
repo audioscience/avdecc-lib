@@ -48,7 +48,7 @@ namespace avdecc_lib
          * \return the stream_input descriptor response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual stream_input_descriptor_response * STDCALL get_stream_input_response() = 0;
-        
+
         /**
          * \return the stream_input descriptor counters response class.
          */
@@ -176,7 +176,7 @@ namespace avdecc_lib
          *                         this corresponds to the id of the STREAM OUTPUT descriptor.
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_rx_state_cmd(void *notification_id) = 0;
-        
+
         /**
          * Send a GET_COUNTERS command to get the stream_input counters of the AVDECC Entity.
          */

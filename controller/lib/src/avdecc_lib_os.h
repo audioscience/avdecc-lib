@@ -57,10 +57,10 @@
 
 namespace avdecc_lib_os
 {
-    typedef uint32_t aTimestamp;
-    typedef pthread_t *aThread;
-    typedef sem_t *aSemaphore;
-    typedef pthread_mutex_t aCriticalSection;
+typedef uint32_t aTimestamp;
+typedef pthread_t *aThread;
+typedef sem_t *aSemaphore;
+typedef pthread_mutex_t aCriticalSection;
 }
 
 #elif defined _WIN32 || defined _WIN64
@@ -68,10 +68,10 @@ namespace avdecc_lib_os
 #include <windows.h>
 namespace avdecc_lib_os
 {
-    typedef LONGLONG aTimestamp;
-    typedef HANDLE aThread;
-    typedef HANDLE aSemaphore;
-    typedef CRITICAL_SECTION aCriticalSection;
+typedef LONGLONG aTimestamp;
+typedef HANDLE aThread;
+typedef HANDLE aSemaphore;
+typedef CRITICAL_SECTION aCriticalSection;
 }
 
 

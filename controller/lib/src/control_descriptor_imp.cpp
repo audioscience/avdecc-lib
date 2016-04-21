@@ -37,14 +37,14 @@
 
 namespace avdecc_lib
 {
-    control_descriptor_imp::control_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
+control_descriptor_imp::control_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
-    control_descriptor_imp::~control_descriptor_imp(){}
-    
-    control_descriptor_response * STDCALL control_descriptor_imp::get_control_response()
-    {
-        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-        return resp = new control_descriptor_response_imp(resp_ref->get_desc_buffer(),
-                                                          resp_ref->get_desc_size(), resp_ref->get_desc_pos());
-    }
+control_descriptor_imp::~control_descriptor_imp() {}
+
+control_descriptor_response * STDCALL control_descriptor_imp::get_control_response()
+{
+    std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+    return resp = new control_descriptor_response_imp(resp_ref->get_desc_buffer(),
+            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
+}
 }

@@ -46,12 +46,12 @@ namespace avdecc_lib
          * \return the audio_unit descriptor response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual audio_unit_descriptor_response * STDCALL get_audio_unit_response() = 0;
-        
+
         /**
          * \return the audio_unit get_sampling_rate response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual audio_unit_get_sampling_rate_response * STDCALL get_audio_unit_get_sampling_rate_response() = 0;
-        
+
         /**
          * Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.
          *

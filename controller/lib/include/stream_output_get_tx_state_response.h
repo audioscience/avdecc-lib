@@ -37,27 +37,27 @@ namespace avdecc_lib
     class stream_output_get_tx_state_response
     {
     public:
-        virtual ~stream_output_get_tx_state_response(){};
+        virtual ~stream_output_get_tx_state_response() {};
         /**
          * \return The stream id field used to identify and transfer the associated stream ID where suitable
          * after sending a GET_TX_STATE command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_state_stream_id() = 0;
-        
+
         /**
          * \return The stream destination MAC address used to convey the destination MAC address for a stream
          *         from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
          *         sending a GET_TX_STATE command and receiving a response back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_state_stream_dest_mac() = 0;
-        
+
         /**
          * \return The connection count used by the state commands to return the number of connections an AVDECC Talker
          *         thinks it has on its stream source after sending a GET_TX_STATE command and receiving a response
          *         back for the command.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_state_connection_count() = 0;
-        
+
         /**
          * \return The stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
          *         or from either to the AVDECC Controller after sending a GET_TX_STATE command and receiving a response

@@ -35,58 +35,58 @@
 
 namespace avdecc_lib
 {
-    external_port_output_descriptor_response_imp::external_port_output_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)  :
-        descriptor_response_base_imp(frame, frame_len, pos) {}
-    
-    external_port_output_descriptor_response_imp::~external_port_output_descriptor_response_imp() {}
-    
-    uint8_t * STDCALL external_port_output_descriptor_response_imp::object_name()
-    {
-        return NULL;
-    }
-    
-    uint16_t STDCALL external_port_output_descriptor_response_imp::port_flags()
-    {
-        return jdksavdecc_descriptor_external_port_get_port_flags(buffer, position);
-    }
-    
-    uint16_t STDCALL external_port_output_descriptor_response_imp::clock_domain_index()
-    {
-        return jdksavdecc_descriptor_external_port_get_clock_domain_index(buffer, position);
-    }
-    
-    uint16_t STDCALL external_port_output_descriptor_response_imp::number_of_controls()
-    {
-        return jdksavdecc_descriptor_external_port_get_number_of_controls(buffer, position);
-    }
-    
-    uint16_t STDCALL external_port_output_descriptor_response_imp::base_control()
-    {
-        return jdksavdecc_descriptor_external_port_get_base_control(buffer, position);
-    }
-    
-    uint16_t STDCALL external_port_output_descriptor_response_imp::signal_type()
-    {
-        return jdksavdecc_descriptor_external_port_get_signal_type(buffer, position);
-    }
-    
-    uint16_t STDCALL external_port_output_descriptor_response_imp::signal_index()
-    {
-        return jdksavdecc_descriptor_external_port_get_signal_index(buffer, position);
-    }
-    
-    uint16_t STDCALL external_port_output_descriptor_response_imp::signal_output()
-    {
-        return jdksavdecc_descriptor_external_port_get_signal_output(buffer, position);
-    }
-    
-    uint32_t STDCALL external_port_output_descriptor_response_imp::block_latency()
-    {
-        return jdksavdecc_descriptor_external_port_get_block_latency(buffer, position);
-    }
-    
-    uint16_t STDCALL external_port_output_descriptor_response_imp::jack_index()
-    {
-        return jdksavdecc_descriptor_external_port_get_jack_index(buffer, position);
-    }
+external_port_output_descriptor_response_imp::external_port_output_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)  :
+    descriptor_response_base_imp(frame, frame_len, pos) {}
+
+external_port_output_descriptor_response_imp::~external_port_output_descriptor_response_imp() {}
+
+uint8_t * STDCALL external_port_output_descriptor_response_imp::object_name()
+{
+    return NULL;
+}
+
+uint16_t STDCALL external_port_output_descriptor_response_imp::port_flags()
+{
+    return jdksavdecc_descriptor_external_port_get_port_flags(buffer, position);
+}
+
+uint16_t STDCALL external_port_output_descriptor_response_imp::clock_domain_index()
+{
+    return jdksavdecc_descriptor_external_port_get_clock_domain_index(buffer, position);
+}
+
+uint16_t STDCALL external_port_output_descriptor_response_imp::number_of_controls()
+{
+    return jdksavdecc_descriptor_external_port_get_number_of_controls(buffer, position);
+}
+
+uint16_t STDCALL external_port_output_descriptor_response_imp::base_control()
+{
+    return jdksavdecc_descriptor_external_port_get_base_control(buffer, position);
+}
+
+uint16_t STDCALL external_port_output_descriptor_response_imp::signal_type()
+{
+    return jdksavdecc_descriptor_external_port_get_signal_type(buffer, position);
+}
+
+uint16_t STDCALL external_port_output_descriptor_response_imp::signal_index()
+{
+    return jdksavdecc_descriptor_external_port_get_signal_index(buffer, position);
+}
+
+uint16_t STDCALL external_port_output_descriptor_response_imp::signal_output()
+{
+    return jdksavdecc_descriptor_external_port_get_signal_output(buffer, position);
+}
+
+uint32_t STDCALL external_port_output_descriptor_response_imp::block_latency()
+{
+    return jdksavdecc_descriptor_external_port_get_block_latency(buffer, position);
+}
+
+uint16_t STDCALL external_port_output_descriptor_response_imp::jack_index()
+{
+    return jdksavdecc_descriptor_external_port_get_jack_index(buffer, position);
+}
 }

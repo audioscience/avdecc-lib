@@ -34,30 +34,30 @@
 
 namespace avdecc_lib
 {
-    class system_message_queue
-    {
-    private:
-        HANDLE data_avail;
-        CRITICAL_SECTION critical_section_obj;
-        std::list<const char *>m_msgs;
-        int entry_size;
-        enum { max_msgs = 0xffff };
+class system_message_queue
+{
+private:
+    HANDLE data_avail;
+    CRITICAL_SECTION critical_section_obj;
+    std::list<const char *>m_msgs;
+    int entry_size;
+    enum { max_msgs = 0xffff };
 
-    public:
-        /**
-         * Constructor for System Message Queue object with an entry count and size.
-         */
-        system_message_queue(int size);
+public:
+    /**
+     * Constructor for System Message Queue object with an entry count and size.
+     */
+    system_message_queue(int size);
 
-        ~system_message_queue();
+    ~system_message_queue();
 
-        void queue_push(void *thread_data);
+    void queue_push(void *thread_data);
 
-        void queue_pop_nowait(void *thread_data);
+    void queue_pop_nowait(void *thread_data);
 
-        void queue_pop_wait(void *thread_data);
+    void queue_pop_wait(void *thread_data);
 
-        HANDLE queue_data_available_object();
-    };
+    HANDLE queue_data_available_object();
+};
 }
 

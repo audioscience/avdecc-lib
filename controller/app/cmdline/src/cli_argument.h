@@ -45,7 +45,7 @@ class cli_argument
 {
 public:
     cli_argument(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint,
-            size_t match_min, size_t match_max);
+                 size_t match_min, size_t match_max);
     virtual ~cli_argument() {};
 
     const std::string &get_name() const;
@@ -89,7 +89,7 @@ class cli_argument_int : public cli_argument
 {
 public:
     cli_argument_int(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint="",
-            size_t match_min=1, size_t match_max=1);
+                     size_t match_min=1, size_t match_max=1);
     virtual ~cli_argument_int() {};
 
     virtual void clear();
@@ -109,7 +109,7 @@ class cli_argument_end_station : public cli_argument
 {
 public:
     cli_argument_end_station(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint="",
-            size_t match_min=1, size_t match_max=1);
+                             size_t match_min=1, size_t match_max=1);
     virtual ~cli_argument_end_station() {};
 
     virtual void clear();
@@ -129,7 +129,7 @@ class cli_argument_string : public cli_argument
 {
 public:
     cli_argument_string(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint="",
-            size_t match_min=1, size_t match_max=1);
+                        size_t match_min=1, size_t match_max=1);
     virtual ~cli_argument_string() {};
 
     virtual void clear();

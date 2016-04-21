@@ -50,7 +50,7 @@ namespace avdecc_lib
          * \return the clock_domain descriptor response class.
          */
         AVDECC_CONTROLLER_LIB32_API virtual clock_domain_descriptor_response * STDCALL get_clock_domain_response() = 0;
-        
+
         /**
          * \return the clock_domain descriptor counters response class.
          */
@@ -85,7 +85,7 @@ namespace avdecc_lib
          * \see get_clock_source_clock_source_index()
          */
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_clock_source_cmd(void *notification_id) = 0;
-        
+
         /**
          * Send a GET_COUNTERS command to get the clock_domain counters of the AVDECC Entity.
          */

@@ -35,14 +35,14 @@
 
 namespace avdecc_lib
 {
-    class audio_map_descriptor_imp : public audio_map_descriptor, public virtual descriptor_base_imp
-    {
-    public:
-        audio_map_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-        virtual ~audio_map_descriptor_imp();
-        
-        audio_map_descriptor_response_imp *resp;
+class audio_map_descriptor_imp : public audio_map_descriptor, public virtual descriptor_base_imp
+{
+public:
+    audio_map_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
+    virtual ~audio_map_descriptor_imp();
 
-        audio_map_descriptor_response * STDCALL get_audio_map_response();
-    };
+    audio_map_descriptor_response_imp *resp;
+
+    audio_map_descriptor_response * STDCALL get_audio_map_response();
+};
 }

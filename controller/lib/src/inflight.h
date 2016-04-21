@@ -33,92 +33,92 @@
 
 namespace avdecc_lib
 {
-    class inflight
+class inflight
+{
+private:
+    struct jdksavdecc_frame cmd_frame;
+    uint32_t cmd_notification_flag;
+    timer cmd_timer;
+    uint32_t cmd_timeout_ms;
+    uint32_t start_timer_cnt;
+
+public:
+    /* following 2 are public for compare prediate classes */
+    uint16_t cmd_seq_id;
+    void *cmd_notification_id;
+
+    inflight(struct jdksavdecc_frame *frame,
+             uint16_t seq_id,
+             void *notification_id,
+             uint32_t notification_flag,
+             uint32_t timeout_ms)
+        :  cmd_notification_flag(notification_flag), cmd_timeout_ms(timeout_ms), cmd_seq_id(seq_id), cmd_notification_id(notification_id)
     {
-    private:
-        struct jdksavdecc_frame cmd_frame;
-        uint32_t cmd_notification_flag;
-        timer cmd_timer;
-        uint32_t cmd_timeout_ms;
-        uint32_t start_timer_cnt;
+        cmd_frame = *frame;
+        start_timer_cnt = 0;
+    }
 
-    public:
-        /* following 2 are public for compare prediate classes */
-        uint16_t cmd_seq_id;
-        void *cmd_notification_id;
+    ~inflight() {}
 
-        inflight(struct jdksavdecc_frame *frame,
-                 uint16_t seq_id,
-                 void *notification_id,
-                 uint32_t notification_flag,
-                 uint32_t timeout_ms)
-                :  cmd_notification_flag(notification_flag), cmd_timeout_ms(timeout_ms), cmd_seq_id(seq_id), cmd_notification_id(notification_id)
-        {
-            cmd_frame = *frame;
-            start_timer_cnt = 0;
-        }
-
-        ~inflight() {}
-
-        inline void start_timer()
-        {
-            start_timer_cnt++;
-            cmd_timer.start(cmd_timeout_ms);
-        }
-
-        inline struct jdksavdecc_frame frame()
-        {
-            return cmd_frame;
-        }
-
-        inline uint32_t notification_flag()
-        {
-            return cmd_notification_flag;
-        }
-
-        inline bool timeout()
-        {
-            return cmd_timer.timeout();
-        }
-
-        inline bool retried()
-        {
-            return start_timer_cnt >= 2; // The command can be resent once
-        }
-    };
-
-    /*
-     * Class for use in STL find_if() call to find matching sequence ID.
-     */
-    class SeqIdComp
+    inline void start_timer()
     {
-    private:
-        uint16_t v;
+        start_timer_cnt++;
+        cmd_timer.start(cmd_timeout_ms);
+    }
 
-    public:
-        SeqIdComp(uint16_t i) : v(i) { }
-
-        inline bool operator()(const inflight & m) const
-        {
-            return m.cmd_seq_id == v;
-        }
-    };
-
-    /*
-     * Class for use in STL find_if() call to find matching notification ID.
-     */
-    class NotificationComp
+    inline struct jdksavdecc_frame frame()
     {
-    private:
-        void * v;
+        return cmd_frame;
+    }
 
-    public:
-        NotificationComp(void * p) : v(p) { }
+    inline uint32_t notification_flag()
+    {
+        return cmd_notification_flag;
+    }
 
-        inline bool operator()(const inflight & m) const
-        {
-            return m.cmd_notification_id == v;
-        }
-    };
+    inline bool timeout()
+    {
+        return cmd_timer.timeout();
+    }
+
+    inline bool retried()
+    {
+        return start_timer_cnt >= 2; // The command can be resent once
+    }
+};
+
+/*
+ * Class for use in STL find_if() call to find matching sequence ID.
+ */
+class SeqIdComp
+{
+private:
+    uint16_t v;
+
+public:
+    SeqIdComp(uint16_t i) : v(i) { }
+
+    inline bool operator()(const inflight & m) const
+    {
+        return m.cmd_seq_id == v;
+    }
+};
+
+/*
+ * Class for use in STL find_if() call to find matching notification ID.
+ */
+class NotificationComp
+{
+private:
+    void * v;
+
+public:
+    NotificationComp(void * p) : v(p) { }
+
+    inline bool operator()(const inflight & m) const
+    {
+        return m.cmd_notification_id == v;
+    }
+};
 }
 

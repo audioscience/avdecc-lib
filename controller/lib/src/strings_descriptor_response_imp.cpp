@@ -31,52 +31,52 @@
 
 namespace avdecc_lib
 {
-    strings_descriptor_response_imp::strings_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-        descriptor_response_base_imp(frame, frame_len, pos) {}
-    
-    strings_descriptor_response_imp::~strings_descriptor_response_imp() {}
-    
-    uint8_t * STDCALL strings_descriptor_response_imp::object_name()
+strings_descriptor_response_imp::strings_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
+    descriptor_response_base_imp(frame, frame_len, pos) {}
+
+strings_descriptor_response_imp::~strings_descriptor_response_imp() {}
+
+uint8_t * STDCALL strings_descriptor_response_imp::object_name()
+{
+    return NULL;
+}
+
+uint8_t * STDCALL strings_descriptor_response_imp::get_string_by_index(size_t string_index)
+{
+    switch(string_index)
     {
-        return NULL;
+    case 0:
+        return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_0];
+        break;
+
+    case 1:
+        return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_1];
+        break;
+
+    case 2:
+        return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_2];
+        break;
+
+    case 3:
+        return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_3];
+        break;
+
+    case 4:
+        return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_4];
+        break;
+
+    case 5:
+        return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_5];
+        break;
+
+    case 6:
+        return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_6];
+        break;
+
+    default:
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_string_by_index error");
+        break;
     }
-    
-    uint8_t * STDCALL strings_descriptor_response_imp::get_string_by_index(size_t string_index)
-    {
-        switch(string_index)
-        {
-            case 0:
-                return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_0];
-                break;
-                
-            case 1:
-                return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_1];
-                break;
-                
-            case 2:
-                return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_2];
-                break;
-                
-            case 3:
-                return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_3];
-                break;
-                
-            case 4:
-                return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_4];
-                break;
-                
-            case 5:
-                return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_5];
-                break;
-                
-            case 6:
-                return (uint8_t *) &buffer[position + JDKSAVDECC_DESCRIPTOR_STRINGS_OFFSET_STRING_6];
-                break;
-                
-            default:
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_string_by_index error");
-                break;
-        }
-        return 0;
-    }
+    return 0;
+}
 }

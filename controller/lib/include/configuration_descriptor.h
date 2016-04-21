@@ -89,12 +89,12 @@ namespace avdecc_lib
          * \return True if the descriptor type and descriptor count index are valid and present in the current configuration.
          */
         AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL are_desc_type_and_index_in_config(int desc_type, int desc_count_index) = 0;
-        
+
         /**
          * \return The number of ENTITY descriptors present in the current configuration.
          */
         AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL entity_desc_count() = 0;
-        
+
         /**
          * \return The number of AUDIO UNIT descriptors present in the current configuration.
          */
@@ -194,12 +194,12 @@ namespace avdecc_lib
          * \return A descriptor by type and index.
          */
         AVDECC_CONTROLLER_LIB32_API virtual descriptor_base * STDCALL lookup_desc(uint16_t desc_type, size_t index) = 0;
-        
+
         /**
          * \return The corresponding ENTITY descriptor by index.
          */
         AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor * STDCALL get_entity_descriptor_by_index(size_t audio_unit_desc_index) = 0;
-        
+
         /**
          * \return The corresponding AUDIO UNIT descriptor by index.
          */

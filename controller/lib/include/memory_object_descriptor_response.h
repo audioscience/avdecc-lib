@@ -39,7 +39,7 @@ namespace avdecc_lib
     class memory_object_descriptor_response : public virtual descriptor_response_base
     {
     public:
-        virtual ~memory_object_descriptor_response(){};
+        virtual ~memory_object_descriptor_response() {};
 
         /**
          * \return The localized string reference pointing to the localized descriptor name.
@@ -50,36 +50,36 @@ namespace avdecc_lib
          * \return The type of the Memory Object
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL memory_object_type() = 0;
-        
+
         /**
          * \return The descriptor_type of the object that is the target of the memory region.
          *         This is the object to which the settings, log file, or firmware applies.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL target_descriptor_type() = 0;
-        
+
         /**
          * \return The descriptor_index of the object that is the target of the memory region.
          *         This is the object to which the settings, log file, or firmware applies.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL target_descriptor_index() = 0;
-        
+
         /**
          * \return The 64-bit start address used for reading or writing the object’s data
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL start_address() = 0;
-        
+
         /**
          * \return The 64-bit maximum length of the Memory Object.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL maximum_length() = 0;
-        
+
         /**
          * \return The 64-bit actual length of the Memory Object.
          *         This value will change and will reflect the actual size of the data contained
          *         in the memory region described by this Memory Object.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL length() = 0;
-        
+
         /**
          * \return String representation of the memory_object_type
          */

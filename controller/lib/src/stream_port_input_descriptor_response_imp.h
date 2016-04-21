@@ -35,20 +35,20 @@
 
 namespace avdecc_lib
 {
-    class stream_port_input_descriptor_response_imp : public stream_port_input_descriptor_response, public virtual descriptor_response_base_imp
-    {
-    public:
-        stream_port_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~stream_port_input_descriptor_response_imp();
-        
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL clock_domain_index();
-        uint16_t STDCALL port_flags();
-        uint16_t STDCALL number_of_controls();
-        uint16_t STDCALL base_control();
-        uint16_t STDCALL number_of_clusters();
-        uint16_t STDCALL base_cluster();
-        uint16_t STDCALL number_of_maps();
-        uint16_t STDCALL base_map();
-    };
+class stream_port_input_descriptor_response_imp : public stream_port_input_descriptor_response, public virtual descriptor_response_base_imp
+{
+public:
+    stream_port_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    virtual ~stream_port_input_descriptor_response_imp();
+
+    uint8_t * STDCALL object_name();
+    uint16_t STDCALL clock_domain_index();
+    uint16_t STDCALL port_flags();
+    uint16_t STDCALL number_of_controls();
+    uint16_t STDCALL base_control();
+    uint16_t STDCALL number_of_clusters();
+    uint16_t STDCALL base_cluster();
+    uint16_t STDCALL number_of_maps();
+    uint16_t STDCALL base_map();
+};
 }

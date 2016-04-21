@@ -34,22 +34,22 @@
 
 namespace avdecc_lib
 {
-    class stream_input_get_rx_state_response_imp : public stream_input_get_rx_state_response
-    {
-    private:
-        uint8_t * m_frame;
-        size_t m_size;
-        ssize_t m_position;
-    public:
-        stream_input_get_rx_state_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~stream_input_get_rx_state_response_imp();
-        
-        uint64_t STDCALL get_rx_state_stream_id();
-        uint16_t STDCALL get_rx_state_talker_unique_id();
-        uint16_t STDCALL get_rx_state_listener_unique_id();
-        uint64_t STDCALL get_rx_state_stream_dest_mac();
-        uint16_t STDCALL get_rx_state_connection_count();
-        uint16_t STDCALL get_rx_state_flags();
-        uint16_t STDCALL get_rx_state_stream_vlan_id();
-    };
+class stream_input_get_rx_state_response_imp : public stream_input_get_rx_state_response
+{
+private:
+    uint8_t * m_frame;
+    size_t m_size;
+    ssize_t m_position;
+public:
+    stream_input_get_rx_state_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
+    virtual ~stream_input_get_rx_state_response_imp();
+
+    uint64_t STDCALL get_rx_state_stream_id();
+    uint16_t STDCALL get_rx_state_talker_unique_id();
+    uint16_t STDCALL get_rx_state_listener_unique_id();
+    uint64_t STDCALL get_rx_state_stream_dest_mac();
+    uint16_t STDCALL get_rx_state_connection_count();
+    uint16_t STDCALL get_rx_state_flags();
+    uint16_t STDCALL get_rx_state_stream_vlan_id();
+};
 }

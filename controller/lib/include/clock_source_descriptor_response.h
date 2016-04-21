@@ -41,7 +41,7 @@ namespace avdecc_lib
     class clock_source_descriptor_response : public virtual descriptor_response_base
     {
     public:
-        virtual ~clock_source_descriptor_response(){};
+        virtual ~clock_source_descriptor_response() {};
 
         /**
          * \return The localized string reference pointing to the localized descriptor name.
@@ -55,7 +55,7 @@ namespace avdecc_lib
          *	       2 (Local ID) if the Input Stream CLOCK SOURCE is identified by it's local ID.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_source_flags() = 0;
-        
+
         /**
          * The type of CLOCK SOURCE.
          *
@@ -64,17 +64,17 @@ namespace avdecc_lib
          *	       2 (Input Stream) if the clock is sourced from the media clock of an Input Stream.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_source_type() = 0;
-        
+
         /**
          * \return The identifier of the CLOCK SOURCE.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL clock_source_identifier() = 0;
-        
+
         /**
          * \return The descriptor type of the object that this CLOCK SOURCE is associated with.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_source_location_type() = 0;
-        
+
         /**
          * \return The descriptor index of the object that this CLOCK SOURCE is associated with.
          */

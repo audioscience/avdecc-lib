@@ -291,83 +291,83 @@ void cmd_line::cmd_line_commands_init()
     // audio mappings
     cli_command *audio_mappings = new cli_command();
     commands.add_sub_command("audio_mappings", audio_mappings);
-    
+
     // remove audio mappings
     cli_command *remove_audio_mappings_cmd = new cli_command();
     audio_mappings->add_sub_command("remove", remove_audio_mappings_cmd);
     cli_command_format *remove_audio_mappings_fmt = new cli_command_format(
-                                                                        "Send a REMOVE_AUDIO_MAPPINGS command to remove the queued mapping entries\n" \
-                                                                        "from the dynamic mapping between the Audio Clusters and Input/Output Streams\n",\
-                                                                        &cmd_line::cmd_remove_audio_mappings);
+        "Send a REMOVE_AUDIO_MAPPINGS command to remove the queued mapping entries\n" \
+        "from the dynamic mapping between the Audio Clusters and Input/Output Streams\n",\
+        &cmd_line::cmd_remove_audio_mappings);
     remove_audio_mappings_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                                                 "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
+                                                                    "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
     remove_audio_mappings_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                                              "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                                              "\"view all\" command."));
+                                                                 "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                                 "\"view all\" command."));
     remove_audio_mappings_cmd->add_format(remove_audio_mappings_fmt);
 
     // store pending audio mapping
     cli_command *store_pending_audio_mapping_cmd = new cli_command();
     audio_mappings->add_sub_command("store_pending", store_pending_audio_mapping_cmd);
-    
+
     cli_command_format *store_pending_audio_mapping_fmt = new cli_command_format(
-                                                                        "Send an ADD_PENDING_AUDIO_MAPPING command to add mapping entries to a local queue.\n" \
-                                                                        "for adding or removal\n", \
-                                                                        &cmd_line::cmd_store_pending_audio_mapping);
+        "Send an ADD_PENDING_AUDIO_MAPPING command to add mapping entries to a local queue.\n" \
+        "for adding or removal\n", \
+        &cmd_line::cmd_store_pending_audio_mapping);
     store_pending_audio_mapping_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                                                 "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
+                                                                          "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
     store_pending_audio_mapping_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                                              "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                                              "\"view all\" command."));
-    
+                                                                       "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                                       "\"view all\" command."));
+
     store_pending_audio_mapping_fmt->add_argument(new cli_argument_int(this, "s_i", "the stream index."));
     store_pending_audio_mapping_fmt->add_argument(new cli_argument_int(this, "s_c", "the stream channel"));
     store_pending_audio_mapping_fmt->add_argument(new cli_argument_int(this, "c_o", "the cluster offset."));
     store_pending_audio_mapping_fmt->add_argument(new cli_argument_int(this, "c_c", "the cluster channel."));
-    
+
     store_pending_audio_mapping_cmd->add_format(store_pending_audio_mapping_fmt);
-    
+
     // view pending audio mappings
     cli_command *get_pending_audio_mappings_cmd = new cli_command();
     audio_mappings->add_sub_command("get_pending", get_pending_audio_mappings_cmd);
-    
+
     cli_command_format *get_pending_audio_mappings_fmt = new cli_command_format(
-                                                                                 "Send an GET_PENDING_AUDIO_MAPPINGS command to read queued entries.",
-                                                                                 &cmd_line::cmd_get_pending_audio_mappings);
+        "Send an GET_PENDING_AUDIO_MAPPINGS command to read queued entries.",
+        &cmd_line::cmd_get_pending_audio_mappings);
     get_pending_audio_mappings_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                                                          "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
+                                                                         "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
     get_pending_audio_mappings_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                                                       "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                                                       "\"view all\" command."));
+                                                                      "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                                      "\"view all\" command."));
     get_pending_audio_mappings_cmd->add_format(get_pending_audio_mappings_fmt);
-    
+
     // clear pending audio mappings
     cli_command *clear_pending_audio_mappings_cmd = new cli_command();
     audio_mappings->add_sub_command("clear_pending", clear_pending_audio_mappings_cmd);
-    
+
     cli_command_format *clear_pending_audio_mappings_fmt = new cli_command_format(
-                                                                                 "Send an CLEAR_PENDING_AUDIO_MAPPINGS command to clear queued entries.",
-                                                                                 &cmd_line::cmd_clear_pending_audio_mappings);
+        "Send an CLEAR_PENDING_AUDIO_MAPPINGS command to clear queued entries.",
+        &cmd_line::cmd_clear_pending_audio_mappings);
     clear_pending_audio_mappings_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                                                          "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
+                                                                           "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
     clear_pending_audio_mappings_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                                                       "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                                                       "\"view all\" command."));
+                                                                        "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                                        "\"view all\" command."));
     clear_pending_audio_mappings_cmd->add_format(clear_pending_audio_mappings_fmt);
 
     // add audio mappings
     cli_command *add_audio_mappings_cmd = new cli_command();
     audio_mappings->add_sub_command("add", add_audio_mappings_cmd);
-    
+
     cli_command_format *add_audio_mappings_fmt = new cli_command_format(
-                                                                        "Send an ADD_AUDIO_MAPPINGS command to add queued mapping entries to the dynamic\n" \
-                                                                        "mapping between the Audio Clusters and Input/Output Streams\n", \
-                                                                        &cmd_line::cmd_add_audio_mappings);
+        "Send an ADD_AUDIO_MAPPINGS command to add queued mapping entries to the dynamic\n" \
+        "mapping between the Audio Clusters and Input/Output Streams\n", \
+        &cmd_line::cmd_add_audio_mappings);
     add_audio_mappings_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                                              "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
+                                                                 "Valid descriptor types are STREAM_PORT_INPUT and STREAM_PORT_OUTPUT."));
     add_audio_mappings_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                                           "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                                           "\"view all\" command."));
+                                                              "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                              "\"view all\" command."));
     add_audio_mappings_cmd->add_format(add_audio_mappings_fmt);
 
     // log
@@ -448,11 +448,11 @@ void cmd_line::cmd_line_commands_init()
     view_descriptor_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
     view_descriptor_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index"));
     view_descriptor_cmd->add_format(view_descriptor_fmt);
-    
+
     // view stream format
     cli_command *view_stream_formats_cmd = new cli_command();
     view_cmd->add_sub_command("stream_formats", view_stream_formats_cmd);
-    
+
     cli_command_format *view_stream_formats_fmt = new cli_command_format("Display all possible stream formats.",
                                                                          &cmd_line::cmd_view_stream_formats);
     view_stream_formats_cmd->add_format(view_stream_formats_fmt);
@@ -516,25 +516,25 @@ void cmd_line::cmd_line_commands_init()
     // get
     cli_command *get_cmd = new cli_command();
     commands.add_sub_command("get", get_cmd);
-    
+
     // get name
     cli_command *get_name_cmd = new cli_command();
     get_cmd->add_sub_command("name", get_name_cmd);
 
     cli_command_format *get_name_state_fmt = new cli_command_format(
-                                                                    "Send a GET_NAME command to fetch the value of a name field within a descriptor.",
-                                                                    &cmd_line::cmd_get_name);
+        "Send a GET_NAME command to fetch the value of a name field within a descriptor.",
+        &cmd_line::cmd_get_name);
     get_name_state_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
     get_name_state_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index"));
     get_name_cmd->add_format(get_name_state_fmt);
-    
+
     // get group name
     cli_command *get_group_name_cmd = new cli_command();
     get_cmd->add_sub_command("group_name", get_group_name_cmd);
-    
+
     cli_command_format *get_group_name_state_fmt = new cli_command_format(
-                                                                    "Send a GET_GROUP_NAME command to fetch the group name of an ENTITY descriptor.",
-                                                                    &cmd_line::cmd_get_group_name);
+        "Send a GET_GROUP_NAME command to fetch the group name of an ENTITY descriptor.",
+        &cmd_line::cmd_get_group_name);
     get_group_name_cmd->add_format(get_group_name_state_fmt);
 
 
@@ -707,24 +707,24 @@ void cmd_line::cmd_line_commands_init()
     // set name
     cli_command *set_name_cmd = new cli_command();
     set_cmd->add_sub_command("name", set_name_cmd);
-    
+
     cli_command_format *set_name_state_fmt = new cli_command_format(
-                                                                    "Send a SET_NAME command to change the value of a name field within a descriptor.",
-                                                                      &cmd_line::cmd_set_name);
+        "Send a SET_NAME command to change the value of a name field within a descriptor.",
+        &cmd_line::cmd_set_name);
     set_name_state_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type"));
     set_name_state_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index"));
     set_name_state_fmt->add_argument(new cli_argument_string(this, "o_n", "the new name"));
     set_name_cmd->add_format(set_name_state_fmt);
-    
+
     //set group name
     cli_command *set_group_name_cmd = new cli_command();
     set_cmd->add_sub_command("group_name", set_group_name_cmd);
-    
+
     cli_command_format *set_group_name_state_fmt = new cli_command_format(
-                                                                    "Send a SET_GROUP_NAME command to change the group name of an ENTITY descriptor.",                                                                    &cmd_line::cmd_set_group_name);
+        "Send a SET_GROUP_NAME command to change the group name of an ENTITY descriptor.",                                                                    &cmd_line::cmd_set_group_name);
     set_group_name_state_fmt->add_argument(new cli_argument_string(this, "o_n", "the new group name"));
     set_group_name_cmd->add_format(set_group_name_state_fmt);
-    
+
     // set stream_format
     cli_command *set_stream_format_cmd = new cli_command();
     set_cmd->add_sub_command("stream_format", set_stream_format_cmd);
@@ -747,7 +747,7 @@ void cmd_line::cmd_line_commands_init()
     // get audio_map
     cli_command *get_audio_map_cmd = new cli_command();
     audio_mappings->add_sub_command("get", get_audio_map_cmd);
-    
+
     cli_command_format *get_audio_map_fmt = new cli_command_format(
         "Send a GET_AUDIO_MAP command to fetch the dynamic mapping between the Audio Clusters\n" \
         "and the input or output streams.",
@@ -807,23 +807,23 @@ void cmd_line::cmd_line_commands_init()
     // unsolicited
     cli_command *unsolicited_cmd = new cli_command();
     commands.add_sub_command("unsolicited", unsolicited_cmd);
-    
+
     //register unsolicited notifications
     cli_command *register_unsolicited_notif = new cli_command();
     unsolicited_cmd->add_sub_command("register", register_unsolicited_notif);
-    
+
     cli_command_format *register_unsolicited_fmt = new cli_command_format(
-                                                                     "Add the controller as being interested in receiving unsolicited response notifications.",
-                                                                     &cmd_line::cmd_register_unsolicited_notif);
+        "Add the controller as being interested in receiving unsolicited response notifications.",
+        &cmd_line::cmd_register_unsolicited_notif);
     register_unsolicited_notif->add_format(register_unsolicited_fmt);
-    
+
     //deregister unsolicited notifications
     cli_command *deregister_unsolicited_notif = new cli_command();
     unsolicited_cmd->add_sub_command("deregister", deregister_unsolicited_notif);
-    
+
     cli_command_format *deregister_unsolicited_fmt = new cli_command_format(
-                                                                          "Remove the controller as being interested in receiving unsolicited response notifications.",
-                                                                          &cmd_line::cmd_deregister_unsolicited_notif);
+        "Remove the controller as being interested in receiving unsolicited response notifications.",
+        &cmd_line::cmd_deregister_unsolicited_notif);
     deregister_unsolicited_notif->add_format(deregister_unsolicited_fmt);
 
     // set sampling_rate
@@ -855,20 +855,20 @@ void cmd_line::cmd_line_commands_init()
                                                              "To see a list of valid descriptor types and corresponding indexes, enter\n" \
                                                              "\"view all\" command."));
     get_sampling_rate_cmd->add_format(get_sampling_rate_fmt);
-    
+
     // get counters
     cli_command *get_counters_cmd = new cli_command();
     get_cmd->add_sub_command("counters", get_counters_cmd);
-    
+
     cli_command_format *get_counters_fmt = new cli_command_format(
-                                                                       "Send a GET_COUNTERS command to get a current counter for a descriptor.\n" \
-                                                                       "port or unit.",
-                                                                       &cmd_line::cmd_get_counters);
+        "Send a GET_COUNTERS command to get a current counter for a descriptor.\n" \
+        "port or unit.",
+        &cmd_line::cmd_get_counters);
     get_counters_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                                                "Valid descriptor types are AVB_INTERFACE, CLOCK_DOMAIN, STREAM_INPUT."));
+                                                           "Valid descriptor types are AVB_INTERFACE, CLOCK_DOMAIN, STREAM_INPUT."));
     get_counters_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
-                                                             "To see a list of valid descriptor types and corresponding indexes, enter\n" \
-                                                             "\"view all\" command."));
+                                                        "To see a list of valid descriptor types and corresponding indexes, enter\n" \
+                                                        "\"view all\" command."));
     get_counters_cmd->add_format(get_counters_fmt);
 
 
@@ -900,11 +900,11 @@ void cmd_line::cmd_line_commands_init()
                                                             "To see a list of valid descriptor types and corresponding indexes, enter\n" \
                                                             "\"view all\" command."));
     get_clock_source_cmd->add_format(get_clock_source_fmt);
-    
+
     // get avb_info
     cli_command *get_avb_info_cmd = new cli_command();
     get_cmd->add_sub_command("avb_info", get_avb_info_cmd);
-    
+
     cli_command_format *get_avb_info_fmt = new cli_command_format(
         "Send a GET_AVB_INFO command to get the dynamic AVB information for an AVB_INTERFACE.",
         &cmd_line::cmd_get_avb_info);
@@ -1154,7 +1154,7 @@ int cmd_line::cmd_view_media_clock(int total_matched, std::vector<cli_argument*>
                     is_clock_sync_source_set = stream_input_resp_ref->stream_flags_clock_sync_source();
                     if(is_clock_sync_source_set)
                     {
-                        
+
                         desc_obj_name = stream_input_resp_ref->object_name();
                         desc_type_value = stream_input_desc->descriptor_type();
                         desc_index = stream_input_desc->descriptor_index();
@@ -1163,7 +1163,7 @@ int cmd_line::cmd_view_media_clock(int total_matched, std::vector<cli_argument*>
                                     << "  " << std::setw(18) << avdecc_lib::utility::aem_desc_value_to_name(desc_type_value)
                                     << "  " << std::setw(16) << std::dec << desc_index << std::endl;
                     }
-                delete(stream_input_resp_ref);
+                    delete(stream_input_resp_ref);
                 }
             }
 
@@ -1360,7 +1360,7 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
         avdecc_lib::configuration_descriptor *configuration;
         if(get_current_entity_and_descriptor(end_station, &entity, &configuration))
             continue;
-        
+
         avdecc_lib::entity_descriptor_response *entity_resp = entity->get_entity_response();
 
         obj_name = entity_resp->entity_name();
@@ -1618,7 +1618,7 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument*> args)
                                                    *locale);
                     delete control_resp_ref;
                 }
-            break;
+                break;
         }
     }
 
@@ -1645,11 +1645,11 @@ int cmd_line::cmd_view_stream_formats(int total_matched, std::vector<cli_argumen
 int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> args)
 {
     uint32_t end_station_index = current_end_station;
- 
+
     avdecc_lib::end_station *end_station = controller_obj->get_end_station_by_index(end_station_index);
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
-    
+
     if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
         return 0;
     avdecc_lib::entity_descriptor_response *entity_resp_ref = entity->get_entity_response();
@@ -1862,13 +1862,13 @@ int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument*> arg
                 avdecc_lib::control_descriptor *control_desc_ref = configuration->get_control_desc_by_index(j);
                 std::string desc_name = avdecc_lib::utility::aem_desc_value_to_name(control_desc_ref->descriptor_type());
                 uint16_t desc_index = control_desc_ref->descriptor_index();
-                
+
                 atomic_cout << "\n----------------------- " << desc_name << " -----------------------";
                 do_view_descriptor(desc_name, desc_index);
             }
 
 
-        break;
+            break;
     }
 
     return 0;
@@ -1927,7 +1927,7 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
 
                         the_bit = ((v & fl->get_flag_mask()) != 0);
                         atomic_cout << "\n\t" << std::setw(32) << fl->get_flag_name() << " = " << the_bit <<
-                            " (mask is 0x" << std::setfill('0') << std::setw(8) << std::hex << fl->get_flag_mask() << ")";
+                                    " (mask is 0x" << std::setfill('0') << std::setw(8) << std::hex << fl->get_flag_mask() << ")";
                     }
                     break;
                 default:
@@ -2102,7 +2102,7 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                             atomic_cout << "\tstream_format_" << i << " = 0x" << std::hex << current_format_value << std::endl;
                         }
                     }
-                    
+
                     delete(stream_input_resp_ref);
                 }
             }
@@ -2481,12 +2481,12 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
                 }
             }
             break;
-            
+
         case avdecc_lib::AEM_DESC_CONTROL:
             {
                 if (!configuration)
                     break;
-            
+
                 avdecc_lib::control_descriptor *control_desc = configuration->get_control_desc_by_index(desc_index);
                 if (control_desc)
                 {
@@ -2564,7 +2564,7 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
         avdecc_lib::configuration_descriptor *configuration;
         if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
             continue;
-        
+
         avdecc_lib::entity_descriptor_response *entity_desc_resp = entity->get_entity_response();
         end_station_mac = end_station->mac();
         instream_end_station_name = entity_desc_resp->entity_name();
@@ -2590,9 +2590,9 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
                     input_stream_name = strings_resp_ref->get_string_by_index(string_index);
 
                     atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
-                    << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
-                    << std::setw(3) << j << std::setw(19) << input_stream_name << "   "
-                    << std::setw(14) << format << std::endl;
+                                << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
+                                << std::setw(3) << j << std::setw(19) << input_stream_name << "   "
+                                << std::setw(14) << format << std::endl;
 
                     delete strings_resp_ref;
                 }
@@ -2602,9 +2602,9 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
                 input_stream_name = desc_desc_name;
 
                 atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
-                << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
-                << std::setw(3) << j << std::setw(19) << input_stream_name << "   "
-                << std::setw(14) << format << std::endl;
+                            << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
+                            << std::setw(3) << j << std::setw(19) << input_stream_name << "   "
+                            << std::setw(14) << format << std::endl;
             }
             delete stream_input_resp_ref;
         }
@@ -2621,7 +2621,7 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
         avdecc_lib::configuration_descriptor *configuration;
         if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
             continue;
-        
+
         avdecc_lib::entity_descriptor_response *entity_desc_resp = entity->get_entity_response();
         end_station_mac = end_station->mac();
         outstream_end_station_name = entity_desc_resp->entity_name();
@@ -2647,9 +2647,9 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
                     output_stream_name = strings_resp_ref->get_string_by_index(string_index);
 
                     atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
-                    << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
-                    << std::setw(3) << j << std::setw(19) << output_stream_name
-                    << "   " << std::setw(14) << format << std::endl;
+                                << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
+                                << std::setw(3) << j << std::setw(19) << output_stream_name
+                                << "   " << std::setw(14) << format << std::endl;
 
                     delete strings_resp_ref;
                 }
@@ -2659,9 +2659,9 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument*> args)
                 output_stream_name = src_desc_name;
 
                 atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
-                << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
-                << std::setw(3) << j << std::setw(19) << output_stream_name
-                << "   " << std::setw(14) << format << std::endl;
+                            << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
+                            << std::setw(3) << j << std::setw(19) << output_stream_name
+                            << "   " << std::setw(14) << format << std::endl;
             }
             delete stream_output_resp_ref;
         }
@@ -2819,7 +2819,7 @@ int cmd_line::cmd_connect_rx(int total_matched, std::vector<cli_argument*> args)
     {
         atomic_cout << "Invalid ACMP Connection" << std::endl;
     }
-    
+
     return 0;
 }
 
@@ -3199,7 +3199,7 @@ int cmd_line::cmd_register_unsolicited_notif(int total_matched, std::vector<cli_
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     end_station->send_register_unsolicited_cmd((void *)cmd_notification_id);
     sys->get_last_resp_status();
-    
+
     return 0;
 }
 
@@ -3209,11 +3209,11 @@ int cmd_line::cmd_deregister_unsolicited_notif(int total_matched, std::vector<cl
     avdecc_lib::end_station *end_station;
     if (get_current_end_station(&end_station))
         return 0;
-    
+
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     end_station->send_deregister_unsolicited_cmd((void *)cmd_notification_id);
     sys->get_last_resp_status();
-    
+
     return 0;
 }
 
@@ -3251,15 +3251,15 @@ int cmd_line::cmd_get_audio_map(int total_matched, std::vector<cli_argument*> ar
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
     uint16_t map_index = args[2]->get_value_int();
-    
+
     uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
-    
+
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    
+
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT)
     {
         intptr_t cmd_notification_id = get_next_notification_id();
@@ -3271,15 +3271,15 @@ int cmd_line::cmd_get_audio_map(int total_matched, std::vector<cli_argument*> ar
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
             avdecc_lib::stream_port_input_get_audio_map_response *stream_port_input_resp_ref = stream_port_input_desc_ref->
-            get_stream_port_input_audio_map_response();
+                                                                                               get_stream_port_input_audio_map_response();
             uint16_t nmappings = stream_port_input_resp_ref->number_of_mappings();
-            
+
             for (int i = 0; i < (int)nmappings; i++)
             {
                 struct avdecc_lib::stream_port_input_audio_mapping map;
-                
+
                 int ret = stream_port_input_resp_ref->mapping(i, map);
-                
+
                 if (ret == 0)
                 {
                     atomic_cout << "map[" << i << "].stream_index = " << std::dec << map.stream_index << std::endl;
@@ -3299,19 +3299,19 @@ int cmd_line::cmd_get_audio_map(int total_matched, std::vector<cli_argument*> ar
         avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref = configuration->get_stream_port_output_desc_by_index(desc_index);
         stream_port_output_desc_ref->send_get_audio_map_cmd((void *)cmd_notification_id, map_index);
         int status = sys->get_last_resp_status();
-        
+
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
             avdecc_lib::stream_port_output_get_audio_map_response *stream_port_output_resp_ref = stream_port_output_desc_ref->
-            get_stream_port_output_audio_map_response();
+                                                                                                 get_stream_port_output_audio_map_response();
             uint16_t nmappings = stream_port_output_resp_ref->number_of_mappings();
-            
+
             for (int i = 0; i < (int)nmappings; i++)
             {
                 struct avdecc_lib::stream_port_output_audio_mapping map;
-                
+
                 int ret = stream_port_output_resp_ref->mapping(i, map);
-                
+
                 if (ret == 0)
                 {
                     atomic_cout << "map[" << i << "].stream_index = " << std::dec << map.stream_index << std::endl;
@@ -3320,7 +3320,7 @@ int cmd_line::cmd_get_audio_map(int total_matched, std::vector<cli_argument*> ar
                     atomic_cout << "map[" << i << "].cluster_channel = " << std::dec << map.cluster_channel << std::endl;
                 }
             }
-            
+
             delete stream_port_output_resp_ref;
         }
     }
@@ -3336,14 +3336,14 @@ int cmd_line::cmd_store_pending_audio_mapping(int total_matched, std::vector<cli
 {
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
-    
+
     uint16_t stream_index = args[2]->get_value_int();
     uint16_t stream_channel = args[3]->get_value_int();
     uint16_t cluster_offset = args[4]->get_value_int();
     uint16_t cluster_channel = args[5]->get_value_int();
-    
+
     uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
-    
+
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
@@ -3356,7 +3356,7 @@ int cmd_line::cmd_store_pending_audio_mapping(int total_matched, std::vector<cli
     map.stream_channel = stream_channel;
     map.cluster_offset = cluster_offset;
     map.cluster_channel = cluster_channel;
-    
+
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT)
     {
         avdecc_lib::stream_port_input_descriptor *stream_port_input_desc = configuration->get_stream_port_input_desc_by_index(desc_index);
@@ -3379,25 +3379,25 @@ int cmd_line::cmd_get_pending_audio_mappings(int total_matched, std::vector<cli_
 {
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
-    
+
     uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
-    
+
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    
+
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT)
     {
         avdecc_lib::stream_port_input_descriptor *stream_port_input_desc = configuration->get_stream_port_input_desc_by_index(desc_index);
-        
+
         for (int i = 0; i < (int)stream_port_input_desc->get_number_of_pending_maps(); i++)
         {
             struct avdecc_lib::audio_map_mapping map;
-            
+
             int ret = stream_port_input_desc->get_pending_maps(i, map);
-            
+
             if (ret == 0)
             {
                 atomic_cout << "map[" << i << "].stream_index = " << std::dec << map.stream_index << std::endl;
@@ -3410,13 +3410,13 @@ int cmd_line::cmd_get_pending_audio_mappings(int total_matched, std::vector<cli_
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT)
     {
         avdecc_lib::stream_port_output_descriptor *stream_port_output_desc = configuration->get_stream_port_output_desc_by_index(desc_index);
-        
+
         for (int i = 0; i < (int)stream_port_output_desc->get_number_of_pending_maps(); i++)
         {
             struct avdecc_lib::audio_map_mapping map;
-            
+
             int ret = stream_port_output_desc->get_pending_maps(i, map);
-            
+
             if (ret == 0)
             {
                 atomic_cout << "map[" << i << "].stream_index = " << std::dec << map.stream_index << std::endl;
@@ -3438,32 +3438,32 @@ int cmd_line::cmd_clear_pending_audio_mappings(int total_matched, std::vector<cl
 {
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
-    
+
     uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
-    
+
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    
+
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT)
     {
         avdecc_lib::stream_port_input_descriptor *stream_port_input_desc = configuration->get_stream_port_input_desc_by_index(desc_index);
-        
+
         stream_port_input_desc->clear_pending_maps();
     }
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_OUTPUT)
     {
         avdecc_lib::stream_port_output_descriptor *stream_port_output_desc = configuration->get_stream_port_output_desc_by_index(desc_index);
-        
+
         stream_port_output_desc->clear_pending_maps();
     }
     else
     {
         std::cout << "invalid descriptor" << std::endl;
     }
-    
+
     return 0;
 }
 
@@ -3473,7 +3473,7 @@ int cmd_line::cmd_add_audio_mappings(int total_matched, std::vector<cli_argument
     uint16_t desc_index = args[1]->get_value_int();
 
     uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
-    
+
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
@@ -3486,7 +3486,7 @@ int cmd_line::cmd_add_audio_mappings(int total_matched, std::vector<cli_argument
         intptr_t cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_port_input_descriptor *stream_port_input_desc_ref= configuration->get_stream_port_input_desc_by_index(desc_index);
-        
+
         while(more_maps_to_send)
         {
             more_maps_to_send = stream_port_input_desc_ref->send_add_audio_mappings_cmd((void *)cmd_notification_id);
@@ -3499,7 +3499,7 @@ int cmd_line::cmd_add_audio_mappings(int total_matched, std::vector<cli_argument
         intptr_t cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref= configuration->get_stream_port_output_desc_by_index(desc_index);
-        
+
         while(more_maps_to_send)
         {
             more_maps_to_send = stream_port_output_desc_ref->send_add_audio_mappings_cmd((void *)cmd_notification_id);
@@ -3518,22 +3518,22 @@ int cmd_line::cmd_remove_audio_mappings(int total_matched, std::vector<cli_argum
 {
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
-    
+
     uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
-    
+
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    
+
     if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_PORT_INPUT)
     {
         int more_maps_to_send = 1;
         intptr_t cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_port_input_descriptor *stream_port_input_desc_ref= configuration->get_stream_port_input_desc_by_index(desc_index);
-        
+
         while(more_maps_to_send)
         {
             more_maps_to_send = stream_port_input_desc_ref->send_remove_audio_mappings_cmd((void *)cmd_notification_id);
@@ -3546,7 +3546,7 @@ int cmd_line::cmd_remove_audio_mappings(int total_matched, std::vector<cli_argum
         intptr_t cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_port_output_descriptor *stream_port_output_desc_ref= configuration->get_stream_port_output_desc_by_index(desc_index);
-        
+
         while(more_maps_to_send)
         {
             more_maps_to_send = stream_port_output_desc_ref->send_remove_audio_mappings_cmd((void *)cmd_notification_id);
@@ -3557,7 +3557,7 @@ int cmd_line::cmd_remove_audio_mappings(int total_matched, std::vector<cli_argum
     {
         atomic_cout << "Invalid Descriptor" << std::endl;
     }
-    
+
     return 0;
 }
 
@@ -3571,7 +3571,7 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument*
     unsigned int stream_format_index = 0;
     uint64_t stream_format_value = 0;
     std::string stream_format;
-    
+
     if(new_stream_format.at(0) == 'I')
     {
         std::string stream_format_substring = new_stream_format.substr(20);
@@ -3824,11 +3824,11 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument*> 
         if(status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
             avdecc_lib::stream_output_get_stream_info_response
-                *stream_output_resp_ref = stream_output_desc_ref->get_stream_output_get_stream_info_response();
-            
+            *stream_output_resp_ref = stream_output_desc_ref->get_stream_output_get_stream_info_response();
+
             stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_output_resp_ref->
                                                                                get_stream_info_stream_format());
-            
+
             if(stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_output_resp_ref->get_stream_info_stream_format() << std::endl;
@@ -3876,11 +3876,11 @@ int cmd_line::cmd_set_group_name(int total_matched, std::vector<cli_argument*> a
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
     avdecc_lib::descriptor_base *desc_base = NULL;
-    
+
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity,
                                                       &configuration))
         return 0;
-    
+
     desc_base = entity;
 
     if(!desc_base)
@@ -3888,18 +3888,18 @@ int cmd_line::cmd_set_group_name(int total_matched, std::vector<cli_argument*> a
         atomic_cout << "cmd_set_name cannot lookup descriptor" << std::endl;
         return 0;
     }
-    
+
     name_index = 1;
     struct avdecc_lib::avdecc_lib_name_string64 new_name64 = {{0}};
     strncpy((char *)new_name64.value, new_name.c_str(),
             sizeof(new_name64.value));
-    
+
     intptr_t cmd_notification_id = get_next_notification_id();
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     desc_base->send_set_name_cmd((void *)cmd_notification_id, name_index, 0,
                                  + &new_name64);
     status = sys->get_last_resp_status();
-    
+
     if(status == avdecc_lib::AEM_STATUS_SUCCESS)
     {
         cmd_display_desc_name(desc_base, name_index, true);
@@ -3907,10 +3907,10 @@ int cmd_line::cmd_set_group_name(int total_matched, std::vector<cli_argument*> a
     else
     {
         atomic_cout << "cmd_set_group_name failed with AEM status: " <<
-        avdecc_lib::utility::aem_cmd_status_value_to_name(status) <<
-        std::endl;
+                    avdecc_lib::utility::aem_cmd_status_value_to_name(status) <<
+                    std::endl;
     }
-    
+
     return 0;
 }
 
@@ -3922,19 +3922,19 @@ int cmd_line::cmd_set_name(int total_matched, std::vector<cli_argument*> args)
     uint16_t desc_index = args[1]->get_value_int();
     std::string new_name = args[2]->get_value_str();
     bool is_entity = false;
-    
+
     uint16_t desc_type =
-    avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
-    
+        avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
+
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
     avdecc_lib::descriptor_base *desc_base = NULL;
-    
+
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity,
                                                       &configuration))
         return 0;
-    
+
     if(desc_type == avdecc_lib::AEM_DESC_ENTITY)
     {
         desc_base = entity;
@@ -3954,18 +3954,18 @@ int cmd_line::cmd_set_name(int total_matched, std::vector<cli_argument*> args)
         atomic_cout << "cmd_set_name cannot lookup descriptor" << std::endl;
         return 0;
     }
-    
+
     uint16_t name_index = 0;
     struct avdecc_lib::avdecc_lib_name_string64 new_name64 = {{0}};
     strncpy((char *)new_name64.value, new_name.c_str(),
-              sizeof(new_name64.value));
+            sizeof(new_name64.value));
 
     intptr_t cmd_notification_id = get_next_notification_id();
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     desc_base->send_set_name_cmd((void *)cmd_notification_id, name_index, 0,
-                                   + &new_name64);
+                                 + &new_name64);
     status = sys->get_last_resp_status();
-    
+
     if(status == avdecc_lib::AEM_STATUS_SUCCESS)
     {
         cmd_display_desc_name(desc_base, name_index, is_entity);
@@ -3973,8 +3973,8 @@ int cmd_line::cmd_set_name(int total_matched, std::vector<cli_argument*> args)
     else
     {
         atomic_cout << "cmd_set_name failed with AEM status: " <<
-            avdecc_lib::utility::aem_cmd_status_value_to_name(status) <<
-            std::endl;
+                    avdecc_lib::utility::aem_cmd_status_value_to_name(status) <<
+                    std::endl;
     }
 
     return 0;
@@ -4010,7 +4010,7 @@ int cmd_line::cmd_display_desc_name(avdecc_lib::descriptor_base *desc, uint16_t 
         name = desc_resp_base->object_name();
         delete desc_resp_base;
     }
-    
+
     if(!name)
     {
         atomic_cout << "cmd_set_name() failed" << std::endl;
@@ -4018,10 +4018,10 @@ int cmd_line::cmd_display_desc_name(avdecc_lib::descriptor_base *desc, uint16_t 
     else
     {
         atomic_cout << "Descriptor " <<
-            avdecc_lib::utility::aem_desc_value_to_name(desc->descriptor_type()) <<
-            "." << desc->descriptor_index() <<
-            " name at index " << name_index << ": " <<
-            std::dec << name << std::endl;
+                    avdecc_lib::utility::aem_desc_value_to_name(desc->descriptor_type()) <<
+                    "." << desc->descriptor_index() <<
+                    " name at index " << name_index << ": " <<
+                    std::dec << name << std::endl;
     }
 
     return 0;
@@ -4032,9 +4032,9 @@ int cmd_line::cmd_get_name(int total_matched, std::vector<cli_argument*> args)
     int status = avdecc_lib::AEM_STATUS_NOT_IMPLEMENTED;
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
-    
+
     uint16_t desc_type = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
-    
+
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
@@ -4056,7 +4056,7 @@ int cmd_line::cmd_get_name(int total_matched, std::vector<cli_argument*> args)
     {
         desc_base = configuration->lookup_desc(desc_type, desc_index);
     }
-    
+
     if(!desc_base)
     {
         atomic_cout << "cmd_get_name cannot lookup descriptor" << std::endl;
@@ -4068,7 +4068,7 @@ int cmd_line::cmd_get_name(int total_matched, std::vector<cli_argument*> args)
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     desc_base->send_get_name_cmd((void *)cmd_notification_id, name_index, 0);
     status = sys->get_last_resp_status();
-    
+
     if(status == avdecc_lib::AEM_STATUS_SUCCESS)
     {
         avdecc_lib::descriptor_base_get_name_response *get_name_resp = desc_base->get_name_response();
@@ -4080,18 +4080,18 @@ int cmd_line::cmd_get_name(int total_matched, std::vector<cli_argument*> args)
         else
         {
             atomic_cout << "Descriptor " <<
-            avdecc_lib::utility::aem_desc_value_to_name(desc_base->descriptor_type()) <<
-            "." << desc_base->descriptor_index() <<
-            " name at index " << name_index << ": " <<
-            std::dec << name << std::endl;
+                        avdecc_lib::utility::aem_desc_value_to_name(desc_base->descriptor_type()) <<
+                        "." << desc_base->descriptor_index() <<
+                        " name at index " << name_index << ": " <<
+                        std::dec << name << std::endl;
         }
-        
+
         delete get_name_resp;
     }
     else
     {
         atomic_cout << "cmd_get_name failed with AEM status: " <<
-        avdecc_lib::utility::aem_cmd_status_value_to_name(status) << std::endl;
+                    avdecc_lib::utility::aem_cmd_status_value_to_name(status) << std::endl;
     }
 
     return 0;
@@ -4105,27 +4105,27 @@ int cmd_line::cmd_get_group_name(int total_matched, std::vector<cli_argument*> a
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
     avdecc_lib::descriptor_base *desc_base = NULL;
-    
+
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity,
                                                       &configuration))
         return 0;
-    
+
 
     desc_base = dynamic_cast<avdecc_lib::descriptor_base *>(entity);
 
-    
+
     if(!desc_base)
     {
         atomic_cout << "cmd_get_name cannot lookup descriptor" << std::endl;
         return 0;
     }
-    
+
     uint16_t name_index = 1;
     intptr_t cmd_notification_id = get_next_notification_id();
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     desc_base->send_get_name_cmd((void *)cmd_notification_id, name_index, 0);
     status = sys->get_last_resp_status();
-    
+
     if(status == avdecc_lib::AEM_STATUS_SUCCESS)
     {
         avdecc_lib::descriptor_base_get_name_response *get_name_resp = desc_base->get_name_response();
@@ -4137,20 +4137,20 @@ int cmd_line::cmd_get_group_name(int total_matched, std::vector<cli_argument*> a
         else
         {
             atomic_cout << "Descriptor " <<
-            avdecc_lib::utility::aem_desc_value_to_name(desc_base->descriptor_type()) <<
-            "." << desc_base->descriptor_index() <<
-            " name at index " << name_index << ": " <<
-            std::dec << name << std::endl;
+                        avdecc_lib::utility::aem_desc_value_to_name(desc_base->descriptor_type()) <<
+                        "." << desc_base->descriptor_index() <<
+                        " name at index " << name_index << ": " <<
+                        std::dec << name << std::endl;
         }
-        
+
         delete get_name_resp;
     }
     else
     {
         atomic_cout << "cmd_get_name failed with AEM status: " <<
-        avdecc_lib::utility::aem_cmd_status_value_to_name(status) << std::endl;
+                    avdecc_lib::utility::aem_cmd_status_value_to_name(status) << std::endl;
     }
-    
+
     return 0;
 }
 
@@ -4247,19 +4247,19 @@ int cmd_line::cmd_get_counters(int total_matched, std::vector<cli_argument*> arg
 {
     std::string desc_name = args[0]->get_value_str();
     uint16_t desc_index = args[1]->get_value_int();
-    
+
     uint16_t desc_type_value = avdecc_lib::utility::aem_desc_name_to_value(desc_name.c_str());
-    
+
     avdecc_lib::end_station *end_station;
     avdecc_lib::entity_descriptor *entity;
     avdecc_lib::configuration_descriptor *configuration;
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    
+
     if(desc_type_value == avdecc_lib::AEM_DESC_AVB_INTERFACE)
     {
         avdecc_lib::avb_interface_descriptor *avb_desc_ref = configuration->get_avb_interface_desc_by_index(desc_index);
-        
+
         intptr_t cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avb_desc_ref->send_get_counters_cmd((void *)cmd_notification_id);
@@ -4271,28 +4271,28 @@ int cmd_line::cmd_get_counters(int total_matched, std::vector<cli_argument*> arg
             {
                 if(avb_interface_counters_resp->get_counter_valid(avdecc_lib::AVB_INTERFACE_LINK_UP))
                     atomic_cout << "Link up Counter: " << avb_interface_counters_resp->
-                    get_counter_by_name(avdecc_lib::AVB_INTERFACE_LINK_UP)
-                        << std::endl;
+                                get_counter_by_name(avdecc_lib::AVB_INTERFACE_LINK_UP)
+                                << std::endl;
                 if(avb_interface_counters_resp->get_counter_valid(avdecc_lib::AVB_INTERFACE_LINK_DOWN))
                     atomic_cout << "Link down Counter: " << avb_interface_counters_resp->
-                    get_counter_by_name(avdecc_lib::AVB_INTERFACE_LINK_DOWN)
-                        << std::endl;
+                                get_counter_by_name(avdecc_lib::AVB_INTERFACE_LINK_DOWN)
+                                << std::endl;
                 if(avb_interface_counters_resp->get_counter_valid(avdecc_lib::AVB_INTERFACE_FRAMES_TX))
                     atomic_cout << "Frames TX Counter: " << avb_interface_counters_resp->
-                    get_counter_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_TX)
-                        << std::endl;
+                                get_counter_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_TX)
+                                << std::endl;
                 if(avb_interface_counters_resp->get_counter_valid(avdecc_lib::AVB_INTERFACE_FRAMES_RX))
                     atomic_cout << "Frames RX Counter: " << avb_interface_counters_resp->
-                    get_counter_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_RX)
-                        << std::endl;
+                                get_counter_by_name(avdecc_lib::AVB_INTERFACE_FRAMES_RX)
+                                << std::endl;
                 if(avb_interface_counters_resp->get_counter_valid(avdecc_lib::AVB_INTERFACE_RX_CRC_ERROR))
                     atomic_cout << "RX crc error Counter: " << avb_interface_counters_resp->
-                    get_counter_by_name(avdecc_lib::AVB_INTERFACE_RX_CRC_ERROR)
-                        << std::endl;
+                                get_counter_by_name(avdecc_lib::AVB_INTERFACE_RX_CRC_ERROR)
+                                << std::endl;
                 if(avb_interface_counters_resp->get_counter_valid(avdecc_lib::AVB_GPTP_GM_CHANGED))
                     atomic_cout << "GPTP GM Changed Counter: " << avb_interface_counters_resp->
-                    get_counter_by_name(avdecc_lib::AVB_GPTP_GM_CHANGED)
-                        << std::endl;
+                                get_counter_by_name(avdecc_lib::AVB_GPTP_GM_CHANGED)
+                                << std::endl;
                 delete avb_interface_counters_resp;
             }
         }
@@ -4301,7 +4301,7 @@ int cmd_line::cmd_get_counters(int total_matched, std::vector<cli_argument*> arg
     else if(desc_type_value == avdecc_lib::AEM_DESC_CLOCK_DOMAIN)
     {
         avdecc_lib::clock_domain_descriptor *clock_domain_desc_ref = configuration->get_clock_domain_desc_by_index(desc_index);
-        
+
         intptr_t cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         clock_domain_desc_ref->send_get_counters_cmd((void *)cmd_notification_id);
@@ -4323,7 +4323,7 @@ int cmd_line::cmd_get_counters(int total_matched, std::vector<cli_argument*> arg
     else if(desc_type_value == avdecc_lib::AEM_DESC_STREAM_INPUT)
     {
         avdecc_lib::stream_input_descriptor *stream_input_desc_ref = configuration->get_stream_input_desc_by_index(desc_index);
-        
+
         if(stream_input_desc_ref)
         {
             intptr_t cmd_notification_id = get_next_notification_id();
@@ -4424,11 +4424,11 @@ int cmd_line::cmd_get_clock_source(int total_matched, std::vector<cli_argument*>
 
     if (!clk_domain_desc_ref)
         return 0;
-    
+
     avdecc_lib::clock_domain_descriptor_response *clk_domain_resp_ref = clk_domain_desc_ref->get_clock_domain_response();
     clk_domain_desc_ref->send_get_clock_source_cmd((void *)cmd_notification_id);
     int status = sys->get_last_resp_status();
-    
+
     avdecc_lib::clock_domain_get_clock_source_response *clk_domain_stream_resp_ref = clk_domain_desc_ref->get_clock_domain_get_clock_source_response();
     clk_src_index = clk_domain_stream_resp_ref->get_clock_source_clock_source_index();
 
@@ -4452,10 +4452,10 @@ int cmd_line::cmd_get_avb_info(int total_matched, std::vector<cli_argument*> arg
     avdecc_lib::configuration_descriptor *configuration;
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
-    
+
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     avdecc_lib::avb_interface_descriptor *avb_interface_desc_ref = configuration->get_avb_interface_desc_by_index(desc_index);
-    
+
     if (!avb_interface_desc_ref)
         return 0;
 
@@ -4464,23 +4464,23 @@ int cmd_line::cmd_get_avb_info(int total_matched, std::vector<cli_argument*> arg
     if(status == avdecc_lib::AEM_STATUS_SUCCESS)
     {
         avdecc_lib::avb_interface_get_avb_info_response
-            *get_avb_info_resp_ref = avb_interface_desc_ref->get_avb_interface_get_avb_info_response();
-        
+        *get_avb_info_resp_ref = avb_interface_desc_ref->get_avb_interface_get_avb_info_response();
+
         atomic_cout << "gPTP Grandmaster ID: 0x" << std::hex << get_avb_info_resp_ref->get_gptp_grandmaster_id() << std::endl;
         atomic_cout << "Propagation Delay: " << get_avb_info_resp_ref->get_propagation_delay() << std::endl;
         atomic_cout << "gPTP Domain Number: " << std::dec << (unsigned int)get_avb_info_resp_ref->get_gptp_domain_number() << std::endl;
         atomic_cout << "msrp mappings count: " << get_avb_info_resp_ref->get_msrp_mappings_count() << std::endl;
-        
+
         if(get_avb_info_resp_ref->get_avb_info_flags_as_capable())
             atomic_cout << "as_capable flag: TRUE" << std::endl;
         else
             atomic_cout << "as_capable flag: FALSE" << std::endl;
-        
+
         if(get_avb_info_resp_ref->get_avb_info_flags_gptp_enabled())
             atomic_cout << "gptp_enabled flag: TRUE" << std::endl;
         else
             atomic_cout << "gptp_enabled flag: FALSE" << std::endl;
-        
+
         if(get_avb_info_resp_ref->get_avb_info_flags_srp_enabled())
             atomic_cout << "srp_enabled flag: TRUE" << std::endl;
         else

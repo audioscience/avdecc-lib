@@ -40,17 +40,18 @@
 
 namespace avdecc_lib
 {
-    struct audio_map_mapping {
+    struct audio_map_mapping
+    {
         uint16_t stream_index;
         uint16_t stream_channel;
         uint16_t cluster_offset;
         uint16_t cluster_channel;
     };
-    
+
     class audio_map_descriptor_response : public virtual descriptor_response_base
     {
     public:
-        virtual ~audio_map_descriptor_response(){};
+        virtual ~audio_map_descriptor_response() {};
         /**
          * \return The number of channel mappings within the Audio Map. The maximum value
          *	       of this field is 62 for this version of AEM.

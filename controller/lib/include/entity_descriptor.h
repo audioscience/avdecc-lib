@@ -44,7 +44,7 @@ namespace avdecc_lib
     class entity_descriptor : public virtual descriptor_base
     {
     public:
-        
+
         /**
          * \return the entity descriptor response class.
          */

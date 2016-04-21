@@ -40,7 +40,7 @@ namespace avdecc_lib
     class locale_descriptor_response : public virtual descriptor_response_base
     {
     public:
-        virtual ~locale_descriptor_response(){};
+        virtual ~locale_descriptor_response() {};
         /**
         * The identifier is a UTF-8 string that contains one to three components such as a
         * language code, a region code, or a variant code, separated by the dash character.
@@ -50,13 +50,13 @@ namespace avdecc_lib
         * \return The identifier of the LOCALE.
         */
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL locale_identifier() = 0;
-        
+
         /**
          * \return The number of Strings descriptor in this locale. This is the same value for
          *	       all locales in an AVDECC Entity.
          */
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_strings() = 0;
-        
+
         /**
          * \return The descriptor index of the first Strings descriptor for this LOCALE.
          */

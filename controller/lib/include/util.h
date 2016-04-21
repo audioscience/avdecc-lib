@@ -95,7 +95,7 @@ namespace avdecc_lib
           * Convert IEEE1722 format name to value.
           */
         AVDECC_CONTROLLER_LIB32_API uint64_t STDCALL ieee1722_format_name_to_value(const char *format_name);
-        
+
         /**
          * Convert IEEE1722 format name to description.
          */
@@ -105,12 +105,12 @@ namespace avdecc_lib
          *  Return IEEE1722 format value by index
          */
         AVDECC_CONTROLLER_LIB32_API uint64_t STDCALL ieee1722_format_index_to_value(unsigned int index);
-        
+
         /**
          *  Return IEEE1722 format name by index
          */
         AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_index_to_name(unsigned int index);
-        
+
         /**
          *  Return IEEE1722 format description by index
          */
@@ -120,7 +120,7 @@ namespace avdecc_lib
          * Convert IEEE1722 format value to name.
          */
         AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_value_to_name(uint64_t format_value);
-        
+
         /**
          * Get IEEE1722 format table size
          */
