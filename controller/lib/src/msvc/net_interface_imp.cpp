@@ -44,21 +44,23 @@ net_interface * STDCALL create_net_interface()
 
 net_interface_imp::net_interface_imp()
 {
+    total_devs = 0;
+
     if(pcap_findalldevs(&all_devs, err_buf) == -1) // Retrieve the device list on the local machine.
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "pcap_findalldevs error %s", err_buf);
-        exit(EXIT_FAILURE);
     }
-
-    for(dev = all_devs, total_devs = 0; dev; dev = dev->next)
+    else
     {
-        total_devs++;
+        for (dev = all_devs; dev; dev = dev->next)
+        {
+            total_devs++;
+        }
     }
 
     if(total_devs == 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "No interfaces found! Make sure WinPcap is installed.");
-        exit(EXIT_FAILURE);
     }
     pcap_interface = nullptr;
 }
