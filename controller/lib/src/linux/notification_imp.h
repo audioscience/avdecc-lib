@@ -42,33 +42,33 @@ private:
     sem_t notify_waiting;
 
 public:
-    /**
-     * An empty constructor for notification_imp
-     */
+    ///
+    /// An empty constructor for notification_imp
+    ///
     notification_imp();
 
-    /**
-     * Destructor for notification_imp used for destroying objects
-     */
+    ///
+    /// Destructor for notification_imp used for destroying objects
+    ///
     virtual ~notification_imp();
 
 private:
-    /**
-     * Create and initialize notification thread, event, and semaphore.
-     */
+    ///
+    /// Create and initialize notification thread, event, and semaphore.
+    ///
     int notification_thread_init();
 
-    /**
-     * Start of the post_notification_msg thread used for generating notification messages.
-     */
+    ///
+    /// Start of the post_notification_msg thread used for generating notification messages.
+    ///
     static void * dispatch_thread(void * lpParam);
 
     void * dispatch_callbacks(void);
 
 public:
-    /**
-     * Release sempahore so that notification callback function is called.
-     */
+    ///
+    /// Release sempahore so that notification callback function is called.
+    ///
     void post_notification_event();
 };
 

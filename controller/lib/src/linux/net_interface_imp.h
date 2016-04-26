@@ -68,57 +68,57 @@ private:
     int setpromiscuous(int rawsock, int ifindex);
 
 public:
-    /**
-     * An empty constructor for net_interface_imp
-     */
+    ///
+    /// An empty constructor for net_interface_imp
+    ///
     net_interface_imp();
 
-    /**
-     * Destructor for net_interface_imp used for destroying objects
-     */
+    ///
+    /// Destructor for net_interface_imp used for destroying objects
+    ///
     virtual ~net_interface_imp();
 
 
     void STDCALL destroy();
 
-    /**
-     * Count the number of devices.
-     */
+    ///
+    /// Count the number of devices.
+    ///
     uint32_t STDCALL devs_count();
 
-    /**
-     * Get the MAC address of the network interface.
-     */
+    ///
+    /// Get the MAC address of the network interface.
+    ///
     uint64_t mac_addr();
 
-    /**
-     * Get network interface description by index.
-     */
+    ///
+    /// Get network interface description by index.
+    ///
     char * STDCALL get_dev_desc_by_index(size_t dev_index);
 
-    /**
-     * Get the corresponding network interface name by index.
-     */
+    ///
+    /// Get the corresponding network interface name by index.
+    ///
     char * STDCALL get_dev_name_by_index(size_t dev_index);
 
-    /**
-     * Select network interface by number.
-     */
+    ///
+    /// Select network interface by number.
+    ///
     int STDCALL select_interface_by_num(uint32_t interface_num);
 
-    /**
-     * Update the Ethernet type for the network interface.
-     */
+    ///
+    /// Update the Ethernet type for the network interface.
+    ///
     int set_capture_ether_type(uint16_t *ether_type, uint32_t count);
 
-    /**
-     * Capture a network packet.
-     */
+    ///
+    /// Capture a network packet.
+    ///
     int STDCALL capture_frame(const uint8_t **frame, uint16_t *mem_buf_len);
 
-    /**
-     * Send a network packet.
-     */
+    ///
+    /// Send a network packet.
+    ///
     int send_frame(uint8_t *frame, uint16_t mem_buf_len);
 
     int get_fd();

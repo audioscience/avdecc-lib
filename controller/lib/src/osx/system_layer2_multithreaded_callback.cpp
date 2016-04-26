@@ -155,9 +155,7 @@ int system_layer2_multithreaded_callback::queue_tx_frame(
     t.notification_flag = notification_flag;
     write(tx_pipe[PIPE_WR], &t, sizeof(t));
 
-    /**
-     * Check for conditions that cause wait for completion.
-     */
+    // Check for conditions that cause wait for completion.
     if ( wait_mgr->primed_state() &&
             wait_mgr->match_id(notification_id) &&
             (notification_flag == CMD_WITH_NOTIFICATION))
@@ -298,8 +296,8 @@ int system_layer2_multithreaded_callback::fn_netif(struct kevent *priv)
 int system_layer2_multithreaded_callback::proc_poll_loop()
 {
     // POLL_COUNT
-    struct kevent chlist[POLL_COUNT];   /* events we want to monitor */
-    struct kevent evlist[POLL_COUNT];   /* events that were triggered */
+    struct kevent chlist[POLL_COUNT];   // events we want to monitor
+    struct kevent evlist[POLL_COUNT];   // events that were triggered
     int nev, i, kq;
 
     kq = kqueue();

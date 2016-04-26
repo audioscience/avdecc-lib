@@ -104,8 +104,8 @@ net_interface_imp::net_interface_imp()
         exit(EXIT_FAILURE);
     }
 
-    /* Walk through linked list, maintaining head pointer so we
-    can free list later */
+    // Walk through linked list, maintaining head pointer so we
+    // can free list later
 
     for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
     {
@@ -114,8 +114,8 @@ net_interface_imp::net_interface_imp()
 
         family = ifa->ifa_addr->sa_family;
 
-        /* Display interface name and family (including symbolic
-        form of the latter for the common families) */
+        // Display interface name and family (including symbolic
+        // form of the latter for the common families)
         if (family == AF_INET)
         {
             s = getnameinfo(ifa->ifa_addr,
@@ -182,7 +182,7 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     const char *ifname;
     char *s;
 
-    /* adjust interface numnber since count starts at 1 */
+    // adjust interface numnber since count starts at 1
     interface_num--;
 
     ifname = ifnames[interface_num].c_str();
@@ -272,34 +272,34 @@ int net_interface_imp::send_frame(uint8_t *frame, uint16_t mem_buf_len)
 {
     int send_result;
 
-    /*target address*/
+    // target address
     struct sockaddr_ll socket_address;
 
-    /*prepare sockaddr_ll*/
+    // prepare sockaddr_ll
 
-    /*RAW communication*/
+    // RAW communication
     socket_address.sll_family   = PF_PACKET;
     socket_address.sll_protocol = htons(ethertype);
 
-    /*index of the network device
-    see full code later how to retrieve it*/
+    // index of the network device
+    // see full code later how to retrieve it
     socket_address.sll_ifindex  = ifindex;
 
-    /*ARP hardware identifier is ethernet*/
+    // ARP hardware identifier is ethernet
     socket_address.sll_hatype   = ARPHRD_ETHER;
 
-    /*target is another host*/
+    // target is another host
     socket_address.sll_pkttype  = PACKET_OTHERHOST;
 
-    /*address length*/
+    // address length
     socket_address.sll_halen    = ETH_ALEN;
-    /*MAC - begin*/
+    // MAC - begin
     memcpy(&socket_address.sll_addr[0], &frame[0], 6);
-    /*MAC - end*/
-    socket_address.sll_addr[6]  = 0x00;/*not used*/
-    socket_address.sll_addr[7]  = 0x00;/*not used*/
+    // MAC - end
+    socket_address.sll_addr[6]  = 0x00;// not used
+    socket_address.sll_addr[7]  = 0x00;// not used
 
-    /*send the packet*/
+    // send the packet
     send_result = sendto(rawsock, frame, mem_buf_len, 0,
                          (struct sockaddr*)&socket_address, sizeof(socket_address));
 
