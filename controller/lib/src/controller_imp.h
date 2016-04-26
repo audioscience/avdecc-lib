@@ -43,46 +43,46 @@ private:
     uint32_t m_talker_capabilities_flags;
     uint32_t m_listener_capabilities_flags;
 
-    /**
-     * Find an end station that matches the entity and controller IDs
-     */
+    ///
+    /// Find an end station that matches the entity and controller IDs
+    ///
     int find_in_end_station(struct jdksavdecc_eui64 &entity_entity_id, bool isUnsolicited, const uint8_t *frame);
 
 public:
-    /**
-     * A constructor for controller_imp used for constructing an object with notification, and post_log_msg callback functions.
-     */
+    ///
+    /// A constructor for controller_imp used for constructing an object with notification, and post_log_msg callback functions.
+    ///
     controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
                    void (*log_callback) (void *, int32_t, const char *, int32_t));
 
     virtual ~controller_imp();
 
-    /**
-     * Call destructor for Controller used for destroying objects
-     */
+    ///
+    /// Call destructor for Controller used for destroying objects
+    ///
     void STDCALL destroy();
 
     const char * STDCALL get_version() const;
     size_t STDCALL get_end_station_count();
     end_station * STDCALL get_end_station_by_index(size_t end_station_index);
 
-    /**
-     * Check if the corresponding End Station with the Entity ID exists.
-     */
+    ///
+    /// Check if the corresponding End Station with the Entity ID exists.
+    ///
     bool STDCALL is_end_station_found_by_entity_id(uint64_t entity_entity_id, uint32_t &end_station_index);
 
-    /**
-     * Check if the corresponding End Station with the Mac Address exists.
-     */
+    ///
+    /// Check if the corresponding End Station with the Mac Address exists.
+    ///
     bool STDCALL is_end_station_found_by_mac_addr(uint64_t mac_addr, uint32_t &end_station_index);
 
     configuration_descriptor * STDCALL get_current_config_desc(size_t end_station_index, bool report_error=true);
 
     configuration_descriptor * STDCALL get_config_desc_by_entity_id(uint64_t entity_entity_id, uint16_t entity_index, uint16_t config_index);
 
-    /**
-     * Check if the command with the corresponding notification id is in the inflight list.
-     */
+    ///
+    /// Check if the command with the corresponding notification id is in the inflight list.
+    ///
     bool is_inflight_cmd_with_notification_id(void *notification_id);
 
     bool is_active_operation_with_notification_id(void *notification_id);
@@ -96,28 +96,28 @@ public:
     uint32_t STDCALL missed_notification_count();
     uint32_t STDCALL missed_log_count();
 
-    /**
-     * Check for End Station connection, command packet, and response packet timeouts.
-     */
+    ///
+    /// Check for End Station connection, command packet, and response packet timeouts.
+    ///
     void time_tick_event();
 
-    /**
-     * Lookup and process packet received.
-     */
+    ///
+    /// Lookup and process packet received.
+    ///
     void rx_packet_event(void *&notification_id, bool &is_notification_id_valid, const uint8_t *frame, size_t frame_len, int &status, uint16_t &operation_id, bool &is_operation_id_valid);
 
-    /**
-     * Send queued packet to the AEM Controller State Machine.
-     */
+    ///
+    /// Send queued packet to the AEM Controller State Machine.
+    ///
     void tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len);
 
     int STDCALL send_controller_avail_cmd(void *notification_id, uint32_t end_station_index);
 
     int STDCALL send_controller_avail_response(const uint8_t *frame, size_t frame_len);
 
-    /**
-     * Process a CONTROLLER_AVAILABLE response for the CONTROLLER_AVAILABLE command.
-     */
+    ///
+    /// Process a CONTROLLER_AVAILABLE response for the CONTROLLER_AVAILABLE command.
+    ///
     int proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 };
 

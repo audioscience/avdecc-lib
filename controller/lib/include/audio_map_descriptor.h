@@ -44,9 +44,9 @@ namespace avdecc_lib
     class audio_map_descriptor : public virtual descriptor_base
     {
     public:
-        /**
-         * \return the audio_map descriptor response class.
-         */
+        ///
+        /// \return the audio_map descriptor response class.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual audio_map_descriptor_response * STDCALL get_audio_map_response() = 0;
     };
 }

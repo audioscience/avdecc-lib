@@ -45,26 +45,26 @@ namespace avdecc_lib
     public:
         virtual ~clock_domain_descriptor_response() {};
 
-        /**
-         * \return The localized string reference pointing to the localized descriptor name.
-         */
+        ///
+        /// \return The localized string reference pointing to the localized descriptor name.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL localized_description() = 0;
 
-        /**
-         * \return The descriptor index of the CLOCK SOURCE descriptor describing the current CLOCK SOURCE
-         *	       for the CLOCK DOMAIN.
-         */
+        ///
+        /// \return The descriptor index of the CLOCK SOURCE descriptor describing the current CLOCK SOURCE
+        ///	       for the CLOCK DOMAIN.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_source_index() = 0;
 
-        /**
-         * \return The number of CLOCK SOURCE indexes in the clock sources field. The maximum value for this field
-         *	       is 249 for this version of AEM.
-         */
+        ///
+        /// \return The number of CLOCK SOURCE indexes in the clock sources field. The maximum value for this field
+        ///	       is 249 for this version of AEM.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_sources_count() = 0;
 
-        /**
-         * \return The list of CLOCK_SOURCE descriptor indices which the clock_source index may be set to.
-         */
+        ///
+        /// \return The list of CLOCK_SOURCE descriptor indices which the clock_source index may be set to.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_by_index(size_t clk_src_index) = 0;
     };
 }

@@ -38,10 +38,10 @@ namespace avdecc_lib
     {
     public:
         virtual ~clock_domain_get_clock_source_response() {};
-        /**
-         * \return The stream format of a stream after sending a GET_clock_source command and
-         *	       receiving a response back for the command.
-         */
+        ///
+        /// \return The stream format of a stream after sending a GET_clock_source command and
+        ///	       receiving a response back for the command.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_clock_source_clock_source_index() = 0;
     };
 }

@@ -42,39 +42,39 @@ namespace avdecc_lib
     class audio_unit_descriptor : public virtual descriptor_base
     {
     public:
-        /**
-         * \return the audio_unit descriptor response class.
-         */
+        ///
+        /// \return the audio_unit descriptor response class.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual audio_unit_descriptor_response * STDCALL get_audio_unit_response() = 0;
 
-        /**
-         * \return the audio_unit get_sampling_rate response class.
-         */
+        ///
+        /// \return the audio_unit get_sampling_rate response class.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual audio_unit_get_sampling_rate_response * STDCALL get_audio_unit_get_sampling_rate_response() = 0;
 
-        /**
-         * Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.
-         *
-         * \param notification_id A void pointer to the unique identifier associated with the command.
-         * \param new_sampling_rate The sampling rate field is set to the new sampling rate.
-         *
-         * The new sampling rates can be retrieved by calling the following function after successfully
-         * receiving a response back for the SET_SAMPLING_RATE command sent.
-         *
-         * \see set_sampling_rate_sampling_rate()
-         */
+        ///
+        /// Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.
+        ///
+        /// \param notification_id A void pointer to the unique identifier associated with the command.
+        /// \param new_sampling_rate The sampling rate field is set to the new sampling rate.
+        ///
+        /// The new sampling rates can be retrieved by calling the following function after successfully
+        /// receiving a response back for the SET_SAMPLING_RATE command sent.
+        ///
+        /// \see set_sampling_rate_sampling_rate()
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_sampling_rate_cmd(void *notification_id, uint32_t new_sampling_rate) = 0;
 
-        /**
-         * Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
-         *
-         * \param notification_id A void pointer to the unique identifier associated with the command.
-         *
-         * The sampling rates can be retrieved by calling the following function after successfully
-         * receiving a response back for the GET_SAMPLING_RATE command sent.
-         *
-         * \see get_sampling_rate_sampling_rate()
-         */
+        ///
+        /// Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
+        ///
+        /// \param notification_id A void pointer to the unique identifier associated with the command.
+        ///
+        /// The sampling rates can be retrieved by calling the following function after successfully
+        /// receiving a response back for the GET_SAMPLING_RATE command sent.
+        ///
+        /// \see get_sampling_rate_sampling_rate()
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_sampling_rate_cmd(void *notification_id) = 0;
     };
 }

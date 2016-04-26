@@ -45,9 +45,9 @@ public:
 
     jack_output_descriptor_response * STDCALL get_jack_output_response();
 private:
-    /**
-     * Store the jack flags componenets of the JACK INPUT descriptor object in a vector.
-     */
+    ///
+    /// Store the jack flags componenets of the JACK INPUT descriptor object in a vector.
+    ///
     void jack_flags_init();
 };
 }

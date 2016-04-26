@@ -52,16 +52,16 @@ namespace avdecc_lib
     {
     public:
         virtual ~audio_map_descriptor_response() {};
-        /**
-         * \return The number of channel mappings within the Audio Map. The maximum value
-         *	       of this field is 62 for this version of AEM.
-         */
+        ///
+        /// \return The number of channel mappings within the Audio Map. The maximum value
+        ///	       of this field is 62 for this version of AEM.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_mappings() = 0;
-        /**
-         * \param index The index of the mapping to return.
-         * \param mapping The mapping structure that is filled in by this funtion.
-         * \return Returns 0 on success.
-         */
+        ///
+        /// \param index The index of the mapping to return.
+        /// \param mapping The mapping structure that is filled in by this funtion.
+        /// \return Returns 0 on success.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual int const STDCALL mapping(size_t index, struct audio_map_mapping &mapping) = 0;
     };
 }

@@ -88,19 +88,19 @@ public:
     uint32_t STDCALL buffer_length();
     uint64_t STDCALL get_supported_stream_fmt_by_index(size_t stream_fmt_index);
 private:
-    /**
-     * Store the stream flags components of the STREAM INPUT descriptor object in a vector.
-     */
+    ///
+    /// Store the stream flags components of the STREAM INPUT descriptor object in a vector.
+    ///
     void stream_flags_init();
 
-    /**
-     * Update the internal STREAM INPUT descriptor's stream format field.
-     */
+    ///
+    /// Update the internal STREAM INPUT descriptor's stream format field.
+    ///
     void update_stream_format(struct jdksavdecc_eui64 stream_format);
 
-    /**
-     * Store the supported stream formats for this STREAM INPUT descriptor.
-     */
+    ///
+    /// Store the supported stream formats for this STREAM INPUT descriptor.
+    ///
     void store_supported_stream_fmts();
 };
 }

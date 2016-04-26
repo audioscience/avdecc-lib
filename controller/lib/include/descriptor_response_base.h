@@ -43,13 +43,13 @@ namespace avdecc_lib
     {
     public:
         virtual ~descriptor_response_base() {};
-        /**
-         * \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
-         *	   The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
-         *	   defined value being provided in a localized form via the localized descripton field. By leaving
-         *	   this field blank an AVDECC Controller can determine if the user has overridden the name and can
-         *	   use this name rather than the localized name.
-         */
+        ///
+        /// \return The name of the descriptor object. This may be user set through the use of a SET_NAME command.
+        ///	   The object name should be left blank (all zeros) by the manufacturer, with the manufacturer
+        ///	   defined value being provided in a localized form via the localized descripton field. By leaving
+        ///	   this field blank an AVDECC Controller can determine if the user has overridden the name and can
+        ///	   use this name rather than the localized name.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL object_name() = 0;
     };
 }

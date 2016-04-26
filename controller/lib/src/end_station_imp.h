@@ -80,19 +80,19 @@ public:
     std::mutex locker;
     const char STDCALL get_connection_status() const;
 
-    /**
-     * Change the End Station connection status to connected.
-     */
+    ///
+    /// Change the End Station connection status to connected.
+    ///
     void set_connected();
 
-    /**
-     * Change the End Station connection status to disconnected.
-     */
+    ///
+    /// Change the End Station connection status to disconnected.
+    ///
     void set_disconnected();
 
-    /**
-     * Re-enumerate the endpoint by re-reading the descriptors
-     */
+    ///
+    /// Re-enumerate the endpoint by re-reading the descriptors
+    ///
     void end_station_reenumerate();
 
     uint64_t STDCALL entity_id();
@@ -117,9 +117,9 @@ public:
     void background_read_update_timeouts(void); ///< update timeout conditions
     void background_read_submit_pending(void); ///< Submit pending background reads
 
-    /**
-     * Process response received for the corresponding AECP Address Access command.
-     */
+    ///
+    /// Process response received for the corresponding AECP Address Access command.
+    ///
     int proc_rcvd_aecp_aa_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
     int proc_rcvd_acmp_resp(uint32_t msg_type, void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
@@ -136,21 +136,21 @@ public:
     int proc_deregister_unsolicited_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
 
 private:
-    /**
-     * Initialize End Station with Entity and Configuration descriptors information.
-     */
+    ///
+    /// Initialize End Station with Entity and Configuration descriptors information.
+    ///
     int end_station_init();
 
-    /**
-     * Initialize End Station by sending non blocking Read Descriptor commands to read
-     * all the descriptors for the End Station.
-     */
+    ///
+    /// Initialize End Station by sending non blocking Read Descriptor commands to read
+    /// all the descriptors for the End Station.
+    ///
     int read_desc_init(uint16_t desc_type, uint16_t desc_index);
 
-    /**
-     * Send a READ_DESCRIPTOR command with or without a notification id based on the post_notification_msg flag
-     * to read a descriptor from an AVDECC Entity.
-     */
+    ///
+    /// Send a READ_DESCRIPTOR command with or without a notification id based on the post_notification_msg flag
+    /// to read a descriptor from an AVDECC Entity.
+    ///
     int send_read_desc_cmd_with_flag(void *notification_id, uint32_t notification_flag, uint16_t desc_type, uint16_t desc_index);
 };
 }

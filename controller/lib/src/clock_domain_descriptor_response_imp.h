@@ -40,9 +40,9 @@ class clock_domain_descriptor_response_imp : public clock_domain_descriptor_resp
 {
 private:
     std::vector<uint16_t> clk_src_vec; // Store clock sources in a vector
-    /**
-     * Store the Clock Sources of the CLOCK DOMAIN object.
-     */
+    ///
+    /// Store the Clock Sources of the CLOCK DOMAIN object.
+    ///
     void store_clock_sources();
 
 public:

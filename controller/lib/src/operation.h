@@ -69,9 +69,9 @@ public:
     }
 };
 
-/*
- * Class for use in STL find_if() call to find matching operation ID.
- */
+//
+// Class for use in STL find_if() call to find matching operation ID.
+//
 class operation_id_comp
 {
 private:
@@ -86,9 +86,9 @@ public:
     }
 };
 
-/*
- * Class for use in STL find_if() call to find matching notification ID.
- */
+//
+// Class for use in STL find_if() call to find matching notification ID.
+//
 class notification_comp
 {
 private:

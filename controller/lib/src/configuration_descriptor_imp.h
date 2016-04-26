@@ -76,10 +76,10 @@ public:
     uint16_t STDCALL localized_description();
     uint16_t STDCALL descriptor_counts_count();
 
-    /**
-     * Get the offset to read the counts of the top level descriptor from the start of the descriptor.
-     * This field is set to 74 for this version of AEM.
-     */
+    ///
+    /// Get the offset to read the counts of the top level descriptor from the start of the descriptor.
+    /// This field is set to 74 for this version of AEM.
+    ///
     uint16_t descriptor_counts_offset();
 
     void store_entity_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
@@ -151,14 +151,14 @@ public:
     external_port_output_descriptor * STDCALL get_external_port_output_desc_by_index(size_t index);
 
 private:
-    /**
-     * Initialize the descriptor type vector with descriptor types present in the current configuration.
-     */
+    ///
+    /// Initialize the descriptor type vector with descriptor types present in the current configuration.
+    ///
     void desc_type_vec_init(const uint8_t *frame, size_t pos);
 
-    /**
-     * Initialize the descriptor count vector with the number of the corresponding type of descriptor present in the current configuration.
-     */
+    ///
+    /// Initialize the descriptor count vector with the number of the corresponding type of descriptor present in the current configuration.
+    ///
     void desc_count_vec_init(const uint8_t *frame, size_t pos);
 };
 }

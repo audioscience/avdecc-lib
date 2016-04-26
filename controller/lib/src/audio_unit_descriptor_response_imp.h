@@ -84,9 +84,9 @@ public:
     uint16_t sampling_rates_offset();
     uint16_t STDCALL sampling_rates_count();
 private:
-    /**
-     * Store the sampling rates of the AUDIO UNIT in a vector.
-     */
+    ///
+    /// Store the sampling rates of the AUDIO UNIT in a vector.
+    ///
     void sampling_rates_init(const uint8_t *frame);
 };
 }

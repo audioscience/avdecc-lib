@@ -45,30 +45,29 @@ namespace avdecc_lib
     class avb_interface_descriptor : public virtual descriptor_base
     {
     public:
-        /**
-         * \return the avb_interface descriptor response class.
-         */
+        ///
+        /// \return the avb_interface descriptor response class.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual avb_interface_descriptor_response * STDCALL get_avb_interface_response() = 0;
 
-        /**
-         * \return the avb_interface descriptor counters response class.
-         */
+        ///
+        /// \return the avb_interface descriptor counters response class.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual avb_counters_response * STDCALL get_avb_interface_counters_response() = 0;
 
-        /**
-         * \return the avb_interface get avb info response class.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual avb_interface_get_avb_info_response *
-        STDCALL get_avb_interface_get_avb_info_response() = 0;
+        ///
+        /// \return the avb_interface get avb info response class.
+        ///
+        AVDECC_CONTROLLER_LIB32_API virtual avb_interface_get_avb_info_response * STDCALL get_avb_interface_get_avb_info_response() = 0;
 
-        /**
-         * Send a GET_COUNTERS command to get the avb_interface counters of the AVDECC Entity.
-         */
+        ///
+        /// Send a GET_COUNTERS command to get the avb_interface counters of the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_counters_cmd(void *notification_id) = 0;
 
-        /**
-         * Send a GET_AVB_INFO command to get the dynamic AVB information for an AVB_INTERFACE.
-         */
+        ///
+        /// Send a GET_AVB_INFO command to get the dynamic AVB information for an AVB_INTERFACE.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_avb_info_cmd(void *notification_id) = 0;
     };
 }

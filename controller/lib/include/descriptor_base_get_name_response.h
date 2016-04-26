@@ -39,9 +39,9 @@ namespace avdecc_lib
     {
     public:
         virtual ~descriptor_base_get_name_response() {};
-        /**
-         * Get the descriptor object name at index name_index.
-         */
+        ///
+        /// Get the descriptor object name at index name_index.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL get_name() = 0;
     };
 }
