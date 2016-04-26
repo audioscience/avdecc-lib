@@ -82,77 +82,78 @@ private:
     timer tick_timer; // A tick timer that is always running
 
 public:
-    /**
-     * A constructor for system_layer2_multithreaded_callback used for constructing an object with network interface, notification, and post_log_msg callback functions.
-     */
+    ///
+    /// A constructor for system_layer2_multithreaded_callback used for constructing an object with network
+    /// interface, notification, and post_log_msg callback functions.
+    ///
     system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj);
 
     virtual ~system_layer2_multithreaded_callback();
 
-    /**
-     * Call destructor for Controller used for destroying objects
-     */
+    ///
+    /// Call destructor for Controller used for destroying objects
+    ///
     void STDCALL destroy();
 
-    /**
-     * Store the frame to be sent in a queue.
-     */
+    ///
+    /// Store the frame to be sent in a queue.
+    ///
     int queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len);
 
-    /**
-     * Set a waiting flag for the next command sent.
-     */
+    ///
+    /// Set a waiting flag for the next command sent.
+    ///
     int STDCALL set_wait_for_next_cmd(void * id);
 
-    /**
-     * Wait for the response packet with the corrsponding notification id to be received.
-     */
+    ///
+    /// Wait for the response packet with the corrsponding notification id to be received.
+    ///
     int STDCALL get_last_resp_status();
 
-    /**
-     * Start point of the system process, which calls the thread initialization function.
-     */
+    ///
+    /// Start point of the system process, which calls the thread initialization function.
+    ///
     int STDCALL process_start();
 
-    /**
-     * End point of the system process, which terminates the threads.
-     */
+    ///
+    /// End point of the system process, which terminates the threads.
+    ///
     int STDCALL process_close();
 
 private:
-    /**
-     * Create and initialize threads, events, and semaphores for wpcap thread.
-     */
+    ///
+    /// Create and initialize threads, events, and semaphores for wpcap thread.
+    ///
     int init_wpcap_thread();
 
-    /**
-     * Create and initialize threads, events, and semaphores for poll thread.
-     */
+    ///
+    /// Create and initialize threads, events, and semaphores for poll thread.
+    ///
     int init_poll_thread();
 
-    /**
-     * Start of the packet capture thread used for capturing packets.
-     */
+    ///
+    /// Start of the packet capture thread used for capturing packets.
+    ///
     static DWORD WINAPI proc_wpcap_thread(LPVOID lpParam);
 
-    /**
-     * A member function called to start the wpcap thread processing.
-     */
+    ///
+    /// A member function called to start the wpcap thread processing.
+    ///
     int proc_wpcap_thread_callback();
 
-    /**
-     * Start of the polling thread used for polling events.
-     */
+    ///
+    /// Start of the polling thread used for polling events.
+    ///
     static DWORD WINAPI proc_poll_thread(LPVOID lpParam);
 
-    /**
-     * A member function called to start the poll thread processing.
-     */
+    ///
+    /// A member function called to start the poll thread processing.
+    ///
     int proc_poll_thread_callback();
 
-    /**
-     * Execute poll events.
-     */
+    ///
+    /// Execute poll events.
+    ///
     int poll_single();
 };
 }

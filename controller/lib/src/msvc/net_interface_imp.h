@@ -55,49 +55,49 @@ public:
 
     ~net_interface_imp();
 
-    /**
-     * Call destructor for Network Interface used for destroying objects
-     */
+    ///
+    /// Call destructor for Network Interface used for destroying objects
+    ///
     void STDCALL destroy();
 
-    /**
-     * Count the number of devices.
-     */
+    ///
+    /// Count the number of devices.
+    ///
     uint32_t STDCALL devs_count();
 
-    /**
-     * Get the MAC address of the network interface.
-     */
+    ///
+    /// Get the MAC address of the network interface.
+    ///
     uint64_t mac_addr();
 
-    /**
-     * Get the corresponding network interface description by index.
-     */
+    ///
+    /// Get the corresponding network interface description by index.
+    ///
     char * STDCALL get_dev_desc_by_index(size_t dev_index);
 
-    /**
-     * Get the corresponding network interface name by index.
-     */
+    ///
+    /// Get the corresponding network interface name by index.
+    ///
     char * STDCALL get_dev_name_by_index(size_t dev_index);
 
-    /**
-     * Select the corresponding interface by number.
-     */
+    ///
+    /// Select the corresponding interface by number.
+    ///
     int STDCALL select_interface_by_num(uint32_t interface_num);
 
-    /**
-     * Set packet filter for the network interface.
-     */
+    ///
+    /// Set packet filter for the network interface.
+    ///
     int set_capture_ether_type(uint16_t *ether_type, uint32_t count);
 
-    /**
-     * Capture a network packet.
-     */
+    ///
+    /// Capture a network packet.
+    ///
     int STDCALL capture_frame(const uint8_t **frame, uint16_t *frame_len);
 
-    /**
-     * Send a network packet.
-     */
+    ///
+    /// Send a network packet.
+    ///
     int send_frame(uint8_t *frame, size_t frame_len);
 
 };

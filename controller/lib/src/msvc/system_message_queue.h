@@ -44,9 +44,9 @@ private:
     enum { max_msgs = 0xffff };
 
 public:
-    /**
-     * Constructor for System Message Queue object with an entry count and size.
-     */
+    ///
+    /// Constructor for System Message Queue object with an entry count and size.
+    ///
     system_message_queue(int size);
 
     ~system_message_queue();

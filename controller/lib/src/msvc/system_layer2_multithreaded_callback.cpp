@@ -109,9 +109,7 @@ int system_layer2_multithreaded_callback::queue_tx_frame(void *notification_id, 
     thread_data.notification_flag = notification_flag;
     poll_tx.tx_queue->queue_push(&thread_data);
 
-    /**
-     * Check for conditions that cause wait for completion.
-     */
+    //Check for conditions that cause wait for completion.
     if ( wait_mgr->primed_state() &&
             wait_mgr->match_id(notification_id) &&
             (notification_flag == CMD_WITH_NOTIFICATION))

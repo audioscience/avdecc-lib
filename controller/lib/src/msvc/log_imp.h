@@ -55,25 +55,25 @@ public:
     virtual ~log_imp();
 
 private:
-    /**
-     * Create and initialize post_log_msg thread, event, and semaphore.
-     */
+    ///
+    /// Create and initialize post_log_msg thread, event, and semaphore.
+    ///
     int logging_thread_init();
 
-    /**
-     * Start of the post_log_msg thread used for post_log_msg purposes.
-     */
+    ///
+    /// Start of the post_log_msg thread used for post_log_msg purposes.
+    ///
     static DWORD WINAPI proc_logging_thread(LPVOID lpParam);
 
-    /**
-     * A member function called to start the logging thread processing.
-     */
+    ///
+    /// A member function called to start the logging thread processing.
+    ///
     int proc_logging_thread_callback();
 
 public:
-    /**
-     * Release sempahore so that log callback function is called.
-     */
+    ///
+    /// Release sempahore so that log callback function is called.
+    ///
     void post_log_event();
 };
 

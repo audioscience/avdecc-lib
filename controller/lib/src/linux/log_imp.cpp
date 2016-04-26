@@ -42,7 +42,7 @@ log_imp::log_imp()
 
 log_imp::~log_imp()
 {
-    /* posting to sem without data causes the thread to terminate */
+    // posting to sem without data causes the thread to terminate
     post_log_event();
 }
 

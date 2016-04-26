@@ -46,19 +46,19 @@ private:
     int entry_size;
 
 public:
-    /**
-     * An empty constructor for system_message_queue
-     */
+    ///
+    /// An empty constructor for system_message_queue
+    ///
     system_message_queue();
 
-    /**
-     * Constructor for system_message_queue used for constructing an object with count and size.
-     */
+    ///
+    /// Constructor for system_message_queue used for constructing an object with count and size.
+    ///
     system_message_queue(int count, int size);
 
-    /**
-     * Destructor for system_message_queue used for destroying objects
-     */
+    ///
+    /// Destructor for system_message_queue used for destroying objects
+    ///
     ~system_message_queue();
 
     void queue_push(void *thread_data);

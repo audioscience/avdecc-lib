@@ -155,9 +155,7 @@ int system_layer2_multithreaded_callback::queue_tx_frame(
     t.notification_flag = notification_flag;
     write(tx_pipe[PIPE_WR], &t, sizeof(t));
 
-    /**
-     * Check for conditions that cause wait for completion.
-     */
+    // Check for conditions that cause wait for completion.
     if ( wait_mgr->primed_state() &&
             wait_mgr->match_id(notification_id) &&
             (notification_flag == CMD_WITH_NOTIFICATION))

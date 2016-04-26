@@ -43,33 +43,33 @@ private:
     sem_t log_waiting;
 
 public:
-    /**
-     * An empty constructor for log_imp
-     */
+    ///
+    /// An empty constructor for log_imp
+    ///
     log_imp();
 
-    /**
-     * Destructor for log_imp used for destroying objects
-     */
+    ///
+    /// Destructor for log_imp used for destroying objects
+    ///
     virtual ~log_imp();
 
 private:
-    /**
-     * Create and initialize post_log_msg thread, event, and semaphore.
-     */
+    ///
+    /// Create and initialize post_log_msg thread, event, and semaphore.
+    ///
     int logging_thread_init();
 
-    /**
-     * Start of the post_log_msg thread used for post_log_msg purposes.
-     */
+    ///
+    /// Start of the post_log_msg thread used for post_log_msg purposes.
+    ///
     static void * dispatch_thread(void *param);
 
     void * dispatch_callbacks(void);
 
 public:
-    /**
-     * Release sempahore so that log callback function is called.
-     */
+    ///
+    /// Release sempahore so that log callback function is called.
+    ///
     void post_log_event();
 };
 
