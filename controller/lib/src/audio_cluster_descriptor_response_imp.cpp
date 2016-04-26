@@ -32,8 +32,7 @@
 
 namespace avdecc_lib
 {
-audio_cluster_descriptor_response_imp::audio_cluster_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-    descriptor_response_base_imp(frame, frame_len, pos) {}
+audio_cluster_descriptor_response_imp::audio_cluster_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos) {}
 
 audio_cluster_descriptor_response_imp::~audio_cluster_descriptor_response_imp() {}
 

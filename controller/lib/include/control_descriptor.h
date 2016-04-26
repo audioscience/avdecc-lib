@@ -37,9 +37,9 @@
 
 namespace avdecc_lib
 {
-    class control_descriptor : public virtual descriptor_base
-    {
-    public:
-        AVDECC_CONTROLLER_LIB32_API virtual control_descriptor_response * STDCALL get_control_response() = 0;
-    };
+class control_descriptor : public virtual descriptor_base
+{
+public:
+    AVDECC_CONTROLLER_LIB32_API virtual control_descriptor_response * STDCALL get_control_response() = 0;
+};
 }

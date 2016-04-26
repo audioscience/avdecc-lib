@@ -57,8 +57,9 @@ private:
         bool stream_format_valid;
     };
     struct stream_output_stream_info_flags stream_output_info_flags;
+
 public:
-    stream_output_get_stream_info_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
+    stream_output_get_stream_info_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~stream_output_get_stream_info_response_imp();
 
     bool STDCALL get_stream_info_flags_stream_vlan_id_valid();

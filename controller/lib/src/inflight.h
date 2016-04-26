@@ -45,14 +45,14 @@ private:
 public:
     /* following 2 are public for compare prediate classes */
     uint16_t cmd_seq_id;
-    void *cmd_notification_id;
+    void * cmd_notification_id;
 
-    inflight(struct jdksavdecc_frame *frame,
+    inflight(struct jdksavdecc_frame * frame,
              uint16_t seq_id,
-             void *notification_id,
+             void * notification_id,
              uint32_t notification_flag,
              uint32_t timeout_ms)
-        :  cmd_notification_flag(notification_flag), cmd_timeout_ms(timeout_ms), cmd_seq_id(seq_id), cmd_notification_id(notification_id)
+        : cmd_notification_flag(notification_flag), cmd_timeout_ms(timeout_ms), cmd_seq_id(seq_id), cmd_notification_id(notification_id)
     {
         cmd_frame = *frame;
         start_timer_cnt = 0;
@@ -96,7 +96,7 @@ private:
     uint16_t v;
 
 public:
-    SeqIdComp(uint16_t i) : v(i) { }
+    SeqIdComp(uint16_t i) : v(i) {}
 
     inline bool operator()(const inflight & m) const
     {
@@ -113,7 +113,7 @@ private:
     void * v;
 
 public:
-    NotificationComp(void * p) : v(p) { }
+    NotificationComp(void * p) : v(p) {}
 
     inline bool operator()(const inflight & m) const
     {
@@ -121,4 +121,3 @@ public:
     }
 };
 }
-

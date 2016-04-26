@@ -63,18 +63,16 @@
 #include "system_tx_queue.h"
 #include "system_layer2_multithreaded_callback.h"
 
-
 namespace avdecc_lib
 {
 
-net_interface_imp *netif_obj_in_system;
-controller_imp *controller_ref_in_system;
-system_layer2_multithreaded_callback *local_system = NULL;
+net_interface_imp * netif_obj_in_system;
+controller_imp * controller_ref_in_system;
+system_layer2_multithreaded_callback * local_system = NULL;
 
-system_layer2_multithreaded_callback *system_layer2_multithreaded_callback::instance = NULL;
+system_layer2_multithreaded_callback * system_layer2_multithreaded_callback::instance = NULL;
 
-
-size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len)
+size_t system_queue_tx(void * notification_id, uint32_t notification_flag, uint8_t * frame, size_t mem_buf_len)
 {
     if (local_system)
     {
@@ -86,7 +84,7 @@ size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_
     }
 }
 
-system * STDCALL create_system(system::system_type type, net_interface *netif, controller *controller_obj)
+system * STDCALL create_system(system::system_type type, net_interface * netif, controller * controller_obj)
 {
     (void)type;
     local_system = new system_layer2_multithreaded_callback(netif, controller_obj);
@@ -94,7 +92,7 @@ system * STDCALL create_system(system::system_type type, net_interface *netif, c
     return local_system;
 }
 
-system_layer2_multithreaded_callback::system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj)
+system_layer2_multithreaded_callback::system_layer2_multithreaded_callback(net_interface * netif, controller * controller_obj)
 {
     instance = this;
     netif_obj_in_system = dynamic_cast<net_interface_imp *>(netif);
@@ -135,9 +133,9 @@ void STDCALL system_layer2_multithreaded_callback::destroy()
 }
 
 int system_layer2_multithreaded_callback::queue_tx_frame(
-    void *notification_id,
+    void * notification_id,
     uint32_t notification_flag,
-    uint8_t *frame,
+    uint8_t * frame,
     size_t mem_buf_len)
 {
     struct tx_data t;
@@ -147,7 +145,6 @@ int system_layer2_multithreaded_callback::queue_tx_frame(
     {
         perror("malloc");
         exit(EXIT_FAILURE);
-
     }
     t.mem_buf_len = mem_buf_len;
     memcpy(t.frame, frame, mem_buf_len);
@@ -156,9 +153,9 @@ int system_layer2_multithreaded_callback::queue_tx_frame(
     write(tx_pipe[PIPE_WR], &t, sizeof(t));
 
     // Check for conditions that cause wait for completion.
-    if ( wait_mgr->primed_state() &&
-            wait_mgr->match_id(notification_id) &&
-            (notification_flag == CMD_WITH_NOTIFICATION))
+    if (wait_mgr->primed_state() &&
+        wait_mgr->match_id(notification_id) &&
+        (notification_flag == CMD_WITH_NOTIFICATION))
     {
         int status = 0;
 
@@ -184,7 +181,6 @@ int STDCALL system_layer2_multithreaded_callback::get_last_resp_status()
     return resp_status_for_cmd;
 }
 
-
 int system_layer2_multithreaded_callback::timer_start_interval(int timerfd)
 {
     struct itimerspec itimer_new;
@@ -202,21 +198,20 @@ int system_layer2_multithreaded_callback::timer_start_interval(int timerfd)
     return timerfd_settime(timerfd, 0, &itimer_new, &itimer_old);
 }
 
-int system_layer2_multithreaded_callback::fn_timer_cb(struct epoll_priv *priv)
+int system_layer2_multithreaded_callback::fn_timer_cb(struct epoll_priv * priv)
 {
     return instance->fn_timer(priv);
 }
-int system_layer2_multithreaded_callback::fn_netif_cb(struct epoll_priv *priv)
+int system_layer2_multithreaded_callback::fn_netif_cb(struct epoll_priv * priv)
 {
     return instance->fn_netif(priv);
 }
-int system_layer2_multithreaded_callback::fn_tx_cb(struct epoll_priv *priv)
+int system_layer2_multithreaded_callback::fn_tx_cb(struct epoll_priv * priv)
 {
     return instance->fn_tx(priv);
 }
 
-
-int system_layer2_multithreaded_callback::fn_timer(struct epoll_priv *priv)
+int system_layer2_multithreaded_callback::fn_timer(struct epoll_priv * priv)
 {
     uint64_t timer_exp_count;
     read(priv->fd, &timer_exp_count, sizeof(timer_exp_count));
@@ -226,7 +221,7 @@ int system_layer2_multithreaded_callback::fn_timer(struct epoll_priv *priv)
     if (wait_mgr->active_state())
     {
         if (controller_ref_in_system->is_inflight_cmd_with_notification_id(wait_mgr->get_notify_id()) ||
-                controller_ref_in_system->is_active_operation_with_notification_id(wait_mgr->get_notify_id()))
+            controller_ref_in_system->is_active_operation_with_notification_id(wait_mgr->get_notify_id()))
             notification_id_incomplete = true;
     }
 
@@ -249,7 +244,7 @@ int system_layer2_multithreaded_callback::fn_timer(struct epoll_priv *priv)
     return 0;
 }
 
-int system_layer2_multithreaded_callback::fn_tx(struct epoll_priv *priv)
+int system_layer2_multithreaded_callback::fn_tx(struct epoll_priv * priv)
 {
     struct tx_data t;
     int result = read(tx_pipe[PIPE_RD], &t, sizeof(t));
@@ -269,11 +264,10 @@ int system_layer2_multithreaded_callback::fn_tx(struct epoll_priv *priv)
     return 0;
 }
 
-
-int system_layer2_multithreaded_callback::fn_netif(struct epoll_priv *priv)
+int system_layer2_multithreaded_callback::fn_netif(struct epoll_priv * priv)
 {
     uint16_t length = 0;
-    const uint8_t *rx_frame;
+    const uint8_t * rx_frame;
     int status = 0;
 
     status = netif_obj_in_system->capture_frame(&rx_frame, &length);
@@ -282,25 +276,24 @@ int system_layer2_multithreaded_callback::fn_netif(struct epoll_priv *priv)
     {
         bool is_notification_id_valid = false;
         int rx_status = -1;
-        void *notification_id = NULL;
+        void * notification_id = NULL;
         uint16_t operation_id = 0;
         bool is_operation_id_valid = false;
 
         controller_ref_in_system->rx_packet_event(notification_id,
-                is_notification_id_valid,
-                rx_frame,
-                length,
-                rx_status,
-                operation_id,
-                is_operation_id_valid);
+                                                  is_notification_id_valid,
+                                                  rx_frame,
+                                                  length,
+                                                  rx_status,
+                                                  operation_id,
+                                                  is_operation_id_valid);
 
         if (
             wait_mgr->active_state() &&
             is_notification_id_valid &&
             wait_mgr->match_id(notification_id) &&
             !controller_ref_in_system->is_inflight_cmd_with_notification_id(wait_mgr->get_notify_id()) &&
-            !controller_ref_in_system->is_active_operation_with_notification_id(wait_mgr->get_notify_id())
-        )
+            !controller_ref_in_system->is_active_operation_with_notification_id(wait_mgr->get_notify_id()))
         {
             int status = wait_mgr->set_completion_status(rx_status);
             assert(status == 0);
@@ -310,12 +303,11 @@ int system_layer2_multithreaded_callback::fn_netif(struct epoll_priv *priv)
     return 0;
 }
 
-
 int system_layer2_multithreaded_callback::prep_evt_desc(
     int fd,
     handler_fn fn,
-    struct epoll_priv *priv,
-    struct epoll_event *ev)
+    struct epoll_priv * priv,
+    struct epoll_event * ev)
 {
     priv->fd = fd;
     priv->fn = fn;
@@ -333,7 +325,7 @@ int system_layer2_multithreaded_callback::proc_poll_loop()
 
     epollfd = epoll_create(POLL_COUNT);
 
-    prep_evt_desc(timerfd_create(CLOCK_MONOTONIC, 0), &system_layer2_multithreaded_callback::fn_timer_cb, &fd_fns[0],  &ev);
+    prep_evt_desc(timerfd_create(CLOCK_MONOTONIC, 0), &system_layer2_multithreaded_callback::fn_timer_cb, &fd_fns[0], &ev);
     epoll_ctl(epollfd, EPOLL_CTL_ADD, fd_fns[0].fd, &ev);
 
     prep_evt_desc(netif_obj_in_system->get_fd(), &system_layer2_multithreaded_callback::fn_netif_cb, &fd_fns[1], &ev);
@@ -349,7 +341,7 @@ int system_layer2_multithreaded_callback::proc_poll_loop()
     do
     {
         int i, res;
-        struct epoll_priv *priv;
+        struct epoll_priv * priv;
         res = epoll_wait(epollfd, epoll_evt, POLL_COUNT, -1);
 
         if (local_system == NULL)
@@ -369,12 +361,11 @@ int system_layer2_multithreaded_callback::proc_poll_loop()
             if (priv->fn(priv) < 0)
                 return -1;
         }
-    }
-    while (1);
+    } while (1);
     return 0;
 }
 
-void * system_layer2_multithreaded_callback::thread_fn(void *param)
+void * system_layer2_multithreaded_callback::thread_fn(void * param)
 {
     ((system_layer2_multithreaded_callback *)param)->proc_poll_loop();
 

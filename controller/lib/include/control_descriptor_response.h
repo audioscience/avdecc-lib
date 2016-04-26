@@ -36,77 +36,77 @@
 
 namespace avdecc_lib
 {
-    class control_descriptor_response : public virtual descriptor_response_base
-    {
-    public:
-        virtual ~control_descriptor_response() {};
+class control_descriptor_response : public virtual descriptor_response_base
+{
+public:
+    virtual ~control_descriptor_response(){};
 
-        ///
-        /// \return The localized string reference pointing to the localized descriptor name.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL localized_description() = 0;
+    ///
+    /// \return The localized string reference pointing to the localized descriptor name.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL localized_description() = 0;
 
-        ///
-        /// \return This is the latency in nanoseconds between the output of the previous
-        ///		   block and its output. The previous block is the object identified by the
-        ///		   signal_type and signal_index fields. For a DELAY Control, the value
-        ///		   of the delay is not included in this value.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL block_latency() = 0;
+    ///
+    /// \return This is the latency in nanoseconds between the output of the previous
+    ///		   block and its output. The previous block is the object identified by the
+    ///		   signal_type and signal_index fields. For a DELAY Control, the value
+    ///		   of the delay is not included in this value.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL block_latency() = 0;
 
-        ///
-        /// \return The worst-case time in microseconds from when a Control value
-        ///		change is received and when the Control has completely switched to
-        ///		the new value.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL control_latency() = 0;
+    ///
+    /// \return The worst-case time in microseconds from when a Control value
+    ///		change is received and when the Control has completely switched to
+    ///		the new value.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL control_latency() = 0;
 
-        ///
-        /// \return The domain that this Control belongs to.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL control_domain() = 0;
+    ///
+    /// \return The domain that this Control belongs to.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL control_domain() = 0;
 
-        ///
-        /// \return The type of the value contained in the Control as defined in 7.3.5.1
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL control_value_type() = 0;
+    ///
+    /// \return The type of the value contained in the Control as defined in 7.3.5.1
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL control_value_type() = 0;
 
-        ///
-        /// \return The type of the Control.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL control_type() = 0;
+    ///
+    /// \return The type of the Control.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL control_type() = 0;
 
-        ///
-        /// \return The time period in milliseconds from when a Control is set with the
-        ///     SET_CONTROL command until it automatically resets to its default values.
-        ///     When this is zero (0), automatic resets do not happen.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL reset_time() = 0;
+    ///
+    /// \return The time period in milliseconds from when a Control is set with the
+    ///     SET_CONTROL command until it automatically resets to its default values.
+    ///     When this is zero (0), automatic resets do not happen.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL reset_time() = 0;
 
-        ///
-        /// \return The offset from the start of the descriptor for the first octet
-        ///     of the value_details. The field is 104 for this version of AEM.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL values_offset() = 0;
+    ///
+    /// \return The offset from the start of the descriptor for the first octet
+    ///     of the value_details. The field is 104 for this version of AEM.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL values_offset() = 0;
 
-        ///
-        /// \return The number of value settings this Control has.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_values() = 0;
+    ///
+    /// \return The number of value settings this Control has.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_values() = 0;
 
-        ///
-        /// \return The descriptor_type for the signal source of the Control.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_type() = 0;
+    ///
+    /// \return The descriptor_type for the signal source of the Control.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_type() = 0;
 
-        ///
-        /// \return The descriptor_index for the signal source of the Control.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_index() = 0;
+    ///
+    /// \return The descriptor_index for the signal source of the Control.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_index() = 0;
 
-        ///
-        /// \return The index of the output of the signal source of the Control.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_output() = 0;
-    };
+    ///
+    /// \return The index of the output of the signal source of the Control.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_output() = 0;
+};
 }

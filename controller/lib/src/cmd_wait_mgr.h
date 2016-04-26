@@ -77,9 +77,8 @@ private:
         wait_active  /// active means a command matching the "primed" notify ID has been sent
     };
 
-    void *notify_id;
+    void * notify_id;
     int completion_status;
     enum wait_states state;
 };
 }
-

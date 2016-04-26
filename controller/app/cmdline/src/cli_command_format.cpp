@@ -33,17 +33,16 @@
 #include "cli_command_format.h"
 
 cli_command_format::cli_command_format(std::string help, cli_fptr action)
-    : m_help(help)
-    , m_action(action)
+    : m_help(help), m_action(action)
 {
 }
 
-void cli_command_format::add_argument(cli_argument *arg)
+void cli_command_format::add_argument(cli_argument * arg)
 {
     m_args.push_back(arg);
 }
 
-cli_argument *cli_command_format::get_arg(size_t index) const
+cli_argument * cli_command_format::get_arg(size_t index) const
 {
     if (index < m_args.size())
         return m_args[index];
@@ -51,7 +50,7 @@ cli_argument *cli_command_format::get_arg(size_t index) const
         return NULL;
 }
 
-bool cli_command_format::run_command(cmd_line *cmd_ptr, std::queue<std::string> args, bool &done)
+bool cli_command_format::run_command(cmd_line * cmd_ptr, std::queue<std::string> args, bool & done)
 {
     clear_args();
 
@@ -137,9 +136,8 @@ void cli_command_format::print_help(std::string prefix) const
 
 void cli_command_format::clear_args()
 {
-    for (std::vector<cli_argument*>::iterator iter = m_args.begin(); iter != m_args.end(); ++iter)
+    for (std::vector<cli_argument *>::iterator iter = m_args.begin(); iter != m_args.end(); ++iter)
     {
         (*iter)->clear();
     }
 }
-

@@ -38,9 +38,8 @@ namespace avdecc_lib
 class log_imp : public virtual log
 {
 private:
-
     pthread_t h_thread;
-    sem_t *log_waiting;
+    sem_t * log_waiting;
 
 public:
     ///
@@ -62,7 +61,7 @@ private:
     ///
     /// Start of the post_log_msg thread used for post_log_msg purposes.
     ///
-    static void * dispatch_thread(void *param);
+    static void * dispatch_thread(void * param);
 
     void * dispatch_callbacks(void);
 
@@ -73,6 +72,5 @@ public:
     void post_log_event();
 };
 
-extern log_imp *log_imp_ref;
+extern log_imp * log_imp_ref;
 }
-

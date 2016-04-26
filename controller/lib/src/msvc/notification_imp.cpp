@@ -32,7 +32,7 @@
 
 namespace avdecc_lib
 {
-notification_imp *notification_imp_ref = new notification_imp();
+notification_imp * notification_imp_ref = new notification_imp();
 
 notification_imp::notification_imp()
 {
@@ -46,13 +46,13 @@ int notification_imp::notification_thread_init()
     poll_events[NOTIFICATION_EVENT] = CreateSemaphore(NULL, 0, 32767, NULL);
     poll_events[KILL_EVENT] = CreateEvent(NULL, FALSE, FALSE, NULL);
 
-    h_thread = CreateThread(NULL, // Default security descriptor
-                            0, // Default stack size
+    h_thread = CreateThread(NULL,                     // Default security descriptor
+                            0,                        // Default stack size
                             proc_notification_thread, // Point to the start address of the thread
-                            this, // Data to be passed to the thread
-                            0, // Flag controlling the creation of the thread
-                            &thread_id // Thread identifier
-                           );
+                            this,                     // Data to be passed to the thread
+                            0,                        // Flag controlling the creation of the thread
+                            &thread_id                // Thread identifier
+                            );
 
     if (h_thread == NULL)
     {
@@ -75,9 +75,9 @@ int notification_imp::proc_notification_thread_callback()
     {
         dwEvent = WaitForMultipleObjects(2, poll_events, FALSE, INFINITE);
 
-        if(dwEvent == (WAIT_OBJECT_0 + NOTIFICATION_EVENT))
+        if (dwEvent == (WAIT_OBJECT_0 + NOTIFICATION_EVENT))
         {
-            if((write_index - read_index) > 0)
+            if ((write_index - read_index) > 0)
             {
                 notification_callback(user_obj,
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_type,
@@ -86,8 +86,7 @@ int notification_imp::proc_notification_thread_callback()
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_status,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id
-                                     ); // Call callback function
+                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id); // Call callback function
                 read_index++;
             }
         }

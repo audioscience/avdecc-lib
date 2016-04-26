@@ -45,8 +45,9 @@ private:
     };
 
     struct jack_input_desc_jack_flags jack_input_flags;
+
 public:
-    jack_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    jack_input_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~jack_input_descriptor_response_imp();
 
     uint8_t * STDCALL object_name();
@@ -57,6 +58,7 @@ public:
     uint16_t STDCALL jack_type();
     uint16_t STDCALL number_of_controls();
     uint16_t STDCALL base_control();
+
 private:
     ///
     /// Store the jack flags componenets of the JACK INPUT descriptor object in a vector.
@@ -64,4 +66,3 @@ private:
     void jack_flags_init();
 };
 }
-

@@ -39,12 +39,12 @@
 
 namespace avdecc_lib
 {
-    class clock_source_descriptor : public virtual descriptor_base
-    {
-    public:
-        ///
-        /// \return the clock_source descriptor response class.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual clock_source_descriptor_response * STDCALL get_clock_source_response() = 0;
-    };
+class clock_source_descriptor : public virtual descriptor_base
+{
+public:
+    ///
+    /// \return the clock_source descriptor response class.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual clock_source_descriptor_response * STDCALL get_clock_source_response() = 0;
+};
 }

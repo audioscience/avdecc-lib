@@ -56,8 +56,6 @@
 namespace avdecc_lib
 {
 
-
-
 struct etherII
 {
     uint8_t destmac[6];
@@ -119,13 +117,10 @@ net_interface_imp::net_interface_imp()
         if (family == AF_INET)
         {
             s = getnameinfo(ifa->ifa_addr,
-                            (family == AF_INET) ? sizeof(struct sockaddr_in) :
-                            sizeof(struct sockaddr_in6),
+                            (family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6),
                             host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 
-
-
-            snprintf(ifname, sizeof(ifname), "%s, address: <%s>",ifa->ifa_name, host);
+            snprintf(ifname, sizeof(ifname), "%s, address: <%s>", ifa->ifa_name, host);
             if (s != 0)
             {
                 printf("getnameinfo() failed: %s\n", gai_strerror(s));
@@ -174,20 +169,19 @@ int net_interface_imp::get_fd()
     return rawsock;
 }
 
-
 int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
 {
     struct sockaddr_ll sll;
     struct ifreq if_mac;
-    const char *ifname;
-    char *s;
+    const char * ifname;
+    char * s;
 
     // adjust interface numnber since count starts at 1
     interface_num--;
 
     ifname = ifnames[interface_num].c_str();
     s = (char *)ifname;
-    while(*s != ',')
+    while (*s != ',')
     {
         s++;
     }
@@ -203,7 +197,7 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
 
     // get the mac address of the eth0 interface
     memset(&if_mac, 0, sizeof(struct ifreq));
-    strncpy(if_mac.ifr_name, ifname, IFNAMSIZ-1);
+    strncpy(if_mac.ifr_name, ifname, IFNAMSIZ - 1);
     if (ioctl(rawsock, SIOCGIFHWADDR, &if_mac) < 0)
     {
         perror("SIOCGIFHWADDR");
@@ -212,7 +206,7 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
 
     setpromiscuous(rawsock, ifindex);
 
-    memset(&sll,0, sizeof(sll));
+    memset(&sll, 0, sizeof(sll));
     sll.sll_family = AF_PACKET;
     sll.sll_ifindex = ifindex;
     sll.sll_protocol = htons(ETH_P_ALL);
@@ -220,14 +214,13 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
 
     utility::convert_eui48_to_uint64((uint8_t *)if_mac.ifr_hwaddr.sa_data, mac);
 
-
     uint16_t etypes[1] = {0x22f0};
     set_capture_ether_type(etypes, 1);
 
     return 0;
 }
 
-int net_interface_imp::set_capture_ether_type(uint16_t *ether_type, uint32_t count)
+int net_interface_imp::set_capture_ether_type(uint16_t * ether_type, uint32_t count)
 {
     struct sock_fprog Filter;
 
@@ -241,7 +234,7 @@ int net_interface_imp::set_capture_ether_type(uint16_t *ether_type, uint32_t cou
     }
 
     // attach filter to socket
-    if(setsockopt(rawsock, SOL_SOCKET, SO_ATTACH_FILTER, &Filter, sizeof(Filter)) == -1)
+    if (setsockopt(rawsock, SOL_SOCKET, SO_ATTACH_FILTER, &Filter, sizeof(Filter)) == -1)
     {
         fprintf(stderr, "socket attach filter failed! %s\n", strerror(errno));
         close(rawsock);
@@ -251,7 +244,7 @@ int net_interface_imp::set_capture_ether_type(uint16_t *ether_type, uint32_t cou
     return 0;
 }
 
-int STDCALL net_interface_imp::capture_frame(const uint8_t **frame, uint16_t *mem_buf_len)
+int STDCALL net_interface_imp::capture_frame(const uint8_t ** frame, uint16_t * mem_buf_len)
 {
     int len;
 
@@ -268,7 +261,7 @@ int STDCALL net_interface_imp::capture_frame(const uint8_t **frame, uint16_t *me
     return len;
 }
 
-int net_interface_imp::send_frame(uint8_t *frame, uint16_t mem_buf_len)
+int net_interface_imp::send_frame(uint8_t * frame, uint16_t mem_buf_len)
 {
     int send_result;
 
@@ -278,45 +271,45 @@ int net_interface_imp::send_frame(uint8_t *frame, uint16_t mem_buf_len)
     // prepare sockaddr_ll
 
     // RAW communication
-    socket_address.sll_family   = PF_PACKET;
+    socket_address.sll_family = PF_PACKET;
     socket_address.sll_protocol = htons(ethertype);
 
     // index of the network device
     // see full code later how to retrieve it
-    socket_address.sll_ifindex  = ifindex;
+    socket_address.sll_ifindex = ifindex;
 
     // ARP hardware identifier is ethernet
-    socket_address.sll_hatype   = ARPHRD_ETHER;
+    socket_address.sll_hatype = ARPHRD_ETHER;
 
     // target is another host
-    socket_address.sll_pkttype  = PACKET_OTHERHOST;
+    socket_address.sll_pkttype = PACKET_OTHERHOST;
 
     // address length
-    socket_address.sll_halen    = ETH_ALEN;
+    socket_address.sll_halen = ETH_ALEN;
     // MAC - begin
     memcpy(&socket_address.sll_addr[0], &frame[0], 6);
     // MAC - end
-    socket_address.sll_addr[6]  = 0x00;// not used
-    socket_address.sll_addr[7]  = 0x00;// not used
+    socket_address.sll_addr[6] = 0x00; // not used
+    socket_address.sll_addr[7] = 0x00; // not used
 
     // send the packet
     send_result = sendto(rawsock, frame, mem_buf_len, 0,
-                         (struct sockaddr*)&socket_address, sizeof(socket_address));
+                         (struct sockaddr *)&socket_address, sizeof(socket_address));
 
     return send_result;
 }
 
-int net_interface_imp::getifindex(int rawsock, const char *iface)
+int net_interface_imp::getifindex(int rawsock, const char * iface)
 {
     struct ifreq ifr;
     int ret;
 
-    memset(&ifr,0,sizeof(ifr));
-    strncpy(ifr.ifr_name,iface,sizeof(ifr.ifr_name));
+    memset(&ifr, 0, sizeof(ifr));
+    strncpy(ifr.ifr_name, iface, sizeof(ifr.ifr_name));
 
-    ret=ioctl(rawsock,SIOCGIFINDEX,&ifr);
+    ret = ioctl(rawsock, SIOCGIFINDEX, &ifr);
 
-    if(ret<0)
+    if (ret < 0)
     {
         return ret;
     }
@@ -328,18 +321,16 @@ int net_interface_imp::setpromiscuous(int rawsock, int ifindex)
 {
     struct packet_mreq mr;
 
-    memset(&mr,0,sizeof(mr));
-    mr.mr_ifindex=ifindex;
-    mr.mr_type=PACKET_MR_ALLMULTI;
+    memset(&mr, 0, sizeof(mr));
+    mr.mr_ifindex = ifindex;
+    mr.mr_type = PACKET_MR_ALLMULTI;
 
     return setsockopt(rawsock, SOL_PACKET,
-                      PACKET_ADD_MEMBERSHIP,&mr,sizeof(mr));
+                      PACKET_ADD_MEMBERSHIP, &mr, sizeof(mr));
 }
-
 
 net_interface * create_net_interface()
 {
     return (new net_interface_imp());
 }
-
 }

@@ -46,22 +46,22 @@ public:
     ///
     /// Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
     ///
-    int ether_frame_init(struct jdksavdecc_frame *cmd_frame);
+    int ether_frame_init(struct jdksavdecc_frame * cmd_frame);
 
     ///
     /// Initialize and fill Ethernet frame payload with 1722 ACMP Header information.
     ///
-    void common_hdr_init(uint32_t msg_type, struct jdksavdecc_frame *cmd_frame);
+    void common_hdr_init(uint32_t msg_type, struct jdksavdecc_frame * cmd_frame);
 
     ///
     /// Process the Command state of the ACMP Controller State Machine.
     ///
-    int state_command(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *cmd_frame);
+    int state_command(void * notification_id, uint32_t notification_flag, struct jdksavdecc_frame * cmd_frame);
 
     ///
     /// Process the Response state of the ACMP Controller State Machine.
     ///
-    int state_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame);
+    int state_resp(void *& notification_id, struct jdksavdecc_frame * cmd_frame);
 
     ///
     /// Check timeout for the inflight commands.
@@ -71,7 +71,7 @@ public:
     ///
     /// Check if the command with the corresponding notification id is already in the inflight command vector.
     ///
-    bool is_inflight_cmd_with_notification_id(void *notification_id);
+    bool is_inflight_cmd_with_notification_id(void * notification_id);
 
 private:
     ///
@@ -82,19 +82,18 @@ private:
     ///
     /// Transmit an ACMP Command.
     ///
-    int tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *cmd_frame, bool resend);
+    int tx_cmd(void * notification_id, uint32_t notification_flag, struct jdksavdecc_frame * cmd_frame, bool resend);
 
     ///
     /// Handle the receipt and processing of a received response for a command sent.
     ///
-    int proc_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame);
+    int proc_resp(void *& notification_id, struct jdksavdecc_frame * cmd_frame);
 
     ///
     /// Call notification or post_log_msg callback function for the command sent or response received.
     ///
-    int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
+    int callback(void * notification_id, uint32_t notification_flag, uint8_t * frame);
 };
 
-extern acmp_controller_state_machine *acmp_controller_state_machine_ref;
+extern acmp_controller_state_machine * acmp_controller_state_machine_ref;
 }
-

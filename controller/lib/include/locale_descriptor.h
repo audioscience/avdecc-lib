@@ -38,12 +38,12 @@
 
 namespace avdecc_lib
 {
-    class locale_descriptor : public virtual descriptor_base
-    {
-    public:
-        ///
-        ///  \return the locale descriptor response class.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual locale_descriptor_response * STDCALL get_locale_response() = 0;
-    };
+class locale_descriptor : public virtual descriptor_base
+{
+public:
+    ///
+    ///  \return the locale descriptor response class.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual locale_descriptor_response * STDCALL get_locale_response() = 0;
+};
 }

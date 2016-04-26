@@ -36,11 +36,10 @@
 
 namespace avdecc_lib
 {
-class entity_descriptor_response_imp : public entity_descriptor_response, public virtual
-    descriptor_response_base_imp
+class entity_descriptor_response_imp : public entity_descriptor_response, public virtual descriptor_response_base_imp
 {
 public:
-    entity_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    entity_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~entity_descriptor_response_imp();
 
     uint64_t STDCALL entity_id();
@@ -63,4 +62,3 @@ public:
     uint16_t STDCALL current_configuration();
 };
 }
-

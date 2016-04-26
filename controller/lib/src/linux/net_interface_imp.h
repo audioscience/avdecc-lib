@@ -38,7 +38,6 @@
 #include "avdecc-lib_build.h"
 #include "net_interface.h"
 
-
 namespace avdecc_lib
 {
 struct ipheader;
@@ -55,8 +54,8 @@ private:
     std::vector<std::string> ifnames;
 
     uint32_t total_devs;
-    struct ipheader *ip_hdr_store;
-    struct udpheader *udp_hdr_store;
+    struct ipheader * ip_hdr_store;
+    struct udpheader * udp_hdr_store;
     int rawsock;
     int ifindex;
     uint16_t ethertype;
@@ -64,7 +63,7 @@ private:
     uint8_t buf[SIZEOF_BUFFER];
     uint8_t rx_buf[SIZEOF_BUFFER];
 
-    int getifindex(int rawsock, const char *iface);
+    int getifindex(int rawsock, const char * iface);
     int setpromiscuous(int rawsock, int ifindex);
 
 public:
@@ -77,7 +76,6 @@ public:
     /// Destructor for net_interface_imp used for destroying objects
     ///
     virtual ~net_interface_imp();
-
 
     void STDCALL destroy();
 
@@ -109,22 +107,20 @@ public:
     ///
     /// Update the Ethernet type for the network interface.
     ///
-    int set_capture_ether_type(uint16_t *ether_type, uint32_t count);
+    int set_capture_ether_type(uint16_t * ether_type, uint32_t count);
 
     ///
     /// Capture a network packet.
     ///
-    int STDCALL capture_frame(const uint8_t **frame, uint16_t *mem_buf_len);
+    int STDCALL capture_frame(const uint8_t ** frame, uint16_t * mem_buf_len);
 
     ///
     /// Send a network packet.
     ///
-    int send_frame(uint8_t *frame, uint16_t mem_buf_len);
+    int send_frame(uint8_t * frame, uint16_t mem_buf_len);
 
     int get_fd();
-
 };
 
-extern net_interface_imp *net_interface_ref;
+extern net_interface_imp * net_interface_ref;
 }
-

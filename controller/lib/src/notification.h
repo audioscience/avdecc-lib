@@ -21,7 +21,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 /**
  * notification.h
  *
@@ -29,7 +28,6 @@
  */
 
 #pragma once
-
 
 #include <stdint.h>
 
@@ -45,12 +43,12 @@ public:
     ///
     /// AVDECC LIB modules call this function to generate a notification message.
     ///
-    void post_notification_msg(int32_t notification_type, uint64_t entity_id, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void *notification_id);
+    void post_notification_msg(int32_t notification_type, uint64_t entity_id, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void * notification_id);
 
     ///
     /// Change the notification callback function to a new post_notification_msg callback function.
     ///
-    void set_notification_callback(void (*new_notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *), void *);
+    void set_notification_callback(void (*new_notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *), void *);
 
     ///
     /// Get the number of missed notifications that exceeds the notification buffer count.
@@ -61,8 +59,8 @@ protected:
     int32_t notifications;
     uint32_t read_index;
     uint32_t write_index;
-    void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *);
-    void *user_obj;
+    void (*notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *);
+    void * user_obj;
     uint32_t missed_notification_event_cnt;
 
     enum
@@ -78,7 +76,7 @@ protected:
         uint16_t desc_type;
         uint16_t desc_index;
         uint32_t cmd_status;
-        void *notification_id;
+        void * notification_id;
     };
 
     struct notification_data notification_buf[NOTIFICATION_BUF_COUNT];
@@ -87,6 +85,5 @@ protected:
     /// Release sempahore so that notification callback function is called.
     ///
     virtual void post_notification_event() = 0;
-
 };
 }

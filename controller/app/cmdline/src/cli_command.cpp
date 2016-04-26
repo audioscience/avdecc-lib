@@ -37,10 +37,10 @@ cli_command::cli_command(std::string hint)
 {
 }
 
-void cli_command::add_sub_command(std::string name, cli_command *cmd)
+void cli_command::add_sub_command(std::string name, cli_command * cmd)
 {
-    std::pair<std::map<std::string, cli_command*>::iterator,bool> ret;
-    ret = m_sub_commands.insert(std::pair<std::string, cli_command*>(name, cmd));
+    std::pair<std::map<std::string, cli_command *>::iterator, bool> ret;
+    ret = m_sub_commands.insert(std::pair<std::string, cli_command *>(name, cmd));
 
     // Ensure that the element was correctly inserted - otherwise trying to add a duplicate command
     assert(ret.second);
@@ -50,16 +50,16 @@ void cli_command::add_sub_command(std::string name, cli_command *cmd)
     m_sub_command_names.sort();
 }
 
-void cli_command::add_format(cli_command_format *format)
+void cli_command::add_format(cli_command_format * format)
 {
     m_formats.push_back(format);
 }
 
-bool cli_command::run_command(cmd_line *cmd_ptr, std::queue<std::string> args, bool &done, std::string prefix)
+bool cli_command::run_command(cmd_line * cmd_ptr, std::queue<std::string> args, bool & done, std::string prefix)
 {
     if (args.size() > 0)
     {
-        std::map<std::string, cli_command*>::iterator iter = m_sub_commands.find(args.front());
+        std::map<std::string, cli_command *>::iterator iter = m_sub_commands.find(args.front());
         if (iter != m_sub_commands.end())
         {
             prefix += args.front() + " ";
@@ -72,7 +72,7 @@ bool cli_command::run_command(cmd_line *cmd_ptr, std::queue<std::string> args, b
         }
     }
 
-    for (std::vector<cli_command_format*>::iterator iter = m_formats.begin(); iter != m_formats.end(); ++iter)
+    for (std::vector<cli_command_format *>::iterator iter = m_formats.begin(); iter != m_formats.end(); ++iter)
     {
         if ((*iter)->run_command(cmd_ptr, args, done))
         {
@@ -105,7 +105,7 @@ void cli_command::print_help_all(std::string prefix, size_t depth) const
                 sub_prefix += " ";
             sub_prefix += *iter;
 
-            std::map<std::string, cli_command*>::const_iterator cmd_iter = m_sub_commands.find(*iter);
+            std::map<std::string, cli_command *>::const_iterator cmd_iter = m_sub_commands.find(*iter);
             assert(cmd_iter != m_sub_commands.end());
             cmd_iter->second->print_help_all(sub_prefix, (depth == UINT_MAX) ? depth : depth - 1);
         }
@@ -116,7 +116,7 @@ void cli_command::print_help_all(std::string prefix, size_t depth) const
     }
 }
 
-const cli_command *cli_command::get_sub_command(std::queue<std::string> &cmd_path, std::string &prefix) const
+const cli_command * cli_command::get_sub_command(std::queue<std::string> & cmd_path, std::string & prefix) const
 {
     while (cmd_path.size() && cmd_path.front().length() == 0)
     {
@@ -130,7 +130,7 @@ const cli_command *cli_command::get_sub_command(std::queue<std::string> &cmd_pat
     }
     else
     {
-        std::map<std::string, cli_command*>::const_iterator iter = m_sub_commands.find(cmd_path.front());
+        std::map<std::string, cli_command *>::const_iterator iter = m_sub_commands.find(cmd_path.front());
         if (iter != m_sub_commands.end())
         {
             prefix += cmd_path.front() + " ";
@@ -138,7 +138,7 @@ const cli_command *cli_command::get_sub_command(std::queue<std::string> &cmd_pat
             return iter->second->get_sub_command(cmd_path, prefix);
         }
     }
-    return (cli_command*)NULL;
+    return (cli_command *)NULL;
 }
 
 void cli_command::print_help_details(std::string prefix) const
@@ -154,7 +154,7 @@ void cli_command::print_help_details(std::string prefix) const
         }
     }
 
-    for (std::vector<cli_command_format*>::const_iterator iter = m_formats.begin(); iter != m_formats.end(); ++iter)
+    for (std::vector<cli_command_format *>::const_iterator iter = m_formats.begin(); iter != m_formats.end(); ++iter)
     {
         (*iter)->print_help(prefix);
     }
@@ -171,13 +171,12 @@ std::list<std::string> cli_command::get_sub_command_names() const
     return m_sub_command_names;
 }
 
-void cli_command::get_args(ssize_t index, std::vector<cli_argument*> &args) const
+void cli_command::get_args(ssize_t index, std::vector<cli_argument *> & args) const
 {
-    for (std::vector<cli_command_format*>::const_iterator iter = m_formats.begin(); iter != m_formats.end(); ++iter)
+    for (std::vector<cli_command_format *>::const_iterator iter = m_formats.begin(); iter != m_formats.end(); ++iter)
     {
-        cli_argument *arg = (*iter)->get_arg(index);
+        cli_argument * arg = (*iter)->get_arg(index);
         if (arg)
             args.push_back(arg);
     }
 }
-

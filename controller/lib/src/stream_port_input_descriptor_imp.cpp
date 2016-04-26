@@ -41,7 +41,7 @@
 
 namespace avdecc_lib
 {
-stream_port_input_descriptor_imp::stream_port_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
+stream_port_input_descriptor_imp::stream_port_input_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
 stream_port_input_descriptor_imp::~stream_port_input_descriptor_imp() {}
 
@@ -49,17 +49,17 @@ stream_port_input_descriptor_response * STDCALL stream_port_input_descriptor_imp
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return resp = new stream_port_input_descriptor_response_imp(resp_ref->get_desc_buffer(),
-            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
+                                                                resp_ref->get_desc_size(), resp_ref->get_desc_pos());
 }
 
 stream_port_input_get_audio_map_response * STDCALL stream_port_input_descriptor_imp::get_stream_port_input_audio_map_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return audio_map_resp = new stream_port_input_get_audio_map_response_imp(resp_ref->get_buffer(),
-            resp_ref->get_size(), resp_ref->get_pos());
+                                                                             resp_ref->get_size(), resp_ref->get_pos());
 }
 
-int stream_port_input_descriptor_imp::store_pending_map(struct audio_map_mapping &map)
+int stream_port_input_descriptor_imp::store_pending_map(struct audio_map_mapping & map)
 {
     pending_maps.push_back(map);
 
@@ -71,7 +71,7 @@ size_t stream_port_input_descriptor_imp::get_number_of_pending_maps()
     return pending_maps.size();
 }
 
-int stream_port_input_descriptor_imp::get_pending_maps(size_t index, struct audio_map_mapping &map)
+int stream_port_input_descriptor_imp::get_pending_maps(size_t index, struct audio_map_mapping & map)
 {
     if (index >= pending_maps.size())
         return -1;
@@ -82,7 +82,7 @@ int stream_port_input_descriptor_imp::get_pending_maps(size_t index, struct audi
 
 int stream_port_input_descriptor_imp::clear_pending_maps()
 {
-    if(pending_maps.size() == 0)
+    if (pending_maps.size() == 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "No pending audio mappings.");
     }
@@ -93,12 +93,12 @@ int stream_port_input_descriptor_imp::clear_pending_maps()
     return 0;
 }
 
-int STDCALL stream_port_input_descriptor_imp::send_get_audio_map_cmd(void *notification_id, uint16_t mapping_index)
+int STDCALL stream_port_input_descriptor_imp::send_get_audio_map_cmd(void * notification_id, uint16_t mapping_index)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_audio_map aem_cmd_get_audio_map;
     ssize_t aem_cmd_get_audio_map_returned;
-    memset(&aem_cmd_get_audio_map,0,sizeof(aem_cmd_get_audio_map));
+    memset(&aem_cmd_get_audio_map, 0, sizeof(aem_cmd_get_audio_map));
 
     /******************************************** AECP Common Data *********************************************/
     aem_cmd_get_audio_map.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
@@ -112,12 +112,12 @@ int STDCALL stream_port_input_descriptor_imp::send_get_audio_map_cmd(void *notif
 
     /******************************* Fill frame payload with AECP data and send the frame **************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_AUDIO_MAP_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_AUDIO_MAP_COMMAND_LEN);
     aem_cmd_get_audio_map_returned = jdksavdecc_aem_command_get_audio_map_write(&aem_cmd_get_audio_map,
-                                     cmd_frame.payload,
-                                     ETHER_HDR_SIZE,
-                                     sizeof(cmd_frame.payload));
-    if(aem_cmd_get_audio_map_returned < 0)
+                                                                                cmd_frame.payload,
+                                                                                ETHER_HDR_SIZE,
+                                                                                sizeof(cmd_frame.payload));
+    if (aem_cmd_get_audio_map_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_audio_map_write error\n");
         assert(aem_cmd_get_audio_map_returned >= 0);
@@ -125,16 +125,16 @@ int STDCALL stream_port_input_descriptor_imp::send_get_audio_map_cmd(void *notif
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_GET_AUDIO_MAP_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_GET_AUDIO_MAP_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int stream_port_input_descriptor_imp::proc_get_audio_map_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_port_input_descriptor_imp::proc_get_audio_map_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_audio_map_response aem_cmd_get_audio_map_resp;
@@ -146,11 +146,11 @@ int stream_port_input_descriptor_imp::proc_get_audio_map_resp(void *&notificatio
     memset(&aem_cmd_get_audio_map_resp, 0, sizeof(jdksavdecc_aem_command_get_audio_map_response));
 
     aem_cmd_get_audio_map_resp_returned = jdksavdecc_aem_command_get_audio_map_response_read(&aem_cmd_get_audio_map_resp,
-                                          frame,
-                                          ETHER_HDR_SIZE,
-                                          frame_len);
+                                                                                             frame,
+                                                                                             ETHER_HDR_SIZE,
+                                                                                             frame_len);
 
-    if(aem_cmd_get_audio_map_resp_returned < 0)
+    if (aem_cmd_get_audio_map_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_sampling_rate_resp_read error\n");
         assert(aem_cmd_get_audio_map_resp_returned >= 0);
@@ -168,13 +168,13 @@ int stream_port_input_descriptor_imp::proc_get_audio_map_resp(void *&notificatio
     return 0;
 }
 
-int STDCALL stream_port_input_descriptor_imp::send_add_audio_mappings_cmd(void *notification_id)
+int STDCALL stream_port_input_descriptor_imp::send_add_audio_mappings_cmd(void * notification_id)
 {
     int i = 0;
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_add_audio_mappings aem_cmd_add_audio_mappings;
     ssize_t aem_cmd_add_audio_mappings_returned;
-    memset(&aem_cmd_add_audio_mappings,0,sizeof(aem_cmd_add_audio_mappings));
+    memset(&aem_cmd_add_audio_mappings, 0, sizeof(aem_cmd_add_audio_mappings));
 
     /******************************************** AECP Common Data *********************************************/
     aem_cmd_add_audio_mappings.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
@@ -190,18 +190,18 @@ int STDCALL stream_port_input_descriptor_imp::send_add_audio_mappings_cmd(void *
     }
     else
     {
-        aem_cmd_add_audio_mappings.number_of_mappings = (uint16_t) pending_maps.size();
+        aem_cmd_add_audio_mappings.number_of_mappings = (uint16_t)pending_maps.size();
     }
 
     /******************************* Fill frame payload with AECP data and send the frame **************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_LEN +
-            (uint16_t) pending_maps.size() * JDKSAVDECC_AUDIO_MAPPING_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_LEN +
+                                                            (uint16_t)pending_maps.size() * JDKSAVDECC_AUDIO_MAPPING_LEN);
     aem_cmd_add_audio_mappings_returned = jdksavdecc_aem_command_add_audio_mappings_write(&aem_cmd_add_audio_mappings,
-                                          cmd_frame.payload,
-                                          ETHER_HDR_SIZE,
-                                          sizeof(cmd_frame.payload));
-    if(aem_cmd_add_audio_mappings_returned < 0)
+                                                                                          cmd_frame.payload,
+                                                                                          ETHER_HDR_SIZE,
+                                                                                          sizeof(cmd_frame.payload));
+    if (aem_cmd_add_audio_mappings_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_add_audio_mappings_write error\n");
         assert(aem_cmd_add_audio_mappings_returned >= 0);
@@ -210,25 +210,25 @@ int STDCALL stream_port_input_descriptor_imp::send_add_audio_mappings_cmd(void *
 
     size_t num_pending_maps = pending_maps.size();
     std::vector<struct audio_map_mapping>::iterator it = pending_maps.begin();
-    while(it != pending_maps.end())
+    while (it != pending_maps.end())
     {
-        if(i >= AEM_MAX_MAPS)
+        if (i >= AEM_MAX_MAPS)
             break;
 
         struct avdecc_lib::audio_map_mapping map = *it;
 
         jdksavdecc_uint16_set(map.stream_index, cmd_frame.payload, ETHER_HDR_SIZE +
-                              JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS + JDKSAVDECC_AUDIO_MAPPING_LEN * i +
-                              JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_STREAM_INDEX);
+                                                                       JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS + JDKSAVDECC_AUDIO_MAPPING_LEN * i +
+                                                                       JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_STREAM_INDEX);
         jdksavdecc_uint16_set(map.stream_channel, cmd_frame.payload, ETHER_HDR_SIZE +
-                              JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
-                              (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_STREAM_CHANNEL));
+                                                                         JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
+                                                                         (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_STREAM_CHANNEL));
         jdksavdecc_uint16_set(map.cluster_offset, cmd_frame.payload, ETHER_HDR_SIZE +
-                              JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
-                              (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_OFFSET));
+                                                                         JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
+                                                                         (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_OFFSET));
         jdksavdecc_uint16_set(map.cluster_channel, cmd_frame.payload, ETHER_HDR_SIZE +
-                              JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
-                              (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_CHANNEL));
+                                                                          JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
+                                                                          (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_CHANNEL));
 
         pending_maps.erase(it);
         it = pending_maps.begin();
@@ -236,13 +236,13 @@ int STDCALL stream_port_input_descriptor_imp::send_add_audio_mappings_cmd(void *
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
-    if(num_pending_maps > AEM_MAX_MAPS)
+    if (num_pending_maps > AEM_MAX_MAPS)
     {
         return 1;
     }
@@ -252,7 +252,7 @@ int STDCALL stream_port_input_descriptor_imp::send_add_audio_mappings_cmd(void *
     }
 }
 
-int stream_port_input_descriptor_imp::proc_add_audio_mappings_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_port_input_descriptor_imp::proc_add_audio_mappings_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_add_audio_mappings_response aem_cmd_add_audio_mappings_resp;
@@ -264,11 +264,11 @@ int stream_port_input_descriptor_imp::proc_add_audio_mappings_resp(void *&notifi
     memset(&aem_cmd_add_audio_mappings_resp, 0, sizeof(jdksavdecc_aem_command_add_audio_mappings_response));
 
     aem_cmd_add_audio_mappings_resp_returned = jdksavdecc_aem_command_add_audio_mappings_response_read(&aem_cmd_add_audio_mappings_resp,
-            frame,
-            ETHER_HDR_SIZE,
-            frame_len);
+                                                                                                       frame,
+                                                                                                       ETHER_HDR_SIZE,
+                                                                                                       frame_len);
 
-    if(aem_cmd_add_audio_mappings_resp_returned < 0)
+    if (aem_cmd_add_audio_mappings_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_add_audio_mappings_resp_read error\n");
         assert(aem_cmd_add_audio_mappings_resp_returned >= 0);
@@ -284,13 +284,13 @@ int stream_port_input_descriptor_imp::proc_add_audio_mappings_resp(void *&notifi
     return 0;
 }
 
-int STDCALL stream_port_input_descriptor_imp::send_remove_audio_mappings_cmd(void *notification_id)
+int STDCALL stream_port_input_descriptor_imp::send_remove_audio_mappings_cmd(void * notification_id)
 {
     int i = 0;
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_remove_audio_mappings aem_cmd_remove_audio_mappings;
     ssize_t aem_cmd_remove_audio_mappings_returned;
-    memset(&aem_cmd_remove_audio_mappings,0,sizeof(aem_cmd_remove_audio_mappings));
+    memset(&aem_cmd_remove_audio_mappings, 0, sizeof(aem_cmd_remove_audio_mappings));
 
     /******************************************** AECP Common Data *********************************************/
     aem_cmd_remove_audio_mappings.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
@@ -306,18 +306,18 @@ int STDCALL stream_port_input_descriptor_imp::send_remove_audio_mappings_cmd(voi
     }
     else
     {
-        aem_cmd_remove_audio_mappings.number_of_mappings = (uint16_t) pending_maps.size();
+        aem_cmd_remove_audio_mappings.number_of_mappings = (uint16_t)pending_maps.size();
     }
 
     /******************************* Fill frame payload with AECP data and send the frame **************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_LEN +
-            (uint16_t) pending_maps.size() * JDKSAVDECC_AUDIO_MAPPING_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_LEN +
+                                                            (uint16_t)pending_maps.size() * JDKSAVDECC_AUDIO_MAPPING_LEN);
     aem_cmd_remove_audio_mappings_returned = jdksavdecc_aem_command_remove_audio_mappings_write(&aem_cmd_remove_audio_mappings,
-            cmd_frame.payload,
-            ETHER_HDR_SIZE,
-            sizeof(cmd_frame.payload));
-    if(aem_cmd_remove_audio_mappings_returned < 0)
+                                                                                                cmd_frame.payload,
+                                                                                                ETHER_HDR_SIZE,
+                                                                                                sizeof(cmd_frame.payload));
+    if (aem_cmd_remove_audio_mappings_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_remove_audio_mappings_write error\n");
         assert(aem_cmd_remove_audio_mappings_returned >= 0);
@@ -326,25 +326,25 @@ int STDCALL stream_port_input_descriptor_imp::send_remove_audio_mappings_cmd(voi
 
     size_t num_pending_maps = pending_maps.size();
     std::vector<struct audio_map_mapping>::iterator it = pending_maps.begin();
-    while(it != pending_maps.end())
+    while (it != pending_maps.end())
     {
-        if(i >= AEM_MAX_MAPS)
+        if (i >= AEM_MAX_MAPS)
             break;
 
         struct avdecc_lib::audio_map_mapping map = *it;
 
         jdksavdecc_uint16_set(map.stream_index, cmd_frame.payload, ETHER_HDR_SIZE +
-                              JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS + JDKSAVDECC_AUDIO_MAPPING_LEN * i +
-                              JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_STREAM_INDEX);
+                                                                       JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS + JDKSAVDECC_AUDIO_MAPPING_LEN * i +
+                                                                       JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_STREAM_INDEX);
         jdksavdecc_uint16_set(map.stream_channel, cmd_frame.payload, ETHER_HDR_SIZE +
-                              JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
-                              (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_STREAM_CHANNEL));
+                                                                         JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
+                                                                         (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_STREAM_CHANNEL));
         jdksavdecc_uint16_set(map.cluster_offset, cmd_frame.payload, ETHER_HDR_SIZE +
-                              JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
-                              (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_OFFSET));
+                                                                         JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
+                                                                         (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_OFFSET));
         jdksavdecc_uint16_set(map.cluster_channel, cmd_frame.payload, ETHER_HDR_SIZE +
-                              JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
-                              (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_CHANNEL));
+                                                                          JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_OFFSET_MAPPINGS +
+                                                                          (JDKSAVDECC_AUDIO_MAPPING_LEN * i + JDKSAVDECC_AUDIO_MAPPING_OFFSET_MAPPING_CLUSTER_CHANNEL));
 
         pending_maps.erase(it);
         it = pending_maps.begin();
@@ -352,13 +352,13 @@ int STDCALL stream_port_input_descriptor_imp::send_remove_audio_mappings_cmd(voi
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
-    if(num_pending_maps > AEM_MAX_MAPS)
+    if (num_pending_maps > AEM_MAX_MAPS)
     {
         return 1;
     }
@@ -368,7 +368,7 @@ int STDCALL stream_port_input_descriptor_imp::send_remove_audio_mappings_cmd(voi
     }
 }
 
-int stream_port_input_descriptor_imp::proc_remove_audio_mappings_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_port_input_descriptor_imp::proc_remove_audio_mappings_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_remove_audio_mappings_response aem_cmd_remove_audio_mappings_resp;
@@ -380,11 +380,11 @@ int stream_port_input_descriptor_imp::proc_remove_audio_mappings_resp(void *&not
     memset(&aem_cmd_remove_audio_mappings_resp, 0, sizeof(jdksavdecc_aem_command_remove_audio_mappings_response));
 
     aem_cmd_remove_audio_mappings_resp_returned = jdksavdecc_aem_command_remove_audio_mappings_response_read(&aem_cmd_remove_audio_mappings_resp,
-            frame,
-            ETHER_HDR_SIZE,
-            frame_len);
+                                                                                                             frame,
+                                                                                                             ETHER_HDR_SIZE,
+                                                                                                             frame_len);
 
-    if(aem_cmd_remove_audio_mappings_resp_returned < 0)
+    if (aem_cmd_remove_audio_mappings_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_remove_audio_mappings_resp_read error\n");
         assert(aem_cmd_remove_audio_mappings_resp_returned >= 0);

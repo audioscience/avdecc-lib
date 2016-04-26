@@ -33,8 +33,7 @@
 
 namespace avdecc_lib
 {
-clock_domain_descriptor_response_imp::clock_domain_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-    descriptor_response_base_imp(frame, frame_len, pos)
+clock_domain_descriptor_response_imp::clock_domain_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos)
 {
     store_clock_sources();
 }
@@ -72,7 +71,7 @@ void clock_domain_descriptor_response_imp::store_clock_sources()
 {
     uint16_t offset = 0;
 
-    for(uint32_t i = 0; i < clock_sources_count(); i++)
+    for (uint32_t i = 0; i < clock_sources_count(); i++)
     {
         clk_src_vec.push_back(jdksavdecc_uint16_get(buffer, clock_sources_offset() + position + offset));
         offset += 0x2;

@@ -41,7 +41,7 @@
 
 namespace avdecc_lib
 {
-audio_unit_descriptor_imp::audio_unit_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
+audio_unit_descriptor_imp::audio_unit_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
 audio_unit_descriptor_imp::~audio_unit_descriptor_imp() {}
 
@@ -49,17 +49,17 @@ audio_unit_descriptor_response * STDCALL audio_unit_descriptor_imp::get_audio_un
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return resp = new audio_unit_descriptor_response_imp(resp_ref->get_desc_buffer(),
-            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
+                                                         resp_ref->get_desc_size(), resp_ref->get_desc_pos());
 }
 
 audio_unit_get_sampling_rate_response * STDCALL audio_unit_descriptor_imp::get_audio_unit_get_sampling_rate_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return sampling_rate_resp = new audio_unit_get_sampling_rate_response_imp(resp_ref->get_buffer(),
-            resp_ref->get_size(), resp_ref->get_pos());
+                                                                              resp_ref->get_size(), resp_ref->get_pos());
 }
 
-int STDCALL audio_unit_descriptor_imp::send_set_sampling_rate_cmd(void *notification_id, uint32_t new_sampling_rate)
+int STDCALL audio_unit_descriptor_imp::send_set_sampling_rate_cmd(void * notification_id, uint32_t new_sampling_rate)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_set_sampling_rate aem_cmd_set_sampling_rate;
@@ -78,13 +78,13 @@ int STDCALL audio_unit_descriptor_imp::send_set_sampling_rate_cmd(void *notifica
 
     /******************************** Fill frame payload with AECP data and send the frame ***************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE_COMMAND_LEN);
     aem_cmd_set_sampling_rate_returned = jdksavdecc_aem_command_set_sampling_rate_write(&aem_cmd_set_sampling_rate,
-                                         cmd_frame.payload,
-                                         ETHER_HDR_SIZE,
-                                         sizeof(cmd_frame.payload));
+                                                                                        cmd_frame.payload,
+                                                                                        ETHER_HDR_SIZE,
+                                                                                        sizeof(cmd_frame.payload));
 
-    if(aem_cmd_set_sampling_rate_returned < 0)
+    if (aem_cmd_set_sampling_rate_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_sampling_rate_write error\n");
         assert(aem_cmd_set_sampling_rate_returned >= 0);
@@ -92,17 +92,16 @@ int STDCALL audio_unit_descriptor_imp::send_set_sampling_rate_cmd(void *notifica
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_SET_SAMPLING_RATE_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
-
 }
 
-int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_set_sampling_rate_response aem_cmd_set_sampling_rate_resp;
@@ -115,11 +114,11 @@ int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *&notification_i
     memset(&aem_cmd_set_sampling_rate_resp, 0, sizeof(struct jdksavdecc_aem_command_set_sampling_rate_response));
 
     aem_cmd_set_sampling_rate_resp_returned = jdksavdecc_aem_command_set_sampling_rate_response_read(&aem_cmd_set_sampling_rate_resp,
-            frame,
-            ETHER_HDR_SIZE,
-            frame_len);
+                                                                                                     frame,
+                                                                                                     ETHER_HDR_SIZE,
+                                                                                                     frame_len);
 
-    if(aem_cmd_set_sampling_rate_resp_returned < 0)
+    if (aem_cmd_set_sampling_rate_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_sampling_rate_resp_read error\n");
         assert(aem_cmd_set_sampling_rate_resp_returned >= 0);
@@ -142,12 +141,12 @@ int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *&notification_i
     return 0;
 }
 
-int STDCALL audio_unit_descriptor_imp::send_get_sampling_rate_cmd(void *notification_id)
+int STDCALL audio_unit_descriptor_imp::send_get_sampling_rate_cmd(void * notification_id)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_sampling_rate aem_cmd_get_sampling_rate;
     ssize_t aem_cmd_get_sampling_rate_returned;
-    memset(&aem_cmd_get_sampling_rate,0,sizeof(aem_cmd_get_sampling_rate));
+    memset(&aem_cmd_get_sampling_rate, 0, sizeof(aem_cmd_get_sampling_rate));
 
     /******************************************** AECP Common Data *********************************************/
     aem_cmd_get_sampling_rate.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
@@ -160,13 +159,13 @@ int STDCALL audio_unit_descriptor_imp::send_get_sampling_rate_cmd(void *notifica
 
     /******************************* Fill frame payload with AECP data and send the frame **************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE_COMMAND_LEN);
     aem_cmd_get_sampling_rate_returned = jdksavdecc_aem_command_get_sampling_rate_write(&aem_cmd_get_sampling_rate,
-                                         cmd_frame.payload,
-                                         ETHER_HDR_SIZE,
-                                         sizeof(cmd_frame.payload));
+                                                                                        cmd_frame.payload,
+                                                                                        ETHER_HDR_SIZE,
+                                                                                        sizeof(cmd_frame.payload));
 
-    if(aem_cmd_get_sampling_rate_returned < 0)
+    if (aem_cmd_get_sampling_rate_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_sampling_rate_write error\n");
         assert(aem_cmd_get_sampling_rate_returned >= 0);
@@ -174,16 +173,16 @@ int STDCALL audio_unit_descriptor_imp::send_get_sampling_rate_cmd(void *notifica
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_GET_SAMPLING_RATE_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_sampling_rate_response aem_cmd_get_sampling_rate_resp;
@@ -195,11 +194,11 @@ int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *&notification_i
     memset(&aem_cmd_get_sampling_rate_resp, 0, sizeof(jdksavdecc_aem_command_get_sampling_rate_response));
 
     aem_cmd_get_sampling_rate_resp_returned = jdksavdecc_aem_command_get_sampling_rate_response_read(&aem_cmd_get_sampling_rate_resp,
-            frame,
-            ETHER_HDR_SIZE,
-            frame_len);
+                                                                                                     frame,
+                                                                                                     ETHER_HDR_SIZE,
+                                                                                                     frame_len);
 
-    if(aem_cmd_get_sampling_rate_resp_returned < 0)
+    if (aem_cmd_get_sampling_rate_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_sampling_rate_resp_read error\n");
         assert(aem_cmd_get_sampling_rate_resp_returned >= 0);

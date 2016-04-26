@@ -58,7 +58,7 @@ private:
     struct stream_input_stream_info_flags stream_input_info_flags;
 
 public:
-    stream_input_get_stream_info_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
+    stream_input_get_stream_info_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~stream_input_get_stream_info_response_imp();
 
     bool STDCALL get_stream_info_flags_stream_vlan_id_valid();

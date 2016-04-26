@@ -38,13 +38,13 @@ class clock_domain_counters_response_imp : public clock_domain_counters_response
 {
 private:
     uint32_t m_counters_valid;
-    uint32_t m_counters_block [31];
+    uint32_t m_counters_block[31];
     uint8_t * m_frame;
     size_t m_size;
     ssize_t m_position;
 
 public:
-    clock_domain_counters_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    clock_domain_counters_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~clock_domain_counters_response_imp();
 
     uint32_t STDCALL get_counter_valid(int name);

@@ -53,29 +53,28 @@ class cli_argument;
 class cli_command
 {
 public:
-    cli_command(std::string hint="");
-    virtual ~cli_command() {};
+    cli_command(std::string hint = "");
+    virtual ~cli_command(){};
 
-    void add_sub_command(std::string name, cli_command *cmd);
-    void add_format(cli_command_format *format);
+    void add_sub_command(std::string name, cli_command * cmd);
+    void add_format(cli_command_format * format);
 
-    bool run_command(cmd_line *cmd_ptr, std::queue<std::string> args, bool &done, std::string prefix="");
+    bool run_command(cmd_line * cmd_ptr, std::queue<std::string> args, bool & done, std::string prefix = "");
 
     void print_help_all(std::string prefix, size_t depth) const;
     void print_help_details(std::string prefix) const;
 
-    const cli_command *get_sub_command(std::queue<std::string> &cmd_path, std::string &prefix) const;
+    const cli_command * get_sub_command(std::queue<std::string> & cmd_path, std::string & prefix) const;
     std::list<std::string> get_sub_command_names() const;
 
     // There can be multiple arguments at a given index (one per command format)
-    void get_args(ssize_t index, std::vector<cli_argument*> &args) const;
+    void get_args(ssize_t index, std::vector<cli_argument *> & args) const;
 
 private:
     std::string m_hint;
 
-    std::map<std::string, cli_command*> m_sub_commands;
+    std::map<std::string, cli_command *> m_sub_commands;
     std::list<std::string> m_sub_command_names;
 
     std::vector<cli_command_format *> m_formats;
 };
-

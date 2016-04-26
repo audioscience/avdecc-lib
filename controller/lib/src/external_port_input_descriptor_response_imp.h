@@ -42,8 +42,9 @@ class external_port_input_descriptor_response_imp : public external_port_input_d
 {
 private:
     struct jdksavdecc_descriptor_external_port desc;
+
 public:
-    external_port_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    external_port_input_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~external_port_input_descriptor_response_imp();
 
     uint8_t * STDCALL object_name();

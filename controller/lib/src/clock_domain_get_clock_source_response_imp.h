@@ -42,7 +42,7 @@ private:
     ssize_t m_position;
 
 public:
-    clock_domain_get_clock_source_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
+    clock_domain_get_clock_source_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~clock_domain_get_clock_source_response_imp();
 
     uint16_t STDCALL get_clock_source_clock_source_index();

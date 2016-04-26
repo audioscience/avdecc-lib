@@ -58,8 +58,8 @@
 namespace avdecc_lib_os
 {
 typedef uint32_t aTimestamp;
-typedef pthread_t *aThread;
-typedef sem_t *aSemaphore;
+typedef pthread_t * aThread;
+typedef sem_t * aSemaphore;
 typedef pthread_mutex_t aCriticalSection;
 }
 
@@ -74,6 +74,4 @@ typedef HANDLE aSemaphore;
 typedef CRITICAL_SECTION aCriticalSection;
 }
 
-
 #endif
-

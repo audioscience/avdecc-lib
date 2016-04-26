@@ -33,19 +33,18 @@
 
 namespace avdecc_lib
 {
-stream_input_counters_response_imp::stream_input_counters_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
+stream_input_counters_response_imp::stream_input_counters_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos)
 {
     m_position = pos;
     m_size = frame_len;
     m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
     memcpy(m_frame, frame, m_size);
 
-    m_counters_valid = jdksavdecc_uint32_get(m_frame, ETHER_HDR_SIZE
-                       + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_VALID);
+    m_counters_valid = jdksavdecc_uint32_get(m_frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_VALID);
 
-    for(int i = 0; i<31; i++) {
-        int r = jdksavdecc_uint32_read(&m_counters_block[i], frame, ETHER_HDR_SIZE
-                                       + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_BLOCK + 4 * i,
+    for (int i = 0; i < 31; i++)
+    {
+        int r = jdksavdecc_uint32_read(&m_counters_block[i], frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_BLOCK + 4 * i,
                                        frame_len);
         if (r < 0)
             break;
@@ -59,7 +58,7 @@ stream_input_counters_response_imp::~stream_input_counters_response_imp()
 
 uint32_t STDCALL stream_input_counters_response_imp::get_counter_valid(int name)
 {
-    switch(name)
+    switch (name)
     {
     case STREAM_INPUT_MEDIA_LOCKED:
         return m_counters_valid & 0x01;
@@ -95,7 +94,7 @@ uint32_t STDCALL stream_input_counters_response_imp::get_counter_valid(int name)
 
 uint32_t STDCALL stream_input_counters_response_imp::get_counter_by_name(int name)
 {
-    switch(name)
+    switch (name)
     {
     case STREAM_INPUT_MEDIA_LOCKED:
         return m_counters_block[0];

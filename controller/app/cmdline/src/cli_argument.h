@@ -44,15 +44,15 @@ class cmd_line;
 class cli_argument
 {
 public:
-    cli_argument(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint,
+    cli_argument(cmd_line * cmd_ptr, const std::string name, const std::string help, const std::string hint,
                  size_t match_min, size_t match_max);
-    virtual ~cli_argument() {};
+    virtual ~cli_argument(){};
 
-    const std::string &get_name() const;
+    const std::string & get_name() const;
 
     virtual void clear() = 0;
     virtual bool set_value(std::string value_str) = 0;
-    virtual void get_completion_options(std::set<std::string> &options) = 0;
+    virtual void get_completion_options(std::set<std::string> & options) = 0;
 
     ///
     /// The get_ functions return the first matching value.
@@ -76,7 +76,7 @@ public:
     size_t get_match_max() const;
 
 protected:
-    cmd_line *m_cmd_line_ptr;
+    cmd_line * m_cmd_line_ptr;
     bool m_is_valid;
     size_t m_match_min;
     size_t m_match_max;
@@ -88,13 +88,13 @@ protected:
 class cli_argument_int : public cli_argument
 {
 public:
-    cli_argument_int(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint="",
-                     size_t match_min=1, size_t match_max=1);
-    virtual ~cli_argument_int() {};
+    cli_argument_int(cmd_line * cmd_ptr, const std::string name, const std::string help, const std::string hint = "",
+                     size_t match_min = 1, size_t match_max = 1);
+    virtual ~cli_argument_int(){};
 
     virtual void clear();
     virtual bool set_value(std::string value_str);
-    virtual void get_completion_options(std::set<std::string> &options);
+    virtual void get_completion_options(std::set<std::string> & options);
 
     virtual int get_value_int() const;
 
@@ -108,13 +108,13 @@ private:
 class cli_argument_end_station : public cli_argument
 {
 public:
-    cli_argument_end_station(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint="",
-                             size_t match_min=1, size_t match_max=1);
-    virtual ~cli_argument_end_station() {};
+    cli_argument_end_station(cmd_line * cmd_ptr, const std::string name, const std::string help, const std::string hint = "",
+                             size_t match_min = 1, size_t match_max = 1);
+    virtual ~cli_argument_end_station(){};
 
     virtual void clear();
     virtual bool set_value(std::string value_str);
-    virtual void get_completion_options(std::set<std::string> &options);
+    virtual void get_completion_options(std::set<std::string> & options);
 
     virtual uint32_t get_value_uint() const;
 
@@ -128,13 +128,13 @@ private:
 class cli_argument_string : public cli_argument
 {
 public:
-    cli_argument_string(cmd_line *cmd_ptr, const std::string name, const std::string help, const std::string hint="",
-                        size_t match_min=1, size_t match_max=1);
-    virtual ~cli_argument_string() {};
+    cli_argument_string(cmd_line * cmd_ptr, const std::string name, const std::string help, const std::string hint = "",
+                        size_t match_min = 1, size_t match_max = 1);
+    virtual ~cli_argument_string(){};
 
     virtual void clear();
     virtual bool set_value(std::string value_str);
-    virtual void get_completion_options(std::set<std::string> &options);
+    virtual void get_completion_options(std::set<std::string> & options);
 
     virtual std::string get_value_str() const;
 
@@ -144,4 +144,3 @@ public:
 private:
     std::vector<std::string> m_values;
 };
-

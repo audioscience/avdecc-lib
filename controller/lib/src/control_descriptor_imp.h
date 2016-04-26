@@ -29,7 +29,6 @@
 
 #pragma once
 
-
 #include "descriptor_base_imp.h"
 #include "control_descriptor.h"
 #include "control_descriptor_response_imp.h"
@@ -39,11 +38,10 @@ namespace avdecc_lib
 class control_descriptor_imp : public control_descriptor, public virtual descriptor_base_imp
 {
 public:
-    control_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
+    control_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
     virtual ~control_descriptor_imp();
-    control_descriptor_response_imp *resp;
+    control_descriptor_response_imp * resp;
 
     control_descriptor_response * STDCALL get_control_response();
 };
 }
-

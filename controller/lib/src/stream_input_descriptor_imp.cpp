@@ -43,7 +43,7 @@
 
 namespace avdecc_lib
 {
-stream_input_descriptor_imp::stream_input_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
+stream_input_descriptor_imp::stream_input_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
 stream_input_descriptor_imp::~stream_input_descriptor_imp() {}
 
@@ -51,43 +51,43 @@ stream_input_descriptor_response * STDCALL stream_input_descriptor_imp::get_stre
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return resp = new stream_input_descriptor_response_imp(resp_ref->get_desc_buffer(),
-            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
+                                                           resp_ref->get_desc_size(), resp_ref->get_desc_pos());
 }
 
 stream_input_counters_response * STDCALL stream_input_descriptor_imp::get_stream_input_counters_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return counters_resp = new stream_input_counters_response_imp(resp_ref->get_buffer(),
-            resp_ref->get_size(), resp_ref->get_pos());
+                                                                  resp_ref->get_size(), resp_ref->get_pos());
 }
 
 stream_input_get_stream_format_response * STDCALL stream_input_descriptor_imp::get_stream_input_get_stream_format_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_format_resp  = new stream_input_get_stream_format_response_imp(resp_ref->get_buffer(),
-            resp_ref->get_size(), resp_ref->get_pos());
+    return get_format_resp = new stream_input_get_stream_format_response_imp(resp_ref->get_buffer(),
+                                                                             resp_ref->get_size(), resp_ref->get_pos());
 }
 
 stream_input_get_stream_info_response * STDCALL stream_input_descriptor_imp::get_stream_input_get_stream_info_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_info_resp  = new stream_input_get_stream_info_response_imp(resp_ref->get_buffer(),
-            resp_ref->get_size(), resp_ref->get_pos());
+    return get_info_resp = new stream_input_get_stream_info_response_imp(resp_ref->get_buffer(),
+                                                                         resp_ref->get_size(), resp_ref->get_pos());
 }
 
 stream_input_get_rx_state_response * STDCALL stream_input_descriptor_imp::get_stream_input_get_rx_state_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_rx_state_resp  = new stream_input_get_rx_state_response_imp(resp_ref->get_buffer(),
-            resp_ref->get_size(), resp_ref->get_pos());
+    return get_rx_state_resp = new stream_input_get_rx_state_response_imp(resp_ref->get_buffer(),
+                                                                          resp_ref->get_size(), resp_ref->get_pos());
 }
 
-int STDCALL stream_input_descriptor_imp::send_set_stream_format_cmd(void *notification_id, uint64_t new_stream_format)
+int STDCALL stream_input_descriptor_imp::send_set_stream_format_cmd(void * notification_id, uint64_t new_stream_format)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_set_stream_format aem_cmd_set_stream_format;
     ssize_t aem_cmd_set_stream_format_returned;
-    memset(&aem_cmd_set_stream_format,0,sizeof(aem_cmd_set_stream_format));
+    memset(&aem_cmd_set_stream_format, 0, sizeof(aem_cmd_set_stream_format));
 
     /******************************************** AECP Common Data *********************************************/
     aem_cmd_set_stream_format.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
@@ -101,13 +101,13 @@ int STDCALL stream_input_descriptor_imp::send_set_stream_format_cmd(void *notifi
 
     /******************************** Fill frame payload with AECP data and send the frame ***************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT_COMMAND_LEN);
     aem_cmd_set_stream_format_returned = jdksavdecc_aem_command_set_stream_format_write(&aem_cmd_set_stream_format,
-                                         cmd_frame.payload,
-                                         ETHER_HDR_SIZE,
-                                         sizeof(cmd_frame.payload));
+                                                                                        cmd_frame.payload,
+                                                                                        ETHER_HDR_SIZE,
+                                                                                        sizeof(cmd_frame.payload));
 
-    if(aem_cmd_set_stream_format_returned < 0)
+    if (aem_cmd_set_stream_format_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_stream_format_write error\n");
         assert(aem_cmd_set_stream_format_returned >= 0);
@@ -115,16 +115,16 @@ int STDCALL stream_input_descriptor_imp::send_set_stream_format_cmd(void *notifi
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_SET_STREAM_FORMAT_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int stream_input_descriptor_imp::proc_set_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_input_descriptor_imp::proc_set_stream_format_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_set_stream_format_response aem_cmd_set_stream_format_resp;
@@ -137,11 +137,11 @@ int stream_input_descriptor_imp::proc_set_stream_format_resp(void *&notification
     memset(&aem_cmd_set_stream_format_resp, 0, sizeof(jdksavdecc_aem_command_set_stream_format_response));
 
     aem_cmd_set_stream_format_resp_returned = jdksavdecc_aem_command_set_stream_format_response_read(&aem_cmd_set_stream_format_resp,
-            frame,
-            ETHER_HDR_SIZE,
-            frame_len);
+                                                                                                     frame,
+                                                                                                     ETHER_HDR_SIZE,
+                                                                                                     frame_len);
 
-    if(aem_cmd_set_stream_format_resp_returned < 0)
+    if (aem_cmd_set_stream_format_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_stream_format_resp_read error\n");
         assert(aem_cmd_set_stream_format_resp_returned >= 0);
@@ -151,7 +151,7 @@ int stream_input_descriptor_imp::proc_set_stream_format_resp(void *&notification
     buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
     memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
     jdksavdecc_descriptor_stream_set_current_format(aem_cmd_set_stream_format_resp.stream_format,
-            buffer, resp_ref->get_desc_pos()); //set stream format
+                                                    buffer, resp_ref->get_desc_pos()); //set stream format
 
     replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size()); //replace frame
 
@@ -165,11 +165,11 @@ int stream_input_descriptor_imp::proc_set_stream_format_resp(void *&notification
     return 0;
 }
 
-int STDCALL stream_input_descriptor_imp::send_get_stream_format_cmd(void *notification_id)
+int STDCALL stream_input_descriptor_imp::send_get_stream_format_cmd(void * notification_id)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_stream_format aem_cmd_get_stream_format;
-    memset(&aem_cmd_get_stream_format,0,sizeof(aem_cmd_get_stream_format));
+    memset(&aem_cmd_get_stream_format, 0, sizeof(aem_cmd_get_stream_format));
     ssize_t aem_cmd_get_stream_format_returned;
 
     /******************************************** AECP Common Data *********************************************/
@@ -183,13 +183,13 @@ int STDCALL stream_input_descriptor_imp::send_get_stream_format_cmd(void *notifi
 
     /******************************* Fill frame payload with AECP data and send the frame *************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_COMMAND_LEN);
     aem_cmd_get_stream_format_returned = jdksavdecc_aem_command_get_stream_format_write(&aem_cmd_get_stream_format,
-                                         cmd_frame.payload,
-                                         ETHER_HDR_SIZE,
-                                         sizeof(cmd_frame.payload));
+                                                                                        cmd_frame.payload,
+                                                                                        ETHER_HDR_SIZE,
+                                                                                        sizeof(cmd_frame.payload));
 
-    if(aem_cmd_get_stream_format_returned < 0)
+    if (aem_cmd_get_stream_format_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_format_write error\n");
         assert(aem_cmd_get_stream_format_returned >= 0);
@@ -197,16 +197,16 @@ int STDCALL stream_input_descriptor_imp::send_get_stream_format_cmd(void *notifi
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_GET_STREAM_FORMAT_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int stream_input_descriptor_imp::proc_get_stream_format_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_input_descriptor_imp::proc_get_stream_format_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_stream_format_response m_stream_format_response;
@@ -218,10 +218,10 @@ int stream_input_descriptor_imp::proc_get_stream_format_resp(void *&notification
     memset(&m_stream_format_response, 0, sizeof(jdksavdecc_aem_command_get_stream_format_response));
 
     aem_cmd_get_stream_format_resp_returned = jdksavdecc_aem_command_get_stream_format_response_read(&m_stream_format_response,
-            frame,
-            ETHER_HDR_SIZE,
-            frame_len);
-    if(aem_cmd_get_stream_format_resp_returned < 0)
+                                                                                                     frame,
+                                                                                                     ETHER_HDR_SIZE,
+                                                                                                     frame_len);
+    if (aem_cmd_get_stream_format_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_format_resp_read error\n");
         assert(aem_cmd_get_stream_format_resp_returned >= 0);
@@ -239,7 +239,7 @@ int stream_input_descriptor_imp::proc_get_stream_format_resp(void *&notification
     return 0;
 }
 
-int STDCALL stream_input_descriptor_imp::send_set_stream_info_cmd(void *notification_id, void *new_stream_info_field)
+int STDCALL stream_input_descriptor_imp::send_set_stream_info_cmd(void * notification_id, void * new_stream_info_field)
 {
     (void)notification_id; //unused
     (void)new_stream_info_field;
@@ -248,9 +248,9 @@ int STDCALL stream_input_descriptor_imp::send_set_stream_info_cmd(void *notifica
     return 0;
 }
 
-int stream_input_descriptor_imp::proc_set_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_input_descriptor_imp::proc_set_stream_info_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
-    (void)notification_id;  //unused
+    (void)notification_id; //unused
     (void)frame;
     (void)frame_len;
     (void)status;
@@ -260,7 +260,7 @@ int stream_input_descriptor_imp::proc_set_stream_info_resp(void *&notification_i
     return 0;
 }
 
-int STDCALL stream_input_descriptor_imp::send_get_stream_info_cmd(void *notification_id)
+int STDCALL stream_input_descriptor_imp::send_get_stream_info_cmd(void * notification_id)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_stream_info aem_cmd_get_stream_info;
@@ -278,13 +278,13 @@ int STDCALL stream_input_descriptor_imp::send_get_stream_info_cmd(void *notifica
 
     /************************** Fill frame payload with AECP data and send the frame ***************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_COMMAND_LEN);
     aem_cmd_get_stream_info_returned = jdksavdecc_aem_command_get_stream_info_write(&aem_cmd_get_stream_info,
-                                       cmd_frame.payload,
-                                       ETHER_HDR_SIZE,
-                                       sizeof(cmd_frame.payload));
+                                                                                    cmd_frame.payload,
+                                                                                    ETHER_HDR_SIZE,
+                                                                                    sizeof(cmd_frame.payload));
 
-    if(aem_cmd_get_stream_info_returned < 0)
+    if (aem_cmd_get_stream_info_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_info_write error\n");
         assert(aem_cmd_get_stream_info_returned >= 0);
@@ -292,16 +292,16 @@ int STDCALL stream_input_descriptor_imp::send_get_stream_info_cmd(void *notifica
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_GET_STREAM_INFO_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int stream_input_descriptor_imp::proc_get_stream_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_input_descriptor_imp::proc_get_stream_info_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_stream_info_response m_stream_info_resp;
@@ -313,11 +313,11 @@ int stream_input_descriptor_imp::proc_get_stream_info_resp(void *&notification_i
     memset(&m_stream_info_resp, 0, sizeof(jdksavdecc_aem_command_get_stream_info_response));
 
     aem_cmd_get_stream_info_resp_returned = jdksavdecc_aem_command_get_stream_info_response_read(&m_stream_info_resp,
-                                            frame,
-                                            ETHER_HDR_SIZE,
-                                            frame_len);
+                                                                                                 frame,
+                                                                                                 ETHER_HDR_SIZE,
+                                                                                                 frame_len);
 
-    if(aem_cmd_get_stream_info_resp_returned < 0)
+    if (aem_cmd_get_stream_info_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_info_resp_read error");
         assert(aem_cmd_get_stream_info_resp_returned >= 0);
@@ -335,12 +335,12 @@ int stream_input_descriptor_imp::proc_get_stream_info_resp(void *&notification_i
     return 0;
 }
 
-int STDCALL stream_input_descriptor_imp::send_start_streaming_cmd(void *notification_id)
+int STDCALL stream_input_descriptor_imp::send_start_streaming_cmd(void * notification_id)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_start_streaming aem_cmd_start_streaming;
     ssize_t aem_cmd_start_streaming_returned;
-    memset(&aem_cmd_start_streaming,0,sizeof(aem_cmd_start_streaming));
+    memset(&aem_cmd_start_streaming, 0, sizeof(aem_cmd_start_streaming));
     /******************************************** AECP Common Data *******************************************/
     aem_cmd_start_streaming.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
     // Fill aem_cmd_start_streaming.sequence_id in AEM Controller State Machine
@@ -352,13 +352,13 @@ int STDCALL stream_input_descriptor_imp::send_start_streaming_cmd(void *notifica
 
     /************************** Fill frame payload with AECP data and send the frame ***************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_START_STREAMING_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_START_STREAMING_COMMAND_LEN);
     aem_cmd_start_streaming_returned = jdksavdecc_aem_command_start_streaming_write(&aem_cmd_start_streaming,
-                                       cmd_frame.payload,
-                                       ETHER_HDR_SIZE,
-                                       sizeof(cmd_frame.payload));
+                                                                                    cmd_frame.payload,
+                                                                                    ETHER_HDR_SIZE,
+                                                                                    sizeof(cmd_frame.payload));
 
-    if(aem_cmd_start_streaming_returned < 0)
+    if (aem_cmd_start_streaming_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_start_streaming_write error\n");
         assert(aem_cmd_start_streaming_returned >= 0);
@@ -366,16 +366,16 @@ int STDCALL stream_input_descriptor_imp::send_start_streaming_cmd(void *notifica
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_START_STREAMING_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_START_STREAMING_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int stream_input_descriptor_imp::proc_start_streaming_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_input_descriptor_imp::proc_start_streaming_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_start_streaming_response aem_cmd_start_streaming_resp;
@@ -384,14 +384,14 @@ int stream_input_descriptor_imp::proc_start_streaming_resp(void *&notification_i
     bool u_field;
 
     memcpy(cmd_frame.payload, frame, frame_len);
-    memset(&aem_cmd_start_streaming_resp,0,sizeof(aem_cmd_start_streaming_resp));
+    memset(&aem_cmd_start_streaming_resp, 0, sizeof(aem_cmd_start_streaming_resp));
 
     aem_cmd_start_streaming_resp_returned = jdksavdecc_aem_command_start_streaming_response_read(&aem_cmd_start_streaming_resp,
-                                            frame,
-                                            ETHER_HDR_SIZE,
-                                            frame_len);
+                                                                                                 frame,
+                                                                                                 ETHER_HDR_SIZE,
+                                                                                                 frame_len);
 
-    if(aem_cmd_start_streaming_resp_returned < 0)
+    if (aem_cmd_start_streaming_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_start_streaming_resp_read error");
         assert(aem_cmd_start_streaming_resp_returned >= 0);
@@ -407,7 +407,7 @@ int stream_input_descriptor_imp::proc_start_streaming_resp(void *&notification_i
     return 0;
 }
 
-int STDCALL stream_input_descriptor_imp::send_stop_streaming_cmd(void *notification_id)
+int STDCALL stream_input_descriptor_imp::send_stop_streaming_cmd(void * notification_id)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_stop_streaming aem_cmd_stop_streaming;
@@ -424,13 +424,13 @@ int STDCALL stream_input_descriptor_imp::send_stop_streaming_cmd(void *notificat
 
     /************************** Fill frame payload with AECP data and send the frame *************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_STOP_STREAMING_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_STOP_STREAMING_COMMAND_LEN);
     aem_cmd_stop_streaming_returned = jdksavdecc_aem_command_stop_streaming_write(&aem_cmd_stop_streaming,
-                                      cmd_frame.payload,
-                                      ETHER_HDR_SIZE,
-                                      sizeof(cmd_frame.payload));
+                                                                                  cmd_frame.payload,
+                                                                                  ETHER_HDR_SIZE,
+                                                                                  sizeof(cmd_frame.payload));
 
-    if(aem_cmd_stop_streaming_returned < 0)
+    if (aem_cmd_stop_streaming_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_stop_streaming_write error\n");
         assert(aem_cmd_stop_streaming_returned >= 0);
@@ -438,16 +438,16 @@ int STDCALL stream_input_descriptor_imp::send_stop_streaming_cmd(void *notificat
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_STOP_STREAMING_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_STOP_STREAMING_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int stream_input_descriptor_imp::proc_stop_streaming_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_input_descriptor_imp::proc_stop_streaming_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_stop_streaming_response aem_cmd_stop_streaming_resp;
@@ -456,14 +456,14 @@ int stream_input_descriptor_imp::proc_stop_streaming_resp(void *&notification_id
     bool u_field;
 
     memcpy(cmd_frame.payload, frame, frame_len);
-    memset(&aem_cmd_stop_streaming_resp,0,sizeof(aem_cmd_stop_streaming_resp));
+    memset(&aem_cmd_stop_streaming_resp, 0, sizeof(aem_cmd_stop_streaming_resp));
 
     aem_cmd_stop_streaming_resp_returned = jdksavdecc_aem_command_stop_streaming_response_read(&aem_cmd_stop_streaming_resp,
-                                           frame,
-                                           ETHER_HDR_SIZE,
-                                           frame_len);
+                                                                                               frame,
+                                                                                               ETHER_HDR_SIZE,
+                                                                                               frame_len);
 
-    if(aem_cmd_stop_streaming_resp_returned < 0)
+    if (aem_cmd_stop_streaming_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_stop_streaming_resp_read error");
         assert(aem_cmd_stop_streaming_resp_returned >= 0);
@@ -479,9 +479,9 @@ int stream_input_descriptor_imp::proc_stop_streaming_resp(void *&notification_id
     return 0;
 }
 
-int STDCALL stream_input_descriptor_imp::send_connect_rx_cmd(void *notification_id, uint64_t talker_entity_id, uint16_t talker_unique_id, uint16_t flags)
+int STDCALL stream_input_descriptor_imp::send_connect_rx_cmd(void * notification_id, uint64_t talker_entity_id, uint16_t talker_unique_id, uint16_t flags)
 {
-    entity_descriptor_response *entity_resp_ref = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_response();
+    entity_descriptor_response * entity_resp_ref = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_response();
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_acmpdu acmp_cmd_connect_rx;
     ssize_t acmp_cmd_connect_rx_returned;
@@ -502,11 +502,11 @@ int STDCALL stream_input_descriptor_imp::send_connect_rx_cmd(void *notification_
     /*************** Fill frame payload with AECP data and send the frame *************/
     acmp_controller_state_machine_ref->ether_frame_init(&cmd_frame);
     acmp_cmd_connect_rx_returned = jdksavdecc_acmpdu_write(&acmp_cmd_connect_rx,
-                                   cmd_frame.payload,
-                                   ETHER_HDR_SIZE,
-                                   sizeof(cmd_frame.payload));
+                                                           cmd_frame.payload,
+                                                           ETHER_HDR_SIZE,
+                                                           sizeof(cmd_frame.payload));
 
-    if(acmp_cmd_connect_rx_returned < 0)
+    if (acmp_cmd_connect_rx_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "cmd_connect_rx_write error\n");
         assert(acmp_cmd_connect_rx_returned >= 0);
@@ -520,18 +520,18 @@ int STDCALL stream_input_descriptor_imp::send_connect_rx_cmd(void *notification_
     return 0;
 }
 
-int stream_input_descriptor_imp::proc_connect_rx_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_input_descriptor_imp::proc_connect_rx_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     ssize_t acmp_cmd_connect_rx_resp_returned;
 
     memcpy(cmd_frame.payload, frame, frame_len);
     acmp_cmd_connect_rx_resp_returned = jdksavdecc_acmpdu_read(&acmp_cmd_connect_rx_resp,
-                                        frame,
-                                        ETHER_HDR_SIZE,
-                                        frame_len);
+                                                               frame,
+                                                               ETHER_HDR_SIZE,
+                                                               frame_len);
 
-    if(acmp_cmd_connect_rx_resp_returned < 0)
+    if (acmp_cmd_connect_rx_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "acmp_cmd_connect_rx_read error");
         assert(acmp_cmd_connect_rx_resp_returned >= 0);
@@ -545,9 +545,9 @@ int stream_input_descriptor_imp::proc_connect_rx_resp(void *&notification_id, co
     return 0;
 }
 
-int STDCALL stream_input_descriptor_imp::send_disconnect_rx_cmd(void *notification_id, uint64_t talker_entity_id, uint16_t talker_unique_id)
+int STDCALL stream_input_descriptor_imp::send_disconnect_rx_cmd(void * notification_id, uint64_t talker_entity_id, uint16_t talker_unique_id)
 {
-    entity_descriptor_response *entity_resp_ref = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_response();
+    entity_descriptor_response * entity_resp_ref = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_response();
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_acmpdu acmp_cmd_disconnect_rx;
     ssize_t acmp_cmd_disconnect_rx_returned;
@@ -568,11 +568,11 @@ int STDCALL stream_input_descriptor_imp::send_disconnect_rx_cmd(void *notificati
     /**************** Fill frame payload with AECP data and send the frame ***************/
     acmp_controller_state_machine_ref->ether_frame_init(&cmd_frame);
     acmp_cmd_disconnect_rx_returned = jdksavdecc_acmpdu_write(&acmp_cmd_disconnect_rx,
-                                      cmd_frame.payload,
-                                      ETHER_HDR_SIZE,
-                                      sizeof(cmd_frame.payload));
+                                                              cmd_frame.payload,
+                                                              ETHER_HDR_SIZE,
+                                                              sizeof(cmd_frame.payload));
 
-    if(acmp_cmd_disconnect_rx_returned < 0)
+    if (acmp_cmd_disconnect_rx_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "cmd_disconnect_rx_write error\n");
         assert(acmp_cmd_disconnect_rx_returned >= 0);
@@ -586,18 +586,18 @@ int STDCALL stream_input_descriptor_imp::send_disconnect_rx_cmd(void *notificati
     return 0;
 }
 
-int stream_input_descriptor_imp::proc_disconnect_rx_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_input_descriptor_imp::proc_disconnect_rx_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     ssize_t acmp_cmd_disconnect_rx_resp_returned;
 
     memcpy(cmd_frame.payload, frame, frame_len);
     acmp_cmd_disconnect_rx_resp_returned = jdksavdecc_acmpdu_read(&acmp_cmd_disconnect_rx_resp,
-                                           frame,
-                                           ETHER_HDR_SIZE,
-                                           frame_len);
+                                                                  frame,
+                                                                  ETHER_HDR_SIZE,
+                                                                  frame_len);
 
-    if(acmp_cmd_disconnect_rx_resp_returned < 0)
+    if (acmp_cmd_disconnect_rx_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "acmp_cmd_disconnect_rx_read error");
         assert(acmp_cmd_disconnect_rx_resp_returned >= 0);
@@ -611,9 +611,9 @@ int stream_input_descriptor_imp::proc_disconnect_rx_resp(void *&notification_id,
     return 0;
 }
 
-int STDCALL stream_input_descriptor_imp::send_get_rx_state_cmd(void *notification_id)
+int STDCALL stream_input_descriptor_imp::send_get_rx_state_cmd(void * notification_id)
 {
-    entity_descriptor_response *entity_resp_ref = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_response();
+    entity_descriptor_response * entity_resp_ref = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_response();
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_acmpdu acmp_cmd_get_rx_state;
     ssize_t acmp_cmd_get_rx_state_returned;
@@ -634,11 +634,11 @@ int STDCALL stream_input_descriptor_imp::send_get_rx_state_cmd(void *notificatio
     /*************** Fill frame payload with AECP data and send the frame ***************/
     acmp_controller_state_machine_ref->ether_frame_init(&cmd_frame);
     acmp_cmd_get_rx_state_returned = jdksavdecc_acmpdu_write(&acmp_cmd_get_rx_state,
-                                     cmd_frame.payload,
-                                     ETHER_HDR_SIZE,
-                                     sizeof(cmd_frame.payload));
+                                                             cmd_frame.payload,
+                                                             ETHER_HDR_SIZE,
+                                                             sizeof(cmd_frame.payload));
 
-    if(acmp_cmd_get_rx_state_returned < 0)
+    if (acmp_cmd_get_rx_state_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "cmd_get_rx_state_write error\n");
         assert(acmp_cmd_get_rx_state_returned >= 0);
@@ -652,7 +652,7 @@ int STDCALL stream_input_descriptor_imp::send_get_rx_state_cmd(void *notificatio
     return 0;
 }
 
-int stream_input_descriptor_imp::proc_get_rx_state_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_input_descriptor_imp::proc_get_rx_state_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_acmpdu acmp_cmd_get_rx_state_resp; // Store the response received after sending a GET_RX_STATE command.
@@ -660,11 +660,11 @@ int stream_input_descriptor_imp::proc_get_rx_state_resp(void *&notification_id, 
 
     memcpy(cmd_frame.payload, frame, frame_len);
     acmp_cmd_get_rx_state_resp_returned = jdksavdecc_acmpdu_read(&acmp_cmd_get_rx_state_resp,
-                                          frame,
-                                          ETHER_HDR_SIZE,
-                                          frame_len);
+                                                                 frame,
+                                                                 ETHER_HDR_SIZE,
+                                                                 frame_len);
 
-    if(acmp_cmd_get_rx_state_resp_returned < 0)
+    if (acmp_cmd_get_rx_state_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "acmp_cmd_get_rx_state_read error");
         assert(acmp_cmd_get_rx_state_resp_returned >= 0);
@@ -680,11 +680,11 @@ int stream_input_descriptor_imp::proc_get_rx_state_resp(void *&notification_id, 
     return 0;
 }
 
-int STDCALL stream_input_descriptor_imp::send_get_counters_cmd(void *notification_id)
+int STDCALL stream_input_descriptor_imp::send_get_counters_cmd(void * notification_id)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_counters aem_cmd_get_stream_input_counters;
-    memset(&aem_cmd_get_stream_input_counters,0,sizeof(aem_cmd_get_stream_input_counters));
+    memset(&aem_cmd_get_stream_input_counters, 0, sizeof(aem_cmd_get_stream_input_counters));
     ssize_t aem_cmd_get_stream_input_counters_returned;
 
     /******************************************** AECP Common Data *********************************************/
@@ -698,13 +698,13 @@ int STDCALL stream_input_descriptor_imp::send_get_counters_cmd(void *notificatio
 
     /******************************* Fill frame payload with AECP data and send the frame **************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_COMMAND_LEN);
     aem_cmd_get_stream_input_counters_returned = jdksavdecc_aem_command_get_counters_write(&aem_cmd_get_stream_input_counters,
-            cmd_frame.payload,
-            ETHER_HDR_SIZE,
-            sizeof(cmd_frame.payload));
+                                                                                           cmd_frame.payload,
+                                                                                           ETHER_HDR_SIZE,
+                                                                                           sizeof(cmd_frame.payload));
 
-    if(aem_cmd_get_stream_input_counters_returned < 0)
+    if (aem_cmd_get_stream_input_counters_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_input_counters_write error\n");
         assert(aem_cmd_get_stream_input_counters_returned >= 0);
@@ -712,16 +712,16 @@ int STDCALL stream_input_descriptor_imp::send_get_counters_cmd(void *notificatio
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int stream_input_descriptor_imp::proc_get_counters_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int stream_input_descriptor_imp::proc_get_counters_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_counters_response stream_input_counters_resp;
@@ -733,20 +733,20 @@ int stream_input_descriptor_imp::proc_get_counters_resp(void *&notification_id, 
     memset(&stream_input_counters_resp, 0, sizeof(jdksavdecc_aem_command_get_counters_response));
 
     aem_cmd_get_stream_input_counters_resp_returned = jdksavdecc_aem_command_get_counters_response_read(&stream_input_counters_resp,
-            frame,
-            ETHER_HDR_SIZE,
-            frame_len);
+                                                                                                        frame,
+                                                                                                        ETHER_HDR_SIZE,
+                                                                                                        frame_len);
 
     replace_frame(frame, ETHER_HDR_SIZE, frame_len);
 
-    if(aem_cmd_get_stream_input_counters_resp_returned < 0)
+    if (aem_cmd_get_stream_input_counters_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_stream_input_counters_resp_read error\n");
         assert(aem_cmd_get_stream_input_counters_resp_returned >= 0);
         return -1;
     }
 
-    msg_type =stream_input_counters_resp.aem_header.aecpdu_header.header.message_type;
+    msg_type = stream_input_counters_resp.aem_header.aecpdu_header.header.message_type;
     status = stream_input_counters_resp.aem_header.aecpdu_header.header.status;
     u_field = stream_input_counters_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 

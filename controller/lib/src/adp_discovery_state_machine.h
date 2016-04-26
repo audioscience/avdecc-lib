@@ -52,12 +52,12 @@ public:
     ///
     /// Initialize and fill Ethernet frame payload with Ethernet frame information for ADP messages.
     ///
-    int ether_frame_init(struct jdksavdecc_frame *cmd_frame);
+    int ether_frame_init(struct jdksavdecc_frame * cmd_frame);
 
     ///
     /// Initialize and fill Ethernet frame payload with 1722 ADP Header information.
     ///
-    void common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_entity_id);
+    void common_hdr_init(struct jdksavdecc_frame * cmd_frame, uint64_t target_entity_id);
 
     ///
     /// Process the Discover state of the ADP Discovery State Machine.
@@ -67,7 +67,7 @@ public:
     ///
     /// Process the Available state of the ADP Discovery State Machine.
     ///
-    int state_avail(const uint8_t *frame, size_t frame_len);
+    int state_avail(const uint8_t * frame, size_t frame_len);
 
     ///
     /// Process the Departing state of the ADP Discovery State Machine.
@@ -77,7 +77,7 @@ public:
     ///
     /// Check timeout for the end stations.
     ///
-    bool tick(uint64_t &end_station_entity_id);
+    bool tick(uint64_t & end_station_entity_id);
 
 private:
     ///
@@ -89,12 +89,12 @@ private:
     ///
     /// Transmit an ENTITY_DISCOVER message.
     ///
-    int tx_discover(struct jdksavdecc_frame *cmd_frame);
+    int tx_discover(struct jdksavdecc_frame * cmd_frame);
 
     ///
     /// Check if an AVDECC Entity is present in the entities variable.
     ///
-    bool have_entity(uint64_t entity_id, uint32_t *entity_index);
+    bool have_entity(uint64_t entity_id, uint32_t * entity_index);
 
     ///
     /// Update the AVDECC Entity record timeout information.
@@ -117,6 +117,5 @@ private:
     int state_timeout(uint32_t entity_index);
 };
 
-extern adp_discovery_state_machine *adp_discovery_state_machine_ref;
+extern adp_discovery_state_machine * adp_discovery_state_machine_ref;
 }
-

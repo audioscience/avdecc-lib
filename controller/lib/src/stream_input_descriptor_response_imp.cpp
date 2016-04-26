@@ -41,8 +41,7 @@
 
 namespace avdecc_lib
 {
-stream_input_descriptor_response_imp::stream_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-    descriptor_response_base_imp(frame, frame_len, pos)
+stream_input_descriptor_response_imp::stream_input_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos)
 {
     memset(&stream_input_flags, 0, sizeof(struct stream_input_desc_stream_flags));
     stream_flags_init();
@@ -139,7 +138,8 @@ const char * STDCALL stream_input_descriptor_response_imp::current_format_name()
 {
     uint64_t current_format;
     current_format = jdksavdecc_uint64_get(&buffer[position +
-                                           JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT], 0);
+                                                   JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT],
+                                           0);
     return utility::ieee1722_format_value_to_name(current_format);
 }
 
@@ -147,7 +147,8 @@ uint64_t STDCALL stream_input_descriptor_response_imp::current_format_value()
 {
     uint64_t current_format;
     return current_format = jdksavdecc_uint64_get(&buffer[position +
-                            JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT], 0);
+                                                          JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT],
+                                                  0);
 }
 
 uint16_t stream_input_descriptor_response_imp::formats_offset()
@@ -166,7 +167,8 @@ uint64_t STDCALL stream_input_descriptor_response_imp::backup_talker_entity_id_0
 {
     uint64_t backup_talker_entity_id_0;
     return backup_talker_entity_id_0 = jdksavdecc_uint64_get(&buffer[position +
-                                       JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_0], 0);
+                                                                     JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_0],
+                                                             0);
 }
 
 uint16_t STDCALL stream_input_descriptor_response_imp::backup_talker_unique_0()
@@ -178,7 +180,8 @@ uint64_t STDCALL stream_input_descriptor_response_imp::backup_talker_entity_id_1
 {
     uint64_t backup_talker_entity_id_1;
     return backup_talker_entity_id_1 = jdksavdecc_uint64_get(&buffer[position +
-                                       JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_1], 0);
+                                                                     JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_1],
+                                                             0);
 }
 
 uint16_t STDCALL stream_input_descriptor_response_imp::backup_talker_unique_1()
@@ -190,7 +193,8 @@ uint64_t STDCALL stream_input_descriptor_response_imp::backup_talker_entity_id_2
 {
     uint64_t backup_talker_entity_id_2;
     return backup_talker_entity_id_2 = jdksavdecc_uint64_get(&buffer[position +
-                                       JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_2], 0);
+                                                                     JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_2],
+                                                             0);
 }
 
 uint16_t STDCALL stream_input_descriptor_response_imp::backup_talker_unique_2()
@@ -202,7 +206,8 @@ uint64_t STDCALL stream_input_descriptor_response_imp::backedup_talker_entity_id
 {
     uint64_t backedup_talker_entity_id;
     return backedup_talker_entity_id = jdksavdecc_uint64_get(&buffer[position +
-                                       JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKEDUP_TALKER_ENTITY_ID], 0);
+                                                                     JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKEDUP_TALKER_ENTITY_ID],
+                                                             0);
 }
 
 uint16_t STDCALL stream_input_descriptor_response_imp::backedup_talker_unique()
@@ -223,7 +228,7 @@ uint32_t STDCALL stream_input_descriptor_response_imp::buffer_length()
 void stream_input_descriptor_response_imp::store_supported_stream_fmts()
 {
     uint64_t offset = 0;
-    for(int i = 0; i < number_of_formats(); i++)
+    for (int i = 0; i < number_of_formats(); i++)
     {
         stream_fmts_vec.push_back(jdksavdecc_uint64_get(&buffer[position + formats_offset() + offset], 0));
         offset += 0x8;

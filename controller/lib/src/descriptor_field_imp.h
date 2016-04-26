@@ -44,7 +44,7 @@ public:
     descriptor_field_imp(const char * name, enum aem_desc_field_types the_type, void * v);
     virtual ~descriptor_field_imp();
 
-    void append_field(descriptor_field_flags_imp *bit_field);
+    void append_field(descriptor_field_flags_imp * bit_field);
 
     const char * STDCALL get_name() const;
     enum descriptor_field::aem_desc_field_types STDCALL get_type() const;
@@ -54,6 +54,7 @@ public:
     uint32_t STDCALL get_flags() const;
     uint32_t STDCALL get_flags_count() const;
     descriptor_field_flags * STDCALL get_flag_by_index(uint32_t index) const;
+
 private:
     const char * m_name;
     void * m_value;
@@ -61,4 +62,3 @@ private:
     std::vector<descriptor_field_flags_imp *> m_fields;
 };
 }
-

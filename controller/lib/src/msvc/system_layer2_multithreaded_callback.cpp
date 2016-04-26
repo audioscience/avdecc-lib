@@ -40,11 +40,11 @@
 
 namespace avdecc_lib
 {
-net_interface *netif_obj_in_system;
-controller_imp *controller_obj_in_system;
-system_layer2_multithreaded_callback *local_system = NULL;
+net_interface * netif_obj_in_system;
+controller_imp * controller_obj_in_system;
+system_layer2_multithreaded_callback * local_system = NULL;
 
-size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len)
+size_t system_queue_tx(void * notification_id, uint32_t notification_flag, uint8_t * frame, size_t frame_len)
 {
     if (local_system)
     {
@@ -56,7 +56,7 @@ size_t system_queue_tx(void *notification_id, uint32_t notification_flag, uint8_
     }
 }
 
-system * STDCALL create_system(system::system_type type, net_interface *netif, controller *controller_obj)
+system * STDCALL create_system(system::system_type type, net_interface * netif, controller * controller_obj)
 {
     (void)type; //unused
     local_system = new system_layer2_multithreaded_callback(netif, controller_obj);
@@ -64,7 +64,7 @@ system * STDCALL create_system(system::system_type type, net_interface *netif, c
     return local_system;
 }
 
-system_layer2_multithreaded_callback::system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj)
+system_layer2_multithreaded_callback::system_layer2_multithreaded_callback(net_interface * netif, controller * controller_obj)
 {
     wait_mgr = new cmd_wait_mgr();
 
@@ -93,7 +93,7 @@ void STDCALL system_layer2_multithreaded_callback::destroy()
     delete this;
 }
 
-int system_layer2_multithreaded_callback::queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len)
+int system_layer2_multithreaded_callback::queue_tx_frame(void * notification_id, uint32_t notification_flag, uint8_t * frame, size_t frame_len)
 {
     struct poll_thread_data thread_data;
 
@@ -110,9 +110,9 @@ int system_layer2_multithreaded_callback::queue_tx_frame(void *notification_id, 
     poll_tx.tx_queue->queue_push(&thread_data);
 
     //Check for conditions that cause wait for completion.
-    if ( wait_mgr->primed_state() &&
-            wait_mgr->match_id(notification_id) &&
-            (notification_flag == CMD_WITH_NOTIFICATION))
+    if (wait_mgr->primed_state() &&
+        wait_mgr->match_id(notification_id) &&
+        (notification_flag == CMD_WITH_NOTIFICATION))
     {
         int status = 0;
 
@@ -146,7 +146,7 @@ int system_layer2_multithreaded_callback::proc_wpcap_thread_callback()
 {
     int status;
     struct poll_thread_data thread_data;
-    const uint8_t *frame;
+    const uint8_t * frame;
     uint16_t length;
 
     while (WaitForSingleObject(poll_rx.queue_thread.kill_sem, 0))
@@ -221,13 +221,13 @@ int system_layer2_multithreaded_callback::init_wpcap_thread()
     poll_rx.timeout_event = CreateEvent(NULL, FALSE, FALSE, NULL);
     poll_events_array[WPCAP_TIMEOUT] = poll_rx.timeout_event;
     poll_events_array[WPCAP_RX_PACKET] = poll_rx.rx_queue->queue_data_available_object();
-    poll_rx.queue_thread.handle = CreateThread(NULL, // Default security descriptor
-                                  0, // Default stack size
-                                  proc_wpcap_thread, // Point to the start address of the thread
-                                  this, // Data to be passed to the thread
-                                  0, // Flag controlling the creation of the thread
-                                  &poll_rx.queue_thread.id // Thread identifier
-                                              );
+    poll_rx.queue_thread.handle = CreateThread(NULL,                    // Default security descriptor
+                                               0,                       // Default stack size
+                                               proc_wpcap_thread,       // Point to the start address of the thread
+                                               this,                    // Data to be passed to the thread
+                                               0,                       // Flag controlling the creation of the thread
+                                               &poll_rx.queue_thread.id // Thread identifier
+                                               );
 
     if (poll_rx.queue_thread.handle == NULL)
     {
@@ -250,13 +250,13 @@ int system_layer2_multithreaded_callback::init_wpcap_thread()
 int system_layer2_multithreaded_callback::init_poll_thread()
 {
     poll_thread.kill_sem = CreateEvent(NULL, FALSE, FALSE, NULL);
-    poll_thread.handle = CreateThread(NULL, // Default security descriptor //poll_thread_handle = CreateThread(NULL, // Default security descriptor
-                                      0, // Default stack size
+    poll_thread.handle = CreateThread(NULL,             // Default security descriptor //poll_thread_handle = CreateThread(NULL, // Default security descriptor
+                                      0,                // Default stack size
                                       proc_poll_thread, // Point to the start address of the thread
-                                      this, // Data to be passed to the thread
-                                      0, // Flag controlling the creation of the thread
-                                      &poll_thread.id // Thread identifier
-                                     );
+                                      this,             // Data to be passed to the thread
+                                      0,                // Flag controlling the creation of the thread
+                                      &poll_thread.id   // Thread identifier
+                                      );
 
     if (poll_thread.handle == NULL)
     {
@@ -293,20 +293,19 @@ int system_layer2_multithreaded_callback::poll_single()
         bool is_operation_id_valid = false;
 
         controller_obj_in_system->rx_packet_event(thread_data.notification_id,
-                is_notification_id_valid,
-                thread_data.frame,
-                thread_data.frame_len,
-                rx_status,
-                operation_id,
-                is_operation_id_valid);
+                                                  is_notification_id_valid,
+                                                  thread_data.frame,
+                                                  thread_data.frame_len,
+                                                  rx_status,
+                                                  operation_id,
+                                                  is_operation_id_valid);
 
         if (
             wait_mgr->active_state() &&
             is_notification_id_valid &&
             wait_mgr->match_id(thread_data.notification_id) &&
             !controller_obj_in_system->is_inflight_cmd_with_notification_id(wait_mgr->get_notify_id()) &&
-            !controller_obj_in_system->is_active_operation_with_notification_id(wait_mgr->get_notify_id())
-        )
+            !controller_obj_in_system->is_active_operation_with_notification_id(wait_mgr->get_notify_id()))
         {
             int status = wait_mgr->set_completion_status(rx_status);
             assert(status == 0);
@@ -320,9 +319,9 @@ int system_layer2_multithreaded_callback::poll_single()
         poll_tx.tx_queue->queue_pop_nowait(&thread_data);
 
         controller_obj_in_system->tx_packet_event(thread_data.notification_id,
-                thread_data.notification_flag,
-                thread_data.frame,
-                thread_data.frame_len);
+                                                  thread_data.notification_flag,
+                                                  thread_data.frame,
+                                                  thread_data.frame_len);
         delete[] thread_data.frame;
         break;
 
@@ -338,7 +337,7 @@ int system_layer2_multithreaded_callback::poll_single()
         if (wait_mgr->active_state())
         {
             if (controller_obj_in_system->is_inflight_cmd_with_notification_id(wait_mgr->get_notify_id()) ||
-                    controller_obj_in_system->is_active_operation_with_notification_id(wait_mgr->get_notify_id()))
+                controller_obj_in_system->is_active_operation_with_notification_id(wait_mgr->get_notify_id()))
                 notification_id_incomplete = true;
         }
 

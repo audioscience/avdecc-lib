@@ -43,7 +43,7 @@ namespace avdecc_lib
 class stream_output_descriptor_response_imp : public stream_output_descriptor_response, public virtual descriptor_response_base_imp
 {
 private:
-    std::map <string, int> stream_info_flags;
+    std::map<string, int> stream_info_flags;
     struct stream_output_desc_stream_flags
     {
         bool clock_sync_source;
@@ -60,7 +60,7 @@ private:
     struct stream_output_desc_stream_flags stream_output_flags;
     std::vector<uint64_t> stream_fmts_vec; // Store supported stream formats in a vector
 public:
-    stream_output_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    stream_output_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~stream_output_descriptor_response_imp();
 
     uint8_t * STDCALL object_name();
@@ -91,8 +91,9 @@ public:
     uint16_t STDCALL backedup_talker_unique();
     uint16_t STDCALL avb_interface_index();
     uint32_t STDCALL buffer_length();
-    bool STDCALL get_stream_info_flag(const char *flag);
+    bool STDCALL get_stream_info_flag(const char * flag);
     uint64_t STDCALL get_supported_stream_fmt_by_index(size_t stream_fmt_index);
+
 private:
     ///
     /// Store the stream flags components of the STREAM OUTPUT descriptor object in a vector.

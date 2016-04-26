@@ -45,12 +45,13 @@ private:
     ssize_t m_position;
 
     size_t offset;
+
 public:
-    stream_port_input_get_audio_map_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
+    stream_port_input_get_audio_map_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~stream_port_input_get_audio_map_response_imp();
 
     uint16_t map_index();
     uint16_t number_of_mappings();
-    int STDCALL mapping(size_t index, struct stream_port_input_audio_mapping &map);
+    int STDCALL mapping(size_t index, struct stream_port_input_audio_mapping & map);
 };
 }

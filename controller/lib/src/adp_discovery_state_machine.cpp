@@ -21,7 +21,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 /**
  * adp_discovery_state_machine.cpp
  *
@@ -41,7 +40,7 @@
 
 namespace avdecc_lib
 {
-adp_discovery_state_machine *adp_discovery_state_machine_ref = new adp_discovery_state_machine(); // To have one ADP Discovery State Machine for all end stations
+adp_discovery_state_machine * adp_discovery_state_machine_ref = new adp_discovery_state_machine(); // To have one ADP Discovery State Machine for all end stations
 
 adp_discovery_state_machine::adp_discovery_state_machine()
 {
@@ -50,7 +49,7 @@ adp_discovery_state_machine::adp_discovery_state_machine()
 
 adp_discovery_state_machine::~adp_discovery_state_machine() {}
 
-int adp_discovery_state_machine::ether_frame_init(struct jdksavdecc_frame *cmd_frame)
+int adp_discovery_state_machine::ether_frame_init(struct jdksavdecc_frame * cmd_frame)
 {
     /*** Offset to write the field to ***/
     size_t ether_frame_pos = 0;
@@ -59,8 +58,8 @@ int adp_discovery_state_machine::ether_frame_init(struct jdksavdecc_frame *cmd_f
     /********************************************************** Ethernet Frame **********************************************************/
     cmd_frame->ethertype = JDKSAVDECC_AVTP_ETHERTYPE;
     utility::convert_uint64_to_eui48(net_interface_ref->mac_addr(), cmd_frame->src_address.value); // Send from the Controller MAC address
-    cmd_frame->dest_address = jdksavdecc_multicast_adp_acmp; // Send to the ADP multicast destination MAC address
-    cmd_frame->length = ADP_FRAME_LEN; // Length of ADP packet is 82 bytes
+    cmd_frame->dest_address = jdksavdecc_multicast_adp_acmp;                                       // Send to the ADP multicast destination MAC address
+    cmd_frame->length = ADP_FRAME_LEN;                                                             // Length of ADP packet is 82 bytes
 
     /****************** Fill frame payload with Ethernet frame information ****************/
     jdksavdecc_frame_write(cmd_frame, cmd_frame->payload, ether_frame_pos, ETHER_HDR_SIZE);
@@ -68,7 +67,7 @@ int adp_discovery_state_machine::ether_frame_init(struct jdksavdecc_frame *cmd_f
     return 0;
 }
 
-void adp_discovery_state_machine::common_hdr_init(struct jdksavdecc_frame *cmd_frame, uint64_t target_entity_id)
+void adp_discovery_state_machine::common_hdr_init(struct jdksavdecc_frame * cmd_frame, uint64_t target_entity_id)
 {
     struct jdksavdecc_adpdu_common_control_header adpdu_common_ctrl_hdr;
     ssize_t adpdu_common_ctrl_hdr_returned;
@@ -85,11 +84,11 @@ void adp_discovery_state_machine::common_hdr_init(struct jdksavdecc_frame *cmd_f
 
     /******************** Fill frame payload with AECP Common Control Header information ********************/
     adpdu_common_ctrl_hdr_returned = jdksavdecc_adpdu_common_control_header_write(&adpdu_common_ctrl_hdr,
-                                     cmd_frame->payload,
-                                     ETHER_HDR_SIZE,
-                                     sizeof(cmd_frame->payload));
+                                                                                  cmd_frame->payload,
+                                                                                  ETHER_HDR_SIZE,
+                                                                                  sizeof(cmd_frame->payload));
 
-    if(adpdu_common_ctrl_hdr_returned < 0)
+    if (adpdu_common_ctrl_hdr_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "adpdu_common_ctrl_hdr_write error");
         assert(adpdu_common_ctrl_hdr_returned >= 0);
@@ -101,12 +100,12 @@ int adp_discovery_state_machine::perform_discover(uint64_t entity_id)
     return state_discover(entity_id);
 }
 
-int adp_discovery_state_machine::tx_discover(struct jdksavdecc_frame *cmd_frame)
+int adp_discovery_state_machine::tx_discover(struct jdksavdecc_frame * cmd_frame)
 {
     int send_frame_returned;
     send_frame_returned = net_interface_ref->send_frame(cmd_frame->payload, cmd_frame->length); // Send the frame with message information
 
-    if(send_frame_returned < 0)
+    if (send_frame_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "netif_send_frame error");
         assert(send_frame_returned >= 0);
@@ -115,11 +114,11 @@ int adp_discovery_state_machine::tx_discover(struct jdksavdecc_frame *cmd_frame)
     return 0;
 }
 
-bool adp_discovery_state_machine::have_entity(uint64_t entity_id, uint32_t *entity_index)
+bool adp_discovery_state_machine::have_entity(uint64_t entity_id, uint32_t * entity_index)
 {
-    for(uint32_t i = 0; i < entities_vec.size(); i++)
+    for (uint32_t i = 0; i < entities_vec.size(); i++)
     {
-        if(entities_vec.at(i).entity_id == entity_id)
+        if (entities_vec.at(i).entity_id == entity_id)
         {
             *entity_index = i;
             return true;
@@ -154,10 +153,9 @@ int adp_discovery_state_machine::state_discover(uint64_t discover_id)
     common_hdr_init(&cmd_frame, discover_id);
 
     return tx_discover(&cmd_frame);
-
 }
 
-int adp_discovery_state_machine::state_avail(const uint8_t *frame, size_t frame_len)
+int adp_discovery_state_machine::state_avail(const uint8_t * frame, size_t frame_len)
 {
     struct jdksavdecc_adpdu_common_control_header adp_hdr;
     uint64_t entity_entity_id;
@@ -166,7 +164,7 @@ int adp_discovery_state_machine::state_avail(const uint8_t *frame, size_t frame_
     entity_entity_id = jdksavdecc_uint64_get(frame, ETHER_HDR_SIZE + PROTOCOL_HDR_SIZE);
     jdksavdecc_adpdu_common_control_header_read(&adp_hdr, frame, ETHER_HDR_SIZE, frame_len);
 
-    if(have_entity(entity_entity_id, &entity_index))
+    if (have_entity(entity_entity_id, &entity_index))
     {
         update_entity_timeout(entity_index, adp_hdr.valid_time * 2 * 1000); // Valid time period is between 2 and 62 seconds
     }
@@ -194,7 +192,7 @@ int adp_discovery_state_machine::state_timeout(uint32_t entity_index)
     return 0;
 }
 
-bool adp_discovery_state_machine::tick(uint64_t &end_station_entity_id)
+bool adp_discovery_state_machine::tick(uint64_t & end_station_entity_id)
 {
     if (first_tick)
     {
@@ -202,9 +200,9 @@ bool adp_discovery_state_machine::tick(uint64_t &end_station_entity_id)
         first_tick = false;
     }
 
-    for(uint32_t i = 0; i < entities_vec.size(); i++)
+    for (uint32_t i = 0; i < entities_vec.size(); i++)
     {
-        if(entities_vec.at(i).inflight_timer.timeout())
+        if (entities_vec.at(i).inflight_timer.timeout())
         {
             end_station_entity_id = entities_vec.at(i).entity_id;
             state_timeout(i);
