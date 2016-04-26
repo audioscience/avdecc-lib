@@ -34,13 +34,12 @@
 #include <signal.h>
 #include <unistd.h>
 
-
 #include "enumeration.h"
 #include "notification_imp.h"
 
 namespace avdecc_lib
 {
-notification_imp *notification_imp_ref = new notification_imp();
+notification_imp * notification_imp_ref = new notification_imp();
 
 notification_imp::notification_imp()
 {
@@ -78,9 +77,7 @@ int notification_imp::notification_thread_init()
 void * notification_imp::dispatch_thread(void * param)
 {
     return ((notification_imp *)param)->dispatch_callbacks();
-
 }
-
 
 void * notification_imp::dispatch_callbacks(void)
 {
@@ -90,12 +87,12 @@ void * notification_imp::dispatch_callbacks(void)
     {
         status = sem_wait(notify_waiting);
 
-        if(status == -1)
+        if (status == -1)
         {
             perror("sem error");
         }
 
-        if((write_index - read_index) > 0)
+        if ((write_index - read_index) > 0)
         {
             notification_callback(user_obj,
                                   notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_type,
@@ -104,8 +101,7 @@ void * notification_imp::dispatch_callbacks(void)
                                   notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
                                   notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
                                   notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_status,
-                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id
-                                 );
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id);
             read_index++;
         }
         else

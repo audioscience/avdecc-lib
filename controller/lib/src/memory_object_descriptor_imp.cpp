@@ -42,7 +42,7 @@
 
 namespace avdecc_lib
 {
-memory_object_descriptor_imp::memory_object_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
+memory_object_descriptor_imp::memory_object_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
 memory_object_descriptor_imp::~memory_object_descriptor_imp() {}
 
@@ -50,14 +50,14 @@ memory_object_descriptor_response * STDCALL memory_object_descriptor_imp::get_me
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return resp = new memory_object_descriptor_response_imp(resp_ref->get_desc_buffer(),
-            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
+                                                            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
 }
 
-int STDCALL memory_object_descriptor_imp::start_operation_cmd(void *notification_id, uint16_t operation_type)
+int STDCALL memory_object_descriptor_imp::start_operation_cmd(void * notification_id, uint16_t operation_type)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_start_operation aem_cmd_start_operation;
-    memset(&aem_cmd_start_operation,0,sizeof(aem_cmd_start_operation));
+    memset(&aem_cmd_start_operation, 0, sizeof(aem_cmd_start_operation));
 
     if (operation_type > JDKSAVDECC_MEMORY_OBJECT_OPERATION_UPLOAD)
     {
@@ -74,47 +74,47 @@ int STDCALL memory_object_descriptor_imp::start_operation_cmd(void *notification
     aem_cmd_start_operation.operation_type = operation_type;
 
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_START_OPERATION_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_START_OPERATION_COMMAND_LEN);
     ssize_t aem_cmd_start_operation_returned = jdksavdecc_aem_command_start_operation_write(&aem_cmd_start_operation,
-            cmd_frame.payload,
-            ETHER_HDR_SIZE,
-            sizeof(cmd_frame.payload));
+                                                                                            cmd_frame.payload,
+                                                                                            ETHER_HDR_SIZE,
+                                                                                            sizeof(cmd_frame.payload));
 
-    if(aem_cmd_start_operation_returned < 0)
+    if (aem_cmd_start_operation_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_command_start_operation_write error\n");
         return -1;
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_START_OPERATION_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_START_OPERATION_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int memory_object_descriptor_imp::proc_start_operation_resp(void *&notification_id,
-        const uint8_t *frame,
-        size_t frame_len,
-        int &status,
-        uint16_t &operation_id,
-        uint16_t &operation_type)
+int memory_object_descriptor_imp::proc_start_operation_resp(void *& notification_id,
+                                                            const uint8_t * frame,
+                                                            size_t frame_len,
+                                                            int & status,
+                                                            uint16_t & operation_id,
+                                                            uint16_t & operation_type)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_start_operation_response aem_cmd_start_operation_resp;
 
     memcpy(cmd_frame.payload, frame, frame_len);
-    memset(&aem_cmd_start_operation_resp,0,sizeof(aem_cmd_start_operation_resp));
+    memset(&aem_cmd_start_operation_resp, 0, sizeof(aem_cmd_start_operation_resp));
 
     ssize_t aem_cmd_start_operation_resp_returned = jdksavdecc_aem_command_start_operation_response_read(&aem_cmd_start_operation_resp,
-            frame,
-            ETHER_HDR_SIZE,
-            frame_len);
+                                                                                                         frame,
+                                                                                                         ETHER_HDR_SIZE,
+                                                                                                         frame_len);
 
-    if(aem_cmd_start_operation_resp_returned < 0)
+    if (aem_cmd_start_operation_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_command_start_operation_response_read error");
         return -1;
@@ -131,25 +131,24 @@ int memory_object_descriptor_imp::proc_start_operation_resp(void *&notification_
     return 0;
 }
 
-
-int memory_object_descriptor_imp::proc_operation_status_resp(void *&notification_id,
-        const uint8_t *frame,
-        size_t frame_len,
-        int &status,
-        uint16_t &operation_id,
-        bool &is_operation_id_valid)
+int memory_object_descriptor_imp::proc_operation_status_resp(void *& notification_id,
+                                                             const uint8_t * frame,
+                                                             size_t frame_len,
+                                                             int & status,
+                                                             uint16_t & operation_id,
+                                                             bool & is_operation_id_valid)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_operation_status_response aem_operation_status_resp;
-    memset(&aem_operation_status_resp,0,sizeof(aem_operation_status_resp));
+    memset(&aem_operation_status_resp, 0, sizeof(aem_operation_status_resp));
     memcpy(cmd_frame.payload, frame, frame_len);
 
     ssize_t aem_operation_status_resp_returned = jdksavdecc_aem_command_operation_status_response_read(&aem_operation_status_resp,
-            frame,
-            ETHER_HDR_SIZE,
-            frame_len);
+                                                                                                       frame,
+                                                                                                       ETHER_HDR_SIZE,
+                                                                                                       frame_len);
 
-    if(aem_operation_status_resp_returned < 0)
+    if (aem_operation_status_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_command_operation_status_response_read error");
         return -1;
@@ -161,12 +160,12 @@ int memory_object_descriptor_imp::proc_operation_status_resp(void *&notification
     operation_id = aem_operation_status_resp.operation_id;
     uint16_t percent_complete = aem_operation_status_resp.percent_complete;
 
-    if (operation_id) is_operation_id_valid = true;
+    if (operation_id)
+        is_operation_id_valid = true;
 
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
     aecp_controller_state_machine_ref->update_operation_for_rcvd_resp(notification_id, operation_id, percent_complete, &cmd_frame);
 
     return 0;
 }
-
 }

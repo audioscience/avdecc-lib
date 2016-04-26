@@ -44,9 +44,9 @@ public:
 
     const char * STDCALL get_flag_name(void) const;
     uint32_t STDCALL get_flag_mask(void) const;
+
 private:
     uint32_t m_mask;
-    const char *m_name;
+    const char * m_name;
 };
 }
-

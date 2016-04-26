@@ -34,7 +34,7 @@
 
 namespace avdecc_lib
 {
-clock_domain_get_clock_source_response_imp::clock_domain_get_clock_source_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos)
+clock_domain_get_clock_source_response_imp::clock_domain_get_clock_source_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos)
 {
     m_position = pos;
     m_size = frame_len;

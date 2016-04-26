@@ -43,14 +43,14 @@ public:
     uint16_t operation_id;
     uint16_t operation_type;
     uint16_t percent_complete;
-    void *cmd_notification_id;
+    void * cmd_notification_id;
 
-    operation(struct jdksavdecc_frame *frame,
+    operation(struct jdksavdecc_frame * frame,
               uint16_t operation_id,
               uint16_t operation_type,
-              void *notification_id,
+              void * notification_id,
               uint32_t notification_flag)
-        :  cmd_notification_flag(notification_flag), operation_id(operation_id), operation_type(operation_type), cmd_notification_id(notification_id)
+        : cmd_notification_flag(notification_flag), operation_id(operation_id), operation_type(operation_type), cmd_notification_id(notification_id)
     {
         cmd_frame = *frame;
         percent_complete = 0;
@@ -78,7 +78,7 @@ private:
     uint16_t v;
 
 public:
-    operation_id_comp(uint16_t i) : v(i) { }
+    operation_id_comp(uint16_t i) : v(i) {}
 
     inline bool operator()(const operation & m) const
     {
@@ -95,7 +95,7 @@ private:
     void * v;
 
 public:
-    notification_comp(void * p) : v(p) { }
+    notification_comp(void * p) : v(p) {}
 
     inline bool operator()(const operation & m) const
     {
@@ -103,4 +103,3 @@ public:
     }
 };
 }
-

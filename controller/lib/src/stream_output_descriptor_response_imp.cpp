@@ -41,32 +41,32 @@
 
 namespace avdecc_lib
 {
-stream_output_descriptor_response_imp::stream_output_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-    descriptor_response_base_imp(frame, frame_len, pos)
+stream_output_descriptor_response_imp::stream_output_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos)
 {
     memset(&stream_output_flags, 0, sizeof(struct stream_output_desc_stream_flags));
     stream_flags_init();
     store_supported_stream_fmts();
 
-    stream_info_flags["CLASS_B"]                  = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_CLASS_B;
-    stream_info_flags["FAST_CONNECT"]             = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_FAST_CONNECT;
-    stream_info_flags["SAVED_STATE"]              = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_SAVED_STATE;
-    stream_info_flags["STREAMING_WAIT"]           = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAMING_WAIT;
-    stream_info_flags["ENCRYPTED_PDU"]            = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_ENCRYPTED_PDU;
-    stream_info_flags["STREAM_VLAN_ID_VALID"]     = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_VLAN_ID_VALID;
-    stream_info_flags["CONNECTED"]                = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_CONNECTED;
-    stream_info_flags["MSRP_FAILURE_VALID"]       = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_MSRP_FAILURE_VALID;
-    stream_info_flags["STREAM_DEST_MAC_VALID"]    = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_DEST_MAC_VALID;
-    stream_info_flags["MSRP_ACC_LAT_VALID"]       = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_MSRP_ACC_LAT_VALID;
-    stream_info_flags["STREAM_ID_VALID"]          = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_ID_VALID;
-    stream_info_flags["STREAM_FORMAT_VALID"]      = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_FORMAT_VALID;
+    stream_info_flags["CLASS_B"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_CLASS_B;
+    stream_info_flags["FAST_CONNECT"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_FAST_CONNECT;
+    stream_info_flags["SAVED_STATE"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_SAVED_STATE;
+    stream_info_flags["STREAMING_WAIT"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAMING_WAIT;
+    stream_info_flags["ENCRYPTED_PDU"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_ENCRYPTED_PDU;
+    stream_info_flags["STREAM_VLAN_ID_VALID"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_VLAN_ID_VALID;
+    stream_info_flags["CONNECTED"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_CONNECTED;
+    stream_info_flags["MSRP_FAILURE_VALID"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_MSRP_FAILURE_VALID;
+    stream_info_flags["STREAM_DEST_MAC_VALID"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_DEST_MAC_VALID;
+    stream_info_flags["MSRP_ACC_LAT_VALID"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_MSRP_ACC_LAT_VALID;
+    stream_info_flags["STREAM_ID_VALID"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_ID_VALID;
+    stream_info_flags["STREAM_FORMAT_VALID"] = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_FORMAT_VALID;
 }
 
 stream_output_descriptor_response_imp::~stream_output_descriptor_response_imp() {}
 
 void stream_output_descriptor_response_imp::stream_flags_init()
 {
-    stream_output_flags.clock_sync_source = stream_flags() >> 0 & 0x01;;
+    stream_output_flags.clock_sync_source = stream_flags() >> 0 & 0x01;
+    ;
     stream_output_flags.class_a = stream_flags() >> 1 & 0x01;
     stream_output_flags.class_b = stream_flags() >> 2 & 0x01;
     stream_output_flags.supports_encrypted = stream_flags() >> 3 & 0x01;
@@ -152,7 +152,8 @@ const char * STDCALL stream_output_descriptor_response_imp::current_format_name(
 {
     uint64_t current_format;
     current_format = jdksavdecc_uint64_get(&buffer[position +
-                                           JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT], 0);
+                                                   JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT],
+                                           0);
 
     return utility::ieee1722_format_value_to_name(current_format);
 }
@@ -161,7 +162,8 @@ uint64_t STDCALL stream_output_descriptor_response_imp::current_format_value()
 {
     uint64_t current_format;
     return current_format = jdksavdecc_uint64_get(&buffer[position +
-                            JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT], 0);
+                                                          JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT],
+                                                  0);
 }
 
 uint16_t stream_output_descriptor_response_imp::formats_offset()
@@ -180,7 +182,8 @@ uint64_t STDCALL stream_output_descriptor_response_imp::backup_talker_entity_id_
 {
     uint64_t backup_talker_entity_id_0;
     return backup_talker_entity_id_0 = jdksavdecc_uint64_get(&buffer[position +
-                                       JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_0], 0);
+                                                                     JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_0],
+                                                             0);
 }
 
 uint16_t STDCALL stream_output_descriptor_response_imp::backup_talker_unique_0()
@@ -192,7 +195,8 @@ uint64_t STDCALL stream_output_descriptor_response_imp::backup_talker_entity_id_
 {
     uint64_t backup_talker_entity_id_1;
     return backup_talker_entity_id_1 = jdksavdecc_uint64_get(&buffer[position +
-                                       JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_1], 0);
+                                                                     JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_1],
+                                                             0);
 }
 
 uint16_t STDCALL stream_output_descriptor_response_imp::backup_talker_unique_1()
@@ -204,7 +208,8 @@ uint64_t STDCALL stream_output_descriptor_response_imp::backup_talker_entity_id_
 {
     uint64_t backup_talker_entity_id_2;
     return backup_talker_entity_id_2 = jdksavdecc_uint64_get(&buffer[position +
-                                       JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_2], 0);
+                                                                     JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKUP_TALKER_ENTITY_ID_2],
+                                                             0);
 }
 
 uint16_t STDCALL stream_output_descriptor_response_imp::backup_talker_unique_2()
@@ -216,7 +221,8 @@ uint64_t STDCALL stream_output_descriptor_response_imp::backedup_talker_entity_i
 {
     uint64_t backedup_talker_entity_id;
     return backedup_talker_entity_id = jdksavdecc_uint64_get(&buffer[position +
-                                       JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKEDUP_TALKER_ENTITY_ID], 0);
+                                                                     JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_BACKEDUP_TALKER_ENTITY_ID],
+                                                             0);
 }
 
 uint16_t STDCALL stream_output_descriptor_response_imp::backedup_talker_unique()
@@ -234,7 +240,7 @@ uint32_t STDCALL stream_output_descriptor_response_imp::buffer_length()
     return jdksavdecc_descriptor_stream_get_buffer_length(buffer, position);
 }
 
-bool stream_output_descriptor_response_imp::get_stream_info_flag(const char *flag)
+bool stream_output_descriptor_response_imp::get_stream_info_flag(const char * flag)
 {
     std::map<string, int>::iterator it;
     it = stream_info_flags.find(flag);
@@ -245,7 +251,7 @@ bool stream_output_descriptor_response_imp::get_stream_info_flag(const char *fla
 void stream_output_descriptor_response_imp::store_supported_stream_fmts()
 {
     uint64_t offset = 0;
-    for(int i = 0; i < number_of_formats(); i++)
+    for (int i = 0; i < number_of_formats(); i++)
     {
         stream_fmts_vec.push_back(jdksavdecc_uint64_get(&buffer[position + formats_offset() + offset], 0));
         offset += 0x8;

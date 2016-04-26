@@ -37,7 +37,7 @@
 
 namespace avdecc_lib
 {
-jack_output_descriptor_imp::jack_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
+jack_output_descriptor_imp::jack_output_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
 jack_output_descriptor_imp::~jack_output_descriptor_imp() {}
 
@@ -45,6 +45,6 @@ jack_output_descriptor_response * STDCALL jack_output_descriptor_imp::get_jack_o
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return resp = new jack_output_descriptor_response_imp(resp_ref->get_desc_buffer(),
-            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
+                                                          resp_ref->get_desc_size(), resp_ref->get_desc_pos());
 }
 }

@@ -42,7 +42,7 @@ private:
     ssize_t m_position;
 
 public:
-    audio_unit_get_sampling_rate_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
+    audio_unit_get_sampling_rate_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~audio_unit_get_sampling_rate_response_imp();
 
     uint32_t STDCALL get_sampling_rate_sampling_rate();

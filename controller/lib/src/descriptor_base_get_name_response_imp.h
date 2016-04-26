@@ -42,7 +42,7 @@ private:
     ssize_t m_position;
 
 public:
-    descriptor_base_get_name_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
+    descriptor_base_get_name_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~descriptor_base_get_name_response_imp();
 
     uint8_t * STDCALL get_name();

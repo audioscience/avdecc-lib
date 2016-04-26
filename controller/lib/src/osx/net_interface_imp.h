@@ -41,13 +41,13 @@ namespace avdecc_lib
 class net_interface_imp : public virtual net_interface
 {
 private:
-    pcap_if_t *all_devs;
-    pcap_if_t *dev;
+    pcap_if_t * all_devs;
+    pcap_if_t * dev;
     uint64_t mac;
     uint32_t total_devs;
-    pcap_t *pcap_interface;
+    pcap_t * pcap_interface;
     char err_buf[PCAP_ERRBUF_SIZE];
-    const u_char *ether_frame;
+    const u_char * ether_frame;
 
 public:
     ///
@@ -90,22 +90,20 @@ public:
     ///
     /// Set packet filter for the network interface.
     ///
-    int set_capture_ether_type(uint16_t *ether_type, uint32_t count);
+    int set_capture_ether_type(uint16_t * ether_type, uint32_t count);
 
     ///
     /// Capture a network packet.
     ///
-    int STDCALL capture_frame(const uint8_t **frame, uint16_t *mem_buf_len);
+    int STDCALL capture_frame(const uint8_t ** frame, uint16_t * mem_buf_len);
 
     ///
     /// Send a network packet.
     ///
-    int send_frame(uint8_t *frame, uint16_t mem_buf_len);
+    int send_frame(uint8_t * frame, uint16_t mem_buf_len);
 
     int get_fd();
-
 };
 
-extern net_interface_imp *net_interface_ref;
+extern net_interface_imp * net_interface_ref;
 }
-

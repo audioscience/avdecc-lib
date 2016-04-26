@@ -34,18 +34,17 @@
 
 namespace avdecc_lib
 {
-    class descriptor_field_flags
-    {
-    public:
-        ///
-        /// \return The name of the flag.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_flag_name(void) const = 0;
+class descriptor_field_flags
+{
+public:
+    ///
+    /// \return The name of the flag.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_flag_name(void) const = 0;
 
-        ///
-        /// \return The mask for the flag.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_flag_mask(void) const = 0;
-    };
+    ///
+    /// \return The mask for the flag.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_flag_mask(void) const = 0;
+};
 }
-

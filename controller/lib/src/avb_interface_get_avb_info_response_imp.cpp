@@ -34,7 +34,7 @@
 
 namespace avdecc_lib
 {
-avb_interface_get_avb_info_response_imp::avb_interface_get_avb_info_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos)
+avb_interface_get_avb_info_response_imp::avb_interface_get_avb_info_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos)
 {
     m_position = pos;
     m_size = frame_len;
@@ -50,7 +50,7 @@ avb_interface_get_avb_info_response_imp::~avb_interface_get_avb_info_response_im
 
 void avb_interface_get_avb_info_response_imp::avb_interface_get_info_flags_init()
 {
-    avb_interface_info_flags.as_capable= get_avb_info_flags() & 0x01;
+    avb_interface_info_flags.as_capable = get_avb_info_flags() & 0x01;
     avb_interface_info_flags.gptp_enabled = get_avb_info_flags() >> 1 & 0x01;
     avb_interface_info_flags.srp_enabled = get_avb_info_flags() >> 2 & 0x01;
 }

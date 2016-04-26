@@ -33,8 +33,7 @@
 
 namespace avdecc_lib
 {
-control_descriptor_response_imp::control_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-    descriptor_response_base_imp(frame, frame_len, pos) {}
+control_descriptor_response_imp::control_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos) {}
 
 control_descriptor_response_imp::~control_descriptor_response_imp() {}
 
@@ -73,7 +72,8 @@ uint64_t STDCALL control_descriptor_response_imp::control_type()
     uint64_t control_type;
 
     utility::convert_eui48_to_uint64(&buffer[position +
-                                     JDKSAVDECC_DESCRIPTOR_CONTROL_OFFSET_CONTROL_TYPE], control_type);
+                                             JDKSAVDECC_DESCRIPTOR_CONTROL_OFFSET_CONTROL_TYPE],
+                                     control_type);
     return control_type;
 }
 

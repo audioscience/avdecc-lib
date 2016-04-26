@@ -40,9 +40,9 @@ class system_layer2_multithreaded_callback : public virtual system
 private:
     struct poll_thread_data
     {
-        uint8_t *frame;
+        uint8_t * frame;
         size_t frame_len;
-        void *notification_id;
+        void * notification_id;
         uint32_t notification_flag;
     };
 
@@ -57,8 +57,8 @@ private:
     struct msg_poll
     {
         struct thread_creation queue_thread;
-        system_message_queue *rx_queue;
-        system_message_queue *tx_queue;
+        system_message_queue * rx_queue;
+        system_message_queue * tx_queue;
         HANDLE timeout_event;
     };
 
@@ -77,7 +77,7 @@ private:
     HANDLE poll_events_array[NUM_OF_EVENTS];
     HANDLE waiting_sem;
 
-    cmd_wait_mgr *wait_mgr;
+    cmd_wait_mgr * wait_mgr;
     int resp_status_for_cmd;
     timer tick_timer; // A tick timer that is always running
 
@@ -86,7 +86,7 @@ public:
     /// A constructor for system_layer2_multithreaded_callback used for constructing an object with network
     /// interface, notification, and post_log_msg callback functions.
     ///
-    system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj);
+    system_layer2_multithreaded_callback(net_interface * netif, controller * controller_obj);
 
     virtual ~system_layer2_multithreaded_callback();
 
@@ -98,7 +98,7 @@ public:
     ///
     /// Store the frame to be sent in a queue.
     ///
-    int queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len);
+    int queue_tx_frame(void * notification_id, uint32_t notification_flag, uint8_t * frame, size_t frame_len);
 
     ///
     /// Set a waiting flag for the next command sent.

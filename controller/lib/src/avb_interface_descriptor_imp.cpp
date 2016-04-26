@@ -41,7 +41,7 @@
 
 namespace avdecc_lib
 {
-avb_interface_descriptor_imp::avb_interface_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
+avb_interface_descriptor_imp::avb_interface_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
 avb_interface_descriptor_imp::~avb_interface_descriptor_imp() {}
 
@@ -49,28 +49,28 @@ avb_interface_descriptor_response * STDCALL avb_interface_descriptor_imp::get_av
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return resp = new avb_interface_descriptor_response_imp(resp_ref->get_desc_buffer(),
-            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
+                                                            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
 }
 
 avb_counters_response * STDCALL avb_interface_descriptor_imp::get_avb_interface_counters_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return counters_resp = new avb_counters_response_imp(resp_ref->get_buffer(),
-            resp_ref->get_size(), resp_ref->get_pos());
+                                                         resp_ref->get_size(), resp_ref->get_pos());
 }
 
 avb_interface_get_avb_info_response * STDCALL avb_interface_descriptor_imp::get_avb_interface_get_avb_info_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return get_avb_info_resp = new avb_interface_get_avb_info_response_imp(resp_ref->get_buffer(),
-            resp_ref->get_size(), resp_ref->get_pos());
+                                                                           resp_ref->get_size(), resp_ref->get_pos());
 }
 
-int STDCALL avb_interface_descriptor_imp::send_get_counters_cmd(void *notification_id)
+int STDCALL avb_interface_descriptor_imp::send_get_counters_cmd(void * notification_id)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_counters aem_cmd_get_counters;
-    memset(&aem_cmd_get_counters,0,sizeof(aem_cmd_get_counters));
+    memset(&aem_cmd_get_counters, 0, sizeof(aem_cmd_get_counters));
     ssize_t aem_cmd_get_counters_returned;
     /******************************************** AECP Common Data *********************************************/
     aem_cmd_get_counters.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
@@ -83,13 +83,13 @@ int STDCALL avb_interface_descriptor_imp::send_get_counters_cmd(void *notificati
 
     /******************************* Fill frame payload with AECP data and send the frame **************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_COMMAND_LEN);
     aem_cmd_get_counters_returned = jdksavdecc_aem_command_get_counters_write(&aem_cmd_get_counters,
-                                    cmd_frame.payload,
-                                    ETHER_HDR_SIZE,
-                                    sizeof(cmd_frame.payload));
+                                                                              cmd_frame.payload,
+                                                                              ETHER_HDR_SIZE,
+                                                                              sizeof(cmd_frame.payload));
 
-    if(aem_cmd_get_counters_returned < 0)
+    if (aem_cmd_get_counters_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_avb_counters_write error\n");
         assert(aem_cmd_get_counters_returned >= 0);
@@ -97,16 +97,16 @@ int STDCALL avb_interface_descriptor_imp::send_get_counters_cmd(void *notificati
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int avb_interface_descriptor_imp::proc_get_counters_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int avb_interface_descriptor_imp::proc_get_counters_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_counters_response avb_interface_counters_resp;
@@ -118,11 +118,11 @@ int avb_interface_descriptor_imp::proc_get_counters_resp(void *&notification_id,
     memset(&avb_interface_counters_resp, 0, sizeof(jdksavdecc_aem_command_get_counters_response));
 
     aem_cmd_get_counters_resp_returned = jdksavdecc_aem_command_get_counters_response_read(&avb_interface_counters_resp,
-                                         frame,
-                                         ETHER_HDR_SIZE,
-                                         frame_len);
+                                                                                           frame,
+                                                                                           ETHER_HDR_SIZE,
+                                                                                           frame_len);
 
-    if(aem_cmd_get_counters_resp_returned < 0)
+    if (aem_cmd_get_counters_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_avb_counters_resp_read error\n");
         return -1;
@@ -139,11 +139,11 @@ int avb_interface_descriptor_imp::proc_get_counters_resp(void *&notification_id,
     return 0;
 }
 
-int STDCALL avb_interface_descriptor_imp::send_get_avb_info_cmd(void *notification_id)
+int STDCALL avb_interface_descriptor_imp::send_get_avb_info_cmd(void * notification_id)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_avb_info aem_cmd_get_avb_info;
-    memset(&aem_cmd_get_avb_info,0,sizeof(aem_cmd_get_avb_info));
+    memset(&aem_cmd_get_avb_info, 0, sizeof(aem_cmd_get_avb_info));
     ssize_t aem_cmd_get_avb_info_returned;
     /******************************************** AECP Common Data *********************************************/
     aem_cmd_get_avb_info.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
@@ -156,13 +156,13 @@ int STDCALL avb_interface_descriptor_imp::send_get_avb_info_cmd(void *notificati
 
     /******************************* Fill frame payload with AECP data and send the frame **************************/
     aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_AVB_INFO_COMMAND_LEN);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_AVB_INFO_COMMAND_LEN);
     aem_cmd_get_avb_info_returned = jdksavdecc_aem_command_get_avb_info_write(&aem_cmd_get_avb_info,
-                                    cmd_frame.payload,
-                                    ETHER_HDR_SIZE,
-                                    sizeof(cmd_frame.payload));
+                                                                              cmd_frame.payload,
+                                                                              ETHER_HDR_SIZE,
+                                                                              sizeof(cmd_frame.payload));
 
-    if(aem_cmd_get_avb_info_returned < 0)
+    if (aem_cmd_get_avb_info_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_avb_info_write error\n");
         assert(aem_cmd_get_avb_info_returned >= 0);
@@ -170,16 +170,16 @@ int STDCALL avb_interface_descriptor_imp::send_get_avb_info_cmd(void *notificati
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            base_end_station_imp_ref->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_GET_AVB_INFO_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_GET_AVB_INFO_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int avb_interface_descriptor_imp::proc_get_avb_info_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int avb_interface_descriptor_imp::proc_get_avb_info_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_get_avb_info_response avb_interface_info_resp;
@@ -191,11 +191,11 @@ int avb_interface_descriptor_imp::proc_get_avb_info_resp(void *&notification_id,
     memset(&avb_interface_info_resp, 0, sizeof(jdksavdecc_aem_command_get_avb_info_response));
 
     aem_cmd_get_avb_info_resp_returned = jdksavdecc_aem_command_get_avb_info_response_read(&avb_interface_info_resp,
-                                         frame,
-                                         ETHER_HDR_SIZE,
-                                         frame_len);
+                                                                                           frame,
+                                                                                           ETHER_HDR_SIZE,
+                                                                                           frame_len);
 
-    if(aem_cmd_get_avb_info_resp_returned < 0)
+    if (aem_cmd_get_avb_info_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_get_avb_info_resp_read error\n");
         assert(aem_cmd_get_avb_info_resp_returned >= 0);

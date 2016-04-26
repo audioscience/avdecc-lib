@@ -46,7 +46,7 @@ private:
     void store_clock_sources();
 
 public:
-    clock_domain_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    clock_domain_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~clock_domain_descriptor_response_imp();
 
     uint8_t * STDCALL object_name();

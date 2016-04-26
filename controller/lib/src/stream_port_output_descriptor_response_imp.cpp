@@ -35,8 +35,7 @@
 
 namespace avdecc_lib
 {
-stream_port_output_descriptor_response_imp::stream_port_output_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-    descriptor_response_base_imp(frame, frame_len, pos) {}
+stream_port_output_descriptor_response_imp::stream_port_output_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos) {}
 
 stream_port_output_descriptor_response_imp::~stream_port_output_descriptor_response_imp() {}
 

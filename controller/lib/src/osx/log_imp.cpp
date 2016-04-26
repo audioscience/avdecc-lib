@@ -34,7 +34,7 @@
 
 namespace avdecc_lib
 {
-log_imp *log_imp_ref = new log_imp();
+log_imp * log_imp_ref = new log_imp();
 
 log_imp::log_imp()
 {
@@ -54,13 +54,11 @@ int log_imp::logging_thread_init()
 
     sem_unlink("/log_waiting_sem");
 
-    if ((log_waiting = sem_open("/log_waiting_sem",  O_CREAT | O_EXCL, 0644, 0)) == SEM_FAILED)
+    if ((log_waiting = sem_open("/log_waiting_sem", O_CREAT | O_EXCL, 0644, 0)) == SEM_FAILED)
     {
         perror("sem_open");
         exit(-1);
     }
-
-
 
     rc = pthread_create(&h_thread, NULL, &log_imp::dispatch_thread, (void *)this);
     if (rc)
@@ -72,7 +70,7 @@ int log_imp::logging_thread_init()
     return 0;
 }
 
-void * log_imp::dispatch_thread(void *param)
+void * log_imp::dispatch_thread(void * param)
 {
     return ((log_imp *)param)->dispatch_callbacks();
 }
@@ -90,13 +88,12 @@ void * log_imp::dispatch_callbacks(void)
             perror("sem_wait");
         }
 
-        if((write_index - read_index) > 0)
+        if ((write_index - read_index) > 0)
         {
             callback_func(user_obj,
                           log_buf[read_index % LOG_BUF_COUNT].level,
                           log_buf[read_index % LOG_BUF_COUNT].msg,
-                          log_buf[read_index % LOG_BUF_COUNT].time_stamp_ms
-                         );
+                          log_buf[read_index % LOG_BUF_COUNT].time_stamp_ms);
             read_index++;
         }
         else
@@ -112,5 +109,4 @@ void log_imp::post_log_event()
 {
     sem_post(log_waiting);
 }
-
 }

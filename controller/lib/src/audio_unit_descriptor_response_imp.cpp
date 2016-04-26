@@ -34,20 +34,19 @@
 
 namespace avdecc_lib
 {
-audio_unit_descriptor_response_imp::audio_unit_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-    descriptor_response_base_imp(frame, frame_len, pos)
+audio_unit_descriptor_response_imp::audio_unit_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos)
 {
     sampling_rates_init(frame);
 }
 
 audio_unit_descriptor_response_imp::~audio_unit_descriptor_response_imp() {}
 
-void audio_unit_descriptor_response_imp::sampling_rates_init(const uint8_t *frame)
+void audio_unit_descriptor_response_imp::sampling_rates_init(const uint8_t * frame)
 {
     uint16_t offset = ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_LEN + sampling_rates_offset();
     uint32_t sampling_rate = 0;
 
-    for(uint32_t i = 0; i < sampling_rates_count(); i++)
+    for (uint32_t i = 0; i < sampling_rates_count(); i++)
     {
         sampling_rate = jdksavdecc_uint32_get(frame, offset);
         sample_rates_vec.push_back(sampling_rate);
@@ -218,7 +217,6 @@ uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_transcoders()
 uint16_t STDCALL audio_unit_descriptor_response_imp::base_transcoder()
 {
     return jdksavdecc_descriptor_audio_unit_get_base_transcoder(buffer, position);
-
 }
 
 uint16_t STDCALL audio_unit_descriptor_response_imp::number_of_control_blocks()

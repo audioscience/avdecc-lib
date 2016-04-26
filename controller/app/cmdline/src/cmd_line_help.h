@@ -58,4 +58,3 @@ public:
     ///
     const std::string get_description();
 };
-

@@ -34,8 +34,7 @@
 
 namespace avdecc_lib
 {
-locale_descriptor_response_imp::locale_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-    descriptor_response_base_imp(frame, frame_len, pos) {}
+locale_descriptor_response_imp::locale_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos) {}
 
 locale_descriptor_response_imp::~locale_descriptor_response_imp() {}
 

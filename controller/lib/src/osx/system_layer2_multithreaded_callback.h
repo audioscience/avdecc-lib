@@ -37,7 +37,6 @@ namespace avdecc_lib
 {
 struct epoll_priv;
 
-
 class system_layer2_multithreaded_callback : public virtual system
 {
 public:
@@ -45,7 +44,7 @@ public:
     /// A constructor for system_layer2_multithreaded_callback used for constructing an object with network
     /// interface, notification, and logging callback functions.
     ///
-    system_layer2_multithreaded_callback(net_interface *netif, controller *controller_obj);
+    system_layer2_multithreaded_callback(net_interface * netif, controller * controller_obj);
 
     ///
     /// Destructor for system_layer2_multithreaded_callback used for destroying objects
@@ -60,7 +59,7 @@ public:
     ///
     /// Store the frame to be sent in a queue.
     ///
-    int queue_tx_frame(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t mem_buf_len);
+    int queue_tx_frame(void * notification_id, uint32_t notification_flag, uint8_t * frame, size_t mem_buf_len);
 
     ///
     /// Set a waiting flag for the command sent.
@@ -83,15 +82,15 @@ public:
     int STDCALL process_close();
 
 private:
-    static system_layer2_multithreaded_callback *instance;
+    static system_layer2_multithreaded_callback * instance;
     struct epoll_priv;
-    typedef int (* handler_fn) (struct kevent * priv);
+    typedef int (*handler_fn)(struct kevent * priv);
 
     struct tx_data
     {
-        uint8_t *frame;
+        uint8_t * frame;
         size_t mem_buf_len;
-        void *notification_id;
+        void * notification_id;
         uint32_t notification_flag;
     };
 
@@ -109,31 +108,29 @@ private:
     int tx_pipe[2];
     // int tick_timer;
 
-    sem_t *waiting_sem;
-    sem_t *shutdown_sem;
+    sem_t * waiting_sem;
+    sem_t * shutdown_sem;
 
-    
     // Events to process:
     // Rx packet - from socket
     // Tx packet - from FIFO
     // Timer tick - from timer
 
-    cmd_wait_mgr *wait_mgr;
+    cmd_wait_mgr * wait_mgr;
     int resp_status_for_cmd;
-    int prep_evt_desc(int fd, handler_fn fn, struct epoll_priv *priv, struct epoll_event *ev);
-    static int fn_timer_cb(struct kevent *priv);
-    static int fn_netif_cb(struct kevent *priv);
-    static int fn_tx_cb(struct kevent *priv);
-    int fn_timer(struct kevent *priv);
-    int fn_netif(struct kevent *priv);
-    int fn_tx(struct kevent *priv);
+    int prep_evt_desc(int fd, handler_fn fn, struct epoll_priv * priv, struct epoll_event * ev);
+    static int fn_timer_cb(struct kevent * priv);
+    static int fn_netif_cb(struct kevent * priv);
+    static int fn_tx_cb(struct kevent * priv);
+    int fn_timer(struct kevent * priv);
+    int fn_netif(struct kevent * priv);
+    int fn_tx(struct kevent * priv);
     int timer_start_interval(int timerfd);
 
     void * proc_poll_thread(void * p);
     int proc_poll_loop();
-    static void * thread_fn(void *param);
+    static void * thread_fn(void * param);
 
     int poll_single(void);
-
 };
 }

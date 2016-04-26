@@ -37,7 +37,7 @@
 
 namespace avdecc_lib
 {
-locale_descriptor_imp::locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
+locale_descriptor_imp::locale_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
 locale_descriptor_imp::~locale_descriptor_imp() {}
 

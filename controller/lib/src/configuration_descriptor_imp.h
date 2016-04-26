@@ -59,15 +59,15 @@ private:
     typedef std::vector<descriptor_base_imp *> DITEM;
     struct jdksavdecc_descriptor_configuration config_desc; // Structure containing the config_desc fields
 
-    std::vector<uint16_t> desc_type_vec; // Store descriptor types present in the CONFIGURATION descriptor
+    std::vector<uint16_t> desc_type_vec;  // Store descriptor types present in the CONFIGURATION descriptor
     std::vector<uint16_t> desc_count_vec; // Store descriptor counts present in the CONFIGURATION descriptor
     std::map<uint16_t, DITEM> m_all_desc; // Store all descriptors in a map of vectors
 
     size_t desc_count(uint16_t type);
-    void update_desc_database(descriptor_base_imp *desc, const uint8_t *frame, ssize_t pos, size_t frame_len);
+    void update_desc_database(descriptor_base_imp * desc, const uint8_t * frame, ssize_t pos, size_t frame_len);
 
 public:
-    configuration_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
+    configuration_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
     virtual ~configuration_descriptor_imp();
 
     uint16_t STDCALL descriptor_type() const;
@@ -82,25 +82,25 @@ public:
     ///
     uint16_t descriptor_counts_offset();
 
-    void store_entity_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_audio_unit_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_stream_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_stream_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_jack_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_jack_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_avb_interface_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_clock_source_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_memory_object_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_locale_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_strings_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_stream_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_stream_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_audio_cluster_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_audio_map_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_clock_domain_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_control_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_external_port_input_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-    void store_external_port_output_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
+    void store_entity_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_audio_unit_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_stream_input_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_stream_output_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_jack_input_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_jack_output_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_avb_interface_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_clock_source_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_memory_object_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_locale_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_strings_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_stream_port_input_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_stream_port_output_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_audio_cluster_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_audio_map_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_clock_domain_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_control_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_external_port_input_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    void store_external_port_output_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
 
     size_t STDCALL entity_desc_count();
     size_t STDCALL audio_unit_desc_count();
@@ -126,7 +126,7 @@ public:
     uint16_t STDCALL get_desc_count_from_config_by_index(int desc_index);
     bool STDCALL are_desc_type_and_index_in_config(int desc_type, int desc_count_index);
 
-    descriptor_base_imp *lookup_desc_imp(uint16_t desc_type, size_t index);
+    descriptor_base_imp * lookup_desc_imp(uint16_t desc_type, size_t index);
     descriptor_base * STDCALL lookup_desc(uint16_t desc_type, size_t index);
 
     entity_descriptor * STDCALL get_entity_descriptor_by_index(size_t entity_desc_index);
@@ -139,7 +139,7 @@ public:
     clock_source_descriptor * STDCALL get_clock_source_desc_by_index(size_t clock_source_desc_index);
     memory_object_descriptor * STDCALL get_memory_object_desc_by_index(size_t memory_object_desc_index);
     locale_descriptor * STDCALL get_locale_desc_by_index(size_t locale_desc_index);
-    int STDCALL get_strings_desc_string_by_reference(size_t reference, size_t &string_desc_index, size_t &string_index);
+    int STDCALL get_strings_desc_string_by_reference(size_t reference, size_t & string_desc_index, size_t & string_index);
     strings_descriptor * STDCALL get_strings_desc_by_index(size_t strings_desc_index);
     stream_port_input_descriptor * STDCALL get_stream_port_input_desc_by_index(size_t stream_port_input_desc_index);
     stream_port_output_descriptor * STDCALL get_stream_port_output_desc_by_index(size_t stream_port_output_desc_index);
@@ -154,12 +154,11 @@ private:
     ///
     /// Initialize the descriptor type vector with descriptor types present in the current configuration.
     ///
-    void desc_type_vec_init(const uint8_t *frame, size_t pos);
+    void desc_type_vec_init(const uint8_t * frame, size_t pos);
 
     ///
     /// Initialize the descriptor count vector with the number of the corresponding type of descriptor present in the current configuration.
     ///
-    void desc_count_vec_init(const uint8_t *frame, size_t pos);
+    void desc_count_vec_init(const uint8_t * frame, size_t pos);
 };
 }
-

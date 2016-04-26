@@ -40,10 +40,10 @@ namespace avdecc_lib
 class external_port_output_descriptor_imp : public external_port_output_descriptor, public virtual descriptor_base_imp
 {
 public:
-    external_port_output_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
+    external_port_output_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
     virtual ~external_port_output_descriptor_imp();
 
-    external_port_output_descriptor_response_imp *resp;
+    external_port_output_descriptor_response_imp * resp;
 
     external_port_output_descriptor_response * STDCALL get_external_port_output_response();
 };

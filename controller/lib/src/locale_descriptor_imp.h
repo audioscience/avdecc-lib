@@ -29,7 +29,6 @@
 
 #pragma once
 
-
 #include "descriptor_base_imp.h"
 #include "locale_descriptor.h"
 #include "locale_descriptor_response_imp.h"
@@ -39,10 +38,10 @@ namespace avdecc_lib
 class locale_descriptor_imp : public locale_descriptor, public virtual descriptor_base_imp
 {
 public:
-    locale_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
+    locale_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
     virtual ~locale_descriptor_imp();
 
-    locale_descriptor_response_imp *resp;
+    locale_descriptor_response_imp * resp;
 
     locale_descriptor_response * STDCALL get_locale_response();
 };

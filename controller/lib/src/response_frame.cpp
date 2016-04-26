@@ -34,9 +34,10 @@
 #include <stdlib.h>
 #include <iostream>
 
-namespace avdecc_lib {
+namespace avdecc_lib
+{
 
-response_frame::response_frame(const uint8_t *frame, size_t size, size_t pos)
+response_frame::response_frame(const uint8_t * frame, size_t size, size_t pos)
 {
     position = pos;
     frame_size = size;
@@ -55,19 +56,19 @@ response_frame::~response_frame()
     free(desc_buffer);
 }
 
-int response_frame::replace_frame(const uint8_t *frame, size_t pos, size_t size)
+int response_frame::replace_frame(const uint8_t * frame, size_t pos, size_t size)
 {
     uint8_t * replaced_buffer = NULL;
 
-    if(size <= frame_size)
+    if (size <= frame_size)
     {
         assert(size <= frame_size);
         memcpy(buffer, frame, size);
     }
     else
     {
-        replaced_buffer = (uint8_t *) realloc (buffer, size * sizeof(uint8_t));
-        if(replaced_buffer != NULL)
+        replaced_buffer = (uint8_t *)realloc(buffer, size * sizeof(uint8_t));
+        if (replaced_buffer != NULL)
         {
             buffer = replaced_buffer;
             memcpy(buffer, frame, size);
@@ -85,19 +86,19 @@ int response_frame::replace_frame(const uint8_t *frame, size_t pos, size_t size)
     return 0;
 }
 
-int response_frame::replace_desc_frame(const uint8_t *frame, size_t pos, size_t size)
+int response_frame::replace_desc_frame(const uint8_t * frame, size_t pos, size_t size)
 {
     uint8_t * replaced_buffer = NULL;
 
-    if(size <= desc_frame_size)
+    if (size <= desc_frame_size)
     {
         assert(size <= desc_frame_size);
         memcpy(desc_buffer, frame, size);
     }
     else
     {
-        replaced_buffer = (uint8_t *) realloc (desc_buffer, size * sizeof(uint8_t));
-        if(replaced_buffer != NULL)
+        replaced_buffer = (uint8_t *)realloc(desc_buffer, size * sizeof(uint8_t));
+        if (replaced_buffer != NULL)
         {
             desc_buffer = replaced_buffer;
             memcpy(desc_buffer, frame, size);
@@ -114,7 +115,6 @@ int response_frame::replace_desc_frame(const uint8_t *frame, size_t pos, size_t 
 
     return 0;
 }
-
 
 uint8_t * response_frame::get_buffer()
 {
@@ -145,5 +145,4 @@ size_t response_frame::get_desc_size()
 {
     return desc_frame_size;
 }
-
 }

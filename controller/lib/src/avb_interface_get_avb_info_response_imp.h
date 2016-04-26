@@ -50,7 +50,7 @@ private:
     struct avb_interface_get_avb_info_flags avb_interface_info_flags;
 
 public:
-    avb_interface_get_avb_info_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
+    avb_interface_get_avb_info_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~avb_interface_get_avb_info_response_imp();
 
     uint8_t STDCALL get_avb_info_flags();

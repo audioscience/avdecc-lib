@@ -27,15 +27,15 @@
 
 namespace avdecc_lib
 {
-class avdecc_runtime_error : public std::runtime_error {
+class avdecc_runtime_error : public std::runtime_error
+{
 public:
-    avdecc_runtime_error(const char *msg) : std::runtime_error(msg) {}
+    avdecc_runtime_error(const char * msg) : std::runtime_error(msg) {}
 };
 
-class avdecc_read_descriptor_error : public avdecc_runtime_error {
+class avdecc_read_descriptor_error : public avdecc_runtime_error
+{
 public:
-    avdecc_read_descriptor_error(const char *msg) : avdecc_runtime_error(msg) {}
+    avdecc_read_descriptor_error(const char * msg) : avdecc_runtime_error(msg) {}
 };
 }
-
-

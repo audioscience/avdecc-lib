@@ -34,31 +34,31 @@
 
 namespace avdecc_lib
 {
-    struct stream_port_input_audio_mapping
-    {
-        uint16_t stream_index;
-        uint16_t stream_channel;
-        uint16_t cluster_offset;
-        uint16_t cluster_channel;
-    };
+struct stream_port_input_audio_mapping
+{
+    uint16_t stream_index;
+    uint16_t stream_channel;
+    uint16_t cluster_offset;
+    uint16_t cluster_channel;
+};
 
-    class stream_port_input_get_audio_map_response
-    {
-    public:
-        virtual ~stream_port_input_get_audio_map_response() {};
+class stream_port_input_get_audio_map_response
+{
+public:
+    virtual ~stream_port_input_get_audio_map_response(){};
 
-        ///
-        /// \return The GET_AUDIO_MAP response map_index.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t map_index() = 0;
+    ///
+    /// \return The GET_AUDIO_MAP response map_index.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t map_index() = 0;
 
-        ///
-        /// \return The number of mappings contained in a GET_AUDIO_MAP response.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t number_of_mappings() = 0;
-        ///
-        /// \return The audio mapping by index after sending a GET_AUDIO_MAP command.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL mapping(size_t index, struct stream_port_input_audio_mapping &map) = 0;
-    };
+    ///
+    /// \return The number of mappings contained in a GET_AUDIO_MAP response.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t number_of_mappings() = 0;
+    ///
+    /// \return The audio mapping by index after sending a GET_AUDIO_MAP command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL mapping(size_t index, struct stream_port_input_audio_mapping & map) = 0;
+};
 }

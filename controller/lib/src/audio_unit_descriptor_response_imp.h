@@ -41,7 +41,7 @@ class audio_unit_descriptor_response_imp : public audio_unit_descriptor_response
 private:
     std::vector<uint32_t> sample_rates_vec; // Store sample rates information
 public:
-    audio_unit_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    audio_unit_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~audio_unit_descriptor_response_imp();
 
     uint8_t * STDCALL object_name();
@@ -83,10 +83,11 @@ public:
     uint32_t STDCALL get_sampling_rate_by_index(size_t sampling_rate_index);
     uint16_t sampling_rates_offset();
     uint16_t STDCALL sampling_rates_count();
+
 private:
     ///
     /// Store the sampling rates of the AUDIO UNIT in a vector.
     ///
-    void sampling_rates_init(const uint8_t *frame);
+    void sampling_rates_init(const uint8_t * frame);
 };
 }

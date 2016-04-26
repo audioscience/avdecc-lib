@@ -33,7 +33,7 @@
 
 namespace avdecc_lib
 {
-log_imp *log_imp_ref = new log_imp();
+log_imp * log_imp_ref = new log_imp();
 
 log_imp::log_imp()
 {
@@ -62,7 +62,7 @@ int log_imp::logging_thread_init()
     return 0;
 }
 
-void * log_imp::dispatch_thread(void *param)
+void * log_imp::dispatch_thread(void * param)
 {
     return ((log_imp *)param)->dispatch_callbacks();
 }
@@ -73,13 +73,12 @@ void * log_imp::dispatch_callbacks(void)
     {
         sem_wait(&log_waiting);
 
-        if((write_index - read_index) > 0)
+        if ((write_index - read_index) > 0)
         {
             callback_func(user_obj,
                           log_buf[read_index % LOG_BUF_COUNT].level,
                           log_buf[read_index % LOG_BUF_COUNT].msg,
-                          log_buf[read_index % LOG_BUF_COUNT].time_stamp_ms
-                         );
+                          log_buf[read_index % LOG_BUF_COUNT].time_stamp_ms);
             read_index++;
         }
         else
@@ -95,5 +94,4 @@ void log_imp::post_log_event()
 {
     sem_post(&log_waiting);
 }
-
 }

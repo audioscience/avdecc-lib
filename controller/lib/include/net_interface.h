@@ -34,44 +34,43 @@
 
 namespace avdecc_lib
 {
-    class net_interface
-    {
-    public:
-        ///
-        /// Call destructor for Network Interface used for destroying objects
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual void STDCALL destroy() = 0;
+class net_interface
+{
+public:
+    ///
+    /// Call destructor for Network Interface used for destroying objects
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual void STDCALL destroy() = 0;
 
-        ///
-        /// \return The number of devices.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL devs_count() = 0;
+    ///
+    /// \return The number of devices.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL devs_count() = 0;
 
-        ///
-        /// \return The corresponding network interface description by index.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_desc_by_index(size_t dev_index) = 0;
+    ///
+    /// \return The corresponding network interface description by index.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_desc_by_index(size_t dev_index) = 0;
 
-        /// This function is OS dependant. In linux and OSX the return is the same as for a call to
-        /// get_dev_desc_by_index(). In Windows this function returns a GUID as a string.
-        /// \return The corresponding network interface name by index.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_name_by_index(size_t dev_index) = 0;
+    /// This function is OS dependant. In linux and OSX the return is the same as for a call to
+    /// get_dev_desc_by_index(). In Windows this function returns a GUID as a string.
+    /// \return The corresponding network interface name by index.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_name_by_index(size_t dev_index) = 0;
 
-        ///
-        /// Select the corresponding interface by number.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL select_interface_by_num(uint32_t interface_num) = 0;
+    ///
+    /// Select the corresponding interface by number.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL select_interface_by_num(uint32_t interface_num) = 0;
 
-        ///
-        /// Capture a network packet.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual int STDCALL capture_frame(const uint8_t **frame, uint16_t *frame_len) = 0;
-    };
+    ///
+    /// Capture a network packet.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL capture_frame(const uint8_t ** frame, uint16_t * frame_len) = 0;
+};
 
-    /**
+/**
      * Create a public network interface object used for accessing from outside the library.
      */
-    extern "C" AVDECC_CONTROLLER_LIB32_API net_interface * STDCALL create_net_interface();
+extern "C" AVDECC_CONTROLLER_LIB32_API net_interface * STDCALL create_net_interface();
 }
-

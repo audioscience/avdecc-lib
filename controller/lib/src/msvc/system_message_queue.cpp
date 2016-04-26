@@ -50,10 +50,10 @@ system_message_queue::~system_message_queue()
     DeleteCriticalSection(&critical_section_obj);
 }
 
-void system_message_queue::queue_push(void *thread_data)
+void system_message_queue::queue_push(void * thread_data)
 {
     LONG count;
-    char *msg = new char[entry_size];
+    char * msg = new char[entry_size];
     memcpy(msg, thread_data, entry_size);
     EnterCriticalSection(&critical_section_obj);
     m_msgs.push_back(msg);
@@ -63,16 +63,16 @@ void system_message_queue::queue_push(void *thread_data)
     assert(count < (max_msgs - 16));
 }
 
-void system_message_queue::queue_pop_nowait(void *thread_data)
+void system_message_queue::queue_pop_nowait(void * thread_data)
 {
     EnterCriticalSection(&critical_section_obj);
     memcpy(thread_data, m_msgs.front(), entry_size);
-    delete [](m_msgs.front());
+    delete[](m_msgs.front());
     m_msgs.pop_front();
     LeaveCriticalSection(&critical_section_obj);
 }
 
-void system_message_queue::queue_pop_wait(void *thread_data)
+void system_message_queue::queue_pop_wait(void * thread_data)
 {
     WaitForSingleObject(data_avail, INFINITE);
     queue_pop_nowait(thread_data);

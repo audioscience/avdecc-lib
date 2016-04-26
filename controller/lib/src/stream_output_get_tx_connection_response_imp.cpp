@@ -34,7 +34,7 @@
 
 namespace avdecc_lib
 {
-stream_output_get_tx_connection_response_imp::stream_output_get_tx_connection_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos)
+stream_output_get_tx_connection_response_imp::stream_output_get_tx_connection_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos)
 {
     m_position = pos;
     m_size = frame_len;

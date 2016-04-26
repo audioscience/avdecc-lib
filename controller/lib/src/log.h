@@ -41,7 +41,7 @@ protected:
     uint32_t read_index;
     uint32_t write_index;
     void (*callback_func)(void *, int32_t, const char *, int32_t);
-    void *user_obj;
+    void * user_obj;
     uint32_t missed_log_event_cnt; // The number of missed log that exceeds the log buffer count.
 
     enum
@@ -71,7 +71,7 @@ public:
     ///
     /// AVDECC LIB modules call this function for logging purposes.
     ///
-    void post_log_msg(int32_t log_level, const char *fmt,...);
+    void post_log_msg(int32_t log_level, const char * fmt, ...);
 
     ///
     /// Release sempahore so that log callback function is called.
@@ -81,7 +81,7 @@ public:
     ///
     /// Change the logging callback function to a new logging callback function.
     ///
-    void set_log_callback(void (*new_log_callback) (void *, int32_t, const char *, int32_t), void *);
+    void set_log_callback(void (*new_log_callback)(void *, int32_t, const char *, int32_t), void *);
 
     ///
     /// Get the number of missed logs that exceeds the log buffer count.
@@ -89,4 +89,3 @@ public:
     virtual uint32_t missed_log_event_count();
 };
 }
-

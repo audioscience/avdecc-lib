@@ -34,7 +34,7 @@
 
 namespace avdecc_lib
 {
-stream_port_output_get_audio_map_response_imp::stream_port_output_get_audio_map_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos)
+stream_port_output_get_audio_map_response_imp::stream_port_output_get_audio_map_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos)
 {
     m_position = pos;
     m_size = frame_len;
@@ -71,7 +71,7 @@ uint16_t stream_port_output_get_audio_map_response_imp::number_of_mappings()
     return jdksavdecc_aem_command_get_audio_map_response_get_number_of_mappings(m_frame, m_position);
 }
 
-int STDCALL stream_port_output_get_audio_map_response_imp::mapping(size_t index, struct stream_port_output_audio_mapping &map)
+int STDCALL stream_port_output_get_audio_map_response_imp::mapping(size_t index, struct stream_port_output_audio_mapping & map)
 {
     if (index >= number_of_mappings())
         return -1;
@@ -80,4 +80,3 @@ int STDCALL stream_port_output_get_audio_map_response_imp::mapping(size_t index,
     return 0;
 }
 }
-

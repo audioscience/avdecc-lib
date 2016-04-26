@@ -27,7 +27,6 @@
  * AVDECC command line main implementation used for testing command line interface.
  */
 
-
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -60,17 +59,17 @@
 
 using namespace std;
 
-extern "C" void notification_callback(void *user_obj, int32_t notification_type, uint64_t entity_id, uint16_t cmd_type,
+extern "C" void notification_callback(void * user_obj, int32_t notification_type, uint64_t entity_id, uint16_t cmd_type,
                                       uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status,
-                                      void *notification_id)
+                                      void * notification_id)
 {
-    if(notification_type == avdecc_lib::COMMAND_TIMEOUT || notification_type == avdecc_lib::RESPONSE_RECEIVED)
+    if (notification_type == avdecc_lib::COMMAND_TIMEOUT || notification_type == avdecc_lib::RESPONSE_RECEIVED)
     {
-        const char *cmd_name;
-        const char *desc_name;
-        const char *cmd_status_name;
+        const char * cmd_name;
+        const char * desc_name;
+        const char * cmd_status_name;
 
-        if(cmd_type < avdecc_lib::CMD_LOOKUP)
+        if (cmd_type < avdecc_lib::CMD_LOOKUP)
         {
             cmd_name = avdecc_lib::utility::aem_cmd_value_to_name(cmd_type);
             desc_name = avdecc_lib::utility::aem_desc_value_to_name(desc_type);
@@ -83,7 +82,7 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
             cmd_status_name = avdecc_lib::utility::acmp_cmd_status_value_to_name(cmd_status);
         }
 
-        printf("\n[NOTIFICATION] (%s, 0x%"  PRIx64 ", %s, %s, %d, %s, %p)\n",
+        printf("\n[NOTIFICATION] (%s, 0x%" PRIx64 ", %s, %s, %d, %s, %p)\n",
                avdecc_lib::utility::notification_value_to_name(notification_type),
                entity_id,
                cmd_name,
@@ -94,7 +93,7 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
     }
     else
     {
-        printf("\n[NOTIFICATION] (%s, 0x%"  PRIx64 ", %d, %d, %d, %d, %p)\n",
+        printf("\n[NOTIFICATION] (%s, 0x%" PRIx64 ", %d, %d, %d, %d, %p)\n",
                avdecc_lib::utility::notification_value_to_name(notification_type),
                entity_id,
                cmd_type,
@@ -105,17 +104,17 @@ extern "C" void notification_callback(void *user_obj, int32_t notification_type,
     }
 }
 
-extern "C" void log_callback(void *user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms)
+extern "C" void log_callback(void * user_obj, int32_t log_level, const char * log_msg, int32_t time_stamp_ms)
 {
     printf("\n[LOG] %s (%s)\n", avdecc_lib::utility::logging_level_value_to_name(log_level), log_msg);
 }
 
 #if defined(__MACH__) || defined(__linux__)
-const cli_command *top_level_command;
-const cli_command *current_command;
+const cli_command * top_level_command;
+const cli_command * current_command;
 int complettion_arg_index = 0;
 
-void split(const std::string &s, char delim, std::queue<std::string> &elems)
+void split(const std::string & s, char delim, std::queue<std::string> & elems)
 {
     std::stringstream ss(s);
     std::string item;
@@ -123,7 +122,7 @@ void split(const std::string &s, char delim, std::queue<std::string> &elems)
         elems.push(item);
 }
 
-char *command_generator(const char *text, int state)
+char * command_generator(const char * text, int state)
 {
     static std::list<std::string> completion_options;
     static int len;
@@ -143,13 +142,13 @@ char *command_generator(const char *text, int state)
         if (!completion_options.size())
         {
             // If there are no sub-commands then try the arguments
-            std::vector<cli_argument*> args;
+            std::vector<cli_argument *> args;
             std::set<std::string> arg_options;
 
             // There can be multiple arguments at a given index as there
             // can be multiple command formats
             current_command->get_args(complettion_arg_index, args);
-            for (std::vector<cli_argument*>::iterator iter = args.begin();
+            for (std::vector<cli_argument *>::iterator iter = args.begin();
                  iter != args.end();
                  ++iter)
             {
@@ -174,7 +173,7 @@ char *command_generator(const char *text, int state)
     return NULL;
 }
 
-char **command_completer(const char *text, int start, int end)
+char ** command_completer(const char * text, int start, int end)
 {
     if (start == 0)
     {
@@ -198,17 +197,17 @@ char **command_completer(const char *text, int start, int end)
         complettion_arg_index = cmd_path_queue.size();
     }
 
-    char **matches = rl_completion_matches(text, command_generator);
+    char ** matches = rl_completion_matches(text, command_generator);
     return matches;
 }
 
-char *null_completer(const char *text, int state)
+char * null_completer(const char * text, int state)
 {
     return NULL;
 }
 #endif
 
-static void usage(char *argv[])
+static void usage(char * argv[])
 {
     std::cerr << "Usage: " << argv[0] << " [-d] [-i interface]" << std::endl;
     std::cerr << "  -t           :  Sets test mode which disables checks" << std::endl;
@@ -218,37 +217,40 @@ static void usage(char *argv[])
     exit(1);
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
     bool test_mode = false;
     int error = 0;
-    char *interface = NULL;
+    char * interface = NULL;
     int c = 0;
     int32_t log_level = avdecc_lib::LOGGING_LEVEL_ERROR;
 
-    while ((c = getopt(argc, argv, "ti:l:")) != -1) {
-        switch (c) {
-            case 't':
-                test_mode = true;
-                break;
-            case 'i':
-                interface = optarg;
-                break;
-            case 'l':
-                log_level = atoi(optarg);
-                break;
-            case ':':
-                fprintf(stderr, "Option -%c requires an operand\n", optopt);
-                error++;
-                break;
-            case '?':
-                fprintf(stderr, "Unrecognized option: '-%c'\n", optopt);
-                error++;
-                break;
+    while ((c = getopt(argc, argv, "ti:l:")) != -1)
+    {
+        switch (c)
+        {
+        case 't':
+            test_mode = true;
+            break;
+        case 'i':
+            interface = optarg;
+            break;
+        case 'l':
+            log_level = atoi(optarg);
+            break;
+        case ':':
+            fprintf(stderr, "Option -%c requires an operand\n", optopt);
+            error++;
+            break;
+        case '?':
+            fprintf(stderr, "Unrecognized option: '-%c'\n", optopt);
+            error++;
+            break;
         }
     }
 
-    for ( ; optind < argc; optind++) {
+    for (; optind < argc; optind++)
+    {
         error++; // Unused arguments
     }
 
@@ -272,24 +274,23 @@ int main(int argc, char *argv[])
     //bool is_input_valid = false;
     std::string cmd_input_orig;
 #if defined(__MACH__) || defined(__linux__)
-    char* input;
+    char * input;
 
     // Set up the state for command-line completion
     top_level_command = avdecc_cmd_line_ref.get_commands();
     rl_attempted_completion_function = command_completer;
 
 #endif
-    // Override to prevent filename completion
+// Override to prevent filename completion
 #if defined(__MACH__)
     rl_completion_entry_function = (Function *)null_completer;
 #elif defined(__linux__)
     rl_completion_entry_function = null_completer;
 #endif
 
-
     std::cout << "\nEnter \"help\" for a list of valid commands." << std::endl;
 
-    while(!done)
+    while (!done)
     {
 #if defined(__MACH__) || defined(__linux__)
         input = readline("$ ");
@@ -308,7 +309,7 @@ int main(int argc, char *argv[])
         cmd_input_orig = cmd_input;
 #endif
 
-        while((pos = cmd_input.find(" ")) != std::string::npos)
+        while ((pos = cmd_input.find(" ")) != std::string::npos)
         {
             if (pos)
                 input_argv.push_back(cmd_input.substr(0, pos));
@@ -316,12 +317,12 @@ int main(int argc, char *argv[])
             cmd_input.erase(0, pos + 1);
         }
 
-        if(cmd_input.length() && cmd_input != " ")
+        if (cmd_input.length() && cmd_input != " ")
         {
             input_argv.push_back(cmd_input);
         }
 
-        if(avdecc_cmd_line_ref.is_output_redirected())
+        if (avdecc_cmd_line_ref.is_output_redirected())
         {
             std::cout << "\n> " << cmd_input_orig << std::endl;
         }

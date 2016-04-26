@@ -32,7 +32,7 @@
 
 namespace avdecc_lib
 {
-descriptor_response_base_imp::descriptor_response_base_imp(const uint8_t *frame, size_t frame_len, size_t pos)
+descriptor_response_base_imp::descriptor_response_base_imp(const uint8_t * frame, size_t frame_len, size_t pos)
 {
     frame_size = frame_len;
     buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t));

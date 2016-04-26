@@ -56,13 +56,13 @@ avdecc_lib_os::aTimestamp timer::clk_monotonic(void)
     struct timespec tp;
     avdecc_lib_os::aTimestamp time;
 
-    if ( clock_getres( CLOCK_MONOTONIC, &tp ) != 0 )
+    if (clock_getres(CLOCK_MONOTONIC, &tp) != 0)
     {
         printf("Timer not supported in asios_Clock_monotonic(), asios.c\n");
     }
 
-    clock_gettime( CLOCK_MONOTONIC, &tp );
-    time = (avdecc_lib_os::aTimestamp)(tp.tv_sec * 1000) + (avdecc_lib_os::aTimestamp)(tp.tv_nsec/1000000);
+    clock_gettime(CLOCK_MONOTONIC, &tp);
+    time = (avdecc_lib_os::aTimestamp)(tp.tv_sec * 1000) + (avdecc_lib_os::aTimestamp)(tp.tv_nsec / 1000000);
     return time;
 }
 #elif defined __MACH__
@@ -79,7 +79,7 @@ avdecc_lib_os::aTimestamp timer::clk_monotonic(void)
     tp.tv_sec = mts.tv_sec;
     tp.tv_nsec = mts.tv_nsec;
 
-    time = (avdecc_lib_os::aTimestamp)(tp.tv_sec * 1000) + (avdecc_lib_os::aTimestamp)(tp.tv_nsec/1000000);
+    time = (avdecc_lib_os::aTimestamp)(tp.tv_sec * 1000) + (avdecc_lib_os::aTimestamp)(tp.tv_nsec / 1000000);
     return time;
 }
 #endif
@@ -90,13 +90,12 @@ uint32_t timer::clk_convert_to_ms(avdecc_lib_os::aTimestamp time_stamp)
     LARGE_INTEGER freq;
     QueryPerformanceFrequency(&freq);
 
-    return (uint32_t)((time_stamp * 1000/freq.QuadPart) & 0xfffffff);
+    return (uint32_t)((time_stamp * 1000 / freq.QuadPart) & 0xfffffff);
 }
 #elif defined __linux__ || defined __MACH__
 uint32_t timer::clk_convert_to_ms(avdecc_lib_os::aTimestamp time_stamp)
 {
     return time_stamp;
-
 }
 #endif
 
@@ -116,13 +115,13 @@ void timer::stop()
 
 bool timer::timeout()
 {
-    if(running && !elapsed)
+    if (running && !elapsed)
     {
         uint32_t elapsed_ms;
         avdecc_lib_os::aTimestamp current_time = clk_monotonic();
         elapsed_ms = (uint32_t)clk_convert_to_ms(current_time - start_time);
 
-        if(elapsed_ms > count)
+        if (elapsed_ms > count)
         {
             elapsed = true;
         }

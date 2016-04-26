@@ -48,8 +48,8 @@
 
 namespace avdecc_lib
 {
-net_interface_imp *net_interface_ref;
-controller_imp *controller_imp_ref;
+net_interface_imp * net_interface_ref;
+controller_imp * controller_imp_ref;
 
 /*
 * The end_stations class is added here so that in the rare case that an endpoint is added by the background discovery
@@ -70,21 +70,22 @@ public:
     };
     ~end_stations()
     {
-        for (uint32_t i = 0; i < end_station_vec.size(); i++) delete end_station_vec.at(i);
+        for (uint32_t i = 0; i < end_station_vec.size(); i++)
+            delete end_station_vec.at(i);
     };
     /* use local m_count to avoid mutex operations */
     const size_t size(void)
     {
         return m_count;
     };
-    end_station_imp *at(size_t i)
+    end_station_imp * at(size_t i)
     {
         end_station_imp * ep;
         std::lock_guard<std::mutex> guard(locker);
         ep = end_station_vec.at(i);
         return ep;
     };
-    void push_back(end_station_imp *ep)
+    void push_back(end_station_imp * ep)
     {
         locker.lock();
         end_station_vec.push_back(ep);
@@ -93,9 +94,9 @@ public:
     };
 };
 
-controller * STDCALL create_controller(net_interface *netif,
-                                       void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
-                                       void (*log_callback) (void *, int32_t, const char *, int32_t),
+controller * STDCALL create_controller(net_interface * netif,
+                                       void (*notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
+                                       void (*log_callback)(void *, int32_t, const char *, int32_t),
                                        int32_t initial_log_level)
 {
     log_imp_ref->set_log_level(initial_log_level);
@@ -114,7 +115,7 @@ controller * STDCALL create_controller(net_interface *netif,
     if (!adp_discovery_state_machine_ref)
         adp_discovery_state_machine_ref = new adp_discovery_state_machine();
 
-    if(!net_interface_ref)
+    if (!net_interface_ref)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base net_interface to derived net_interface_imp error");
     }
@@ -122,8 +123,8 @@ controller * STDCALL create_controller(net_interface *netif,
     return controller_imp_ref;
 }
 
-controller_imp::controller_imp(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
-                               void (*log_callback) (void *, int32_t, const char *, int32_t))
+controller_imp::controller_imp(void (*notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
+                               void (*log_callback)(void *, int32_t, const char *, int32_t))
 {
     notification_imp_ref->set_notification_callback(notification_callback, NULL);
     end_station_array = new end_stations();
@@ -166,7 +167,7 @@ end_station * STDCALL controller_imp::get_end_station_by_index(size_t end_statio
     return end_station_array->at(end_station_index);
 }
 
-bool STDCALL controller_imp::is_end_station_found_by_entity_id(uint64_t entity_entity_id, uint32_t &end_station_index)
+bool STDCALL controller_imp::is_end_station_found_by_entity_id(uint64_t entity_entity_id, uint32_t & end_station_index)
 {
     uint64_t end_station_entity_id;
 
@@ -174,7 +175,7 @@ bool STDCALL controller_imp::is_end_station_found_by_entity_id(uint64_t entity_e
     {
         end_station_entity_id = end_station_array->at(i)->entity_id();
 
-        if(end_station_entity_id == entity_entity_id)
+        if (end_station_entity_id == entity_entity_id)
         {
             end_station_index = i;
             return true;
@@ -184,7 +185,7 @@ bool STDCALL controller_imp::is_end_station_found_by_entity_id(uint64_t entity_e
     return false;
 }
 
-bool STDCALL controller_imp::is_end_station_found_by_mac_addr(uint64_t mac_addr, uint32_t &end_station_index)
+bool STDCALL controller_imp::is_end_station_found_by_mac_addr(uint64_t mac_addr, uint32_t & end_station_index)
 {
     uint64_t end_station_mac_addr;
 
@@ -192,7 +193,7 @@ bool STDCALL controller_imp::is_end_station_found_by_mac_addr(uint64_t mac_addr,
     {
         end_station_mac_addr = end_station_array->at(i)->mac();
 
-        if(end_station_mac_addr == mac_addr)
+        if (end_station_mac_addr == mac_addr)
         {
             end_station_index = i;
             return true;
@@ -210,7 +211,7 @@ configuration_descriptor * STDCALL controller_imp::get_current_config_desc(size_
 
     if (end_station_index < end_station_array->size())
     {
-        avdecc_lib::end_station *end_station = end_station_array->at(end_station_index);
+        avdecc_lib::end_station * end_station = end_station_array->at(end_station_index);
         entity_index = end_station->get_current_entity_index();
         config_index = end_station->get_current_config_index();
 
@@ -218,7 +219,7 @@ configuration_descriptor * STDCALL controller_imp::get_current_config_desc(size_
                    (config_index < end_station->get_entity_desc_by_index(entity_index)->config_desc_count());
     }
 
-    if(is_valid)
+    if (is_valid)
     {
         configuration_descriptor * configuration;
         configuration = end_station_array->at(end_station_index)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
@@ -237,13 +238,13 @@ configuration_descriptor * controller_imp::get_config_desc_by_entity_id(uint64_t
 {
     for (uint32_t i = 0; i < end_station_array->size(); i++)
     {
-        entity_descriptor_response *entity_resp_ref = end_station_array->at(i)->get_entity_desc_by_index(entity_index)->get_entity_response();
+        entity_descriptor_response * entity_resp_ref = end_station_array->at(i)->get_entity_desc_by_index(entity_index)->get_entity_response();
         uint64_t end_station_entity_id = end_station_array->at(i)->entity_id();
-        if(end_station_entity_id == entity_entity_id)
+        if (end_station_entity_id == entity_entity_id)
         {
             bool is_valid = ((entity_index < end_station_array->at(i)->entity_desc_count()) &&
                              (config_index < entity_resp_ref->configurations_count()));
-            if(is_valid)
+            if (is_valid)
             {
                 configuration_descriptor * configuration;
                 configuration = end_station_array->at(i)->get_entity_desc_by_index(entity_index)->get_config_desc_by_index(config_index);
@@ -260,7 +261,7 @@ configuration_descriptor * controller_imp::get_config_desc_by_entity_id(uint64_t
     return NULL;
 }
 
-bool controller_imp::is_inflight_cmd_with_notification_id(void *notification_id)
+bool controller_imp::is_inflight_cmd_with_notification_id(void * notification_id)
 {
     bool is_inflight_cmd = ((aecp_controller_state_machine_ref->is_inflight_cmd_with_notification_id(notification_id)) ||
                             (acmp_controller_state_machine_ref->is_inflight_cmd_with_notification_id(notification_id)));
@@ -268,7 +269,7 @@ bool controller_imp::is_inflight_cmd_with_notification_id(void *notification_id)
     return is_inflight_cmd;
 }
 
-bool controller_imp::is_active_operation_with_notification_id(void *notification_id)
+bool controller_imp::is_active_operation_with_notification_id(void * notification_id)
 {
     return aecp_controller_state_machine_ref->is_active_operation_with_notification_id(notification_id);
 }
@@ -279,8 +280,8 @@ void STDCALL controller_imp::set_logging_level(int32_t new_log_level)
 }
 
 void STDCALL controller_imp::apply_end_station_capabilities_filters(uint32_t entity_capabilities_flags,
-        uint32_t talker_capabilities_flags,
-        uint32_t listener_capabilities_flags)
+                                                                    uint32_t talker_capabilities_flags,
+                                                                    uint32_t listener_capabilities_flags)
 {
     m_entity_capabilities_flags = entity_capabilities_flags;
     m_talker_capabilities_flags = talker_capabilities_flags;
@@ -301,7 +302,7 @@ void controller_imp::time_tick_event()
 {
     uint64_t end_station_entity_id;
     uint32_t disconnected_end_station_index;
-    if(aecp_controller_state_machine_ref)
+    if (aecp_controller_state_machine_ref)
         aecp_controller_state_machine_ref->tick();
     if (acmp_controller_state_machine_ref)
         acmp_controller_state_machine_ref->tick();
@@ -309,7 +310,7 @@ void controller_imp::time_tick_event()
     if (adp_discovery_state_machine_ref)
     {
         if (adp_discovery_state_machine_ref->tick(end_station_entity_id) &&
-                is_end_station_found_by_entity_id(end_station_entity_id, disconnected_end_station_index))
+            is_end_station_found_by_entity_id(end_station_entity_id, disconnected_end_station_index))
         {
             end_station_array->at(disconnected_end_station_index)->set_disconnected();
         }
@@ -323,7 +324,7 @@ void controller_imp::time_tick_event()
     }
 }
 
-int controller_imp::find_in_end_station(struct jdksavdecc_eui64 &other_entity_id, bool isUnsolicited, const uint8_t *frame)
+int controller_imp::find_in_end_station(struct jdksavdecc_eui64 & other_entity_id, bool isUnsolicited, const uint8_t * frame)
 {
     struct jdksavdecc_eui64 other_controller_id = jdksavdecc_acmpdu_get_controller_entity_id(frame, ETHER_HDR_SIZE);
 
@@ -334,25 +335,25 @@ int controller_imp::find_in_end_station(struct jdksavdecc_eui64 &other_entity_id
         bool entity_id_match = false;
         bool controller_id_match = false;
 
-        if(jdksavdecc_eui64_compare(&end_entity_id, &other_entity_id) == 0)
+        if (jdksavdecc_eui64_compare(&end_entity_id, &other_entity_id) == 0)
         {
             entity_id_match = true;
         }
 
         //Do not try to find the controller_id if it is an unsolicited response
-        if(isUnsolicited && entity_id_match)
+        if (isUnsolicited && entity_id_match)
         {
             return i;
         }
         else
         {
-            if(jdksavdecc_eui64_compare(&other_controller_id, &this_controller_id) == 0 ||
-                    jdksavdecc_eui64_compare(&other_controller_id, &end_entity_id) == 0)
+            if (jdksavdecc_eui64_compare(&other_controller_id, &this_controller_id) == 0 ||
+                jdksavdecc_eui64_compare(&other_controller_id, &end_entity_id) == 0)
             {
                 controller_id_match = true;
             }
 
-            if(entity_id_match && controller_id_match)
+            if (entity_id_match && controller_id_match)
             {
                 return i;
             }
@@ -362,46 +363,46 @@ int controller_imp::find_in_end_station(struct jdksavdecc_eui64 &other_entity_id
     return -1;
 }
 
-void controller_imp::rx_packet_event(void *&notification_id,
-                                     bool &is_notification_id_valid,
-                                     const uint8_t *frame,
+void controller_imp::rx_packet_event(void *& notification_id,
+                                     bool & is_notification_id_valid,
+                                     const uint8_t * frame,
                                      size_t frame_len,
-                                     int &status,
-                                     uint16_t &operation_id,
-                                     bool &is_operation_id_valid)
+                                     int & status,
+                                     uint16_t & operation_id,
+                                     bool & is_operation_id_valid)
 {
     uint64_t dest_mac_addr;
     utility::convert_eui48_to_uint64(frame, dest_mac_addr);
     is_operation_id_valid = false;
 
-    if((dest_mac_addr == net_interface_ref->mac_addr()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address
+    if ((dest_mac_addr == net_interface_ref->mac_addr()) || (dest_mac_addr & UINT64_C(0x010000000000))) // Process if the packet dest is our MAC address or a multicast address
     {
         uint8_t subtype = jdksavdecc_common_control_header_get_subtype(frame, ETHER_HDR_SIZE);
 
-        switch(subtype)
+        switch (subtype)
         {
         case JDKSAVDECC_SUBTYPE_ADP:
         {
-            end_station_imp *end_station = NULL;
+            end_station_imp * end_station = NULL;
             bool found_adp_in_end_station = false;
 
             jdksavdecc_adpdu adpdu;
-            memset(&adpdu,0,sizeof(adpdu));
-            jdksavdecc_adpdu_read(&adpdu, frame, ETHER_HDR_SIZE, frame_len );
+            memset(&adpdu, 0, sizeof(adpdu));
+            jdksavdecc_adpdu_read(&adpdu, frame, ETHER_HDR_SIZE, frame_len);
 
             status = AVDECC_LIB_STATUS_INVALID;
             is_notification_id_valid = false;
 
             if ((adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_GENERAL_CONTROLLER_IGNORE) ||
-                    (adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_ENTITY_NOT_READY))
+                (adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_ENTITY_NOT_READY))
             {
                 // The entity indicates that we should not enumerate it
                 break;
             }
 
-            if( (m_entity_capabilities_flags & adpdu.entity_capabilities) != m_entity_capabilities_flags ||
-                    (m_talker_capabilities_flags & adpdu.talker_capabilities) != m_talker_capabilities_flags ||
-                    (m_listener_capabilities_flags & adpdu.listener_capabilities) != m_listener_capabilities_flags)
+            if ((m_entity_capabilities_flags & adpdu.entity_capabilities) != m_entity_capabilities_flags ||
+                (m_talker_capabilities_flags & adpdu.talker_capabilities) != m_talker_capabilities_flags ||
+                (m_listener_capabilities_flags & adpdu.listener_capabilities) != m_listener_capabilities_flags)
             {
                 //The entity has been filtered out by the user set exclusion flags
                 break;
@@ -411,19 +412,19 @@ void controller_imp::rx_packet_event(void *&notification_id,
              * Check if an ADP object is already in the system. If not, create a new End Station object storing the ADPDU information
              * and add the End Station object to the system.
              */
-            for(uint32_t i = 0; i < end_station_array->size(); i++)
+            for (uint32_t i = 0; i < end_station_array->size(); i++)
             {
                 struct jdksavdecc_eui64 end_entity_id = end_station_array->at(i)->get_adp()->get_entity_entity_id();
-                if(jdksavdecc_eui64_compare(&end_entity_id, &adpdu.header.entity_id) == 0)
+                if (jdksavdecc_eui64_compare(&end_entity_id, &adpdu.header.entity_id) == 0)
                 {
                     found_adp_in_end_station = true;
                     end_station = end_station_array->at(i);
                 }
             }
 
-            if(jdksavdecc_eui64_convert_to_uint64(&adpdu.header.entity_id) != 0)
+            if (jdksavdecc_eui64_convert_to_uint64(&adpdu.header.entity_id) != 0)
             {
-                if(!found_adp_in_end_station)
+                if (!found_adp_in_end_station)
                 {
                     if (adp_discovery_state_machine_ref)
                         adp_discovery_state_machine_ref->state_avail(frame, frame_len);
@@ -433,7 +434,7 @@ void controller_imp::rx_packet_event(void *&notification_id,
                 else
                 {
                     if ((adpdu.available_index < end_station->get_adp()->get_available_index()) ||
-                            (jdksavdecc_eui64_convert_to_uint64(&adpdu.entity_model_id) != end_station->get_adp()->get_entity_model_id()))
+                        (jdksavdecc_eui64_convert_to_uint64(&adpdu.entity_model_id) != end_station->get_adp()->get_entity_model_id()))
                     {
                         log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Re-enumerating end station with entity_id %ull", end_station->entity_id());
                         end_station->end_station_reenumerate();
@@ -441,7 +442,7 @@ void controller_imp::rx_packet_event(void *&notification_id,
 
                     end_station->get_adp()->proc_adpdu(frame, frame_len);
 
-                    if(end_station->get_connection_status() == 'D')
+                    if (end_station->get_connection_status() == 'D')
                     {
                         end_station->set_connected();
                         if (adp_discovery_state_machine_ref)
@@ -473,7 +474,7 @@ void controller_imp::rx_packet_event(void *&notification_id,
             if (dest_mac_addr == net_interface_ref->mac_addr())
             {
                 if (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND &&
-                        cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
+                    cmd_type == JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE)
                 {
                     send_controller_avail_response(frame, frame_len);
                 }
@@ -485,7 +486,7 @@ void controller_imp::rx_packet_event(void *&notification_id,
                     found_end_station_index = find_in_end_station(entity_entity_id, isUnsolicited, frame);
                     if (found_end_station_index >= 0)
                     {
-                        switch(msg_type)
+                        switch (msg_type)
                         {
 
                         case JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE:
@@ -520,22 +521,23 @@ void controller_imp::rx_packet_event(void *&notification_id,
             struct jdksavdecc_eui64 entity_entity_id;
             uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
 
-            if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
-                    (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))
+            if ((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
+                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))
             {
                 entity_entity_id = jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE);
             }
-            else if((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
-                    (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
-                    (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE))
+            else if ((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
+                     (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
+                     (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE))
             {
                 entity_entity_id = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
             }
 
             found_end_station_index = find_in_end_station(entity_entity_id, false, frame);
-            if (found_end_station_index >= 0) found_acmp_in_end_station = true;
+            if (found_end_station_index >= 0)
+                found_acmp_in_end_station = true;
 
-            if(found_acmp_in_end_station)
+            if (found_acmp_in_end_station)
             {
                 end_station_array->at(found_end_station_index)->proc_rcvd_acmp_resp(msg_type, notification_id, frame, frame_len, status);
                 is_notification_id_valid = true;
@@ -554,16 +556,16 @@ void controller_imp::rx_packet_event(void *&notification_id,
     }
 }
 
-void controller_imp::tx_packet_event(void *notification_id, uint32_t notification_flag, uint8_t *frame, size_t frame_len)
+void controller_imp::tx_packet_event(void * notification_id, uint32_t notification_flag, uint8_t * frame, size_t frame_len)
 {
-    uint8_t subtype = jdksavdecc_common_control_header_get_subtype(frame,ETHER_HDR_SIZE);
+    uint8_t subtype = jdksavdecc_common_control_header_get_subtype(frame, ETHER_HDR_SIZE);
     struct jdksavdecc_frame packet_frame;
 
     packet_frame.length = (uint16_t)frame_len;
     assert(frame_len <= sizeof(packet_frame.payload));
     memcpy(packet_frame.payload, frame, frame_len);
 
-    if(subtype == JDKSAVDECC_SUBTYPE_AECP)
+    if (subtype == JDKSAVDECC_SUBTYPE_AECP)
     {
         if (aecp_controller_state_machine_ref)
         {
@@ -571,7 +573,7 @@ void controller_imp::tx_packet_event(void *notification_id, uint32_t notificatio
             memcpy(frame, packet_frame.payload, frame_len); // Get the updated frame with sequence id
         }
     }
-    else if(subtype == JDKSAVDECC_SUBTYPE_ACMP)
+    else if (subtype == JDKSAVDECC_SUBTYPE_ACMP)
     {
         if (acmp_controller_state_machine_ref)
         {
@@ -585,12 +587,12 @@ void controller_imp::tx_packet_event(void *notification_id, uint32_t notificatio
     }
 }
 
-int STDCALL controller_imp::send_controller_avail_cmd(void *notification_id, uint32_t end_station_index)
+int STDCALL controller_imp::send_controller_avail_cmd(void * notification_id, uint32_t end_station_index)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_controller_available aem_cmd_controller_avail;
     ssize_t aem_cmd_controller_avail_returned;
-    memset(&aem_cmd_controller_avail,0,sizeof(aem_cmd_controller_avail));
+    memset(&aem_cmd_controller_avail, 0, sizeof(aem_cmd_controller_avail));
 
     /*************************************************** AECP Common Data **************************************************/
     aem_cmd_controller_avail.aem_header.aecpdu_header.controller_entity_id = end_station_array->at(end_station_index)->get_adp()->get_controller_entity_id();
@@ -599,13 +601,13 @@ int STDCALL controller_imp::send_controller_avail_cmd(void *notification_id, uin
 
     /******************************** Fill frame payload with AECP data and send the frame ***************************/
     aecp_controller_state_machine_ref->ether_frame_init(end_station_array->at(end_station_index)->mac(), &cmd_frame,
-            ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE);
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE);
     aem_cmd_controller_avail_returned = jdksavdecc_aem_command_controller_available_write(&aem_cmd_controller_avail,
-                                        cmd_frame.payload,
-                                        ETHER_HDR_SIZE,
-                                        sizeof(cmd_frame.payload));
+                                                                                          cmd_frame.payload,
+                                                                                          ETHER_HDR_SIZE,
+                                                                                          sizeof(cmd_frame.payload));
 
-    if(aem_cmd_controller_avail_returned < 0)
+    if (aem_cmd_controller_avail_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_write error\n");
         assert(aem_cmd_controller_avail_returned >= 0);
@@ -613,16 +615,16 @@ int STDCALL controller_imp::send_controller_avail_cmd(void *notification_id, uin
     }
 
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
-            &cmd_frame,
-            end_station_array->at(end_station_index)->entity_id(),
-            JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE_COMMAND_LEN -
-            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+                                                       &cmd_frame,
+                                                       end_station_array->at(end_station_index)->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_CONTROLLER_AVAILABLE_COMMAND_LEN -
+                                                           JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
     return 0;
 }
 
-int STDCALL controller_imp::send_controller_avail_response(const uint8_t *frame, size_t frame_len)
+int STDCALL controller_imp::send_controller_avail_response(const uint8_t * frame, size_t frame_len)
 {
     struct jdksavdecc_eui48 dest_address;
     struct jdksavdecc_eui48 src_address;
@@ -652,23 +654,23 @@ int STDCALL controller_imp::send_controller_avail_response(const uint8_t *frame,
 
     //set message type
     jdksavdecc_common_control_header_set_control_data(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE,
-            tx_frame,
-            pos + ETHER_HDR_SIZE);
+                                                      tx_frame,
+                                                      pos + ETHER_HDR_SIZE);
 
     //send packet
     send_frame_returned = net_interface_ref->send_frame(tx_frame, frame_len);
 
-    if(send_frame_returned < 0)
+    if (send_frame_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "netif_send_frame error");
         assert(send_frame_returned >= 0);
     }
 
-    delete [] tx_frame;
+    delete[] tx_frame;
     return 0;
 }
 
-int controller_imp::proc_controller_avail_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int controller_imp::proc_controller_avail_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_controller_available_response aem_cmd_controller_avail_resp;
@@ -680,11 +682,11 @@ int controller_imp::proc_controller_avail_resp(void *&notification_id, const uin
     memset(&aem_cmd_controller_avail_resp, 0, sizeof(aem_cmd_controller_avail_resp));
 
     aem_cmd_controller_avail_resp_returned = jdksavdecc_aem_command_controller_available_response_read(&aem_cmd_controller_avail_resp,
-            frame,
-            ETHER_HDR_SIZE,
-            frame_len);
+                                                                                                       frame,
+                                                                                                       ETHER_HDR_SIZE,
+                                                                                                       frame_len);
 
-    if(aem_cmd_controller_avail_resp_returned < 0)
+    if (aem_cmd_controller_avail_resp_returned < 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_controller_avail_resp_read error\n");
         assert(aem_cmd_controller_avail_resp_returned >= 0);

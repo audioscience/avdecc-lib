@@ -32,14 +32,13 @@
 #include "avdecc_lib_os.h"
 #include "notification.h"
 
-
 namespace avdecc_lib
 {
 class notification_imp : public virtual notification
 {
 private:
     pthread_t h_thread;
-    sem_t *notify_waiting;
+    sem_t * notify_waiting;
 
 public:
     ///
@@ -72,6 +71,5 @@ public:
     void post_notification_event();
 };
 
-extern notification_imp *notification_imp_ref;
+extern notification_imp * notification_imp_ref;
 }
-

@@ -70,9 +70,9 @@ private:
 class cmd_line
 {
 private:
-    avdecc_lib::net_interface *netif;
-    avdecc_lib::system *sys;
-    avdecc_lib::controller *controller_obj;
+    avdecc_lib::net_interface * netif;
+    avdecc_lib::system * sys;
+    avdecc_lib::controller * controller_obj;
 
     cli_command commands;
 
@@ -81,7 +81,7 @@ private:
 
     bool test_mode;
 
-    std::streambuf *cout_buf;
+    std::streambuf * cout_buf;
     std::ofstream ofstream_ref;
     bool output_redirected;
 
@@ -93,357 +93,355 @@ public:
     ///
     /// Constructor for cmd_line used for constructing an object with notification and log callback functions.
     ///
-    cmd_line(void (*notification_callback) (void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
-             void (*log_callback) (void *, int32_t, const char *, int32_t),
-             bool test_mode, char *interface, int32_t log_level);
+    cmd_line(void (*notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
+             void (*log_callback)(void *, int32_t, const char *, int32_t),
+             bool test_mode, char * interface, int32_t log_level);
 
     ~cmd_line();
 
 private:
-    int print_interfaces_and_select(char *interface);
-    int get_current_end_station(avdecc_lib::end_station **end_station) const;
-    int get_current_entity_and_descriptor(avdecc_lib::end_station *end_station,
-                                          avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **descriptor);
-    int get_current_end_station_entity_and_descriptor(avdecc_lib::end_station **end_station,
-                                                      avdecc_lib::entity_descriptor **entity, avdecc_lib::configuration_descriptor **configuration);
+    int print_interfaces_and_select(char * interface);
+    int get_current_end_station(avdecc_lib::end_station ** end_station) const;
+    int get_current_entity_and_descriptor(avdecc_lib::end_station * end_station,
+                                          avdecc_lib::entity_descriptor ** entity, avdecc_lib::configuration_descriptor ** descriptor);
+    int get_current_end_station_entity_and_descriptor(avdecc_lib::end_station ** end_station,
+                                                      avdecc_lib::entity_descriptor ** entity, avdecc_lib::configuration_descriptor ** configuration);
 
     void cmd_line_commands_init();
 
-    void print_desc_type_index_name_row(avdecc_lib::descriptor_base &desc,
-                                        avdecc_lib::configuration_descriptor &configuration,
+    void print_desc_type_index_name_row(avdecc_lib::descriptor_base & desc,
+                                        avdecc_lib::configuration_descriptor & configuration,
                                         size_t localized_description,
-                                        const uint8_t *object_name,
-                                        avdecc_lib::locale_descriptor &locale);
+                                        const uint8_t * object_name,
+                                        avdecc_lib::locale_descriptor & locale);
 
 public:
-
     ///
     /// Access methods used for command-line completion
     ///
-    const cli_command *get_commands() const;
-    avdecc_lib::controller *get_controller() const;
+    const cli_command * get_commands() const;
+    avdecc_lib::controller * get_controller() const;
 
     ///
     /// Try to execute a command
     ///
-    bool handle(std::vector<std::string> &args);
+    bool handle(std::vector<std::string> & args);
 
     ///
     /// Find an endstation index from an argument string.
     ///
-    bool get_end_station_index(std::string arg, uint32_t &end_station_index) const;
+    bool get_end_station_index(std::string arg, uint32_t & end_station_index) const;
 
     bool is_output_redirected() const;
 
 private:
-
     ///
     /// Display summary help for all commands.
     ///
-    int cmd_help_all(int total_matched, std::vector<cli_argument*> args);
+    int cmd_help_all(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display a detailed description of a command.
     ///
-    int cmd_help_one(int total_matched, std::vector<cli_argument*> args);
+    int cmd_help_one(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display a detailed description of a command.
     ///
-    int cmd_quit(int total_matched, std::vector<cli_argument*> args);
+    int cmd_quit(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display the name at index name_index for a given descriptor.
     ///
-    int cmd_display_desc_name(avdecc_lib::descriptor_base *desc, uint16_t name_index, bool is_entity);
+    int cmd_display_desc_name(avdecc_lib::descriptor_base * desc, uint16_t name_index, bool is_entity);
 
     ///
     /// Display the current build release version.
     ///
-    int cmd_version(int total_matched, std::vector<cli_argument*> args);
+    int cmd_version(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display a table with information about each end station discovered with ADP.
     ///
-    int cmd_list(int total_matched, std::vector<cli_argument*> args);
+    int cmd_list(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display the current end station and configuration setting.
     ///
-    int cmd_show_select(int total_matched, std::vector<cli_argument*> args);
+    int cmd_show_select(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Change the setting of end station, entity, and configuration.
     ///
-    int cmd_select(int total_matched, std::vector<cli_argument*> args);
+    int cmd_select(int total_matched, std::vector<cli_argument *> args);
 
     int do_select(uint32_t new_end_station, uint16_t new_entity, uint16_t new_config);
 
     ///
     /// Change the base log level for messages to be logged by the logging callback.
     ///
-    int cmd_log_level(int total_matched, std::vector<cli_argument*> args);
+    int cmd_log_level(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Re-direct logging to a file.
     ///
-    int cmd_log(int total_matched, std::vector<cli_argument*> args);
+    int cmd_log(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Re-direct logging back to stdout
     ///
-    int cmd_unlog(int total_matched, std::vector<cli_argument*> args);
+    int cmd_unlog(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display all the descriptors in each end station.
     ///
-    int cmd_view_all(int total_matched, std::vector<cli_argument*> args);
+    int cmd_view_all(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display a list of descriptors that has the Clock Sync Source flag set.
     ///
-    int cmd_view_media_clock(int total_matched, std::vector<cli_argument*> args);
+    int cmd_view_media_clock(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display all the descriptors with details in the end station.
     ///
-    int cmd_view_details(int total_matched, std::vector<cli_argument*> args);
+    int cmd_view_details(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display all stream formats.
     ///
-    int cmd_view_stream_formats(int total_matched, std::vector<cli_argument*> args);
+    int cmd_view_stream_formats(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display information for the specified descriptor using the current end station, entity, and configuration setting.
     ///
-    int cmd_view_descriptor(int total_matched, std::vector<cli_argument*> args);
+    int cmd_view_descriptor(int total_matched, std::vector<cli_argument *> args);
 
     int do_view_descriptor(std::string desc_name, uint16_t desc_index);
 
     ///
     /// Display all the available instreams for all End Stations.
     ///
-    int cmd_connect(int total_matched, std::vector<cli_argument*> args);
+    int cmd_connect(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display all the available outstreams for all End Stations that can connect with the instreams.
     ///
-    int cmd_connect_dst(int total_matched, std::vector<cli_argument*> args);
+    int cmd_connect_dst(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a CONNECT_RX command to connect Listener sink stream.
     ///
-    int cmd_connect_rx(int total_matched, std::vector<cli_argument*> args);
+    int cmd_connect_rx(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a CONNECT_RX command to disconnect Listener sink stream.
     ///
-    int cmd_disconnect_rx(int total_matched, std::vector<cli_argument*> args);
+    int cmd_disconnect_rx(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display all current connections.
     ///
-    int cmd_show_connections(int total_matched, std::vector<cli_argument*> args);
+    int cmd_show_connections(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_TX_STATE command to get Talker source stream connection state.
     ///
-    int cmd_get_tx_state(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_tx_state(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_RX_STATE command to get Listener sink stream connection state.
     ///
-    int cmd_get_rx_state(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_rx_state(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_TX_CONNECTION command with a notification id to get a specific Talker connection information.
     ///
-    int cmd_get_tx_connection(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_tx_connection(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send an ACQUIRE_ENTITY command to obtain exclusive access to an entire Entity or a sub-tree of objects.
     ///
-    int cmd_acquire_entity(int total_matched, std::vector<cli_argument*> args);
+    int cmd_acquire_entity(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a LOCK_ENTITY command to provide short term exclusive access to the AVDECC Entity to perform atomic operations.
     ///
-    int cmd_lock_entity(int total_matched, std::vector<cli_argument*> args);
+    int cmd_lock_entity(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a ENTITY_AVAILABLE command to determine if another AVDECC Entity is still alive.
     ///
-    int cmd_entity_avail(int total_matched, std::vector<cli_argument*> args);
+    int cmd_entity_avail(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a REGISTER_UNSOLICITED_NOTIFICATION command to add the controller as being interested
     /// in receiving unsolicited response notifications.
     ///
-    int cmd_register_unsolicited_notif(int total_matched, std::vector<cli_argument*> args);
+    int cmd_register_unsolicited_notif(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a DEREGISTER_UNSOLICITED_NOTIFICATION command to remove the controller as being interested
     /// in receiving unsolicited response notifications.
     ///
-    int cmd_deregister_unsolicited_notif(int total_matched, std::vector<cli_argument*> args);
+    int cmd_deregister_unsolicited_notif(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a REBOOT command to reboot the entity
     ///
-    int cmd_reboot(int total_matched, std::vector<cli_argument*> args);
+    int cmd_reboot(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a CONTROLLER_AVAILABLE command to determine if an AVDECC Controller is still alive.
     ///
-    int cmd_controller_avail(int total_matched, std::vector<cli_argument*> args);
+    int cmd_controller_avail(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a READ_DESCRIPTOR command to read a descriptor from an AVDECC Entity.
     ///
-    int cmd_read_descriptor(int total_matched, std::vector<cli_argument*> args);
+    int cmd_read_descriptor(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_AUDIO_MAP command to fetch the dynamic mapping between the Audio Clusters and
     /// the input or output Streams.
     ///
-    int cmd_get_audio_map(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_audio_map(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a ADD_PENDING_AUDIO_MAPPING command to add a mapping entry to a library queue.
     ///
-    int cmd_store_pending_audio_mapping(int total_matched, std::vector<cli_argument*> args);
+    int cmd_store_pending_audio_mapping(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_PENDING_AUDIO_MAPPINGS command to view queued mappings.
     ///
-    int cmd_get_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_pending_audio_mappings(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a CLEAR_PENDING_AUDIO_MAPPINGS command to clear queued mappings.
     ///
-    int cmd_clear_pending_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+    int cmd_clear_pending_audio_mappings(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a ADD_AUDIO_MAPPINGS command to send queued mapping entries indicating dynamic mappings
     /// between the Audio Clusters and the input or output Streams
     ///
-    int cmd_add_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+    int cmd_add_audio_mappings(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a REMOVE_AUDIO_MAPPINGS command to remove the queued selected dynamic mappings.
     ///
-    int cmd_remove_audio_mappings(int total_matched, std::vector<cli_argument*> args);
+    int cmd_remove_audio_mappings(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a SET_STREAM_FORMAT command to change the format of a stream.
     ///
-    int cmd_set_stream_format(int total_matched, std::vector<cli_argument*> args);
+    int cmd_set_stream_format(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_STREAM_FORMAT command with nofitication id to fetch the current format of a stream.
     ///
-    int cmd_get_stream_format(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_stream_format(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a SET_STREAM_INFO command to change a stream info field value to a new value.
     ///
-    int cmd_set_stream_info(int total_matched, std::vector<cli_argument*> args);
+    int cmd_set_stream_info(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_STREAM_INFO command to fetch the current information of a stream.
     ///
-    int cmd_get_stream_info(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_stream_info(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a SET_NAME command to change the value of a name field within a descriptor.
     ///
-    int cmd_set_name(int total_matched, std::vector<cli_argument*> args);
+    int cmd_set_name(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a SET_GROUP_NAME command to change the value of the Entity descriptor group name.
     ///
-    int cmd_set_group_name(int total_matched, std::vector<cli_argument*> args);
+    int cmd_set_group_name(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_NAME command to fetch the value of a name field within a descriptor.
     ///
-    int cmd_get_name(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_name(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_GROUP_NAME command to fetch the group name of the ENTITY descriptor.
     ///
-    int cmd_get_group_name(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_group_name(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a SET_SAMPLING_RATE command to change the sampling rate of a port or unit.
     ///
-    int cmd_set_sampling_rate(int total_matched, std::vector<cli_argument*> args);
+    int cmd_set_sampling_rate(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_SAMPLING_RATE command to get the current sampling rate of a port or unit.
     ///
-    int cmd_get_sampling_rate(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_sampling_rate(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_COUNTERS command to get the current counters of a descriptor.
     ///
-    int cmd_get_counters(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_counters(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a SET_CLOCK_SOURCE command to change the clock source of a clock domain.
     ///
-    int cmd_set_clock_source(int total_matched, std::vector<cli_argument*> args);
+    int cmd_set_clock_source(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_CLOCK_SOURCE command to get the current clock source of a clock domain.
     ///
-    int cmd_get_clock_source(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_clock_source(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a GET_AVB_INFO command to get the dynamic AVB information for an AVB_INTERFACE.
     ///
-    int cmd_get_avb_info(int total_matched, std::vector<cli_argument*> args);
+    int cmd_get_avb_info(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
     /// via ACMP or has previously been stopped with the STOP_STREAMING command.
     ///
-    int cmd_start_streaming(int total_matched, std::vector<cli_argument*> args);
+    int cmd_start_streaming(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a STOP_STREAMING command with a notification id to stop a connected stream for streaming media.
     ///
-    int cmd_stop_streaming(int total_matched, std::vector<cli_argument*> args);
+    int cmd_stop_streaming(int total_matched, std::vector<cli_argument *> args);
 
-    int cmd_firmware_upgrade(int total_matched, std::vector<cli_argument*> args);
+    int cmd_firmware_upgrade(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a IDENTIFY command to enable identification.
     ///
-    int cmd_identify_on(int total_matched, std::vector<cli_argument*> args);
+    int cmd_identify_on(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Send a IDENTIFY command to disable identification.
     ///
-    int cmd_identify_off(int total_matched, std::vector<cli_argument*> args);
+    int cmd_identify_off(int total_matched, std::vector<cli_argument *> args);
 
     void do_identify(uint32_t end_station_index, bool turn_on);
 
     ///
     /// Display the location of the redirected output file.
     ///
-    int cmd_show_path(int total_matched, std::vector<cli_argument*> args);
+    int cmd_show_path(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Change the path of the redirected output file.
     ///
-    int cmd_set_path(int total_matched, std::vector<cli_argument*> args);
+    int cmd_set_path(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Clear the screen.
     ///
-    int cmd_clr(int total_matched, std::vector<cli_argument*> args);
+    int cmd_clr(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Get the next unique notification id.
@@ -456,4 +454,4 @@ private:
     bool is_setting_valid(uint32_t end_station, uint16_t entity, uint16_t config);
 };
 
-extern const char *const log_level_help;
+extern const char * const log_level_help;

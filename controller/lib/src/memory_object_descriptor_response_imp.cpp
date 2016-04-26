@@ -41,18 +41,16 @@
 namespace avdecc_lib
 {
 #define MEMORY_OBJECT_NUM_STRINGS 6
-const char *memory_object_type_str[] =
-{
-    "FIRMWARE_IMAGE",
-    "VENDOR_SPECIFIC",
-    "CRASH_DUMP",
-    "LOG_OBJECT",
-    "AUTOSTART_SETTINGS",
-    "SNAPSHOT_SETTINGS"
-};
+const char * memory_object_type_str[] =
+    {
+        "FIRMWARE_IMAGE",
+        "VENDOR_SPECIFIC",
+        "CRASH_DUMP",
+        "LOG_OBJECT",
+        "AUTOSTART_SETTINGS",
+        "SNAPSHOT_SETTINGS"};
 
-memory_object_descriptor_response_imp::memory_object_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-    descriptor_response_base_imp(frame, frame_len, pos) {}
+memory_object_descriptor_response_imp::memory_object_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos) {}
 
 memory_object_descriptor_response_imp::~memory_object_descriptor_response_imp() {}
 
@@ -98,7 +96,7 @@ uint64_t STDCALL memory_object_descriptor_response_imp::length()
 
 const char * STDCALL memory_object_descriptor_response_imp::memory_object_type_to_str()
 {
-    if(memory_object_type() < MEMORY_OBJECT_NUM_STRINGS)
+    if (memory_object_type() < MEMORY_OBJECT_NUM_STRINGS)
     {
         return memory_object_type_str[memory_object_type()];
     }

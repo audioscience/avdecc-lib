@@ -37,23 +37,23 @@ class adp
 {
 private:
     struct jdksavdecc_frame cmd_frame; // Structure containing the Ethernet Frame fields
-    struct jdksavdecc_adpdu adpdu; // Structure containing the ADPDU fields
-    uint8_t *adp_frame; // Point to a raw memory buffer to read from
-    ssize_t frame_read_returned; // Status of extracting Ethernet Frame information from a network buffer
-    ssize_t adpdu_read_returned; // Status of extracting ADPDU information from a network buffer
-    int proc_adpdu_returned; //result of ADP update
+    struct jdksavdecc_adpdu adpdu;     // Structure containing the ADPDU fields
+    uint8_t * adp_frame;               // Point to a raw memory buffer to read from
+    ssize_t frame_read_returned;       // Status of extracting Ethernet Frame information from a network buffer
+    ssize_t adpdu_read_returned;       // Status of extracting ADPDU information from a network buffer
+    int proc_adpdu_returned;           //result of ADP update
 
 public:
     ///
     /// Constructor for ADP used for constructing an object with a base pointer and memory buffer length.
     ///
-    adp(const uint8_t *frame, size_t frame_len);
+    adp(const uint8_t * frame, size_t frame_len);
 
     ~adp();
     ///
     /// Update the stored ADP contents with the latest ADPDU fields
     ///
-    int proc_adpdu(const uint8_t *frame, size_t frame_len);
+    int proc_adpdu(const uint8_t * frame, size_t frame_len);
 
     ///
     /// Get the Ethernet type of the ADP packet.
@@ -221,4 +221,3 @@ public:
     }
 };
 }
-

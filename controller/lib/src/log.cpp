@@ -34,7 +34,7 @@
 
 namespace avdecc_lib
 {
-void default_log(void *log_user_obj, int32_t log_level, const char *log_msg, int32_t time_stamp_ms)
+void default_log(void * log_user_obj, int32_t log_level, const char * log_msg, int32_t time_stamp_ms)
 {
     (void)log_user_obj; //unused
     (void)log_level;
@@ -59,7 +59,7 @@ void log::set_log_level(int32_t new_log_level)
     log_level = new_log_level;
 }
 
-void log::post_log_msg(int32_t level, const char *fmt,...)
+void log::post_log_msg(int32_t level, const char * fmt, ...)
 {
     if (level <= log_level)
     {
@@ -73,7 +73,7 @@ void log::post_log_msg(int32_t level, const char *fmt,...)
         }
         index = InterlockedExchangeAdd(&write_index, 1);
         va_start(arglist, fmt);
-        vsprintf_s(log_buf[index % LOG_BUF_COUNT].msg, sizeof(log_buf[0].msg), fmt, arglist);  // Write to log_buf using write_index
+        vsprintf_s(log_buf[index % LOG_BUF_COUNT].msg, sizeof(log_buf[0].msg), fmt, arglist); // Write to log_buf using write_index
         va_end(arglist);
         log_buf[index % LOG_BUF_COUNT].level = level;
         log_buf[index % LOG_BUF_COUNT].time_stamp_ms = 0;
@@ -82,7 +82,7 @@ void log::post_log_msg(int32_t level, const char *fmt,...)
     }
 }
 
-void log::set_log_callback(void (*new_log_callback) (void *, int32_t, const char *, int32_t), void *p)
+void log::set_log_callback(void (*new_log_callback)(void *, int32_t, const char *, int32_t), void * p)
 {
     callback_func = new_log_callback;
     user_obj = p;

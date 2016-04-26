@@ -37,12 +37,12 @@
 
 namespace avdecc_lib
 {
-    class jack_input_descriptor : public virtual descriptor_base
-    {
-    public:
-        ///
-        /// \return the jack input descriptor response class.
-        ///
-        AVDECC_CONTROLLER_LIB32_API virtual jack_input_descriptor_response * STDCALL get_jack_input_response() = 0;
-    };
+class jack_input_descriptor : public virtual descriptor_base
+{
+public:
+    ///
+    /// \return the jack input descriptor response class.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual jack_input_descriptor_response * STDCALL get_jack_input_response() = 0;
+};
 }

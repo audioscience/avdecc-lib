@@ -36,7 +36,7 @@
 
 namespace avdecc_lib
 {
-external_port_input_descriptor_response_imp::external_port_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) : descriptor_base_imp(nullptr, frame, frame_len, pos), descriptor_response_base_imp(frame, frame_len, pos)
+external_port_input_descriptor_response_imp::external_port_input_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_base_imp(nullptr, frame, frame_len, pos), descriptor_response_base_imp(frame, frame_len, pos)
 {
     ssize_t ret = jdksavdecc_descriptor_external_port_read(&desc, frame, pos, frame_len);
 
@@ -46,7 +46,7 @@ external_port_input_descriptor_response_imp::external_port_input_descriptor_resp
     }
 
     // fields
-    descriptor_field_imp *f;
+    descriptor_field_imp * f;
 
     m_fields.push_back(new descriptor_field_imp("clock_domain_index", descriptor_field::TYPE_UINT16, &desc.clock_domain_index));
 

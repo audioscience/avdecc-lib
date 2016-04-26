@@ -40,11 +40,11 @@
 
 namespace avdecc_lib
 {
-entity_descriptor_imp::entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
+entity_descriptor_imp::entity_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
 entity_descriptor_imp::~entity_descriptor_imp()
 {
-    for(uint32_t config_vec_index = 0; config_vec_index < config_desc_vec.size(); config_vec_index++)
+    for (uint32_t config_vec_index = 0; config_vec_index < config_desc_vec.size(); config_vec_index++)
     {
         delete config_desc_vec.at(config_vec_index);
     }
@@ -59,10 +59,10 @@ entity_descriptor_response * STDCALL entity_descriptor_imp::get_entity_response(
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
     return resp = new entity_descriptor_response_imp(resp_ref->get_desc_buffer(),
-            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
+                                                     resp_ref->get_desc_size(), resp_ref->get_desc_pos());
 }
 
-void entity_descriptor_imp::store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
+void entity_descriptor_imp::store_config_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len)
 {
     config_desc_vec.push_back(new configuration_descriptor_imp(end_station_obj, frame, pos, frame_len));
 }
@@ -76,7 +76,7 @@ configuration_descriptor * STDCALL entity_descriptor_imp::get_config_desc_by_ind
 {
     bool is_valid = (config_desc_index < config_desc_vec.size());
 
-    if(is_valid)
+    if (is_valid)
     {
         return config_desc_vec.at(config_desc_index);
     }
@@ -108,32 +108,32 @@ uint64_t STDCALL entity_descriptor_imp::lock_entity_locked_entity_id()
     return jdksavdecc_uint64_get(&aem_cmd_lock_entity_resp.locked_entity_id, 0);
 }
 
-int STDCALL entity_descriptor_imp::send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag)
+int STDCALL entity_descriptor_imp::send_acquire_entity_cmd(void * notification_id, uint32_t acquire_entity_flag)
 {
     return default_send_acquire_entity_cmd(this, notification_id, acquire_entity_flag);
 }
 
-int entity_descriptor_imp::proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int entity_descriptor_imp::proc_acquire_entity_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     return default_proc_acquire_entity_resp(aem_cmd_acquire_entity_resp, notification_id, frame, frame_len, status);
 }
 
-int STDCALL entity_descriptor_imp::send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag)
+int STDCALL entity_descriptor_imp::send_lock_entity_cmd(void * notification_id, uint32_t lock_entity_flag)
 {
     return default_send_lock_entity_cmd(this, notification_id, lock_entity_flag);
 }
 
-int STDCALL entity_descriptor_imp::send_reboot_cmd(void *notification_id)
+int STDCALL entity_descriptor_imp::send_reboot_cmd(void * notification_id)
 {
     return default_send_reboot_cmd(this, notification_id);
 }
 
-int entity_descriptor_imp::proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int entity_descriptor_imp::proc_lock_entity_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     return default_proc_lock_entity_resp(aem_cmd_lock_entity_resp, notification_id, frame, frame_len, status);
 }
 
-int entity_descriptor_imp::proc_reboot_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
+int entity_descriptor_imp::proc_reboot_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
     return default_proc_reboot_resp(aem_cmd_reboot_resp, notification_id, frame, frame_len, status);
 }

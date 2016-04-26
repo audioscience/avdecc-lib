@@ -77,7 +77,5 @@ public:
     void post_log_event();
 };
 
-extern log_imp *log_imp_ref;
+extern log_imp * log_imp_ref;
 }
-
-

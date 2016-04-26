@@ -36,8 +36,7 @@
 
 namespace avdecc_lib
 {
-avb_interface_descriptor_response_imp::avb_interface_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-    descriptor_response_base_imp(frame, frame_len, pos) {}
+avb_interface_descriptor_response_imp::avb_interface_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos) {}
 
 avb_interface_descriptor_response_imp::~avb_interface_descriptor_response_imp() {}
 
@@ -53,7 +52,8 @@ uint64_t STDCALL avb_interface_descriptor_response_imp::mac_addr()
 {
     uint64_t mac_addr;
     utility::convert_eui48_to_uint64(&buffer[position +
-                                     JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE_OFFSET_MAC_ADDRESS], mac_addr);
+                                             JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE_OFFSET_MAC_ADDRESS],
+                                     mac_addr);
     return mac_addr;
 }
 uint16_t STDCALL avb_interface_descriptor_response_imp::interface_flags()
@@ -63,7 +63,7 @@ uint16_t STDCALL avb_interface_descriptor_response_imp::interface_flags()
 uint64_t STDCALL avb_interface_descriptor_response_imp::clock_identity()
 {
     return jdksavdecc_uint64_get(buffer, position +
-                                 JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE_OFFSET_CLOCK_IDENTITY);
+                                             JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE_OFFSET_CLOCK_IDENTITY);
 }
 uint8_t STDCALL avb_interface_descriptor_response_imp::priority1()
 {

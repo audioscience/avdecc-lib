@@ -38,7 +38,7 @@ namespace avdecc_lib
 class memory_object_descriptor_response_imp : public memory_object_descriptor_response, public virtual descriptor_response_base_imp
 {
 public:
-    memory_object_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
+    memory_object_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
     virtual ~memory_object_descriptor_response_imp();
 
     uint8_t * STDCALL object_name();
