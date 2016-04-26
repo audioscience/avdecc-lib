@@ -67,10 +67,9 @@ public:
     void * get_notify_id(void);
 
 private:
-
-    /**
-     * Wait states.
-     */
+    ///
+    /// Wait states.
+    ///
     enum wait_states
     {
         wait_idle,   /// idle state

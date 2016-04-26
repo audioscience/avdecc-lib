@@ -42,9 +42,9 @@ namespace avdecc_lib
     class audio_cluster_descriptor : public virtual descriptor_base
     {
     public:
-        /**
-         * \return the audio_cluster descriptor response class.
-         */
+        ///
+        /// \return the audio_cluster descriptor response class.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual audio_cluster_descriptor_response * STDCALL get_audio_cluster_response() = 0;
     };
 }

@@ -58,9 +58,9 @@ public:
     uint16_t STDCALL number_of_controls();
     uint16_t STDCALL base_control();
 private:
-    /**
-     * Store the jack flags componenets of the JACK INPUT descriptor object in a vector.
-     */
+    ///
+    /// Store the jack flags componenets of the JACK INPUT descriptor object in a vector.
+    ////
     void jack_flags_init();
 };
 }

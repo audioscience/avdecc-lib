@@ -54,17 +54,17 @@ public:
     virtual bool set_value(std::string value_str) = 0;
     virtual void get_completion_options(std::set<std::string> &options) = 0;
 
-    /**
-     * The get_ functions return the first matching value.
-     */
+    ///
+    /// The get_ functions return the first matching value.
+    ///
     virtual int get_value_int() const;
     virtual uint32_t get_value_uint() const;
     virtual std::string get_value_str() const;
 
-    /**
-     * The get_all_ functions return all matching values where an argument has
-     * matched more than once
-     */
+    ///
+    /// The get_all_ functions return all matching values where an argument has
+    /// matched more than once
+    ///
     virtual size_t get_all_value_count() const = 0;
     virtual std::vector<int> get_all_value_int() const;
     virtual std::vector<uint32_t> get_all_value_uint() const;

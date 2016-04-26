@@ -63,29 +63,29 @@ public:
 
     virtual ~log();
 
-    /**
-     * Update the base log level for messages to be logged by the logging callback.
-     */
+    ///
+    /// Update the base log level for messages to be logged by the logging callback.
+    ///
     void set_log_level(int32_t new_log_level);
 
-    /**
-     * AVDECC LIB modules call this function for logging purposes.
-     */
+    ///
+    /// AVDECC LIB modules call this function for logging purposes.
+    ///
     void post_log_msg(int32_t log_level, const char *fmt,...);
 
-    /**
-     * Release sempahore so that log callback function is called.
-     */
+    ///
+    /// Release sempahore so that log callback function is called.
+    ///
     virtual void post_log_event() = 0;
 
-    /**
-     * Change the logging callback function to a new logging callback function.
-     */
+    ///
+    /// Change the logging callback function to a new logging callback function.
+    ///
     void set_log_callback(void (*new_log_callback) (void *, int32_t, const char *, int32_t), void *);
 
-    /**
-     * Get the number of missed logs that exceeds the log buffer count.
-     */
+    ///
+    /// Get the number of missed logs that exceeds the log buffer count.
+    ///
     virtual uint32_t missed_log_event_count();
 };
 }

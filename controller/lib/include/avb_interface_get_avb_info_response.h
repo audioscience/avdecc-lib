@@ -39,40 +39,40 @@ namespace avdecc_lib
     public:
         virtual ~avb_interface_get_avb_info_response() {};
 
-        /**
-         * \return the ClockIdentity of the current IEEE Std 802.1AS-2011 grandmaster as elected on this AVB Interface.
-         */
+        ///
+        /// \return the ClockIdentity of the current IEEE Std 802.1AS-2011 grandmaster as elected on this AVB Interface.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_gptp_grandmaster_id() = 0;
 
-        /**
-         * \return the propagation delay in nanoseconds as reported by the IEEE Std 802.1AS-2011 pDelay mechanism.
-         */
+        ///
+        /// \return the propagation delay in nanoseconds as reported by the IEEE Std 802.1AS-2011 pDelay mechanism.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_propagation_delay() = 0;
 
-        /**
-         * \return the domainNumber of the current IEEE Std 802.1AS-2011 grandmaster as elected on this AVB Interface.
-         */
+        ///
+        /// \return the domainNumber of the current IEEE Std 802.1AS-2011 grandmaster as elected on this AVB Interface.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL get_gptp_domain_number() = 0;
 
-        /**
-         * \return the number of mappings present in the msrp_mappings field.
-         */
+        ///
+        /// \return the number of mappings present in the msrp_mappings field.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_msrp_mappings_count() = 0;
 
-        /**
-         * \return True if the IEEE Std 802.1AS-2011 variable asCapable is set on this interface.
-         */
+        ///
+        /// \return True if the IEEE Std 802.1AS-2011 variable asCapable is set on this interface.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_avb_info_flags_as_capable() = 0;
 
-        /**
-         * \return True if the interface has the IEEE Std 802.1AS- 2011 functionality enabled.
-         */
+        ///
+        /// \return True if the interface has the IEEE Std 802.1AS- 2011 functionality enabled.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_avb_info_flags_gptp_enabled() = 0;
 
-        /**
-         * \return True if the interface has the IEEE Std 802.1Q- 2011 Clause 35,
-         *  “Stream Reservation Protocol (SRP)” functionality enabled.
-         */
+        ///
+        /// \return True if the interface has the IEEE Std 802.1Q- 2011 Clause 35,
+        ///  “Stream Reservation Protocol (SRP)” functionality enabled.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_avb_info_flags_srp_enabled() = 0;
     };
 }

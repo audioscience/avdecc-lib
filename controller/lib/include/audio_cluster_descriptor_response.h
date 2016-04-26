@@ -42,60 +42,60 @@ namespace avdecc_lib
     {
     public:
         virtual ~audio_cluster_descriptor_response() {};
-        /**
-         * \return The localized string reference pointing to the localized descriptor name.
-         */
+        ///
+        /// \return The localized string reference pointing to the localized descriptor name.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL localized_description() = 0;
 
-        /**
-         * \return The descriptor type for the signal source of the cluster.
-         */
+        ///
+        /// \return The descriptor type for the signal source of the cluster.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_type() = 0;
 
-        /**
-         * \return The descriptor index for the signal source of the cluster.
-         */
+        ///
+        /// \return The descriptor index for the signal source of the cluster.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_index() = 0;
 
-        /**
-         * \return The index of the output of the signal source of the cluster. For a signal type of
-         *	       Signal Splitter or Signal Demultiplexer, this is which output of the object it is
-         *	       being source from, for a signal type of Matrix, this is the column the signal is
-         *	       from and for any other signal type this is 0.
-         */
+        ///
+        /// \return The index of the output of the signal source of the cluster. For a signal type of
+        ///	       Signal Splitter or Signal Demultiplexer, this is which output of the object it is
+        ///	       being source from, for a signal type of Matrix, this is the column the signal is
+        ///	       from and for any other signal type this is 0.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL signal_output() = 0;
 
-        /**
-         * \return The latency in nanoseconds between the timing reference plane and the opposite end
-         *	       of the currently selected signal path. This does not include any latency added by a
-         *	       delay control. The path latency is used to inform smart Controllers of the extra
-         *	       latency to get the samples to the output, so that output across multiple entries
-         *	       can be sample aligned.
-         */
+        ///
+        /// \return The latency in nanoseconds between the timing reference plane and the opposite end
+        ///	       of the currently selected signal path. This does not include any latency added by a
+        ///	       delay control. The path latency is used to inform smart Controllers of the extra
+        ///	       latency to get the samples to the output, so that output across multiple entries
+        ///	       can be sample aligned.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL path_latency() = 0;
 
-        /**
-         * \return The block latency of the Audio Cluster. For an Aduio Cluster attached to a Stream Port Input,
-         *	       this is the latency in nanoseconds between the reference plane and the output of the cluster. For
-         *	       an Audio Cluster attached to a Stream Port Output, this is the latency in nanoseconds between the
-         *	       output of the previous block's output and the reference plane. The previous block is the object
-         *	       identified by the signal type and signal index fields.
-         */
+        ///
+        /// \return The block latency of the Audio Cluster. For an Aduio Cluster attached to a Stream Port Input,
+        ///	       this is the latency in nanoseconds between the reference plane and the output of the cluster. For
+        ///	       an Audio Cluster attached to a Stream Port Output, this is the latency in nanoseconds between the
+        ///	       output of the previous block's output and the reference plane. The previous block is the object
+        ///	       identified by the signal type and signal index fields.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL block_latency() = 0;
 
-        /**
-         * \return The number of channels within the cluster.
-         */
+        ///
+        /// \return The number of channels within the cluster.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL channel_count() = 0;
 
-        /**
-         * The format for each channel of this cluster, all channels within the cluster have the same format.
-         *
-         * \return 0x00 (IEC 60958) for IEC 60958 encoded Audio Cluster. \n
-         *	       0x40 (MBLA) for Multi-bit Linear Audio. \n
-         *	       0x80 (MIDI) for MIDI data. \n
-         *	       0x88 (SMPTE) for SMPTE data.
-         */
+        ///
+        /// The format for each channel of this cluster, all channels within the cluster have the same format.
+        ///
+        /// \return 0x00 (IEC 60958) for IEC 60958 encoded Audio Cluster. \n
+        ///	       0x40 (MBLA) for Multi-bit Linear Audio. \n
+        ///	       0x80 (MIDI) for MIDI data. \n
+        ///	       0x88 (SMPTE) for SMPTE data.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t STDCALL format() = 0;
     };
 }

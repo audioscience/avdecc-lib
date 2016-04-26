@@ -38,49 +38,49 @@ namespace avdecc_lib
     {
     public:
         virtual ~stream_output_get_tx_connection_response() {};
-        /**
-         * \return The stream id field used to identify and transfer the associated stream ID where suitable
-         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
-         */
+        ///
+        /// \return The stream id field used to identify and transfer the associated stream ID where suitable
+        ///         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_connection_stream_id() = 0;
 
-        /**
-         * \return The Talker unique ID used to uniquely identify the stream source of the AVDECC Talker
-         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
-         */
+        ///
+        /// \return The Talker unique ID used to uniquely identify the stream source of the AVDECC Talker
+        ///         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_talker_unique_id() = 0;
 
-        /**
-         * \return The Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener
-         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
-         */
+        ///
+        /// \return The Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener
+        ///         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_listener_unique_id() = 0;
 
-        /**
-         * \return The Listener entity ID of the stream sink of the AVDECC Talker
-         *         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
-         */
+        ///
+        /// \return The Listener entity ID of the stream sink of the AVDECC Talker
+        ///         after sending a GET_TX_CONNECTION command and receiving a response back for the command.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_connection_listener_entity_id() = 0;
 
-        /**
-         * \return The stream destination MAC address used to convey the destination MAC address for a stream
-         *         from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
-         *         sending a GET_TX_CONNECTION command and receiving a response back for the command.
-         */
+        ///
+        /// \return The stream destination MAC address used to convey the destination MAC address for a stream
+        ///         from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
+        ///         sending a GET_TX_CONNECTION command and receiving a response back for the command.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_tx_connection_stream_dest_mac() = 0;
 
-        /**
-         * \return The connection count used by the state commands to return the number of connections an AVDECC Talker
-         *         thinks it has on its stream source after sending a GET_TX_CONNECTION command and receiving a response
-         *         back for the command.
-         */
+        ///
+        /// \return The connection count used by the state commands to return the number of connections an AVDECC Talker
+        ///         thinks it has on its stream source after sending a GET_TX_CONNECTION command and receiving a response
+        ///         back for the command.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_connection_count() = 0;
 
-        /**
-         * \return The stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
-         *         or from either to the AVDECC Controller after sending a GET_TX_CONNECTION command and receiving a response
-         *         back for the command.
-         */
+        ///
+        /// \return The stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
+        ///         or from either to the AVDECC Controller after sending a GET_TX_CONNECTION command and receiving a response
+        ///         back for the command.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_tx_connection_stream_vlan_id() = 0;
     };
 }

@@ -46,18 +46,18 @@ namespace avdecc_lib
     {
     public:
         virtual ~stream_port_output_get_audio_map_response() {};
-        /**
-         * \return The GET_AUDIO_MAP response map_index.
-         */
+        ///
+        /// \return The GET_AUDIO_MAP response map_index.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t map_index() = 0;
 
-        /**
-         * \return The number of mappings contained in a GET_AUDIO_MAP response.
-         */
+        ///
+        /// \return The number of mappings contained in a GET_AUDIO_MAP response.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t number_of_mappings() = 0;
-        /**
-         * \return The audio mapping by index after sending a GET_AUDIO_MAP command.
-         */
+        ///
+        /// \return The audio mapping by index after sending a GET_AUDIO_MAP command.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL mapping(size_t index, struct stream_port_output_audio_mapping &map) = 0;
     };
 }

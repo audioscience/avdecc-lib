@@ -44,30 +44,30 @@ namespace avdecc_lib
     class entity_descriptor : public virtual descriptor_base
     {
     public:
-
-        /**
-         * \return the entity descriptor response class.
-         */
+        ///
+        /// \return the entity descriptor response class.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor_response * STDCALL get_entity_response() = 0;
-        /**
-         * \return The number of Configuration descriptors.
-         * \see configurations_count()
-         */
+
+        ///
+        /// \return The number of Configuration descriptors.
+        /// \see configurations_count()
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL config_desc_count() = 0;
 
-        /**
-         * \return The corresponding Configuration descriptor by index.
-         */
+        ///
+        /// \return The corresponding Configuration descriptor by index.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index) = 0;
 
-        /**
-         * Send a SET_CONFIFURATION command to change the current configuration of the AVDECC Entity.
-         */
+        ///
+        /// Send a SET_CONFIFURATION command to change the current configuration of the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_config_cmd() = 0;
 
-        /**
-         * Send a GET_CONFIGURATION command to get the current configuration of the AVDECC Entity.
-         */
+        ///
+        /// Send a GET_CONFIGURATION command to get the current configuration of the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_config_cmd() = 0;
     };
 }

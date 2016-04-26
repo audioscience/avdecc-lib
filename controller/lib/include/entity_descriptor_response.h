@@ -42,96 +42,96 @@ namespace avdecc_lib
     {
     public:
         virtual ~entity_descriptor_response() {};
-        /**
-         * \return The Entity ID of the AVDECC Entity.
-         */
+        ///
+        /// \return The Entity ID of the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL entity_id() = 0;
 
-        /**
-         * \return The AVDECC Entity model id for the AVDECC Entity.
-         */
+        ///
+        /// \return The AVDECC Entity model id for the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL entity_model_id() = 0;
 
-        /**
-         * \return The capabilities of the AVDECC Entity.
-         */
+        ///
+        /// \return The capabilities of the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL entity_capabilities() = 0;
 
-        /**
-         * \return The number of Output Streams the AVDECC Entity has. This is also the number
-         *	       of STREAM_OUTPUT descriptors the AVDECC Entity has for Output Streams.
-         */
+        ///
+        /// \return The number of Output Streams the AVDECC Entity has. This is also the number
+        ///	       of STREAM_OUTPUT descriptors the AVDECC Entity has for Output Streams.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL talker_stream_sources() = 0;
 
-        /**
-         * \return The AVDECC Talker capabilities of the AVDECC Entity.
-         */
+        ///
+        /// \return The AVDECC Talker capabilities of the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL talker_capabilities() = 0;
 
-        /**
-         * \return The number of Input Streams the AVDECC Entity has. This is also the number
-         *         of STREAM_INPUT descriptors the AVDECC Entity has for Input Streams.
-         */
+        ///
+        /// \return The number of Input Streams the AVDECC Entity has. This is also the number
+        ///         of STREAM_INPUT descriptors the AVDECC Entity has for Input Streams.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL listener_stream_sinks() = 0;
 
-        /**
-         * \return The AVDECC Listener capabilities of the AVDECC Entity.
-         */
+        ///
+        /// \return The AVDECC Listener capabilities of the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL listener_capabilities() = 0;
 
-        /**
-         * \return The AVDECC Controller capabilities of the AVDECC Entity.
-         */
+        ///
+        /// \return The AVDECC Controller capabilities of the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL controller_capabilities() = 0;
 
-        /**
-         * \return The available index of the AVDECC Entity.
-         */
+        ///
+        /// \return The available index of the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL available_index() = 0;
 
-        /**
-         * \return The association ID for the AVDECC Entity.
-         */
+        ///
+        /// \return The association ID for the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL association_id() = 0;
 
-        /**
-         * \return The name of the AVDECC Entity. This may be user set through the use of a SET_NAME command.
-         */
+        ///
+        /// \return The name of the AVDECC Entity. This may be user set through the use of a SET_NAME command.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL entity_name() = 0;
 
-        /**
-         * \return The localized string reference pointing to the localized vendor name.
-         */
+        ///
+        /// \return The localized string reference pointing to the localized vendor name.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL vendor_name_string() = 0;
 
-        /**
-         * \return The localized string reference pointing to the localized model name.
-         */
+        ///
+        /// \return The localized string reference pointing to the localized model name.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL model_name_string() = 0;
 
-        /**
-         * \return The firmware version of the AVDECC Entity.
-         */
+        ///
+        /// \return The firmware version of the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL firmware_version() = 0;
 
-        /**
-         * \return The group name of the AVDECC Entity. This may be user set through the use of a SET_NAME command.
-         */
+        ///
+        /// \return The group name of the AVDECC Entity. This may be user set through the use of a SET_NAME command.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL group_name() = 0;
 
-        /**
-         * \return The serial number of the AVDECC Entity.
-         */
+        ///
+        /// \return The serial number of the AVDECC Entity.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint8_t * STDCALL serial_number() = 0;
 
-        /**
-         * \return The number of Configurations the device has. A device is required to have at least 1 Configuration.
-         */
+        ///
+        /// \return The number of Configurations the device has. A device is required to have at least 1 Configuration.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL configurations_count() = 0;
 
-        /**
-         * \return The index of the currently set Configuration.
-         */
+        ///
+        /// \return The index of the currently set Configuration.
+        ///
         AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL current_configuration() = 0;
     };
 }

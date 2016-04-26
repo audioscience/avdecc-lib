@@ -77,34 +77,34 @@ public:
         else
             return nullptr;
     };
-    /**
-     * Replace the frame for counters/commands.
-     */
+    ///
+    /// Replace the frame for counters/commands.
+    ///
     virtual void STDCALL replace_frame(const uint8_t *frame, ssize_t pos, size_t size);
 
-    /**
-     * Replace the frame for descriptors.
-     */
+    ///
+    /// Replace the frame for descriptors.
+    ///
     virtual void STDCALL replace_desc_frame(const uint8_t *frame, ssize_t pos, size_t size);
 
-    /**
-     * Get the flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
-     */
+    ///
+    /// Get the flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
+    ///
     virtual uint32_t STDCALL acquire_entity_flags();
 
-    /**
-     * Get the owner id after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
-     */
+    ///
+    /// Get the owner id after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
+    ///
     virtual uint64_t STDCALL acquire_entity_owner_entity_id();
 
-    /**
-     * Get the flags after sending a LOCK_ENTITY command and receiving a response back for the command.
-     */
+    ///
+    /// Get the flags after sending a LOCK_ENTITY command and receiving a response back for the command.
+    ///
     virtual uint32_t STDCALL lock_entity_flags();
 
-    /**
-     * Get the locked entity id after sending a LOCK_ENTITY command and receiving a response back for the command.
-     */
+    ///
+    /// Get the locked entity id after sending a LOCK_ENTITY command and receiving a response back for the command.
+    ///
     virtual uint64_t STDCALL lock_entity_locked_entity_id();
 
     virtual int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag);

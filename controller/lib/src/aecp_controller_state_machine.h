@@ -48,40 +48,39 @@ public:
     aecp_controller_state_machine();
 
     ~aecp_controller_state_machine();
-
-    /**
-     * Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
-     */
+    ///
+    /// Initialize and fill Ethernet frame payload with Ethernet frame information for AEM commands.
+    ///
     int ether_frame_init(uint64_t end_station_mac, struct jdksavdecc_frame *cmd_frame, uint16_t len);
 
-    /**
-     * Initialize and fill Ethernet frame payload with 1722 AECP Header information.
-     */
+    ///
+    /// Initialize and fill Ethernet frame payload with 1722 AECP Header information.
+    ///
     void common_hdr_init(int message_type, struct jdksavdecc_frame *cmd_frame, uint64_t target_entity_id, uint32_t cd_len);
 
-    /**
-     * Process the Send Command state of the AEM Controller State Machine.
-     */
+    ///
+    /// Process the Send Command state of the AEM Controller State Machine.
+    ///
     int state_send_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *cmd_frame);
 
-    /**
-     * Process the Received Unsolicited state of the AEM Controller State Machine.
-     */
+    ///
+    /// Process the Received Unsolicited state of the AEM Controller State Machine.
+    ///
     int state_rcvd_unsolicited(struct jdksavdecc_frame *cmd_frame);
 
-    /**
-     * Process the Received Response state of the AEM Controller State Machine.
-     */
+    ///
+    /// Process the Received Response state of the AEM Controller State Machine.
+    ///
     int state_rcvd_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame);
 
-    /**
-    * Check timeout for the inflight commands.
-    */
+    ///
+    /// Check timeout for the inflight commands.
+    ///
     void tick();
 
-    /**
-     * Update inflight command for the response received.
-     */
+    ///
+    /// Update inflight command for the response received.
+    ///
     int update_inflight_for_rcvd_resp(void *&notification_id, uint32_t msg_type, bool u_field, struct jdksavdecc_frame *cmd_frame);
 
     int start_operation(void *&notification_id, uint16_t operation_id, uint16_t operation_type, const uint8_t *frame, ssize_t frame_len);
@@ -89,36 +88,36 @@ public:
 
     int update_operation_for_rcvd_resp(void *&notification_id, uint16_t operation_id, uint16_t percent_complete, struct jdksavdecc_frame *cmd_frame);
 
-    /**
-     * Check if the command with the corresponding notification id is already in the inflight command vector.
-     */
+    ///
+    /// Check if the command with the corresponding notification id is already in the inflight command vector.
+    ///
     bool is_inflight_cmd_with_notification_id(void *notification_id);
 
 private:
-    /**
-     * Transmit an AEM Command.
-     */
+    ///
+    /// Transmit an AEM Command.
+    ///
     int tx_cmd(void *notification_id, uint32_t notification_flag, struct jdksavdecc_frame *cmd_frame, bool resend);
 
-    /**
-     * Handle the receipt and processing of a received unsolicited response for a command sent.
-     */
+    ///
+    /// Handle the receipt and processing of a received unsolicited response for a command sent.
+    ///
     int proc_unsolicited(struct jdksavdecc_frame *cmd_frame);
 
-    /**
-     * Handle the receipt and processing of a received response for a command sent.
-     */
+    ///
+    /// Handle the receipt and processing of a received response for a command sent.
+    ///
     int proc_resp(void *&notification_id, struct jdksavdecc_frame *cmd_frame);
 
-    /**
-     * Notify the application that a command has timed out and the retry has timed out and the
-     * inflight command is removed from the inflight list.
-     */
+    ///
+    /// Notify the application that a command has timed out and the retry has timed out and the
+    /// inflight command is removed from the inflight list.
+    ///
     void state_timeout(uint32_t inflight_cmd_index);
 
-    /**
-     * Call notification or post_log_msg callback function for the command sent or response received.
-     */
+    ///
+    /// Call notification or post_log_msg callback function for the command sent or response received.
+    ///
     int callback(void *notification_id, uint32_t notification_flag, uint8_t *frame);
 };
 
