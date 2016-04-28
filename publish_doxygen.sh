@@ -13,7 +13,7 @@ git clone -b gh-pages "${REPO_PATH}" --single-branch ${BUILD_PATH}
 
 # Create HTML directory
 cd ${BUILD_PATH}
-mkdir -p HTML_PATH
+mkdir -p ${HTML_PATH}
 cd -
 
 doxygen Doxyfile-public_lib
