@@ -19,5 +19,4 @@ env: BUILD_KERNEL=3.13.0-36-generic
 install:
 script:
   - ./travis.sh
-  - ls
   - if [ "$TRAVIS_BRANCH" = "staging" ]; then ./publish_doxygen.sh; fi
