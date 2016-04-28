@@ -140,5 +140,148 @@ namespace utility
     /// Convert an eui48 value to uint64_t.
     ///
     AVDECC_CONTROLLER_LIB32_API void convert_eui48_to_uint64(const uint8_t value[6], uint64_t & new_value);
+
+    /* 6 byte mac address in network byte order */
+    class MacAddr
+    {
+    public:
+        unsigned char byte1;
+        unsigned char byte2;
+        unsigned char byte3;
+        unsigned char byte4;
+        unsigned char byte5;
+        unsigned char byte6;
+        static const int strlen = 18;
+
+        MacAddr(void) : byte1(0), byte2(0), byte3(0), byte4(0), byte5(0), byte6(0) {}
+        MacAddr(unsigned char a, unsigned char b,
+                unsigned char c, unsigned char d,
+                unsigned char e, unsigned char f) : byte1(a), byte2(b), byte3(c), byte4(d), byte5(e), byte6(f) {}
+        MacAddr(uint64_t mac_val) : byte1((mac_val >> 40) & 0XFF),
+                                    byte2((mac_val >> 32) & 0xFF),
+                                    byte3((mac_val >> 24) & 0xFF),
+                                    byte4((mac_val >> 16) & 0xFF),
+                                    byte5((mac_val >> 8) & 0XFF),
+                                    byte6((mac_val & 0XFF)) {}
+        MacAddr(const char * p) { fromstring(p); }
+
+        void tostring(char * p, char d = ':') const;
+        bool fromstring(const char * p);
+
+        bool operator==(const MacAddr & a) const
+        {
+            return byte1 == a.byte1 && byte2 == a.byte2 &&
+                   byte3 == a.byte3 && byte4 == a.byte4 &&
+                   byte5 == a.byte5 && byte6 == a.byte6;
+        }
+        bool operator!=(const MacAddr & a) const
+        {
+            return !operator==(a);
+        }
+        unsigned char & operator[](int a)
+        {
+            switch (a)
+            {
+            case 0:
+                return byte1;
+            case 1:
+                return byte2;
+            case 2:
+                return byte3;
+            case 3:
+                return byte4;
+            case 4:
+                return byte5;
+            }
+            return byte6;
+        }
+        unsigned char getByte(int a) const
+        {
+            switch (a)
+            {
+            case 0:
+                return byte1;
+            case 1:
+                return byte2;
+            case 2:
+                return byte3;
+            case 3:
+                return byte4;
+            case 4:
+                return byte5;
+            }
+            return byte6;
+        }
+    };
+    inline bool MacAddr::fromstring(const char * p)
+    {
+        // must be of the form "n:n:n:n:n:n" where 0<=n<=FF in hexidecimal
+        int i = 0; // index of byte currently being scanned
+        int j = 0; // count of characters scanned for current byte
+        int n = 0; // value of current byte;
+        bool valid = true;
+        while (i < 6)
+        {
+            if (*p >= '0' && *p <= '9')
+            {
+                n = 16 * n + *p - '0';
+                j++;
+            }
+            else if (*p >= 'a' && *p <= 'f')
+            {
+                n = 16 * n + 10 + *p - 'a';
+                j++;
+            }
+            else if (*p >= 'A' && *p <= 'F')
+            {
+                n = 16 * n + 10 + *p - 'A';
+                j++;
+            }
+            else
+            {
+                if (!j)
+                {
+                    // need at least one hex char per byte
+                    valid = false;
+                }
+                if (n >= 0 && n <= 255)
+                {
+                    operator[](i++) = n;
+                    n = 0;
+                    j = 0;
+                }
+                else
+                {
+                    break;
+                }
+                if (*p != ':' && *p != '.')
+                    break;
+            }
+            p++;
+        };
+        if (i < 6)
+            valid = false;
+        return valid;
+    }
+    inline void MacAddr::tostring(char * p, char d) const
+    {
+        char digits[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        int i = 0;
+        int n;
+
+        for (i = 0; i < 6; i++)
+        {
+            n = getByte(i);
+            *p = digits[n / 16];
+            p++;
+            *p = digits[n % 16];
+            p++;
+            if (i < 5)
+                *p = d;
+            else
+                *p = 0;
+            p++;
+        }
+    }
 }
 }
