@@ -38,54 +38,54 @@
 
 namespace avdecc_lib
 {
-    adp::adp(const uint8_t *frame, size_t frame_len)
-    {
-        adp_frame = (uint8_t *)malloc(frame_len * sizeof(uint8_t));
-        memcpy(adp_frame, frame, frame_len);
+adp::adp(const uint8_t * frame, size_t frame_len)
+{
+    adp_frame = (uint8_t *)malloc(frame_len * sizeof(uint8_t));
+    memcpy(adp_frame, frame, frame_len);
 
-        proc_adpdu_returned = proc_adpdu(frame, frame_len);
-        
-        if(proc_adpdu_returned < 0)
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "ADP update error");
-            exit(EXIT_FAILURE);
-        }
+    proc_adpdu_returned = proc_adpdu(frame, frame_len);
+
+    if (proc_adpdu_returned < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "ADP update error");
+        exit(EXIT_FAILURE);
+    }
+}
+
+adp::~adp()
+{
+    free(adp_frame); // Free allocated memory for frame from the heap
+}
+
+int adp::proc_adpdu(const uint8_t * frame, size_t frame_len)
+{
+    frame_read_returned = jdksavdecc_frame_read(&cmd_frame, frame, 0, frame_len);
+
+    if (frame_read_returned < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "frame_read error");
+        return -1;
     }
 
-    adp::~adp()
+    adpdu_read_returned = jdksavdecc_adpdu_read(&adpdu, frame, ETHER_HDR_SIZE, frame_len);
+
+    if (adpdu_read_returned < 0)
     {
-        free(adp_frame); // Free allocated memory for frame from the heap
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "adpdu_read error");
+        return -1;
     }
 
-    int adp::proc_adpdu(const uint8_t *frame, size_t frame_len)
-    {
-        frame_read_returned = jdksavdecc_frame_read(&cmd_frame, frame, 0, frame_len);
+    return 0;
+}
 
-        if(frame_read_returned < 0)
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "frame_read error");
-            return -1;
-        }
+struct jdksavdecc_eui64 adp::get_controller_entity_id()
+{
+    uint64_t mac_entity_id = ((net_interface_ref->mac_addr() & UINT64_C(0xFFFFFF000000)) << 16) |
+                             UINT64_C(0x000000FFFF000000) |
+                             (net_interface_ref->mac_addr() & UINT64_C(0xFFFFFF));
+    struct jdksavdecc_eui64 entity_id;
+    jdksavdecc_eui64_init_from_uint64(&entity_id, mac_entity_id);
 
-        adpdu_read_returned = jdksavdecc_adpdu_read(&adpdu, frame, ETHER_HDR_SIZE, frame_len);
-
-        if(adpdu_read_returned < 0)
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "adpdu_read error");
-            return -1;
-        }
-
-        return 0;
-    }
-
-    struct jdksavdecc_eui64 adp::get_controller_entity_id()
-    {
-        uint64_t mac_entity_id = ((net_interface_ref->mac_addr() & UINT64_C(0xFFFFFF000000)) << 16) |
-                   UINT64_C(0x000000FFFF000000) |
-                   (net_interface_ref->mac_addr() & UINT64_C(0xFFFFFF));
-        struct jdksavdecc_eui64 entity_id;
-        jdksavdecc_eui64_init_from_uint64(&entity_id, mac_entity_id);
-
-        return entity_id;
-    }
+    return entity_id;
+}
 }

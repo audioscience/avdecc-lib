@@ -35,18 +35,18 @@
 
 namespace avdecc_lib
 {
-    class memory_object_descriptor_imp : public memory_object_descriptor, public virtual descriptor_base_imp
-    {
-    public:
-        memory_object_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-        virtual ~memory_object_descriptor_imp();
-        
-        memory_object_descriptor_response_imp *resp;
+class memory_object_descriptor_imp : public memory_object_descriptor, public virtual descriptor_base_imp
+{
+public:
+    memory_object_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    virtual ~memory_object_descriptor_imp();
 
-        memory_object_descriptor_response * STDCALL get_memory_object_response();
+    memory_object_descriptor_response_imp * resp;
 
-        int STDCALL start_operation_cmd(void *notification_id, uint16_t operation_type);
-        int proc_start_operation_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status, uint16_t &operation_id, uint16_t &operation_type);
-        int proc_operation_status_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status, uint16_t &operation_id, bool &is_operation_id_valid);
-    };
+    memory_object_descriptor_response * STDCALL get_memory_object_response();
+
+    int STDCALL start_operation_cmd(void * notification_id, uint16_t operation_type);
+    int proc_start_operation_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status, uint16_t & operation_id, uint16_t & operation_type);
+    int proc_operation_status_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status, uint16_t & operation_id, bool & is_operation_id_valid);
+};
 }

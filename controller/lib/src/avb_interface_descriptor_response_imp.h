@@ -35,26 +35,26 @@
 
 namespace avdecc_lib
 {
-    class avb_interface_descriptor_response_imp : public avb_interface_descriptor_response, public virtual descriptor_response_base_imp
-    {
-    public:
-        avb_interface_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~avb_interface_descriptor_response_imp();
+class avb_interface_descriptor_response_imp : public avb_interface_descriptor_response, public virtual descriptor_response_base_imp
+{
+public:
+    avb_interface_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
+    virtual ~avb_interface_descriptor_response_imp();
 
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL localized_description();
-        uint64_t STDCALL mac_addr();
-        uint16_t STDCALL interface_flags();
-        uint64_t STDCALL clock_identity();
-        uint8_t STDCALL priority1();
-        uint8_t STDCALL clock_class();
-        uint16_t STDCALL offset_scaled_log_variance();
-        uint8_t STDCALL clock_accuracy();
-        uint8_t STDCALL priority2();
-        uint8_t STDCALL domain_number();
-        uint8_t STDCALL log_sync_interval();
-        uint8_t STDCALL log_announce_interval();
-        uint8_t STDCALL log_pdelay_interval();
-        uint16_t STDCALL port_number();
-    };
+    uint8_t * STDCALL object_name();
+    uint16_t STDCALL localized_description();
+    uint64_t STDCALL mac_addr();
+    uint16_t STDCALL interface_flags();
+    uint64_t STDCALL clock_identity();
+    uint8_t STDCALL priority1();
+    uint8_t STDCALL clock_class();
+    uint16_t STDCALL offset_scaled_log_variance();
+    uint8_t STDCALL clock_accuracy();
+    uint8_t STDCALL priority2();
+    uint8_t STDCALL domain_number();
+    uint8_t STDCALL log_sync_interval();
+    uint8_t STDCALL log_announce_interval();
+    uint8_t STDCALL log_pdelay_interval();
+    uint16_t STDCALL port_number();
+};
 }

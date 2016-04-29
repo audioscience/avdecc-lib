@@ -35,25 +35,25 @@
 
 namespace avdecc_lib
 {
-    class clock_domain_descriptor_response_imp : public clock_domain_descriptor_response, public virtual descriptor_response_base_imp
+class clock_domain_descriptor_response_imp : public clock_domain_descriptor_response, public virtual descriptor_response_base_imp
 
-    {
-    private:
-        std::vector<uint16_t> clk_src_vec; // Store clock sources in a vector
-        /**
-         * Store the Clock Sources of the CLOCK DOMAIN object.
-         */
-        void store_clock_sources();
+{
+private:
+    std::vector<uint16_t> clk_src_vec; // Store clock sources in a vector
+    ///
+    /// Store the Clock Sources of the CLOCK DOMAIN object.
+    ///
+    void store_clock_sources();
 
-    public:
-        clock_domain_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~clock_domain_descriptor_response_imp();
+public:
+    clock_domain_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
+    virtual ~clock_domain_descriptor_response_imp();
 
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL localized_description();
-        uint16_t STDCALL clock_source_index();
-        uint16_t clock_sources_offset();
-        uint16_t STDCALL clock_sources_count();
-        uint16_t STDCALL get_clock_source_by_index(size_t clk_src_index);
-    };
+    uint8_t * STDCALL object_name();
+    uint16_t STDCALL localized_description();
+    uint16_t STDCALL clock_source_index();
+    uint16_t clock_sources_offset();
+    uint16_t STDCALL clock_sources_count();
+    uint16_t STDCALL get_clock_source_by_index(size_t clk_src_index);
+};
 }

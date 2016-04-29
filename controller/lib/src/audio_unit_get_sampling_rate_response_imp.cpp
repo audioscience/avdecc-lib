@@ -34,22 +34,22 @@
 
 namespace avdecc_lib
 {
-    audio_unit_get_sampling_rate_response_imp::audio_unit_get_sampling_rate_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos)
-    {
-        m_position = pos;
-        m_size = frame_len;
-        m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
-        memcpy(m_frame, frame, m_size);
-    }
-    
-    audio_unit_get_sampling_rate_response_imp::~audio_unit_get_sampling_rate_response_imp()
-    {
-        free(m_frame);
-    }
-    
-    uint32_t STDCALL audio_unit_get_sampling_rate_response_imp::get_sampling_rate_sampling_rate()
-    {
-        uint32_t sampling_rate;
-        return sampling_rate = jdksavdecc_aem_command_get_sampling_rate_response_get_sampling_rate(m_frame, m_position);
-    }
+audio_unit_get_sampling_rate_response_imp::audio_unit_get_sampling_rate_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos)
+{
+    m_position = pos;
+    m_size = frame_len;
+    m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
+    memcpy(m_frame, frame, m_size);
+}
+
+audio_unit_get_sampling_rate_response_imp::~audio_unit_get_sampling_rate_response_imp()
+{
+    free(m_frame);
+}
+
+uint32_t STDCALL audio_unit_get_sampling_rate_response_imp::get_sampling_rate_sampling_rate()
+{
+    uint32_t sampling_rate;
+    return sampling_rate = jdksavdecc_aem_command_get_sampling_rate_response_get_sampling_rate(m_frame, m_position);
+}
 }

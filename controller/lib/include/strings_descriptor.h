@@ -37,12 +37,12 @@
 
 namespace avdecc_lib
 {
-    class strings_descriptor : public virtual descriptor_base
-    {
-    public:
-        /**
-         * \return the strings descriptor response class.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual strings_descriptor_response * STDCALL get_strings_response() = 0;
-    };
+class strings_descriptor : public virtual descriptor_base
+{
+public:
+    ///
+    /// \return the strings descriptor response class.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual strings_descriptor_response * STDCALL get_strings_response() = 0;
+};
 }

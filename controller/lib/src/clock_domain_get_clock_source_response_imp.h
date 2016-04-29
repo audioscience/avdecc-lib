@@ -34,17 +34,17 @@
 
 namespace avdecc_lib
 {
-    class clock_domain_get_clock_source_response_imp : public clock_domain_get_clock_source_response
-    {
-    private:
-        uint8_t * m_frame;
-        size_t m_size;
-        ssize_t m_position;
-        
-    public:
-        clock_domain_get_clock_source_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~clock_domain_get_clock_source_response_imp();
-        
-        uint16_t STDCALL get_clock_source_clock_source_index();
-    };
+class clock_domain_get_clock_source_response_imp : public clock_domain_get_clock_source_response
+{
+private:
+    uint8_t * m_frame;
+    size_t m_size;
+    ssize_t m_position;
+
+public:
+    clock_domain_get_clock_source_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos);
+    virtual ~clock_domain_get_clock_source_response_imp();
+
+    uint16_t STDCALL get_clock_source_clock_source_index();
+};
 }

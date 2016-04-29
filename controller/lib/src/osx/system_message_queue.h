@@ -37,33 +37,33 @@ private:
     avdecc_lib_os::aSemaphore space_avail;
     avdecc_lib_os::aSemaphore data_avail;
     avdecc_lib_os::aCriticalSection critical_section_obj;
-    uint8_t *buf;
+    uint8_t * buf;
     int in_pos;
     int out_pos;
     int entry_count;
     int entry_size;
 
 public:
-    /**
-     * An empty constructor for system_message_queue
-     */
+    ///
+    /// An empty constructor for system_message_queue
+    ///
     system_message_queue();
 
-    /**
-     * Constructor for system_message_queue used for constructing an object with count and size.
-     */
+    ///
+    /// Constructor for system_message_queue used for constructing an object with count and size.
+    ///
     system_message_queue(int count, int size);
 
-    /**
-     * Destructor for system_message_queue used for destroying objects
-     */
+    ///
+    /// Destructor for system_message_queue used for destroying objects
+    ///
     ~system_message_queue();
 
-    void queue_push(void *thread_data);
+    void queue_push(void * thread_data);
 
-    void queue_pop_nowait(void *thread_data);
+    void queue_pop_nowait(void * thread_data);
 
-    void queue_pop_wait(void *thread_data);
+    void queue_pop_wait(void * thread_data);
 
     avdecc_lib_os::aSemaphore queue_data_available_object();
 };

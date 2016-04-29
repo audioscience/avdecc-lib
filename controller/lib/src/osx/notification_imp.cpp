@@ -34,91 +34,87 @@
 #include <signal.h>
 #include <unistd.h>
 
-
 #include "enumeration.h"
 #include "notification_imp.h"
 
 namespace avdecc_lib
 {
-    notification_imp *notification_imp_ref = new notification_imp();
+notification_imp * notification_imp_ref = new notification_imp();
 
-    notification_imp::notification_imp()
+notification_imp::notification_imp()
+{
+    notification_thread_init(); // Start notification thread
+}
+
+notification_imp::~notification_imp()
+{
+    post_notification_event();
+    sem_unlink("/notify_waiting_sem");
+}
+
+int notification_imp::notification_thread_init()
+{
+    int rc;
+
+    sem_unlink("/notify_waiting_sem");
+
+    if ((notify_waiting = sem_open("/notify_waiting_sem", O_CREAT | O_EXCL, 0644, 0)) == SEM_FAILED)
     {
-        notification_thread_init(); // Start notification thread
+        perror("sem_open");
+        exit(-1);
     }
 
-    notification_imp::~notification_imp()
+    rc = pthread_create(&h_thread, NULL, &notification_imp::dispatch_thread, (void *)this);
+    if (rc)
     {
-        post_notification_event();
-        sem_unlink("/notify_waiting_sem");
+        printf("ERROR; return code from pthread_create() is %d\n", rc);
+        exit(-1);
     }
 
-    int notification_imp::notification_thread_init()
+    return 0;
+}
+
+void * notification_imp::dispatch_thread(void * param)
+{
+    return ((notification_imp *)param)->dispatch_callbacks();
+}
+
+void * notification_imp::dispatch_callbacks(void)
+{
+    int status;
+
+    while (true)
     {
-        int rc;
+        status = sem_wait(notify_waiting);
 
-        sem_unlink("/notify_waiting_sem");
-
-        if ((notify_waiting = sem_open("/notify_waiting_sem", O_CREAT | O_EXCL, 0644, 0)) == SEM_FAILED)
+        if (status == -1)
         {
-            perror("sem_open");
-            exit(-1);
+            perror("sem error");
         }
 
-        rc = pthread_create(&h_thread, NULL, &notification_imp::dispatch_thread, (void *)this);
-        if (rc)
+        if ((write_index - read_index) > 0)
         {
-            printf("ERROR; return code from pthread_create() is %d\n", rc);
-            exit(-1);
+            notification_callback(user_obj,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_type,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].entity_id,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_status,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id);
+            read_index++;
         }
-
-        return 0;
-    }
-
-    void * notification_imp::dispatch_thread(void * param)
-    {
-        return ((notification_imp *)param)->dispatch_callbacks();
-
-    }
-
-
-    void * notification_imp::dispatch_callbacks(void)
-    {
-        int status;
-
-        while (true)
+        else
         {
-            status = sem_wait(notify_waiting);
-            
-            if(status == -1)
-            {
-                perror("sem error");
-            }
-
-            if((write_index - read_index) > 0)
-            {
-                notification_callback(user_obj,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_type,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].entity_id,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_status,
-                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_id
-                                     );
-                read_index++;
-            }
-            else
-            {
-                break;
-            }
+            break;
         }
-
-        return 0;
     }
 
-    void notification_imp::post_notification_event()
-    {
-        sem_post(notify_waiting);
-    }
+    return 0;
+}
+
+void notification_imp::post_notification_event()
+{
+    sem_post(notify_waiting);
+}
 }

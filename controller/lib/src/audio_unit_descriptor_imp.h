@@ -36,21 +36,21 @@
 
 namespace avdecc_lib
 {
-    class audio_unit_descriptor_imp : public audio_unit_descriptor, public virtual descriptor_base_imp
-    {
-    public:
-        audio_unit_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-        virtual ~audio_unit_descriptor_imp();
-        
-        audio_unit_descriptor_response_imp *resp;
-        audio_unit_get_sampling_rate_response_imp *sampling_rate_resp;
+class audio_unit_descriptor_imp : public audio_unit_descriptor, public virtual descriptor_base_imp
+{
+public:
+    audio_unit_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    virtual ~audio_unit_descriptor_imp();
 
-        audio_unit_descriptor_response * STDCALL get_audio_unit_response();
-        audio_unit_get_sampling_rate_response * STDCALL get_audio_unit_get_sampling_rate_response();
-        int STDCALL send_set_sampling_rate_cmd(void *notification_id, uint32_t new_sampling_rate);
-        int proc_set_sampling_rate_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
+    audio_unit_descriptor_response_imp * resp;
+    audio_unit_get_sampling_rate_response_imp * sampling_rate_resp;
 
-        int STDCALL send_get_sampling_rate_cmd(void *notification_id);
-        int proc_get_sampling_rate_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
-    };
+    audio_unit_descriptor_response * STDCALL get_audio_unit_response();
+    audio_unit_get_sampling_rate_response * STDCALL get_audio_unit_get_sampling_rate_response();
+    int STDCALL send_set_sampling_rate_cmd(void * notification_id, uint32_t new_sampling_rate);
+    int proc_set_sampling_rate_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
+
+    int STDCALL send_get_sampling_rate_cmd(void * notification_id);
+    int proc_get_sampling_rate_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
+};
 }

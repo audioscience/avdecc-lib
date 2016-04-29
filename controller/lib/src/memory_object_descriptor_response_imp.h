@@ -35,20 +35,20 @@
 
 namespace avdecc_lib
 {
-    class memory_object_descriptor_response_imp : public memory_object_descriptor_response, public virtual descriptor_response_base_imp
-    {
-    public:
-        memory_object_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~memory_object_descriptor_response_imp();
+class memory_object_descriptor_response_imp : public memory_object_descriptor_response, public virtual descriptor_response_base_imp
+{
+public:
+    memory_object_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
+    virtual ~memory_object_descriptor_response_imp();
 
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL localized_description();
-        uint16_t STDCALL memory_object_type();
-        uint16_t STDCALL target_descriptor_type();
-        uint16_t STDCALL target_descriptor_index();
-        uint64_t STDCALL start_address();
-        uint64_t STDCALL maximum_length();
-        uint64_t STDCALL length();
-        const char * STDCALL memory_object_type_to_str();
-    };
+    uint8_t * STDCALL object_name();
+    uint16_t STDCALL localized_description();
+    uint16_t STDCALL memory_object_type();
+    uint16_t STDCALL target_descriptor_type();
+    uint16_t STDCALL target_descriptor_index();
+    uint64_t STDCALL start_address();
+    uint64_t STDCALL maximum_length();
+    uint64_t STDCALL length();
+    const char * STDCALL memory_object_type_to_str();
+};
 }

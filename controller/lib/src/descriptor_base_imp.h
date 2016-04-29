@@ -43,146 +43,145 @@
 
 namespace avdecc_lib
 {
-    class end_station_imp;
-    class response_frame;
+class end_station_imp;
+class response_frame;
 
-    class descriptor_base_imp : public virtual descriptor_base
+class descriptor_base_imp : public virtual descriptor_base
+{
+protected:
+    descriptor_response_base_imp * resp_base;
+    descriptor_base_get_name_response_imp * get_name_resp;
+    end_station_imp * base_end_station_imp_ref;
+    std::vector<descriptor_field_imp *> m_fields;
+    response_frame * resp_ref;
+    uint16_t desc_type;
+    uint16_t desc_index;
+
+public:
+    descriptor_base_imp(end_station_imp * base, const uint8_t * frame, size_t size, ssize_t pos);
+    virtual ~descriptor_base_imp();
+
+    uint16_t STDCALL descriptor_type() const;
+    uint16_t STDCALL descriptor_index() const;
+    virtual uint16_t STDCALL localized_description();
+
+    size_t STDCALL field_count() const
     {
-    protected:
-        descriptor_response_base_imp *resp_base;
-        descriptor_base_get_name_response_imp *get_name_resp;
-        end_station_imp *base_end_station_imp_ref;
-        std::vector<descriptor_field_imp *>m_fields;
-        response_frame *resp_ref;
-        uint16_t desc_type;
-        uint16_t desc_index;
-
-    public:
-        descriptor_base_imp(end_station_imp *base, const uint8_t *frame, size_t size, ssize_t pos);
-        virtual ~descriptor_base_imp();
-
-        uint16_t STDCALL descriptor_type() const;
-        uint16_t STDCALL descriptor_index() const;
-        virtual uint16_t STDCALL localized_description();
-
-        size_t STDCALL field_count() const
-        {
-            return m_fields.size();
-        };
-
-        descriptor_field * STDCALL field(size_t index) const
-        {
-            if (index < m_fields.size())
-                return m_fields.at(index);
-            else
-                return nullptr;
-        };
-        /**
-         * Replace the frame for counters/commands.
-         */
-        virtual void STDCALL replace_frame(const uint8_t *frame, ssize_t pos, size_t size);
-        
-        /**
-         * Replace the frame for descriptors.
-         */
-        virtual void STDCALL replace_desc_frame(const uint8_t *frame, ssize_t pos, size_t size);
-
-        /**
-         * Get the flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
-         */
-        virtual uint32_t STDCALL acquire_entity_flags();
-
-        /**
-         * Get the owner id after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
-         */
-        virtual uint64_t STDCALL acquire_entity_owner_entity_id();
-
-        /**
-         * Get the flags after sending a LOCK_ENTITY command and receiving a response back for the command.
-         */
-        virtual uint32_t STDCALL lock_entity_flags();
-
-        /**
-         * Get the locked entity id after sending a LOCK_ENTITY command and receiving a response back for the command.
-         */
-        virtual uint64_t STDCALL lock_entity_locked_entity_id();
-
-        virtual int STDCALL send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag);
-        virtual int proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
-
-        int default_send_acquire_entity_cmd(descriptor_base_imp *desc_base_imp_ref, void *notification_id, uint32_t acquire_entity_flag);
-        int default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response &aem_cmd_acquire_entity_resp,
-                                             void *&notification_id,
-                                             const uint8_t *frame,
-                                             size_t frame_len,
-                                             int &status);
-
-        virtual int STDCALL send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag);
-        virtual int proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
-
-        int default_send_lock_entity_cmd(descriptor_base_imp *descriptor_base_imp_ref, void *notification_id, uint32_t lock_entity_flag);
-        int default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response &aem_cmd_lock_entity_resp,
-                                          void *&notification_id,
-                                          const uint8_t *frame,
-                                          size_t frame_len,
-                                          int &status);
-
-        virtual int STDCALL send_reboot_cmd(void *notification_id);
-        virtual int proc_reboot_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status);
-
-        int default_send_reboot_cmd(descriptor_base_imp *descriptor_base_imp_ref, void *notification_id);
-        int default_proc_reboot_resp(struct jdksavdecc_aem_command_reboot_response &aem_cmd_reboot_resp,
-                                     void *&notification_id,
-                                     const uint8_t *frame,
-                                     size_t frame_len,
-                                     int &status);
-
-        virtual int STDCALL send_set_name_cmd(void *notification_id,
-                                              uint16_t name_index,
-                                              uint16_t config_index,
-                                              const struct avdecc_lib_name_string64 * new_name);
-        virtual int proc_set_name_resp(void *&notification_id,
-                                       const uint8_t *frame,
-                                       size_t frame_len,
-                                       int &status);
-
-        int default_send_set_name_cmd(descriptor_base_imp *desc_base_imp_ref,
-                                      void *notification_id,
-                                      uint16_t name_index,
-                                      uint16_t config_index,
-                                      const struct avdecc_lib_name_string64 * name);
-
-        int default_proc_set_name_resp(struct jdksavdecc_aem_command_set_name_response &aem_cmd_set_name_resp,
-                                       void *&notification_id,
-                                       const uint8_t *frame,
-                                       size_t frame_len,
-                                       int &status);
-
-        virtual int STDCALL send_get_name_cmd(void *notification_id,
-                                              uint16_t name_index,
-                                              uint16_t config_index);
-        
-        virtual int proc_get_name_resp(void *&notification_id,
-                                       const uint8_t *frame,
-                                       size_t frame_len,
-                                       int &status);
-        
-        int default_send_get_name_cmd(descriptor_base_imp *desc_base_imp_ref,
-                                      void *notification_id,
-                                      uint16_t name_index,
-                                     uint16_t config_index);
-        
-        int default_proc_get_name_resp(struct jdksavdecc_aem_command_get_name_response &aem_cmd_get_name_resp,
-                                       void *&notification_id,
-                                       const uint8_t *frame,
-                                       size_t frame_len,
-                                       int &status);
-        
-        descriptor_response_base * STDCALL get_descriptor_response();
-        descriptor_base_get_name_response * STDCALL get_name_response();
+        return m_fields.size();
     };
 
-    bool operator== (const descriptor_base_imp &n1, const descriptor_base_imp &n2);
-    bool operator< (const descriptor_base_imp &n1, const descriptor_base_imp &n2);
-}
+    descriptor_field * STDCALL field(size_t index) const
+    {
+        if (index < m_fields.size())
+            return m_fields.at(index);
+        else
+            return nullptr;
+    };
+    ///
+    /// Replace the frame for counters/commands.
+    ///
+    virtual void STDCALL replace_frame(const uint8_t * frame, ssize_t pos, size_t size);
 
+    ///
+    /// Replace the frame for descriptors.
+    ///
+    virtual void STDCALL replace_desc_frame(const uint8_t * frame, ssize_t pos, size_t size);
+
+    ///
+    /// Get the flags after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
+    ///
+    virtual uint32_t STDCALL acquire_entity_flags();
+
+    ///
+    /// Get the owner id after sending a ACQUIRE_ENTITY command and receiving a response back for the command.
+    ///
+    virtual uint64_t STDCALL acquire_entity_owner_entity_id();
+
+    ///
+    /// Get the flags after sending a LOCK_ENTITY command and receiving a response back for the command.
+    ///
+    virtual uint32_t STDCALL lock_entity_flags();
+
+    ///
+    /// Get the locked entity id after sending a LOCK_ENTITY command and receiving a response back for the command.
+    ///
+    virtual uint64_t STDCALL lock_entity_locked_entity_id();
+
+    virtual int STDCALL send_acquire_entity_cmd(void * notification_id, uint32_t acquire_entity_flag);
+    virtual int proc_acquire_entity_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
+
+    int default_send_acquire_entity_cmd(descriptor_base_imp * desc_base_imp_ref, void * notification_id, uint32_t acquire_entity_flag);
+    int default_proc_acquire_entity_resp(struct jdksavdecc_aem_command_acquire_entity_response & aem_cmd_acquire_entity_resp,
+                                         void *& notification_id,
+                                         const uint8_t * frame,
+                                         size_t frame_len,
+                                         int & status);
+
+    virtual int STDCALL send_lock_entity_cmd(void * notification_id, uint32_t lock_entity_flag);
+    virtual int proc_lock_entity_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
+
+    int default_send_lock_entity_cmd(descriptor_base_imp * descriptor_base_imp_ref, void * notification_id, uint32_t lock_entity_flag);
+    int default_proc_lock_entity_resp(struct jdksavdecc_aem_command_lock_entity_response & aem_cmd_lock_entity_resp,
+                                      void *& notification_id,
+                                      const uint8_t * frame,
+                                      size_t frame_len,
+                                      int & status);
+
+    virtual int STDCALL send_reboot_cmd(void * notification_id);
+    virtual int proc_reboot_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
+
+    int default_send_reboot_cmd(descriptor_base_imp * descriptor_base_imp_ref, void * notification_id);
+    int default_proc_reboot_resp(struct jdksavdecc_aem_command_reboot_response & aem_cmd_reboot_resp,
+                                 void *& notification_id,
+                                 const uint8_t * frame,
+                                 size_t frame_len,
+                                 int & status);
+
+    virtual int STDCALL send_set_name_cmd(void * notification_id,
+                                          uint16_t name_index,
+                                          uint16_t config_index,
+                                          const struct avdecc_lib_name_string64 * new_name);
+    virtual int proc_set_name_resp(void *& notification_id,
+                                   const uint8_t * frame,
+                                   size_t frame_len,
+                                   int & status);
+
+    int default_send_set_name_cmd(descriptor_base_imp * desc_base_imp_ref,
+                                  void * notification_id,
+                                  uint16_t name_index,
+                                  uint16_t config_index,
+                                  const struct avdecc_lib_name_string64 * name);
+
+    int default_proc_set_name_resp(struct jdksavdecc_aem_command_set_name_response & aem_cmd_set_name_resp,
+                                   void *& notification_id,
+                                   const uint8_t * frame,
+                                   size_t frame_len,
+                                   int & status);
+
+    virtual int STDCALL send_get_name_cmd(void * notification_id,
+                                          uint16_t name_index,
+                                          uint16_t config_index);
+
+    virtual int proc_get_name_resp(void *& notification_id,
+                                   const uint8_t * frame,
+                                   size_t frame_len,
+                                   int & status);
+
+    int default_send_get_name_cmd(descriptor_base_imp * desc_base_imp_ref,
+                                  void * notification_id,
+                                  uint16_t name_index,
+                                  uint16_t config_index);
+
+    int default_proc_get_name_resp(struct jdksavdecc_aem_command_get_name_response & aem_cmd_get_name_resp,
+                                   void *& notification_id,
+                                   const uint8_t * frame,
+                                   size_t frame_len,
+                                   int & status);
+
+    descriptor_response_base * STDCALL get_descriptor_response();
+    descriptor_base_get_name_response * STDCALL get_name_response();
+};
+
+bool operator==(const descriptor_base_imp & n1, const descriptor_base_imp & n2);
+bool operator<(const descriptor_base_imp & n1, const descriptor_base_imp & n2);
+}

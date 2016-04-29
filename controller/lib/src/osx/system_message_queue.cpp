@@ -72,7 +72,7 @@ system_message_queue::system_message_queue(int count, int size)
 
 system_message_queue::~system_message_queue()
 {
-    if(buf)
+    if (buf)
     {
         free(buf);
     }
@@ -80,17 +80,17 @@ system_message_queue::~system_message_queue()
     sem_unlink("/data_avail_sem");
 }
 
-void system_message_queue::queue_push(void *thread_data)
+void system_message_queue::queue_push(void * thread_data)
 {
     sem_wait(space_avail);
     pthread_mutex_lock(&critical_section_obj);
     memcpy(&buf[in_pos * entry_size], thread_data, entry_size);
     in_pos = (in_pos + 1) % entry_count;
-    pthread_mutex_unlock (&critical_section_obj);
+    pthread_mutex_unlock(&critical_section_obj);
     sem_post(data_avail);
 }
 
-void system_message_queue::queue_pop_nowait(void *thread_data)
+void system_message_queue::queue_pop_nowait(void * thread_data)
 {
     pthread_mutex_lock(&critical_section_obj);
     memcpy(thread_data, &buf[out_pos * entry_size], entry_size);
@@ -99,7 +99,7 @@ void system_message_queue::queue_pop_nowait(void *thread_data)
     sem_post(space_avail);
 }
 
-void system_message_queue::queue_pop_wait(void *thread_data)
+void system_message_queue::queue_pop_wait(void * thread_data)
 {
     sem_wait(data_avail);
     queue_pop_nowait(thread_data);

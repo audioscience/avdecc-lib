@@ -33,74 +33,73 @@
 
 namespace avdecc_lib
 {
-    log_imp *log_imp_ref = new log_imp();
+log_imp * log_imp_ref = new log_imp();
 
-    log_imp::log_imp()
+log_imp::log_imp()
+{
+    logging_thread_init(); // Start log thread
+}
+
+log_imp::~log_imp() {}
+
+int log_imp::logging_thread_init()
+{
+    poll_events[LOG_EVENT] = CreateSemaphore(NULL, 0, 32767, NULL);
+    poll_events[KILL_EVENT] = CreateEvent(NULL, FALSE, FALSE, NULL);
+
+    h_thread = CreateThread(NULL,                // Default security descriptor
+                            0,                   // Default stack size
+                            proc_logging_thread, // Point to the start address of the thread
+                            this,                // Data to be passed to the thread
+                            0,                   // Flag controlling the creation of the thread
+                            &thread_id           // Thread identifier
+                            );
+
+    if (h_thread == NULL)
     {
-        logging_thread_init(); // Start log thread
+        exit(EXIT_FAILURE);
     }
 
-    log_imp::~log_imp() {}
+    return 0;
+}
 
-    int log_imp::logging_thread_init()
+DWORD WINAPI log_imp::proc_logging_thread(LPVOID lpParam)
+{
+    return reinterpret_cast<log_imp *>(lpParam)->proc_logging_thread_callback();
+}
+
+int log_imp::proc_logging_thread_callback()
+{
+    DWORD dwEvent;
+
+    while (true)
     {
-        poll_events[LOG_EVENT] = CreateSemaphore(NULL, 0, 32767, NULL);
-        poll_events[KILL_EVENT] = CreateEvent(NULL, FALSE, FALSE, NULL);
+        dwEvent = WaitForMultipleObjects(2, poll_events, FALSE, INFINITE);
 
-        h_thread = CreateThread(NULL, // Default security descriptor
-                                0, // Default stack size
-                                proc_logging_thread, // Point to the start address of the thread
-                                this, // Data to be passed to the thread
-                                0, // Flag controlling the creation of the thread
-                                &thread_id // Thread identifier
-                               );
-
-        if (h_thread == NULL)
+        if (dwEvent == (WAIT_OBJECT_0 + LOG_EVENT))
         {
-            exit(EXIT_FAILURE);
-        }
-
-        return 0;
-    }
-
-    DWORD WINAPI log_imp::proc_logging_thread(LPVOID lpParam)
-    {
-        return reinterpret_cast<log_imp *>(lpParam)->proc_logging_thread_callback();
-    }
-
-    int log_imp::proc_logging_thread_callback()
-    {
-        DWORD dwEvent;
-
-        while (true)
-        {
-            dwEvent = WaitForMultipleObjects(2, poll_events, FALSE, INFINITE);
-
-            if (dwEvent == (WAIT_OBJECT_0 + LOG_EVENT))
+            if ((write_index - read_index) > 0)
             {
-                if((write_index - read_index) > 0)
-                {
-                    callback_func(user_obj,
-                                  log_buf[read_index % LOG_BUF_COUNT].level,
-                                  log_buf[read_index % LOG_BUF_COUNT].msg,
-                                  log_buf[read_index % LOG_BUF_COUNT].time_stamp_ms
-                                 ); // Call callback function
+                callback_func(user_obj,
+                              log_buf[read_index % LOG_BUF_COUNT].level,
+                              log_buf[read_index % LOG_BUF_COUNT].msg,
+                              log_buf[read_index % LOG_BUF_COUNT].time_stamp_ms); // Call callback function
 
-                    read_index++;
-                }
-            }
-            else
-            {
-                SetEvent(poll_events[KILL_EVENT]);
-                break;
+                read_index++;
             }
         }
-
-        return 0;
+        else
+        {
+            SetEvent(poll_events[KILL_EVENT]);
+            break;
+        }
     }
 
-    void log_imp::post_log_event()
-    {
-        ReleaseSemaphore(poll_events[LOG_EVENT], 1, NULL);
-    }
+    return 0;
+}
+
+void log_imp::post_log_event()
+{
+    ReleaseSemaphore(poll_events[LOG_EVENT], 1, NULL);
+}
 }

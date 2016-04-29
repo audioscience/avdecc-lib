@@ -33,53 +33,53 @@
 
 namespace avdecc_lib
 {
-    system_message_queue::system_message_queue(int size)
-    {
-        entry_size = size;
-        data_avail = CreateSemaphore(NULL, 0, max_msgs, NULL);
-        InitializeCriticalSection(&critical_section_obj);
-    }
+system_message_queue::system_message_queue(int size)
+{
+    entry_size = size;
+    data_avail = CreateSemaphore(NULL, 0, max_msgs, NULL);
+    InitializeCriticalSection(&critical_section_obj);
+}
 
-    system_message_queue::~system_message_queue()
+system_message_queue::~system_message_queue()
+{
+    while (!m_msgs.empty())
     {
-        while (!m_msgs.empty())
-        {
-             m_msgs.pop_front();
-        }
-        CloseHandle(data_avail);
-        DeleteCriticalSection(&critical_section_obj);
-    }
-
-    void system_message_queue::queue_push(void *thread_data)
-    {
-        LONG count;
-        char *msg = new char[entry_size];
-        memcpy(msg, thread_data, entry_size);
-        EnterCriticalSection(&critical_section_obj);
-        m_msgs.push_back(msg);
-        LeaveCriticalSection(&critical_section_obj);
-        ReleaseSemaphore(data_avail, 1, &count);
-        // check for getting near the semaphore count limit
-        assert(count < (max_msgs - 16));
-    }
-
-    void system_message_queue::queue_pop_nowait(void *thread_data)
-    {
-        EnterCriticalSection(&critical_section_obj);
-        memcpy(thread_data, m_msgs.front(), entry_size);
-        delete [](m_msgs.front());
         m_msgs.pop_front();
-        LeaveCriticalSection(&critical_section_obj);
     }
+    CloseHandle(data_avail);
+    DeleteCriticalSection(&critical_section_obj);
+}
 
-    void system_message_queue::queue_pop_wait(void *thread_data)
-    {
-        WaitForSingleObject(data_avail, INFINITE);
-        queue_pop_nowait(thread_data);
-    }
+void system_message_queue::queue_push(void * thread_data)
+{
+    LONG count;
+    char * msg = new char[entry_size];
+    memcpy(msg, thread_data, entry_size);
+    EnterCriticalSection(&critical_section_obj);
+    m_msgs.push_back(msg);
+    LeaveCriticalSection(&critical_section_obj);
+    ReleaseSemaphore(data_avail, 1, &count);
+    // check for getting near the semaphore count limit
+    assert(count < (max_msgs - 16));
+}
 
-    HANDLE system_message_queue::queue_data_available_object()
-    {
-        return data_avail;
-    }
+void system_message_queue::queue_pop_nowait(void * thread_data)
+{
+    EnterCriticalSection(&critical_section_obj);
+    memcpy(thread_data, m_msgs.front(), entry_size);
+    delete[](m_msgs.front());
+    m_msgs.pop_front();
+    LeaveCriticalSection(&critical_section_obj);
+}
+
+void system_message_queue::queue_pop_wait(void * thread_data)
+{
+    WaitForSingleObject(data_avail, INFINITE);
+    queue_pop_nowait(thread_data);
+}
+
+HANDLE system_message_queue::queue_data_available_object()
+{
+    return data_avail;
+}
 }

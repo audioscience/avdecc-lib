@@ -37,14 +37,14 @@
 
 namespace avdecc_lib
 {
-    audio_map_descriptor_imp::audio_map_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
+audio_map_descriptor_imp::audio_map_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
-    audio_map_descriptor_imp::~audio_map_descriptor_imp() {}
-    
-    audio_map_descriptor_response * STDCALL audio_map_descriptor_imp::get_audio_map_response()
-    {
-        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-        return resp = new audio_map_descriptor_response_imp(resp_ref->get_desc_buffer(),
-                                                            resp_ref->get_desc_size(), resp_ref->get_desc_pos());
-    }
+audio_map_descriptor_imp::~audio_map_descriptor_imp() {}
+
+audio_map_descriptor_response * STDCALL audio_map_descriptor_imp::get_audio_map_response()
+{
+    std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+    return resp = new audio_map_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                        resp_ref->get_desc_size(), resp_ref->get_desc_pos());
+}
 }

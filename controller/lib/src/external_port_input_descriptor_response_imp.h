@@ -38,23 +38,24 @@
 
 namespace avdecc_lib
 {
-    class external_port_input_descriptor_response_imp : public external_port_input_descriptor_response, public virtual descriptor_base_imp, public virtual descriptor_response_base_imp
-    {
-    private:
-        struct jdksavdecc_descriptor_external_port desc;
-    public:
-        external_port_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~external_port_input_descriptor_response_imp();
-        
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL port_flags();
-        uint16_t STDCALL clock_domain_index();
-        uint16_t STDCALL number_of_controls();
-        uint16_t STDCALL base_control();
-        uint16_t STDCALL signal_type();
-        uint16_t STDCALL signal_index();
-        uint16_t STDCALL signal_output();
-        uint32_t STDCALL block_latency();
-        uint16_t STDCALL jack_index();
-    };
+class external_port_input_descriptor_response_imp : public external_port_input_descriptor_response, public virtual descriptor_base_imp, public virtual descriptor_response_base_imp
+{
+private:
+    struct jdksavdecc_descriptor_external_port desc;
+
+public:
+    external_port_input_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
+    virtual ~external_port_input_descriptor_response_imp();
+
+    uint8_t * STDCALL object_name();
+    uint16_t STDCALL port_flags();
+    uint16_t STDCALL clock_domain_index();
+    uint16_t STDCALL number_of_controls();
+    uint16_t STDCALL base_control();
+    uint16_t STDCALL signal_type();
+    uint16_t STDCALL signal_index();
+    uint16_t STDCALL signal_output();
+    uint32_t STDCALL block_latency();
+    uint16_t STDCALL jack_index();
+};
 }

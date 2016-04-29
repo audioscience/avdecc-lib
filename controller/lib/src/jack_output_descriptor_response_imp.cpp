@@ -35,57 +35,56 @@
 
 namespace avdecc_lib
 {
-    jack_output_descriptor_response_imp::jack_output_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-        descriptor_response_base_imp(frame, frame_len, pos)
-    {
-        jack_flags_init();
-    }
-    
-    jack_output_descriptor_response_imp::~jack_output_descriptor_response_imp() {}
-    
-    void jack_output_descriptor_response_imp::jack_flags_init()
-    {
-        jack_output_flags.clock_sync_source = jack_flags() >> 1 & 0x01;
-        jack_output_flags.captive = jack_flags() >> 2 & 0x01;
-    }
-    
-    uint8_t * STDCALL jack_output_descriptor_response_imp::object_name()
-    {
-        return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_JACK_OFFSET_OBJECT_NAME];
-    }
-    
-    uint16_t STDCALL jack_output_descriptor_response_imp::localized_description()
-    {
-        return jdksavdecc_descriptor_jack_get_localized_description(buffer, position);
-    }
-    
-    uint16_t STDCALL jack_output_descriptor_response_imp::jack_flags()
-    {
-        return jdksavdecc_descriptor_jack_get_jack_flags(buffer, position);
-    }
-    
-    uint16_t STDCALL jack_output_descriptor_response_imp::jack_flag_clock_sync_source()
-    {
-        return jack_output_flags.clock_sync_source;
-    }
-    
-    uint16_t STDCALL jack_output_descriptor_response_imp::jack_flag_captive()
-    {
-        return jack_output_flags.captive;
-    }
-    
-    uint16_t STDCALL jack_output_descriptor_response_imp::jack_type()
-    {
-        return jdksavdecc_descriptor_jack_get_jack_type(buffer, position);
-    }
-    
-    uint16_t STDCALL jack_output_descriptor_response_imp::number_of_controls()
-    {
-        return jdksavdecc_descriptor_jack_get_number_of_controls(buffer, position);
-    }
-    
-    uint16_t STDCALL jack_output_descriptor_response_imp::base_control()
-    {
-        return jdksavdecc_descriptor_jack_get_base_control(buffer, position);
-    }
+jack_output_descriptor_response_imp::jack_output_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos)
+{
+    jack_flags_init();
+}
+
+jack_output_descriptor_response_imp::~jack_output_descriptor_response_imp() {}
+
+void jack_output_descriptor_response_imp::jack_flags_init()
+{
+    jack_output_flags.clock_sync_source = jack_flags() >> 1 & 0x01;
+    jack_output_flags.captive = jack_flags() >> 2 & 0x01;
+}
+
+uint8_t * STDCALL jack_output_descriptor_response_imp::object_name()
+{
+    return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_JACK_OFFSET_OBJECT_NAME];
+}
+
+uint16_t STDCALL jack_output_descriptor_response_imp::localized_description()
+{
+    return jdksavdecc_descriptor_jack_get_localized_description(buffer, position);
+}
+
+uint16_t STDCALL jack_output_descriptor_response_imp::jack_flags()
+{
+    return jdksavdecc_descriptor_jack_get_jack_flags(buffer, position);
+}
+
+uint16_t STDCALL jack_output_descriptor_response_imp::jack_flag_clock_sync_source()
+{
+    return jack_output_flags.clock_sync_source;
+}
+
+uint16_t STDCALL jack_output_descriptor_response_imp::jack_flag_captive()
+{
+    return jack_output_flags.captive;
+}
+
+uint16_t STDCALL jack_output_descriptor_response_imp::jack_type()
+{
+    return jdksavdecc_descriptor_jack_get_jack_type(buffer, position);
+}
+
+uint16_t STDCALL jack_output_descriptor_response_imp::number_of_controls()
+{
+    return jdksavdecc_descriptor_jack_get_number_of_controls(buffer, position);
+}
+
+uint16_t STDCALL jack_output_descriptor_response_imp::base_control()
+{
+    return jdksavdecc_descriptor_jack_get_base_control(buffer, position);
+}
 }

@@ -34,21 +34,21 @@
 
 namespace avdecc_lib
 {
-    descriptor_base_get_name_response_imp::descriptor_base_get_name_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos)
-    {
-        m_position = pos;
-        m_size = frame_len;
-        m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
-        memcpy(m_frame, frame, m_size);
-    }
-    
-    descriptor_base_get_name_response_imp::~descriptor_base_get_name_response_imp()
-    {
-        free(m_frame);
-    }
-    
-    uint8_t * STDCALL descriptor_base_get_name_response_imp::get_name()
-    {
-        return (uint8_t *) &m_frame[m_position + JDKSAVDECC_AEM_COMMAND_GET_NAME_RESPONSE_OFFSET_NAME];
-    }
+descriptor_base_get_name_response_imp::descriptor_base_get_name_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos)
+{
+    m_position = pos;
+    m_size = frame_len;
+    m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
+    memcpy(m_frame, frame, m_size);
+}
+
+descriptor_base_get_name_response_imp::~descriptor_base_get_name_response_imp()
+{
+    free(m_frame);
+}
+
+uint8_t * STDCALL descriptor_base_get_name_response_imp::get_name()
+{
+    return (uint8_t *)&m_frame[m_position + JDKSAVDECC_AEM_COMMAND_GET_NAME_RESPONSE_OFFSET_NAME];
+}
 }

@@ -35,44 +35,42 @@
 
 namespace avdecc_lib
 {
-    class log_imp : public virtual log
-    {
-    private:
+class log_imp : public virtual log
+{
+private:
+    pthread_t h_thread;
+    sem_t * log_waiting;
 
-        pthread_t h_thread;
-        sem_t *log_waiting;
+public:
+    ///
+    /// An empty constructor for log_imp
+    ///
+    log_imp();
 
-    public:
-        /**
-         * An empty constructor for log_imp
-         */
-        log_imp();
+    ///
+    /// Destructor for log_imp used for destroying objects
+    ///
+    virtual ~log_imp();
 
-        /**
-         * Destructor for log_imp used for destroying objects
-         */
-        virtual ~log_imp();
+private:
+    ///
+    /// Create and initialize post_log_msg thread, event, and semaphore.
+    ///
+    int logging_thread_init();
 
-    private:
-        /**
-         * Create and initialize post_log_msg thread, event, and semaphore.
-         */
-        int logging_thread_init();
+    ///
+    /// Start of the post_log_msg thread used for post_log_msg purposes.
+    ///
+    static void * dispatch_thread(void * param);
 
-        /**
-         * Start of the post_log_msg thread used for post_log_msg purposes.
-         */
-        static void * dispatch_thread(void *param);
+    void * dispatch_callbacks(void);
 
-        void * dispatch_callbacks(void);
+public:
+    ///
+    /// Release sempahore so that log callback function is called.
+    ///
+    void post_log_event();
+};
 
-    public:
-        /**
-         * Release sempahore so that log callback function is called.
-         */
-        void post_log_event();
-    };
-
-    extern log_imp *log_imp_ref;
+extern log_imp * log_imp_ref;
 }
-

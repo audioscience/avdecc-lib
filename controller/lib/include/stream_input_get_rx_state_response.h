@@ -34,53 +34,53 @@
 
 namespace avdecc_lib
 {
-    class stream_input_get_rx_state_response
-    {
-    public:
-        virtual ~stream_input_get_rx_state_response(){};
-        /**
-         * \return The stream id field used to identify and transfer the associated stream ID where suitable
-         *         after sending a GET_RX_STATE command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_rx_state_stream_id() = 0;
-        
-        /**
-         * \return The Talker unique ID used to uniquely identify the stream source of the AVDECC Talker
-         *         after sending a GET_RX_STATE command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_talker_unique_id() = 0;
-        
-        /**
-         * \return The Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener
-         *         after sending a GET_RX_STATE command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_listener_unique_id() = 0;
-        
-        /**
-         * \return The stream destination MAC address used to convey the destination MAC address for a stream
-         *         from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
-         *         sending a GET_RX_STATE command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_rx_state_stream_dest_mac() = 0;
-        
-        /**
-         * \return The connection count used by the state commands to return the number of connections an AVDECC Talker
-         *         thinks it has on its stream source after sending a GET_RX_STATE command and receiving a response
-         *         back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_connection_count() = 0;
-        
-        /**
-         * \return The flags used to indicate attributes of the connection or saved state after sending a GET_RX_STATE
-         *         command and receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_flags() = 0;
-        
-        /**
-         * \return The stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
-         *         or from either to the AVDECC Controller after sending a GET_RX_STATE command and receiving a response
-         *         back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_stream_vlan_id() = 0;
-    };
+class stream_input_get_rx_state_response
+{
+public:
+    virtual ~stream_input_get_rx_state_response(){};
+    ///
+    /// \return The stream id field used to identify and transfer the associated stream ID where suitable
+    ///         after sending a GET_RX_STATE command and receiving a response back for the command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_rx_state_stream_id() = 0;
+
+    ///
+    /// \return The Talker unique ID used to uniquely identify the stream source of the AVDECC Talker
+    ///         after sending a GET_RX_STATE command and receiving a response back for the command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_talker_unique_id() = 0;
+
+    ///
+    /// \return The Listener unique ID used to uniquely identify the stream sink of the AVDECC Listener
+    ///         after sending a GET_RX_STATE command and receiving a response back for the command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_listener_unique_id() = 0;
+
+    ///
+    /// \return The stream destination MAC address used to convey the destination MAC address for a stream
+    ///         from the AVDECC Talker to the AVDECC Listener, or from either to the AVDECC Controller after
+    ///         sending a GET_RX_STATE command and receiving a response back for the command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_rx_state_stream_dest_mac() = 0;
+
+    ///
+    /// \return The connection count used by the state commands to return the number of connections an AVDECC Talker
+    ///         thinks it has on its stream source after sending a GET_RX_STATE command and receiving a response
+    ///         back for the command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_connection_count() = 0;
+
+    ///
+    /// \return The flags used to indicate attributes of the connection or saved state after sending a GET_RX_STATE
+    ///         command and receiving a response back for the command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_flags() = 0;
+
+    ///
+    /// \return The stream vlan id used to convey the VLAN ID for a stream from the AVDECC Talker to the AVDECC Listener,
+    ///         or from either to the AVDECC Controller after sending a GET_RX_STATE command and receiving a response
+    ///         back for the command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_rx_state_stream_vlan_id() = 0;
+};
 }

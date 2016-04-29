@@ -36,17 +36,17 @@
 
 namespace avdecc_lib
 {
-    class descriptor_field_flags_imp : public descriptor_field_flags
-    {
-    public:
-        descriptor_field_flags_imp(const char * name, uint32_t mask);
-        virtual ~descriptor_field_flags_imp();
+class descriptor_field_flags_imp : public descriptor_field_flags
+{
+public:
+    descriptor_field_flags_imp(const char * name, uint32_t mask);
+    virtual ~descriptor_field_flags_imp();
 
-        const char * STDCALL get_flag_name(void) const;
-        uint32_t STDCALL get_flag_mask(void) const;
-    private:
-        uint32_t m_mask;
-        const char *m_name;
-    };
+    const char * STDCALL get_flag_name(void) const;
+    uint32_t STDCALL get_flag_mask(void) const;
+
+private:
+    uint32_t m_mask;
+    const char * m_name;
+};
 }
-
