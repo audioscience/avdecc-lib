@@ -32,77 +32,77 @@
 namespace avdecc_lib
 {
 
-    cmd_wait_mgr::cmd_wait_mgr()
+cmd_wait_mgr::cmd_wait_mgr()
+{
+    state = wait_idle;
+}
+
+cmd_wait_mgr::~cmd_wait_mgr() {}
+
+int cmd_wait_mgr::set_primed_state(void * id)
+{
+    if (state != wait_idle)
+        return -1;
+    else
+    {
+        notify_id = id;
+        state = wait_primed;
+        return 0;
+    }
+}
+int cmd_wait_mgr::set_active_state(void)
+{
+    if (state != wait_primed)
+        return -1;
+    else
+    {
+        state = wait_active;
+        return 0;
+    }
+}
+int cmd_wait_mgr::set_idle_state(void)
+{
+    if (state != wait_active)
+        return -1;
+    else
     {
         state = wait_idle;
+        return 0;
     }
+}
 
-    cmd_wait_mgr::~cmd_wait_mgr() {}
+bool cmd_wait_mgr::match_id(void * id)
+{
+    return id == notify_id;
+}
 
-    int cmd_wait_mgr::set_primed_state(void * id)
-    {
-        if (state != wait_idle)
-            return -1;
-        else
-        {
-            notify_id = id;
-            state = wait_primed;
-            return 0;
-        }
-    }
-    int cmd_wait_mgr::set_active_state(void)
-    {
-        if (state != wait_primed)
-            return -1;
-        else
-        {
-            state = wait_active;
-            return 0;
-        }
-    }
-    int cmd_wait_mgr::set_idle_state(void)
-    {
-        if (state != wait_active)
-            return -1;
-        else
-        {
-            state = wait_idle;
-            return 0;
-        }
-    }
+void * cmd_wait_mgr::get_notify_id(void)
+{
+    return notify_id;
+}
 
-    bool cmd_wait_mgr::match_id(void * id)
-    {
-        return id == notify_id;
-    }
+bool cmd_wait_mgr::active_state(void)
+{
+    return state == wait_active;
+}
 
-    void * cmd_wait_mgr::get_notify_id(void)
-    {
-        return notify_id;
-    }
+bool cmd_wait_mgr::primed_state(void)
+{
+    return state == wait_primed;
+}
 
-    bool cmd_wait_mgr::active_state(void)
+int cmd_wait_mgr::set_completion_status(int status)
+{
+    if (state != wait_active)
+        return -1;
+    else
     {
-        return state == wait_active;
+        completion_status = status;
+        return 0;
     }
-
-    bool cmd_wait_mgr::primed_state(void)
-    {
-        return state == wait_primed;
-    }
-
-    int cmd_wait_mgr::set_completion_status(int status)
-    {
-        if (state != wait_active)
-            return -1;
-        else
-        {
-            completion_status = status;
-            return 0;
-        }
-    }
-    int cmd_wait_mgr::get_completion_status(void)
-    {
-        return completion_status;
-    }
+}
+int cmd_wait_mgr::get_completion_status(void)
+{
+    return completion_status;
+}
 }

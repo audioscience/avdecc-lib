@@ -35,22 +35,23 @@
 
 namespace avdecc_lib
 {
-    class stream_port_input_get_audio_map_response_imp : public stream_port_input_get_audio_map_response
-    {
-    private:
-        std::vector<struct stream_port_input_audio_mapping> maps; // Store maps in a vector
+class stream_port_input_get_audio_map_response_imp : public stream_port_input_get_audio_map_response
+{
+private:
+    std::vector<struct stream_port_input_audio_mapping> maps; // Store maps in a vector
 
-        uint8_t * m_frame;
-        size_t m_size;
-        ssize_t m_position;
-        
-        size_t offset;
-    public:
-        stream_port_input_get_audio_map_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~stream_port_input_get_audio_map_response_imp();
-        
-        uint16_t map_index();
-        uint16_t number_of_mappings();
-        int STDCALL mapping(size_t index, struct stream_port_input_audio_mapping &map);
-    };
+    uint8_t * m_frame;
+    size_t m_size;
+    ssize_t m_position;
+
+    size_t offset;
+
+public:
+    stream_port_input_get_audio_map_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos);
+    virtual ~stream_port_input_get_audio_map_response_imp();
+
+    uint16_t map_index();
+    uint16_t number_of_mappings();
+    int STDCALL mapping(size_t index, struct stream_port_input_audio_mapping & map);
+};
 }

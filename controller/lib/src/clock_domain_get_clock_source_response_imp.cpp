@@ -34,21 +34,21 @@
 
 namespace avdecc_lib
 {
-    clock_domain_get_clock_source_response_imp::clock_domain_get_clock_source_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos)
-    {
-        m_position = pos;
-        m_size = frame_len;
-        m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
-        memcpy(m_frame, frame, m_size);
-    }
-    
-    clock_domain_get_clock_source_response_imp::~clock_domain_get_clock_source_response_imp()
-    {
-        free(m_frame);
-    }
-    
-    uint16_t STDCALL clock_domain_get_clock_source_response_imp::get_clock_source_clock_source_index()
-    {
-        return jdksavdecc_aem_command_get_clock_source_response_get_clock_source_index(m_frame, m_position);
-    }
+clock_domain_get_clock_source_response_imp::clock_domain_get_clock_source_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos)
+{
+    m_position = pos;
+    m_size = frame_len;
+    m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
+    memcpy(m_frame, frame, m_size);
+}
+
+clock_domain_get_clock_source_response_imp::~clock_domain_get_clock_source_response_imp()
+{
+    free(m_frame);
+}
+
+uint16_t STDCALL clock_domain_get_clock_source_response_imp::get_clock_source_clock_source_index()
+{
+    return jdksavdecc_aem_command_get_clock_source_response_get_clock_source_index(m_frame, m_position);
+}
 }

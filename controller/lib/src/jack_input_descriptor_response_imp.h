@@ -35,33 +35,34 @@
 
 namespace avdecc_lib
 {
-    class jack_input_descriptor_response_imp : public jack_input_descriptor_response, public virtual descriptor_response_base_imp
+class jack_input_descriptor_response_imp : public jack_input_descriptor_response, public virtual descriptor_response_base_imp
+{
+private:
+    struct jack_input_desc_jack_flags
     {
-    private:        
-        struct jack_input_desc_jack_flags
-        {
-            bool clock_sync_source;
-            bool captive;
-        };
-        
-        struct jack_input_desc_jack_flags jack_input_flags;
-    public:
-        jack_input_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~jack_input_descriptor_response_imp();
-
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL localized_description();
-        uint16_t STDCALL jack_flags();
-        uint16_t STDCALL jack_flag_clock_sync_source();
-        uint16_t STDCALL jack_flag_captive();
-        uint16_t STDCALL jack_type();
-        uint16_t STDCALL number_of_controls();
-        uint16_t STDCALL base_control();
-    private:
-        /**
-         * Store the jack flags componenets of the JACK INPUT descriptor object in a vector.
-         */
-        void jack_flags_init();
+        bool clock_sync_source;
+        bool captive;
     };
-}
 
+    struct jack_input_desc_jack_flags jack_input_flags;
+
+public:
+    jack_input_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
+    virtual ~jack_input_descriptor_response_imp();
+
+    uint8_t * STDCALL object_name();
+    uint16_t STDCALL localized_description();
+    uint16_t STDCALL jack_flags();
+    uint16_t STDCALL jack_flag_clock_sync_source();
+    uint16_t STDCALL jack_flag_captive();
+    uint16_t STDCALL jack_type();
+    uint16_t STDCALL number_of_controls();
+    uint16_t STDCALL base_control();
+
+private:
+    ///
+    /// Store the jack flags componenets of the JACK INPUT descriptor object in a vector.
+    ///
+    void jack_flags_init();
+};
+}

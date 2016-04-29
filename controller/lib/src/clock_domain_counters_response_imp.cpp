@@ -33,55 +33,54 @@
 
 namespace avdecc_lib
 {
-    clock_domain_counters_response_imp::clock_domain_counters_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos)
+clock_domain_counters_response_imp::clock_domain_counters_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos)
+{
+    m_position = pos;
+    m_size = frame_len;
+    m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
+    memcpy(m_frame, frame, m_size);
+
+    m_counters_valid = jdksavdecc_uint32_get(m_frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_VALID);
+
+    for (int i = 0; i < 31; i++)
     {
-        m_position = pos;
-        m_size = frame_len;
-        m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
-        memcpy(m_frame, frame, m_size);
-        
-        m_counters_valid = jdksavdecc_uint32_get(m_frame, ETHER_HDR_SIZE
-                                                 + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_VALID);
-        
-        for(int i = 0; i<31; i++){
-            int r = jdksavdecc_uint32_read(&m_counters_block[i], frame, ETHER_HDR_SIZE
-                                       + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_BLOCK + 4 * i,
+        int r = jdksavdecc_uint32_read(&m_counters_block[i], frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_BLOCK + 4 * i,
                                        frame_len);
-            if (r < 0)
-                break;
-        }
+        if (r < 0)
+            break;
     }
-    
-    clock_domain_counters_response_imp::~clock_domain_counters_response_imp()
+}
+
+clock_domain_counters_response_imp::~clock_domain_counters_response_imp()
+{
+    free(m_frame);
+}
+
+uint32_t STDCALL clock_domain_counters_response_imp::get_counter_valid(int name)
+{
+    switch (name)
     {
-        free(m_frame);
+    case CLOCK_DOMAIN_LOCKED:
+        return m_counters_valid & 0x01;
+    case CLOCK_DOMAIN_UNLOCKED:
+        return m_counters_valid >> 1 & 0x01;
+    default:
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
     }
-    
-    uint32_t STDCALL clock_domain_counters_response_imp::get_counter_valid(int name)
+    return 0;
+}
+
+uint32_t STDCALL clock_domain_counters_response_imp::get_counter_by_name(int name)
+{
+    switch (name)
     {
-        switch(name)
-        {
-            case CLOCK_DOMAIN_LOCKED:
-                return m_counters_valid & 0x01;
-            case CLOCK_DOMAIN_UNLOCKED:
-                return m_counters_valid >> 1 & 0x01;
-            default:
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
-        }
-        return 0;
+    case CLOCK_DOMAIN_LOCKED:
+        return m_counters_block[0];
+    case CLOCK_DOMAIN_UNLOCKED:
+        return m_counters_block[1];
+    default:
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
     }
-    
-    uint32_t STDCALL clock_domain_counters_response_imp::get_counter_by_name(int name)
-    {
-        switch(name)
-        {
-            case CLOCK_DOMAIN_LOCKED:
-                return m_counters_block[0];
-            case CLOCK_DOMAIN_UNLOCKED:
-                return m_counters_block[1];
-            default:
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "counter name not found");
-        }
-        return 0;
-    }
+    return 0;
+}
 }

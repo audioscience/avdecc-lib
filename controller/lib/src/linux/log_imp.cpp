@@ -33,67 +33,65 @@
 
 namespace avdecc_lib
 {
-    log_imp *log_imp_ref = new log_imp();
+log_imp * log_imp_ref = new log_imp();
 
-    log_imp::log_imp()
+log_imp::log_imp()
+{
+    logging_thread_init(); // Start log thread
+}
+
+log_imp::~log_imp()
+{
+    // posting to sem without data causes the thread to terminate
+    post_log_event();
+}
+
+int log_imp::logging_thread_init()
+{
+    int rc;
+
+    sem_init(&log_waiting, 0, 0);
+
+    rc = pthread_create(&h_thread, NULL, &log_imp::dispatch_thread, (void *)this);
+    if (rc)
     {
-        logging_thread_init(); // Start log thread
+        printf("ERROR; return code from pthread_create() is %d\n", rc);
+        exit(-1);
     }
 
-    log_imp::~log_imp()
+    return 0;
+}
+
+void * log_imp::dispatch_thread(void * param)
+{
+    return ((log_imp *)param)->dispatch_callbacks();
+}
+
+void * log_imp::dispatch_callbacks(void)
+{
+    while (true)
     {
-        /* posting to sem without data causes the thread to terminate */
-        post_log_event();
-    }
+        sem_wait(&log_waiting);
 
-    int log_imp::logging_thread_init()
-    {
-        int rc;
-
-        sem_init(&log_waiting, 0, 0);
-
-        rc = pthread_create(&h_thread, NULL, &log_imp::dispatch_thread, (void *)this);
-        if (rc)
+        if ((write_index - read_index) > 0)
         {
-            printf("ERROR; return code from pthread_create() is %d\n", rc);
-            exit(-1);
+            callback_func(user_obj,
+                          log_buf[read_index % LOG_BUF_COUNT].level,
+                          log_buf[read_index % LOG_BUF_COUNT].msg,
+                          log_buf[read_index % LOG_BUF_COUNT].time_stamp_ms);
+            read_index++;
         }
-
-        return 0;
-    }
-
-    void * log_imp::dispatch_thread(void *param)
-    {
-        return ((log_imp *)param)->dispatch_callbacks();
-    }
-
-    void * log_imp::dispatch_callbacks(void)
-    {
-        while (true)
+        else
         {
-            sem_wait(&log_waiting);
-
-            if((write_index - read_index) > 0)
-            {
-                callback_func(user_obj,
-                              log_buf[read_index % LOG_BUF_COUNT].level,
-                              log_buf[read_index % LOG_BUF_COUNT].msg,
-                              log_buf[read_index % LOG_BUF_COUNT].time_stamp_ms
-                             );
-                read_index++;
-            }
-            else
-            {
-                break;
-            }
+            break;
         }
-
-        return 0;
     }
 
-    void log_imp::post_log_event()
-    {
-        sem_post(&log_waiting);
-    }
+    return 0;
+}
 
+void log_imp::post_log_event()
+{
+    sem_post(&log_waiting);
+}
 }

@@ -36,17 +36,17 @@
 
 namespace avdecc_lib
 {
-    class descriptor_response_base_imp : public virtual descriptor_response_base
-    {
-    public:
-        descriptor_response_base_imp(const uint8_t *frame, size_t frame_len, size_t pos);
-        virtual ~descriptor_response_base_imp();
-        
-        virtual uint8_t * STDCALL object_name();
+class descriptor_response_base_imp : public virtual descriptor_response_base
+{
+public:
+    descriptor_response_base_imp(const uint8_t * frame, size_t frame_len, size_t pos);
+    virtual ~descriptor_response_base_imp();
 
-    protected:
-        uint8_t * buffer;
-        size_t position;
-        size_t frame_size;
-    };
+    virtual uint8_t * STDCALL object_name();
+
+protected:
+    uint8_t * buffer;
+    size_t position;
+    size_t frame_size;
+};
 }

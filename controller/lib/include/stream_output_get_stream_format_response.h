@@ -34,14 +34,14 @@
 
 namespace avdecc_lib
 {
-    class stream_output_get_stream_format_response
-    {
-    public:
-        virtual ~stream_output_get_stream_format_response(){};
-        /**
-         * \return The stream format of a stream after sending a GET_STREAM_FORMAT command and
-         *	       receiving a response back for the command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_format() = 0;
-    };
+class stream_output_get_stream_format_response
+{
+public:
+    virtual ~stream_output_get_stream_format_response(){};
+    ///
+    /// \return The stream format of a stream after sending a GET_STREAM_FORMAT command and
+    ///	       receiving a response back for the command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_stream_format() = 0;
+};
 }

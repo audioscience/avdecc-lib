@@ -33,74 +33,73 @@
 
 namespace avdecc_lib
 {
-    class operation
+class operation
+{
+private:
+    struct jdksavdecc_frame cmd_frame;
+    uint32_t cmd_notification_flag;
+
+public:
+    uint16_t operation_id;
+    uint16_t operation_type;
+    uint16_t percent_complete;
+    void * cmd_notification_id;
+
+    operation(struct jdksavdecc_frame * frame,
+              uint16_t operation_id,
+              uint16_t operation_type,
+              void * notification_id,
+              uint32_t notification_flag)
+        : cmd_notification_flag(notification_flag), operation_id(operation_id), operation_type(operation_type), cmd_notification_id(notification_id)
     {
-    private:
-        struct jdksavdecc_frame cmd_frame;
-        uint32_t cmd_notification_flag;
+        cmd_frame = *frame;
+        percent_complete = 0;
+    }
 
-    public:
-        uint16_t operation_id;
-        uint16_t operation_type;
-        uint16_t percent_complete;
-        void *cmd_notification_id;
+    ~operation() {}
 
-        operation(struct jdksavdecc_frame *frame,
-                 uint16_t operation_id,
-                 uint16_t operation_type,
-                 void *notification_id,
-                 uint32_t notification_flag)
-                :  cmd_notification_flag(notification_flag), operation_id(operation_id), operation_type(operation_type), cmd_notification_id(notification_id)
-        {
-            cmd_frame = *frame;
-            percent_complete = 0;
-        }
-
-        ~operation() {}
-
-        inline struct jdksavdecc_frame frame()
-        {
-            return cmd_frame;
-        }
-
-        inline uint32_t notification_flag()
-        {
-            return cmd_notification_flag;
-        }
-    };
-
-    /*
-     * Class for use in STL find_if() call to find matching operation ID.
-     */
-    class operation_id_comp
+    inline struct jdksavdecc_frame frame()
     {
-    private:
-        uint16_t v;
+        return cmd_frame;
+    }
 
-    public:
-        operation_id_comp(uint16_t i) : v(i) { }
-
-        inline bool operator()(const operation & m) const
-        {
-            return m.operation_id == v;
-        }
-    };
-
-    /*
-     * Class for use in STL find_if() call to find matching notification ID.
-     */
-    class notification_comp
+    inline uint32_t notification_flag()
     {
-    private:
-        void * v;
+        return cmd_notification_flag;
+    }
+};
 
-    public:
-        notification_comp(void * p) : v(p) { }
+//
+// Class for use in STL find_if() call to find matching operation ID.
+//
+class operation_id_comp
+{
+private:
+    uint16_t v;
 
-        inline bool operator()(const operation & m) const
-        {
-            return m.cmd_notification_id == v;
-        }
-    };
+public:
+    operation_id_comp(uint16_t i) : v(i) {}
+
+    inline bool operator()(const operation & m) const
+    {
+        return m.operation_id == v;
+    }
+};
+
+//
+// Class for use in STL find_if() call to find matching notification ID.
+//
+class notification_comp
+{
+private:
+    void * v;
+
+public:
+    notification_comp(void * p) : v(p) {}
+
+    inline bool operator()(const operation & m) const
+    {
+        return m.cmd_notification_id == v;
+    }
+};
 }
-

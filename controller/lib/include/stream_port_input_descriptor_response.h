@@ -36,58 +36,57 @@
 
 namespace avdecc_lib
 {
-    class stream_port_input_descriptor_response : public virtual descriptor_response_base
-    {
-    public:
-        virtual ~stream_port_input_descriptor_response(){};
-        /**
-         * \return The descriptor index of the CLOCK DOMAIN descriptor describing the CLOCK DOMAIN for the port.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_domain_index() = 0;
-        
-        /**
-         * The flags describing the capabilities or features of the port.
-         *
-         * \return 1 (Clock Sync Source) if the port can be used as a clock synchronization source. \n
-         *	       2 (Async Sample Rate Conv) if the port has an asynchronous sample rate converter
-         *	         to convert sample rates between another CLOCK DOMAIN and the Unit's. \n
-         *	       3 (Sync Sample Rate Conv) if the port has a synchronous sample rate converter
-         *	         to convert between sample rates in the same CLOCK DOMAIN.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL port_flags() = 0;
-        
-        /**
-         * \return The number of controls within the port.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_controls() = 0;
-        
-        /**
-         * \return The index of the first Control descriptor.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_control() = 0;
-        
-        /**
-         * \return The number of clusters within the port. This corresponds to the number of Audio Cluster,
-         *	       Video Cluster, and Sensor Cluster descriptors which represent these clusters.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_clusters() = 0;
-        
-        /**
-         * \return The index of the first Audio Cluster, Video Cluster, or Sensor Cluster descriptor
-         *	       describing the clusters within the port.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_cluster() = 0;
-        
-        /**
-         * \return The number of map descriptors used to define the mapping between the stream and the port.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_maps() = 0;
-        
-        /**
-         * \return The index of the first Audio Map, Video Map, or Sensor Map, descriptor which defines
-         *	       the mappling between the stream and the port.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_map() = 0;
-    };
-}
+class stream_port_input_descriptor_response : public virtual descriptor_response_base
+{
+public:
+    virtual ~stream_port_input_descriptor_response(){};
+    ///
+    /// \return The descriptor index of the CLOCK DOMAIN descriptor describing the CLOCK DOMAIN for the port.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL clock_domain_index() = 0;
 
+    ///
+    /// The flags describing the capabilities or features of the port.
+    ///
+    /// \return 1 (Clock Sync Source) if the port can be used as a clock synchronization source. \n
+    ///	        2 (Async Sample Rate Conv) if the port has an asynchronous sample rate converter
+    ///	          to convert sample rates between another CLOCK DOMAIN and the Unit's. \n
+    ///	        3 (Sync Sample Rate Conv) if the port has a synchronous sample rate converter
+    ///	          to convert between sample rates in the same CLOCK DOMAIN.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL port_flags() = 0;
+
+    ///
+    /// \return The number of controls within the port.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_controls() = 0;
+
+    ///
+    /// \return The index of the first Control descriptor.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_control() = 0;
+
+    ///
+    /// \return The number of clusters within the port. This corresponds to the number of Audio Cluster,
+    ///	       Video Cluster, and Sensor Cluster descriptors which represent these clusters.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_clusters() = 0;
+
+    ///
+    /// \return The index of the first Audio Cluster, Video Cluster, or Sensor Cluster descriptor
+    ///	       describing the clusters within the port.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_cluster() = 0;
+
+    ///
+    /// \return The number of map descriptors used to define the mapping between the stream and the port.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL number_of_maps() = 0;
+
+    ///
+    /// \return The index of the first Audio Map, Video Map, or Sensor Map, descriptor which defines
+    ///	       the mappling between the stream and the port.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL base_map() = 0;
+};
+}

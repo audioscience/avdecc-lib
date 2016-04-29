@@ -36,7 +36,7 @@
 #include "descriptor_field_flags_imp.h"
 #include "descriptor_field_imp.h"
 
-static void delete_bitfield(avdecc_lib::descriptor_field_flags_imp *f)
+static void delete_bitfield(avdecc_lib::descriptor_field_flags_imp * f)
 {
     delete f;
 }
@@ -44,76 +44,73 @@ static void delete_bitfield(avdecc_lib::descriptor_field_flags_imp *f)
 namespace avdecc_lib
 {
 
-    descriptor_field_imp::descriptor_field_imp(const char * name, enum aem_desc_field_types the_type, void * v) :
-            m_name(name), m_value(v) , m_type(the_type)
-    {
-    }
-
-    descriptor_field_imp::~descriptor_field_imp()
-    {
-        std::for_each(m_fields.begin(), m_fields.end(), delete_bitfield);
-        m_fields.clear();
-    }
-
-    enum descriptor_field::aem_desc_field_types STDCALL descriptor_field_imp::get_type() const
-    {
-        return m_type;
-    }
-
-    void descriptor_field_imp::append_field(descriptor_field_flags_imp *bit_field)
-    {
-        m_fields.push_back(bit_field);
-    }
-
-    const char * STDCALL descriptor_field_imp::get_name() const
-    {
-        return m_name;
-    }
-
-    char * STDCALL descriptor_field_imp::get_char() const
-    {
-        assert(m_type == TYPE_CHAR);
-        return (char *)m_value;
-    }
-
-    uint16_t STDCALL descriptor_field_imp::get_uint16() const
-    {
-        assert(m_type == TYPE_UINT16);
-        return *(uint16_t *)m_value;
-    }
-
-    uint32_t STDCALL descriptor_field_imp::get_uint32() const
-    {
-        assert(m_type == TYPE_UINT32);
-        return *(uint32_t *)m_value;
-    }
-
-    uint32_t STDCALL descriptor_field_imp::get_flags() const
-    {
-        uint32_t flag;
-        assert((m_type == TYPE_FLAGS16) || (m_type == TYPE_FLAGS16));
-        if (m_type == TYPE_FLAGS16)
-        {
-            flag = (uint32_t)*(uint16_t *)m_value;
-        }
-        else
-        {
-            flag = *(uint32_t *)m_value;
-
-        }
-        return flag;
-    }
-
-    uint32_t STDCALL descriptor_field_imp::get_flags_count() const
-    {
-        assert((m_type == TYPE_FLAGS16) || (m_type == TYPE_FLAGS16));
-        return m_fields.size();
-    }
-
-    descriptor_field_flags * STDCALL descriptor_field_imp::get_flag_by_index(uint32_t index) const
-    {
-        assert((m_type == TYPE_FLAGS16) || (m_type == TYPE_FLAGS16));
-        return m_fields[index];
-    }
+descriptor_field_imp::descriptor_field_imp(const char * name, enum aem_desc_field_types the_type, void * v) : m_name(name), m_value(v), m_type(the_type)
+{
 }
 
+descriptor_field_imp::~descriptor_field_imp()
+{
+    std::for_each(m_fields.begin(), m_fields.end(), delete_bitfield);
+    m_fields.clear();
+}
+
+enum descriptor_field::aem_desc_field_types STDCALL descriptor_field_imp::get_type() const
+{
+    return m_type;
+}
+
+void descriptor_field_imp::append_field(descriptor_field_flags_imp * bit_field)
+{
+    m_fields.push_back(bit_field);
+}
+
+const char * STDCALL descriptor_field_imp::get_name() const
+{
+    return m_name;
+}
+
+char * STDCALL descriptor_field_imp::get_char() const
+{
+    assert(m_type == TYPE_CHAR);
+    return (char *)m_value;
+}
+
+uint16_t STDCALL descriptor_field_imp::get_uint16() const
+{
+    assert(m_type == TYPE_UINT16);
+    return *(uint16_t *)m_value;
+}
+
+uint32_t STDCALL descriptor_field_imp::get_uint32() const
+{
+    assert(m_type == TYPE_UINT32);
+    return *(uint32_t *)m_value;
+}
+
+uint32_t STDCALL descriptor_field_imp::get_flags() const
+{
+    uint32_t flag;
+    assert((m_type == TYPE_FLAGS16) || (m_type == TYPE_FLAGS16));
+    if (m_type == TYPE_FLAGS16)
+    {
+        flag = (uint32_t) * (uint16_t *)m_value;
+    }
+    else
+    {
+        flag = *(uint32_t *)m_value;
+    }
+    return flag;
+}
+
+uint32_t STDCALL descriptor_field_imp::get_flags_count() const
+{
+    assert((m_type == TYPE_FLAGS16) || (m_type == TYPE_FLAGS16));
+    return m_fields.size();
+}
+
+descriptor_field_flags * STDCALL descriptor_field_imp::get_flag_by_index(uint32_t index) const
+{
+    assert((m_type == TYPE_FLAGS16) || (m_type == TYPE_FLAGS16));
+    return m_fields[index];
+}
+}

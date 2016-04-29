@@ -34,28 +34,27 @@
 
 namespace avdecc_lib
 {
-    locale_descriptor_response_imp::locale_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-    descriptor_response_base_imp(frame, frame_len, pos) {}
+locale_descriptor_response_imp::locale_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos) {}
 
-    locale_descriptor_response_imp::~locale_descriptor_response_imp() {}
-    
-    uint8_t * STDCALL locale_descriptor_response_imp::object_name()
-    {
-        return NULL;
-    }
+locale_descriptor_response_imp::~locale_descriptor_response_imp() {}
 
-    uint8_t * STDCALL locale_descriptor_response_imp::locale_identifier()
-    {
-        return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_LOCALE_OFFSET_LOCALE_IDENTIFIER];
-    }
+uint8_t * STDCALL locale_descriptor_response_imp::object_name()
+{
+    return NULL;
+}
 
-    uint16_t STDCALL locale_descriptor_response_imp::number_of_strings()
-    {
-        return jdksavdecc_descriptor_locale_get_number_of_strings(buffer, position);
-    }
+uint8_t * STDCALL locale_descriptor_response_imp::locale_identifier()
+{
+    return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_LOCALE_OFFSET_LOCALE_IDENTIFIER];
+}
 
-    uint16_t STDCALL locale_descriptor_response_imp::base_strings()
-    {
-        return jdksavdecc_descriptor_locale_get_base_strings(buffer, position);
-    }
+uint16_t STDCALL locale_descriptor_response_imp::number_of_strings()
+{
+    return jdksavdecc_descriptor_locale_get_number_of_strings(buffer, position);
+}
+
+uint16_t STDCALL locale_descriptor_response_imp::base_strings()
+{
+    return jdksavdecc_descriptor_locale_get_base_strings(buffer, position);
+}
 }

@@ -36,34 +36,34 @@
 
 namespace avdecc_lib
 {
-    class response_frame
-    {
-    public:
-        response_frame(const uint8_t *frame, size_t size, size_t pos);
-        virtual ~response_frame();
-        
-        /*
-         * Buffer to store counters and command response frames.  Will be updated
-         * by command response processing methods.
-         */
-        uint8_t * buffer;
-        /*
-         * Buffer to store descriptor response frames.  Will be updated by
-         * update_desc_database() method in configuration descriptor.
-         */
-        uint8_t * desc_buffer;
-        size_t frame_size;
-        size_t desc_frame_size;
-        size_t position;
-        size_t desc_position;
-        
-        int replace_frame(const uint8_t* frame, size_t pos, size_t size);
-        int replace_desc_frame(const uint8_t *frame, size_t pos, size_t size);
-        uint8_t * get_buffer();
-        uint8_t * get_desc_buffer();
-        size_t get_pos();
-        size_t get_desc_pos();
-        size_t get_size();
-        size_t get_desc_size();
-    };
+class response_frame
+{
+public:
+    response_frame(const uint8_t * frame, size_t size, size_t pos);
+    virtual ~response_frame();
+
+    //
+    // Buffer to store counters and command response frames.  Will be updated
+    // by command response processing methods.
+    //
+    uint8_t * buffer;
+    //
+    // Buffer to store descriptor response frames.  Will be updated by
+    // update_desc_database() method in configuration descriptor.
+    //
+    uint8_t * desc_buffer;
+    size_t frame_size;
+    size_t desc_frame_size;
+    size_t position;
+    size_t desc_position;
+
+    int replace_frame(const uint8_t * frame, size_t pos, size_t size);
+    int replace_desc_frame(const uint8_t * frame, size_t pos, size_t size);
+    uint8_t * get_buffer();
+    uint8_t * get_desc_buffer();
+    size_t get_pos();
+    size_t get_desc_pos();
+    size_t get_size();
+    size_t get_desc_size();
+};
 }

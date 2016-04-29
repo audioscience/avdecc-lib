@@ -34,59 +34,58 @@
 
 namespace avdecc_lib
 {
-    class descriptor_field_flags;
-    class descriptor_field
+class descriptor_field_flags;
+class descriptor_field
+{
+public:
+    enum aem_desc_field_types /// The descriptor field types
     {
-    public:
-        enum aem_desc_field_types /// The descriptor field types
-        {
-            TYPE_INVALID,
-            TYPE_CHAR,
-            TYPE_UINT16,
-            TYPE_UINT32,
-            TYPE_FLAGS16,
-            TYPE_FLAGS32
-        };
-
-        /**
-         * \return The name of the descriptor field.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_name() const = 0;
-
-        /**
-        * \return The type of the descriptor field.
-        */
-        AVDECC_CONTROLLER_LIB32_API virtual enum aem_desc_field_types STDCALL get_type() const = 0;
-
-        /**
-         * \return The value of the descriptor as a char pointer.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_char() const = 0;
-
-        /**
-        * \return The value of the descriptor as a uint16_t type.
-        */
-        AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_uint16() const = 0;
-
-        /**
-        * \return The value of the descriptor as a uint32_t type.
-        */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_uint32() const = 0;
-
-        /**
-        * \return The value of the descriptor field of type flags.
-        */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_flags() const = 0;
-
-        /**
-        * \return The number flags for descriptor field of type flags.
-        */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_flags_count() const = 0;
-
-        /**
-        * \return Get flag details.
-        */
-        AVDECC_CONTROLLER_LIB32_API virtual descriptor_field_flags * STDCALL get_flag_by_index(uint32_t index) const = 0;
+        TYPE_INVALID,
+        TYPE_CHAR,
+        TYPE_UINT16,
+        TYPE_UINT32,
+        TYPE_FLAGS16,
+        TYPE_FLAGS32
     };
-}
 
+    ///
+    /// \return The name of the descriptor field.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_name() const = 0;
+
+    ///
+    /// \return The type of the descriptor field.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual enum aem_desc_field_types STDCALL get_type() const = 0;
+
+    ///
+    /// \return The value of the descriptor as a char pointer.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_char() const = 0;
+
+    ///
+    /// \return The value of the descriptor as a uint16_t type.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL get_uint16() const = 0;
+
+    ///
+    /// \return The value of the descriptor as a uint32_t type.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_uint32() const = 0;
+
+    ///
+    /// \return The value of the descriptor field of type flags.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_flags() const = 0;
+
+    ///
+    /// \return The number flags for descriptor field of type flags.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_flags_count() const = 0;
+
+    ///
+    /// \return Get flag details.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual descriptor_field_flags * STDCALL get_flag_by_index(uint32_t index) const = 0;
+};
+}

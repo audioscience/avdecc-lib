@@ -34,41 +34,41 @@
 
 namespace avdecc_lib
 {
-    stream_output_get_tx_state_response_imp::stream_output_get_tx_state_response_imp(uint8_t *frame, size_t frame_len, ssize_t pos)
-    {
-        m_position = pos;
-        m_size = frame_len;
-        m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
-        memcpy(m_frame, frame, m_size);
-    }
-    
-    stream_output_get_tx_state_response_imp::~stream_output_get_tx_state_response_imp()
-    {
-        free(m_frame);
-    }
-    
-    uint64_t STDCALL stream_output_get_tx_state_response_imp::get_tx_state_stream_id()
-    {
-        jdksavdecc_eui64 stream_id;
-        stream_id = jdksavdecc_common_control_header_get_stream_id(m_frame, m_position);
-        return jdksavdecc_eui64_convert_to_uint64(&stream_id);
-    }
-    
-    uint64_t STDCALL stream_output_get_tx_state_response_imp::get_tx_state_stream_dest_mac()
-    {
-        jdksavdecc_eui48 stream_dest_mac;
-        stream_dest_mac = jdksavdecc_acmpdu_get_stream_dest_mac(m_frame, m_position);
-        
-        return jdksavdecc_eui48_convert_to_uint64(&stream_dest_mac);
-    }
-    
-    uint16_t STDCALL stream_output_get_tx_state_response_imp::get_tx_state_connection_count()
-    {
-        return jdksavdecc_acmpdu_get_connection_count(m_frame, m_position);
-    }
-    
-    uint16_t STDCALL stream_output_get_tx_state_response_imp::get_tx_state_stream_vlan_id()
-    {
-        return jdksavdecc_acmpdu_get_stream_vlan_id(m_frame, m_position);
-    }
+stream_output_get_tx_state_response_imp::stream_output_get_tx_state_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos)
+{
+    m_position = pos;
+    m_size = frame_len;
+    m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
+    memcpy(m_frame, frame, m_size);
+}
+
+stream_output_get_tx_state_response_imp::~stream_output_get_tx_state_response_imp()
+{
+    free(m_frame);
+}
+
+uint64_t STDCALL stream_output_get_tx_state_response_imp::get_tx_state_stream_id()
+{
+    jdksavdecc_eui64 stream_id;
+    stream_id = jdksavdecc_common_control_header_get_stream_id(m_frame, m_position);
+    return jdksavdecc_eui64_convert_to_uint64(&stream_id);
+}
+
+uint64_t STDCALL stream_output_get_tx_state_response_imp::get_tx_state_stream_dest_mac()
+{
+    jdksavdecc_eui48 stream_dest_mac;
+    stream_dest_mac = jdksavdecc_acmpdu_get_stream_dest_mac(m_frame, m_position);
+
+    return jdksavdecc_eui48_convert_to_uint64(&stream_dest_mac);
+}
+
+uint16_t STDCALL stream_output_get_tx_state_response_imp::get_tx_state_connection_count()
+{
+    return jdksavdecc_acmpdu_get_connection_count(m_frame, m_position);
+}
+
+uint16_t STDCALL stream_output_get_tx_state_response_imp::get_tx_state_stream_vlan_id()
+{
+    return jdksavdecc_acmpdu_get_stream_vlan_id(m_frame, m_position);
+}
 }

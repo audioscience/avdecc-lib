@@ -35,14 +35,14 @@
 
 namespace avdecc_lib
 {
-    class strings_descriptor_imp : public strings_descriptor, public virtual descriptor_base_imp
-    {
-    public:
-        strings_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len);
-        virtual ~strings_descriptor_imp();
-        
-        strings_descriptor_response_imp *resp;
+class strings_descriptor_imp : public strings_descriptor, public virtual descriptor_base_imp
+{
+public:
+    strings_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
+    virtual ~strings_descriptor_imp();
 
-        strings_descriptor_response * STDCALL get_strings_response();
-    };
+    strings_descriptor_response_imp * resp;
+
+    strings_descriptor_response * STDCALL get_strings_response();
+};
 }

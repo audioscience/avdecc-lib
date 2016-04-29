@@ -32,53 +32,52 @@
 
 namespace avdecc_lib
 {
-    audio_cluster_descriptor_response_imp::audio_cluster_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos) :
-        descriptor_response_base_imp(frame, frame_len, pos) {}
-    
-    audio_cluster_descriptor_response_imp::~audio_cluster_descriptor_response_imp(){}
-    
-    uint8_t * STDCALL audio_cluster_descriptor_response_imp::object_name()
-    {
-        return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER_OFFSET_OBJECT_NAME];
-    }
-    
-    uint16_t STDCALL audio_cluster_descriptor_response_imp::localized_description()
-    {
-        return jdksavdecc_descriptor_audio_cluster_get_localized_description(buffer, position);
-    }
-    
-    uint16_t STDCALL audio_cluster_descriptor_response_imp::signal_type()
-    {
-        return jdksavdecc_descriptor_audio_cluster_get_signal_type(buffer, position);
-    }
-    
-    uint16_t STDCALL audio_cluster_descriptor_response_imp::signal_index()
-    {
-        return jdksavdecc_descriptor_audio_cluster_get_signal_index(buffer, position);
-    }
+audio_cluster_descriptor_response_imp::audio_cluster_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos) : descriptor_response_base_imp(frame, frame_len, pos) {}
 
-    uint16_t STDCALL audio_cluster_descriptor_response_imp::signal_output()
-    {
-        return jdksavdecc_descriptor_audio_cluster_get_signal_output(buffer, position);
-    }
-    
-    uint32_t STDCALL audio_cluster_descriptor_response_imp::path_latency()
-    {
-        return jdksavdecc_descriptor_audio_cluster_get_path_latency(buffer, position);
-    }
-    
-    uint32_t STDCALL audio_cluster_descriptor_response_imp::block_latency()
-    {
-        return jdksavdecc_descriptor_audio_cluster_get_block_latency(buffer, position);
-    }
-    
-    uint16_t STDCALL audio_cluster_descriptor_response_imp::channel_count()
-    {
-        return jdksavdecc_descriptor_audio_cluster_get_channel_count(buffer, position);
-    }
-    
-    uint8_t STDCALL audio_cluster_descriptor_response_imp::format()
-    {
-        return jdksavdecc_descriptor_audio_cluster_get_format(buffer, position);
-    }
+audio_cluster_descriptor_response_imp::~audio_cluster_descriptor_response_imp() {}
+
+uint8_t * STDCALL audio_cluster_descriptor_response_imp::object_name()
+{
+    return (uint8_t *)&buffer[position + JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER_OFFSET_OBJECT_NAME];
+}
+
+uint16_t STDCALL audio_cluster_descriptor_response_imp::localized_description()
+{
+    return jdksavdecc_descriptor_audio_cluster_get_localized_description(buffer, position);
+}
+
+uint16_t STDCALL audio_cluster_descriptor_response_imp::signal_type()
+{
+    return jdksavdecc_descriptor_audio_cluster_get_signal_type(buffer, position);
+}
+
+uint16_t STDCALL audio_cluster_descriptor_response_imp::signal_index()
+{
+    return jdksavdecc_descriptor_audio_cluster_get_signal_index(buffer, position);
+}
+
+uint16_t STDCALL audio_cluster_descriptor_response_imp::signal_output()
+{
+    return jdksavdecc_descriptor_audio_cluster_get_signal_output(buffer, position);
+}
+
+uint32_t STDCALL audio_cluster_descriptor_response_imp::path_latency()
+{
+    return jdksavdecc_descriptor_audio_cluster_get_path_latency(buffer, position);
+}
+
+uint32_t STDCALL audio_cluster_descriptor_response_imp::block_latency()
+{
+    return jdksavdecc_descriptor_audio_cluster_get_block_latency(buffer, position);
+}
+
+uint16_t STDCALL audio_cluster_descriptor_response_imp::channel_count()
+{
+    return jdksavdecc_descriptor_audio_cluster_get_channel_count(buffer, position);
+}
+
+uint8_t STDCALL audio_cluster_descriptor_response_imp::format()
+{
+    return jdksavdecc_descriptor_audio_cluster_get_format(buffer, position);
+}
 }

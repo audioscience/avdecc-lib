@@ -35,25 +35,24 @@
 
 namespace avdecc_lib
 {
-    class control_descriptor_response_imp : public control_descriptor_response, public virtual
-        descriptor_response_base_imp
-    {
-    public:
-        control_descriptor_response_imp(const uint8_t *frame, size_t frame_len, ssize_t pos);
-        virtual ~control_descriptor_response_imp();
+class control_descriptor_response_imp : public control_descriptor_response, public virtual descriptor_response_base_imp
+{
+public:
+    control_descriptor_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
+    virtual ~control_descriptor_response_imp();
 
-        uint8_t * STDCALL object_name();
-        uint16_t STDCALL localized_description();
-        uint32_t STDCALL block_latency();
-        uint32_t STDCALL control_latency();
-        uint16_t STDCALL control_domain();
-        uint16_t STDCALL control_value_type();
-        uint64_t STDCALL control_type();
-        uint32_t STDCALL reset_time();
-        uint16_t STDCALL values_offset();
-        uint16_t STDCALL number_of_values();
-        uint16_t STDCALL signal_type();
-        uint16_t STDCALL signal_index();
-        uint16_t STDCALL signal_output();
-    };
+    uint8_t * STDCALL object_name();
+    uint16_t STDCALL localized_description();
+    uint32_t STDCALL block_latency();
+    uint32_t STDCALL control_latency();
+    uint16_t STDCALL control_domain();
+    uint16_t STDCALL control_value_type();
+    uint64_t STDCALL control_type();
+    uint32_t STDCALL reset_time();
+    uint16_t STDCALL values_offset();
+    uint16_t STDCALL number_of_values();
+    uint16_t STDCALL signal_type();
+    uint16_t STDCALL signal_index();
+    uint16_t STDCALL signal_output();
+};
 }

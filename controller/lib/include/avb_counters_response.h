@@ -34,22 +34,22 @@
 
 namespace avdecc_lib
 {
-    class avb_counters_response
-    {
-    public:
-        virtual ~avb_counters_response(){};
-        /**
-         * \param name avdecc_lib::counter_labels
-         *
-         * \return the avb counter valid after the GET_COUNTERS command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_valid(int name) = 0;
-        
-        /**
-         * \param name avdecc_lib::counter_labels
-         *
-         * \return the avb counter by name after the GET_COUNTERS command.
-         */
-        AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_by_name(int name) = 0;
-    };
+class avb_counters_response
+{
+public:
+    virtual ~avb_counters_response(){};
+    ///
+    /// \param name avdecc_lib::counter_labels
+    ///
+    /// \return the avb counter valid after the GET_COUNTERS command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_valid(int name) = 0;
+
+    ///
+    /// \param name avdecc_lib::counter_labels
+    ///
+    /// \return the avb counter by name after the GET_COUNTERS command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_by_name(int name) = 0;
+};
 }

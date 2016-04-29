@@ -40,129 +40,129 @@
 
 namespace avdecc_lib
 {
-    entity_descriptor_imp::entity_descriptor_imp(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
+entity_descriptor_imp::entity_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len) : descriptor_base_imp(end_station_obj, frame, frame_len, pos) {}
 
-    entity_descriptor_imp::~entity_descriptor_imp()
+entity_descriptor_imp::~entity_descriptor_imp()
+{
+    for (uint32_t config_vec_index = 0; config_vec_index < config_desc_vec.size(); config_vec_index++)
     {
-        for(uint32_t config_vec_index = 0; config_vec_index < config_desc_vec.size(); config_vec_index++)
-        {
-            delete config_desc_vec.at(config_vec_index);
-        }
+        delete config_desc_vec.at(config_vec_index);
+    }
+}
+
+uint16_t STDCALL entity_descriptor_imp::current_configuration()
+{
+    return jdksavdecc_descriptor_entity_get_current_configuration(resp_ref->get_buffer(), resp_ref->get_pos());
+}
+
+entity_descriptor_response * STDCALL entity_descriptor_imp::get_entity_response()
+{
+    std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
+    return resp = new entity_descriptor_response_imp(resp_ref->get_desc_buffer(),
+                                                     resp_ref->get_desc_size(), resp_ref->get_desc_pos());
+}
+
+void entity_descriptor_imp::store_config_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len)
+{
+    config_desc_vec.push_back(new configuration_descriptor_imp(end_station_obj, frame, pos, frame_len));
+}
+
+size_t STDCALL entity_descriptor_imp::config_desc_count()
+{
+    return config_desc_vec.size();
+}
+
+configuration_descriptor * STDCALL entity_descriptor_imp::get_config_desc_by_index(uint16_t config_desc_index)
+{
+    bool is_valid = (config_desc_index < config_desc_vec.size());
+
+    if (is_valid)
+    {
+        return config_desc_vec.at(config_desc_index);
+    }
+    else
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
     }
 
-    uint16_t STDCALL entity_descriptor_imp::current_configuration()
-    {
-        return jdksavdecc_descriptor_entity_get_current_configuration(resp_ref->get_buffer(), resp_ref->get_pos());
-    }
+    return NULL;
+}
 
-    entity_descriptor_response * STDCALL entity_descriptor_imp::get_entity_response()
-    {
-        std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-        return resp = new entity_descriptor_response_imp(resp_ref->get_desc_buffer(),
-                                                         resp_ref->get_desc_size(), resp_ref->get_desc_pos());
-    }
+uint32_t STDCALL entity_descriptor_imp::acquire_entity_flags()
+{
+    return aem_cmd_acquire_entity_resp.aem_acquire_flags;
+}
 
-    void entity_descriptor_imp::store_config_desc(end_station_imp *end_station_obj, const uint8_t *frame, ssize_t pos, size_t frame_len)
-    {
-        config_desc_vec.push_back(new configuration_descriptor_imp(end_station_obj, frame, pos, frame_len));
-    }
+uint64_t STDCALL entity_descriptor_imp::acquire_entity_owner_entity_id()
+{
+    return jdksavdecc_uint64_get(&aem_cmd_acquire_entity_resp.owner_entity_id, 0);
+}
 
-    size_t STDCALL entity_descriptor_imp::config_desc_count()
-    {
-        return config_desc_vec.size();
-    }
+uint32_t STDCALL entity_descriptor_imp::lock_entity_flags()
+{
+    return aem_cmd_lock_entity_resp.aem_lock_flags;
+}
 
-    configuration_descriptor * STDCALL entity_descriptor_imp::get_config_desc_by_index(uint16_t config_desc_index)
-    {
-        bool is_valid = (config_desc_index < config_desc_vec.size());
+uint64_t STDCALL entity_descriptor_imp::lock_entity_locked_entity_id()
+{
+    return jdksavdecc_uint64_get(&aem_cmd_lock_entity_resp.locked_entity_id, 0);
+}
 
-        if(is_valid)
-        {
-            return config_desc_vec.at(config_desc_index);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
-        }
+int STDCALL entity_descriptor_imp::send_acquire_entity_cmd(void * notification_id, uint32_t acquire_entity_flag)
+{
+    return default_send_acquire_entity_cmd(this, notification_id, acquire_entity_flag);
+}
 
-        return NULL;
-    }
+int entity_descriptor_imp::proc_acquire_entity_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
+{
+    return default_proc_acquire_entity_resp(aem_cmd_acquire_entity_resp, notification_id, frame, frame_len, status);
+}
 
-    uint32_t STDCALL entity_descriptor_imp::acquire_entity_flags()
-    {
-        return aem_cmd_acquire_entity_resp.aem_acquire_flags;
-    }
+int STDCALL entity_descriptor_imp::send_lock_entity_cmd(void * notification_id, uint32_t lock_entity_flag)
+{
+    return default_send_lock_entity_cmd(this, notification_id, lock_entity_flag);
+}
 
-    uint64_t STDCALL entity_descriptor_imp::acquire_entity_owner_entity_id()
-    {
-        return jdksavdecc_uint64_get(&aem_cmd_acquire_entity_resp.owner_entity_id, 0);
-    }
+int STDCALL entity_descriptor_imp::send_reboot_cmd(void * notification_id)
+{
+    return default_send_reboot_cmd(this, notification_id);
+}
 
-    uint32_t STDCALL entity_descriptor_imp::lock_entity_flags()
-    {
-        return aem_cmd_lock_entity_resp.aem_lock_flags;
-    }
+int entity_descriptor_imp::proc_lock_entity_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
+{
+    return default_proc_lock_entity_resp(aem_cmd_lock_entity_resp, notification_id, frame, frame_len, status);
+}
 
-    uint64_t STDCALL entity_descriptor_imp::lock_entity_locked_entity_id()
-    {
-        return jdksavdecc_uint64_get(&aem_cmd_lock_entity_resp.locked_entity_id, 0);
-    }
+int entity_descriptor_imp::proc_reboot_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
+{
+    return default_proc_reboot_resp(aem_cmd_reboot_resp, notification_id, frame, frame_len, status);
+}
 
-    int STDCALL entity_descriptor_imp::send_acquire_entity_cmd(void *notification_id, uint32_t acquire_entity_flag)
-    {
-        return default_send_acquire_entity_cmd(this, notification_id, acquire_entity_flag);
-    }
+int STDCALL entity_descriptor_imp::send_set_config_cmd()
+{
+    log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION command.");
 
-    int entity_descriptor_imp::proc_acquire_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
-    {
-        return default_proc_acquire_entity_resp(aem_cmd_acquire_entity_resp, notification_id, frame, frame_len, status);
-    }
+    return 0;
+}
 
-    int STDCALL entity_descriptor_imp::send_lock_entity_cmd(void *notification_id, uint32_t lock_entity_flag)
-    {
-        return default_send_lock_entity_cmd(this, notification_id, lock_entity_flag);
-    }
+int entity_descriptor_imp::proc_set_config_resp()
+{
+    log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION response.");
 
-    int STDCALL entity_descriptor_imp::send_reboot_cmd(void *notification_id)
-    {
-        return default_send_reboot_cmd(this, notification_id);
-    }
+    return 0;
+}
 
-    int entity_descriptor_imp::proc_lock_entity_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
-    {
-        return default_proc_lock_entity_resp(aem_cmd_lock_entity_resp, notification_id, frame, frame_len, status);
-    }
+int STDCALL entity_descriptor_imp::send_get_config_cmd()
+{
+    log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_CONFIGURATION command.");
 
-    int entity_descriptor_imp::proc_reboot_resp(void *&notification_id, const uint8_t *frame, size_t frame_len, int &status)
-    {
-        return default_proc_reboot_resp(aem_cmd_reboot_resp, notification_id, frame, frame_len, status);
-    }
+    return 0;
+}
 
-    int STDCALL entity_descriptor_imp::send_set_config_cmd()
-    {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION command.");
+int entity_descriptor_imp::proc_get_config_resp()
+{
+    log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_CONFIGURATION response.");
 
-        return 0;
-    }
-
-    int entity_descriptor_imp::proc_set_config_resp()
-    {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement SET_CONFIGURATION response.");
-
-        return 0;
-    }
-
-    int STDCALL entity_descriptor_imp::send_get_config_cmd()
-    {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_CONFIGURATION command.");
-
-        return 0;
-    }
-
-    int entity_descriptor_imp::proc_get_config_resp()
-    {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Need to implement GET_CONFIGURATION response.");
-
-        return 0;
-    }
+    return 0;
+}
 }

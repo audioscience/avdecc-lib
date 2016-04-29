@@ -37,27 +37,21 @@
 #include "cmd_line.h"
 #include "cli_argument.h"
 
-cli_argument::cli_argument(cmd_line *cmd_line_ptr, const std::string name,
-        const std::string help, const std::string hint,
-        size_t match_min, size_t match_max)
-    : m_cmd_line_ptr(cmd_line_ptr)
-    , m_is_valid(false)
-    , m_match_min(match_min)
-    , m_match_max(match_max)
-    , m_name(name)
-    , m_help(help)
-    , m_hint(hint)
+cli_argument::cli_argument(cmd_line * cmd_line_ptr, const std::string name,
+                           const std::string help, const std::string hint,
+                           size_t match_min, size_t match_max)
+    : m_cmd_line_ptr(cmd_line_ptr), m_is_valid(false), m_match_min(match_min), m_match_max(match_max), m_name(name), m_help(help), m_hint(hint)
 {
     // Format the indentation of the hint strings
     std::string::size_type pos = 0;
-    while ((pos = m_hint.find("\n",pos)) != std::string::npos)
+    while ((pos = m_hint.find("\n", pos)) != std::string::npos)
     {
         m_hint.replace(pos, 1, "\n               ");
         pos += 1;
     }
 }
 
-const std::string &cli_argument::get_name() const
+const std::string & cli_argument::get_name() const
 {
     return m_name;
 }
@@ -134,11 +128,12 @@ size_t cli_argument::get_match_max() const
     return m_match_max;
 }
 
-cli_argument_int::cli_argument_int(cmd_line *cmd_line_ptr, const std::string name,
-        const std::string help, const std::string hint,
-        size_t match_min, size_t match_max)
+cli_argument_int::cli_argument_int(cmd_line * cmd_line_ptr, const std::string name,
+                                   const std::string help, const std::string hint,
+                                   size_t match_min, size_t match_max)
     : cli_argument(cmd_line_ptr, name, help + " (type int)", hint, match_min, match_max)
-{}
+{
+}
 
 void cli_argument_int::clear()
 {
@@ -162,7 +157,7 @@ bool cli_argument_int::set_value(std::string value_str)
     return false;
 }
 
-void cli_argument_int::get_completion_options(std::set<std::string> &options)
+void cli_argument_int::get_completion_options(std::set<std::string> & options)
 {
     // Do nothing
 }
@@ -183,11 +178,12 @@ std::vector<int> cli_argument_int::get_all_value_int() const
     return m_values;
 }
 
-cli_argument_end_station::cli_argument_end_station(cmd_line *cmd_line_ptr, const std::string name,
-        const std::string help, const std::string hint,
-        size_t match_min, size_t match_max)
+cli_argument_end_station::cli_argument_end_station(cmd_line * cmd_line_ptr, const std::string name,
+                                                   const std::string help, const std::string hint,
+                                                   size_t match_min, size_t match_max)
     : cli_argument(cmd_line_ptr, name, help + " (index as int or Entity ID)", hint, match_min, match_max)
-{}
+{
+}
 
 void cli_argument_end_station::clear()
 {
@@ -210,15 +206,15 @@ bool cli_argument_end_station::set_value(std::string value_str)
     return false;
 }
 
-void cli_argument_end_station::get_completion_options(std::set<std::string> &options)
+void cli_argument_end_station::get_completion_options(std::set<std::string> & options)
 {
-    avdecc_lib::controller *controller = m_cmd_line_ptr->get_controller();
+    avdecc_lib::controller * controller = m_cmd_line_ptr->get_controller();
 
     for (size_t i = 0; i < controller->get_end_station_count(); i++)
     {
         char entity_id_str[20];
-        avdecc_lib::end_station *end_station = controller->get_end_station_by_index(i);
-        sprintf(entity_id_str, "0x%"  PRIx64, end_station->entity_id());
+        avdecc_lib::end_station * end_station = controller->get_end_station_by_index(i);
+        sprintf(entity_id_str, "0x%" PRIx64, end_station->entity_id());
         options.insert(std::string(entity_id_str));
     }
 }
@@ -239,11 +235,12 @@ std::vector<uint32_t> cli_argument_end_station::get_all_value_uint() const
     return m_values;
 }
 
-cli_argument_string::cli_argument_string(cmd_line *cmd_line_ptr, const std::string name,
-        const std::string help, const std::string hint,
-        size_t match_min, size_t match_max)
+cli_argument_string::cli_argument_string(cmd_line * cmd_line_ptr, const std::string name,
+                                         const std::string help, const std::string hint,
+                                         size_t match_min, size_t match_max)
     : cli_argument(cmd_line_ptr, name, help + " (type string)", hint, match_min, match_max)
-{}
+{
+}
 
 void cli_argument_string::clear()
 {
@@ -262,7 +259,7 @@ bool cli_argument_string::set_value(std::string value_str)
     return false;
 }
 
-void cli_argument_string::get_completion_options(std::set<std::string> &options)
+void cli_argument_string::get_completion_options(std::set<std::string> & options)
 {
     // Do nothing
 }
@@ -282,4 +279,3 @@ std::vector<std::string> cli_argument_string::get_all_value_str() const
 {
     return m_values;
 }
-

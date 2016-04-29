@@ -49,38 +49,36 @@
 
 namespace avdecc_lib
 {
-    class cmd_wait_mgr
+class cmd_wait_mgr
+{
+public:
+    cmd_wait_mgr();
+    virtual ~cmd_wait_mgr();
+
+    int set_primed_state(void * id);
+    int set_active_state(void);
+    int set_idle_state(void);
+
+    bool match_id(void * id);
+    bool active_state(void);
+    bool primed_state(void);
+    int set_completion_status(int status);
+    int get_completion_status(void);
+    void * get_notify_id(void);
+
+private:
+    ///
+    /// Wait states.
+    ///
+    enum wait_states
     {
-    public:
-        cmd_wait_mgr();
-        virtual ~cmd_wait_mgr();
-
-        int set_primed_state(void * id);
-        int set_active_state(void);
-        int set_idle_state(void);
-
-        bool match_id(void * id);
-        bool active_state(void);
-        bool primed_state(void);
-        int set_completion_status(int status);
-        int get_completion_status(void);
-        void * get_notify_id(void);
-
-    private:
-
-        /**
-         * Wait states.
-         */
-        enum wait_states
-        {
-            wait_idle,   /// idle state
-            wait_primed, /// primed means a call to set_wait_for_next_cmd() has been made
-            wait_active  /// active means a command matching the "primed" notify ID has been sent
-        };
-
-        void *notify_id;
-        int completion_status;
-        enum wait_states state;
+        wait_idle,   /// idle state
+        wait_primed, /// primed means a call to set_wait_for_next_cmd() has been made
+        wait_active  /// active means a command matching the "primed" notify ID has been sent
     };
-}
 
+    void * notify_id;
+    int completion_status;
+    enum wait_states state;
+};
+}

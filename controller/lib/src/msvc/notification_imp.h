@@ -35,46 +35,45 @@
 
 namespace avdecc_lib
 {
-    class notification_imp : public virtual notification
+class notification_imp : public virtual notification
+{
+public:
+    notification_imp();
+
+    virtual ~notification_imp();
+
+private:
+    enum notification_events
     {
-    public:
-        notification_imp();
-
-        virtual ~notification_imp();
-
-    private:
-        enum notification_events
-        {
-            NOTIFICATION_EVENT,
-            KILL_EVENT
-        };
-
-        LPTHREAD_START_ROUTINE thread;
-        HANDLE h_thread;
-        DWORD thread_id;
-        HANDLE poll_events[2];
-
-        /**
-         * Create and initialize notification thread, event, and semaphore.
-         */
-        int notification_thread_init();
-
-        /**
-         * Start of the notification thread used for generating notification messages.
-         */
-        static DWORD WINAPI proc_notification_thread(LPVOID lpParam);
-
-        /**
-         * A member function called to start the notification thread processing.
-         */
-        int proc_notification_thread_callback();
-
-        /**
-         * Release sempahore so that notification callback function is called.
-         */
-        void post_notification_event();
+        NOTIFICATION_EVENT,
+        KILL_EVENT
     };
 
-    extern notification_imp *notification_imp_ref;
-}
+    LPTHREAD_START_ROUTINE thread;
+    HANDLE h_thread;
+    DWORD thread_id;
+    HANDLE poll_events[2];
 
+    ///
+    /// Create and initialize notification thread, event, and semaphore.
+    ///
+    int notification_thread_init();
+
+    ///
+    /// Start of the notification thread used for generating notification messages.
+    ///
+    static DWORD WINAPI proc_notification_thread(LPVOID lpParam);
+
+    ///
+    /// A member function called to start the notification thread processing.
+    ///
+    int proc_notification_thread_callback();
+
+    ///
+    /// Release sempahore so that notification callback function is called.
+    ///
+    void post_notification_event();
+};
+
+extern notification_imp * notification_imp_ref;
+}
