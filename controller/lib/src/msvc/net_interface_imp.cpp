@@ -192,7 +192,7 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
 
     uint16_t ether_type[1];
     ether_type[0] = JDKSAVDECC_AVTP_ETHERTYPE;
-    set_capture_ether_type(ether_type, 0); // Set the filter
+    set_capture_ether_type(ether_type, 1); // Set the filter
 
     free(AdapterInfo);
     return 0;
