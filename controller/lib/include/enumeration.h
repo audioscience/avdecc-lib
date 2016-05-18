@@ -284,6 +284,13 @@ enum notifications /// Notifications for the AVDECC library implementation, not 
     TOTAL_NUM_OF_NOTIFICATIONS = 7
 };
 
+enum acmp_notifications
+{
+    NULL_ACMP_NOTIFICATION = 0,
+    BROADCAST_ACMP_RESPONSE_RECEIVED = 1,
+    TOTAL_NUM_OF_ACMP_NOTIFICATIONS = 2
+};
+
 enum logging_levels
 {
     LOGGING_LEVEL_ERROR = 0,

@@ -89,6 +89,8 @@ cmd_line::cmd_line()
 }
 
 cmd_line::cmd_line(void (*notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
+                   void (*acmp_notification_callback)(void *, int32_t, uint16_t, uint64_t, uint16_t, uint64_t, uint16_t,
+                                                      uint32_t, void *),
                    void (*log_callback)(void *, int32_t, const char *, int32_t),
                    bool test_mode, char * interface, int32_t log_level)
     : test_mode(test_mode), output_redirected(false)
@@ -102,7 +104,7 @@ cmd_line::cmd_line(void (*notification_callback)(void *, int32_t, uint64_t, uint
     cmd_line_commands_init();
 
     netif = avdecc_lib::create_net_interface();
-    controller_obj = avdecc_lib::create_controller(netif, notification_callback, log_callback, log_level);
+    controller_obj = avdecc_lib::create_controller(netif, notification_callback, acmp_notification_callback, log_callback, log_level);
     controller_obj->apply_end_station_capabilities_filters(avdecc_lib::ENTITY_CAPABILITIES_GPTP_SUPPORTED |
                                                                avdecc_lib::ENTITY_CAPABILITIES_AEM_SUPPORTED,
                                                            0, 0);

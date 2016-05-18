@@ -36,6 +36,7 @@
 #include "net_interface_imp.h"
 #include "enumeration.h"
 #include "notification_imp.h"
+#include "notification_acmp_imp.h"
 #include "log_imp.h"
 #include "util.h"
 #include "adp.h"
@@ -95,7 +96,12 @@ public:
 };
 
 controller * STDCALL create_controller(net_interface * netif,
-                                       void (*notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
+                                       void (*notification_callback)(void *, int32_t, uint64_t,
+                                                                     uint16_t, uint16_t, uint16_t,
+                                                                     uint32_t, void *),
+                                       void (*acmp_notification_callback)(void *, int32_t, uint16_t,
+                                                                          uint64_t, uint16_t, uint64_t,
+                                                                          uint16_t, uint32_t, void *),
                                        void (*log_callback)(void *, int32_t, const char *, int32_t),
                                        int32_t initial_log_level)
 {
@@ -103,7 +109,7 @@ controller * STDCALL create_controller(net_interface * netif,
 
     net_interface_ref = dynamic_cast<net_interface_imp *>(netif);
 
-    controller_imp_ref = new controller_imp(notification_callback, log_callback);
+    controller_imp_ref = new controller_imp(notification_callback, acmp_notification_callback, log_callback);
 
     //Start up state machines if previously deleted on a restart
     if (!aecp_controller_state_machine_ref)
@@ -123,10 +129,15 @@ controller * STDCALL create_controller(net_interface * netif,
     return controller_imp_ref;
 }
 
-controller_imp::controller_imp(void (*notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
+controller_imp::controller_imp(void (*notification_callback)(void *, int32_t, uint64_t, uint16_t,
+                                                             uint16_t, uint16_t, uint32_t, void *),
+                               void (*acmp_notification_callback)(void *, int32_t, uint16_t,
+                                                                  uint64_t, uint16_t, uint64_t,
+                                                                  uint16_t, uint32_t, void *),
                                void (*log_callback)(void *, int32_t, const char *, int32_t))
 {
     notification_imp_ref->set_notification_callback(notification_callback, NULL);
+    notification_acmp_imp_ref->set_acmp_notification_callback(acmp_notification_callback, NULL);
     end_station_array = new end_stations();
     log_imp_ref->set_log_callback(log_callback, NULL);
 
@@ -533,7 +544,17 @@ void controller_imp::rx_packet_event(void *& notification_id,
                 entity_entity_id = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
             }
 
-            found_end_station_index = find_in_end_station(entity_entity_id, false, frame);
+            if ((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
+                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE))
+            {
+                // check for unsolicited connect/disconnect responses
+                found_end_station_index = find_in_end_station(entity_entity_id, true, frame);
+            }
+            else
+            {
+                found_end_station_index = find_in_end_station(entity_entity_id, false, frame);
+            }
+
             if (found_end_station_index >= 0)
                 found_acmp_in_end_station = true;
 
