@@ -104,6 +104,39 @@ extern "C" void notification_callback(void * user_obj, int32_t notification_type
     }
 }
 
+extern "C" void acmp_notification_callback(void * user_obj, int32_t notification_type, uint16_t cmd_type,
+                                           uint64_t talker_entity_id, uint16_t talker_unique_id,
+                                           uint64_t listener_entity_id, uint16_t listener_unique_id,
+                                           uint32_t cmd_status, void * notification_id)
+{
+    if (notification_type == avdecc_lib::BROADCAST_RESPONSE_RECEIVED)
+    {
+        const char * cmd_name;
+        const char * cmd_status_name;
+
+        if (cmd_type < avdecc_lib::CMD_LOOKUP)
+        {
+            cmd_name = avdecc_lib::utility::aem_cmd_value_to_name(cmd_type);
+            cmd_status_name = avdecc_lib::utility::aem_cmd_status_value_to_name(cmd_status);
+        }
+        else
+        {
+            cmd_name = avdecc_lib::utility::acmp_cmd_value_to_name(cmd_type - avdecc_lib::CMD_LOOKUP);
+            cmd_status_name = avdecc_lib::utility::acmp_cmd_status_value_to_name(cmd_status);
+        }
+
+        printf("\n[NOTIFICATION] (%s, %s, 0x%llx, %d, 0x%llx, %d, %s, %p)\n",
+               "BROADCAST_RESPONSE_RECEIVED",
+               cmd_name,
+               talker_entity_id,
+               talker_unique_id,
+               listener_entity_id,
+               listener_unique_id,
+               cmd_status_name,
+               notification_id);
+    }
+}
+
 extern "C" void log_callback(void * user_obj, int32_t log_level, const char * log_msg, int32_t time_stamp_ms)
 {
     printf("\n[LOG] %s (%s)\n", avdecc_lib::utility::logging_level_value_to_name(log_level), log_msg);
@@ -265,7 +298,7 @@ int main(int argc, char * argv[])
         setvbuf(stdout, NULL, _IOLBF, 0);
     }
 
-    cmd_line avdecc_cmd_line_ref(notification_callback, log_callback,
+    cmd_line avdecc_cmd_line_ref(notification_callback, acmp_notification_callback, log_callback,
                                  test_mode, interface, log_level);
 
     std::vector<std::string> input_argv;
