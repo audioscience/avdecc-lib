@@ -325,7 +325,7 @@ int acmp_controller_state_machine::callback(void * notification_id, uint32_t not
         listener_entity_id = jdksavdecc_uint64_get(&_listener_entity_id, 0);
         listener_unique_id = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
 
-        notification_acmp_imp_ref->post_acmp_notification_msg(BROADCAST_RESPONSE_RECEIVED,
+        notification_acmp_imp_ref->post_acmp_notification_msg(BROADCAST_ACMP_RESPONSE_RECEIVED,
                                                               (uint16_t)msg_type + CMD_LOOKUP,
                                                               talker_entity_id,
                                                               talker_unique_id,

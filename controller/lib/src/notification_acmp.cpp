@@ -72,7 +72,7 @@ void notification_acmp::post_acmp_notification_msg(int32_t notification_type, ui
         return;
     }
 
-    if (notification_type == BROADCAST_RESPONSE_RECEIVED)
+    if (notification_type == BROADCAST_ACMP_RESPONSE_RECEIVED)
     {
         index = InterlockedExchangeAdd(&write_index, 1);
         notification_buf[index % NOTIFICATION_BUF_COUNT].notification_type = notification_type;
