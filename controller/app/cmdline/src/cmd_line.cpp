@@ -2890,9 +2890,6 @@ int cmd_line::cmd_disconnect_rx(int total_matched, std::vector<cli_argument *> a
 
 int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument *> args)
 {
-    // Use the same notification ID for all the read commands
-    intptr_t cmd_notification_id = get_next_notification_id();
-
     for (uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
     {
         avdecc_lib::end_station * end_station = controller_obj->get_end_station_by_index(i);
@@ -2905,6 +2902,8 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument *
         for (uint32_t j = 0; j < stream_input_desc_count; j++)
         {
             avdecc_lib::stream_input_descriptor * instream = configuration->get_stream_input_desc_by_index(j);
+            intptr_t cmd_notification_id = get_next_notification_id();
+            sys->set_wait_for_next_cmd((void *)cmd_notification_id);
             instream->send_get_rx_state_cmd((void *)cmd_notification_id);
         }
 
@@ -2912,15 +2911,10 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument *
 
         for (uint32_t j = 0; j < stream_output_desc_count; j++)
         {
-            // Only wait when issuing the last packet
-            const bool last_command = (i == controller_obj->get_end_station_count() - 1) &&
-                                      (j == stream_output_desc_count - 1);
-            if (last_command)
-                sys->set_wait_for_next_cmd((void *)cmd_notification_id);
             avdecc_lib::stream_output_descriptor * outstream = configuration->get_stream_output_desc_by_index(j);
+            intptr_t cmd_notification_id = get_next_notification_id();
+            sys->set_wait_for_next_cmd((void *)cmd_notification_id);
             outstream->send_get_tx_state_cmd((void *)cmd_notification_id);
-            if (last_command)
-                sys->get_last_resp_status();
         }
     }
 
