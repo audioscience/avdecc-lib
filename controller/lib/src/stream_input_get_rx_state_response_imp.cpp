@@ -53,10 +53,24 @@ uint64_t STDCALL stream_input_get_rx_state_response_imp::get_rx_state_stream_id(
     stream_id = jdksavdecc_common_control_header_get_stream_id(m_frame, m_position);
     return jdksavdecc_eui64_convert_to_uint64(&stream_id);
 }
+    
+uint64_t STDCALL stream_input_get_rx_state_response_imp::get_rx_state_talker_entity_id()
+{
+    jdksavdecc_eui64 talker_entity_id;
+    talker_entity_id = jdksavdecc_acmpdu_get_talker_entity_id(m_frame, m_position);
+    return jdksavdecc_eui64_convert_to_uint64(&talker_entity_id);
+}
 
 uint16_t STDCALL stream_input_get_rx_state_response_imp::get_rx_state_talker_unique_id()
 {
     return jdksavdecc_acmpdu_get_talker_unique_id(m_frame, m_position);
+}
+    
+uint64_t STDCALL stream_input_get_rx_state_response_imp::get_rx_state_listener_entity_id()
+{
+    jdksavdecc_eui64 listener_entity_id;
+    listener_entity_id = jdksavdecc_acmpdu_get_listener_entity_id(m_frame, m_position);
+    return jdksavdecc_eui64_convert_to_uint64(&listener_entity_id);
 }
 
 uint16_t STDCALL stream_input_get_rx_state_response_imp::get_rx_state_listener_unique_id()

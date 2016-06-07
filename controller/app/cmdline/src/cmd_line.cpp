@@ -3032,7 +3032,9 @@ int cmd_line::cmd_get_rx_state(int total_matched, std::vector<cli_argument *> ar
         {
             avdecc_lib::stream_input_get_rx_state_response * stream_input_resp_ref = instream->get_stream_input_get_rx_state_response();
             atomic_cout << "\nstream_id = 0x" << std::hex << stream_input_resp_ref->get_rx_state_stream_id();
+            atomic_cout << "\ntalker_entity_id = 0x" << std::hex << stream_input_resp_ref->get_rx_state_talker_entity_id();
             atomic_cout << "\ntalker_unique_id = " << std::dec << std::dec << stream_input_resp_ref->get_rx_state_talker_unique_id();
+            atomic_cout << "\nlistener_entity_id = 0x" << std::hex << stream_input_resp_ref->get_rx_state_listener_entity_id();
             atomic_cout << "\nlistener_unique_id = " << std::dec << stream_input_resp_ref->get_rx_state_listener_unique_id();
             atomic_cout << "\nstream_dest_mac = 0x" << std::hex << stream_input_resp_ref->get_rx_state_stream_dest_mac();
             atomic_cout << "\nconnection_count = " << std::dec << stream_input_resp_ref->get_rx_state_connection_count();
