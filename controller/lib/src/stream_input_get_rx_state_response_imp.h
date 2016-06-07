@@ -46,7 +46,9 @@ public:
     virtual ~stream_input_get_rx_state_response_imp();
 
     uint64_t STDCALL get_rx_state_stream_id();
+    uint64_t STDCALL get_rx_state_talker_entity_id();
     uint16_t STDCALL get_rx_state_talker_unique_id();
+    uint64_t STDCALL get_rx_state_listener_entity_id();
     uint16_t STDCALL get_rx_state_listener_unique_id();
     uint64_t STDCALL get_rx_state_stream_dest_mac();
     uint16_t STDCALL get_rx_state_connection_count();
