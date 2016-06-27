@@ -289,11 +289,12 @@ int acmp_controller_state_machine::callback(void * notification_id, uint32_t not
     {
         struct jdksavdecc_eui64 _end_station_entity_id = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
         end_station_entity_id = jdksavdecc_uint64_get(&_end_station_entity_id, 0);
+        uint16_t desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
         notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                     end_station_entity_id,
                                                     (uint16_t)msg_type + CMD_LOOKUP,
                                                     0,
-                                                    0,
+                                                    desc_index,
                                                     status,
                                                     notification_id);
 
