@@ -109,7 +109,7 @@ extern "C" void acmp_notification_callback(void * user_obj, int32_t notification
                                            uint64_t listener_entity_id, uint16_t listener_unique_id,
                                            uint32_t cmd_status, void * notification_id)
 {
-    if (notification_type == avdecc_lib::BROADCAST_ACMP_RESPONSE_RECEIVED)
+    if (notification_type == avdecc_lib::ACMP_RESPONSE_RECEIVED || notification_type == avdecc_lib::BROADCAST_ACMP_RESPONSE_RECEIVED)
     {
         const char * cmd_name;
         const char * cmd_status_name;
@@ -126,7 +126,7 @@ extern "C" void acmp_notification_callback(void * user_obj, int32_t notification
         }
 
         printf("\n[NOTIFICATION] (%s, %s, 0x%llx, %d, 0x%llx, %d, %s, %p)\n",
-               "BROADCAST_ACMP_RESPONSE_RECEIVED",
+               avdecc_lib::utility::acmp_notification_value_to_name(notification_type),
                cmd_name,
                talker_entity_id,
                talker_unique_id,

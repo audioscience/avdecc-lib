@@ -224,6 +224,12 @@ namespace utility
             "RESPONSE_RECEIVED",
             "END_STATION_READ_COMPLETED",
             "UNSOLICITED_RESPONSE_RECEIVED"};
+    
+    const char * acmp_notification_names[] =
+    {
+        "NULL_ACMP_NOTIFICATION",
+        "BROADCAST_ACMP_RESPONSE_RECEIVED",
+        "ACMP_RESPONSE_RECEIVED"};
 
     const char * logging_level_names[] =
         {
@@ -459,6 +465,16 @@ namespace utility
             return notification_names[notification_value];
         }
 
+        return "UNKNOWN";
+    }
+    
+    const char * STDCALL acmp_notification_value_to_name(uint16_t acmp_notification_value)
+    {
+        if (acmp_notification_value < avdecc_lib::TOTAL_NUM_OF_ACMP_NOTIFICATIONS)
+        {
+            return acmp_notification_names[acmp_notification_value];
+        }
+        
         return "UNKNOWN";
     }
 
