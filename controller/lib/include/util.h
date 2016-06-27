@@ -82,7 +82,7 @@ namespace utility
     AVDECC_CONTROLLER_LIB32_API const char * STDCALL notification_value_to_name(uint16_t notification_value);
     
     ///
-    /// Convert acmp notification value to its corresponding acmp notification name.
+    /// Convert ACMP notification value to its corresponding ACMP notification name.
     ///
     AVDECC_CONTROLLER_LIB32_API const char * STDCALL acmp_notification_value_to_name(uint16_t acmp_notification_value);
 
