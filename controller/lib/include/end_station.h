@@ -48,7 +48,7 @@ public:
     AVDECC_CONTROLLER_LIB32_API virtual const char STDCALL get_connection_status() const = 0;
 
     ///
-    /// \return The GPTP grandmaster id of the end station.
+    /// \return The GPTP grandmaster id of the end station as advertised by ADP.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_gptp_grandmaster_id() = 0;
     
