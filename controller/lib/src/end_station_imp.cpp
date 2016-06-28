@@ -112,6 +112,11 @@ uint64_t STDCALL end_station_imp::mac()
 {
     return end_station_mac;
 }
+    
+uint64_t STDCALL end_station_imp::get_gptp_grandmaster_id()
+{
+    return adp_ref->get_gptp_grandmaster_id();
+}
 
 adp * end_station_imp::get_adp()
 {

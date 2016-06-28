@@ -96,6 +96,7 @@ public:
 
     uint64_t STDCALL entity_id();
     uint64_t STDCALL mac();
+    uint64_t STDCALL get_gptp_grandmaster_id();
     adp * get_adp();
     size_t STDCALL entity_desc_count();
     entity_descriptor * STDCALL get_entity_desc_by_index(size_t entity_desc_index);
