@@ -316,7 +316,13 @@ int main(int argc, char * argv[])
 #endif
 // Override to prevent filename completion
 #if defined(__MACH__)
+#if defined (READLINE_LIBRARY)
+    // GNU Readline library
+    rl_completion_entry_function = (rl_compentry_func_t *)null_completer;
+#else
+    // OSX default libedit library
     rl_completion_entry_function = (Function *)null_completer;
+#endif
 #elif defined(__linux__)
     rl_completion_entry_function = null_completer;
 #endif
