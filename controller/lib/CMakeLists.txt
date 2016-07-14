@@ -4,6 +4,7 @@ enable_testing()
 
 if(APPLE)
   include_directories( include src src/osx ../../jdksavdecc-c/include )
+  set(avdecc-lib-name "avdecc-lib_controller")
 elseif(UNIX)
   include_directories( include src src/linux ../../jdksavdecc-c/include )
 elseif(WIN32)
