@@ -108,7 +108,6 @@ int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *& notification_
     ssize_t aem_cmd_set_sampling_rate_resp_returned;
     uint32_t msg_type;
     bool u_field;
-    uint8_t * buffer;
 
     memcpy(cmd_frame.payload, frame, frame_len);
     memset(&aem_cmd_set_sampling_rate_resp, 0, sizeof(struct jdksavdecc_aem_command_set_sampling_rate_response));
@@ -124,20 +123,23 @@ int audio_unit_descriptor_imp::proc_set_sampling_rate_resp(void *& notification_
         assert(aem_cmd_set_sampling_rate_resp_returned >= 0);
         return -1;
     }
-
-    buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
-    memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
-    jdksavdecc_descriptor_audio_unit_set_current_sampling_rate(aem_cmd_set_sampling_rate_resp.sampling_rate, buffer, resp_ref->get_desc_pos()); //set clk source
-
-    replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size()); //replace frame
-
+    
     msg_type = aem_cmd_set_sampling_rate_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_set_sampling_rate_resp.aem_header.aecpdu_header.header.status;
     u_field = aem_cmd_set_sampling_rate_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
+    if (status == AEM_STATUS_SUCCESS)
+    {
+        uint8_t * buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
+        memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
+        jdksavdecc_descriptor_audio_unit_set_current_sampling_rate(aem_cmd_set_sampling_rate_resp.sampling_rate, buffer, resp_ref->get_desc_pos()); //set clk source
+
+        replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size()); //replace frame
+        free(buffer);
+    }
+
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
-    free(buffer);
     return 0;
 }
 
