@@ -89,6 +89,8 @@ cmd_line::cmd_line()
 }
 
 cmd_line::cmd_line(void (*notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
+                   void (*acmp_notification_callback)(void *, int32_t, uint16_t, uint64_t, uint16_t, uint64_t, uint16_t,
+                                                      uint32_t, void *),
                    void (*log_callback)(void *, int32_t, const char *, int32_t),
                    bool test_mode, char * interface, int32_t log_level)
     : test_mode(test_mode), output_redirected(false)
@@ -102,7 +104,7 @@ cmd_line::cmd_line(void (*notification_callback)(void *, int32_t, uint64_t, uint
     cmd_line_commands_init();
 
     netif = avdecc_lib::create_net_interface();
-    controller_obj = avdecc_lib::create_controller(netif, notification_callback, log_callback, log_level);
+    controller_obj = avdecc_lib::create_controller(netif, notification_callback, acmp_notification_callback, log_callback, log_level);
     controller_obj->apply_end_station_capabilities_filters(avdecc_lib::ENTITY_CAPABILITIES_GPTP_SUPPORTED |
                                                                avdecc_lib::ENTITY_CAPABILITIES_AEM_SUPPORTED,
                                                            0, 0);
@@ -2888,9 +2890,6 @@ int cmd_line::cmd_disconnect_rx(int total_matched, std::vector<cli_argument *> a
 
 int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument *> args)
 {
-    // Use the same notification ID for all the read commands
-    intptr_t cmd_notification_id = get_next_notification_id();
-
     for (uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
     {
         avdecc_lib::end_station * end_station = controller_obj->get_end_station_by_index(i);
@@ -2903,6 +2902,8 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument *
         for (uint32_t j = 0; j < stream_input_desc_count; j++)
         {
             avdecc_lib::stream_input_descriptor * instream = configuration->get_stream_input_desc_by_index(j);
+            intptr_t cmd_notification_id = get_next_notification_id();
+            sys->set_wait_for_next_cmd((void *)cmd_notification_id);
             instream->send_get_rx_state_cmd((void *)cmd_notification_id);
         }
 
@@ -2910,15 +2911,10 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument *
 
         for (uint32_t j = 0; j < stream_output_desc_count; j++)
         {
-            // Only wait when issuing the last packet
-            const bool last_command = (i == controller_obj->get_end_station_count() - 1) &&
-                                      (j == stream_output_desc_count - 1);
-            if (last_command)
-                sys->set_wait_for_next_cmd((void *)cmd_notification_id);
             avdecc_lib::stream_output_descriptor * outstream = configuration->get_stream_output_desc_by_index(j);
+            intptr_t cmd_notification_id = get_next_notification_id();
+            sys->set_wait_for_next_cmd((void *)cmd_notification_id);
             outstream->send_get_tx_state_cmd((void *)cmd_notification_id);
-            if (last_command)
-                sys->get_last_resp_status();
         }
     }
 
@@ -3036,7 +3032,9 @@ int cmd_line::cmd_get_rx_state(int total_matched, std::vector<cli_argument *> ar
         {
             avdecc_lib::stream_input_get_rx_state_response * stream_input_resp_ref = instream->get_stream_input_get_rx_state_response();
             atomic_cout << "\nstream_id = 0x" << std::hex << stream_input_resp_ref->get_rx_state_stream_id();
+            atomic_cout << "\ntalker_entity_id = 0x" << std::hex << stream_input_resp_ref->get_rx_state_talker_entity_id();
             atomic_cout << "\ntalker_unique_id = " << std::dec << std::dec << stream_input_resp_ref->get_rx_state_talker_unique_id();
+            atomic_cout << "\nlistener_entity_id = 0x" << std::hex << stream_input_resp_ref->get_rx_state_listener_entity_id();
             atomic_cout << "\nlistener_unique_id = " << std::dec << stream_input_resp_ref->get_rx_state_listener_unique_id();
             atomic_cout << "\nstream_dest_mac = 0x" << std::hex << stream_input_resp_ref->get_rx_state_stream_dest_mac();
             atomic_cout << "\nconnection_count = " << std::dec << stream_input_resp_ref->get_rx_state_connection_count();

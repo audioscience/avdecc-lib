@@ -112,6 +112,11 @@ uint64_t STDCALL end_station_imp::mac()
 {
     return end_station_mac;
 }
+    
+uint64_t STDCALL end_station_imp::get_gptp_grandmaster_id()
+{
+    return adp_ref->get_gptp_grandmaster_id();
+}
 
 adp * end_station_imp::get_adp()
 {
@@ -1823,103 +1828,77 @@ int end_station_imp::proc_rcvd_aecp_aa_resp(void *& notification_id, const uint8
 
 int end_station_imp::proc_rcvd_acmp_resp(uint32_t msg_type, void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
+    stream_output_descriptor_imp * stream_output_desc_imp_ref = nullptr;
+    stream_input_descriptor_imp * stream_input_desc_imp_ref = nullptr;
+    configuration_descriptor * c = nullptr;
+    entity_descriptor_imp * e = nullptr;
     uint16_t desc_index = 0;
+
+    e = entity_desc_vec.at(current_entity_desc);
+    if (e)
+    {
+        c = e->get_config_desc_by_index(current_config_desc);
+    }
 
     switch (msg_type)
     {
     case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE:
-    {
-        desc_index = jdksavdecc_acmpdu_get_talker_unique_id(frame, ETHER_HDR_SIZE);
-        stream_output_descriptor_imp * stream_output_desc_imp_ref;
-        stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
-
-        if (stream_output_desc_imp_ref)
+    case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE:
+	desc_index = jdksavdecc_acmpdu_get_talker_unique_id(frame, ETHER_HDR_SIZE);
+        if (c)
         {
-            stream_output_desc_imp_ref->proc_get_tx_state_resp(notification_id, frame, frame_len, status);
+            stream_output_descriptor * so = c->get_stream_output_desc_by_index(desc_index);
+	    if (so)
+                stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(so);
         }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
-        }
-    }
-
-    break;
+	break;
 
     case JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE:
-    {
-        desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
-        stream_input_descriptor_imp * stream_input_desc_imp_ref;
-        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
-
-        if (stream_input_desc_imp_ref)
-        {
-            stream_input_desc_imp_ref->proc_connect_rx_resp(notification_id, frame, frame_len, status);
+    case JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE:
+    case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE:
+	desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
+        if (c)
+	{
+		stream_input_descriptor * si = c->get_stream_input_desc_by_index(desc_index);
+		stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(si);
         }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
-        }
+	break;
+    default:
+	notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, (uint16_t)msg_type, 0, 0, 0, 0);
+	break;
     }
 
-    break;
+    // return from here for error case
+    if ((nullptr == stream_output_desc_imp_ref) && (nullptr == stream_input_desc_imp_ref))
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "ACMP response stream_descriptor lookup failed");
+        return 0;
+    }
+
+    switch (msg_type)
+    {
+    case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE:
+        stream_output_desc_imp_ref->proc_get_tx_state_resp(notification_id, frame, frame_len, status);
+        break;
+
+    case JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE:
+        stream_input_desc_imp_ref->proc_connect_rx_resp(notification_id, frame, frame_len, status);
+        break;
 
     case JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE:
-    {
-        desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
-        stream_input_descriptor_imp * stream_input_desc_imp_ref;
-        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
-
-        if (stream_input_desc_imp_ref)
-        {
-            stream_input_desc_imp_ref->proc_disconnect_rx_resp(notification_id, frame, frame_len, status);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
-        }
-    }
-
-    break;
+        stream_input_desc_imp_ref->proc_disconnect_rx_resp(notification_id, frame, frame_len, status);
+        break;
 
     case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE:
-    {
-        desc_index = jdksavdecc_acmpdu_get_listener_unique_id(frame, ETHER_HDR_SIZE);
-        stream_input_descriptor_imp * stream_input_desc_imp_ref;
-        stream_input_desc_imp_ref = dynamic_cast<stream_input_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_input_desc_by_index(desc_index));
-
-        if (stream_input_desc_imp_ref)
-        {
-            stream_input_desc_imp_ref->proc_get_rx_state_resp(notification_id, frame, frame_len, status);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
-        }
-    }
-
-    break;
+        stream_input_desc_imp_ref->proc_get_rx_state_resp(notification_id, frame, frame_len, status);
+        break;
 
     case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE:
-    {
-        desc_index = jdksavdecc_acmpdu_get_talker_unique_id(frame, ETHER_HDR_SIZE);
-        stream_output_descriptor_imp * stream_output_desc_imp_ref;
-        stream_output_desc_imp_ref = dynamic_cast<stream_output_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_stream_output_desc_by_index(desc_index));
-
-        if (stream_output_desc_imp_ref)
-        {
-            stream_output_desc_imp_ref->proc_get_tx_connection_resp(notification_id, frame, frame_len, status);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from derived stream_input_descriptor_imp to base stream_input_descriptor error");
-        }
-    }
-
-    break;
+	stream_output_desc_imp_ref->proc_get_tx_connection_resp(notification_id, frame, frame_len, status);
+        break;
 
     default:
-        notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, (uint16_t)msg_type, 0, 0, 0, 0);
-        break;
+        break;	// handled in previous switch statement
     }
 
     return 0;

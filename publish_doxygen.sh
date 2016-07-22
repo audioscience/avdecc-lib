@@ -64,6 +64,6 @@ if [ -d "${HTML_PATH}/html" ] && [ -f "${HTML_PATH}/html/index.html" ]; then
 else
     echo 'Warning: No documentation (html) files have been found!'
     echo 'Warning: Not going to push the documentation to GitHub!'
-    exit 1
+    exit 0
 fi
 cd -

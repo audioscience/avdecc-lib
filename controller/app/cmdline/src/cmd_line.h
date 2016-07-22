@@ -94,6 +94,7 @@ public:
     /// Constructor for cmd_line used for constructing an object with notification and log callback functions.
     ///
     cmd_line(void (*notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
+             void (*acmp_notification_callback)(void *, int32_t, uint16_t, uint64_t, uint16_t, uint64_t, uint16_t, uint32_t, void *),
              void (*log_callback)(void *, int32_t, const char *, int32_t),
              bool test_mode, char * interface, int32_t log_level);
 

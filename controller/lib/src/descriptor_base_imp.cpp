@@ -482,7 +482,6 @@ int descriptor_base_imp::default_proc_set_name_resp(struct jdksavdecc_aem_comman
     uint32_t msg_type = 0;
     bool u_field = false;
     uint16_t desc_type = 0;
-    uint8_t * buffer;
 
     memcpy(cmd_frame.payload, frame, frame_len);
 
@@ -502,39 +501,43 @@ int descriptor_base_imp::default_proc_set_name_resp(struct jdksavdecc_aem_comman
     status = aem_cmd_set_name_resp.aem_header.aecpdu_header.header.status;
     u_field = aem_cmd_set_name_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-    desc_type = jdksavdecc_aem_command_set_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
-
-    if (desc_type == AEM_DESC_ENTITY)
+    if (status == AEM_STATUS_SUCCESS)
     {
-        buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
-        memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
+        uint8_t * buffer;
+        desc_type = jdksavdecc_aem_command_set_name_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
 
-        if (aem_cmd_set_name_resp.name_index == 0) //entity name
+        if (desc_type == AEM_DESC_ENTITY)
         {
-            jdksavdecc_descriptor_entity_set_entity_name(aem_cmd_set_name_resp.name, buffer, resp_ref->get_desc_pos());
-        }
-        else if (aem_cmd_set_name_resp.name_index == 1) //group name
-        {
-            jdksavdecc_descriptor_entity_set_group_name(aem_cmd_set_name_resp.name, buffer, resp_ref->get_desc_pos());
+            buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
+            memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
+
+            if (aem_cmd_set_name_resp.name_index == 0) //entity name
+            {
+                jdksavdecc_descriptor_entity_set_entity_name(aem_cmd_set_name_resp.name, buffer, resp_ref->get_desc_pos());
+            }
+            else if (aem_cmd_set_name_resp.name_index == 1) //group name
+            {
+                jdksavdecc_descriptor_entity_set_group_name(aem_cmd_set_name_resp.name, buffer, resp_ref->get_desc_pos());
+            }
+            else
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "invalid SET_NAME name index\n");
+            }
         }
         else
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "invalid SET_NAME name index\n");
+            buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
+            memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
+
+            jdksavdecc_aem_command_set_name_set_name(aem_cmd_set_name_resp.name, buffer, ETHER_HDR_SIZE);
         }
-    }
-    else
-    {
-        buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); //fetch current desc frame
-        memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
 
-        jdksavdecc_aem_command_set_name_set_name(aem_cmd_set_name_resp.name, buffer, ETHER_HDR_SIZE);
+        replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size());
+        free(buffer);
     }
-
-    replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size());
 
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
-    free(buffer);
     return 0;
 }
 

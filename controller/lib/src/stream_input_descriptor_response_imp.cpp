@@ -159,7 +159,6 @@ uint16_t stream_input_descriptor_response_imp::formats_offset()
 
 uint16_t STDCALL stream_input_descriptor_response_imp::number_of_formats()
 {
-    assert(jdksavdecc_descriptor_stream_get_number_of_formats(buffer, position));
     return jdksavdecc_descriptor_stream_get_number_of_formats(buffer, position);
 }
 

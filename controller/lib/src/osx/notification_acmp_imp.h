@@ -1,7 +1,7 @@
 /*
  * Licensed under the MIT License (MIT)
  *
- * Copyright (c) 2014 AudioScience Inc.
+ * Copyright (c) 2016 AudioScience Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,37 +22,54 @@
  */
 
 /**
- * stream_input_get_rx_state_response_imp.h
+ * notification_acmp_imp.h
  *
- * STREAM INPUT rx state response implementation class
+ * ACMP Notification implementation class
  */
 
 #pragma once
 
-#include "stream_input_get_rx_state_response.h"
-#include "jdksavdecc_acmp.h"
+#include "avdecc_lib_os.h"
+#include "notification_acmp.h"
 
 namespace avdecc_lib
 {
-class stream_input_get_rx_state_response_imp : public stream_input_get_rx_state_response
+class notification_acmp_imp : public virtual notification_acmp
 {
 private:
-    uint8_t * m_frame;
-    size_t m_size;
-    ssize_t m_position;
+    pthread_t h_thread;
+    sem_t * notify_waiting;
 
 public:
-    stream_input_get_rx_state_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos);
-    virtual ~stream_input_get_rx_state_response_imp();
+    ///
+    /// An empty constructor for notification_imp
+    ///
+    notification_acmp_imp();
 
-    uint64_t STDCALL get_rx_state_stream_id();
-    uint64_t STDCALL get_rx_state_talker_entity_id();
-    uint16_t STDCALL get_rx_state_talker_unique_id();
-    uint64_t STDCALL get_rx_state_listener_entity_id();
-    uint16_t STDCALL get_rx_state_listener_unique_id();
-    uint64_t STDCALL get_rx_state_stream_dest_mac();
-    uint16_t STDCALL get_rx_state_connection_count();
-    uint16_t STDCALL get_rx_state_flags();
-    uint16_t STDCALL get_rx_state_stream_vlan_id();
+    ///
+    /// Destructor for notification_imp used for destroying objects
+    ///
+    virtual ~notification_acmp_imp();
+
+private:
+    ///
+    /// Create and initialize notification thread, event, and semaphore.
+    ///
+    int notification_thread_init();
+
+    ///
+    /// Start of the post_notification_msg thread used for generating notification messages.
+    ///
+    static void * dispatch_thread(void * lpParam);
+
+    void * dispatch_callbacks(void);
+
+public:
+    ///
+    /// Release sempahore so that notification callback function is called.
+    ///
+    void post_acmp_notification_event();
 };
+
+extern notification_acmp_imp * notification_acmp_imp_ref;
 }
