@@ -67,9 +67,9 @@ public:
     const char * STDCALL get_version() const;
 
     ///
-    /// This function is included to bypass the
-    /// adp.h function used by descriptor commands.
+    /// This function converts the net_interface_imp mac address to the controller entity id.
     ///
+    /// A copy of this function exists in adp.h
     /// \see get_controller_entity_id()
     uint64_t STDCALL get_entity_id();
     size_t STDCALL get_end_station_count();
