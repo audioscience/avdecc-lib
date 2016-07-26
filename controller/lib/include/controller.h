@@ -58,6 +58,11 @@ public:
     /// \return The total number of End Stations connected.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL get_end_station_count() = 0;
+    
+    ///
+    /// \return The entity id of the controller.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_entity_id() = 0;
 
     ///
     /// \return The corresponding End Station by index.

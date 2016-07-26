@@ -82,6 +82,13 @@ public:
     ///
     /// Get the Controller Entity ID of the AVDECC Entity sending the command.
     ///
+    /// This function is used by descriptor commands to fetch the
+    /// controller entity id corresponding to a particular end station.
+    /// A copy of this function that bypasses
+    /// the adp and end_station classes exists in controller.h.
+    ///
+    /// \see get_entity_id()
+    ///
     static struct jdksavdecc_eui64 get_controller_entity_id();
 
     ///
