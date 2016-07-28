@@ -52,6 +52,17 @@ public:
     /// \return The index of the descriptor.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual uint16_t STDCALL descriptor_index() const = 0;
+    
+    ///
+    /// Check the descriptor's permission status.
+    ///
+    /// \param flag The LOCK_ENTITY or ACQUIRE_ENTITY flag to retrieve.
+    /// \see avdecc_lib::permission_flags
+    ///
+    /// \return True if the current permission status matches the flag.
+    ///         False if the current permission status differs.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL get_permission(int flag) = 0;
 
     ///
     /// \return The number of fields in the descriptor.
