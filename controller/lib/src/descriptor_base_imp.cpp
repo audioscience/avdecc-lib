@@ -95,6 +95,21 @@ void STDCALL descriptor_base_imp::replace_desc_frame(const uint8_t * frame, ssiz
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock the end station
     resp_ref->replace_desc_frame(frame, pos, size);
 }
+    
+bool STDCALL descriptor_base_imp::get_permission(int flag)
+{
+    switch (flag)
+    {
+    case LOCK:
+        return ((1 & last_rcvd_lock_entity_flags) == 0);
+    case ACQUIRE:
+        return ((1 & (last_rcvd_acquire_entity_flags >> 31)) == 0);
+    case PERSISTENT:
+        return ((1 & last_rcvd_acquire_entity_flags) == 1);
+    default :
+        return false;
+    }
+}
 
 uint16_t STDCALL descriptor_base_imp::descriptor_type() const
 {
@@ -222,6 +237,8 @@ int descriptor_base_imp::default_proc_acquire_entity_resp(struct jdksavdecc_aem_
     status = aem_cmd_acquire_entity_resp.aem_header.aecpdu_header.header.status;
     u_field = aem_cmd_acquire_entity_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
+    last_rcvd_acquire_entity_flags = aem_cmd_acquire_entity_resp.aem_acquire_flags;
+
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
     return 0;
@@ -319,7 +336,9 @@ int descriptor_base_imp::default_proc_lock_entity_resp(struct jdksavdecc_aem_com
     msg_type = aem_cmd_lock_entity_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_lock_entity_resp.aem_header.aecpdu_header.header.status;
     u_field = aem_cmd_lock_entity_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
-
+    
+    last_rcvd_lock_entity_flags = aem_cmd_lock_entity_resp.aem_lock_flags;
+    
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
     return 0;

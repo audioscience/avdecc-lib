@@ -56,7 +56,22 @@ protected:
     response_frame * resp_ref;
     uint16_t desc_type;
     uint16_t desc_index;
-
+    
+    ///
+    /// Store the lock status - the last received lock entity flags.
+    /// This is not guaranteed to be the actual status as another
+    /// controller may have locked the Entity before this controller
+    /// is notified of the change.
+    ///
+    uint32_t last_rcvd_lock_entity_flags = 0x1; // initialized to unlocked
+    
+    ///
+    /// Store the acquire status - the last received acquire entity flags.
+    /// This is not guaranteed to be the actual status as another
+    /// controller may have acquired the Entity before this controller
+    /// is notified of the change.
+    ///
+    uint32_t last_rcvd_acquire_entity_flags = 0x80000000; // initialized to released
 public:
     descriptor_base_imp(end_station_imp * base, const uint8_t * frame, size_t size, ssize_t pos);
     virtual ~descriptor_base_imp();
@@ -64,6 +79,7 @@ public:
     uint16_t STDCALL descriptor_type() const;
     uint16_t STDCALL descriptor_index() const;
     virtual uint16_t STDCALL localized_description();
+    bool STDCALL get_permission(int flag);
 
     size_t STDCALL field_count() const
     {
