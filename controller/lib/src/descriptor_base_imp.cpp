@@ -110,6 +110,11 @@ bool STDCALL descriptor_base_imp::get_permission(int flag)
         return false;
     }
 }
+    
+uint64_t STDCALL descriptor_base_imp::get_owning_guid()
+{
+    return owning_guid;
+}
 
 uint16_t STDCALL descriptor_base_imp::descriptor_type() const
 {
@@ -238,6 +243,7 @@ int descriptor_base_imp::default_proc_acquire_entity_resp(struct jdksavdecc_aem_
     u_field = aem_cmd_acquire_entity_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
     last_rcvd_acquire_entity_flags = aem_cmd_acquire_entity_resp.aem_acquire_flags;
+    owning_guid = jdksavdecc_eui64_convert_to_uint64(&aem_cmd_acquire_entity_resp.owner_entity_id);
 
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
@@ -338,6 +344,7 @@ int descriptor_base_imp::default_proc_lock_entity_resp(struct jdksavdecc_aem_com
     u_field = aem_cmd_lock_entity_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
     
     last_rcvd_lock_entity_flags = aem_cmd_lock_entity_resp.aem_lock_flags;
+    owning_guid = jdksavdecc_eui64_convert_to_uint64(&aem_cmd_lock_entity_resp.locked_entity_id);
     
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
