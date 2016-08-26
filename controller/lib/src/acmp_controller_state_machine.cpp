@@ -294,13 +294,13 @@ int acmp_controller_state_machine::callback(void * notification_id, uint32_t not
         if (status != ACMP_STATUS_SUCCESS)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
-                                      "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %s, %d",
+                                      "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %d, %s",
                                       end_station_entity_id,
                                       utility::acmp_cmd_value_to_name(msg_type),
                                       "NULL",
                                       "NULL",
-                                      utility::acmp_cmd_status_value_to_name(status),
-                                      seq_id);
+                                      seq_id,
+                                      utility::acmp_cmd_status_value_to_name(status));
         }
     }
     else if ((notification_flag == CMD_WITH_NOTIFICATION) &&
@@ -336,13 +336,13 @@ int acmp_controller_state_machine::callback(void * notification_id, uint32_t not
         if (status != ACMP_STATUS_SUCCESS)
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR,
-                                      "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %s, %d",
+                                      "RESPONSE_RECEIVED, 0x%llx, %s, %s, %s, %d, %s",
                                       end_station_entity_id,
                                       utility::acmp_cmd_value_to_name(msg_type),
                                       "NULL",
                                       "NULL",
-                                      utility::acmp_cmd_status_value_to_name(status),
-                                      seq_id);
+                                      seq_id,
+                                      utility::acmp_cmd_status_value_to_name(status));
         }
     }
     else if ((notification_flag == CMD_WITHOUT_NOTIFICATION) &&
@@ -400,13 +400,13 @@ int acmp_controller_state_machine::callback(void * notification_id, uint32_t not
         struct jdksavdecc_eui64 _end_station_entity_id = jdksavdecc_acmpdu_get_listener_entity_id(frame, ETHER_HDR_SIZE);
         end_station_entity_id = jdksavdecc_uint64_get(&_end_station_entity_id, 0);
         log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG,
-                                  "COMMAND_SENT, 0x%llx, %s, %s, %s, %s, %d",
+                                  "COMMAND_SENT, 0x%llx, %s, %s, %s, %d, %s",
                                   end_station_entity_id,
                                   utility::acmp_cmd_value_to_name(msg_type),
                                   "NULL",
                                   "NULL",
-                                  utility::acmp_cmd_status_value_to_name(status),
-                                  seq_id);
+                                  seq_id,
+                                  utility::acmp_cmd_status_value_to_name(status));
     }
 
     return 0;
