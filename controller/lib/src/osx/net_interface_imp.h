@@ -32,6 +32,7 @@
 #define HAVE_REMOTE
 
 #include <stdint.h>
+#include <vector>
 #include <pcap.h>
 #include "avdecc-lib_build.h"
 #include "net_interface.h"
@@ -41,6 +42,7 @@ namespace avdecc_lib
 class net_interface_imp : public virtual net_interface
 {
 private:
+    std::vector<std::vector<std::string> > all_ip_addresses;
     pcap_if_t * all_devs;
     pcap_if_t * dev;
     uint64_t mac;
@@ -66,6 +68,11 @@ public:
     /// Count the number of devices.
     ///
     uint32_t STDCALL devs_count();
+    
+    ///
+    /// Count the number of IP addresses for a device.
+    ///
+    size_t STDCALL device_ip_address_count(size_t dev_index);
 
     ///
     /// Get the MAC address of the network interface.
@@ -76,6 +83,11 @@ public:
     /// Get the corresponding network interface description by index.
     ///
     char * STDCALL get_dev_desc_by_index(size_t dev_index);
+    
+    ///
+    /// Get the corresponding network interface IP address by index.
+    ///
+    std::string STDCALL get_dev_ip_address_by_index(size_t dev_index, size_t ip_index);
 
     ///
     /// Get the corresponding network interface name by index.

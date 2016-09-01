@@ -54,6 +54,20 @@ net_interface_imp::net_interface_imp()
     {
         for (dev = all_devs; dev; dev = dev->next)
         {
+            // store the valid IPv4 addresses associated with the device
+            std::vector<std::string> device_ip_addresses;
+            pcap_addr_t * dev_addr;
+            for (dev_addr = dev->addresses; dev_addr != NULL; dev_addr = dev_addr->next)
+            {
+                if (dev_addr->addr->sa_family == AF_INET && dev_addr->addr)
+                {
+                    char ip_str[INET_ADDRSTRLEN] = {0};
+                    inet_ntop(AF_INET, &((struct sockaddr_in *)dev_addr->addr)->sin_addr, ip_str, INET_ADDRSTRLEN);
+                    device_ip_addresses.push_back(std::string(ip_str));
+                }
+            }
+            
+            all_ip_addresses.push_back(device_ip_addresses);
             total_devs++;
         }
     }
@@ -80,6 +94,14 @@ void STDCALL net_interface_imp::destroy()
 uint32_t STDCALL net_interface_imp::devs_count()
 {
     return total_devs;
+}
+
+size_t STDCALL net_interface_imp::device_ip_address_count(size_t dev_index)
+{
+    if (dev_index < all_ip_addresses.size())
+        return all_ip_addresses.at(dev_index).size();
+
+    return -1;
 }
 
 uint64_t net_interface_imp::mac_addr()
@@ -115,6 +137,17 @@ char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
     }
 
     return dev->name;
+}
+    
+std::string STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_index, size_t ip_index)
+{
+    if (dev_index < all_ip_addresses.size())
+    {
+        if (ip_index < all_ip_addresses.at(dev_index).size())
+            return all_ip_addresses.at(dev_index).at(ip_index);
+    }
+    
+    return "";
 }
 
 int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)

@@ -83,6 +83,11 @@ public:
     /// Count the number of devices.
     ///
     uint32_t STDCALL devs_count();
+    
+    ///
+    /// Count the number of IP addresses for a device.
+    ///
+    size_t STDCALL device_ip_address_count(size_t dev_index);
 
     ///
     /// Get the MAC address of the network interface.
@@ -93,6 +98,11 @@ public:
     /// Get network interface description by index.
     ///
     char * STDCALL get_dev_desc_by_index(size_t dev_index);
+
+    ///
+    /// Get the corresponding network interface IP address by index.
+    ///
+    std::string STDCALL get_dev_ip_address_by_index(size_t dev_index, size_t ip_index);
 
     ///
     /// Get the corresponding network interface name by index.
