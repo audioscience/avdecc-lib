@@ -153,10 +153,22 @@ int cmd_line::print_interfaces_and_select(char * interface)
 
     for (uint32_t i = 1; i < netif->devs_count() + 1; i++)
     {
-        char * dev_desc = netif->get_dev_desc_by_index(i - 1);
+        size_t dev_index = i - 1;
+        char * dev_desc = netif->get_dev_desc_by_index(dev_index);
         if (!interface)
         {
-            printf("%d (%s)\n", i, dev_desc);
+            printf("%d (%s)", i, dev_desc);
+            size_t ip_addr_count = netif->device_ip_address_count(dev_index);
+            if (ip_addr_count > 0)
+            {
+                for(size_t ip_index = 0; ip_index < ip_addr_count; ip_index++)
+                {
+                    const char * dev_ip = netif->get_dev_ip_address_by_index(dev_index, ip_index);
+                    if (dev_ip)
+                        printf(" (%s)", dev_ip);
+                }
+            }
+            printf("\n");
         }
         else
         {
