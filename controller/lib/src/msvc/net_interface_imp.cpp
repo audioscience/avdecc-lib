@@ -212,13 +212,12 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     {
         if (strstr(dev->name, Current->AdapterName) != 0)
         {
-            uint32_t my_ip;
+            struct sockaddr_in sa;
             ULONG len;
             uint8_t tmp[16];
-
-            my_ip = inet_addr(Current->IpAddressList.IpAddress.String);
+            inet_pton(AF_INET, Current->IpAddressList.IpAddress.String, &(sa.sin_addr));
             len = sizeof(tmp);
-            SendARP(my_ip, INADDR_ANY, tmp, &len);
+            SendARP(sa.sin_addr.S_un.S_addr, INADDR_ANY, tmp, &len);
             utility::convert_eui48_to_uint64(&tmp[0], mac);
         }
     }
