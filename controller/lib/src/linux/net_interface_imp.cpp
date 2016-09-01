@@ -151,7 +151,7 @@ uint32_t STDCALL net_interface_imp::devs_count()
 
 size_t STDCALL net_interface_imp::device_ip_address_count(size_t dev_index)
 {
-    // not needed
+    // not needed on this platform as the device IP is embedded in the string returned by get_dev_desc_by_index()
     return -1;
 }
 
@@ -172,7 +172,7 @@ char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
     
 const char * STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_index, size_t ip_index)
 {
-    // not needed
+    // not needed on this platform as the device IP is embedded in the string returned by get_dev_desc_by_index()
     return NULL;
 }
 
