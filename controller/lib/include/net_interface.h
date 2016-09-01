@@ -61,7 +61,7 @@ public:
     ///
     /// \return The network interface IP address by index for a device.
     ///
-    AVDECC_CONTROLLER_LIB32_API virtual std::string STDCALL get_dev_ip_address_by_index(size_t dev_index, size_t ip_index) = 0;
+    AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_dev_ip_address_by_index(size_t dev_index, size_t ip_index) = 0;
 
     /// This function is OS dependant. In linux and OSX the return is the same as for a call to
     /// get_dev_desc_by_index(). In Windows this function returns a GUID as a string.

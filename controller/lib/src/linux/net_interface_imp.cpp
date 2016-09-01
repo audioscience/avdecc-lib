@@ -151,7 +151,7 @@ uint32_t STDCALL net_interface_imp::devs_count()
 
 size_t STDCALL net_interface_imp::device_ip_address_count(size_t dev_index)
 {
-    // need to implement
+    // not needed
     return -1;
 }
 
@@ -170,10 +170,10 @@ char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
     return get_dev_desc_by_index(dev_index);
 }
     
-std::string STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_index, size_t ip_index)
+const char * STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_index, size_t ip_index)
 {
-    // need to implement
-    return "";
+    // not needed
+    return NULL;
 }
 
 int net_interface_imp::get_fd()

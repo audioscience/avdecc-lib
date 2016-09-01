@@ -85,7 +85,7 @@ public:
     ///
     /// Get the corresponding network interface IP address by index.
     ///
-    std::string STDCALL get_dev_ip_address_by_index(size_t dev_index, size_t ip_index);
+    const char * STDCALL get_dev_ip_address_by_index(size_t dev_index, size_t ip_index);
 
     ///
     /// Get the corresponding network interface name by index.

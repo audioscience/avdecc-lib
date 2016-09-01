@@ -139,15 +139,15 @@ char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
     return dev->name;
 }
     
-std::string STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_index, size_t ip_index)
+const char * STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_index, size_t ip_index)
 {
     if (dev_index < all_ip_addresses.size())
     {
         if (ip_index < all_ip_addresses.at(dev_index).size())
-            return all_ip_addresses.at(dev_index).at(ip_index);
+            return all_ip_addresses.at(dev_index).at(ip_index).c_str();
     }
     
-    return "";
+    return NULL;
 }
 
 int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)

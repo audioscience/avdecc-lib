@@ -163,9 +163,9 @@ int cmd_line::print_interfaces_and_select(char * interface)
             {
                 for(size_t ip_index = 0; ip_index < ip_addr_count; ip_index++)
                 {
-                    std::string dev_ip = netif->get_dev_ip_address_by_index(dev_index, ip_index);
-                    if (!dev_ip.empty())
-                        printf(" (%s)", dev_ip.c_str());
+                    const char * dev_ip = netif->get_dev_ip_address_by_index(dev_index, ip_index);
+                    if (dev_ip)
+                        printf(" (%s)", dev_ip);
                 }
             }
             printf("\n");
