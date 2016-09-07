@@ -531,6 +531,16 @@ void cmd_line::cmd_line_commands_init()
     cli_command * get_cmd = new cli_command();
     commands.add_sub_command("get", get_cmd);
 
+    // get connection status
+    cli_command * get_connection_status_cmd = new cli_command();
+    get_cmd->add_sub_command("connection_status", get_connection_status_cmd);
+    
+    cli_command_format * get_connection_status_fmt = new cli_command_format(
+        "Get the connection status of an end station.",
+        &cmd_line::cmd_get_connection_status);
+    get_connection_status_fmt->add_argument(new cli_argument_string(this, "e_g", "the end station - by GUID or index"));
+    get_connection_status_cmd->add_format(get_connection_status_fmt);
+    
     // get name
     cli_command * get_name_cmd = new cli_command();
     get_cmd->add_sub_command("name", get_name_cmd);
@@ -4144,6 +4154,35 @@ int cmd_line::cmd_get_group_name(int total_matched, std::vector<cli_argument *> 
     {
         atomic_cout << "cmd_get_name failed with AEM status: " << avdecc_lib::utility::aem_cmd_status_value_to_name(status) << std::endl;
     }
+
+    return 0;
+}
+
+int cmd_line::cmd_get_connection_status(int total_matched, std::vector<cli_argument *> args)
+{
+    std::string end_station = args[0]->get_value_str();
+    uint32_t end_station_index;
+    if (get_end_station_index(end_station, end_station_index))
+    {
+        avdecc_lib::end_station * end_station = controller_obj->get_end_station_by_index(end_station_index);
+        avdecc_lib::entity_descriptor * entity;
+        avdecc_lib::configuration_descriptor * configuration;
+        if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
+        {
+            atomic_cout << "End Station " << end_station << " is not fully enumerated." << std::endl;
+            return 0;
+        }
+        
+        avdecc_lib::entity_descriptor_response * entity_desc_resp = entity->get_entity_response();
+        if (end_station->get_connection_status() == 'C')
+            atomic_cout << "End Station " << entity_desc_resp->entity_name() << " is connected." << std::endl;
+        else
+            atomic_cout << "End Station " << entity_desc_resp->entity_name() << " is disconnected." << std::endl;
+
+        delete entity_desc_resp;
+    }
+    else
+        atomic_cout << "End Station " << end_station << " is not found." << std::endl;
 
     return 0;
 }
