@@ -41,6 +41,8 @@
 #include <sys/ioctl.h>
 #include <net/bpf.h>
 
+#include <algorithm>
+
 #include "util.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -78,6 +80,10 @@ net_interface_imp::net_interface_imp()
         }
         
         all_ip_addresses.push_back(device_ip_addresses);
+        
+        // store the MAC addr associated with device
+        find_and_store_device_mac_addr(dev->name);
+        
         total_devs++;
     }
 
@@ -92,6 +98,55 @@ net_interface_imp::~net_interface_imp()
 {
     pcap_freealldevs(all_devs); // Free the device list
     pcap_close(pcap_interface);
+}
+    
+void net_interface_imp::find_and_store_device_mac_addr(char * dev_name)
+{
+    uint64_t mac;
+    int mib[6];
+    size_t len;
+    char * buf;
+    unsigned char * ptr;
+    struct if_msghdr * ifm;
+    struct sockaddr_dl * sdl;
+    
+    mib[0] = CTL_NET;
+    mib[1] = AF_ROUTE;
+    mib[2] = 0;
+    mib[3] = AF_LINK;
+    mib[4] = NET_RT_IFLIST;
+    
+    if ((mib[5] = if_nametoindex(dev_name)) == 0)
+    {
+        perror("if_nametoindex error");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
+    {
+        perror("sysctl 1 error");
+        exit(EXIT_FAILURE);
+    }
+    
+    if ((buf = (char *)malloc(len)) == NULL)
+    {
+        perror("malloc error");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
+    {
+        perror("sysctl 2 error");
+        exit(EXIT_FAILURE);
+    }
+    
+    ifm = (struct if_msghdr *)buf;
+    sdl = (struct sockaddr_dl *)(ifm + 1);
+    ptr = (unsigned char *)LLADDR(sdl);
+    utility::convert_eui48_to_uint64(ptr, mac);
+
+    all_mac_addresses.push_back(mac);
+    free(buf);
 }
 
 void STDCALL net_interface_imp::destroy()
@@ -114,7 +169,7 @@ size_t STDCALL net_interface_imp::device_ip_address_count(size_t dev_index)
 
 uint64_t net_interface_imp::mac_addr()
 {
-    return mac;
+    return selected_dev_mac;
 }
 
 char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
@@ -144,6 +199,29 @@ const char * STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_i
     return NULL;
 }
     
+bool STDCALL net_interface_imp::find_selected_interface_by_ip_address(size_t dev_index, char * ip_addr_str)
+{
+    if (dev_index < all_ip_addresses.size())
+    {
+        if (std::find(all_ip_addresses.at(dev_index).begin(), all_ip_addresses.at(dev_index).end(),
+                      std::string(ip_addr_str)) != all_ip_addresses.at(dev_index).end())
+            return true;
+    }
+    
+    return false;
+}
+    
+bool STDCALL net_interface_imp::find_selected_interface_by_mac_address(size_t dev_index, uint64_t mac_addr)
+{
+    if (dev_index < all_mac_addresses.size())
+    {
+        if (all_mac_addresses.at(dev_index) == mac_addr)
+            return true;
+    }
+    
+    return false;
+}
+    
 char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
 {
     return get_dev_desc_by_index(dev_index);
@@ -152,6 +230,14 @@ char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
 int net_interface_imp::get_fd()
 {
     return pcap_get_selectable_fd(pcap_interface);
+}
+
+uint64_t net_interface_imp::get_dev_mac_addr_by_index(size_t dev_index)
+{
+    if (dev_index < all_mac_addresses.size())
+        return all_mac_addresses.at(dev_index);
+    
+    return 0;
 }
 
 int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
@@ -203,58 +289,18 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
         exit(EXIT_FAILURE);
     }
 
-    int mib[6];
-    size_t len;
-    char * buf;
-    unsigned char * ptr;
-    struct if_msghdr * ifm;
-    struct sockaddr_dl * sdl;
-
-    mib[0] = CTL_NET;
-    mib[1] = AF_ROUTE;
-    mib[2] = 0;
-    mib[3] = AF_LINK;
-    mib[4] = NET_RT_IFLIST;
-
-    if ((mib[5] = if_nametoindex(dev->name)) == 0)
+    if (index >= all_mac_addresses.size())
     {
-        perror("if_nametoindex error");
+        perror("Cannot find selected interface MAC address");
         exit(EXIT_FAILURE);
     }
-
-    if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
-    {
-        perror("sysctl 1 error");
-        exit(EXIT_FAILURE);
-    }
-
-    if ((buf = (char *)malloc(len)) == NULL)
-    {
-        perror("malloc error");
-        exit(EXIT_FAILURE);
-    }
-
-    if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
-    {
-        perror("sysctl 2 error");
-        exit(EXIT_FAILURE);
-    }
-
-    ifm = (struct if_msghdr *)buf;
-    sdl = (struct sockaddr_dl *)(ifm + 1);
-    ptr = (unsigned char *)LLADDR(sdl);
-    utility::convert_eui48_to_uint64(ptr, mac);
-
-    char mac_str[20];
-    snprintf(mac_str, (size_t)20, "%02x:%02x:%02x:%02x:%02x:%02x", *ptr, *(ptr + 1), *(ptr + 2),
-             *(ptr + 3), *(ptr + 4), *(ptr + 5));
-    log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, mac_str);
-
+    
+    selected_dev_mac = all_mac_addresses.at(index);
+    
     uint16_t ether_type[1];
     ether_type[0] = JDKSAVDECC_AVTP_ETHERTYPE;
     set_capture_ether_type(ether_type, 1); // Set the filter
 
-    free(buf);
     return 0;
 }
 

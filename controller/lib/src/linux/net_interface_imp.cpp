@@ -143,6 +143,24 @@ void STDCALL net_interface_imp::destroy()
 {
     delete this;
 }
+    
+bool STDCALL net_interface_imp::find_selected_interface_by_ip_address(size_t dev_index, char * ip_addr_str)
+{
+    // need to implement
+    return false;
+}
+
+bool STDCALL net_interface_imp::find_selected_interface_by_mac_address(size_t dev_index, uint64_t mac_addr)
+{
+    // need to implement
+    return false;
+}
+
+uint64_t net_interface_imp::get_dev_mac_addr_by_index(size_t dev_index)
+{
+    //need to implement
+    return 0;
+}
 
 uint32_t STDCALL net_interface_imp::devs_count()
 {
