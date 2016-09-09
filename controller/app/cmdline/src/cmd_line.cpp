@@ -158,6 +158,16 @@ int cmd_line::print_interfaces_and_select(char * interface)
         if (!interface)
         {
             printf("%d (%s)", i, dev_desc);
+            
+            uint64_t dev_mac = netif->get_dev_mac_addr_by_index(dev_index);
+            if (dev_mac)
+            {
+                avdecc_lib::utility::MacAddr mac(dev_mac);
+                char mac_str[20];
+                mac.tostring(mac_str);
+                printf(" (%s)", mac_str);
+            }
+            
             size_t ip_addr_count = netif->device_ip_address_count(dev_index);
             if (ip_addr_count > 0)
             {
@@ -165,17 +175,33 @@ int cmd_line::print_interfaces_and_select(char * interface)
                 {
                     const char * dev_ip = netif->get_dev_ip_address_by_index(dev_index, ip_index);
                     if (dev_ip)
-                        printf(" (%s)", dev_ip);
+                        printf(" <%s>", dev_ip);
                 }
             }
             printf("\n");
         }
         else
         {
-            if (strcmp(dev_desc, interface) == 0)
+            // try to find the selected interface by ip address
+            if (netif->does_interface_have_ip_address(dev_index, interface))
             {
                 interface_num = i;
                 break;
+            }
+
+            // try to find the selected interface by MAC address
+            avdecc_lib::utility::MacAddr mac(interface);
+            if (mac.fromstring(interface)) // valid format? (xx:xx:...)
+            {
+                uint64_t mac_val = mac.tovalue();
+                if (mac_val)
+                {
+                    if (netif->does_interface_have_mac_address(dev_index, mac_val))
+                    {
+                        interface_num = i;
+                        break;
+                    }
+                }
             }
         }
     }
@@ -185,7 +211,26 @@ int cmd_line::print_interfaces_and_select(char * interface)
         atomic_cout << "Enter the interface number (1-" << std::dec << netif->devs_count() << "): ";
         std::cin >> interface_num;
     }
+    else
+    {
+        // if the interface was not found by IP Address or MAC address...
+        if (interface_num == -1)
+        {
+            // treat the selected interface as an index
+            char * tmp;
+            long if_num = strtol(interface, &tmp, 10);
+            if (interface != tmp)
+                interface_num = if_num;
+        }
+    }
 
+    if (interface_num == -1 ||
+        interface_num > netif->devs_count() + 1)
+    {
+        printf("Invalid Interface: (%s).  Exiting...\n", interface);
+        exit(EXIT_FAILURE);
+    }
+    
     netif->select_interface_by_num(interface_num);
 
     return 0;

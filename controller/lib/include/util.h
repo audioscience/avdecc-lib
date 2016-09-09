@@ -170,6 +170,7 @@ namespace utility
                                     byte6((mac_val & 0XFF)) {}
         MacAddr(const char * p) { fromstring(p); }
 
+        uint64_t tovalue();
         void tostring(char * p, char d = ':') const;
         bool fromstring(const char * p);
 
@@ -267,6 +268,14 @@ namespace utility
         if (i < 6)
             valid = false;
         return valid;
+    }
+    inline uint64_t MacAddr::tovalue()
+    {
+        uint64_t mac_val = 0;
+        for (int i = 0; i < 6; i++)
+            mac_val = uint64_t(getByte(i)) << (40 - (8 * i)) | mac_val;
+        
+        return mac_val;
     }
     inline void MacAddr::tostring(char * p, char d) const
     {

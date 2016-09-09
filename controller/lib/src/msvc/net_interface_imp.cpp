@@ -27,6 +27,7 @@
  * Network interface implementation class
  */
 
+#include <algorithm>
 #include <winsock2.h>
 #include <iphlpapi.h>
 #include "util.h"
@@ -62,8 +63,17 @@ net_interface_imp::net_interface_imp()
                 if (dev_addr->addr->sa_family == AF_INET && dev_addr->addr)
                 {
                     char ip_str[INET_ADDRSTRLEN] = {0};
-                    inet_ntop(AF_INET, &((struct sockaddr_in *)dev_addr->addr)->sin_addr, ip_str, INET_ADDRSTRLEN);
+                    struct sockaddr_in * sa = (struct sockaddr_in *)dev_addr->addr;
+                    inet_ntop(AF_INET, &sa->sin_addr, ip_str, INET_ADDRSTRLEN);
                     device_ip_addresses.push_back(std::string(ip_str));
+                    
+                    uint64_t dev_mac;
+                    ULONG len;
+                    uint8_t tmp[16];
+                    len = sizeof(tmp);
+                    SendARP(sa->sin_addr.S_un.S_addr, INADDR_ANY, tmp, &len);
+                    utility::convert_eui48_to_uint64(&tmp[0], dev_mac);
+                    all_mac_addresses.push_back(dev_mac);
                 }
             }
             
@@ -106,7 +116,7 @@ size_t STDCALL net_interface_imp::device_ip_address_count(size_t dev_index)
 
 uint64_t net_interface_imp::mac_addr()
 {
-    return mac;
+    return selected_dev_mac;
 }
 
 char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
@@ -148,6 +158,37 @@ const char * STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_i
     }
     
     return NULL;
+}
+    
+bool STDCALL net_interface_imp::does_interface_have_ip_address(size_t dev_index, char * ip_addr_str)
+{
+    if (dev_index < all_ip_addresses.size())
+    {
+        if (std::find(all_ip_addresses.at(dev_index).begin(), all_ip_addresses.at(dev_index).end(),
+                      std::string(ip_addr_str)) != all_ip_addresses.at(dev_index).end())
+            return true;
+    }
+    
+    return false;
+}
+
+bool STDCALL net_interface_imp::does_interface_have_mac_address(size_t dev_index, uint64_t mac_addr)
+{
+    if (dev_index < all_mac_addresses.size())
+    {
+        if (all_mac_addresses.at(dev_index) == mac_addr)
+            return true;
+    }
+    
+    return false;
+}
+    
+uint64_t net_interface_imp::get_dev_mac_addr_by_index(size_t dev_index)
+{
+    if (dev_index < all_mac_addresses.size())
+        return all_mac_addresses.at(dev_index);
+    
+    return 0;
 }
 
 int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
@@ -212,13 +253,13 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     {
         if (strstr(dev->name, Current->AdapterName) != 0)
         {
-            struct sockaddr_in sa;
-            ULONG len;
-            uint8_t tmp[16];
-            inet_pton(AF_INET, Current->IpAddressList.IpAddress.String, &(sa.sin_addr));
-            len = sizeof(tmp);
-            SendARP(sa.sin_addr.S_un.S_addr, INADDR_ANY, tmp, &len);
-            utility::convert_eui48_to_uint64(&tmp[0], mac);
+            if (index >= all_mac_addresses.size())
+            {
+                perror("Cannot find selected interface MAC address");
+                exit(EXIT_FAILURE);
+            }
+            
+            selected_dev_mac = all_mac_addresses.at(index);
         }
     }
 

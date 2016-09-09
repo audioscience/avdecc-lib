@@ -240,11 +240,45 @@ char * null_completer(const char * text, int state)
 }
 #endif
 
+// static function to print the network interfaces
+static void print_interfaces()
+{
+    avdecc_lib::net_interface * netif = avdecc_lib::create_net_interface();
+    for (uint32_t i = 1; i < netif->devs_count() + 1; i++)
+    {
+        size_t dev_index = i - 1;
+        char * dev_desc = netif->get_dev_desc_by_index(dev_index);
+        printf("%d (%s)", i, dev_desc);
+        
+        uint64_t dev_mac = netif->get_dev_mac_addr_by_index(dev_index);
+        if (dev_mac)
+        {
+            avdecc_lib::utility::MacAddr mac(dev_mac);
+            char mac_str[20];
+            mac.tostring(mac_str);
+            printf(" (%s)", mac_str);
+        }
+        
+        size_t ip_addr_count = netif->device_ip_address_count(dev_index);
+        if (ip_addr_count > 0)
+        {
+            for(size_t ip_index = 0; ip_index < ip_addr_count; ip_index++)
+            {
+                const char * dev_ip = netif->get_dev_ip_address_by_index(dev_index, ip_index);
+                if (dev_ip)
+                    printf(" <%s>", dev_ip);
+            }
+        }
+        printf("\n");
+    }
+}
+
 static void usage(char * argv[])
 {
     std::cerr << "Usage: " << argv[0] << " [-d] [-i interface]" << std::endl;
     std::cerr << "  -t           :  Sets test mode which disables checks" << std::endl;
-    std::cerr << "  -i interface :  Sets the name of the interface to use" << std::endl;
+    std::cerr << "  -i interface :  Sets the network interface to use.\n \
+                    Valid options are IP Address and MAC Address (must be in the form 'n:n:n:n:n:n', where 0<=n<=FF in hexidecimal" << std::endl;
     std::cerr << "  -l log_level :  Sets the log level to use." << std::endl;
     std::cerr << log_level_help << std::endl;
     exit(1);
@@ -258,10 +292,14 @@ int main(int argc, char * argv[])
     int c = 0;
     int32_t log_level = avdecc_lib::LOGGING_LEVEL_ERROR;
 
-    while ((c = getopt(argc, argv, "ti:l:")) != -1)
+    while ((c = getopt(argc, argv, "pti:l:")) != -1)
     {
         switch (c)
         {
+        case 'p':
+            // print the network interfaces and exit
+            print_interfaces();
+            exit(EXIT_SUCCESS);
         case 't':
             test_mode = true;
             break;
