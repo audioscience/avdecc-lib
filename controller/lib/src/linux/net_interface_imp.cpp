@@ -144,13 +144,13 @@ void STDCALL net_interface_imp::destroy()
     delete this;
 }
     
-bool STDCALL net_interface_imp::find_selected_interface_by_ip_address(size_t dev_index, char * ip_addr_str)
+bool STDCALL net_interface_imp::does_interface_have_ip_address(size_t dev_index, char * ip_addr_str)
 {
     // need to implement
     return false;
 }
 
-bool STDCALL net_interface_imp::find_selected_interface_by_mac_address(size_t dev_index, uint64_t mac_addr)
+bool STDCALL net_interface_imp::does_interface_have_mac_address(size_t dev_index, uint64_t mac_addr)
 {
     // need to implement
     return false;

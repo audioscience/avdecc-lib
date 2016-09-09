@@ -112,12 +112,12 @@ public:
     ///
     /// Check whether ip_addr_str is a valid IP Address for a device.
     ///
-    bool STDCALL find_selected_interface_by_ip_address(size_t dev_index, char * ip_addr_str);
+    bool STDCALL does_interface_have_ip_address(size_t dev_index, char * ip_addr_str);
     
     ///
     /// Check whether mac_addr is the MAC Address for a device.
     ///
-    bool STDCALL find_selected_interface_by_mac_address(size_t dev_index, uint64_t mac_addr);
+    bool STDCALL does_interface_have_mac_address(size_t dev_index, uint64_t mac_addr);
 
     ///
     /// Get the corresponding network interface name by index.

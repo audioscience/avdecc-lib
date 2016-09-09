@@ -183,7 +183,7 @@ int cmd_line::print_interfaces_and_select(char * interface)
         else
         {
             // try to find the selected interface by ip address
-            if (netif->find_selected_interface_by_ip_address(dev_index, interface))
+            if (netif->does_interface_have_ip_address(dev_index, interface))
             {
                 interface_num = i;
                 break;
@@ -196,7 +196,7 @@ int cmd_line::print_interfaces_and_select(char * interface)
                 uint64_t mac_val = mac.tovalue();
                 if (mac_val)
                 {
-                    if (netif->find_selected_interface_by_mac_address(dev_index, mac_val))
+                    if (netif->does_interface_have_mac_address(dev_index, mac_val))
                     {
                         interface_num = i;
                         break;

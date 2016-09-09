@@ -199,7 +199,7 @@ const char * STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_i
     return NULL;
 }
     
-bool STDCALL net_interface_imp::find_selected_interface_by_ip_address(size_t dev_index, char * ip_addr_str)
+bool STDCALL net_interface_imp::does_interface_have_ip_address(size_t dev_index, char * ip_addr_str)
 {
     if (dev_index < all_ip_addresses.size())
     {
@@ -211,7 +211,7 @@ bool STDCALL net_interface_imp::find_selected_interface_by_ip_address(size_t dev
     return false;
 }
     
-bool STDCALL net_interface_imp::find_selected_interface_by_mac_address(size_t dev_index, uint64_t mac_addr)
+bool STDCALL net_interface_imp::does_interface_have_mac_address(size_t dev_index, uint64_t mac_addr)
 {
     if (dev_index < all_mac_addresses.size())
     {
