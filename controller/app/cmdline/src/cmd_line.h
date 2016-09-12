@@ -59,6 +59,7 @@ public:
     {
         // Use printf as cout seems to still be interleaved
         printf("%s", buffer.str().c_str());
+        fflush(stdout);
     }
 
 private:

@@ -102,6 +102,8 @@ extern "C" void notification_callback(void * user_obj, int32_t notification_type
                cmd_status,
                notification_id);
     }
+    
+    fflush(stdout);
 }
 
 extern "C" void acmp_notification_callback(void * user_obj, int32_t notification_type, uint16_t cmd_type,
@@ -135,11 +137,15 @@ extern "C" void acmp_notification_callback(void * user_obj, int32_t notification
                cmd_status_name,
                notification_id);
     }
+    
+    fflush(stdout);
 }
 
 extern "C" void log_callback(void * user_obj, int32_t log_level, const char * log_msg, int32_t time_stamp_ms)
 {
     printf("\n[LOG] %s (%s)\n", avdecc_lib::utility::logging_level_value_to_name(log_level), log_msg);
+    
+    fflush(stdout);
 }
 
 #if defined(__MACH__) || defined(__linux__)
