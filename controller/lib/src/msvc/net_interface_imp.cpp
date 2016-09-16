@@ -93,7 +93,7 @@ net_interface_imp::net_interface_imp()
             status = GetAdaptersInfo(AdapterInfo, &AIS);
             if (status != ERROR_SUCCESS)
             {
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "GetAdaptersInfo call in netif_win32_pcap.c failed.", dev->name);
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "GetAdaptersInfo call in net_interface_imp.cpp failed.", dev->name);
                 free(AdapterInfo);
                 return;
             }
@@ -260,7 +260,7 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
 
     if (index >= all_mac_addresses.size())
     {
-        perror("Cannot find selected interface MAC address");
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Cannot find selected interface MAC address");
         return -1;
     }
 	
