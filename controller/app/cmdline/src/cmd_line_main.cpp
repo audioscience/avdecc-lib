@@ -292,13 +292,14 @@ static void usage(char * argv[])
 
 int main(int argc, char * argv[])
 {
+    bool show_cmd_separator = false;
     bool test_mode = false;
     int error = 0;
     char * interface = NULL;
     int c = 0;
     int32_t log_level = avdecc_lib::LOGGING_LEVEL_ERROR;
 
-    while ((c = getopt(argc, argv, "pti:l:")) != -1)
+    while ((c = getopt(argc, argv, "spti:l:")) != -1)
     {
         switch (c)
         {
@@ -306,6 +307,9 @@ int main(int argc, char * argv[])
             // print the network interfaces and exit
             print_interfaces();
             exit(EXIT_SUCCESS);
+        case 's':
+            show_cmd_separator = true;
+            break;
         case 't':
             test_mode = true;
             break;
@@ -387,6 +391,8 @@ int main(int argc, char * argv[])
         add_history(input);
 #else
         std::string cmd_input;
+        if (show_cmd_separator)
+            printf("\n_\n");
         printf("\n>");
         std::getline(std::cin, cmd_input);
         cmd_input_orig = cmd_input;
