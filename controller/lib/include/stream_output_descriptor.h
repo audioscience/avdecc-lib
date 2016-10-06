@@ -101,6 +101,14 @@ public:
     /// \param new_stream_info_field The new field information to be set to for a stream.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_info_vlan_id_cmd(void * notification_id, uint16_t vlan_id) = 0;
+    
+    ///
+    /// Send a SET_STREAM_INFO command with a notification id to set the msrp accumulated latency of the stream.
+    ///
+    /// \param notification_id A void pointer to the unique identifier associated with the command.
+    /// \param msrp_accumulated_latency The new msrp_accumulated_latency (ns) to be set.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_info_msrp_accumulated_latency_cmd(void * notification_id, uint32_t msrp_accumulated_latency) = 0;
 
     ///
     /// Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.

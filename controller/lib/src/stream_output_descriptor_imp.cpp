@@ -261,7 +261,7 @@ int STDCALL stream_output_descriptor_imp::send_set_stream_info_vlan_id_cmd(void 
     /****************** AECP Message Specific Data ***************/
     cmd.descriptor_type = descriptor_type();
     cmd.descriptor_index = descriptor_index();
-    cmd.aem_stream_info_flags = 0x02000000;
+    cmd.aem_stream_info_flags = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_VLAN_ID_VALID;
     cmd.stream_vlan_id = vlan_id;
 
     /************************** Fill frame payload with AECP data and send the frame ***************************/
@@ -286,6 +286,50 @@ int STDCALL stream_output_descriptor_imp::send_set_stream_info_vlan_id_cmd(void 
                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
+    return 0;
+}
+    
+int STDCALL stream_output_descriptor_imp::send_set_stream_info_msrp_accumulated_latency_cmd(void * notification_id, uint32_t msrp_accumulated_latency)
+{
+    struct jdksavdecc_frame cmd_frame;
+    struct jdksavdecc_aem_command_set_stream_info cmd;
+    ssize_t write_return;
+    
+    memset(&cmd, 0, sizeof(cmd));
+    
+    /******************************************** AECP Common Data *******************************************/
+    cmd.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
+    // Fill aem_cmd_start_streaming.sequence_id in AEM Controller State Machine
+    cmd.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO;
+    
+    /****************** AECP Message Specific Data ***************/
+    cmd.descriptor_type = descriptor_type();
+    cmd.descriptor_index = descriptor_index();
+    cmd.aem_stream_info_flags = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_MSRP_ACC_LAT_VALID;
+    cmd.msrp_accumulated_latency = msrp_accumulated_latency;
+    
+    /************************** Fill frame payload with AECP data and send the frame ***************************/
+    aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_COMMAND_LEN);
+    write_return = jdksavdecc_aem_command_set_stream_info_write(&cmd,
+                                                                cmd_frame.payload,
+                                                                ETHER_HDR_SIZE,
+                                                                sizeof(cmd_frame.payload));
+    
+    if (write_return < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_start_streaming_write error\n");
+        assert(write_return >= 0);
+        return -1;
+    }
+    
+    aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_COMMAND_LEN -
+                                                       JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+    system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
+    
     return 0;
 }
 
