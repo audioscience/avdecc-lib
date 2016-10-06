@@ -72,6 +72,7 @@ public:
     int proc_get_stream_format_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
 
     int STDCALL send_set_stream_info_vlan_id_cmd(void * notification_id, uint16_t vlan_id);
+    int STDCALL send_set_stream_info_msrp_accumulated_latency_cmd(void * notification_id, uint32_t msrp_accumulated_latency);
     int proc_set_stream_info_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
 
     int STDCALL send_get_stream_info_cmd(void * notification_id);

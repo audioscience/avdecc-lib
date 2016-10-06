@@ -3829,10 +3829,24 @@ int cmd_line::cmd_set_stream_info(int total_matched, std::vector<cli_argument *>
                 return 0;
             }
         }
+        else if (stream_info_field == "msrp_accumulated_latency")
+        {
+            uint32_t msrp_accumulated_latency = (uint32_t)strtoul(new_stream_info_field_value.c_str(), NULL, 0);
+            intptr_t cmd_notification_id = get_next_notification_id();
+            sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+            avdecc_lib::stream_output_descriptor * stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
+            stream_output_desc_ref->send_set_stream_info_msrp_accumulated_latency_cmd((void *)cmd_notification_id, msrp_accumulated_latency);
+            int status = sys->get_last_resp_status();
+            if (status != avdecc_lib::AEM_STATUS_SUCCESS)
+            {
+                atomic_cout << "cmd_set_stream_info error" << std::endl;
+                return 0;
+            }
+        }
         else
         {
             atomic_cout << "Supported fields are:" << std::endl
-                        << "stream_vlan_id" << std::endl;
+                        << "stream_vlan_id, msrp_accumulated_latency" << std::endl;
         }
     }
     else
