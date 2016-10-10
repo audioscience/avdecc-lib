@@ -297,7 +297,12 @@ int system_layer2_multithreaded_callback::fn_netif(struct epoll_priv * priv)
         {
             int status = wait_mgr->set_completion_status(rx_status);
             assert(status == 0);
-            sem_post(waiting_sem);
+
+            // Only unlock the semaphore if the status is zero i.e. SUCCESS
+            if (rx_status == JDKSAVDECC_AECP_STATUS_SUCCESS)
+            {
+                sem_post(waiting_sem);
+            }
         }
     }
     return 0;

@@ -150,6 +150,7 @@ int aecp_controller_state_machine::proc_unsolicited(struct jdksavdecc_frame * cm
 int aecp_controller_state_machine::proc_resp(void *& notification_id, struct jdksavdecc_frame * cmd_frame)
 {
     uint16_t seq_id = jdksavdecc_aecpdu_common_get_sequence_id(cmd_frame->payload, ETHER_HDR_SIZE);
+    uint32_t status = jdksavdecc_common_control_header_get_status(cmd_frame->payload, ETHER_HDR_SIZE);
     uint32_t notification_flag = 0;
 
     std::vector<inflight>::iterator j =
@@ -160,7 +161,17 @@ int aecp_controller_state_machine::proc_resp(void *& notification_id, struct jdk
         notification_id = j->cmd_notification_id;
         notification_flag = j->notification_flag();
         callback(notification_id, notification_flag, cmd_frame->payload);
-        inflight_cmds.erase(j);
+
+        // Restart the timer if response is indicating the operation is still in progress so that it won't be timed out
+        if (status == JDKSAVDECC_AECP_STATUS_IN_PROGRESS)
+        {
+            j->restart_timer();
+        }
+        else
+        {
+            inflight_cmds.erase(j);
+        }
+
         return 1;
     }
 

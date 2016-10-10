@@ -1777,10 +1777,27 @@ int STDCALL end_station_imp::send_identify(void * notification_id, bool turn_on)
 
 int end_station_imp::proc_set_control_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
-    (void)status; //unused
-
     struct jdksavdecc_frame cmd_frame;
+    struct jdksavdecc_aem_command_set_control_response aem_cmd_set_control_resp;
+    ssize_t aem_cmd_set_control_resp_returned;
+
     memcpy(cmd_frame.payload, frame, frame_len);
+
+    // Read the response
+    aem_cmd_set_control_resp_returned = jdksavdecc_aem_command_set_control_response_read(&aem_cmd_set_control_resp,
+                                                                                         frame,
+                                                                                         ETHER_HDR_SIZE,
+                                                                                         frame_len);
+    // Check the read result
+    if (aem_cmd_set_control_resp_returned < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_control_resp_read error\n");
+        return -1;
+    }
+
+    // Get the status
+    status = aem_cmd_set_control_resp.aem_header.aecpdu_header.header.status;
+
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE, false, &cmd_frame);
     return 0;
 }
