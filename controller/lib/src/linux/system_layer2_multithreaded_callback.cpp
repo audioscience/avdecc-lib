@@ -299,7 +299,7 @@ int system_layer2_multithreaded_callback::fn_netif(struct epoll_priv * priv)
             assert(status == 0);
 
             // Only unlock the semaphore if the status is zero i.e. SUCCESS
-            if (rx_status == JDKSAVDECC_AECP_STATUS_SUCCESS)
+            if (rx_status == AEM_STATUS_SUCCESS)
             {
                 sem_post(waiting_sem);
             }

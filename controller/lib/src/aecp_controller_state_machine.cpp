@@ -163,7 +163,7 @@ int aecp_controller_state_machine::proc_resp(void *& notification_id, struct jdk
         callback(notification_id, notification_flag, cmd_frame->payload);
 
         // Restart the timer if response is indicating the operation is still in progress so that it won't be timed out
-        if (status == JDKSAVDECC_AECP_STATUS_IN_PROGRESS)
+        if (status == AEM_STATUS_IN_PROGRESS)
         {
             j->restart_timer();
         }
