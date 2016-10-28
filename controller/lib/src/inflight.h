@@ -66,6 +66,12 @@ public:
         cmd_timer.start(cmd_timeout_ms);
     }
 
+    inline void restart_timer()
+    {
+        cmd_timer.stop();
+        cmd_timer.start(cmd_timeout_ms);
+    }
+
     inline struct jdksavdecc_frame frame()
     {
         return cmd_frame;
