@@ -61,7 +61,6 @@ net_interface_imp::net_interface_imp()
     if (pcap_findalldevs(&all_devs, err_buf) == -1) // Retrieve the device list on the local machine.
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "pcap_findalldevs error %s", err_buf);
-        exit(EXIT_FAILURE);
     }
 
     for (dev = all_devs, total_devs = 0; dev; dev = dev->next)
@@ -90,7 +89,6 @@ net_interface_imp::net_interface_imp()
     if (total_devs == 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "No interfaces found! Make sure WinPcap is installed.");
-        exit(EXIT_FAILURE);
     }
 }
 
@@ -118,26 +116,26 @@ void net_interface_imp::find_and_store_device_mac_addr(char * dev_name)
     
     if ((mib[5] = if_nametoindex(dev_name)) == 0)
     {
-        perror("if_nametoindex error");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "if_nametoindex error");
+        return;
     }
     
     if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
     {
-        perror("sysctl 1 error");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "sysctl 1 error");
+        return;
     }
     
     if ((buf = (char *)malloc(len)) == NULL)
     {
-        perror("malloc error");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "malloc error");
+        return;
     }
     
     if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
     {
-        perror("sysctl 2 error");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "sysctl 2 error");
+        return;
     }
     
     ifm = (struct if_msghdr *)buf;
@@ -249,7 +247,7 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Interface number out of range.");
         pcap_freealldevs(all_devs); // Free the device list
-        exit(EXIT_FAILURE);
+        return -1;
     }
 
     for (dev = all_devs, index = 0; index < interface_num - 1; dev = dev->next, index++)
@@ -266,40 +264,41 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Unable to open the adapter. %s is not supported by pcap.", dev->name);
         pcap_freealldevs(all_devs); // Free the device list
-        exit(EXIT_FAILURE);
+        return -1;
     }
 
     if (pcap_setnonblock(pcap_interface, 1, err_buf) < 0)
     {
-        perror("pcap_setnonblock");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "pcap_setnonblock");
+        return -1;
     }
 
     int fd = pcap_fileno(pcap_interface);
     if (fd == -1)
     {
-        perror("Can't get file descriptor for pcap_t");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Can't get file descriptor for pcap_t");
+        return -1;
     }
 
     int on = 1;
     if (ioctl(fd, BIOCIMMEDIATE, &on) == -1)
     {
-        perror("BIOCIMMEDIATE error");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "BIOCIMMEDIATE error");
+        return -1;
     }
 
     if (index >= all_mac_addresses.size())
     {
-        perror("Cannot find selected interface MAC address");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Cannot find selected interface MAC address");
+        return -1;
     }
     
     selected_dev_mac = all_mac_addresses.at(index);
     
     uint16_t ether_type[1];
     ether_type[0] = JDKSAVDECC_AVTP_ETHERTYPE;
-    set_capture_ether_type(ether_type, 1); // Set the filter
+    if (set_capture_ether_type(ether_type, 1) < 0) // Set the filter
+        return -1;
 
     return 0;
 }
