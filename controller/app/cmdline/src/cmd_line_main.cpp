@@ -364,7 +364,9 @@ int main(int argc, char * argv[])
 #endif
 // Override to prevent filename completion
 #if defined(__MACH__)
-#if defined (READLINE_LIBRARY)
+
+// This macro can be set via cmake command line argument -DUSE_GNU_READLINE=ON
+#ifdef USE_GNU_READLINE
     // GNU Readline library
     rl_completion_entry_function = (rl_compentry_func_t *)null_completer;
 #else
