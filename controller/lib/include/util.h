@@ -145,6 +145,11 @@ namespace utility
     /// Convert an eui48 value to uint64_t.
     ///
     AVDECC_CONTROLLER_LIB32_API void convert_eui48_to_uint64(const uint8_t value[6], uint64_t & new_value);
+    
+    ///
+    /// Encode a string with Quoted-Printable encoding.
+    ///
+    AVDECC_CONTROLLER_LIB32_API const char * qprintable_encode(const char * input_cstr);
 
     /* 6 byte mac address in network byte order */
     class MacAddr
