@@ -639,5 +639,33 @@ namespace utility
             new_value |= (uint64_t)value[i] << ((5 - i) * 8);
         }
     }
+    
+    const char * qprintable_encode(const char * input_cstr)
+    {
+        std::string input_str(input_cstr);
+        static std::string output;
+        output.clear();
+        
+        char byte;
+        const char hex[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        
+        for (int i = 0; i < input_str.length() ; ++i)
+        {
+            byte = input_str[i];
+            
+            if ((byte == 0x20) || ((byte >= 33) && (byte <= 126) && (byte != 61)))
+            {
+                output += byte;
+            }
+            else
+            {
+                output += '=';
+                output += hex[((byte >> 4) & 0x0F)];
+                output += hex[(byte & 0x0F)];
+            }
+        }
+        
+        return output.c_str();
+    }
 }
 }

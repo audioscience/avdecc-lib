@@ -1181,9 +1181,9 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument *> args)
             uint64_t end_station_mac = end_station->mac();
             atomic_cout << (std::stringstream() << end_station->get_connection_status()
                                                 << std::setw(10) << std::dec << std::setfill(' ') << i << "  |  "
-                                                << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc_resp ? end_station_name : "UNKNOWN") << "  |  0x"
+                                                << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc_resp ? avdecc_lib::utility::qprintable_encode(end_station_name) : "UNKNOWN") << "  |  0x"
                                                 << std::setw(16) << std::hex << std::setfill('0') << end_station_entity_id << "  |  "
-                                                << std::setw(16) << std::hex << std::setfill(' ') << (ent_desc_resp ? fw_ver : "UNKNOWN") << "  |  "
+                                                << std::setw(16) << std::hex << std::setfill(' ') << (ent_desc_resp ? avdecc_lib::utility::qprintable_encode(fw_ver) : "UNKNOWN") << "  |  "
                                                 << std::setw(12) << std::hex << std::setfill('0') << end_station_mac)
                                .rdbuf()
                         << std::endl;
