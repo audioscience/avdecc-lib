@@ -36,6 +36,7 @@
 #include "avdecc-lib_build.h"
 #include "descriptor_base.h"
 #include "entity_descriptor_response.h"
+#include "entity_descriptor_get_config_response.h"
 
 namespace avdecc_lib
 {
@@ -48,6 +49,11 @@ public:
     /// \return the entity descriptor response class.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor_response * STDCALL get_entity_response() = 0;
+    
+    ///
+    /// \return the entity descriptor get_configuration response class.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor_get_config_response * STDCALL get_entity_get_config_response() = 0;
 
     ///
     /// \return The number of Configuration descriptors.
@@ -61,13 +67,13 @@ public:
     AVDECC_CONTROLLER_LIB32_API virtual configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index) = 0;
 
     ///
-    /// Send a SET_CONFIFURATION command to change the current configuration of the AVDECC Entity.
+    /// Send a SET_CONFIFURATION command to change the current configuration of the current entity.
     ///
-    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_config_cmd() = 0;
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_config_cmd(void * notification_id, uint16_t new_configuration_index) = 0;
 
     ///
-    /// Send a GET_CONFIGURATION command to get the current configuration of the AVDECC Entity.
+    /// Send a GET_CONFIGURATION command to get the current configuration of the current entity.
     ///
-    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_config_cmd() = 0;
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_config_cmd(void * notification_id) = 0;
 };
 }

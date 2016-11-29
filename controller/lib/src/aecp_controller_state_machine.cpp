@@ -450,6 +450,12 @@ int aecp_controller_state_machine::callback(void * notification_id, uint32_t not
     case JDKSAVDECC_AEM_COMMAND_DEREGISTER_UNSOLICITED_NOTIFICATION:
         break;
 
+    case JDKSAVDECC_AEM_COMMAND_GET_CONFIGURATION:
+        break;
+
+    case JDKSAVDECC_AEM_COMMAND_SET_CONFIGURATION:
+        break;
+
     default:
         log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "NO_MATCH_FOUND for %s", utility::aem_cmd_value_to_name(cmd_type));
         break;

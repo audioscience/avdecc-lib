@@ -446,6 +446,16 @@ private:
     int cmd_get_connection_status(int total_matched, std::vector<cli_argument *> args);
     
     ///
+    /// Get the current configuration index of the current entity.
+    ///
+    int cmd_get_config(int total_matched, std::vector<cli_argument *> args);
+    
+    ///
+    /// Set the current configuration index of the current entity.
+    ///
+    int cmd_set_config(int total_matched, std::vector<cli_argument *> args);
+    
+    ///
     /// Clear the screen.
     ///
     int cmd_clr(int total_matched, std::vector<cli_argument *> args);

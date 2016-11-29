@@ -575,7 +575,16 @@ void cmd_line::cmd_line_commands_init()
     // get
     cli_command * get_cmd = new cli_command();
     commands.add_sub_command("get", get_cmd);
-
+    
+    // get configuration
+    cli_command * get_config_cmd = new cli_command();
+    get_cmd->add_sub_command("configuration", get_config_cmd);
+    
+    cli_command_format * get_config_fmt = new cli_command_format(
+        "Send a GET_CONFIGURATION command to fetch the current configuration index of the current Entity.",
+        &cmd_line::cmd_get_config);
+    get_config_cmd->add_format(get_config_fmt);
+    
     // get connection status
     cli_command * get_connection_status_cmd = new cli_command();
     get_cmd->add_sub_command("connection_status", get_connection_status_cmd);
@@ -769,6 +778,16 @@ void cmd_line::cmd_line_commands_init()
     cli_command * set_cmd = new cli_command();
     commands.add_sub_command("set", set_cmd);
 
+    // set configuration
+    cli_command * set_config_cmd = new cli_command();
+    set_cmd->add_sub_command("configuration", set_config_cmd);
+    
+    cli_command_format * set_config_fmt = new cli_command_format(
+        "Send a SET_CONFIGURATION command to set the current configuration of the current Entity.",
+        &cmd_line::cmd_set_config);
+    set_config_fmt->add_argument(new cli_argument_int(this, "c_i", "the new configuration index"));
+    set_config_cmd->add_format(set_config_fmt);
+    
     // set name
     cli_command * set_name_cmd = new cli_command();
     set_cmd->add_sub_command("name", set_name_cmd);
@@ -3299,6 +3318,51 @@ int cmd_line::cmd_deregister_unsolicited_notif(int total_matched, std::vector<cl
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     end_station->send_deregister_unsolicited_cmd((void *)cmd_notification_id);
     sys->get_last_resp_status();
+
+    return 0;
+}
+
+int cmd_line::cmd_get_config(int total_matched, std::vector<cli_argument *> args)
+{
+    avdecc_lib::end_station * end_station;
+    avdecc_lib::entity_descriptor * entity;
+    avdecc_lib::configuration_descriptor * configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+    
+    intptr_t cmd_notification_id = get_next_notification_id();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+    entity->send_get_config_cmd((void *)cmd_notification_id);
+    int status = sys->get_last_resp_status();
+    if (status == avdecc_lib::AEM_STATUS_SUCCESS)
+    {
+        avdecc_lib::entity_descriptor_get_config_response * entity_get_config_resp = entity->get_entity_get_config_response();
+        atomic_cout << "current configuration index = " << std::dec << entity_get_config_resp->get_config_config_index() << std::endl;
+        delete entity_get_config_resp;
+    }
+
+    return 0;
+}
+
+int cmd_line::cmd_set_config(int total_matched, std::vector<cli_argument *> args)
+{
+    uint16_t new_configuration_index = args[0]->get_value_int();
+    avdecc_lib::end_station * end_station;
+    avdecc_lib::entity_descriptor * entity;
+    avdecc_lib::configuration_descriptor * configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+    
+    intptr_t cmd_notification_id = get_next_notification_id();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+    entity->send_set_config_cmd((void *)cmd_notification_id, new_configuration_index);
+    int status = sys->get_last_resp_status();
+    if (status == avdecc_lib::AEM_STATUS_SUCCESS)
+    {
+        avdecc_lib::entity_descriptor_response * entity_desc_resp = entity->get_entity_response();
+        atomic_cout << "new configuration index = " << std::dec << entity_desc_resp->current_configuration() << std::endl;
+        delete entity_desc_resp;
+    }
 
     return 0;
 }

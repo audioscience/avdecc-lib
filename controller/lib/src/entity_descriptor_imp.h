@@ -33,6 +33,7 @@
 #include "configuration_descriptor_imp.h"
 #include "entity_descriptor.h"
 #include "entity_descriptor_response_imp.h"
+#include "entity_descriptor_get_config_response_imp.h"
 
 namespace avdecc_lib
 {
@@ -49,12 +50,14 @@ public:
     virtual ~entity_descriptor_imp();
 
     entity_descriptor_response_imp * resp;
+    entity_descriptor_get_config_response_imp * get_config_resp;
 
     uint16_t STDCALL current_configuration();
     void store_config_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
     size_t STDCALL config_desc_count();
     configuration_descriptor * STDCALL get_config_desc_by_index(uint16_t config_desc_index);
     entity_descriptor_response * STDCALL get_entity_response();
+    entity_descriptor_get_config_response * STDCALL get_entity_get_config_response();
     uint32_t STDCALL acquire_entity_flags();
     uint64_t STDCALL acquire_entity_owner_entity_id();
     uint32_t STDCALL lock_entity_flags();
@@ -69,10 +72,10 @@ public:
     int STDCALL send_reboot_cmd(void * notification_id);
     int proc_reboot_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
 
-    int STDCALL send_set_config_cmd();
-    int proc_set_config_resp();
+    int STDCALL send_set_config_cmd(void * notification_id, uint16_t new_configuration_index);
+    int proc_set_config_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
 
-    int STDCALL send_get_config_cmd();
-    int proc_get_config_resp();
+    int STDCALL send_get_config_cmd(void * notification_id);
+    int proc_get_config_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
 };
 }
