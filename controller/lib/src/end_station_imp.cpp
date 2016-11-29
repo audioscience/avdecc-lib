@@ -1435,6 +1435,38 @@ int end_station_imp::proc_rcvd_aem_resp(void *& notification_id,
     }
     break;
 
+    case JDKSAVDECC_AEM_COMMAND_GET_CONFIGURATION:
+    {
+        entity_descriptor_imp * entity_desc_imp_ref =
+            dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
+        
+        if (entity_desc_imp_ref)
+        {
+            entity_desc_imp_ref->proc_get_config_resp(notification_id, frame, frame_len, status);
+        }
+        else
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base entity_descriptor to derived entity_descriptor_imp error");
+        }
+    }
+    break;
+            
+    case JDKSAVDECC_AEM_COMMAND_SET_CONFIGURATION:
+    {
+        entity_descriptor_imp * entity_desc_imp_ref =
+            dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
+        
+        if (entity_desc_imp_ref)
+        {
+            entity_desc_imp_ref->proc_set_config_resp(notification_id, frame, frame_len, status);
+        }
+        else
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base entity_descriptor to derived entity_descriptor_imp error");
+        }
+    }
+    break;
+            
     case JDKSAVDECC_AEM_COMMAND_REBOOT:
     {
         desc_type = jdksavdecc_aem_command_reboot_get_descriptor_type(frame, ETHER_HDR_SIZE);
