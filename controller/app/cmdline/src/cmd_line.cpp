@@ -1342,8 +1342,8 @@ int cmd_line::do_select(uint32_t new_end_station, uint16_t new_entity, uint16_t 
             end_station->set_current_config_index(new_config);
             atomic_cout << "New setting" << std::endl;
             atomic_cout << "\tEnd Station Index: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
-            atomic_cout << "\tEntity Index: " << std::dec << current_entity << std::endl;
-            atomic_cout << "\tConfiguration Index: " << std::dec << current_config << std::endl;
+            atomic_cout << "\tEntity Index: " << std::dec << end_station->get_current_entity_index() << std::endl;
+            atomic_cout << "\tConfiguration Index: " << std::dec << end_station->get_current_config_index() << std::endl;
         }
         delete entity_desc_resp;
     }
