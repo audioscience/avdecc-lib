@@ -217,8 +217,8 @@ int entity_descriptor_imp::proc_set_config_resp(void *& notification_id, const u
         uint8_t * buffer = (uint8_t *)malloc(resp_ref->get_desc_size() * sizeof(uint8_t)); // fetch current desc frame
         memcpy(buffer, resp_ref->get_desc_buffer(), resp_ref->get_desc_size());
         jdksavdecc_descriptor_entity_set_current_configuration(aem_cmd_set_configuration_resp.configuration_index, buffer, resp_ref->get_desc_pos());
-        
-        replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size()); // replace frame
+        replace_desc_frame(buffer, resp_ref->get_desc_pos(), resp_ref->get_desc_size()); // update descriptor current config
+        base_end_station_imp_ref->set_current_config_index(aem_cmd_set_configuration_resp.configuration_index); // update end station current config
         free(buffer);
     }
     
