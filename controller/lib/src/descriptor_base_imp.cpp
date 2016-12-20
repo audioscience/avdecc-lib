@@ -70,8 +70,12 @@ descriptor_response_base * STDCALL descriptor_base_imp::get_descriptor_response(
 descriptor_base_get_name_response * STDCALL descriptor_base_imp::get_name_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_name_resp = new descriptor_base_get_name_response_imp(resp_ref->get_buffer(), resp_ref->get_size(),
-                                                                     resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_NAME);
+    if (!resp_frame)
+        return NULL;
+
+    return get_name_resp = new descriptor_base_get_name_response_imp(resp_frame->buffer,
+                                                                     resp_frame->frame_size, resp_frame->position);
 }
 
 bool operator==(const descriptor_base_imp & n1, const descriptor_base_imp & n2)
@@ -84,10 +88,10 @@ bool operator<(const descriptor_base_imp & n1, const descriptor_base_imp & n2)
     return n1.descriptor_index() < n2.descriptor_index();
 }
 
-void STDCALL descriptor_base_imp::replace_frame(const uint8_t * frame, ssize_t pos, size_t size)
+void STDCALL descriptor_base_imp::store_cmd_resp_frame(uint16_t cmd_type, const uint8_t * frame, ssize_t pos, size_t size)
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock the end station
-    resp_ref->replace_frame(frame, pos, size);
+    resp_ref->store_cmd_resp_frame(cmd_type, frame, pos, size);
 }
 
 void STDCALL descriptor_base_imp::replace_desc_frame(const uint8_t * frame, ssize_t pos, size_t size)
@@ -633,7 +637,7 @@ int descriptor_base_imp::default_proc_get_name_resp(struct jdksavdecc_aem_comman
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_NAME, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = aem_cmd_get_name_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_get_name_resp.aem_header.aecpdu_header.header.status;

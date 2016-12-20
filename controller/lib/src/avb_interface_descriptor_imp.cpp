@@ -55,15 +55,23 @@ avb_interface_descriptor_response * STDCALL avb_interface_descriptor_imp::get_av
 avb_counters_response * STDCALL avb_interface_descriptor_imp::get_avb_interface_counters_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return counters_resp = new avb_counters_response_imp(resp_ref->get_buffer(),
-                                                         resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_COUNTERS);
+    if (!resp_frame)
+        return NULL;
+    
+    return counters_resp = new avb_counters_response_imp(resp_frame->buffer,
+                                                         resp_frame->frame_size, resp_frame->position);
 }
 
 avb_interface_get_avb_info_response * STDCALL avb_interface_descriptor_imp::get_avb_interface_get_avb_info_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_avb_info_resp = new avb_interface_get_avb_info_response_imp(resp_ref->get_buffer(),
-                                                                           resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_AVB_INFO);
+    if (!resp_frame)
+        return NULL;
+    
+    return get_avb_info_resp = new avb_interface_get_avb_info_response_imp(resp_frame->buffer,
+                                                                           resp_frame->frame_size, resp_frame->position);
 }
 
 int STDCALL avb_interface_descriptor_imp::send_get_counters_cmd(void * notification_id)
@@ -128,7 +136,7 @@ int avb_interface_descriptor_imp::proc_get_counters_resp(void *& notification_id
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_COUNTERS, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = avb_interface_counters_resp.aem_header.aecpdu_header.header.message_type;
     status = avb_interface_counters_resp.aem_header.aecpdu_header.header.status;
@@ -202,7 +210,7 @@ int avb_interface_descriptor_imp::proc_get_avb_info_resp(void *& notification_id
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_AVB_INFO, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = avb_interface_info_resp.aem_header.aecpdu_header.header.message_type;
     status = avb_interface_info_resp.aem_header.aecpdu_header.header.status;

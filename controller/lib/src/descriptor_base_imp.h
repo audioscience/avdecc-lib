@@ -105,7 +105,7 @@ public:
     ///
     /// Replace the frame for counters/commands.
     ///
-    virtual void STDCALL replace_frame(const uint8_t * frame, ssize_t pos, size_t size);
+    virtual void STDCALL store_cmd_resp_frame(uint16_t cmd_type, const uint8_t * frame, ssize_t pos, size_t size);
 
     ///
     /// Replace the frame for descriptors.
