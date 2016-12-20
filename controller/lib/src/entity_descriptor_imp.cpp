@@ -52,7 +52,7 @@ entity_descriptor_imp::~entity_descriptor_imp()
 
 uint16_t STDCALL entity_descriptor_imp::current_configuration()
 {
-    return jdksavdecc_descriptor_entity_get_current_configuration(resp_ref->get_buffer(), resp_ref->get_pos());
+    return jdksavdecc_descriptor_entity_get_current_configuration(resp_ref->get_desc_buffer(), resp_ref->get_desc_pos());
 }
 
 entity_descriptor_response * STDCALL entity_descriptor_imp::get_entity_response()
@@ -65,8 +65,12 @@ entity_descriptor_response * STDCALL entity_descriptor_imp::get_entity_response(
 entity_descriptor_get_config_response * STDCALL entity_descriptor_imp::get_entity_get_config_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_config_resp = new entity_descriptor_get_config_response_imp(resp_ref->get_buffer(),
-                                                                           resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_CONFIGURATION);
+    if (!resp_frame)
+        return NULL;
+
+    return get_config_resp = new entity_descriptor_get_config_response_imp(resp_frame->buffer,
+                                                                           resp_frame->frame_size, resp_frame->position);
 }
 
 void entity_descriptor_imp::store_config_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len)
@@ -286,7 +290,7 @@ int entity_descriptor_imp::proc_get_config_resp(void *& notification_id, const u
         assert(aem_cmd_get_configuration_resp_returned >= 0);
         return -1;
     }
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_CONFIGURATION, frame, ETHER_HDR_SIZE, frame_len);
     
     msg_type = aem_cmd_get_configuration_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_get_configuration_resp.aem_header.aecpdu_header.header.status;

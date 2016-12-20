@@ -39,11 +39,6 @@ namespace avdecc_lib
 
 response_frame::response_frame(const uint8_t * frame, size_t size, size_t pos)
 {
-    position = pos;
-    frame_size = size;
-    buffer = (uint8_t *)malloc(frame_size * sizeof(uint8_t)); //allocate space for the new frame
-    memcpy(buffer, frame, frame_size);
-
     desc_frame_size = size;
     desc_position = pos;
     desc_buffer = (uint8_t *)malloc(desc_frame_size * sizeof(uint8_t));
@@ -52,36 +47,36 @@ response_frame::response_frame(const uint8_t * frame, size_t size, size_t pos)
 
 response_frame::~response_frame()
 {
-    free(buffer);
+    typedef std::map<uint16_t, struct cmd_resp_frame_info *>::iterator it;
+    for (it i = cmd_resp_buffers.begin(); i != cmd_resp_buffers.end(); i++)
+    {
+        free(i->second->buffer);
+        delete i->second;
+    }
+
     free(desc_buffer);
 }
-
-int response_frame::replace_frame(const uint8_t * frame, size_t pos, size_t size)
+    
+int response_frame::store_cmd_resp_frame(uint16_t cmd_type, const uint8_t *frame, size_t pos, size_t size)
 {
-    uint8_t * replaced_buffer = NULL;
-
-    if (size <= frame_size)
+    uint8_t * buffer = NULL;
+    std::map<uint16_t, struct cmd_resp_frame_info * >::iterator it = cmd_resp_buffers.find(cmd_type);
+    if (it != cmd_resp_buffers.end())
     {
-        assert(size <= frame_size);
-        memcpy(buffer, frame, size);
+        free(it->second->buffer);
+        delete it->second;
     }
-    else
+    
+    buffer = (uint8_t *)malloc(size * sizeof(uint8_t));
+    if (!buffer)
     {
-        replaced_buffer = (uint8_t *)realloc(buffer, size * sizeof(uint8_t));
-        if (replaced_buffer != NULL)
-        {
-            buffer = replaced_buffer;
-            memcpy(buffer, frame, size);
-        }
-        else
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Error reallocating memory");
-            free(buffer);
-            return -1;
-        }
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Error allocating memory for response buffer");
+        free(buffer);
+        return -1;
     }
-    position = pos;
-    frame_size = size;
+    
+    memcpy(buffer, frame, size);
+    cmd_resp_buffers[cmd_type] = new cmd_resp_frame_info(buffer, size, pos);
 
     return 0;
 }
@@ -116,19 +111,9 @@ int response_frame::replace_desc_frame(const uint8_t * frame, size_t pos, size_t
     return 0;
 }
 
-uint8_t * response_frame::get_buffer()
-{
-    return buffer;
-}
-
 uint8_t * response_frame::get_desc_buffer()
 {
     return desc_buffer;
-}
-
-size_t response_frame::get_pos()
-{
-    return position;
 }
 
 size_t response_frame::get_desc_pos()
@@ -136,13 +121,17 @@ size_t response_frame::get_desc_pos()
     return desc_position;
 }
 
-size_t response_frame::get_size()
-{
-    return frame_size;
-}
-
 size_t response_frame::get_desc_size()
 {
     return desc_frame_size;
+}
+    
+struct cmd_resp_frame_info * response_frame::get_cmd_resp_frame_info(uint16_t cmd_type)
+{
+    std::map<uint16_t, struct cmd_resp_frame_info * >::iterator it = cmd_resp_buffers.find(cmd_type);
+    if (it != cmd_resp_buffers.end())
+        return it->second;
+
+    return NULL;
 }
 }
