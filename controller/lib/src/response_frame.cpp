@@ -56,7 +56,7 @@ response_frame::~response_frame()
 
     free(desc_buffer);
 }
-    
+
 int response_frame::store_cmd_resp_frame(uint16_t cmd_type, const uint8_t *frame, size_t pos, size_t size)
 {
     uint8_t * buffer = NULL;
