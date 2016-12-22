@@ -82,8 +82,6 @@ public:
     ///
     /// Get the Controller Entity ID of the AVDECC Entity sending the command.
     ///
-    /// This function converts the net_interface_imp mac address to the controller entity id.
-    ///
     /// A copy of this function exists in controller.h
     /// \see get_entity_id()
     ///

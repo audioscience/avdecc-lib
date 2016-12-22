@@ -175,11 +175,12 @@ size_t STDCALL controller_imp::get_end_station_count()
     
 uint64_t STDCALL controller_imp::get_entity_id()
 {
-    uint64_t controller_entity_id = ((net_interface_ref->mac_addr() & UINT64_C(0xFFFFFF000000)) << 16) |
-                                    UINT64_C(0x000000FFFF000000) |
-                                    (net_interface_ref->mac_addr() & UINT64_C(0xFFFFFF));
+    return net_interface_ref->get_dev_eui();
+}
     
-    return controller_entity_id;
+void STDCALL controller_imp::set_entity_id(uint64_t entity_id)
+{
+    net_interface_ref->set_dev_eui(entity_id);
 }
 
 end_station * STDCALL controller_imp::get_end_station_by_index(size_t end_station_index)

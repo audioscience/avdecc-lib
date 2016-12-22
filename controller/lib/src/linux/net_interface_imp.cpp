@@ -178,6 +178,16 @@ uint64_t net_interface_imp::mac_addr()
     return mac;
 }
 
+uint64_t net_interface_imp::get_dev_eui()
+{
+    return selected_dev_eui;
+}
+    
+void net_interface_imp::set_dev_eui(uint64_t dev_eui)
+{
+    selected_dev_eui = dev_eui;
+}
+
 char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
 {
     return (char *)ifnames[dev_index].c_str();
@@ -243,6 +253,9 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     bind(rawsock, (struct sockaddr *)&sll, sizeof(sll));
 
     utility::convert_eui48_to_uint64((uint8_t *)if_mac.ifr_hwaddr.sa_data, mac);
+    selected_dev_eui = ((mac & UINT64_C(0xFFFFFF000000)) << 16) |
+                       UINT64_C(0x000000FFFF000000) |
+                       (mac & UINT64_C(0xFFFFFF));
 
     uint16_t etypes[1] = {0x22f0};
     set_capture_ether_type(etypes, 1);
