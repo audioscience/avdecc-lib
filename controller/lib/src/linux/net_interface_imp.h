@@ -60,6 +60,7 @@ private:
     int ifindex;
     uint16_t ethertype;
     uint64_t mac;
+    uint64_t selected_dev_eui;
     uint8_t buf[SIZEOF_BUFFER];
     uint8_t rx_buf[SIZEOF_BUFFER];
 
@@ -93,6 +94,16 @@ public:
     /// Get the MAC address of the network interface.
     ///
     uint64_t mac_addr();
+
+    ///
+    /// Get the EUI of the selected network interface.
+    ///
+    uint64_t get_dev_eui();
+    
+    ///
+    /// Set the EUI of the selected network interface.
+    ///
+    void set_dev_eui(uint64_t dev_eui);
 
     ///
     /// Get the MAC address of a network interface.

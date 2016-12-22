@@ -170,6 +170,16 @@ uint64_t net_interface_imp::mac_addr()
     return selected_dev_mac;
 }
 
+uint64_t net_interface_imp::get_dev_eui()
+{
+    return selected_dev_eui;
+}
+    
+void net_interface_imp::set_dev_eui(uint64_t dev_eui)
+{
+    selected_dev_eui = dev_eui;
+}
+
 char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
 {
     uint32_t index_i;
@@ -294,6 +304,9 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     }
     
     selected_dev_mac = all_mac_addresses.at(index);
+    selected_dev_eui = ((selected_dev_mac & UINT64_C(0xFFFFFF000000)) << 16) |
+                       UINT64_C(0x000000FFFF000000) |
+                       (selected_dev_mac & UINT64_C(0xFFFFFF));
     
     uint16_t ether_type[1];
     ether_type[0] = JDKSAVDECC_AVTP_ETHERTYPE;

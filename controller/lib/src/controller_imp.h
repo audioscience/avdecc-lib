@@ -72,6 +72,7 @@ public:
     /// A copy of this function exists in adp.h
     /// \see get_controller_entity_id()
     uint64_t STDCALL get_entity_id();
+    void STDCALL set_entity_id(uint64_t entity_id);
     size_t STDCALL get_end_station_count();
     end_station * STDCALL get_end_station_by_index(size_t end_station_index);
 

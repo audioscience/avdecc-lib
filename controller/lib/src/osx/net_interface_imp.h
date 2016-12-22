@@ -47,6 +47,7 @@ private:
     pcap_if_t * all_devs;
     pcap_if_t * dev;
     uint64_t selected_dev_mac;
+    uint64_t selected_dev_eui;
     uint32_t total_devs;
     pcap_t * pcap_interface;
     char err_buf[PCAP_ERRBUF_SIZE];
@@ -79,6 +80,16 @@ public:
     /// Get the MAC address of the selected network interface.
     ///
     uint64_t mac_addr();
+    
+    ///
+    /// Get the EUI of the selected network interface.
+    ///
+    uint64_t get_dev_eui();
+    
+    ///
+    /// Set the EUI of the selected network interface.
+    ///
+    void set_dev_eui(uint64_t dev_eui);
 
     ///
     /// Find and store the MAC address string of a network interface.
