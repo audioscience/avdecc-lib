@@ -87,7 +87,7 @@ public:
     int STDCALL send_get_tx_state_cmd(void * notification_id);
     int proc_get_tx_state_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
 
-    int STDCALL send_get_tx_connection_cmd(void * notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id);
+    int STDCALL send_get_tx_connection_cmd(void * notification_id, uint16_t connection_index);
     int proc_get_tx_connection_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
 };
 }

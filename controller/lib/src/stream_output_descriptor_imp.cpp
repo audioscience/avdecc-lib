@@ -671,7 +671,7 @@ int stream_output_descriptor_imp::proc_get_tx_state_resp(void *& notification_id
     return 0;
 }
 
-int STDCALL stream_output_descriptor_imp::send_get_tx_connection_cmd(void * notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id)
+int STDCALL stream_output_descriptor_imp::send_get_tx_connection_cmd(void * notification_id, uint16_t connection_index)
 {
     entity_descriptor_response * entity_resp_ref = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_response();
     struct jdksavdecc_frame cmd_frame;
@@ -682,11 +682,11 @@ int STDCALL stream_output_descriptor_imp::send_get_tx_connection_cmd(void * noti
     /********************************************* ACMP Common Data *********************************************/
     acmp_cmd_get_tx_connection.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
     jdksavdecc_uint64_write(talker_entity_id, &acmp_cmd_get_tx_connection.talker_entity_id, 0, sizeof(uint64_t));
-    jdksavdecc_uint64_write(listener_entity_id, &acmp_cmd_get_tx_connection.listener_entity_id, 0, sizeof(uint64_t));
+    jdksavdecc_uint64_write(0, &acmp_cmd_get_tx_connection.listener_entity_id, 0, sizeof(uint64_t));
     acmp_cmd_get_tx_connection.talker_unique_id = descriptor_index();
-    acmp_cmd_get_tx_connection.listener_unique_id = listener_unique_id;
+    acmp_cmd_get_tx_connection.listener_unique_id = 0;
     jdksavdecc_eui48_init(&acmp_cmd_get_tx_connection.stream_dest_mac);
-    acmp_cmd_get_tx_connection.connection_count = 0;
+    acmp_cmd_get_tx_connection.connection_count = connection_index;
     // Fill acmp_cmd_get_tx_connection.sequence_id in AEM Controller State Machine
     acmp_cmd_get_tx_connection.flags = 0;
     acmp_cmd_get_tx_connection.stream_vlan_id = 0;

@@ -655,6 +655,7 @@ void cmd_line::cmd_line_commands_init()
         &cmd_line::cmd_get_tx_connection);
     get_tx_connection_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
     get_tx_connection_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
+    get_tx_connection_fmt->add_argument(new cli_argument_int(this, "c_i", "the connection index"));
     get_tx_connection_cmd->add_format(get_tx_connection_fmt);
 
     // entity
@@ -3141,6 +3142,7 @@ int cmd_line::cmd_get_tx_connection(int total_matched, std::vector<cli_argument 
 {
     uint32_t outstream_end_station_index = args[0]->get_value_uint();
     uint16_t outstream_desc_index = args[1]->get_value_int();
+    uint16_t connection_index = args[2]->get_value_int();
     avdecc_lib::configuration_descriptor * configuration = controller_obj->get_current_config_desc(outstream_end_station_index, false);
     bool is_valid = (configuration &&
                      (outstream_end_station_index < controller_obj->get_end_station_count()) &&
@@ -3151,7 +3153,7 @@ int cmd_line::cmd_get_tx_connection(int total_matched, std::vector<cli_argument 
         intptr_t cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor * outstream = configuration->get_stream_output_desc_by_index(outstream_desc_index);
-        outstream->send_get_tx_connection_cmd((void *)cmd_notification_id, 0, 0);
+        outstream->send_get_tx_connection_cmd((void *)cmd_notification_id, connection_index);
         int status = sys->get_last_resp_status();
 
         if (status == avdecc_lib::ACMP_STATUS_SUCCESS)
