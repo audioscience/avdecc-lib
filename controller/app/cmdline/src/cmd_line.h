@@ -240,6 +240,11 @@ private:
     /// Send a CONNECT_RX command to disconnect Listener sink stream.
     ///
     int cmd_disconnect_rx(int total_matched, std::vector<cli_argument *> args);
+    
+    ///
+    /// Send a DISCONNECT_TX command to disconnect a Talker source stream.
+    ///
+    int cmd_disconnect_tx(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display all current connections.

@@ -125,6 +125,13 @@ public:
     AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void * notification_id) = 0;
 
     ///
+    /// Send a DISCONNECT_TX command with a notification id to disconnect a Talker source stream.
+    ///
+    /// \param notification_id A void pointer to the unique identifier associated with the command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_disconnect_tx_cmd(void * notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id) = 0;
+    
+    ///
     /// Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
     /// via ACMP or has previously been stopped with the STOP_STREAMING command.
     ///

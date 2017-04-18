@@ -306,6 +306,7 @@ int acmp_controller_state_machine::callback(void * notification_id, uint32_t not
     else if ((notification_flag == CMD_WITH_NOTIFICATION) &&
              ((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_CONNECT_RX_RESPONSE) ||
               (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_RX_RESPONSE) ||
+              (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_TX_RESPONSE) ||
               (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE) ||
               (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_RX_STATE_RESPONSE)))
     {
