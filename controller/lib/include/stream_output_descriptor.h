@@ -128,6 +128,10 @@ public:
     /// Send a DISCONNECT_TX command with a notification id to disconnect a Talker source stream.
     ///
     /// \param notification_id A void pointer to the unique identifier associated with the command.
+    /// \param listener_entity_id The Listener Entity ID is used to identify the AVDECC Listener being targeted by the command.
+    /// \param listener_unique_id The Listener Unique ID is used to uniquely identify the stream sink
+    ///                           of the AVDECC Listener targeted by the command. For entities using the AVDECC Entity Model,
+    ///                           this corresponds to the id of the STREAM INPUT descriptor.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_disconnect_tx_cmd(void * notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id) = 0;
     
