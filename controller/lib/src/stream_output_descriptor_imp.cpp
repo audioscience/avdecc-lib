@@ -455,6 +455,71 @@ int stream_output_descriptor_imp::proc_get_stream_info_resp(void *& notification
 
     return 0;
 }
+    
+int STDCALL stream_output_descriptor_imp::send_disconnect_tx_cmd(void * notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id)
+{
+    entity_descriptor_response * entity_resp_ref = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_response();
+    struct jdksavdecc_frame cmd_frame;
+    struct jdksavdecc_acmpdu acmp_cmd_disconnect_tx;
+    ssize_t acmp_cmd_disconnect_tx_returned;
+    uint64_t talker_entity_id = entity_resp_ref->entity_id();
+    
+    /******************************************* ACMP Common Data *******************************************/
+    acmp_cmd_disconnect_tx.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
+    jdksavdecc_uint64_write(talker_entity_id, &acmp_cmd_disconnect_tx.talker_entity_id, 0, sizeof(uint64_t));
+    jdksavdecc_uint64_write(listener_entity_id, &acmp_cmd_disconnect_tx.listener_entity_id, 0, sizeof(uint64_t));
+    acmp_cmd_disconnect_tx.listener_unique_id = listener_unique_id;
+    acmp_cmd_disconnect_tx.talker_unique_id = descriptor_index();
+    jdksavdecc_eui48_init(&acmp_cmd_disconnect_tx.stream_dest_mac);
+    acmp_cmd_disconnect_tx.connection_count = 0;
+    // Fill acmp_cmd_disconnect_tx.sequence_id in AEM Controller State Machine
+    acmp_cmd_disconnect_tx.flags = 0;
+    acmp_cmd_disconnect_tx.stream_vlan_id = 0;
+    
+    /**************** Fill frame payload with AECP data and send the frame ***************/
+    acmp_controller_state_machine_ref->ether_frame_init(&cmd_frame);
+    acmp_cmd_disconnect_tx_returned = jdksavdecc_acmpdu_write(&acmp_cmd_disconnect_tx,
+                                                              cmd_frame.payload,
+                                                              ETHER_HDR_SIZE,
+                                                              sizeof(cmd_frame.payload));
+    
+    if (acmp_cmd_disconnect_tx_returned < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "cmd_disconnect_tx_write error\n");
+        assert(acmp_cmd_disconnect_tx_returned >= 0);
+        return -1;
+    }
+    
+    acmp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_TX_COMMAND, &cmd_frame);
+    system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
+    
+    delete entity_resp_ref;
+    return 0;
+}
+
+int stream_output_descriptor_imp::proc_disconnect_tx_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
+{
+    struct jdksavdecc_frame cmd_frame;
+    ssize_t acmp_cmd_disconnect_tx_resp_returned;
+    
+    memcpy(cmd_frame.payload, frame, frame_len);
+    acmp_cmd_disconnect_tx_resp_returned = jdksavdecc_acmpdu_read(&acmp_cmd_disconnect_tx_resp,
+                                                                  frame,
+                                                                  ETHER_HDR_SIZE,
+                                                                  frame_len);
+    
+    if (acmp_cmd_disconnect_tx_resp_returned < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "acmp_cmd_disconnect_tx_read error");
+        assert(acmp_cmd_disconnect_tx_resp_returned >= 0);
+        return -1;
+    }
+    
+    status = acmp_cmd_disconnect_tx_resp.header.status;
+    acmp_controller_state_machine_ref->state_resp(notification_id, &cmd_frame);
+    
+    return 0;
+}
 
 int STDCALL stream_output_descriptor_imp::send_start_streaming_cmd(void * notification_id)
 {

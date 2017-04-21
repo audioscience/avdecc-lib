@@ -563,14 +563,31 @@ void cmd_line::cmd_line_commands_init()
     cli_command * disconnect_cmd = new cli_command();
     commands.add_sub_command("disconnect", disconnect_cmd);
 
-    cli_command_format * disconnect_fmt = new cli_command_format(
+    // disconnect rx
+    cli_command * disconnect_rx_cmd = new cli_command();
+    disconnect_cmd->add_sub_command("rx", disconnect_rx_cmd);
+    
+    cli_command_format * disconnect_rx_fmt = new cli_command_format(
         "Send a CONNECT_RX command to disconnect Listener sink stream.",
         &cmd_line::cmd_disconnect_rx);
-    disconnect_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
-    disconnect_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
-    disconnect_fmt->add_argument(new cli_argument_end_station(this, "d_e_s", DST_END_STATION_HELP));
-    disconnect_fmt->add_argument(new cli_argument_int(this, "d_d_i", "the destination descriptor index"));
-    disconnect_cmd->add_format(disconnect_fmt);
+    disconnect_rx_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
+    disconnect_rx_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
+    disconnect_rx_fmt->add_argument(new cli_argument_end_station(this, "d_e_s", DST_END_STATION_HELP));
+    disconnect_rx_fmt->add_argument(new cli_argument_int(this, "d_d_i", "the destination descriptor index"));
+    disconnect_rx_cmd->add_format(disconnect_rx_fmt);
+    
+    // disconnect tx
+    cli_command * disconnect_tx_cmd = new cli_command();
+    disconnect_cmd->add_sub_command("tx", disconnect_tx_cmd);
+    
+    cli_command_format * disconnect_tx_fmt = new cli_command_format(
+        "Send a DISCONNECT_TX command to disconnect a Talker source stream.",
+        &cmd_line::cmd_disconnect_tx);
+    disconnect_tx_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
+    disconnect_tx_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
+    disconnect_tx_fmt->add_argument(new cli_argument_end_station(this, "d_e_s", DST_END_STATION_HELP));
+    disconnect_tx_fmt->add_argument(new cli_argument_int(this, "d_d_i", "the destination descriptor index"));
+    disconnect_tx_cmd->add_format(disconnect_tx_fmt);
 
     // get
     cli_command * get_cmd = new cli_command();
@@ -2972,6 +2989,44 @@ int cmd_line::cmd_disconnect_rx(int total_matched, std::vector<cli_argument *> a
         atomic_cout << "Invalid ACMP Disconnection" << std::endl;
     }
 
+    return 0;
+}
+
+int cmd_line::cmd_disconnect_tx(int total_matched, std::vector<cli_argument *> args)
+{
+    uint32_t outstream_end_station_index = args[0]->get_value_uint();
+    uint16_t outstream_desc_index = args[1]->get_value_int();
+    uint32_t instream_end_station_index = args[2]->get_value_uint();
+    uint16_t instream_desc_index = args[3]->get_value_int();
+    
+    avdecc_lib::configuration_descriptor * in_descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
+    avdecc_lib::configuration_descriptor * out_descriptor = controller_obj->get_current_config_desc(outstream_end_station_index, false);
+    bool is_valid = (in_descriptor && out_descriptor &&
+                     (test_mode || (instream_end_station_index != outstream_end_station_index)) &&
+                     (instream_end_station_index < controller_obj->get_end_station_count()) &&
+                     (outstream_end_station_index < controller_obj->get_end_station_count()) &&
+                     (instream_desc_index < in_descriptor->stream_input_desc_count()) &&
+                     (outstream_desc_index < out_descriptor->stream_output_desc_count()));
+    
+    if (is_valid)
+    {
+        avdecc_lib::end_station * instream_end_station = controller_obj->get_end_station_by_index(instream_end_station_index);
+        avdecc_lib::entity_descriptor_response * entity_resp_ref = instream_end_station->get_entity_desc_by_index(
+            instream_end_station->get_current_entity_index())->get_entity_response();
+        avdecc_lib::stream_output_descriptor * outstream = out_descriptor->get_stream_output_desc_by_index(outstream_desc_index);
+        uint64_t listener_entity_id = entity_resp_ref->entity_id();
+
+        intptr_t cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+        outstream->send_disconnect_tx_cmd((void *)cmd_notification_id, listener_entity_id, instream_desc_index);
+        sys->get_last_resp_status();
+        delete entity_resp_ref;
+    }
+    else
+    {
+        atomic_cout << "Invalid ACMP Disconnection" << std::endl;
+    }
+    
     return 0;
 }
 

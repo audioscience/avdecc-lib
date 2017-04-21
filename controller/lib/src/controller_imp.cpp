@@ -543,7 +543,8 @@ void controller_imp::rx_packet_event(void *& notification_id,
             uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame, ETHER_HDR_SIZE);
 
             if ((msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE) ||
-                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE))
+                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE) ||
+                (msg_type == JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_TX_RESPONSE))
             {
                 entity_entity_id = jdksavdecc_acmpdu_get_talker_entity_id(frame, ETHER_HDR_SIZE);
             }

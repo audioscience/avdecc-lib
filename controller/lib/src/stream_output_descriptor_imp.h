@@ -48,6 +48,7 @@ namespace avdecc_lib
 class stream_output_descriptor_imp : public stream_output_descriptor, public virtual descriptor_base_imp
 {
 private:
+    struct jdksavdecc_acmpdu acmp_cmd_disconnect_tx_resp; // Store the response received after sending a DISCONNECT_TX command
     struct jdksavdecc_aem_command_set_stream_info_response aem_cmd_set_stream_info_resp; // Store the response received after sending a SET_STREAM_INFO command.
 public:
     stream_output_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
@@ -78,6 +79,9 @@ public:
     int STDCALL send_get_stream_info_cmd(void * notification_id);
     int proc_get_stream_info_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
 
+    int STDCALL send_disconnect_tx_cmd(void * notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id);
+    int proc_disconnect_tx_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
+    
     int STDCALL send_start_streaming_cmd(void * notification_id);
     int proc_start_streaming_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
 

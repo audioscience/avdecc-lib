@@ -1924,6 +1924,7 @@ int end_station_imp::proc_rcvd_acmp_resp(uint32_t msg_type, void *& notification
     {
     case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE:
     case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE:
+    case JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_TX_RESPONSE:
 	desc_index = jdksavdecc_acmpdu_get_talker_unique_id(frame, ETHER_HDR_SIZE);
         if (c)
         {
@@ -1973,6 +1974,10 @@ int end_station_imp::proc_rcvd_acmp_resp(uint32_t msg_type, void *& notification
         stream_input_desc_imp_ref->proc_get_rx_state_resp(notification_id, frame, frame_len, status);
         break;
 
+    case JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_TX_RESPONSE:
+        stream_output_desc_imp_ref->proc_disconnect_tx_resp(notification_id, frame, frame_len, status);
+        break;
+            
     case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE:
 	stream_output_desc_imp_ref->proc_get_tx_connection_resp(notification_id, frame, frame_len, status);
         break;

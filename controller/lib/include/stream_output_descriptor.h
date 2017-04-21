@@ -125,6 +125,20 @@ public:
     AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void * notification_id) = 0;
 
     ///
+    /// Send a DISCONNECT_TX command with a notification id to disconnect a Talker source stream.
+    /// This API should not be used during normal operation.  It is intended to restore a Talker stream
+    /// to the disconnected state when the Listener side of a connection reports disconnected (via GET_RX_STATE)
+    /// and the Talker side still reports connected (via GET_TX_STATE).
+    ///
+    /// \param notification_id A void pointer to the unique identifier associated with the command.
+    /// \param listener_entity_id The Listener Entity ID is used to identify the AVDECC Listener being targeted by the command.
+    /// \param listener_unique_id The Listener Unique ID is used to uniquely identify the stream sink
+    ///                           of the AVDECC Listener targeted by the command. For entities using the AVDECC Entity Model,
+    ///                           this corresponds to the id of the STREAM INPUT descriptor.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_disconnect_tx_cmd(void * notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id) = 0;
+    
+    ///
     /// Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
     /// via ACMP or has previously been stopped with the STOP_STREAMING command.
     ///
