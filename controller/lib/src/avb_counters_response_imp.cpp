@@ -42,7 +42,7 @@ avb_counters_response_imp::avb_counters_response_imp(const uint8_t * frame, size
 
     m_counters_valid = jdksavdecc_uint32_get(m_frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_VALID);
 
-    for (int i = 0; i < 31; i++)
+    for (int i = 0; i <= 31; i++)
     {
         int r = jdksavdecc_uint32_read(&m_counters_block[i], frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_BLOCK + 4 * i,
                                        frame_len);
