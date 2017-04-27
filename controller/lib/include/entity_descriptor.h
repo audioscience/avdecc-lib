@@ -36,6 +36,7 @@
 #include "avdecc-lib_build.h"
 #include "descriptor_base.h"
 #include "entity_descriptor_response.h"
+#include "entity_counters_response.h"
 #include "entity_descriptor_get_config_response.h"
 
 namespace avdecc_lib
@@ -54,6 +55,11 @@ public:
     /// \return the entity descriptor get_configuration response class.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor_get_config_response * STDCALL get_entity_get_config_response() = 0;
+
+    ///
+    /// \return the entity descriptor counters response class.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual entity_counters_response * STDCALL get_entity_counters_response() = 0;
 
     ///
     /// \return The number of Configuration descriptors.
@@ -75,5 +81,10 @@ public:
     /// Send a GET_CONFIGURATION command to get the current configuration of the current entity.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_config_cmd(void * notification_id) = 0;
+    
+    ///
+    /// Send a GET_COUNTERS command to get the entity counters of the AVDECC Entity.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_counters_cmd(void * notification_id) = 0;
 };
 }

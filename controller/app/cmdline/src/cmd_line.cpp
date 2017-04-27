@@ -967,7 +967,7 @@ void cmd_line::cmd_line_commands_init()
         "port or unit.",
         &cmd_line::cmd_get_counters);
     get_counters_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                                           "Valid descriptor types are AVB_INTERFACE, CLOCK_DOMAIN, STREAM_INPUT."));
+                                                           "Valid descriptor types are ENTITY, AVB_INTERFACE, CLOCK_DOMAIN, STREAM_INPUT."));
     get_counters_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
                                                         "To see a list of valid descriptor types and corresponding indexes, enter\n"
                                                         "\"view all\" command."));
@@ -4469,7 +4469,38 @@ int cmd_line::cmd_get_counters(int total_matched, std::vector<cli_argument *> ar
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
 
-    if (desc_type_value == avdecc_lib::AEM_DESC_AVB_INTERFACE)
+    if (desc_type_value == avdecc_lib::AEM_DESC_ENTITY)
+    {
+        intptr_t cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+        entity->send_get_counters_cmd((void *)cmd_notification_id);
+        avdecc_lib::entity_counters_response * entity_counters_resp = entity->get_entity_counters_response();
+        if (entity_counters_resp)
+        {
+            int status = sys->get_last_resp_status();
+            if (status == avdecc_lib::AEM_STATUS_SUCCESS)
+            {
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_1))
+                    atomic_cout << "Entity Specific 1 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_1) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_2))
+                    atomic_cout << "Entity Specific 2 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_2) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_3))
+                    atomic_cout << "Entity Specific 3 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_3) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_4))
+                    atomic_cout << "Entity Specific 4 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_4) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_5))
+                    atomic_cout << "Entity Specific 5 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_5) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_6))
+                    atomic_cout << "Entity Specific 6 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_6) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_7))
+                    atomic_cout << "Entity Specific 7 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_7) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_8))
+                    atomic_cout << "Entity Specific 8 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_8) << std::endl;
+                delete entity_counters_resp;
+            }
+        }
+    }
+    else if (desc_type_value == avdecc_lib::AEM_DESC_AVB_INTERFACE)
     {
         avdecc_lib::avb_interface_descriptor * avb_desc_ref = configuration->get_avb_interface_desc_by_index(desc_index);
 

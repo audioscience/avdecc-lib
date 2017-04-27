@@ -1,7 +1,7 @@
 /*
  * Licensed under the MIT License (MIT)
  *
- * Copyright (c) 2014 AudioScience Inc.
+ * Copyright (c) 2017 AudioScience Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,32 +22,34 @@
  */
 
 /**
- * avb_counters_response_imp.h
+ * entity_counters_response.h
  *
- * AVB counters response implementation class
+ * ENTITY counters response base class
  */
 
 #pragma once
 
-#include "avb_counters_response.h"
-#include "jdksavdecc_aem_command.h"
+#include <stdint.h>
+#include "avdecc-lib_build.h"
 
 namespace avdecc_lib
 {
-class avb_counters_response_imp : public avb_counters_response
+class entity_counters_response
 {
-private:
-    uint32_t m_counters_valid;
-    uint32_t m_counters_block[32];
-    uint8_t * m_frame;
-    size_t m_size;
-    ssize_t m_position;
-
 public:
-    avb_counters_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
-    virtual ~avb_counters_response_imp();
-
-    uint32_t STDCALL get_counter_valid(int name);
-    uint32_t STDCALL get_counter_by_name(int name);
+    virtual ~entity_counters_response(){};
+    ///
+    /// \param name avdecc_lib::counter_labels
+    ///
+    /// \return the avb counter valid after the GET_COUNTERS command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_valid(int name) = 0;
+    
+    ///
+    /// \param name avdecc_lib::counter_labels
+    ///
+    /// \return the avb counter by name after the GET_COUNTERS command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_counter_by_name(int name) = 0;
 };
 }
