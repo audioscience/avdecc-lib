@@ -42,7 +42,7 @@ clock_domain_counters_response_imp::clock_domain_counters_response_imp(const uin
 
     m_counters_valid = jdksavdecc_uint32_get(m_frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_VALID);
 
-    for (int i = 0; i <= 31; i++)
+    for (int i = 0; i < 32; i++)
     {
         int r = jdksavdecc_uint32_read(&m_counters_block[i], frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_GET_COUNTERS_RESPONSE_OFFSET_COUNTERS_BLOCK + 4 * i,
                                        frame_len);
