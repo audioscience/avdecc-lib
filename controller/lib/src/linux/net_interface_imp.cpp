@@ -170,7 +170,7 @@ uint32_t STDCALL net_interface_imp::devs_count()
 size_t STDCALL net_interface_imp::device_ip_address_count(size_t dev_index)
 {
     // not needed on this platform as the device IP is embedded in the string returned by get_dev_desc_by_index()
-    return -1;
+    return 0;
 }
 
 uint64_t net_interface_imp::mac_addr()
