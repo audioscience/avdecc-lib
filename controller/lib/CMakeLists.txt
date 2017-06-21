@@ -43,6 +43,8 @@ elseif(UNIX)
   target_link_libraries(avdecc-lib_controller pthread)
   target_link_libraries(avdecc-lib_controller rt)
 elseif(WIN32)
+  set_property(TARGET avdecc-lib_controller APPEND PROPERTY LINK_FLAGS /DEBUG)
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
   target_link_libraries(avdecc-lib_controller wpcap Iphlpapi Ws2_32)
 endif()
 
