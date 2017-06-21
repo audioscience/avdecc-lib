@@ -58,6 +58,22 @@ public:
     /// \return The total number of End Stations connected.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL get_end_station_count() = 0;
+    
+    ///
+    /// \return The entity id of the controller.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_entity_id() = 0;
+    
+    ///
+    /// Set the entity id of the controller.
+    ///
+    /// This API should only be used if an application wishes to modify the default
+    /// controller entity - generated from the selected network interface MAC EUI.
+    ///
+    /// The controller entity id must not be modified after the system process start point.
+    /// \see process_start()
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_entity_id(uint64_t entity_id) = 0;
 
     ///
     /// \return The corresponding End Station by index.

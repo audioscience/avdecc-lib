@@ -57,29 +57,45 @@ stream_input_descriptor_response * STDCALL stream_input_descriptor_imp::get_stre
 stream_input_counters_response * STDCALL stream_input_descriptor_imp::get_stream_input_counters_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return counters_resp = new stream_input_counters_response_imp(resp_ref->get_buffer(),
-                                                                  resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_COUNTERS);
+    if (!resp_frame)
+        return NULL;
+
+    return counters_resp = new stream_input_counters_response_imp(resp_frame->buffer,
+                                                                  resp_frame->frame_size, resp_frame->position);
 }
 
 stream_input_get_stream_format_response * STDCALL stream_input_descriptor_imp::get_stream_input_get_stream_format_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_format_resp = new stream_input_get_stream_format_response_imp(resp_ref->get_buffer(),
-                                                                             resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_STREAM_FORMAT);
+    if (!resp_frame)
+        return NULL;
+
+    return get_format_resp = new stream_input_get_stream_format_response_imp(resp_frame->buffer,
+                                                                             resp_frame->frame_size, resp_frame->position);
 }
 
 stream_input_get_stream_info_response * STDCALL stream_input_descriptor_imp::get_stream_input_get_stream_info_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_info_resp = new stream_input_get_stream_info_response_imp(resp_ref->get_buffer(),
-                                                                         resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_STREAM_INFO);
+    if (!resp_frame)
+        return NULL;
+
+    return get_info_resp = new stream_input_get_stream_info_response_imp(resp_frame->buffer,
+                                                                         resp_frame->frame_size, resp_frame->position);
 }
 
 stream_input_get_rx_state_response * STDCALL stream_input_descriptor_imp::get_stream_input_get_rx_state_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_rx_state_resp = new stream_input_get_rx_state_response_imp(resp_ref->get_buffer(),
-                                                                          resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(GET_RX_STATE_RESPONSE);
+    if (!resp_frame)
+        return NULL;
+
+    return get_rx_state_resp = new stream_input_get_rx_state_response_imp(resp_frame->buffer,
+                                                                          resp_frame->frame_size, resp_frame->position);
 }
 
 int STDCALL stream_input_descriptor_imp::send_set_stream_format_cmd(void * notification_id, uint64_t new_stream_format)
@@ -230,7 +246,7 @@ int stream_input_descriptor_imp::proc_get_stream_format_resp(void *& notificatio
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_STREAM_FORMAT, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = m_stream_format_response.aem_header.aecpdu_header.header.message_type;
     status = m_stream_format_response.aem_header.aecpdu_header.header.status;
@@ -326,7 +342,7 @@ int stream_input_descriptor_imp::proc_get_stream_info_resp(void *& notification_
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_STREAM_INFO, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = m_stream_info_resp.aem_header.aecpdu_header.header.message_type;
     status = m_stream_info_resp.aem_header.aecpdu_header.header.status;
@@ -673,7 +689,7 @@ int stream_input_descriptor_imp::proc_get_rx_state_resp(void *& notification_id,
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(GET_RX_STATE_RESPONSE, frame, ETHER_HDR_SIZE, frame_len);
 
     status = acmp_cmd_get_rx_state_resp.header.status;
 
@@ -739,7 +755,7 @@ int stream_input_descriptor_imp::proc_get_counters_resp(void *& notification_id,
                                                                                                         ETHER_HDR_SIZE,
                                                                                                         frame_len);
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_COUNTERS, frame, ETHER_HDR_SIZE, frame_len);
 
     if (aem_cmd_get_stream_input_counters_resp_returned < 0)
     {

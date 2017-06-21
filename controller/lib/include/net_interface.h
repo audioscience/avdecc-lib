@@ -30,6 +30,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <string>
 #include "avdecc-lib_build.h"
 
 namespace avdecc_lib
@@ -46,17 +47,48 @@ public:
     /// \return The number of devices.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL devs_count() = 0;
+    
+    ///
+    /// \return The number of IP addresses for a device.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL device_ip_address_count(size_t dev_index) = 0;
 
     ///
     /// \return The corresponding network interface description by index.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_desc_by_index(size_t dev_index) = 0;
+    
+    ///
+    /// \return The network interface IP address by index for a device.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual const char * STDCALL get_dev_ip_address_by_index(size_t dev_index, size_t ip_index) = 0;
+    
+    ///
+    /// \return The network interface MAC address by index for a device.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint64_t STDCALL get_dev_mac_addr_by_index(size_t dev_index) = 0;
 
     /// This function is OS dependant. In linux and OSX the return is the same as for a call to
     /// get_dev_desc_by_index(). In Windows this function returns a GUID as a string.
     /// \return The corresponding network interface name by index.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual char * STDCALL get_dev_name_by_index(size_t dev_index) = 0;
+    
+    ///
+    /// \param dev_index The index of a network interface.
+    /// \param ip_addr_str The IP Address to check for.
+    ///
+    /// \return True if ip_addr_str is the IP address of the device specified by dev_index.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL does_interface_have_ip_address(size_t dev_index, char * ip_addr_str) = 0;
+    
+    ///
+    /// \param dev_index The index of a network interface.
+    /// \param mac_addr The MAC address to check for.
+    ///
+    /// \return True if mac_addr is the MAC address of the device specified by dev_index.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual bool STDCALL does_interface_have_mac_address(size_t dev_index, uint64_t mac_addr) = 0;
 
     ///
     /// Select the corresponding interface by number.

@@ -52,8 +52,12 @@ stream_port_output_descriptor_response * STDCALL stream_port_output_descriptor_i
 stream_port_output_get_audio_map_response * STDCALL stream_port_output_descriptor_imp::get_stream_port_output_audio_map_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return audio_map_resp = new stream_port_output_get_audio_map_response_imp(resp_ref->get_buffer(),
-                                                                              resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_AUDIO_MAP);
+    if (!resp_frame)
+        return NULL;
+
+    return audio_map_resp = new stream_port_output_get_audio_map_response_imp(resp_frame->buffer,
+                                                                              resp_frame->frame_size, resp_frame->position);
 }
 
 int stream_port_output_descriptor_imp::store_pending_map(struct audio_map_mapping & map)
@@ -154,7 +158,7 @@ int stream_port_output_descriptor_imp::proc_get_audio_map_resp(void *& notificat
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_AUDIO_MAP, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = aem_cmd_get_audio_map_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_get_audio_map_resp.aem_header.aecpdu_header.header.status;

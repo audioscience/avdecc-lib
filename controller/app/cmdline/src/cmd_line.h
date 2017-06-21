@@ -59,6 +59,7 @@ public:
     {
         // Use printf as cout seems to still be interleaved
         printf("%s", buffer.str().c_str());
+        fflush(stdout);
     }
 
 private:
@@ -239,6 +240,11 @@ private:
     /// Send a CONNECT_RX command to disconnect Listener sink stream.
     ///
     int cmd_disconnect_rx(int total_matched, std::vector<cli_argument *> args);
+    
+    ///
+    /// Send a DISCONNECT_TX command to disconnect a Talker source stream.
+    ///
+    int cmd_disconnect_tx(int total_matched, std::vector<cli_argument *> args);
 
     ///
     /// Display all current connections.
@@ -439,6 +445,21 @@ private:
     ///
     int cmd_set_path(int total_matched, std::vector<cli_argument *> args);
 
+    ///
+    /// Get the connection status of an end station
+    ///
+    int cmd_get_connection_status(int total_matched, std::vector<cli_argument *> args);
+    
+    ///
+    /// Get the current configuration index of the current entity.
+    ///
+    int cmd_get_config(int total_matched, std::vector<cli_argument *> args);
+    
+    ///
+    /// Set the current configuration index of the current entity.
+    ///
+    int cmd_set_config(int total_matched, std::vector<cli_argument *> args);
+    
     ///
     /// Clear the screen.
     ///

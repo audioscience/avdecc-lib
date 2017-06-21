@@ -2,6 +2,8 @@ cmake_minimum_required (VERSION 2.8)
 project (avdecc-lib_controller)
 enable_testing()
 
+option(USE_GNU_READLINE "Use GNU Readline" OFF)
+
 include_directories( src ../../lib/include ../../jdksavdecc-c/include )
 
 file(GLOB_RECURSE CMDLINE_INCLUDES "src/*.h" )
@@ -12,6 +14,9 @@ if(APPLE)
   add_executable (avdecccmdline ${CMDLINE_INCLUDES} ${CMDLINE_SRC})
   set(PCAP_NAME pcap)
   set(READLINE_NAME edit)
+  if(USE_GNU_READLINE)
+    add_definitions(-DUSE_GNU_READLINE)
+  endif(USE_GNU_READLINE)
 elseif(UNIX)
   add_executable (avdecccmdline ${CMDLINE_INCLUDES} ${CMDLINE_SRC})
   set(PCAP_NAME pcap)

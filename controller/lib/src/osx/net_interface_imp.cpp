@@ -41,6 +41,8 @@
 #include <sys/ioctl.h>
 #include <net/bpf.h>
 
+#include <algorithm>
+
 #include "util.h"
 #include "enumeration.h"
 #include "log_imp.h"
@@ -59,18 +61,34 @@ net_interface_imp::net_interface_imp()
     if (pcap_findalldevs(&all_devs, err_buf) == -1) // Retrieve the device list on the local machine.
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "pcap_findalldevs error %s", err_buf);
-        exit(EXIT_FAILURE);
     }
 
     for (dev = all_devs, total_devs = 0; dev; dev = dev->next)
     {
+        // store the valid IPv4 addresses associated with the device
+        std::vector<std::string> device_ip_addresses;
+        pcap_addr_t * dev_addr;
+        for (dev_addr = dev->addresses; dev_addr != NULL; dev_addr = dev_addr->next)
+        {
+            if (dev_addr->addr->sa_family == AF_INET && dev_addr->addr)
+            {
+                char ip_str[INET_ADDRSTRLEN] = {0};
+                inet_ntop(AF_INET, &((struct sockaddr_in *)dev_addr->addr)->sin_addr, ip_str, INET_ADDRSTRLEN);
+                device_ip_addresses.push_back(std::string(ip_str));
+            }
+        }
+        
+        all_ip_addresses.push_back(device_ip_addresses);
+        
+        // store the MAC addr associated with device
+        find_and_store_device_mac_addr(dev->name);
+        
         total_devs++;
     }
 
     if (total_devs == 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "No interfaces found! Make sure WinPcap is installed.");
-        exit(EXIT_FAILURE);
     }
 }
 
@@ -78,6 +96,55 @@ net_interface_imp::~net_interface_imp()
 {
     pcap_freealldevs(all_devs); // Free the device list
     pcap_close(pcap_interface);
+}
+    
+void net_interface_imp::find_and_store_device_mac_addr(char * dev_name)
+{
+    uint64_t mac;
+    int mib[6];
+    size_t len;
+    char * buf;
+    unsigned char * ptr;
+    struct if_msghdr * ifm;
+    struct sockaddr_dl * sdl;
+    
+    mib[0] = CTL_NET;
+    mib[1] = AF_ROUTE;
+    mib[2] = 0;
+    mib[3] = AF_LINK;
+    mib[4] = NET_RT_IFLIST;
+    
+    if ((mib[5] = if_nametoindex(dev_name)) == 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "if_nametoindex error");
+        return;
+    }
+    
+    if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "sysctl 1 error");
+        return;
+    }
+    
+    if ((buf = (char *)malloc(len)) == NULL)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "malloc error");
+        return;
+    }
+    
+    if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "sysctl 2 error");
+        return;
+    }
+    
+    ifm = (struct if_msghdr *)buf;
+    sdl = (struct sockaddr_dl *)(ifm + 1);
+    ptr = (unsigned char *)LLADDR(sdl);
+    utility::convert_eui48_to_uint64(ptr, mac);
+
+    all_mac_addresses.push_back(mac);
+    free(buf);
 }
 
 void STDCALL net_interface_imp::destroy()
@@ -89,10 +156,28 @@ uint32_t STDCALL net_interface_imp::devs_count()
 {
     return total_devs;
 }
+    
+size_t STDCALL net_interface_imp::device_ip_address_count(size_t dev_index)
+{
+    if (dev_index < all_ip_addresses.size())
+        return all_ip_addresses.at(dev_index).size();
+
+    return -1;
+}
 
 uint64_t net_interface_imp::mac_addr()
 {
-    return mac;
+    return selected_dev_mac;
+}
+
+uint64_t net_interface_imp::get_dev_eui()
+{
+    return selected_dev_eui;
+}
+    
+void net_interface_imp::set_dev_eui(uint64_t dev_eui)
+{
+    selected_dev_eui = dev_eui;
 }
 
 char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
@@ -110,7 +195,41 @@ char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
 
     return dev->name;
 }
-
+    
+const char * STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_index, size_t ip_index)
+{
+    if (dev_index < all_ip_addresses.size())
+    {
+        if (ip_index < all_ip_addresses.at(dev_index).size())
+            return all_ip_addresses.at(dev_index).at(ip_index).c_str();
+    }
+    
+    return NULL;
+}
+    
+bool STDCALL net_interface_imp::does_interface_have_ip_address(size_t dev_index, char * ip_addr_str)
+{
+    if (dev_index < all_ip_addresses.size())
+    {
+        if (std::find(all_ip_addresses.at(dev_index).begin(), all_ip_addresses.at(dev_index).end(),
+                      std::string(ip_addr_str)) != all_ip_addresses.at(dev_index).end())
+            return true;
+    }
+    
+    return false;
+}
+    
+bool STDCALL net_interface_imp::does_interface_have_mac_address(size_t dev_index, uint64_t mac_addr)
+{
+    if (dev_index < all_mac_addresses.size())
+    {
+        if (all_mac_addresses.at(dev_index) == mac_addr)
+            return true;
+    }
+    
+    return false;
+}
+    
 char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
 {
     return get_dev_desc_by_index(dev_index);
@@ -119,6 +238,14 @@ char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
 int net_interface_imp::get_fd()
 {
     return pcap_get_selectable_fd(pcap_interface);
+}
+
+uint64_t net_interface_imp::get_dev_mac_addr_by_index(size_t dev_index)
+{
+    if (dev_index < all_mac_addresses.size())
+        return all_mac_addresses.at(dev_index);
+    
+    return 0;
 }
 
 int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
@@ -130,7 +257,7 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Interface number out of range.");
         pcap_freealldevs(all_devs); // Free the device list
-        exit(EXIT_FAILURE);
+        return -1;
     }
 
     for (dev = all_devs, index = 0; index < interface_num - 1; dev = dev->next, index++)
@@ -147,81 +274,45 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Unable to open the adapter. %s is not supported by pcap.", dev->name);
         pcap_freealldevs(all_devs); // Free the device list
-        exit(EXIT_FAILURE);
+        return -1;
     }
 
     if (pcap_setnonblock(pcap_interface, 1, err_buf) < 0)
     {
-        perror("pcap_setnonblock");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "pcap_setnonblock");
+        return -1;
     }
 
     int fd = pcap_fileno(pcap_interface);
     if (fd == -1)
     {
-        perror("Can't get file descriptor for pcap_t");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Can't get file descriptor for pcap_t");
+        return -1;
     }
 
     int on = 1;
     if (ioctl(fd, BIOCIMMEDIATE, &on) == -1)
     {
-        perror("BIOCIMMEDIATE error");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "BIOCIMMEDIATE error");
+        return -1;
     }
 
-    int mib[6];
-    size_t len;
-    char * buf;
-    unsigned char * ptr;
-    struct if_msghdr * ifm;
-    struct sockaddr_dl * sdl;
-
-    mib[0] = CTL_NET;
-    mib[1] = AF_ROUTE;
-    mib[2] = 0;
-    mib[3] = AF_LINK;
-    mib[4] = NET_RT_IFLIST;
-
-    if ((mib[5] = if_nametoindex(dev->name)) == 0)
+    if (index >= all_mac_addresses.size())
     {
-        perror("if_nametoindex error");
-        exit(EXIT_FAILURE);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Cannot find selected interface MAC address");
+        return -1;
     }
-
-    if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
-    {
-        perror("sysctl 1 error");
-        exit(EXIT_FAILURE);
-    }
-
-    if ((buf = (char *)malloc(len)) == NULL)
-    {
-        perror("malloc error");
-        exit(EXIT_FAILURE);
-    }
-
-    if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
-    {
-        perror("sysctl 2 error");
-        exit(EXIT_FAILURE);
-    }
-
-    ifm = (struct if_msghdr *)buf;
-    sdl = (struct sockaddr_dl *)(ifm + 1);
-    ptr = (unsigned char *)LLADDR(sdl);
-    utility::convert_eui48_to_uint64(ptr, mac);
-
-    char mac_str[20];
-    snprintf(mac_str, (size_t)20, "%02x:%02x:%02x:%02x:%02x:%02x", *ptr, *(ptr + 1), *(ptr + 2),
-             *(ptr + 3), *(ptr + 4), *(ptr + 5));
-    log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, mac_str);
-
+    
+    selected_dev_mac = all_mac_addresses.at(index);
+    selected_dev_eui = ((selected_dev_mac & UINT64_C(0xFFFFFF000000)) << 16) |
+                       UINT64_C(0x000000FFFF000000) |
+                       (selected_dev_mac & UINT64_C(0xFFFFFF));
+    
     uint16_t ether_type[1];
     ether_type[0] = JDKSAVDECC_AVTP_ETHERTYPE;
-    set_capture_ether_type(ether_type, 1); // Set the filter
+    if (set_capture_ether_type(ether_type, 1) < 0) // Set the filter
+        return -1;
 
-    free(buf);
     return 0;
 }
 

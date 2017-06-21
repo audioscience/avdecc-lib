@@ -60,29 +60,45 @@ stream_output_descriptor_response * STDCALL stream_output_descriptor_imp::get_st
 stream_output_get_stream_format_response * STDCALL stream_output_descriptor_imp::get_stream_output_get_stream_format_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_format_resp = new stream_output_get_stream_format_response_imp(resp_ref->get_buffer(),
-                                                                              resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_STREAM_FORMAT);
+    if (!resp_frame)
+        return NULL;
+
+    return get_format_resp = new stream_output_get_stream_format_response_imp(resp_frame->buffer,
+                                                                              resp_frame->frame_size, resp_frame->position);
 }
 
 stream_output_get_stream_info_response * STDCALL stream_output_descriptor_imp::get_stream_output_get_stream_info_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_info_resp = new stream_output_get_stream_info_response_imp(resp_ref->get_buffer(),
-                                                                          resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_STREAM_INFO);
+    if (!resp_frame)
+        return NULL;
+
+    return get_info_resp = new stream_output_get_stream_info_response_imp(resp_frame->buffer,
+                                                                          resp_frame->frame_size, resp_frame->position);
 }
 
 stream_output_get_tx_state_response * STDCALL stream_output_descriptor_imp::get_stream_output_get_tx_state_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_tx_state_resp = new stream_output_get_tx_state_response_imp(resp_ref->get_buffer(),
-                                                                           resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(GET_TX_STATE_RESPONSE);
+    if (!resp_frame)
+        return NULL;
+
+    return get_tx_state_resp = new stream_output_get_tx_state_response_imp(resp_frame->buffer,
+                                                                           resp_frame->frame_size, resp_frame->position);
 }
 
 stream_output_get_tx_connection_response * STDCALL stream_output_descriptor_imp::get_stream_output_get_tx_connection_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_tx_connection_resp = new stream_output_get_tx_connection_response_imp(resp_ref->get_buffer(),
-                                                                                     resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(GET_TX_CONNECTION_RESPONSE);
+    if (!resp_frame)
+        return NULL;
+
+    return get_tx_connection_resp = new stream_output_get_tx_connection_response_imp(resp_frame->buffer,
+                                                                                     resp_frame->frame_size, resp_frame->position);
 }
 
 int STDCALL stream_output_descriptor_imp::send_set_stream_format_cmd(void * notification_id, uint64_t new_stream_format)
@@ -234,7 +250,7 @@ int stream_output_descriptor_imp::proc_get_stream_format_resp(void *& notificati
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_STREAM_FORMAT, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = aem_cmd_get_stream_format_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_get_stream_format_resp.aem_header.aecpdu_header.header.status;
@@ -261,7 +277,7 @@ int STDCALL stream_output_descriptor_imp::send_set_stream_info_vlan_id_cmd(void 
     /****************** AECP Message Specific Data ***************/
     cmd.descriptor_type = descriptor_type();
     cmd.descriptor_index = descriptor_index();
-    cmd.aem_stream_info_flags = 0x02000000;
+    cmd.aem_stream_info_flags = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_STREAM_VLAN_ID_VALID;
     cmd.stream_vlan_id = vlan_id;
 
     /************************** Fill frame payload with AECP data and send the frame ***************************/
@@ -288,6 +304,50 @@ int STDCALL stream_output_descriptor_imp::send_set_stream_info_vlan_id_cmd(void 
 
     return 0;
 }
+    
+int STDCALL stream_output_descriptor_imp::send_set_stream_info_msrp_accumulated_latency_cmd(void * notification_id, uint32_t msrp_accumulated_latency)
+{
+    struct jdksavdecc_frame cmd_frame;
+    struct jdksavdecc_aem_command_set_stream_info cmd;
+    ssize_t write_return;
+    
+    memset(&cmd, 0, sizeof(cmd));
+    
+    /******************************************** AECP Common Data *******************************************/
+    cmd.aem_header.aecpdu_header.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
+    // Fill aem_cmd_start_streaming.sequence_id in AEM Controller State Machine
+    cmd.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO;
+    
+    /****************** AECP Message Specific Data ***************/
+    cmd.descriptor_type = descriptor_type();
+    cmd.descriptor_index = descriptor_index();
+    cmd.aem_stream_info_flags = JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_FLAG_MSRP_ACC_LAT_VALID;
+    cmd.msrp_accumulated_latency = msrp_accumulated_latency;
+    
+    /************************** Fill frame payload with AECP data and send the frame ***************************/
+    aecp_controller_state_machine_ref->ether_frame_init(base_end_station_imp_ref->mac(), &cmd_frame,
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_COMMAND_LEN);
+    write_return = jdksavdecc_aem_command_set_stream_info_write(&cmd,
+                                                                cmd_frame.payload,
+                                                                ETHER_HDR_SIZE,
+                                                                sizeof(cmd_frame.payload));
+    
+    if (write_return < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_start_streaming_write error\n");
+        assert(write_return >= 0);
+        return -1;
+    }
+    
+    aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
+                                                       &cmd_frame,
+                                                       base_end_station_imp_ref->entity_id(),
+                                                       JDKSAVDECC_AEM_COMMAND_SET_STREAM_INFO_COMMAND_LEN -
+                                                       JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
+    system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
+    
+    return 0;
+}
 
 int stream_output_descriptor_imp::proc_set_stream_info_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
@@ -309,7 +369,7 @@ int stream_output_descriptor_imp::proc_set_stream_info_resp(void *& notification
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_STREAM_INFO, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = aem_cmd_set_stream_info_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_set_stream_info_resp.aem_header.aecpdu_header.header.status;
@@ -385,7 +445,7 @@ int stream_output_descriptor_imp::proc_get_stream_info_resp(void *& notification
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_STREAM_INFO, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = aem_cmd_get_stream_info_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_get_stream_info_resp.aem_header.aecpdu_header.header.status;
@@ -393,6 +453,71 @@ int stream_output_descriptor_imp::proc_get_stream_info_resp(void *& notification
 
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
+    return 0;
+}
+    
+int STDCALL stream_output_descriptor_imp::send_disconnect_tx_cmd(void * notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id)
+{
+    entity_descriptor_response * entity_resp_ref = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_response();
+    struct jdksavdecc_frame cmd_frame;
+    struct jdksavdecc_acmpdu acmp_cmd_disconnect_tx;
+    ssize_t acmp_cmd_disconnect_tx_returned;
+    uint64_t talker_entity_id = entity_resp_ref->entity_id();
+    
+    /******************************************* ACMP Common Data *******************************************/
+    acmp_cmd_disconnect_tx.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
+    jdksavdecc_uint64_write(talker_entity_id, &acmp_cmd_disconnect_tx.talker_entity_id, 0, sizeof(uint64_t));
+    jdksavdecc_uint64_write(listener_entity_id, &acmp_cmd_disconnect_tx.listener_entity_id, 0, sizeof(uint64_t));
+    acmp_cmd_disconnect_tx.listener_unique_id = listener_unique_id;
+    acmp_cmd_disconnect_tx.talker_unique_id = descriptor_index();
+    jdksavdecc_eui48_init(&acmp_cmd_disconnect_tx.stream_dest_mac);
+    acmp_cmd_disconnect_tx.connection_count = 0;
+    // Fill acmp_cmd_disconnect_tx.sequence_id in AEM Controller State Machine
+    acmp_cmd_disconnect_tx.flags = 0;
+    acmp_cmd_disconnect_tx.stream_vlan_id = 0;
+    
+    /**************** Fill frame payload with AECP data and send the frame ***************/
+    acmp_controller_state_machine_ref->ether_frame_init(&cmd_frame);
+    acmp_cmd_disconnect_tx_returned = jdksavdecc_acmpdu_write(&acmp_cmd_disconnect_tx,
+                                                              cmd_frame.payload,
+                                                              ETHER_HDR_SIZE,
+                                                              sizeof(cmd_frame.payload));
+    
+    if (acmp_cmd_disconnect_tx_returned < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "cmd_disconnect_tx_write error\n");
+        assert(acmp_cmd_disconnect_tx_returned >= 0);
+        return -1;
+    }
+    
+    acmp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_TX_COMMAND, &cmd_frame);
+    system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
+    
+    delete entity_resp_ref;
+    return 0;
+}
+
+int stream_output_descriptor_imp::proc_disconnect_tx_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
+{
+    struct jdksavdecc_frame cmd_frame;
+    ssize_t acmp_cmd_disconnect_tx_resp_returned;
+    
+    memcpy(cmd_frame.payload, frame, frame_len);
+    acmp_cmd_disconnect_tx_resp_returned = jdksavdecc_acmpdu_read(&acmp_cmd_disconnect_tx_resp,
+                                                                  frame,
+                                                                  ETHER_HDR_SIZE,
+                                                                  frame_len);
+    
+    if (acmp_cmd_disconnect_tx_resp_returned < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "acmp_cmd_disconnect_tx_read error");
+        assert(acmp_cmd_disconnect_tx_resp_returned >= 0);
+        return -1;
+    }
+    
+    status = acmp_cmd_disconnect_tx_resp.header.status;
+    acmp_controller_state_machine_ref->state_resp(notification_id, &cmd_frame);
+    
     return 0;
 }
 
@@ -602,7 +727,7 @@ int stream_output_descriptor_imp::proc_get_tx_state_resp(void *& notification_id
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(GET_TX_STATE_RESPONSE, frame, ETHER_HDR_SIZE, frame_len);
 
     status = acmp_cmd_get_tx_state_resp.header.status;
 
@@ -611,7 +736,7 @@ int stream_output_descriptor_imp::proc_get_tx_state_resp(void *& notification_id
     return 0;
 }
 
-int STDCALL stream_output_descriptor_imp::send_get_tx_connection_cmd(void * notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id)
+int STDCALL stream_output_descriptor_imp::send_get_tx_connection_cmd(void * notification_id, uint16_t connection_index)
 {
     entity_descriptor_response * entity_resp_ref = base_end_station_imp_ref->get_entity_desc_by_index(0)->get_entity_response();
     struct jdksavdecc_frame cmd_frame;
@@ -622,11 +747,11 @@ int STDCALL stream_output_descriptor_imp::send_get_tx_connection_cmd(void * noti
     /********************************************* ACMP Common Data *********************************************/
     acmp_cmd_get_tx_connection.controller_entity_id = base_end_station_imp_ref->get_adp()->get_controller_entity_id();
     jdksavdecc_uint64_write(talker_entity_id, &acmp_cmd_get_tx_connection.talker_entity_id, 0, sizeof(uint64_t));
-    jdksavdecc_uint64_write(listener_entity_id, &acmp_cmd_get_tx_connection.listener_entity_id, 0, sizeof(uint64_t));
+    jdksavdecc_uint64_write(0, &acmp_cmd_get_tx_connection.listener_entity_id, 0, sizeof(uint64_t));
     acmp_cmd_get_tx_connection.talker_unique_id = descriptor_index();
-    acmp_cmd_get_tx_connection.listener_unique_id = listener_unique_id;
+    acmp_cmd_get_tx_connection.listener_unique_id = 0;
     jdksavdecc_eui48_init(&acmp_cmd_get_tx_connection.stream_dest_mac);
-    acmp_cmd_get_tx_connection.connection_count = 0;
+    acmp_cmd_get_tx_connection.connection_count = connection_index;
     // Fill acmp_cmd_get_tx_connection.sequence_id in AEM Controller State Machine
     acmp_cmd_get_tx_connection.flags = 0;
     acmp_cmd_get_tx_connection.stream_vlan_id = 0;
@@ -671,7 +796,7 @@ int stream_output_descriptor_imp::proc_get_tx_connection_resp(void *& notificati
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(GET_TX_CONNECTION_RESPONSE, frame, ETHER_HDR_SIZE, frame_len);
 
     status = acmp_cmd_get_tx_connection_resp.header.status;
 

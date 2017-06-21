@@ -1,7 +1,7 @@
 /*
  * Licensed under the MIT License (MIT)
  *
- * Copyright (c) 2014 AudioScience Inc.
+ * Copyright (c) 2016 AudioScience Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,32 +22,31 @@
  */
 
 /**
- * avb_counters_response_imp.h
+ * entity_descriptor_get_config_response_imp.cpp
  *
- * AVB counters response implementation class
+ * Entity Descriptor GET_CONFIGURATION response implementation
  */
 
-#pragma once
-
-#include "avb_counters_response.h"
-#include "jdksavdecc_aem_command.h"
+#include "log_imp.h"
+#include "entity_descriptor_get_config_response_imp.h"
 
 namespace avdecc_lib
 {
-class avb_counters_response_imp : public avb_counters_response
+entity_descriptor_get_config_response_imp::entity_descriptor_get_config_response_imp(uint8_t * frame, size_t frame_len, ssize_t pos)
 {
-private:
-    uint32_t m_counters_valid;
-    uint32_t m_counters_block[32];
-    uint8_t * m_frame;
-    size_t m_size;
-    ssize_t m_position;
+    m_position = pos;
+    m_size = frame_len;
+    m_frame = (uint8_t *)malloc(m_size * sizeof(uint8_t));
+    memcpy(m_frame, frame, m_size);
+}
 
-public:
-    avb_counters_response_imp(const uint8_t * frame, size_t frame_len, ssize_t pos);
-    virtual ~avb_counters_response_imp();
-
-    uint32_t STDCALL get_counter_valid(int name);
-    uint32_t STDCALL get_counter_by_name(int name);
-};
+entity_descriptor_get_config_response_imp::~entity_descriptor_get_config_response_imp()
+{
+    free(m_frame);
+}
+    
+uint16_t STDCALL entity_descriptor_get_config_response_imp::get_config_config_index()
+{
+    return jdksavdecc_aem_command_get_configuration_response_get_configuration_index(m_frame, m_position);
+}
 }

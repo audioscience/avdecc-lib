@@ -38,7 +38,7 @@ class clock_domain_counters_response_imp : public clock_domain_counters_response
 {
 private:
     uint32_t m_counters_valid;
-    uint32_t m_counters_block[31];
+    uint32_t m_counters_block[32];
     uint8_t * m_frame;
     size_t m_size;
     ssize_t m_position;

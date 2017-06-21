@@ -101,6 +101,14 @@ public:
     /// \param new_stream_info_field The new field information to be set to for a stream.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_info_vlan_id_cmd(void * notification_id, uint16_t vlan_id) = 0;
+    
+    ///
+    /// Send a SET_STREAM_INFO command with a notification id to set the msrp accumulated latency of the stream.
+    ///
+    /// \param notification_id A void pointer to the unique identifier associated with the command.
+    /// \param msrp_accumulated_latency The new msrp_accumulated_latency (ns) to be set.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_set_stream_info_msrp_accumulated_latency_cmd(void * notification_id, uint32_t msrp_accumulated_latency) = 0;
 
     ///
     /// Send a GET_STREAM_INFO command with a notification id to fetch the current information for a stream.
@@ -116,6 +124,20 @@ public:
     ///
     AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_stream_info_cmd(void * notification_id) = 0;
 
+    ///
+    /// Send a DISCONNECT_TX command with a notification id to disconnect a Talker source stream.
+    /// This API should not be used during normal operation.  It is intended to restore a Talker stream
+    /// to the disconnected state when the Listener side of a connection reports disconnected (via GET_RX_STATE)
+    /// and the Talker side still reports connected (via GET_TX_STATE).
+    ///
+    /// \param notification_id A void pointer to the unique identifier associated with the command.
+    /// \param listener_entity_id The Listener Entity ID is used to identify the AVDECC Listener being targeted by the command.
+    /// \param listener_unique_id The Listener Unique ID is used to uniquely identify the stream sink
+    ///                           of the AVDECC Listener targeted by the command. For entities using the AVDECC Entity Model,
+    ///                           this corresponds to the id of the STREAM INPUT descriptor.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_disconnect_tx_cmd(void * notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id) = 0;
+    
     ///
     /// Send a START_STREAMING command with a notification id to start streaming on a previously connected stream that was connected
     /// via ACMP or has previously been stopped with the STOP_STREAMING command.
@@ -150,16 +172,10 @@ public:
     /// Send a GET_TX_CONNECTION command with a notification id to get a specific Talker connection information.
     ///
     /// \param notification_id A void pointer to the unique identifier associated with the command.
-    /// \param talker_entity_id The Talker Entity ID used to identify the AVDECC Talker being targed by
-    ///                    the command. In the case of Talker commands, this is the AVDECC Entity
-    ///                    receiving the command. In the case of Listener commands, this is the
-    ///                    AVDECC Entity that any Talker command is to be sent to. This field is
-    ///                    either the Entity ID of the AVDECC Entity being targets to or 0.
-    /// \param talker_unique_id The Talker Unique ID is used to uniquely identify the stream source
-    ///                         of the AVDECC Talker. For entities using the AVDECC Entity Model,
-    ///                         this corresponds to the id of the STREAM OUTPUT descriptor.
+    /// \param connection_index The Index of the connection which is the target of the command (the first
+    ///                         connection of the list has index 0).
     /// \return Returns 0 on success.
     ///
-    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_tx_connection_cmd(void * notification_id, uint64_t listener_entity_id, uint16_t listener_unique_id) = 0;
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_tx_connection_cmd(void * notification_id, uint16_t connection_index) = 0;
 };
 }

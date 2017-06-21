@@ -42,9 +42,10 @@ class adp;
 class background_read_request
 {
 public:
-    background_read_request(uint16_t t, uint16_t I) : m_type(t), m_index(I){};
+    background_read_request(uint16_t t, uint16_t I, uint16_t c) : m_type(t), m_index(I), m_config(c){};
     uint16_t m_type;
     uint16_t m_index;
+    uint16_t m_config;
     timer m_timer;
 };
 
@@ -57,17 +58,14 @@ private:
     uint16_t current_entity_desc;       // The ENTITY descriptor associated with the End Station
     uint16_t current_config_desc;       // The CONFIGURATION descriptor associated with the ENTITY descriptor in the same End Station
 
-    uint16_t selected_entity_index; // The controller-selected entity index
-    uint16_t selected_config_index; // The controller-selected configuraition descriptor index
-
     std::list<background_read_request *> m_backbround_read_pending;  // Store a list of background reads
     std::list<background_read_request *> m_backbround_read_inflight; // Store a list of background reads that are inflight
 
     adp * adp_ref;                                        // ADP associated with the End Station
     std::vector<entity_descriptor_imp *> entity_desc_vec; // Store a list of ENTITY descriptor objects
 
-    void queue_background_read_request(uint16_t desc_type, uint16_t desc_base_index, uint16_t count);               ///< Generate "count" read requests
-    void background_read_deduce_next(configuration_descriptor * cd, uint16_t desc_type, void * frame, ssize_t pos); ///< Deduce what else needs to be read from the rx'd frame
+    void queue_background_read_request(uint16_t desc_type, uint16_t desc_base_index, uint16_t count, uint16_t config_desc_index);               ///< Generate "count" read requests
+    void background_read_deduce_next(entity_descriptor * ed, uint16_t desc_type, uint16_t config_index, void * frame, ssize_t pos); ///< Deduce what else needs to be read from the rx'd frame
     void background_read_update_inflight(uint16_t desc_type, void * frame, ssize_t read_desc_offset);               ///< Remove rx'd frame from background read inflight list
 
     bool desc_index_from_frame(uint16_t desc_type, void * frame, ssize_t read_desc_offset, uint16_t & desc_index);
@@ -145,12 +143,12 @@ private:
     /// Initialize End Station by sending non blocking Read Descriptor commands to read
     /// all the descriptors for the End Station.
     ///
-    int read_desc_init(uint16_t desc_type, uint16_t desc_index);
+    int read_desc_init(uint16_t desc_type, uint16_t desc_index, uint16_t config_desc_index = 0);
 
     ///
     /// Send a READ_DESCRIPTOR command with or without a notification id based on the post_notification_msg flag
     /// to read a descriptor from an AVDECC Entity.
     ///
-    int send_read_desc_cmd_with_flag(void * notification_id, uint32_t notification_flag, uint16_t desc_type, uint16_t desc_index);
+    int send_read_desc_cmd_with_flag(void * notification_id, uint32_t notification_flag, uint16_t desc_type, uint16_t desc_index, uint16_t config_desc_index);
 };
 }

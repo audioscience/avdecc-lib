@@ -102,6 +102,8 @@ extern "C" void notification_callback(void * user_obj, int32_t notification_type
                cmd_status,
                notification_id);
     }
+    
+    fflush(stdout);
 }
 
 extern "C" void acmp_notification_callback(void * user_obj, int32_t notification_type, uint16_t cmd_type,
@@ -135,11 +137,15 @@ extern "C" void acmp_notification_callback(void * user_obj, int32_t notification
                cmd_status_name,
                notification_id);
     }
+    
+    fflush(stdout);
 }
 
 extern "C" void log_callback(void * user_obj, int32_t log_level, const char * log_msg, int32_t time_stamp_ms)
 {
     printf("\n[LOG] %s (%s)\n", avdecc_lib::utility::logging_level_value_to_name(log_level), log_msg);
+    
+    fflush(stdout);
 }
 
 #if defined(__MACH__) || defined(__linux__)
@@ -240,11 +246,45 @@ char * null_completer(const char * text, int state)
 }
 #endif
 
+// static function to print the network interfaces
+static void print_interfaces()
+{
+    avdecc_lib::net_interface * netif = avdecc_lib::create_net_interface();
+    for (uint32_t i = 1; i < netif->devs_count() + 1; i++)
+    {
+        size_t dev_index = i - 1;
+        char * dev_desc = netif->get_dev_desc_by_index(dev_index);
+        printf("%d (%s)", i, dev_desc);
+        
+        uint64_t dev_mac = netif->get_dev_mac_addr_by_index(dev_index);
+        if (dev_mac)
+        {
+            avdecc_lib::utility::MacAddr mac(dev_mac);
+            char mac_str[20];
+            mac.tostring(mac_str);
+            printf(" (%s)", mac_str);
+        }
+        
+        size_t ip_addr_count = netif->device_ip_address_count(dev_index);
+        if (ip_addr_count > 0)
+        {
+            for(size_t ip_index = 0; ip_index < ip_addr_count; ip_index++)
+            {
+                const char * dev_ip = netif->get_dev_ip_address_by_index(dev_index, ip_index);
+                if (dev_ip)
+                    printf(" <%s>", dev_ip);
+            }
+        }
+        printf("\n");
+    }
+}
+
 static void usage(char * argv[])
 {
     std::cerr << "Usage: " << argv[0] << " [-d] [-i interface]" << std::endl;
     std::cerr << "  -t           :  Sets test mode which disables checks" << std::endl;
-    std::cerr << "  -i interface :  Sets the name of the interface to use" << std::endl;
+    std::cerr << "  -i interface :  Sets the network interface to use.\n \
+                    Valid options are IP Address and MAC Address (must be in the form 'n:n:n:n:n:n', where 0<=n<=FF in hexidecimal" << std::endl;
     std::cerr << "  -l log_level :  Sets the log level to use." << std::endl;
     std::cerr << log_level_help << std::endl;
     exit(1);
@@ -252,16 +292,24 @@ static void usage(char * argv[])
 
 int main(int argc, char * argv[])
 {
+    bool show_cmd_separator = false;
     bool test_mode = false;
     int error = 0;
     char * interface = NULL;
     int c = 0;
     int32_t log_level = avdecc_lib::LOGGING_LEVEL_ERROR;
 
-    while ((c = getopt(argc, argv, "ti:l:")) != -1)
+    while ((c = getopt(argc, argv, "spti:l:")) != -1)
     {
         switch (c)
         {
+        case 'p':
+            // print the network interfaces and exit
+            print_interfaces();
+            exit(EXIT_SUCCESS);
+        case 's':
+            show_cmd_separator = true;
+            break;
         case 't':
             test_mode = true;
             break;
@@ -316,7 +364,9 @@ int main(int argc, char * argv[])
 #endif
 // Override to prevent filename completion
 #if defined(__MACH__)
-#if defined (READLINE_LIBRARY)
+
+// This macro can be set via cmake command line argument -DUSE_GNU_READLINE=ON
+#ifdef USE_GNU_READLINE
     // GNU Readline library
     rl_completion_entry_function = (rl_compentry_func_t *)null_completer;
 #else
@@ -343,6 +393,8 @@ int main(int argc, char * argv[])
         add_history(input);
 #else
         std::string cmd_input;
+        if (show_cmd_separator)
+            printf("\n_\n");
         printf("\n>");
         std::getline(std::cin, cmd_input);
         cmd_input_orig = cmd_input;

@@ -32,6 +32,7 @@
 #define HAVE_REMOTE
 
 #include <stdint.h>
+#include <vector>
 #include <pcap.h>
 #include "avdecc-lib_build.h"
 #include "net_interface.h"
@@ -41,9 +42,12 @@ namespace avdecc_lib
 class net_interface_imp : public virtual net_interface
 {
 private:
+    std::vector<std::vector<std::string> > all_ip_addresses;
+    std::vector<uint64_t> all_mac_addresses;
     pcap_if_t * all_devs;
     pcap_if_t * dev;
-    uint64_t mac;
+    uint64_t selected_dev_mac;
+    uint64_t selected_dev_eui;
     uint32_t total_devs;
     pcap_t * pcap_interface;
     char err_buf[PCAP_ERRBUF_SIZE];
@@ -66,16 +70,56 @@ public:
     /// Count the number of devices.
     ///
     uint32_t STDCALL devs_count();
+    
+    ///
+    /// Count the number of IP addresses for a device.
+    ///
+    size_t STDCALL device_ip_address_count(size_t dev_index);
 
     ///
-    /// Get the MAC address of the network interface.
+    /// Get the MAC address of the selected network interface.
     ///
     uint64_t mac_addr();
+    
+    ///
+    /// Get the EUI of the selected network interface.
+    ///
+    uint64_t get_dev_eui();
+    
+    ///
+    /// Set the EUI of the selected network interface.
+    ///
+    void set_dev_eui(uint64_t dev_eui);
 
+    ///
+    /// Find and store the MAC address string of a network interface.
+    ///
+    void find_and_store_device_mac_addr(char * dev_name);
+    
+    ///
+    /// Get the MAC address of a network interface.
+    ///
+    uint64_t STDCALL get_dev_mac_addr_by_index(size_t dev_index);
+    
     ///
     /// Get the corresponding network interface description by index.
     ///
     char * STDCALL get_dev_desc_by_index(size_t dev_index);
+    
+    ///
+    /// Get the corresponding network interface IP address by index.
+    ///
+    const char * STDCALL get_dev_ip_address_by_index(size_t dev_index, size_t ip_index);
+    
+    ///
+    /// Check whether ip_addr_str is a valid IP Address for a device.
+    ///
+    bool STDCALL does_interface_have_ip_address(size_t dev_index, char * ip_addr_str);
+    
+    ///
+    /// Check whether mac_addr is the MAC Address for a device.
+    ///
+    bool STDCALL does_interface_have_mac_address(size_t dev_index, uint64_t mac_addr);
 
     ///
     /// Get the corresponding network interface name by index.

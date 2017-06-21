@@ -302,9 +302,24 @@ enum logging_levels
     LOGGING_LEVEL_VERBOSE = 5,
     TOTAL_NUM_OF_LOGGING_LEVELS = 6
 };
+    
+enum permission_flags /// LOCK_ENTITY and ACQUIRE_ENTITY Flags
+{
+     LOCK,
+     ACQUIRE,
+     PERSISTENT
+};
 
 enum counter_labels ///Counter Labels for GET_COUNTERS command
 {
+    ENTITY_SPECIFIC_1,
+    ENTITY_SPECIFIC_2,
+    ENTITY_SPECIFIC_3,
+    ENTITY_SPECIFIC_4,
+    ENTITY_SPECIFIC_5,
+    ENTITY_SPECIFIC_6,
+    ENTITY_SPECIFIC_7,
+    ENTITY_SPECIFIC_8,
     AVB_INTERFACE_LINK_UP,
     AVB_INTERFACE_LINK_DOWN,
     AVB_INTERFACE_FRAMES_TX,

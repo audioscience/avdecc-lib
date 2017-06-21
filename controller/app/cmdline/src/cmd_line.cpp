@@ -153,17 +153,55 @@ int cmd_line::print_interfaces_and_select(char * interface)
 
     for (uint32_t i = 1; i < netif->devs_count() + 1; i++)
     {
-        char * dev_desc = netif->get_dev_desc_by_index(i - 1);
+        size_t dev_index = i - 1;
+        char * dev_desc = netif->get_dev_desc_by_index(dev_index);
         if (!interface)
         {
-            printf("%d (%s)\n", i, dev_desc);
+            printf("%d (%s)", i, dev_desc);
+            
+            uint64_t dev_mac = netif->get_dev_mac_addr_by_index(dev_index);
+            if (dev_mac)
+            {
+                avdecc_lib::utility::MacAddr mac(dev_mac);
+                char mac_str[20];
+                mac.tostring(mac_str);
+                printf(" (%s)", mac_str);
+            }
+            
+            size_t ip_addr_count = netif->device_ip_address_count(dev_index);
+            if (ip_addr_count > 0)
+            {
+                for(size_t ip_index = 0; ip_index < ip_addr_count; ip_index++)
+                {
+                    const char * dev_ip = netif->get_dev_ip_address_by_index(dev_index, ip_index);
+                    if (dev_ip)
+                        printf(" <%s>", dev_ip);
+                }
+            }
+            printf("\n");
         }
         else
         {
-            if (strcmp(dev_desc, interface) == 0)
+            // try to find the selected interface by ip address
+            if (netif->does_interface_have_ip_address(dev_index, interface))
             {
                 interface_num = i;
                 break;
+            }
+
+            // try to find the selected interface by MAC address
+            avdecc_lib::utility::MacAddr mac(interface);
+            if (mac.fromstring(interface)) // valid format? (xx:xx:...)
+            {
+                uint64_t mac_val = mac.tovalue();
+                if (mac_val)
+                {
+                    if (netif->does_interface_have_mac_address(dev_index, mac_val))
+                    {
+                        interface_num = i;
+                        break;
+                    }
+                }
             }
         }
     }
@@ -173,7 +211,26 @@ int cmd_line::print_interfaces_and_select(char * interface)
         atomic_cout << "Enter the interface number (1-" << std::dec << netif->devs_count() << "): ";
         std::cin >> interface_num;
     }
+    else
+    {
+        // if the interface was not found by IP Address or MAC address...
+        if (interface_num == -1)
+        {
+            // treat the selected interface as an index
+            char * tmp;
+            long if_num = strtol(interface, &tmp, 10);
+            if (interface != tmp)
+                interface_num = if_num;
+        }
+    }
 
+    if (interface_num == -1 ||
+        interface_num > netif->devs_count() + 1)
+    {
+        printf("Invalid Interface: (%s).  Exiting...\n", interface);
+        exit(EXIT_FAILURE);
+    }
+    
     netif->select_interface_by_num(interface_num);
 
     return 0;
@@ -506,19 +563,55 @@ void cmd_line::cmd_line_commands_init()
     cli_command * disconnect_cmd = new cli_command();
     commands.add_sub_command("disconnect", disconnect_cmd);
 
-    cli_command_format * disconnect_fmt = new cli_command_format(
+    // disconnect rx
+    cli_command * disconnect_rx_cmd = new cli_command();
+    disconnect_cmd->add_sub_command("rx", disconnect_rx_cmd);
+    
+    cli_command_format * disconnect_rx_fmt = new cli_command_format(
         "Send a CONNECT_RX command to disconnect Listener sink stream.",
         &cmd_line::cmd_disconnect_rx);
-    disconnect_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
-    disconnect_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
-    disconnect_fmt->add_argument(new cli_argument_end_station(this, "d_e_s", DST_END_STATION_HELP));
-    disconnect_fmt->add_argument(new cli_argument_int(this, "d_d_i", "the destination descriptor index"));
-    disconnect_cmd->add_format(disconnect_fmt);
+    disconnect_rx_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
+    disconnect_rx_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
+    disconnect_rx_fmt->add_argument(new cli_argument_end_station(this, "d_e_s", DST_END_STATION_HELP));
+    disconnect_rx_fmt->add_argument(new cli_argument_int(this, "d_d_i", "the destination descriptor index"));
+    disconnect_rx_cmd->add_format(disconnect_rx_fmt);
+    
+    // disconnect tx
+    cli_command * disconnect_tx_cmd = new cli_command();
+    disconnect_cmd->add_sub_command("tx", disconnect_tx_cmd);
+    
+    cli_command_format * disconnect_tx_fmt = new cli_command_format(
+        "Send a DISCONNECT_TX command to disconnect a Talker source stream.",
+        &cmd_line::cmd_disconnect_tx);
+    disconnect_tx_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
+    disconnect_tx_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
+    disconnect_tx_fmt->add_argument(new cli_argument_end_station(this, "d_e_s", DST_END_STATION_HELP));
+    disconnect_tx_fmt->add_argument(new cli_argument_int(this, "d_d_i", "the destination descriptor index"));
+    disconnect_tx_cmd->add_format(disconnect_tx_fmt);
 
     // get
     cli_command * get_cmd = new cli_command();
     commands.add_sub_command("get", get_cmd);
-
+    
+    // get configuration
+    cli_command * get_config_cmd = new cli_command();
+    get_cmd->add_sub_command("configuration", get_config_cmd);
+    
+    cli_command_format * get_config_fmt = new cli_command_format(
+        "Send a GET_CONFIGURATION command to fetch the current configuration index of the current Entity.",
+        &cmd_line::cmd_get_config);
+    get_config_cmd->add_format(get_config_fmt);
+    
+    // get connection status
+    cli_command * get_connection_status_cmd = new cli_command();
+    get_cmd->add_sub_command("connection_status", get_connection_status_cmd);
+    
+    cli_command_format * get_connection_status_fmt = new cli_command_format(
+        "Get the connection status of an end station.",
+        &cmd_line::cmd_get_connection_status);
+    get_connection_status_fmt->add_argument(new cli_argument_string(this, "e_g", "the end station - by GUID or index"));
+    get_connection_status_cmd->add_format(get_connection_status_fmt);
+    
     // get name
     cli_command * get_name_cmd = new cli_command();
     get_cmd->add_sub_command("name", get_name_cmd);
@@ -579,6 +672,7 @@ void cmd_line::cmd_line_commands_init()
         &cmd_line::cmd_get_tx_connection);
     get_tx_connection_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
     get_tx_connection_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
+    get_tx_connection_fmt->add_argument(new cli_argument_int(this, "c_i", "the connection index"));
     get_tx_connection_cmd->add_format(get_tx_connection_fmt);
 
     // entity
@@ -702,6 +796,16 @@ void cmd_line::cmd_line_commands_init()
     cli_command * set_cmd = new cli_command();
     commands.add_sub_command("set", set_cmd);
 
+    // set configuration
+    cli_command * set_config_cmd = new cli_command();
+    set_cmd->add_sub_command("configuration", set_config_cmd);
+    
+    cli_command_format * set_config_fmt = new cli_command_format(
+        "Send a SET_CONFIGURATION command to set the current configuration of the current Entity.",
+        &cmd_line::cmd_set_config);
+    set_config_fmt->add_argument(new cli_argument_int(this, "c_i", "the new configuration index"));
+    set_config_cmd->add_format(set_config_fmt);
+    
     // set name
     cli_command * set_name_cmd = new cli_command();
     set_cmd->add_sub_command("name", set_name_cmd);
@@ -863,7 +967,7 @@ void cmd_line::cmd_line_commands_init()
         "port or unit.",
         &cmd_line::cmd_get_counters);
     get_counters_fmt->add_argument(new cli_argument_string(this, "d_t", "the descriptor type",
-                                                           "Valid descriptor types are AVB_INTERFACE, CLOCK_DOMAIN, STREAM_INPUT."));
+                                                           "Valid descriptor types are ENTITY, AVB_INTERFACE, CLOCK_DOMAIN, STREAM_INPUT."));
     get_counters_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index",
                                                         "To see a list of valid descriptor types and corresponding indexes, enter\n"
                                                         "\"view all\" command."));
@@ -1114,9 +1218,9 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument *> args)
             uint64_t end_station_mac = end_station->mac();
             atomic_cout << (std::stringstream() << end_station->get_connection_status()
                                                 << std::setw(10) << std::dec << std::setfill(' ') << i << "  |  "
-                                                << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc_resp ? end_station_name : "UNKNOWN") << "  |  0x"
+                                                << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc_resp ? avdecc_lib::utility::qprintable_encode(end_station_name) : "UNKNOWN") << "  |  0x"
                                                 << std::setw(16) << std::hex << std::setfill('0') << end_station_entity_id << "  |  "
-                                                << std::setw(16) << std::hex << std::setfill(' ') << (ent_desc_resp ? fw_ver : "UNKNOWN") << "  |  "
+                                                << std::setw(16) << std::hex << std::setfill(' ') << (ent_desc_resp ? avdecc_lib::utility::qprintable_encode(fw_ver) : "UNKNOWN") << "  |  "
                                                 << std::setw(12) << std::hex << std::setfill('0') << end_station_mac)
                                .rdbuf()
                         << std::endl;
@@ -1256,8 +1360,8 @@ int cmd_line::do_select(uint32_t new_end_station, uint16_t new_entity, uint16_t 
             end_station->set_current_config_index(new_config);
             atomic_cout << "New setting" << std::endl;
             atomic_cout << "\tEnd Station Index: " << std::dec << current_end_station << " (" << end_station_name << ")" << std::endl;
-            atomic_cout << "\tEntity Index: " << std::dec << current_entity << std::endl;
-            atomic_cout << "\tConfiguration Index: " << std::dec << current_config << std::endl;
+            atomic_cout << "\tEntity Index: " << std::dec << end_station->get_current_entity_index() << std::endl;
+            atomic_cout << "\tConfiguration Index: " << std::dec << end_station->get_current_config_index() << std::endl;
         }
         delete entity_desc_resp;
     }
@@ -2888,6 +2992,44 @@ int cmd_line::cmd_disconnect_rx(int total_matched, std::vector<cli_argument *> a
     return 0;
 }
 
+int cmd_line::cmd_disconnect_tx(int total_matched, std::vector<cli_argument *> args)
+{
+    uint32_t outstream_end_station_index = args[0]->get_value_uint();
+    uint16_t outstream_desc_index = args[1]->get_value_int();
+    uint32_t instream_end_station_index = args[2]->get_value_uint();
+    uint16_t instream_desc_index = args[3]->get_value_int();
+    
+    avdecc_lib::configuration_descriptor * in_descriptor = controller_obj->get_current_config_desc(instream_end_station_index, false);
+    avdecc_lib::configuration_descriptor * out_descriptor = controller_obj->get_current_config_desc(outstream_end_station_index, false);
+    bool is_valid = (in_descriptor && out_descriptor &&
+                     (test_mode || (instream_end_station_index != outstream_end_station_index)) &&
+                     (instream_end_station_index < controller_obj->get_end_station_count()) &&
+                     (outstream_end_station_index < controller_obj->get_end_station_count()) &&
+                     (instream_desc_index < in_descriptor->stream_input_desc_count()) &&
+                     (outstream_desc_index < out_descriptor->stream_output_desc_count()));
+    
+    if (is_valid)
+    {
+        avdecc_lib::end_station * instream_end_station = controller_obj->get_end_station_by_index(instream_end_station_index);
+        avdecc_lib::entity_descriptor_response * entity_resp_ref = instream_end_station->get_entity_desc_by_index(
+            instream_end_station->get_current_entity_index())->get_entity_response();
+        avdecc_lib::stream_output_descriptor * outstream = out_descriptor->get_stream_output_desc_by_index(outstream_desc_index);
+        uint64_t listener_entity_id = entity_resp_ref->entity_id();
+
+        intptr_t cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+        outstream->send_disconnect_tx_cmd((void *)cmd_notification_id, listener_entity_id, instream_desc_index);
+        sys->get_last_resp_status();
+        delete entity_resp_ref;
+    }
+    else
+    {
+        atomic_cout << "Invalid ACMP Disconnection" << std::endl;
+    }
+    
+    return 0;
+}
+
 int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument *> args)
 {
     for (uint32_t i = 0; i < controller_obj->get_end_station_count(); i++)
@@ -3055,6 +3197,7 @@ int cmd_line::cmd_get_tx_connection(int total_matched, std::vector<cli_argument 
 {
     uint32_t outstream_end_station_index = args[0]->get_value_uint();
     uint16_t outstream_desc_index = args[1]->get_value_int();
+    uint16_t connection_index = args[2]->get_value_int();
     avdecc_lib::configuration_descriptor * configuration = controller_obj->get_current_config_desc(outstream_end_station_index, false);
     bool is_valid = (configuration &&
                      (outstream_end_station_index < controller_obj->get_end_station_count()) &&
@@ -3065,7 +3208,7 @@ int cmd_line::cmd_get_tx_connection(int total_matched, std::vector<cli_argument 
         intptr_t cmd_notification_id = get_next_notification_id();
         sys->set_wait_for_next_cmd((void *)cmd_notification_id);
         avdecc_lib::stream_output_descriptor * outstream = configuration->get_stream_output_desc_by_index(outstream_desc_index);
-        outstream->send_get_tx_connection_cmd((void *)cmd_notification_id, 0, 0);
+        outstream->send_get_tx_connection_cmd((void *)cmd_notification_id, connection_index);
         int status = sys->get_last_resp_status();
 
         if (status == avdecc_lib::ACMP_STATUS_SUCCESS)
@@ -3232,6 +3375,51 @@ int cmd_line::cmd_deregister_unsolicited_notif(int total_matched, std::vector<cl
     sys->set_wait_for_next_cmd((void *)cmd_notification_id);
     end_station->send_deregister_unsolicited_cmd((void *)cmd_notification_id);
     sys->get_last_resp_status();
+
+    return 0;
+}
+
+int cmd_line::cmd_get_config(int total_matched, std::vector<cli_argument *> args)
+{
+    avdecc_lib::end_station * end_station;
+    avdecc_lib::entity_descriptor * entity;
+    avdecc_lib::configuration_descriptor * configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+    
+    intptr_t cmd_notification_id = get_next_notification_id();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+    entity->send_get_config_cmd((void *)cmd_notification_id);
+    int status = sys->get_last_resp_status();
+    if (status == avdecc_lib::AEM_STATUS_SUCCESS)
+    {
+        avdecc_lib::entity_descriptor_get_config_response * entity_get_config_resp = entity->get_entity_get_config_response();
+        atomic_cout << "current configuration index = " << std::dec << entity_get_config_resp->get_config_config_index() << std::endl;
+        delete entity_get_config_resp;
+    }
+
+    return 0;
+}
+
+int cmd_line::cmd_set_config(int total_matched, std::vector<cli_argument *> args)
+{
+    uint16_t new_configuration_index = args[0]->get_value_int();
+    avdecc_lib::end_station * end_station;
+    avdecc_lib::entity_descriptor * entity;
+    avdecc_lib::configuration_descriptor * configuration;
+    if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
+        return 0;
+    
+    intptr_t cmd_notification_id = get_next_notification_id();
+    sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+    entity->send_set_config_cmd((void *)cmd_notification_id, new_configuration_index);
+    int status = sys->get_last_resp_status();
+    if (status == avdecc_lib::AEM_STATUS_SUCCESS)
+    {
+        avdecc_lib::entity_descriptor_response * entity_desc_resp = entity->get_entity_response();
+        atomic_cout << "new configuration index = " << std::dec << entity_desc_resp->current_configuration() << std::endl;
+        delete entity_desc_resp;
+    }
 
     return 0;
 }
@@ -3762,10 +3950,24 @@ int cmd_line::cmd_set_stream_info(int total_matched, std::vector<cli_argument *>
                 return 0;
             }
         }
+        else if (stream_info_field == "msrp_accumulated_latency")
+        {
+            uint32_t msrp_accumulated_latency = (uint32_t)strtoul(new_stream_info_field_value.c_str(), NULL, 0);
+            intptr_t cmd_notification_id = get_next_notification_id();
+            sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+            avdecc_lib::stream_output_descriptor * stream_output_desc_ref = configuration->get_stream_output_desc_by_index(desc_index);
+            stream_output_desc_ref->send_set_stream_info_msrp_accumulated_latency_cmd((void *)cmd_notification_id, msrp_accumulated_latency);
+            int status = sys->get_last_resp_status();
+            if (status != avdecc_lib::AEM_STATUS_SUCCESS)
+            {
+                atomic_cout << "cmd_set_stream_info error" << std::endl;
+                return 0;
+            }
+        }
         else
         {
             atomic_cout << "Supported fields are:" << std::endl
-                        << "stream_vlan_id" << std::endl;
+                        << "stream_vlan_id, msrp_accumulated_latency" << std::endl;
         }
     }
     else
@@ -4136,6 +4338,35 @@ int cmd_line::cmd_get_group_name(int total_matched, std::vector<cli_argument *> 
     return 0;
 }
 
+int cmd_line::cmd_get_connection_status(int total_matched, std::vector<cli_argument *> args)
+{
+    std::string end_station = args[0]->get_value_str();
+    uint32_t end_station_index;
+    if (get_end_station_index(end_station, end_station_index))
+    {
+        avdecc_lib::end_station * end_station = controller_obj->get_end_station_by_index(end_station_index);
+        avdecc_lib::entity_descriptor * entity;
+        avdecc_lib::configuration_descriptor * configuration;
+        if (get_current_entity_and_descriptor(end_station, &entity, &configuration))
+        {
+            atomic_cout << "End Station " << end_station << " is not fully enumerated." << std::endl;
+            return 0;
+        }
+        
+        avdecc_lib::entity_descriptor_response * entity_desc_resp = entity->get_entity_response();
+        if (end_station->get_connection_status() == 'C')
+            atomic_cout << "End Station " << entity_desc_resp->entity_name() << " is connected." << std::endl;
+        else
+            atomic_cout << "End Station " << entity_desc_resp->entity_name() << " is disconnected." << std::endl;
+
+        delete entity_desc_resp;
+    }
+    else
+        atomic_cout << "End Station " << end_station << " is not found." << std::endl;
+
+    return 0;
+}
+
 int cmd_line::cmd_set_sampling_rate(int total_matched, std::vector<cli_argument *> args)
 {
     std::string desc_name = args[0]->get_value_str();
@@ -4238,7 +4469,38 @@ int cmd_line::cmd_get_counters(int total_matched, std::vector<cli_argument *> ar
     if (get_current_end_station_entity_and_descriptor(&end_station, &entity, &configuration))
         return 0;
 
-    if (desc_type_value == avdecc_lib::AEM_DESC_AVB_INTERFACE)
+    if (desc_type_value == avdecc_lib::AEM_DESC_ENTITY)
+    {
+        intptr_t cmd_notification_id = get_next_notification_id();
+        sys->set_wait_for_next_cmd((void *)cmd_notification_id);
+        entity->send_get_counters_cmd((void *)cmd_notification_id);
+        avdecc_lib::entity_counters_response * entity_counters_resp = entity->get_entity_counters_response();
+        if (entity_counters_resp)
+        {
+            int status = sys->get_last_resp_status();
+            if (status == avdecc_lib::AEM_STATUS_SUCCESS)
+            {
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_1))
+                    atomic_cout << "Entity Specific 1 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_1) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_2))
+                    atomic_cout << "Entity Specific 2 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_2) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_3))
+                    atomic_cout << "Entity Specific 3 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_3) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_4))
+                    atomic_cout << "Entity Specific 4 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_4) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_5))
+                    atomic_cout << "Entity Specific 5 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_5) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_6))
+                    atomic_cout << "Entity Specific 6 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_6) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_7))
+                    atomic_cout << "Entity Specific 7 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_7) << std::endl;
+                if (entity_counters_resp->get_counter_valid(avdecc_lib::ENTITY_SPECIFIC_8))
+                    atomic_cout << "Entity Specific 8 Counter: " << entity_counters_resp->get_counter_by_name(avdecc_lib::ENTITY_SPECIFIC_8) << std::endl;
+                delete entity_counters_resp;
+            }
+        }
+    }
+    else if (desc_type_value == avdecc_lib::AEM_DESC_AVB_INTERFACE)
     {
         avdecc_lib::avb_interface_descriptor * avb_desc_ref = configuration->get_avb_interface_desc_by_index(desc_index);
 

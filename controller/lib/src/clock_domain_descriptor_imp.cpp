@@ -55,15 +55,23 @@ clock_domain_descriptor_response * STDCALL clock_domain_descriptor_imp::get_cloc
 clock_domain_counters_response * STDCALL clock_domain_descriptor_imp::get_clock_domain_counters_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return counters_resp = new clock_domain_counters_response_imp(resp_ref->get_buffer(),
-                                                                  resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_COUNTERS);
+    if (!resp_frame)
+        return NULL;
+
+    return counters_resp = new clock_domain_counters_response_imp(resp_frame->buffer,
+                                                                  resp_frame->frame_size, resp_frame->position);
 }
 
 clock_domain_get_clock_source_response * STDCALL clock_domain_descriptor_imp::get_clock_domain_get_clock_source_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return clock_source_resp = new clock_domain_get_clock_source_response_imp(resp_ref->get_buffer(),
-                                                                              resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_CLOCK_SOURCE);
+    if (!resp_frame)
+        return NULL;
+
+    return clock_source_resp = new clock_domain_get_clock_source_response_imp(resp_frame->buffer,
+                                                                              resp_frame->frame_size, resp_frame->position);
 }
 
 int STDCALL clock_domain_descriptor_imp::send_set_clock_source_cmd(void * notification_id, uint16_t new_clk_src_index)
@@ -215,7 +223,7 @@ int clock_domain_descriptor_imp::proc_get_clock_source_resp(void *& notification
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_CLOCK_SOURCE, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = aem_cmd_get_clk_src_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_get_clk_src_resp.aem_header.aecpdu_header.header.status;
@@ -289,7 +297,7 @@ int clock_domain_descriptor_imp::proc_get_counters_resp(void *& notification_id,
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_COUNTERS, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = clock_domain_counters_resp.aem_header.aecpdu_header.header.message_type;
     status = clock_domain_counters_resp.aem_header.aecpdu_header.header.status;

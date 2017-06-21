@@ -65,6 +65,14 @@ public:
     void STDCALL destroy();
 
     const char * STDCALL get_version() const;
+
+    ///
+    /// This function converts the net_interface_imp mac address to the controller entity id.
+    ///
+    /// A copy of this function exists in adp.h
+    /// \see get_controller_entity_id()
+    uint64_t STDCALL get_entity_id();
+    void STDCALL set_entity_id(uint64_t entity_id);
     size_t STDCALL get_end_station_count();
     end_station * STDCALL get_end_station_by_index(size_t end_station_index);
 

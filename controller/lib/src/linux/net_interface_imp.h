@@ -60,6 +60,7 @@ private:
     int ifindex;
     uint16_t ethertype;
     uint64_t mac;
+    uint64_t selected_dev_eui;
     uint8_t buf[SIZEOF_BUFFER];
     uint8_t rx_buf[SIZEOF_BUFFER];
 
@@ -83,6 +84,11 @@ public:
     /// Count the number of devices.
     ///
     uint32_t STDCALL devs_count();
+    
+    ///
+    /// Count the number of IP addresses for a device.
+    ///
+    size_t STDCALL device_ip_address_count(size_t dev_index);
 
     ///
     /// Get the MAC address of the network interface.
@@ -90,9 +96,39 @@ public:
     uint64_t mac_addr();
 
     ///
+    /// Get the EUI of the selected network interface.
+    ///
+    uint64_t get_dev_eui();
+    
+    ///
+    /// Set the EUI of the selected network interface.
+    ///
+    void set_dev_eui(uint64_t dev_eui);
+
+    ///
+    /// Get the MAC address of a network interface.
+    ///
+    uint64_t STDCALL get_dev_mac_addr_by_index(size_t dev_index);
+
+    ///
     /// Get network interface description by index.
     ///
     char * STDCALL get_dev_desc_by_index(size_t dev_index);
+
+    ///
+    /// Get the corresponding network interface IP address by index.
+    ///
+    const char * STDCALL get_dev_ip_address_by_index(size_t dev_index, size_t ip_index);
+    
+    ///
+    /// Check whether ip_addr_str is a valid IP Address for a device.
+    ///
+    bool STDCALL does_interface_have_ip_address(size_t dev_index, char * ip_addr_str);
+    
+    ///
+    /// Check whether mac_addr is the MAC Address for a device.
+    ///
+    bool STDCALL does_interface_have_mac_address(size_t dev_index, uint64_t mac_addr);
 
     ///
     /// Get the corresponding network interface name by index.

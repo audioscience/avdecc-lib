@@ -55,8 +55,12 @@ audio_unit_descriptor_response * STDCALL audio_unit_descriptor_imp::get_audio_un
 audio_unit_get_sampling_rate_response * STDCALL audio_unit_descriptor_imp::get_audio_unit_get_sampling_rate_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return sampling_rate_resp = new audio_unit_get_sampling_rate_response_imp(resp_ref->get_buffer(),
-                                                                              resp_ref->get_size(), resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_SAMPLING_RATE);
+    if (!resp_frame)
+        return NULL;
+    
+    return sampling_rate_resp = new audio_unit_get_sampling_rate_response_imp(resp_frame->buffer, resp_frame->frame_size,
+                                                                              resp_frame->position);
 }
 
 int STDCALL audio_unit_descriptor_imp::send_set_sampling_rate_cmd(void * notification_id, uint32_t new_sampling_rate)
@@ -206,7 +210,7 @@ int audio_unit_descriptor_imp::proc_get_sampling_rate_resp(void *& notification_
         assert(aem_cmd_get_sampling_rate_resp_returned >= 0);
         return -1;
     }
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_SAMPLING_RATE, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = aem_cmd_get_sampling_rate_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_get_sampling_rate_resp.aem_header.aecpdu_header.header.status;

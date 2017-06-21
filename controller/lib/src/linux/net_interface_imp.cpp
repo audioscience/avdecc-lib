@@ -143,15 +143,49 @@ void STDCALL net_interface_imp::destroy()
 {
     delete this;
 }
+    
+bool STDCALL net_interface_imp::does_interface_have_ip_address(size_t dev_index, char * ip_addr_str)
+{
+    // need to implement
+    return false;
+}
+
+bool STDCALL net_interface_imp::does_interface_have_mac_address(size_t dev_index, uint64_t mac_addr)
+{
+    // need to implement
+    return false;
+}
+
+uint64_t net_interface_imp::get_dev_mac_addr_by_index(size_t dev_index)
+{
+    //need to implement
+    return 0;
+}
 
 uint32_t STDCALL net_interface_imp::devs_count()
 {
     return total_devs;
 }
 
+size_t STDCALL net_interface_imp::device_ip_address_count(size_t dev_index)
+{
+    // not needed on this platform as the device IP is embedded in the string returned by get_dev_desc_by_index()
+    return 0;
+}
+
 uint64_t net_interface_imp::mac_addr()
 {
     return mac;
+}
+
+uint64_t net_interface_imp::get_dev_eui()
+{
+    return selected_dev_eui;
+}
+    
+void net_interface_imp::set_dev_eui(uint64_t dev_eui)
+{
+    selected_dev_eui = dev_eui;
 }
 
 char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
@@ -162,6 +196,12 @@ char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
 char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
 {
     return get_dev_desc_by_index(dev_index);
+}
+    
+const char * STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_index, size_t ip_index)
+{
+    // not needed on this platform as the device IP is embedded in the string returned by get_dev_desc_by_index()
+    return NULL;
 }
 
 int net_interface_imp::get_fd()
@@ -213,6 +253,9 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     bind(rawsock, (struct sockaddr *)&sll, sizeof(sll));
 
     utility::convert_eui48_to_uint64((uint8_t *)if_mac.ifr_hwaddr.sa_data, mac);
+    selected_dev_eui = ((mac & UINT64_C(0xFFFFFF000000)) << 16) |
+                       UINT64_C(0x000000FFFF000000) |
+                       (mac & UINT64_C(0xFFFFFF));
 
     uint16_t etypes[1] = {0x22f0};
     set_capture_ether_type(etypes, 1);

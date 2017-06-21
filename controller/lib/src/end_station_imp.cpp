@@ -68,8 +68,6 @@ int end_station_imp::end_station_init()
 {
     current_entity_desc = 0;
     current_config_desc = 0;
-    selected_entity_index = 0;
-    selected_config_index = 0;
 
     read_desc_init(JDKSAVDECC_DESCRIPTOR_ENTITY, 0);
 
@@ -144,17 +142,17 @@ entity_descriptor * STDCALL end_station_imp::get_entity_desc_by_index(size_t ent
     return NULL;
 }
 
-int end_station_imp::read_desc_init(uint16_t desc_type, uint16_t desc_index)
+int end_station_imp::read_desc_init(uint16_t desc_type, uint16_t desc_index, uint16_t config_desc_index)
 {
-    return send_read_desc_cmd_with_flag(NULL, CMD_WITHOUT_NOTIFICATION, desc_type, desc_index);
+    return send_read_desc_cmd_with_flag(NULL, CMD_WITHOUT_NOTIFICATION, desc_type, desc_index, config_desc_index);
 }
 
 int STDCALL end_station_imp::send_read_desc_cmd(void * notification_id, uint16_t desc_type, uint16_t desc_index)
 {
-    return send_read_desc_cmd_with_flag(notification_id, CMD_WITH_NOTIFICATION, desc_type, desc_index);
+    return send_read_desc_cmd_with_flag(notification_id, CMD_WITH_NOTIFICATION, desc_type, desc_index, current_config_desc);
 }
 
-int end_station_imp::send_read_desc_cmd_with_flag(void * notification_id, uint32_t notification_flag, uint16_t desc_type, uint16_t desc_index)
+int end_station_imp::send_read_desc_cmd_with_flag(void * notification_id, uint32_t notification_flag, uint16_t desc_type, uint16_t desc_index, uint16_t config_desc_index)
 {
     struct jdksavdecc_frame cmd_frame;
     struct jdksavdecc_aem_command_read_descriptor aem_command_read_desc;
@@ -166,7 +164,7 @@ int end_station_imp::send_read_desc_cmd_with_flag(void * notification_id, uint32
     aem_command_read_desc.aem_header.command_type = JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR;
 
     /******************************************************** AECP Message Specific Data ********************************************************/
-    aem_command_read_desc.configuration_index = (desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) ? 0 : entity_desc_vec.at(current_entity_desc)->current_configuration();
+    aem_command_read_desc.configuration_index = (desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY || desc_type == JDKSAVDECC_DESCRIPTOR_CONFIGURATION) ? 0 : config_desc_index;
     aem_command_read_desc.descriptor_type = desc_type;
     aem_command_read_desc.descriptor_index = desc_index;
 
@@ -202,12 +200,17 @@ int end_station_imp::proc_read_desc_resp(void *& notification_id, const uint8_t 
     uint32_t msg_type;
     bool u_field;
     uint16_t desc_type;
+    uint16_t desc_index = 0;
+    uint16_t config_index = 0;
     configuration_descriptor_imp * config_desc_imp_ref = NULL;
     memset(&aem_cmd_read_desc_resp, 0, sizeof(aem_cmd_read_desc_resp));
+    desc_type = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR);
+    desc_index_from_frame(desc_type, (void *)frame, read_desc_offset, desc_index);
+    config_index = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_CONFIGURATION_INDEX);
 
     if (entity_desc_vec.size() >= 1 && entity_desc_vec.at(current_entity_desc)->config_desc_count() >= 1)
     {
-        config_desc_imp_ref = dynamic_cast<configuration_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc));
+        config_desc_imp_ref = dynamic_cast<configuration_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(config_index));
 
         if (!config_desc_imp_ref)
         {
@@ -230,7 +233,6 @@ int end_station_imp::proc_read_desc_resp(void *& notification_id, const uint8_t 
     msg_type = aem_cmd_read_desc_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_read_desc_resp.aem_header.aecpdu_header.header.status;
     u_field = aem_cmd_read_desc_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
-    desc_type = jdksavdecc_uint16_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR_RESPONSE_OFFSET_DESCRIPTOR);
 
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
@@ -244,7 +246,7 @@ int end_station_imp::proc_read_desc_resp(void *& notification_id, const uint8_t 
             break;
 
         case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
-            if (entity_desc_vec.size() == 1 && entity_desc_vec.at(current_entity_desc)->config_desc_count() == 0)
+            if (entity_desc_vec.size() == 1)
             {
                 store_descriptor = true;
             }
@@ -377,13 +379,7 @@ int end_station_imp::proc_read_desc_resp(void *& notification_id, const uint8_t 
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, catch %s", entity_id(), ia.what());
         }
 
-        configuration_descriptor * cd = NULL;
-
-        if ((entity_desc_vec.size() >= 1) && (entity_desc_vec.at(current_entity_desc)->config_desc_count() >= 1))
-        {
-            cd = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc);
-        }
-        background_read_deduce_next(cd, desc_type, (void *)frame, read_desc_offset);
+        background_read_deduce_next(entity_desc_vec.at(current_entity_desc), desc_type, config_index, (void *)frame, read_desc_offset);
     }
     background_read_update_inflight(desc_type, (void *)frame, read_desc_offset);
     background_read_submit_pending();
@@ -455,8 +451,8 @@ void end_station_imp::background_read_submit_pending(void)
     {
         background_read_request * b_first = m_backbround_read_pending.front();
         m_backbround_read_pending.pop_front();
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d", utility::aem_desc_value_to_name(b_first->m_type), b_first->m_index);
-        read_desc_init(b_first->m_type, b_first->m_index);
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d config %d", utility::aem_desc_value_to_name(b_first->m_type), b_first->m_index, b_first->m_config);
+        read_desc_init(b_first->m_type, b_first->m_index, b_first->m_config);
         b_first->m_timer.start(750); // 750 ms timeout (1722.1 timeout is 250ms)
         m_backbround_read_inflight.push_back(b_first);
 
@@ -466,8 +462,8 @@ void end_station_imp::background_read_submit_pending(void)
             while (b_next->m_type == b_first->m_type)
             {
                 m_backbround_read_pending.pop_front();
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d", utility::aem_desc_value_to_name(b_next->m_type), b_next->m_index);
-                read_desc_init(b_next->m_type, b_next->m_index);
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d config %d", utility::aem_desc_value_to_name(b_next->m_type), b_next->m_index, b_first->m_config);
+                read_desc_init(b_next->m_type, b_next->m_index, b_first->m_config);
                 b_next->m_timer.start(750); // 750 ms timeout (1722.1 timeout is 250ms)
                 m_backbround_read_inflight.push_back(b_next);
                 if (m_backbround_read_pending.empty())
@@ -565,18 +561,40 @@ bool end_station_imp::desc_index_from_frame(uint16_t desc_type, void * frame, ss
  *  There are two lists that are maintained for reading descriptors. The m_backbround_read_pending list where descriptors
  *  are queued before being sent and the m_backbround_read_inflight list the contains read requests that are on "the wire".
  */
-void end_station_imp::background_read_deduce_next(configuration_descriptor * cd, uint16_t desc_type, void * frame, ssize_t read_desc_offset)
+void end_station_imp::background_read_deduce_next(entity_descriptor * ed, uint16_t desc_type, uint16_t config_index, void * frame, ssize_t read_desc_offset)
 {
+    configuration_descriptor * cd = NULL;
     stream_port_input_descriptor_response * spid;
     stream_port_output_descriptor_response * spod;
     audio_unit_descriptor_response * aud;
     locale_descriptor_response * ldr;
     uint16_t total_num_of_desc = 0;
     uint16_t desc_index;
+    uint16_t config_count = 1;
+    uint16_t config_desc_index = 0;
 
     bool have_index = desc_index_from_frame(desc_type, frame, read_desc_offset, desc_index);
     if (!have_index)
         desc_index = 0;
+
+    if (ed == NULL)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid entity_descriptor passed to background_read_deduce_next()\n");
+        return;
+    }
+    
+    avdecc_lib::entity_descriptor_response * entity_desc_resp = ed->get_entity_response();
+    config_count = entity_desc_resp->configurations_count();
+    delete entity_desc_resp;
+    
+    if (ed->config_desc_count() >= 1)
+    {
+        if (desc_type == JDKSAVDECC_DESCRIPTOR_CONFIGURATION)
+            config_desc_index = desc_index;
+        else
+            config_desc_index = config_index;
+        cd = entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(config_desc_index);
+    }
 
     if ((desc_type != JDKSAVDECC_DESCRIPTOR_ENTITY) && (cd == NULL))
     {
@@ -587,7 +605,7 @@ void end_station_imp::background_read_deduce_next(configuration_descriptor * cd,
     switch (desc_type)
     {
     case JDKSAVDECC_DESCRIPTOR_ENTITY:
-        queue_background_read_request(JDKSAVDECC_DESCRIPTOR_CONFIGURATION, 0, 1);
+        queue_background_read_request(JDKSAVDECC_DESCRIPTOR_CONFIGURATION, 0, config_count, config_desc_index);
         break;
 
     case JDKSAVDECC_DESCRIPTOR_CONFIGURATION:
@@ -597,7 +615,8 @@ void end_station_imp::background_read_deduce_next(configuration_descriptor * cd,
             queue_background_read_request(
                 cd->get_desc_type_from_config_by_index(j),
                 0,
-                cd->get_desc_count_from_config_by_index(j));
+                cd->get_desc_count_from_config_by_index(j),
+                config_desc_index);
         }
         break;
 
@@ -606,7 +625,8 @@ void end_station_imp::background_read_deduce_next(configuration_descriptor * cd,
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_STRINGS,
             0,
-            ldr->number_of_strings());
+            ldr->number_of_strings(),
+            config_desc_index);
         delete ldr;
         break;
 
@@ -616,27 +636,32 @@ void end_station_imp::background_read_deduce_next(configuration_descriptor * cd,
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_STREAM_PORT_INPUT,
             aud->base_stream_input_port(),
-            aud->number_of_stream_input_ports());
+            aud->number_of_stream_input_ports(),
+            config_desc_index);
         // stream port outputs
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_STREAM_PORT_OUTPUT,
             aud->base_stream_output_port(),
-            aud->number_of_stream_output_ports());
+            aud->number_of_stream_output_ports(),
+            config_desc_index);
         // external inputs
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_INPUT,
             aud->base_external_input_port(),
-            aud->number_of_external_input_ports());
+            aud->number_of_external_input_ports(),
+            config_desc_index);
         // external outputs
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_EXTERNAL_PORT_OUTPUT,
             aud->base_external_output_port(),
-            aud->number_of_external_output_ports());
+            aud->number_of_external_output_ports(),
+            config_desc_index);
         // controls
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_CONTROL,
             aud->base_control_block(),
-            aud->number_of_control_blocks());
+            aud->number_of_control_blocks(),
+            config_desc_index);
         // TODO: other descriptor types in AUDIO_UNIT
         delete aud;
         break;
@@ -647,17 +672,20 @@ void end_station_imp::background_read_deduce_next(configuration_descriptor * cd,
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_CONTROL,
             spid->base_control(),
-            spid->number_of_controls());
+            spid->number_of_controls(),
+            config_desc_index);
         // clusters
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER,
             spid->base_cluster(),
-            spid->number_of_clusters());
+            spid->number_of_clusters(),
+            config_desc_index);
         // maps
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_AUDIO_MAP,
             spid->base_map(),
-            spid->number_of_maps());
+            spid->number_of_maps(),
+            config_desc_index);
         delete spid;
         break;
 
@@ -667,29 +695,32 @@ void end_station_imp::background_read_deduce_next(configuration_descriptor * cd,
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_CONTROL,
             spod->base_control(),
-            spod->number_of_controls());
+            spod->number_of_controls(),
+            config_desc_index);
         // clusters
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_AUDIO_CLUSTER,
             spod->base_cluster(),
-            spod->number_of_clusters());
+            spod->number_of_clusters(),
+            config_desc_index);
         // maps
         queue_background_read_request(
             JDKSAVDECC_DESCRIPTOR_AUDIO_MAP,
             spod->base_map(),
-            spod->number_of_maps());
+            spod->number_of_maps(),
+            config_desc_index);
         delete spod;
         break;
     }
 }
 
-void end_station_imp::queue_background_read_request(uint16_t desc_type, uint16_t desc_base_index, uint16_t desc_count)
+void end_station_imp::queue_background_read_request(uint16_t desc_type, uint16_t desc_base_index, uint16_t desc_count, uint16_t config_desc_index)
 {
     background_read_request * b;
 
     for (uint16_t i = 0; i < desc_count; i++)
     {
-        b = new background_read_request(desc_type, desc_base_index + i);
+        b = new background_read_request(desc_type, desc_base_index + i, config_desc_index);
         m_backbround_read_pending.push_back(b);
     }
 }
@@ -1257,7 +1288,20 @@ int end_station_imp::proc_rcvd_aem_resp(void *& notification_id,
         desc_type = jdksavdecc_aem_command_get_counters_response_get_descriptor_type(frame, ETHER_HDR_SIZE);
         desc_index = jdksavdecc_aem_command_get_counters_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
 
-        if (desc_type == JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE)
+        if (desc_type == JDKSAVDECC_DESCRIPTOR_ENTITY)
+        {
+            entity_descriptor_imp * entity_desc_imp_ref = dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
+            
+            if (entity_desc_imp_ref)
+            {
+                entity_desc_imp_ref->proc_get_counters_resp(notification_id, frame, frame_len, status);
+            }
+            else
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base entity_descriptor to derived entity_descriptor_imp error");
+            }
+        }
+        else if (desc_type == JDKSAVDECC_DESCRIPTOR_AVB_INTERFACE)
         {
             avb_interface_descriptor_imp * avb_interface_desc_ref =
                 dynamic_cast<avb_interface_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_avb_interface_desc_by_index(desc_index));
@@ -1435,6 +1479,38 @@ int end_station_imp::proc_rcvd_aem_resp(void *& notification_id,
     }
     break;
 
+    case JDKSAVDECC_AEM_COMMAND_GET_CONFIGURATION:
+    {
+        entity_descriptor_imp * entity_desc_imp_ref =
+            dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
+        
+        if (entity_desc_imp_ref)
+        {
+            entity_desc_imp_ref->proc_get_config_resp(notification_id, frame, frame_len, status);
+        }
+        else
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base entity_descriptor to derived entity_descriptor_imp error");
+        }
+    }
+    break;
+            
+    case JDKSAVDECC_AEM_COMMAND_SET_CONFIGURATION:
+    {
+        entity_descriptor_imp * entity_desc_imp_ref =
+            dynamic_cast<entity_descriptor_imp *>(entity_desc_vec.at(current_entity_desc));
+        
+        if (entity_desc_imp_ref)
+        {
+            entity_desc_imp_ref->proc_set_config_resp(notification_id, frame, frame_len, status);
+        }
+        else
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base entity_descriptor to derived entity_descriptor_imp error");
+        }
+    }
+    break;
+            
     case JDKSAVDECC_AEM_COMMAND_REBOOT:
     {
         desc_type = jdksavdecc_aem_command_reboot_get_descriptor_type(frame, ETHER_HDR_SIZE);
@@ -1777,10 +1853,27 @@ int STDCALL end_station_imp::send_identify(void * notification_id, bool turn_on)
 
 int end_station_imp::proc_set_control_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
 {
-    (void)status; //unused
-
     struct jdksavdecc_frame cmd_frame;
+    struct jdksavdecc_aem_command_set_control_response aem_cmd_set_control_resp;
+    ssize_t aem_cmd_set_control_resp_returned;
+
     memcpy(cmd_frame.payload, frame, frame_len);
+
+    // Read the response
+    aem_cmd_set_control_resp_returned = jdksavdecc_aem_command_set_control_response_read(&aem_cmd_set_control_resp,
+                                                                                         frame,
+                                                                                         ETHER_HDR_SIZE,
+                                                                                         frame_len);
+    // Check the read result
+    if (aem_cmd_set_control_resp_returned < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "aem_cmd_set_control_resp_read error\n");
+        return -1;
+    }
+
+    // Get the status
+    status = aem_cmd_set_control_resp.aem_header.aecpdu_header.header.status;
+
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE, false, &cmd_frame);
     return 0;
 }
@@ -1844,6 +1937,7 @@ int end_station_imp::proc_rcvd_acmp_resp(uint32_t msg_type, void *& notification
     {
     case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_STATE_RESPONSE:
     case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE:
+    case JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_TX_RESPONSE:
 	desc_index = jdksavdecc_acmpdu_get_talker_unique_id(frame, ETHER_HDR_SIZE);
         if (c)
         {
@@ -1893,6 +1987,10 @@ int end_station_imp::proc_rcvd_acmp_resp(uint32_t msg_type, void *& notification
         stream_input_desc_imp_ref->proc_get_rx_state_resp(notification_id, frame, frame_len, status);
         break;
 
+    case JDKSAVDECC_ACMP_MESSAGE_TYPE_DISCONNECT_TX_RESPONSE:
+        stream_output_desc_imp_ref->proc_disconnect_tx_resp(notification_id, frame, frame_len, status);
+        break;
+            
     case JDKSAVDECC_ACMP_MESSAGE_TYPE_GET_TX_CONNECTION_RESPONSE:
 	stream_output_desc_imp_ref->proc_get_tx_connection_resp(notification_id, frame, frame_len, status);
         break;
@@ -1906,21 +2004,21 @@ int end_station_imp::proc_rcvd_acmp_resp(uint32_t msg_type, void *& notification
 
 void STDCALL end_station_imp::set_current_entity_index(uint16_t entity_index)
 {
-    selected_entity_index = entity_index;
+    current_entity_desc = entity_index;
 }
 
 uint16_t STDCALL end_station_imp::get_current_entity_index() const
 {
-    return selected_entity_index;
+    return current_entity_desc;
 }
 
 void STDCALL end_station_imp::set_current_config_index(uint16_t config_index)
 {
-    selected_config_index = config_index;
+    current_config_desc = config_index;
 }
 
 uint16_t STDCALL end_station_imp::get_current_config_index() const
 {
-    return selected_config_index;
+    return current_config_desc;
 }
 }

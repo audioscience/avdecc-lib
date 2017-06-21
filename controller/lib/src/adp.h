@@ -82,6 +82,9 @@ public:
     ///
     /// Get the Controller Entity ID of the AVDECC Entity sending the command.
     ///
+    /// A copy of this function exists in controller.h
+    /// \see get_entity_id()
+    ///
     static struct jdksavdecc_eui64 get_controller_entity_id();
 
     ///

@@ -188,6 +188,11 @@ Get the lib from github:
 Compile
 * cd avdecc-lib
 * cmake .
+
+* NOTE: the Readline library used by avdecccmdline can be specified via cmake.
+* NetBSD Editline (libedit) is the default, but the GNU Readline Library can be referenced by passing in 
+* the argument: -DUSE_GNU_READLINE=ON
+
 * make
 
 

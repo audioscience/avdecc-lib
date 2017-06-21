@@ -27,6 +27,7 @@
  * Network interface implementation class
  */
 
+#include <algorithm>
 #include <winsock2.h>
 #include <iphlpapi.h>
 #include "util.h"
@@ -54,8 +55,69 @@ net_interface_imp::net_interface_imp()
     {
         for (dev = all_devs; dev; dev = dev->next)
         {
+            // store the valid IPv4 addresses associated with the device
+            std::vector<std::string> device_ip_addresses;
+            pcap_addr_t * dev_addr;
+            for (dev_addr = dev->addresses; dev_addr != NULL; dev_addr = dev_addr->next)
+            {
+                if (dev_addr->addr->sa_family == AF_INET && dev_addr->addr)
+                {
+                    char ip_str[INET_ADDRSTRLEN] = { 0 };
+                    inet_ntop(AF_INET, &((struct sockaddr_in *)dev_addr->addr)->sin_addr, ip_str, INET_ADDRSTRLEN);
+                    device_ip_addresses.push_back(std::string(ip_str));
+                }
+            }
+
+            all_ip_addresses.push_back(device_ip_addresses);
             total_devs++;
         }
+
+        /****************************** Find Adapter Info ***************************/
+        IP_ADAPTER_INFO * AdapterInfo;
+        ULONG AIS;
+        DWORD status;
+        AdapterInfo = (IP_ADAPTER_INFO *)calloc(total_devs, sizeof(IP_ADAPTER_INFO));
+        AIS = sizeof(IP_ADAPTER_INFO) * total_devs;
+
+        if (GetAdaptersInfo(AdapterInfo, &AIS) == ERROR_BUFFER_OVERFLOW)
+        {
+            free(AdapterInfo);
+            AdapterInfo = (IP_ADAPTER_INFO *)calloc(1, AIS);
+
+            if (AdapterInfo == NULL)
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Allocating memory needed to call GetAdaptersinfo.", dev->name);
+                return;
+            }
+
+            status = GetAdaptersInfo(AdapterInfo, &AIS);
+            if (status != ERROR_SUCCESS)
+            {
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "GetAdaptersInfo call in net_interface_imp.cpp failed.", dev->name);
+                free(AdapterInfo);
+                return;
+            }
+        }
+
+        PIP_ADAPTER_INFO pAdapterInfo = NULL;
+        for (dev = all_devs; dev; dev = dev->next)
+        {
+            uint64_t dev_mac_addr = 0;
+            for (pAdapterInfo = AdapterInfo; pAdapterInfo != NULL; pAdapterInfo = pAdapterInfo->Next)
+            {
+                if (strstr(dev->name, pAdapterInfo->AdapterName) != 0)
+                {
+                    utility::MacAddr mac(
+                                         pAdapterInfo->Address[0], pAdapterInfo->Address[1],
+                                         pAdapterInfo->Address[2], pAdapterInfo->Address[3],
+                                         pAdapterInfo->Address[4], pAdapterInfo->Address[5]);
+                    dev_mac_addr = mac.tovalue();
+                    break;
+                }
+            }
+            all_mac_addresses.push_back(dev_mac_addr);
+        }
+        free(AdapterInfo);
     }
 
     if (total_devs == 0)
@@ -82,9 +144,27 @@ uint32_t STDCALL net_interface_imp::devs_count()
     return total_devs;
 }
 
+size_t STDCALL net_interface_imp::device_ip_address_count(size_t dev_index)
+{
+    if (dev_index < all_ip_addresses.size())
+        return all_ip_addresses.at(dev_index).size();
+
+    return -1;
+}
+
 uint64_t net_interface_imp::mac_addr()
 {
-    return mac;
+    return selected_dev_mac;
+}
+
+uint64_t net_interface_imp::get_dev_eui()
+{
+    return selected_dev_eui;
+}
+    
+void net_interface_imp::set_dev_eui(uint64_t dev_eui)
+{
+    selected_dev_eui = dev_eui;
 }
 
 char * STDCALL net_interface_imp::get_dev_desc_by_index(size_t dev_index)
@@ -116,21 +196,59 @@ char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
 
     return dev->name;
 }
+    
+const char * STDCALL net_interface_imp::get_dev_ip_address_by_index(size_t dev_index, size_t ip_index)
+{
+    if (dev_index < all_ip_addresses.size())
+    {
+        if (ip_index < all_ip_addresses.at(dev_index).size())
+            return all_ip_addresses.at(dev_index).at(ip_index).c_str();
+    }
+    
+    return NULL;
+}
+    
+bool STDCALL net_interface_imp::does_interface_have_ip_address(size_t dev_index, char * ip_addr_str)
+{
+    if (dev_index < all_ip_addresses.size())
+    {
+        if (std::find(all_ip_addresses.at(dev_index).begin(), all_ip_addresses.at(dev_index).end(),
+                      std::string(ip_addr_str)) != all_ip_addresses.at(dev_index).end())
+            return true;
+    }
+    
+    return false;
+}
+
+bool STDCALL net_interface_imp::does_interface_have_mac_address(size_t dev_index, uint64_t mac_addr)
+{
+    if (dev_index < all_mac_addresses.size())
+    {
+        if (all_mac_addresses.at(dev_index) == mac_addr)
+            return true;
+    }
+    
+    return false;
+}
+    
+uint64_t net_interface_imp::get_dev_mac_addr_by_index(size_t dev_index)
+{
+    if (dev_index < all_mac_addresses.size())
+        return all_mac_addresses.at(dev_index);
+    
+    return 0;
+}
 
 int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
 {
     uint32_t index;
-    IP_ADAPTER_INFO * AdapterInfo;
-    IP_ADAPTER_INFO * Current;
-    ULONG AIS;
-    DWORD status;
     int timeout_ms = NETIF_READ_TIMEOUT_MS;
 
     if (interface_num < 1 || interface_num > total_devs)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Interface number out of range.");
         pcap_freealldevs(all_devs); // Free the device list
-        exit(EXIT_FAILURE);
+        return -1;
     }
 
     for (dev = all_devs, index = 0; index < interface_num - 1; dev = dev->next, index++)
@@ -147,54 +265,25 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Unable to open the adapter. %s is not supported by WinPcap.", dev->name);
         pcap_freealldevs(all_devs); // Free the device list
-        exit(EXIT_FAILURE);
+        return -1;
     }
 
-    /****************************** Lookup IP address ***************************/
-    AdapterInfo = (IP_ADAPTER_INFO *)calloc(total_devs, sizeof(IP_ADAPTER_INFO));
-    AIS = sizeof(IP_ADAPTER_INFO) * total_devs;
-
-    if (GetAdaptersInfo(AdapterInfo, &AIS) == ERROR_BUFFER_OVERFLOW)
+    if (index >= all_mac_addresses.size())
     {
-        free(AdapterInfo);
-        AdapterInfo = (IP_ADAPTER_INFO *)calloc(1, AIS);
-
-        if (AdapterInfo == NULL)
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Allocating memory needed to call GetAdaptersinfo.", dev->name);
-            exit(EXIT_FAILURE);
-        }
-
-        status = GetAdaptersInfo(AdapterInfo, &AIS);
-
-        if (status != ERROR_SUCCESS)
-        {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "GetAdaptersInfo call in netif_win32_pcap.c failed.", dev->name);
-            free(AdapterInfo);
-            exit(EXIT_FAILURE);
-        }
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Cannot find selected interface MAC address");
+        return -1;
     }
-
-    for (Current = AdapterInfo; Current != NULL; Current = Current->Next)
-    {
-        if (strstr(dev->name, Current->AdapterName) != 0)
-        {
-            uint32_t my_ip;
-            ULONG len;
-            uint8_t tmp[16];
-
-            my_ip = inet_addr(Current->IpAddressList.IpAddress.String);
-            len = sizeof(tmp);
-            SendARP(my_ip, INADDR_ANY, tmp, &len);
-            utility::convert_eui48_to_uint64(&tmp[0], mac);
-        }
-    }
+	
+    selected_dev_mac = all_mac_addresses.at(index);
+    selected_dev_eui = ((selected_dev_mac & UINT64_C(0xFFFFFF000000)) << 16) |
+                       UINT64_C(0x000000FFFF000000) |
+                       (selected_dev_mac & UINT64_C(0xFFFFFF));
 
     uint16_t ether_type[1];
     ether_type[0] = JDKSAVDECC_AVTP_ETHERTYPE;
-    set_capture_ether_type(ether_type, 1); // Set the filter
+    if (set_capture_ether_type(ether_type, 1) < 0) // Set the filter
+        return -1;
 
-    free(AdapterInfo);
     return 0;
 }
 

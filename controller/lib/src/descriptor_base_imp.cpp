@@ -70,8 +70,12 @@ descriptor_response_base * STDCALL descriptor_base_imp::get_descriptor_response(
 descriptor_base_get_name_response * STDCALL descriptor_base_imp::get_name_response()
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock end station
-    return get_name_resp = new descriptor_base_get_name_response_imp(resp_ref->get_buffer(), resp_ref->get_size(),
-                                                                     resp_ref->get_pos());
+    struct cmd_resp_frame_info * resp_frame = resp_ref->get_cmd_resp_frame_info(AEM_CMD_GET_NAME);
+    if (!resp_frame)
+        return NULL;
+
+    return get_name_resp = new descriptor_base_get_name_response_imp(resp_frame->buffer,
+                                                                     resp_frame->frame_size, resp_frame->position);
 }
 
 bool operator==(const descriptor_base_imp & n1, const descriptor_base_imp & n2)
@@ -84,16 +88,36 @@ bool operator<(const descriptor_base_imp & n1, const descriptor_base_imp & n2)
     return n1.descriptor_index() < n2.descriptor_index();
 }
 
-void STDCALL descriptor_base_imp::replace_frame(const uint8_t * frame, ssize_t pos, size_t size)
+void STDCALL descriptor_base_imp::store_cmd_resp_frame(uint16_t cmd_type, const uint8_t * frame, ssize_t pos, size_t size)
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock the end station
-    resp_ref->replace_frame(frame, pos, size);
+    resp_ref->store_cmd_resp_frame(cmd_type, frame, pos, size);
 }
 
 void STDCALL descriptor_base_imp::replace_desc_frame(const uint8_t * frame, ssize_t pos, size_t size)
 {
     std::lock_guard<std::mutex> guard(base_end_station_imp_ref->locker); //mutex lock the end station
     resp_ref->replace_desc_frame(frame, pos, size);
+}
+    
+bool STDCALL descriptor_base_imp::get_permission(int flag)
+{
+    switch (flag)
+    {
+    case LOCK:
+        return ((1 & last_rcvd_lock_entity_flags) == 0);
+    case ACQUIRE:
+        return ((1 & (last_rcvd_acquire_entity_flags >> 31)) == 0);
+    case PERSISTENT:
+        return ((1 & last_rcvd_acquire_entity_flags) == 1);
+    default :
+        return false;
+    }
+}
+    
+uint64_t STDCALL descriptor_base_imp::get_owning_guid()
+{
+    return owning_guid;
 }
 
 uint16_t STDCALL descriptor_base_imp::descriptor_type() const
@@ -222,6 +246,9 @@ int descriptor_base_imp::default_proc_acquire_entity_resp(struct jdksavdecc_aem_
     status = aem_cmd_acquire_entity_resp.aem_header.aecpdu_header.header.status;
     u_field = aem_cmd_acquire_entity_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
+    last_rcvd_acquire_entity_flags = aem_cmd_acquire_entity_resp.aem_acquire_flags;
+    owning_guid = jdksavdecc_eui64_convert_to_uint64(&aem_cmd_acquire_entity_resp.owner_entity_id);
+
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
     return 0;
@@ -319,7 +346,10 @@ int descriptor_base_imp::default_proc_lock_entity_resp(struct jdksavdecc_aem_com
     msg_type = aem_cmd_lock_entity_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_lock_entity_resp.aem_header.aecpdu_header.header.status;
     u_field = aem_cmd_lock_entity_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
-
+    
+    last_rcvd_lock_entity_flags = aem_cmd_lock_entity_resp.aem_lock_flags;
+    owning_guid = jdksavdecc_eui64_convert_to_uint64(&aem_cmd_lock_entity_resp.locked_entity_id);
+    
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 
     return 0;
@@ -607,7 +637,7 @@ int descriptor_base_imp::default_proc_get_name_resp(struct jdksavdecc_aem_comman
         return -1;
     }
 
-    replace_frame(frame, ETHER_HDR_SIZE, frame_len);
+    store_cmd_resp_frame(AEM_CMD_GET_NAME, frame, ETHER_HDR_SIZE, frame_len);
 
     msg_type = aem_cmd_get_name_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_get_name_resp.aem_header.aecpdu_header.header.status;

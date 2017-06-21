@@ -33,37 +33,43 @@
 #include <stdint.h>
 #include <cstring>
 #include <assert.h>
+#include <map>
 
 namespace avdecc_lib
 {
+struct cmd_resp_frame_info
+{
+    uint8_t * buffer;
+    size_t frame_size;
+    size_t position;
+    
+    cmd_resp_frame_info(uint8_t * buf, size_t f_size, size_t pos) :
+        buffer(buf), frame_size(f_size), position(pos) {}
+    
+};
 class response_frame
 {
 public:
     response_frame(const uint8_t * frame, size_t size, size_t pos);
     virtual ~response_frame();
+private:
+    // <key, value> : <command type, command response frame info>
+    std::map<uint16_t, struct cmd_resp_frame_info * > cmd_resp_buffers;
 
-    //
-    // Buffer to store counters and command response frames.  Will be updated
-    // by command response processing methods.
-    //
-    uint8_t * buffer;
     //
     // Buffer to store descriptor response frames.  Will be updated by
     // update_desc_database() method in configuration descriptor.
     //
     uint8_t * desc_buffer;
-    size_t frame_size;
     size_t desc_frame_size;
-    size_t position;
     size_t desc_position;
 
-    int replace_frame(const uint8_t * frame, size_t pos, size_t size);
+public:
+    struct cmd_resp_frame_info * get_cmd_resp_frame_info(uint16_t cmd_type);
+    int store_cmd_resp_frame(uint16_t cmd_type, const uint8_t * frame, size_t pos, size_t size);
     int replace_desc_frame(const uint8_t * frame, size_t pos, size_t size);
-    uint8_t * get_buffer();
     uint8_t * get_desc_buffer();
-    size_t get_pos();
     size_t get_desc_pos();
-    size_t get_size();
     size_t get_desc_size();
 };
 }
