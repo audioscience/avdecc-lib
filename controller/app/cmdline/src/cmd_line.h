@@ -237,7 +237,7 @@ private:
     int cmd_connect_rx(int total_matched, std::vector<cli_argument *> args);
 
     ///
-    /// Send a CONNECT_RX command to disconnect Listener sink stream.
+    /// Send a DISCONNECT_RX command to disconnect Listener sink stream.
     ///
     int cmd_disconnect_rx(int total_matched, std::vector<cli_argument *> args);
     
