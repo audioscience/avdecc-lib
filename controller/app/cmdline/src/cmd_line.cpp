@@ -568,7 +568,7 @@ void cmd_line::cmd_line_commands_init()
     disconnect_cmd->add_sub_command("rx", disconnect_rx_cmd);
     
     cli_command_format * disconnect_rx_fmt = new cli_command_format(
-        "Send a CONNECT_RX command to disconnect Listener sink stream.",
+        "Send a DISCONNECT_RX command to disconnect Listener sink stream.",
         &cmd_line::cmd_disconnect_rx);
     disconnect_rx_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
     disconnect_rx_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
