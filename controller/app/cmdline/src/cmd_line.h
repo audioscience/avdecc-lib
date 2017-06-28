@@ -117,6 +117,10 @@ private:
                                         const uint8_t * object_name,
                                         avdecc_lib::locale_descriptor & locale);
 
+    ///
+    /// Encode a string with Quoted-Printable encoding.
+    ///
+    std::string qprintable_encode(const char * input_cstr);
 public:
     ///
     /// Access methods used for command-line completion
