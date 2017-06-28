@@ -252,7 +252,7 @@ int cmd_line::print_interfaces_and_select(char * interface)
     }
 
     if (interface_num == -1 ||
-        interface_num > netif->devs_count() + 1)
+        interface_num > (int)netif->devs_count() + 1)
     {
         printf("Invalid Interface: (%s).  Exiting...\n", interface);
         exit(EXIT_FAILURE);
