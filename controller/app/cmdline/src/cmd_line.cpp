@@ -124,6 +124,33 @@ cmd_line::~cmd_line()
     ofstream_ref.close();
 }
 
+std::string cmd_line::qprintable_encode(const char * input_cstr)
+{
+    std::string input_str(input_cstr);
+    std::string output;
+
+    char byte;
+    const char hex[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    
+    for (size_t i = 0; i < input_str.length() ; ++i)
+    {
+        byte = input_str[i];
+        
+        if ((byte == 0x20) || ((byte >= 33) && (byte <= 126) && (byte != 61)))
+        {
+            output += byte;
+        }
+        else
+        {
+            output += '=';
+            output += hex[((byte >> 4) & 0x0F)];
+            output += hex[(byte & 0x0F)];
+        }
+    }
+    
+    return output;
+}
+
 const cli_command * cmd_line::get_commands() const
 {
     return &commands;
