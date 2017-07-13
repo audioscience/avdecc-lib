@@ -377,7 +377,7 @@ int main(int argc, char * argv[])
     rl_completion_entry_function = null_completer;
 #endif
 
-    std::cout << "\nEnter \"help\" for a list of valid commands." << std::endl;
+    std::cout << "\nEnter \"help\" for a list of valid commands, or \"help -a\" for an expanded list of subcommands." << std::endl;
 
     while (!done)
     {

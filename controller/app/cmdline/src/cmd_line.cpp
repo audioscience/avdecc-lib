@@ -169,7 +169,18 @@ bool cmd_line::handle(std::vector<std::string> & args)
     if (!ok)
     {
         printf("Invalid command\n");
-        commands.print_help_all("", 1);
+
+        // Show the subcommands that are valid.
+        std::string prefix;
+        const cli_command * cmd = commands.get_sub_command(args_queue, prefix);
+        if (cmd)
+        {
+            cmd->print_help_details(prefix);
+        }
+        else
+        {
+            commands.print_help_all("", 1);
+        }
     }
     return done;
 }
