@@ -2703,7 +2703,6 @@ int cmd_line::cmd_read_descriptor(int total_matched, std::vector<cli_argument *>
 
 int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument *> args)
 {
-    uint8_t * outstream_end_station_name;
     uint8_t * instream_end_station_name;
     const char * format;
     size_t stream_input_desc_count = 0;
@@ -2786,7 +2785,6 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument *> args)
 
         avdecc_lib::entity_descriptor_response * entity_desc_resp = entity->get_entity_response();
         end_station_mac = end_station->mac();
-        outstream_end_station_name = entity_desc_resp->entity_name();
         stream_output_desc_count = configuration->stream_output_desc_count();
 
         for (uint32_t j = 0; j < stream_output_desc_count; j++)
