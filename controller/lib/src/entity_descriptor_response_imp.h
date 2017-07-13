@@ -24,7 +24,7 @@
 /**
  * entity_descriptor_response_imp.h
  *
- * ENTITY descriptor repsonse implementation class
+ * ENTITY descriptor response implementation class
  */
 
 #pragma once
