@@ -802,6 +802,21 @@ int end_station_imp::proc_rcvd_aem_resp(void *& notification_id,
     cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
     cmd_type &= 0x7FFF;
 
+    if (cmd_type != JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR)
+    {
+        if (current_entity_desc >= entity_desc_vec.size())
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_aem_resp entity desc not present, skipping");
+            return 0;
+        }
+        
+        if (current_config_desc >= entity_desc_vec.at(current_entity_desc)->config_desc_count())
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_aem_resp config desc not present, skipping");
+            return 0;
+        }
+    }
+
     switch (cmd_type)
     {
     case JDKSAVDECC_AEM_COMMAND_ACQUIRE_ENTITY:
@@ -1927,9 +1942,21 @@ int end_station_imp::proc_rcvd_acmp_resp(uint32_t msg_type, void *& notification
     entity_descriptor_imp * e = nullptr;
     uint16_t desc_index = 0;
 
+    if (current_entity_desc >= entity_desc_vec.size())
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_acmp_resp entity desc not present, skipping");
+        return 0;
+    }
+    
     e = entity_desc_vec.at(current_entity_desc);
     if (e)
     {
+        if (current_config_desc >= e->config_desc_count())
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_acmp_resp config desc not present, skipping");
+            return 0;
+        }
+
         c = e->get_config_desc_by_index(current_config_desc);
     }
 

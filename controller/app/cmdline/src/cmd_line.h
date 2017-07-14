@@ -117,6 +117,10 @@ private:
                                         const uint8_t * object_name,
                                         avdecc_lib::locale_descriptor & locale);
 
+    ///
+    /// Encode a string with Quoted-Printable encoding.
+    ///
+    std::string qprintable_encode(const char * input_cstr);
 public:
     ///
     /// Access methods used for command-line completion
@@ -237,7 +241,7 @@ private:
     int cmd_connect_rx(int total_matched, std::vector<cli_argument *> args);
 
     ///
-    /// Send a CONNECT_RX command to disconnect Listener sink stream.
+    /// Send a DISCONNECT_RX command to disconnect Listener sink stream.
     ///
     int cmd_disconnect_rx(int total_matched, std::vector<cli_argument *> args);
     

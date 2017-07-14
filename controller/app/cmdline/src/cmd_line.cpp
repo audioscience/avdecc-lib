@@ -124,6 +124,33 @@ cmd_line::~cmd_line()
     ofstream_ref.close();
 }
 
+std::string cmd_line::qprintable_encode(const char * input_cstr)
+{
+    std::string input_str(input_cstr);
+    std::string output;
+
+    char byte;
+    const char hex[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    
+    for (size_t i = 0; i < input_str.length() ; ++i)
+    {
+        byte = input_str[i];
+        
+        if ((byte == 0x20) || ((byte >= 33) && (byte <= 126) && (byte != 61)))
+        {
+            output += byte;
+        }
+        else
+        {
+            output += '=';
+            output += hex[((byte >> 4) & 0x0F)];
+            output += hex[(byte & 0x0F)];
+        }
+    }
+    
+    return output;
+}
+
 const cli_command * cmd_line::get_commands() const
 {
     return &commands;
@@ -142,7 +169,18 @@ bool cmd_line::handle(std::vector<std::string> & args)
     if (!ok)
     {
         printf("Invalid command\n");
-        commands.print_help_all("", 1);
+
+        // Show the subcommands that are valid.
+        std::string prefix;
+        const cli_command * cmd = commands.get_sub_command(args_queue, prefix);
+        if (cmd)
+        {
+            cmd->print_help_details(prefix);
+        }
+        else
+        {
+            commands.print_help_all("", 1);
+        }
     }
     return done;
 }
@@ -225,7 +263,7 @@ int cmd_line::print_interfaces_and_select(char * interface)
     }
 
     if (interface_num == -1 ||
-        interface_num > netif->devs_count() + 1)
+        interface_num > (int)netif->devs_count() + 1)
     {
         printf("Invalid Interface: (%s).  Exiting...\n", interface);
         exit(EXIT_FAILURE);
@@ -568,7 +606,7 @@ void cmd_line::cmd_line_commands_init()
     disconnect_cmd->add_sub_command("rx", disconnect_rx_cmd);
     
     cli_command_format * disconnect_rx_fmt = new cli_command_format(
-        "Send a CONNECT_RX command to disconnect Listener sink stream.",
+        "Send a DISCONNECT_RX command to disconnect Listener sink stream.",
         &cmd_line::cmd_disconnect_rx);
     disconnect_rx_fmt->add_argument(new cli_argument_end_station(this, "s_e_s", SRC_END_STATION_HELP));
     disconnect_rx_fmt->add_argument(new cli_argument_int(this, "s_d_i", "the source descriptor index"));
@@ -1188,12 +1226,12 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument *> args)
     atomic_cout << "\n"
                 << "End Station"
                 << "  |  "
-                << "Name" << std::setw(21) << "  |  "
-                << "Entity ID" << std::setw(12) << "  |  "
-                << "Firmware Version"
+                << "Name" << std::setw(31) << "  |  "
+                << "Entity ID" << std::setw(14) << "  |  "
+                << "Firmware Version" << std::setw(19)
                 << "  |  "
                 << "MAC" << std::endl;
-    atomic_cout << std::string(100, '-') << std::endl;
+    atomic_cout << std::string(123, '-') << std::endl;
 
     for (unsigned int i = 0; i < controller_obj->get_end_station_count(); i++)
     {
@@ -1218,9 +1256,9 @@ int cmd_line::cmd_list(int total_matched, std::vector<cli_argument *> args)
             uint64_t end_station_mac = end_station->mac();
             atomic_cout << (std::stringstream() << end_station->get_connection_status()
                                                 << std::setw(10) << std::dec << std::setfill(' ') << i << "  |  "
-                                                << std::setw(20) << std::hex << std::setfill(' ') << (ent_desc_resp ? avdecc_lib::utility::qprintable_encode(end_station_name) : "UNKNOWN") << "  |  0x"
+                                                << std::setw(30) << std::hex << std::setfill(' ') << (ent_desc_resp ? qprintable_encode(end_station_name) : "UNKNOWN") << "  |  0x"
                                                 << std::setw(16) << std::hex << std::setfill('0') << end_station_entity_id << "  |  "
-                                                << std::setw(16) << std::hex << std::setfill(' ') << (ent_desc_resp ? avdecc_lib::utility::qprintable_encode(fw_ver) : "UNKNOWN") << "  |  "
+                                                << std::setw(30) << std::hex << std::setfill(' ') << (ent_desc_resp ? qprintable_encode(fw_ver) : "UNKNOWN") << "  |  "
                                                 << std::setw(12) << std::hex << std::setfill('0') << end_station_mac)
                                .rdbuf()
                         << std::endl;
@@ -2665,7 +2703,6 @@ int cmd_line::cmd_read_descriptor(int total_matched, std::vector<cli_argument *>
 
 int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument *> args)
 {
-    uint8_t * outstream_end_station_name;
     uint8_t * instream_end_station_name;
     const char * format;
     size_t stream_input_desc_count = 0;
@@ -2748,7 +2785,6 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument *> args)
 
         avdecc_lib::entity_descriptor_response * entity_desc_resp = entity->get_entity_response();
         end_station_mac = end_station->mac();
-        outstream_end_station_name = entity_desc_resp->entity_name();
         stream_output_desc_count = configuration->stream_output_desc_count();
 
         for (uint32_t j = 0; j < stream_output_desc_count; j++)
