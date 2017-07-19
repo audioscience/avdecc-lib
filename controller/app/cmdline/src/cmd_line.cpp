@@ -3144,9 +3144,9 @@ int cmd_line::cmd_show_connections(int total_matched, std::vector<cli_argument *
                     }
 
                     atomic_cout << "0x" << std::setw(16) << std::hex << std::setfill('0') << out_end_station->entity_id()
-                                << "[" << in_stream_index << "] -> "
+                                << "[" << out_stream_index << "] -> "
                                 << "0x" << std::setw(16) << std::hex << std::setfill('0') << in_end_station->entity_id()
-                                << "[" << out_stream_index << "]" << std::endl;
+                                << "[" << in_stream_index << "]" << std::endl;
 
                     delete stream_input_resp_ref;
                     delete stream_output_resp_ref;
