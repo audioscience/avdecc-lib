@@ -220,7 +220,6 @@ int cmd_line::print_interfaces_and_select(char * interface)
         }
         else
         {
-        #if 
             // try to find the selected interface by ip address
             if (netif->does_interface_have_ip_address(dev_index, interface))
             {
