@@ -4432,7 +4432,9 @@ int cmd_line::cmd_set_sampling_rate(int total_matched, std::vector<cli_argument 
         if (status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
             avdecc_lib::audio_unit_descriptor_response * audio_unit_resp_ref = audio_unit_desc_ref->get_audio_unit_response();
-            atomic_cout << "Sampling rate: " << std::dec << audio_unit_resp_ref->current_sampling_rate();
+            atomic_cout << "Sampling rate: " << std::dec 
+                        << audio_unit_resp_ref->current_sampling_rate()
+                        << std::endl;
             delete audio_unit_resp_ref;
         }
     }
