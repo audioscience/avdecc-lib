@@ -220,6 +220,7 @@ int cmd_line::print_interfaces_and_select(char * interface)
         }
         else
         {
+        #if 
             // try to find the selected interface by ip address
             if (netif->does_interface_have_ip_address(dev_index, interface))
             {
@@ -262,10 +263,21 @@ int cmd_line::print_interfaces_and_select(char * interface)
         }
     }
 
-    if (interface_num == -1 ||
-        interface_num > (int)netif->devs_count() + 1)
+    if (interface_num <= 0 ||
+        interface_num > (int)netif->devs_count())
     {
-        printf("Invalid Interface: (%s).  Exiting...\n", interface);
+        printf("Invalid Interface");
+        
+        if ((!interface) && (interface_num != -1))
+        {
+            printf(": (%d)", interface_num);
+        }
+        else if (interface)
+        {
+            printf(": (%s)", interface);
+        }
+            
+        printf(".  Exiting...\n");
         exit(EXIT_FAILURE);
     }
 

@@ -70,7 +70,7 @@ bool cli_command_format::run_command(cmd_line * cmd_ptr, std::queue<std::string>
             match_count++;
             total_matched++;
 
-            if ((match_max != UINT_MAX) && (match_count >= match_max))
+            if ((match_max != static_cast<int>(UINT_MAX)) && (match_count >= match_max))
             {
                 // Move to next argument - completed this one
                 m_i++;
