@@ -1398,12 +1398,12 @@ int cmd_line::do_select(uint32_t new_end_station, uint16_t new_entity, uint16_t 
             end_station->set_current_entity_index(new_entity);
             end_station->set_current_config_index(new_config);
             atomic_cout << "New selection" << std::endl;
-            atomic_cout << "\tEnd Station Index:   " << std::dec << current_end_station << std::endl;
+            atomic_cout << "\tEnd Station Index:   " << std::dec << new_end_station << std::endl;
             atomic_cout << "\tEnd Station:         " << entity_desc_resp->entity_name()
                         << " (0x" << std::setw(16) << std::hex << std::setfill('0') << end_station->entity_id()
                         << ")" << std::endl;
-            atomic_cout << "\tEntity Index:        " << std::dec << current_entity << std::endl;
-            atomic_cout << "\tConfiguration Index: " << std::dec << current_config << std::endl;
+            atomic_cout << "\tEntity Index:        " << std::dec << new_entity << std::endl;
+            atomic_cout << "\tConfiguration Index: " << std::dec << new_config << std::endl;
         }
         delete entity_desc_resp;
     }
