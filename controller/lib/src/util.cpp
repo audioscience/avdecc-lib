@@ -733,24 +733,15 @@ namespace utility
         ieee1722_stream_format sf(format_value);
         switch (sf.subtype())
         {
-            case ieee1722_stream_format::IIDC_61883:
-            {
-                iec_61883_iidc_format iec_sf(format_value);
-                return iec_sf.name();
-            }
-            case ieee1722_stream_format::AAF:
-            {
-                aaf_format aaf_sf(format_value);
-                return aaf_sf.name();
-            }
-            case ieee1722_stream_format::CRF:
-            {
-                crf_format crf_sf(format_value);
-                return crf_sf.name();
-            }
-            default:
-                return "UNKNOWN";
+        case ieee1722_stream_format::IIDC_61883:
+            return iec_61883_iidc_format(format_value).name();
+        case ieee1722_stream_format::AAF:
+            return aaf_format(format_value).name();
+        case ieee1722_stream_format::CRF:
+            return crf_format(format_value).name();
         }
+        
+        return "UNKNOWN";
     }
     
     uint64_t _ieee1722_format_name_to_value(const char * format_name)
@@ -758,24 +749,15 @@ namespace utility
         ieee1722_stream_format sf(format_name);
         switch (sf.subtype())
         {
-            case ieee1722_stream_format::IIDC_61883:
-            {
-                iec_61883_iidc_format iec_sf(format_name);
-                return iec_sf.value();
-            }
-            case ieee1722_stream_format::AAF:
-            {
-                aaf_format aaf_sf(format_name);
-                return aaf_sf.value();
-            }
-            case ieee1722_stream_format::CRF:
-            {
-                crf_format crf_sf(format_name);
-                return crf_sf.value();
-            }
-            default:
-                return 0;
+        case ieee1722_stream_format::IIDC_61883:
+            return iec_61883_iidc_format(format_name).value();
+        case ieee1722_stream_format::AAF:
+            return aaf_format(format_name).value();
+        case ieee1722_stream_format::CRF:
+            return crf_format(format_name).value();
         }
+        
+        return 0;
     }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1020,14 +1002,14 @@ namespace utility
         m_packetization_type = (m_format_value >> AAF_TYPE_SHIFT) & AAF_TYPE_MASK;
         switch (m_packetization_type)
         {
-            case FLOAT_32BIT:
-            case INT_32BIT:
-            case INT_24BIT:
-            case INT_16BIT:
-                decode_aaf_pcm_fields();
-                break;
-            default:
-                break;
+        case FLOAT_32BIT:
+        case INT_32BIT:
+        case INT_24BIT:
+        case INT_16BIT:
+            decode_aaf_pcm_fields();
+            break;
+        default:
+            break;
         }
         
         to_string();
@@ -1282,39 +1264,39 @@ namespace utility
             
         switch (m_iec61883_type)
         {
-            case IEC_61883_6:
+        case IEC_61883_6:
+        {
+            m_sf = 1;
+            m_nonblocking = 1; // assume non-blocking
+            
+            if (!iec_61883_packetization_type_from_str(tokens.at(IEC61883_6_AM824_TOKEN_PACKETIZATION)))
+                return;
+            
+            switch (m_packetization_type_value)
             {
-                m_sf = 1;
-                m_nonblocking = 1; // assume non-blocking
-                
-                if (!iec_61883_packetization_type_from_str(tokens.at(IEC61883_6_AM824_TOKEN_PACKETIZATION)))
+            case AM824:
+            {
+                if (!iec_61883_sfc_from_str(tokens.at(IEC61883_6_AM824_TOKEN_SFC)) ||
+                    !iec_61883_dbs_from_str(tokens.at(IEC61883_6_AM824_TOKEN_BLOCK_COUNT)))
                     return;
                 
-                switch (m_packetization_type_value)
-                {
-                    case AM824:
-                    {
-                        if (!iec_61883_sfc_from_str(tokens.at(IEC61883_6_AM824_TOKEN_SFC)) ||
-                            !iec_61883_dbs_from_str(tokens.at(IEC61883_6_AM824_TOKEN_BLOCK_COUNT)))
-                            return;
-                        
-                        uint64_t val = uint64_t( (uint64_t) m_subtype << IEEE1722_FORMAT_SUBTYPE_SHIFT) |
-                                                 ((uint64_t) m_sf << IEC61883_SF_SHIFT) |
-                                                 ((uint64_t) m_iec61883_type << IEC61883_TYPE_SHIFT) |
-                                                 ((uint64_t) m_packetization_type_value << IEC61883_6_PACKETIZATION_SHIFT) |
-                                                 ((uint64_t) m_fdf_sfc_value << IEC61883_6_SFC_SHIFT) |
-                                                 ((uint64_t) m_dbs << IEC61883_6_BLOCK_COUNT_SHIFT) |
-                                                 ((uint64_t) m_nonblocking << IEC61883_6_NONBLOCKING_SHIFT) |
-                                                 ((uint64_t) m_dbs << IEC61883_6_AM824_MBLA_COUNT_SHIFT);
+                uint64_t val = uint64_t( (uint64_t) m_subtype << IEEE1722_FORMAT_SUBTYPE_SHIFT) |
+                                         ((uint64_t) m_sf << IEC61883_SF_SHIFT) |
+                                         ((uint64_t) m_iec61883_type << IEC61883_TYPE_SHIFT) |
+                                         ((uint64_t) m_packetization_type_value << IEC61883_6_PACKETIZATION_SHIFT) |
+                                         ((uint64_t) m_fdf_sfc_value << IEC61883_6_SFC_SHIFT) |
+                                         ((uint64_t) m_dbs << IEC61883_6_BLOCK_COUNT_SHIFT) |
+                                         ((uint64_t) m_nonblocking << IEC61883_6_NONBLOCKING_SHIFT) |
+                                         ((uint64_t) m_dbs << IEC61883_6_AM824_MBLA_COUNT_SHIFT);
 
-                        m_format_value = val;
-                    }
-                    default:
-                        return;
-                }
+                m_format_value = val;
             }
             default:
                 return;
+            }
+        }
+        default:
+            return;
         }
     }
     
@@ -1323,12 +1305,12 @@ namespace utility
         m_iec61883_type = (m_format_value >> IEC61883_TYPE_SHIFT) & IEC61883_TYPE_MASK;
         switch (m_iec61883_type)
         {
-            case IEC_61883_6:
-                decode_iec_61883_common();
-                decode_iec_61883_packetization_type();
-                break;
-            default:
-                break;
+        case IEC_61883_6:
+            decode_iec_61883_common();
+            decode_iec_61883_packetization_type();
+            break;
+        default:
+            break;
         }
     }
 
@@ -1347,11 +1329,11 @@ namespace utility
         m_packetization_type_value = (m_format_value >> IEC61883_6_PACKETIZATION_SHIFT) & IEC61883_6_PACKETIZATION_MASK;
         switch (m_packetization_type_value)
         {
-            case AM824:
-                decode_iec_61883_am824_fields();
-                break;
-            default:
-                break;
+        case AM824:
+            decode_iec_61883_am824_fields();
+            break;
+        default:
+            break;
         }
     }
     
