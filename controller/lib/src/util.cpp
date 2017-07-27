@@ -345,83 +345,6 @@ namespace utility
             {avdecc_lib::GET_TX_CONNECTION_COMMAND, avdecc_lib::ACMP_GET_TX_CONNECTION_COMMAND_TIMEOUT_MS},
             {avdecc_lib::AEM_ACMP_ERROR, 0xffff}};
 
-    struct ieee1722_format
-    {
-        uint64_t fmt;
-        const char * str;
-        const char * description;
-    };
-
-    struct ieee1722_format ieee1722_format_table[] =
-        {
-            // 44.1 kHz, 1..8 channel
-            {UINT64_C(0x00a0010140000100), "IEC...44.1KHZ_1CH", "IEC61883-6_AM824_MBLA_44.1KHZ_1CH"},
-            {UINT64_C(0x00a0010240000200), "IEC...44.1KHZ_2CH", "IEC61883-6_AM824_MBLA_44.1KHZ_2CH"},
-            {UINT64_C(0x00a0010340000300), "IEC...44.1KHZ_3CH", "IEC61883-6_AM824_MBLA_44.1KHZ_3CH"},
-            {UINT64_C(0x00a0010440000400), "IEC...44.1KHZ_4CH", "IEC61883-6_AM824_MBLA_44.1KHZ_4CH"},
-            {UINT64_C(0x00a0010540000500), "IEC...44.1KHZ_5CH", "IEC61883-6_AM824_MBLA_44.1KHZ_5CH"},
-            {UINT64_C(0x00a0010640000600), "IEC...44.1KHZ_6CH", "IEC61883-6_AM824_MBLA_44.1KHZ_6CH"},
-            {UINT64_C(0x00a0010740000700), "IEC...44.1KHZ_7CH", "IEC61883-6_AM824_MBLA_44.1KHZ_7CH"},
-            {UINT64_C(0x00a0010840000800), "IEC...44.1KHZ_8CH", "IEC61883-6_AM824_MBLA_44.1KHZ_8CH"},
-
-            // 48 kHz, 1..8, 16, 24, 32 channel
-            {UINT64_C(0x00a0020140000100), "IEC...48KHZ_1CH", "IEC61883-6_AM824_MBLA_48KHZ_1CH"},
-            {UINT64_C(0x00a0020240000200), "IEC...48KHZ_2CH", "IEC61883-6_AM824_MBLA_48KHZ_2CH"},
-            {UINT64_C(0x00a0020340000300), "IEC...48KHZ_3CH", "IEC61883-6_AM824_MBLA_48KHZ_3CH"},
-            {UINT64_C(0x00a0020440000400), "IEC...48KHZ_4CH", "IEC61883-6_AM824_MBLA_48KHZ_4CH"},
-            {UINT64_C(0x00a0020540000500), "IEC...48KHZ_5CH", "IEC61883-6_AM824_MBLA_48KHZ_5CH"},
-            {UINT64_C(0x00a0020640000600), "IEC...48KHZ_6CH", "IEC61883-6_AM824_MBLA_48KHZ_6CH"},
-            {UINT64_C(0x00a0020740000700), "IEC...48KHZ_7CH", "IEC61883-6_AM824_MBLA_48KHZ_7CH"},
-            {UINT64_C(0x00a0020840000800), "IEC...48KHZ_8CH", "IEC61883-6_AM824_MBLA_48KHZ_8CH"},
-            {UINT64_C(0x00a0021040001000), "IEC...48KHZ_16CH", "IEC61883-6_AM824_MBLA_48KHZ_16CH"},
-            {UINT64_C(0x00a0021840001800), "IEC...48KHZ_24CH", "IEC61883-6_AM824_MBLA_48KHZ_24CH"},
-            {UINT64_C(0x00a0022040002000), "IEC...48KHZ_32CH", "IEC61883-6_AM824_MBLA_48KHZ_32CH"},
-
-            // 88.2 kHz, 1..8 channel
-            {UINT64_C(0x00a0030140000100), "IEC...88.2KHZ_1CH", "IEC61883-6_AM824_MBLA_88.2KHZ_1CH"},
-            {UINT64_C(0x00a0030240000200), "IEC...88.2KHZ_2CH", "IEC61883-6_AM824_MBLA_88.2KHZ_2CH"},
-            {UINT64_C(0x00a0030340000300), "IEC...88.2KHZ_3CH", "IEC61883-6_AM824_MBLA_88.2KHZ_3CH"},
-            {UINT64_C(0x00a0030440000400), "IEC...88.2KHZ_4CH", "IEC61883-6_AM824_MBLA_88.2KHZ_4CH"},
-            {UINT64_C(0x00a0030540000500), "IEC...88.2KHZ_5CH", "IEC61883-6_AM824_MBLA_88.2KHZ_5CH"},
-            {UINT64_C(0x00a0030640000600), "IEC...88.2KHZ_6CH", "IEC61883-6_AM824_MBLA_88.2KHZ_6CH"},
-            {UINT64_C(0x00a0030740000700), "IEC...88.2KHZ_7CH", "IEC61883-6_AM824_MBLA_88.2KHZ_7CH"},
-            {UINT64_C(0x00a0030840000800), "IEC...88.2KHZ_8CH", "IEC61883-6_AM824_MBLA_88.2KHZ_8CH"},
-
-            // 96 kHz, 1..8, 16, 24, 32 channel
-            {UINT64_C(0x00a0040140000100), "IEC...96KHZ_1CH", "IEC61883-6_AM824_MBLA_96KHZ_1CH"},
-            {UINT64_C(0x00a0040240000200), "IEC...96KHZ_2CH", "IEC61883-6_AM824_MBLA_96KHZ_2CH"},
-            {UINT64_C(0x00a0040340000300), "IEC...96KHZ_3CH", "IEC61883-6_AM824_MBLA_96KHZ_3CH"},
-            {UINT64_C(0x00a0040440000400), "IEC...96KHZ_4CH", "IEC61883-6_AM824_MBLA_96KHZ_4CH"},
-            {UINT64_C(0x00a0040540000500), "IEC...96KHZ_5CH", "IEC61883-6_AM824_MBLA_96KHZ_5CH"},
-            {UINT64_C(0x00a0040640000600), "IEC...96KHZ_6CH", "IEC61883-6_AM824_MBLA_96KHZ_6CH"},
-            {UINT64_C(0x00a0040740000700), "IEC...96KHZ_7CH", "IEC61883-6_AM824_MBLA_96KHZ_7CH"},
-            {UINT64_C(0x00a0040840000800), "IEC...96KHZ_8CH", "IEC61883-6_AM824_MBLA_96KHZ_8CH"},
-            {UINT64_C(0x00a0041040001000), "IEC...96KHZ_16CH", "IEC61883-6_AM824_MBLA_96KHZ_16CH"},
-            {UINT64_C(0x00a0041840001800), "IEC...96KHZ_24CH", "IEC61883-6_AM824_MBLA_96KHZ_24CH"},
-            {UINT64_C(0x00a0042040002000), "IEC...96KHZ_32CH", "IEC61883-6_AM824_MBLA_96KHZ_32CH"},
-
-            // 176.4 kHz, 1..8 channel
-            {UINT64_C(0x00a0050140000100), "IEC...176.4KHZ_1CH", "IEC61883-6_AM824_MBLA_176.4KHZ_1CH"},
-            {UINT64_C(0x00a0050240000200), "IEC...176.4KHZ_2CH", "IEC61883-6_AM824_MBLA_176.4KHZ_2CH"},
-            {UINT64_C(0x00a0050340000300), "IEC...176.4KHZ_3CH", "IEC61883-6_AM824_MBLA_176.4KHZ_3CH"},
-            {UINT64_C(0x00a0050440000400), "IEC...176.4KHZ_4CH", "IEC61883-6_AM824_MBLA_176.4KHZ_4CH"},
-            {UINT64_C(0x00a0050540000500), "IEC...176.4KHZ_5CH", "IEC61883-6_AM824_MBLA_176.4KHZ_5CH"},
-            {UINT64_C(0x00a0050640000600), "IEC...176.4KHZ_6CH", "IEC61883-6_AM824_MBLA_176.4KHZ_6CH"},
-            {UINT64_C(0x00a0050740000700), "IEC...176.4KHZ_7CH", "IEC61883-6_AM824_MBLA_176.4KHZ_7CH"},
-            {UINT64_C(0x00a0050840000800), "IEC...176.4KHZ_8CH", "IEC61883-6_AM824_MBLA_176.4KHZ_8CH"},
-
-            // 192 kHz, 1..8 channel
-            {UINT64_C(0x00A0060140000100), "IEC...192KHZ_1CH", "IEC61883-6_AM824_MBLA_192KHZ_1CH"},
-            {UINT64_C(0x00A0060240000200), "IEC...192KHZ_2CH", "IEC61883-6_AM824_MBLA_192KHZ_2CH"},
-            {UINT64_C(0x00A0060340000300), "IEC...192KHZ_3CH", "IEC61883-6_AM824_MBLA_192KHZ_3CH"},
-            {UINT64_C(0x00A0060440000400), "IEC...192KHZ_4CH", "IEC61883-6_AM824_MBLA_192KHZ_4CH"},
-            {UINT64_C(0x00A0060540000500), "IEC...192KHZ_5CH", "IEC61883-6_AM824_MBLA_192KHZ_5CH"},
-            {UINT64_C(0x00A0060640000600), "IEC...192KHZ_6CH", "IEC61883-6_AM824_MBLA_192KHZ_6CH"},
-            {UINT64_C(0x00A0060740000700), "IEC...192KHZ_7CH", "IEC61883-6_AM824_MBLA_192KHZ_7CH"},
-            {UINT64_C(0x00A0060840000800), "IEC...192KHZ_8CH", "IEC61883-6_AM824_MBLA_192KHZ_8CH"},
-
-            {UINT64_C(0x0000000000000000), "UNKNOWN", "UNKNOWN"}};
-
     const char * STDCALL aem_cmd_value_to_name(uint16_t cmd_value)
     {
         if (cmd_value < avdecc_lib::TOTAL_NUM_OF_AEM_CMDS)
@@ -592,110 +515,6 @@ namespace utility
         return (uint32_t)0xffff;
     }
 
-    uint64_t STDCALL ieee1722_format_name_to_value(const char * format_name)
-    {
-        struct ieee1722_format * p = &ieee1722_format_table[0];
-
-        while (p->fmt != UINT64_C(0x0000000000000000))
-        {
-            if (strcmp(p->str, format_name) == 0)
-            {
-                return p->fmt;
-            }
-
-            p++;
-        }
-
-        return (uint64_t)0xffff;
-    }
-
-    const char * STDCALL ieee1722_format_name_to_description(const char * format_name)
-    {
-        struct ieee1722_format * p = &ieee1722_format_table[0];
-
-        while (p->fmt != UINT64_C(0x0000000000000000))
-        {
-            if (strcmp(p->str, format_name) == 0)
-            {
-                return p->description;
-            }
-
-            p++;
-        }
-
-        return "UNKNOWN";
-    }
-
-    const char * STDCALL ieee1722_format_value_to_name(uint64_t format)
-    {
-        struct ieee1722_format * p = &ieee1722_format_table[0];
-
-        while (p->fmt != 0)
-        {
-            if (p->fmt == format)
-            {
-                return p->str;
-            }
-
-            p++;
-        }
-
-        return "UNKNOWN";
-    }
-
-    uint64_t STDCALL ieee1722_format_index_to_value(unsigned int index)
-    {
-        struct ieee1722_format * p;
-        unsigned int format_table_size = (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
-
-        if (index < format_table_size)
-        {
-            p = &ieee1722_format_table[index];
-            return p->fmt;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    const char * STDCALL ieee1722_format_index_to_description(unsigned int index)
-    {
-        struct ieee1722_format * p;
-        unsigned int format_table_size = (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
-
-        if (index < format_table_size)
-        {
-            p = &ieee1722_format_table[index];
-            return p->description;
-        }
-        else
-        {
-            return "UNKNOWN";
-        }
-    }
-
-    const char * STDCALL ieee1722_format_index_to_name(unsigned int index)
-    {
-        struct ieee1722_format * p;
-        unsigned int format_table_size = (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
-
-        if (index < format_table_size)
-        {
-            p = &ieee1722_format_table[index];
-            return p->str;
-        }
-        else
-        {
-            return "UNKNOWN";
-        }
-    }
-
-    unsigned int STDCALL get_ieee1722_format_table_size()
-    {
-        return (sizeof(ieee1722_format_table) / sizeof(ieee1722_format_table[0]));
-    }
-
     const char * STDCALL end_station_mac_to_string(uint64_t end_station_mac)
     {
         static std::string mac_substring;
@@ -728,23 +547,27 @@ namespace utility
     }
     
     
-    std::string _ieee1722_format_value_to_name(uint64_t format_value)
+    const char * ieee1722_format_value_to_name(uint64_t format_value)
     {
+        static std::string format_name = "UNKNOWN";
         ieee1722_stream_format sf(format_value);
         switch (sf.subtype())
         {
         case ieee1722_stream_format::IIDC_61883:
-            return iec_61883_iidc_format(format_value).name();
+            format_name = iec_61883_iidc_format(format_value).name();
+            break;
         case ieee1722_stream_format::AAF:
-            return aaf_format(format_value).name();
+            format_name = aaf_format(format_value).name();
+            break;
         case ieee1722_stream_format::CRF:
-            return crf_format(format_value).name();
+            format_name = crf_format(format_value).name();
+            break;
         }
         
-        return "UNKNOWN";
+        return format_name.c_str();
     }
     
-    uint64_t _ieee1722_format_name_to_value(const char * format_name)
+    uint64_t ieee1722_format_name_to_value(const char * format_name)
     {
         ieee1722_stream_format sf(format_name);
         switch (sf.subtype())

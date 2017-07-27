@@ -214,11 +214,6 @@ private:
     int cmd_view_details(int total_matched, std::vector<cli_argument *> args);
 
     ///
-    /// Display all stream formats.
-    ///
-    int cmd_view_stream_formats(int total_matched, std::vector<cli_argument *> args);
-
-    ///
     /// Display information for the specified descriptor using the current end station, entity, and configuration setting.
     ///
     int cmd_view_descriptor(int total_matched, std::vector<cli_argument *> args);
