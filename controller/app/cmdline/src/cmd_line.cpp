@@ -2707,7 +2707,7 @@ int cmd_line::cmd_read_descriptor(int total_matched, std::vector<cli_argument *>
 
 int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument *> args)
 {
-    uint8_t * instream_end_station_name;
+    uint8_t * stream_end_station_name;
     const char * format;
     size_t stream_input_desc_count = 0;
     size_t stream_output_desc_count = 0;
@@ -2729,7 +2729,7 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument *> args)
 
         avdecc_lib::entity_descriptor_response * entity_desc_resp = entity->get_entity_response();
         end_station_mac = end_station->mac();
-        instream_end_station_name = entity_desc_resp->entity_name();
+        stream_end_station_name = entity_desc_resp->entity_name();
         stream_input_desc_count = configuration->stream_input_desc_count();
 
         for (uint32_t j = 0; j < stream_input_desc_count; j++)
@@ -2751,7 +2751,7 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument *> args)
                     avdecc_lib::strings_descriptor_response * strings_resp_ref = desc->get_strings_response();
                     input_stream_name = strings_resp_ref->get_string_by_index(string_index);
 
-                    atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
+                    atomic_cout << std::setw(5) << i << std::setw(25) << stream_end_station_name
                                 << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
                                 << std::setw(3) << j << std::setw(19) << input_stream_name << "   "
                                 << std::setw(14) << format << std::endl;
@@ -2763,7 +2763,7 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument *> args)
             {
                 input_stream_name = desc_desc_name;
 
-                atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
+                atomic_cout << std::setw(5) << i << std::setw(25) << stream_end_station_name
                             << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
                             << std::setw(3) << j << std::setw(19) << input_stream_name << "   "
                             << std::setw(14) << format << std::endl;
@@ -2790,6 +2790,7 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument *> args)
         avdecc_lib::entity_descriptor_response * entity_desc_resp = entity->get_entity_response();
         end_station_mac = end_station->mac();
         stream_output_desc_count = configuration->stream_output_desc_count();
+	stream_end_station_name = entity_desc_resp->entity_name();
 
         for (uint32_t j = 0; j < stream_output_desc_count; j++)
         {
@@ -2810,7 +2811,7 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument *> args)
                     avdecc_lib::strings_descriptor_response * strings_resp_ref = desc->get_strings_response();
                     output_stream_name = strings_resp_ref->get_string_by_index(string_index);
 
-                    atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
+                    atomic_cout << std::setw(5) << i << std::setw(25) << stream_end_station_name
                                 << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
                                 << std::setw(3) << j << std::setw(19) << output_stream_name
                                 << "   " << std::setw(14) << format << std::endl;
@@ -2822,7 +2823,7 @@ int cmd_line::cmd_connect(int total_matched, std::vector<cli_argument *> args)
             {
                 output_stream_name = src_desc_name;
 
-                atomic_cout << std::setw(5) << i << std::setw(25) << instream_end_station_name
+                atomic_cout << std::setw(5) << i << std::setw(25) << stream_end_station_name
                             << avdecc_lib::utility::end_station_mac_to_string(end_station_mac) << "   "
                             << std::setw(3) << j << std::setw(19) << output_stream_name
                             << "   " << std::setw(14) << format << std::endl;
