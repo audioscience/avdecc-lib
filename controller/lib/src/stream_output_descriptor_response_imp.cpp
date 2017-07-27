@@ -155,7 +155,7 @@ const char * STDCALL stream_output_descriptor_response_imp::current_format_name(
                                                    JDKSAVDECC_DESCRIPTOR_STREAM_OFFSET_CURRENT_FORMAT],
                                            0);
 
-    return utility::ieee1722_format_value_to_name(current_format);
+    return utility::_ieee1722_format_value_to_name(current_format);
 }
 
 uint64_t STDCALL stream_output_descriptor_response_imp::current_format_value()
