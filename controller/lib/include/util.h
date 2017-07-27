@@ -98,36 +98,6 @@ namespace utility
     AVDECC_CONTROLLER_LIB32_API uint32_t STDCALL acmp_cmd_to_timeout(const uint32_t acmp_cmd);
 
     ///
-    /// Convert IEEE1722 format name to value.
-    ///
-    AVDECC_CONTROLLER_LIB32_API uint64_t STDCALL ieee1722_format_name_to_value(const char * format_name);
-
-    ///
-    /// Convert IEEE1722 format name to description.
-    ///
-    AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_name_to_description(const char * format_name);
-
-    ///
-    ///  Return IEEE1722 format value by index
-    ///
-    AVDECC_CONTROLLER_LIB32_API uint64_t STDCALL ieee1722_format_index_to_value(unsigned int index);
-
-    ///
-    ///  Return IEEE1722 format name by index
-    ///
-    AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_index_to_name(unsigned int index);
-
-    ///
-    ///  Return IEEE1722 format description by index
-    ///
-    AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_index_to_description(unsigned int index);
-
-    ///
-    /// Convert IEEE1722 format value to name.
-    ///
-    AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_value_to_name(uint64_t format_value);
-
-    ///
     /// Get IEEE1722 format table size
     ///
     AVDECC_CONTROLLER_LIB32_API unsigned int STDCALL get_ieee1722_format_table_size();
@@ -149,21 +119,17 @@ namespace utility
 
     ///
     /// Convert IEEE1722 stream format name to value.
-    /// Replacement for the soon to be deprecated:
-    /// \see ieee1722_format_name_to_value()
     ///
     /// \return 0 if the name is not recognized.
     ///
-    AVDECC_CONTROLLER_LIB32_API uint64_t _ieee1722_format_name_to_value(const char * format_name);
+    AVDECC_CONTROLLER_LIB32_API uint64_t ieee1722_format_name_to_value(const char * format_name);
     
     ///
     /// Convert IEEE1722 stream format value to name.
-    /// Replacement for the soon to be deprecated:
-    /// \see ieee1722_format_value_to_name()
     ///
     /// \return 'UNKNOWN' if the value cannot be decoded.
     ///
-    AVDECC_CONTROLLER_LIB32_API const char * _ieee1722_format_value_to_name(uint64_t format_value);
+    AVDECC_CONTROLLER_LIB32_API const char * ieee1722_format_value_to_name(uint64_t format_value);
     
     class ieee1722_stream_format
     {

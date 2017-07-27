@@ -546,14 +546,6 @@ void cmd_line::cmd_line_commands_init()
     view_descriptor_fmt->add_argument(new cli_argument_int(this, "d_i", "the descriptor index"));
     view_descriptor_cmd->add_format(view_descriptor_fmt);
 
-    // view stream format
-    cli_command * view_stream_formats_cmd = new cli_command();
-    view_cmd->add_sub_command("stream_formats", view_stream_formats_cmd);
-
-    cli_command_format * view_stream_formats_fmt = new cli_command_format("Display all possible stream formats.",
-                                                                          &cmd_line::cmd_view_stream_formats);
-    view_stream_formats_cmd->add_format(view_stream_formats_fmt);
-
     // show
     cli_command * show_cmd = new cli_command();
     commands.add_sub_command("show", show_cmd);
@@ -1776,26 +1768,6 @@ int cmd_line::cmd_view_all(int total_matched, std::vector<cli_argument *> args)
     return 0;
 }
 
-int cmd_line::cmd_view_stream_formats(int total_matched, std::vector<cli_argument *> args)
-{
-    unsigned int format_table_size = avdecc_lib::utility::get_ieee1722_format_table_size();
-
-    atomic_cout << "   "
-                << "Stream Type" << std::setw(4) << "|"
-                << "    "
-                << "Stream Description" << std::setw(10) << std::endl;
-    atomic_cout << "----------------------------------------------------" << std::endl;
-
-    for (unsigned int i = 0; i < format_table_size - 1; i++)
-    {
-        atomic_cout << i << " ";
-        atomic_cout << avdecc_lib::utility::ieee1722_format_index_to_name(i) << " ";
-        atomic_cout << avdecc_lib::utility::ieee1722_format_index_to_description(i) << std::endl;
-    }
-
-    return 0;
-}
-
 int cmd_line::cmd_view_details(int total_matched, std::vector<cli_argument *> args)
 {
     uint32_t end_station_index = current_end_station;
@@ -2247,7 +2219,7 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
             for (int i = 0; i < stream_input_resp_ref->number_of_formats(); i++)
             {
                 uint64_t current_format_value = stream_input_resp_ref->get_supported_stream_fmt_by_index(i);
-                const char * current_format_name = avdecc_lib::utility::_ieee1722_format_value_to_name(current_format_value);
+                const char * current_format_name = avdecc_lib::utility::ieee1722_format_value_to_name(current_format_value);
                 if (strcmp(current_format_name, "UNKNOWN"))
                 {
                     atomic_cout << "\tstream_format_" << i << " = " << current_format_name << std::endl;
@@ -2301,7 +2273,7 @@ int cmd_line::do_view_descriptor(std::string desc_name, uint16_t desc_index)
             for (int i = 0; i < stream_output_resp_ref->number_of_formats(); i++)
             {
                 uint64_t current_format_value = stream_output_resp_ref->get_supported_stream_fmt_by_index(i);
-                const char * current_format_name = avdecc_lib::utility::_ieee1722_format_value_to_name(current_format_value);
+                const char * current_format_name = avdecc_lib::utility::ieee1722_format_value_to_name(current_format_value);
                 if (strcmp(current_format_name, "UNKNOWN"))
                 {
                     atomic_cout << "\tstream_format_" << i << " = " << current_format_name << std::endl;
@@ -3821,7 +3793,7 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument 
     if (new_stream_format.at(0) == 'I')
     {
         std::string stream_format_substring = new_stream_format.substr(20);
-        stream_format_value = avdecc_lib::utility::_ieee1722_format_name_to_value(new_stream_format.c_str());
+        stream_format_value = avdecc_lib::utility::ieee1722_format_name_to_value(new_stream_format.c_str());
     }
     else if (new_stream_format.at(0) == '?')
     {
@@ -3839,7 +3811,7 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument 
             for (int i = 0; i < stream_input_resp_ref->number_of_formats(); i++)
             {
                 uint64_t current_format_value = stream_input_resp_ref->get_supported_stream_fmt_by_index(i);
-                std::string current_format_name = avdecc_lib::utility::_ieee1722_format_value_to_name(current_format_value);
+                std::string current_format_name = avdecc_lib::utility::ieee1722_format_value_to_name(current_format_value);
                 if (current_format_name != "UNKNOWN")
                     atomic_cout << "\tstream_format_" << i << " = " << current_format_name << std::endl;
                 else
@@ -3863,7 +3835,7 @@ int cmd_line::cmd_set_stream_format(int total_matched, std::vector<cli_argument 
             for (int i = 0; i < stream_output_resp_ref->number_of_formats(); i++)
             {
                 uint64_t current_format_value = stream_output_resp_ref->get_supported_stream_fmt_by_index(i);
-                std::string current_format_name = avdecc_lib::utility::_ieee1722_format_value_to_name(current_format_value);
+                std::string current_format_name = avdecc_lib::utility::ieee1722_format_value_to_name(current_format_value);
                 if (current_format_name != "UNKNOWN")
                     atomic_cout << "\tstream_format_" << i << " = " << current_format_name << std::endl;
                 else
@@ -3998,7 +3970,7 @@ int cmd_line::cmd_get_stream_format(int total_matched, std::vector<cli_argument 
         if (status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
             avdecc_lib::stream_input_get_stream_format_response * stream_input_resp_ref = stream_input_desc_ref->get_stream_input_get_stream_format_response();
-            stream_format = avdecc_lib::utility::_ieee1722_format_value_to_name(stream_input_resp_ref->get_stream_format());
+            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_input_resp_ref->get_stream_format());
             if (stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_input_resp_ref->get_stream_format() << std::endl;
@@ -4020,7 +3992,7 @@ int cmd_line::cmd_get_stream_format(int total_matched, std::vector<cli_argument 
         if (status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
             avdecc_lib::stream_output_get_stream_format_response * stream_output_resp_ref = stream_output_desc_ref->get_stream_output_get_stream_format_response();
-            stream_format = avdecc_lib::utility::_ieee1722_format_value_to_name(stream_output_resp_ref->get_stream_format());
+            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_output_resp_ref->get_stream_format());
             if (stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_output_resp_ref->get_stream_format() << std::endl;
@@ -4128,7 +4100,7 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument *>
         if (status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
             avdecc_lib::stream_input_get_stream_info_response * stream_input_resp_ref = stream_input_desc_ref->get_stream_input_get_stream_info_response();
-            stream_format = avdecc_lib::utility::_ieee1722_format_value_to_name(stream_input_resp_ref->get_stream_info_stream_format());
+            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_input_resp_ref->get_stream_info_stream_format());
             if (stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_input_resp_ref->get_stream_info_stream_format() << std::endl;
@@ -4163,7 +4135,7 @@ int cmd_line::cmd_get_stream_info(int total_matched, std::vector<cli_argument *>
         {
             avdecc_lib::stream_output_get_stream_info_response * stream_output_resp_ref = stream_output_desc_ref->get_stream_output_get_stream_info_response();
 
-            stream_format = avdecc_lib::utility::_ieee1722_format_value_to_name(stream_output_resp_ref->get_stream_info_stream_format());
+            stream_format = avdecc_lib::utility::ieee1722_format_value_to_name(stream_output_resp_ref->get_stream_info_stream_format());
             if (stream_format == "UNKNOWN")
             {
                 atomic_cout << "Stream format: 0x" << std::hex << stream_output_resp_ref->get_stream_info_stream_format() << std::endl;
