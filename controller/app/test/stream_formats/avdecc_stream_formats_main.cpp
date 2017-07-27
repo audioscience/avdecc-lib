@@ -167,7 +167,7 @@ int main()
         struct ieee1722_format * p = &ieee1722_format_table[i];
         
         // value -> name
-        std::string translated_name = avdecc_lib::utility::_ieee1722_format_value_to_name(p->fmt_value);
+        std::string translated_name = avdecc_lib::utility::ieee1722_format_value_to_name(p->fmt_value);
         if (translated_name.compare(p->fmt_name) != 0)
         {
             std::cout << "ERROR: value -> name, " << std::hex << p->fmt_value <<
@@ -176,7 +176,7 @@ int main()
         }
         
         // name -> value
-        uint64_t translated_value = avdecc_lib::utility::_ieee1722_format_name_to_value(p->fmt_name.c_str());
+        uint64_t translated_value = avdecc_lib::utility::ieee1722_format_name_to_value(p->fmt_name.c_str());
         if (translated_value != p->fmt_value)
         {
             std::cout << "ERROR: name -> value, " << p->fmt_name <<
