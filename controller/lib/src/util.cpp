@@ -728,20 +728,24 @@ namespace utility
     }
     
     
-    std::string _ieee1722_format_value_to_name(uint64_t format_value)
+    const char * _ieee1722_format_value_to_name(uint64_t format_value)
     {
+        static std::string format_name = "UNKNOWN";
         ieee1722_stream_format sf(format_value);
         switch (sf.subtype())
         {
         case ieee1722_stream_format::IIDC_61883:
-            return iec_61883_iidc_format(format_value).name();
+            format_name = iec_61883_iidc_format(format_value).name();
+            break;
         case ieee1722_stream_format::AAF:
-            return aaf_format(format_value).name();
+            format_name = aaf_format(format_value).name();
+            break;
         case ieee1722_stream_format::CRF:
-            return crf_format(format_value).name();
+            format_name = crf_format(format_value).name();
+            break;
         }
         
-        return "UNKNOWN";
+        return format_name.c_str();
     }
     
     uint64_t _ieee1722_format_name_to_value(const char * format_name)

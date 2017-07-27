@@ -163,7 +163,7 @@ namespace utility
     ///
     /// \return 'UNKNOWN' if the value cannot be decoded.
     ///
-    AVDECC_CONTROLLER_LIB32_API std::string _ieee1722_format_value_to_name(uint64_t format_value);
+    AVDECC_CONTROLLER_LIB32_API const char * _ieee1722_format_value_to_name(uint64_t format_value);
     
     class ieee1722_stream_format
     {
