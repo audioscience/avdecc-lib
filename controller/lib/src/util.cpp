@@ -838,6 +838,35 @@ namespace utility
         to_string();
     }
     
+    unsigned int aaf_format::sample_rate()
+    {
+        switch (m_nsr_value)
+        {
+        case NSR_8KHZ:
+            return 8000;
+        case NSR_16KHZ:
+            return 16000;
+        case NSR_32KHZ:
+            return 32000;
+        case NSR_44_1KHZ:
+            return 44100;
+        case NSR_48KHZ:
+            return 48000;
+        case NSR_88_2KHZ:
+            return 88200;
+        case NSR_96KHZ:
+            return 96000;
+        case NSR_176_4KHZ:
+            return 176400;
+        case NSR_192KHZ:
+            return 192000;
+        case NSR_24KHZ:
+            return 24000;
+        }
+        
+        return 0;
+    }
+
     void aaf_format::to_string()
     {
         std::stringstream ss;
@@ -1024,6 +1053,27 @@ namespace utility
             decode_iidc_format();
         
         to_string();
+    }
+    
+    unsigned int iec_61883_iidc_format::sample_rate()
+    {
+        switch (m_fdf_sfc_value)
+        {
+        case FDF_SFC_44_1KHZ:
+            return 44100;
+        case FDF_SFC_48KHZ:
+            return 48000;
+        case FDF_SFC_88_2KHZ:
+            return 88200;
+        case FDF_SFC_96KHZ:
+            return 96000;
+        case FDF_SFC_176_4KHZ:
+            return 176400;
+        case FDF_SFC_192KHZ:
+            return 192000;
+        }
+        
+        return 0;
     }
     
     void iec_61883_iidc_format::to_string()

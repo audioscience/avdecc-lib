@@ -169,6 +169,12 @@ namespace utility
         crf_format(uint64_t format_value);
         crf_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
         
+        unsigned int type() { return m_type; }
+        unsigned int timestamp_interval() { return m_timestamp_interval; }
+        unsigned int timestamps_per_pdu() { return m_timestamps_per_pdu; }
+        unsigned int pull_value() { return m_pull_value; }
+        unsigned int base_frequency() { return m_base_frequency; }
+        
         enum Crf_types
         {
             CRF_USER = 0,
@@ -212,6 +218,15 @@ namespace utility
         aaf_format(uint64_t format_value);
         aaf_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
         
+        unsigned int sample_rate();
+        unsigned int channel_count() { return m_channels_per_frame; }
+        unsigned int upto() { return m_upto; }
+        unsigned int nsr_value() { return m_nsr_value; }
+        unsigned int packetization_type() { return m_packetization_type; }
+        unsigned int bit_depth() { return m_bit_depth; }
+        unsigned int channels_per_frame() { return m_channels_per_frame; }
+        unsigned int samples_per_frame() { return m_samples_per_frame; }
+
         enum Aaf_nsr_values
         {
             NSR_8KHZ = 0x01,
@@ -237,7 +252,7 @@ namespace utility
 
     private:
         // AAF common
-        bool m_upto = false;
+        unsigned int m_upto = 0;
         unsigned int m_nsr_value = 0;
         unsigned int m_packetization_type = 0;
 
@@ -264,6 +279,22 @@ namespace utility
         iec_61883_iidc_format(uint64_t format_value);
         iec_61883_iidc_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
 
+        unsigned int sample_rate();
+        unsigned int channel_count() { return m_dbs; }
+        unsigned int sf() { return m_sf; }
+        unsigned int iec61883_type() { return m_iec61883_type; }
+        unsigned int packetization_type_value() { return m_packetization_type_value; }
+        unsigned int fdf_sfc_value() { return m_fdf_sfc_value; }
+        unsigned int dbs() { return m_dbs; }
+        unsigned int blocking() { return m_blocking; }
+        unsigned int nonblocking() { return m_nonblocking; }
+        unsigned int upto() { return m_upto; }
+        unsigned int synchronous() { return m_synchronous; }
+        unsigned int iec60958_count() { return m_iec60958_count; }
+        unsigned int mbla_count() { return m_mbla_count; }
+        unsigned int midi_count() { return m_midi_count; }
+        unsigned int smpte_count() { return m_smpte_count; }
+        
         enum Iec61883_types
         {
             IEC_61883_4 = 0x20,
