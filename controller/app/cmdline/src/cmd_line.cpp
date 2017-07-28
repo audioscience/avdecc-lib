@@ -384,7 +384,7 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("select", select_cmd);
 
     cli_command_format * select_fmt = new cli_command_format(
-        "Change the setting of End Station, entity, and configuration.",
+        "Change the End Station, entity, and configuration selection.",
         &cmd_line::cmd_select);
     select_fmt->add_argument(new cli_argument_end_station(this, "e_s", END_STATION_HELP));
     select_fmt->add_argument(new cli_argument_int(this, "e_i", "the entity index"));
@@ -392,7 +392,7 @@ void cmd_line::cmd_line_commands_init()
     select_cmd->add_format(select_fmt);
 
     cli_command_format * show_select_fmt = new cli_command_format(
-        "Display the current End Station, Entity, and Configuration setting.",
+        "Display the currently selected End Station, Entity, and Configuration.",
         &cmd_line::cmd_show_select);
     select_cmd->add_format(show_select_fmt);
 
