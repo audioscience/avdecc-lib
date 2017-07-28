@@ -134,8 +134,8 @@ namespace utility
     class ieee1722_stream_format
     {
     public:
-        ieee1722_stream_format(uint64_t format_value);
-        ieee1722_stream_format(const char * format_str);
+        AVDECC_CONTROLLER_LIB32_API ieee1722_stream_format(uint64_t format_value);
+        AVDECC_CONTROLLER_LIB32_API ieee1722_stream_format(const char * format_str);
         
         std::string name() { return m_format_name; }
         uint64_t value() { return m_format_value; }
@@ -166,8 +166,8 @@ namespace utility
     class crf_format : public ieee1722_stream_format
     {
     public:
-        crf_format(uint64_t format_value);
-        crf_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
+        AVDECC_CONTROLLER_LIB32_API crf_format(uint64_t format_value);
+        AVDECC_CONTROLLER_LIB32_API crf_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
         
         unsigned int type() { return m_type; }
         unsigned int timestamp_interval() { return m_timestamp_interval; }
@@ -215,10 +215,10 @@ namespace utility
     class aaf_format : public ieee1722_stream_format
     {
     public:
-        aaf_format(uint64_t format_value);
-        aaf_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
+        AVDECC_CONTROLLER_LIB32_API aaf_format(uint64_t format_value);
+        AVDECC_CONTROLLER_LIB32_API aaf_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
         
-        unsigned int sample_rate();
+        AVDECC_CONTROLLER_LIB32_API unsigned int sample_rate();
         unsigned int channel_count() { return m_channels_per_frame; }
         unsigned int upto() { return m_upto; }
         unsigned int nsr_value() { return m_nsr_value; }
@@ -276,10 +276,10 @@ namespace utility
     class iec_61883_iidc_format : public ieee1722_stream_format
     {
     public:
-        iec_61883_iidc_format(uint64_t format_value);
-        iec_61883_iidc_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
+        AVDECC_CONTROLLER_LIB32_API iec_61883_iidc_format(uint64_t format_value);
+        AVDECC_CONTROLLER_LIB32_API iec_61883_iidc_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
 
-        unsigned int sample_rate();
+        AVDECC_CONTROLLER_LIB32_API unsigned int sample_rate();
         unsigned int channel_count() { return m_dbs; }
         unsigned int sf() { return m_sf; }
         unsigned int iec61883_type() { return m_iec61883_type; }
