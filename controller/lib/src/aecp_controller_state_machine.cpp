@@ -257,11 +257,11 @@ int aecp_controller_state_machine::update_inflight_for_rcvd_resp(void *& notific
     case JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE: // Fallthrough intentional
         if (u_field)
         {
-            state_rcvd_unsolicited(cmd_frame);
+            return state_rcvd_unsolicited(cmd_frame);
         }
         else
         {
-            state_rcvd_resp(notification_id, cmd_frame);
+            return state_rcvd_resp(notification_id, cmd_frame);
         }
         break;
     default:

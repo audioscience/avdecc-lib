@@ -234,7 +234,15 @@ int end_station_imp::proc_read_desc_resp(void *& notification_id, const uint8_t 
     status = aem_cmd_read_desc_resp.aem_header.aecpdu_header.header.status;
     u_field = aem_cmd_read_desc_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
-    aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
+    int retval = aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
+    if (retval == -1)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "0x%llx, aem_cmd_read_desc_resp (%s, %d).  Not found in inflight - skipping",
+                                  end_station_entity_id,
+                                  utility::aem_desc_value_to_name(desc_type), desc_index);
+
+        return 0;
+    }
 
     bool store_descriptor = false;
     if (status == avdecc_lib::AEM_STATUS_SUCCESS)
@@ -806,13 +814,17 @@ int end_station_imp::proc_rcvd_aem_resp(void *& notification_id,
     {
         if (current_entity_desc >= entity_desc_vec.size())
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_aem_resp entity desc not present, skipping");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_aem_resp (0x%llx, %s) entity desc not present, skipping",
+                                      end_station_entity_id,
+                                      utility::aem_cmd_value_to_name(cmd_type));
             return 0;
         }
         
         if (current_config_desc >= entity_desc_vec.at(current_entity_desc)->config_desc_count())
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_aem_resp config desc not present, skipping");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_aem_resp (0x%llx, %s) config desc not present, skipping",
+                                      end_station_entity_id,
+                                      utility::aem_cmd_value_to_name(cmd_type));
             return 0;
         }
     }

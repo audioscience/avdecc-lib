@@ -44,10 +44,8 @@ entity_descriptor_imp::entity_descriptor_imp(end_station_imp * end_station_obj, 
 
 entity_descriptor_imp::~entity_descriptor_imp()
 {
-    for (uint32_t config_vec_index = 0; config_vec_index < config_desc_vec.size(); config_vec_index++)
-    {
-        delete config_desc_vec.at(config_vec_index);
-    }
+    for (auto it = config_desc_map.begin(); it != config_desc_map.end(); it++)
+        delete it->second;
 }
 
 uint16_t STDCALL entity_descriptor_imp::current_configuration()
@@ -86,26 +84,28 @@ entity_counters_response * STDCALL entity_descriptor_imp::get_entity_counters_re
 
 void entity_descriptor_imp::store_config_desc(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len)
 {
-    config_desc_vec.push_back(new configuration_descriptor_imp(end_station_obj, frame, pos, frame_len));
+    uint16_t config_desc_index = jdksavdecc_descriptor_configuration_get_descriptor_index(frame, pos);
+    const auto it = config_desc_map.find(config_desc_index);
+    if (it != config_desc_map.end())
+        delete it->second;
+    
+    config_desc_map[config_desc_index] = new configuration_descriptor_imp(end_station_obj, frame, pos, frame_len);
 }
 
 size_t STDCALL entity_descriptor_imp::config_desc_count()
 {
-    return config_desc_vec.size();
+    return config_desc_map.size();
 }
 
 configuration_descriptor * STDCALL entity_descriptor_imp::get_config_desc_by_index(uint16_t config_desc_index)
 {
-    bool is_valid = (config_desc_index < config_desc_vec.size());
+    const auto it = config_desc_map.find(config_desc_index);
+    if (it != config_desc_map.end())
+        return it->second;
 
-    if (is_valid)
-    {
-        return config_desc_vec.at(config_desc_index);
-    }
-    else
-    {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "get_config_desc_by_index error");
-    }
+    log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "0x%llx, get_config_desc_by_index(%d) error",
+                              base_end_station_imp_ref->entity_id(),
+                              config_desc_index);
 
     return NULL;
 }
