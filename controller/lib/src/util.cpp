@@ -31,6 +31,7 @@
 #include <utility>
 #include <map>
 #include <vector>
+#include <set>
 #include <algorithm>
 #include <string.h>
 #include "enumeration.h"
@@ -546,10 +547,11 @@ namespace utility
         }
     }
     
+    static std::set<std::string> ieee1722_format_names;
     
     const char * ieee1722_format_value_to_name(uint64_t format_value)
     {
-        static std::string format_name = "UNKNOWN";
+        std::string format_name = "UNKNOWN";
         ieee1722_stream_format sf(format_value);
         switch (sf.subtype())
         {
@@ -564,7 +566,11 @@ namespace utility
             break;
         }
         
-        return format_name.c_str();
+        auto it = ieee1722_format_names.find(format_name);
+        if (it == ieee1722_format_names.end())
+            return "UNKNOWN";
+        else
+           return (*it).c_str();
     }
     
     uint64_t ieee1722_format_name_to_value(const char * format_name)
@@ -677,6 +683,7 @@ namespace utility
                     ss << it->second<< IEEE1722_FORMAT_STR_DELIM;
                     ss << std::to_string(m_base_frequency) << "HZ";
                     m_format_name = ss.str();
+                    ieee1722_format_names.insert(m_format_name);
                 }
             }
         }
@@ -888,6 +895,7 @@ namespace utility
                         ss << std::to_string(m_channels_per_frame) << "CH" << IEEE1722_FORMAT_STR_DELIM;
                         ss << std::to_string(m_samples_per_frame) << "-SAMPLES";
                         m_format_name = ss.str();
+                        ieee1722_format_names.insert(m_format_name);
                     }
                 }
             }
@@ -1102,6 +1110,7 @@ namespace utility
                         ss << it->second << IEEE1722_FORMAT_STR_DELIM;
                         ss << std::to_string(m_dbs) << "CH";
                         m_format_name = ss.str();
+                        ieee1722_format_names.insert(m_format_name);
                     }
                 }
             }

@@ -27,4 +27,4 @@
  * AVDECC Controller version
  */
 
-#define AVDECC_CONTROLLER_VERSION "v0.6.17"
+#define AVDECC_CONTROLLER_VERSION "v0.6.19"
