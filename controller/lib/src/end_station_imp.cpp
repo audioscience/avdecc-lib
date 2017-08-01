@@ -814,13 +814,17 @@ int end_station_imp::proc_rcvd_aem_resp(void *& notification_id,
     {
         if (current_entity_desc >= entity_desc_vec.size())
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_aem_resp entity desc not present, skipping");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_aem_resp (0x%llx, %s) entity desc not present, skipping",
+                                      end_station_entity_id,
+                                      utility::aem_cmd_value_to_name(cmd_type));
             return 0;
         }
         
         if (current_config_desc >= entity_desc_vec.at(current_entity_desc)->config_desc_count())
         {
-            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_aem_resp config desc not present, skipping");
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_rcvd_aem_resp (0x%llx, %s) config desc not present, skipping",
+                                      end_station_entity_id,
+                                      utility::aem_cmd_value_to_name(cmd_type));
             return 0;
         }
     }
