@@ -41,7 +41,7 @@ namespace avdecc_lib
 class entity_descriptor_imp : public entity_descriptor, public virtual descriptor_base_imp
 {
 private:
-    std::vector<configuration_descriptor_imp *> config_desc_vec;                       // Store a list of CONFIGURATION descriptor objects
+    std::map<uint16_t, configuration_descriptor_imp *> config_desc_map;                // Store a map of CONFIGURATION descriptor objects
     struct jdksavdecc_aem_command_acquire_entity_response aem_cmd_acquire_entity_resp; // Store the response received after sending a ACQUIRE_ENTITY command.
     struct jdksavdecc_aem_command_lock_entity_response aem_cmd_lock_entity_resp;       // Store the response received after sending a LOCK_ENTITY command.
     struct jdksavdecc_aem_command_reboot_response aem_cmd_reboot_resp;
