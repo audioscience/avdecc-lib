@@ -549,6 +549,45 @@ namespace utility
     
     static std::set<std::string> ieee1722_format_names;
     
+    unsigned int ieee1722_format_value_extract_subtype(uint64_t format_value)
+    {
+        return ieee1722_stream_format(format_value).subtype();
+    }
+
+    unsigned int ieee1722_format_value_extract_sample_rate(uint64_t format_value)
+    {
+        unsigned int sample_rate = 0;
+        ieee1722_stream_format sf(format_value);
+        switch (sf.subtype())
+        {
+        case ieee1722_stream_format::IIDC_61883:
+            sample_rate = iec_61883_iidc_format(format_value).sample_rate();
+            break;
+        case ieee1722_stream_format::AAF:
+            sample_rate = aaf_format(format_value).sample_rate();
+            break;
+        }
+        
+        return sample_rate;
+    }
+
+    unsigned int ieee1722_format_value_extract_channel_count(uint64_t format_value)
+    {
+        unsigned int channel_count = 0;
+        ieee1722_stream_format sf(format_value);
+        switch (sf.subtype())
+        {
+        case ieee1722_stream_format::IIDC_61883:
+            channel_count = iec_61883_iidc_format(format_value).channel_count();
+            break;
+        case ieee1722_stream_format::AAF:
+            channel_count = aaf_format(format_value).channel_count();
+            break;
+        }
+        
+        return channel_count;
+    }
+
     const char * ieee1722_format_value_to_name(uint64_t format_value)
     {
         std::string format_name = "UNKNOWN";
