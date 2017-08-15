@@ -549,12 +549,12 @@ namespace utility
     
     static std::set<std::string> ieee1722_format_names;
     
-    unsigned int ieee1722_format_value_to_subtype(uint64_t format_value)
+    unsigned int ieee1722_format_value_extract_subtype(uint64_t format_value)
     {
         return ieee1722_stream_format(format_value).subtype();
     }
 
-    unsigned int ieee1722_format_value_to_sample_rate(uint64_t format_value)
+    unsigned int ieee1722_format_value_extract_sample_rate(uint64_t format_value)
     {
         unsigned int sample_rate = 0;
         ieee1722_stream_format sf(format_value);
@@ -571,7 +571,7 @@ namespace utility
         return sample_rate;
     }
 
-    unsigned int ieee1722_format_value_to_channel_count(uint64_t format_value)
+    unsigned int ieee1722_format_value_extract_channel_count(uint64_t format_value)
     {
         unsigned int channel_count = 0;
         ieee1722_stream_format sf(format_value);
