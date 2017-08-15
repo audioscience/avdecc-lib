@@ -31,6 +31,7 @@
 
 #include "avdecc-lib_build.h"
 #include <stdint.h>
+#include <string>
 
 namespace avdecc_lib
 {
@@ -97,36 +98,6 @@ namespace utility
     AVDECC_CONTROLLER_LIB32_API uint32_t STDCALL acmp_cmd_to_timeout(const uint32_t acmp_cmd);
 
     ///
-    /// Convert IEEE1722 format name to value.
-    ///
-    AVDECC_CONTROLLER_LIB32_API uint64_t STDCALL ieee1722_format_name_to_value(const char * format_name);
-
-    ///
-    /// Convert IEEE1722 format name to description.
-    ///
-    AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_name_to_description(const char * format_name);
-
-    ///
-    ///  Return IEEE1722 format value by index
-    ///
-    AVDECC_CONTROLLER_LIB32_API uint64_t STDCALL ieee1722_format_index_to_value(unsigned int index);
-
-    ///
-    ///  Return IEEE1722 format name by index
-    ///
-    AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_index_to_name(unsigned int index);
-
-    ///
-    ///  Return IEEE1722 format description by index
-    ///
-    AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_index_to_description(unsigned int index);
-
-    ///
-    /// Convert IEEE1722 format value to name.
-    ///
-    AVDECC_CONTROLLER_LIB32_API const char * STDCALL ieee1722_format_value_to_name(uint64_t format_value);
-
-    ///
     /// Get IEEE1722 format table size
     ///
     AVDECC_CONTROLLER_LIB32_API unsigned int STDCALL get_ieee1722_format_table_size();
@@ -146,6 +117,242 @@ namespace utility
     ///
     AVDECC_CONTROLLER_LIB32_API void convert_eui48_to_uint64(const uint8_t value[6], uint64_t & new_value);
 
+    ///
+    /// Convert IEEE1722 stream format name to value.
+    ///
+    /// \return 0 if the name is not recognized.
+    ///
+    AVDECC_CONTROLLER_LIB32_API uint64_t ieee1722_format_name_to_value(const char * format_name);
+    
+    ///
+    /// Convert IEEE1722 stream format value to name.
+    ///
+    /// \return 'UNKNOWN' if the value cannot be decoded.
+    ///
+    AVDECC_CONTROLLER_LIB32_API const char * ieee1722_format_value_to_name(uint64_t format_value);
+    
+    class ieee1722_stream_format
+    {
+    public:
+        AVDECC_CONTROLLER_LIB32_API ieee1722_stream_format(uint64_t format_value);
+        AVDECC_CONTROLLER_LIB32_API ieee1722_stream_format(const char * format_str);
+        
+        std::string name() { return m_format_name; }
+        uint64_t value() { return m_format_value; }
+        
+        unsigned int version() { return m_version; }
+        unsigned int subtype() { return m_subtype; }
+        
+        enum ieee1722_stream_subtypes
+        {
+            IIDC_61883 = 0,
+            MMA_STREAM = 1,
+            AAF = 2,
+            CVF = 3,
+            CRF = 4
+        };
+        
+    protected:
+        uint64_t m_format_value = 0;
+        std::string m_format_name = "UNKNOWN";
+        
+        // 1722 Stream format common
+        unsigned int m_version = 0;
+        unsigned int m_subtype = 0;
+        
+        bool subtype_from_str(std::string subtype);
+    };
+    
+    class crf_format : public ieee1722_stream_format
+    {
+    public:
+        AVDECC_CONTROLLER_LIB32_API crf_format(uint64_t format_value);
+        AVDECC_CONTROLLER_LIB32_API crf_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
+        
+        unsigned int type() { return m_type; }
+        unsigned int timestamp_interval() { return m_timestamp_interval; }
+        unsigned int timestamps_per_pdu() { return m_timestamps_per_pdu; }
+        unsigned int pull_value() { return m_pull_value; }
+        unsigned int base_frequency() { return m_base_frequency; }
+        
+        enum Crf_types
+        {
+            CRF_USER = 0,
+            CRF_AUDIO_SAMPLE = 1,
+            CRF_VIDEO_FRAME = 2,
+            CRF_VIDEO_LINE = 3,
+            CRF_MACHINE_CYCLE = 4
+        };
+        
+        enum Crf_pull_values
+        {
+            MULTIPLY_1_0 = 0,
+            MULTIPLY_1_1_001 = 1,
+            MULTIPLY_1_001 = 2,
+            MULTIPLY_24_25 = 3,
+            MULTIPLY_25_24 = 4,
+            MULTIPLY_1_8 = 5
+        };
+
+    private:
+        // CRF common
+        unsigned int m_type = 0;
+        unsigned int m_timestamp_interval = 0;
+        unsigned int m_timestamps_per_pdu = 0;
+        unsigned int m_pull_value = 0;
+        unsigned int m_base_frequency = 0;
+        
+        void to_string();
+        void to_val();
+        
+        bool crf_type_from_str(std::string type);
+        bool crf_timestamp_interval_from_str(std::string timestamp_interval);
+        bool crf_timestamps_per_pdu_from_str(std::string timestamps_per_pdu);
+        bool crf_pull_value_from_str(std::string pull);
+        bool crf_base_frequency_from_str(std::string base_frequency);
+    };
+    
+    class aaf_format : public ieee1722_stream_format
+    {
+    public:
+        AVDECC_CONTROLLER_LIB32_API aaf_format(uint64_t format_value);
+        AVDECC_CONTROLLER_LIB32_API aaf_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
+        
+        AVDECC_CONTROLLER_LIB32_API unsigned int sample_rate();
+        unsigned int channel_count() { return m_channels_per_frame; }
+        unsigned int upto() { return m_upto; }
+        unsigned int nsr_value() { return m_nsr_value; }
+        unsigned int packetization_type() { return m_packetization_type; }
+        unsigned int bit_depth() { return m_bit_depth; }
+        unsigned int channels_per_frame() { return m_channels_per_frame; }
+        unsigned int samples_per_frame() { return m_samples_per_frame; }
+
+        enum Aaf_nsr_values
+        {
+            NSR_8KHZ = 0x01,
+            NSR_16KHZ = 0x02,
+            NSR_32KHZ = 0x03,
+            NSR_44_1KHZ = 0x04,
+            NSR_48KHZ = 0x05,
+            NSR_88_2KHZ = 0x06,
+            NSR_96KHZ = 0x07,
+            NSR_176_4KHZ = 0x08,
+            NSR_192KHZ = 0x09,
+            NSR_24KHZ = 0x0a
+        };
+        
+        enum Aaf_packetization_types
+        {
+            FLOAT_32BIT = 1,
+            INT_32BIT = 2,
+            INT_24BIT = 3,
+            INT_16BIT = 4,
+            AES3_32BIT = 5
+        };
+
+    private:
+        // AAF common
+        unsigned int m_upto = 0;
+        unsigned int m_nsr_value = 0;
+        unsigned int m_packetization_type = 0;
+
+        // AAF PCM
+        unsigned int m_bit_depth = 0;
+        unsigned int m_channels_per_frame = 0;
+        unsigned int m_samples_per_frame = 0;
+        
+        void to_string();
+        void to_val();
+        
+        void decode_aaf_pcm_fields();
+        
+        bool aaf_packetization_type_from_str(std::string packetization_type);
+        bool aaf_nsr_from_str(std::string nsr);
+        bool aaf_bit_depth_from_str(std::string bit_depth);
+        bool aaf_channels_per_frame_from_str(std::string channels);
+        bool aaf_samples_per_frame_from_str(std::string samples);
+    };
+
+    class iec_61883_iidc_format : public ieee1722_stream_format
+    {
+    public:
+        AVDECC_CONTROLLER_LIB32_API iec_61883_iidc_format(uint64_t format_value);
+        AVDECC_CONTROLLER_LIB32_API iec_61883_iidc_format(const char * format_name) : ieee1722_stream_format(format_name) { to_val(); }
+
+        AVDECC_CONTROLLER_LIB32_API unsigned int sample_rate();
+        unsigned int channel_count() { return m_dbs; }
+        unsigned int sf() { return m_sf; }
+        unsigned int iec61883_type() { return m_iec61883_type; }
+        unsigned int packetization_type_value() { return m_packetization_type_value; }
+        unsigned int fdf_sfc_value() { return m_fdf_sfc_value; }
+        unsigned int dbs() { return m_dbs; }
+        unsigned int blocking() { return m_blocking; }
+        unsigned int nonblocking() { return m_nonblocking; }
+        unsigned int upto() { return m_upto; }
+        unsigned int synchronous() { return m_synchronous; }
+        unsigned int iec60958_count() { return m_iec60958_count; }
+        unsigned int mbla_count() { return m_mbla_count; }
+        unsigned int midi_count() { return m_midi_count; }
+        unsigned int smpte_count() { return m_smpte_count; }
+        
+        enum Iec61883_types
+        {
+            IEC_61883_4 = 0x20,
+            IEC_61883_6 = 0x10,
+            IEC_61883_7 = 0x21,
+            IEC_61883_8 = 0x01
+        };
+        
+        enum Iec61883_packetization_types
+        {
+            FIXED_32BIT = 6,
+            FLOAT_32BIT = 4,
+            AM824 = 0
+        };
+        
+        enum Iec61883_fdf_sfc_values
+        {
+            FDF_SFC_44_1KHZ = 1,
+            FDF_SFC_48KHZ = 2,
+            FDF_SFC_88_2KHZ = 3,
+            FDF_SFC_96KHZ = 4,
+            FDF_SFC_176_4KHZ = 5,
+            FDF_SFC_192KHZ = 6
+        };
+        
+    private:
+        // IEC 61883-6 common
+        unsigned int m_sf = 0;
+        unsigned int m_iec61883_type = 0;
+        unsigned int m_packetization_type_value = 0;
+        unsigned int m_fdf_sfc_value = 0;
+        unsigned int m_dbs = 0;
+        unsigned int m_blocking = 0;
+        unsigned int m_nonblocking = 0;
+        unsigned int m_upto = 0;
+        unsigned int m_synchronous = 0;
+        
+        // IEC 61883-6 AM824
+        unsigned int m_iec60958_count = 0; // count of iec60958 quadlets
+        unsigned int m_mbla_count = 0;     // count of multi-bit linear audio quadlets
+        unsigned int m_midi_count = 0;     // count of MIDI quadlets
+        unsigned int m_smpte_count = 0;    // count of SMPTE quadlets
+
+        void to_string();
+        void to_val();
+        
+        void decode_iec_61883_type();
+        void decode_iidc_format() { return; }
+        void decode_iec_61883_common();
+        void decode_iec_61883_packetization_type();
+        void decode_iec_61883_am824_fields();
+        
+        bool iec_61883_type_from_str(std::string type);
+        bool iec_61883_packetization_type_from_str(std::string packetization_type);
+        bool iec_61883_sfc_from_str(std::string sfc);
+        bool iec_61883_dbs_from_str(std::string dbs);
+    };
+    
     /* 6 byte mac address in network byte order */
     class MacAddr
     {
