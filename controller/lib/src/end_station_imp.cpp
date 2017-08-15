@@ -470,8 +470,8 @@ void end_station_imp::background_read_submit_pending(void)
             while (b_next->m_type == b_first->m_type)
             {
                 m_backbround_read_pending.pop_front();
-                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d config %d", utility::aem_desc_value_to_name(b_next->m_type), b_next->m_index, b_first->m_config);
-                read_desc_init(b_next->m_type, b_next->m_index, b_first->m_config);
+                log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d config %d", utility::aem_desc_value_to_name(b_next->m_type), b_next->m_index, b_next->m_config);
+                read_desc_init(b_next->m_type, b_next->m_index, b_next->m_config);
                 b_next->m_timer.start(750); // 750 ms timeout (1722.1 timeout is 250ms)
                 m_backbround_read_inflight.push_back(b_next);
                 if (m_backbround_read_pending.empty())
