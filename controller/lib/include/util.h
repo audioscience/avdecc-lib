@@ -130,6 +130,27 @@ namespace utility
     /// \return 'UNKNOWN' if the value cannot be decoded.
     ///
     AVDECC_CONTROLLER_LIB32_API const char * ieee1722_format_value_to_name(uint64_t format_value);
+
+    ///
+    /// Convert IEEE1722 stream format value to subtype.
+    ///
+    /// \return 0 if the value is not recognized.
+    ///
+    AVDECC_CONTROLLER_LIB32_API unsigned int ieee1722_format_value_to_subtype(uint64_t format_value);
+
+    ///
+    /// Convert IEEE1722 stream format value to sample rate.
+    ///
+    /// \return 0 if the value is not recognized or if sample rate is not an applicable field of the format.
+    ///
+    AVDECC_CONTROLLER_LIB32_API unsigned int ieee1722_format_value_to_sample_rate(uint64_t format_value);
+
+    ///
+    /// Convert IEEE1722 stream format value to channel count.
+    ///
+    /// \return 0 if the value is not recognized or if channel count is not an applicable field of the format.
+    ///
+    AVDECC_CONTROLLER_LIB32_API unsigned int ieee1722_format_value_to_channel_count(uint64_t format_value);
     
     class ieee1722_stream_format
     {
