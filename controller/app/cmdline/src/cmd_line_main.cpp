@@ -130,9 +130,9 @@ extern "C" void acmp_notification_callback(void * user_obj, int32_t notification
         printf("\n[NOTIFICATION] (%s, %s, 0x%llx, %d, 0x%llx, %d, %s, %p)\n",
                avdecc_lib::utility::acmp_notification_value_to_name(notification_type),
                cmd_name,
-               talker_entity_id,
+               (long long unsigned int)talker_entity_id,
                talker_unique_id,
-               listener_entity_id,
+               (long long unsigned int)listener_entity_id,
                listener_unique_id,
                cmd_status_name,
                notification_id);
@@ -292,7 +292,9 @@ static void usage(char * argv[])
 
 int main(int argc, char * argv[])
 {
+#if !(defined(__MACH__) || defined(__linux__))
     bool show_cmd_separator = false;
+#endif
     bool test_mode = false;
     int error = 0;
     char * interface = NULL;
@@ -307,9 +309,11 @@ int main(int argc, char * argv[])
             // print the network interfaces and exit
             print_interfaces();
             exit(EXIT_SUCCESS);
+#if !(defined(__MACH__) || defined(__linux__))
         case 's':
             show_cmd_separator = true;
             break;
+#endif
         case 't':
             test_mode = true;
             break;

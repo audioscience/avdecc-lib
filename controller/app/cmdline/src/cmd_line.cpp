@@ -262,10 +262,21 @@ int cmd_line::print_interfaces_and_select(char * interface)
         }
     }
 
-    if (interface_num == -1 ||
-        interface_num > (int)netif->devs_count() + 1)
+    if (interface_num <= 0 ||
+        interface_num > (int)netif->devs_count())
     {
-        printf("Invalid Interface: (%s).  Exiting...\n", interface);
+        printf("Invalid Interface");
+        
+        if ((!interface) && (interface_num != -1))
+        {
+            printf(": (%d)", interface_num);
+        }
+        else if (interface)
+        {
+            printf(": (%s)", interface);
+        }
+            
+        printf(".  Exiting...\n");
         exit(EXIT_FAILURE);
     }
 
@@ -373,7 +384,7 @@ void cmd_line::cmd_line_commands_init()
     commands.add_sub_command("select", select_cmd);
 
     cli_command_format * select_fmt = new cli_command_format(
-        "Change the setting of End Station, entity, and configuration.",
+        "Change the End Station, entity, and configuration selection.",
         &cmd_line::cmd_select);
     select_fmt->add_argument(new cli_argument_end_station(this, "e_s", END_STATION_HELP));
     select_fmt->add_argument(new cli_argument_int(this, "e_i", "the entity index"));
@@ -381,7 +392,7 @@ void cmd_line::cmd_line_commands_init()
     select_cmd->add_format(select_fmt);
 
     cli_command_format * show_select_fmt = new cli_command_format(
-        "Display the current End Station, Entity, and Configuration setting.",
+        "Display the currently selected End Station, Entity, and Configuration.",
         &cmd_line::cmd_show_select);
     select_cmd->add_format(show_select_fmt);
 
@@ -4493,7 +4504,9 @@ int cmd_line::cmd_set_sampling_rate(int total_matched, std::vector<cli_argument 
         if (status == avdecc_lib::AEM_STATUS_SUCCESS)
         {
             avdecc_lib::audio_unit_descriptor_response * audio_unit_resp_ref = audio_unit_desc_ref->get_audio_unit_response();
-            atomic_cout << "Sampling rate: " << std::dec << audio_unit_resp_ref->current_sampling_rate();
+            atomic_cout << "Sampling rate: " << std::dec 
+                        << audio_unit_resp_ref->current_sampling_rate()
+                        << std::endl;
             delete audio_unit_resp_ref;
         }
     }
