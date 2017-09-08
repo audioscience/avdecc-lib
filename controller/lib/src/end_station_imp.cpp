@@ -394,7 +394,7 @@ int end_station_imp::proc_read_desc_resp(void *& notification_id, const uint8_t 
 
     if ((entity_desc_vec.size() >= 1) && (entity_desc_vec.at(current_entity_desc)->config_desc_count() >= 1))
     {
-        if (m_backbround_read_inflight.empty() && m_backbround_read_pending.empty())
+        if (m_background_read_inflight.empty() && m_background_read_pending.empty())
         {
             notification_imp_ref->post_notification_msg(END_STATION_READ_COMPLETED, end_station_entity_id, 0, 0, 0, 0, NULL);
         }
@@ -408,15 +408,15 @@ void end_station_imp::background_read_update_timeouts(void)
     std::list<background_read_request *>::iterator ii;
     background_read_request * b;
 
-    ii = m_backbround_read_inflight.begin();
-    while (ii != m_backbround_read_inflight.end())
+    ii = m_background_read_inflight.begin();
+    while (ii != m_background_read_inflight.end())
     {
         b = *ii;
         // check inflight timeout
         if (b->m_timer.timeout())
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Background read timeout reading descriptor %s index %d\n", utility::aem_desc_value_to_name(b->m_type), b->m_index);
-            ii = m_backbround_read_inflight.erase(ii);
+            ii = m_background_read_inflight.erase(ii);
             delete b;
         }
         else
@@ -434,14 +434,14 @@ void end_station_imp::background_read_update_inflight(uint16_t desc_type, void *
 
     bool have_index = desc_index_from_frame(desc_type, frame, read_desc_offset, desc_index);
 
-    ii = m_backbround_read_inflight.begin();
-    while (ii != m_backbround_read_inflight.end())
+    ii = m_background_read_inflight.begin();
+    while (ii != m_background_read_inflight.end())
     {
         b = *ii;
         // check inflight has been read
         if (have_index && (b->m_type == desc_type) && (b->m_index == desc_index))
         {
-            ii = m_backbround_read_inflight.erase(ii);
+            ii = m_background_read_inflight.erase(ii);
             delete b;
         }
         else
@@ -455,32 +455,32 @@ void end_station_imp::background_read_submit_pending(void)
 {
     // if there are no pending inflight, but the background read list is not
     // empty submit the next set of read operations
-    if (m_backbround_read_inflight.empty() && !m_backbround_read_pending.empty())
+    if (m_background_read_inflight.empty() && !m_background_read_pending.empty())
     {
-        background_read_request * b_first = m_backbround_read_pending.front();
-        m_backbround_read_pending.pop_front();
+        background_read_request * b_first = m_background_read_pending.front();
+        m_background_read_pending.pop_front();
         log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d config %d", utility::aem_desc_value_to_name(b_first->m_type), b_first->m_index, b_first->m_config);
         read_desc_init(b_first->m_type, b_first->m_index, b_first->m_config);
         b_first->m_timer.start(750); // 750 ms timeout (1722.1 timeout is 250ms)
-        m_backbround_read_inflight.push_back(b_first);
+        m_background_read_inflight.push_back(b_first);
 
-        if (!m_backbround_read_pending.empty())
+        if (!m_background_read_pending.empty())
         {
-            background_read_request * b_next = m_backbround_read_pending.front();
+            background_read_request * b_next = m_background_read_pending.front();
             while (b_next->m_type == b_first->m_type)
             {
-                m_backbround_read_pending.pop_front();
+                m_background_read_pending.pop_front();
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d config %d", utility::aem_desc_value_to_name(b_next->m_type), b_next->m_index, b_next->m_config);
                 read_desc_init(b_next->m_type, b_next->m_index, b_next->m_config);
                 b_next->m_timer.start(750); // 750 ms timeout (1722.1 timeout is 250ms)
-                m_backbround_read_inflight.push_back(b_next);
-                if (m_backbround_read_pending.empty())
+                m_background_read_inflight.push_back(b_next);
+                if (m_background_read_pending.empty())
                 {
                     break;
                 }
                 else
                 {
-                    b_next = m_backbround_read_pending.front();
+                    b_next = m_background_read_pending.front();
                 }
             }
         }
@@ -566,8 +566,8 @@ bool end_station_imp::desc_index_from_frame(uint16_t desc_type, void * frame, ss
 }
 
 /** This function looks inside rx'd descriptors and deducees which descriptors need to be read in the background next.
- *  There are two lists that are maintained for reading descriptors. The m_backbround_read_pending list where descriptors
- *  are queued before being sent and the m_backbround_read_inflight list the contains read requests that are on "the wire".
+ *  There are two lists that are maintained for reading descriptors. The m_background_read_pending list where descriptors
+ *  are queued before being sent and the m_background_read_inflight list the contains read requests that are on "the wire".
  */
 void end_station_imp::background_read_deduce_next(entity_descriptor * ed, uint16_t desc_type, uint16_t config_index, void * frame, ssize_t read_desc_offset)
 {
@@ -729,7 +729,7 @@ void end_station_imp::queue_background_read_request(uint16_t desc_type, uint16_t
     for (uint16_t i = 0; i < desc_count; i++)
     {
         b = new background_read_request(desc_type, desc_base_index + i, config_desc_index);
-        m_backbround_read_pending.push_back(b);
+        m_background_read_pending.push_back(b);
     }
 }
 
