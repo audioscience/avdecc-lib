@@ -144,6 +144,7 @@ controller_imp::controller_imp(void (*notification_callback)(void *, int32_t, ui
     m_entity_capabilities_flags = 0x00000000;
     m_talker_capabilities_flags = 0x00000000;
     m_listener_capabilities_flags = 0x00000000;
+    m_max_num_read_desc_cmd_inflight = -1;
 }
 
 controller_imp::~controller_imp()
@@ -181,6 +182,11 @@ uint64_t STDCALL controller_imp::get_entity_id()
 void STDCALL controller_imp::set_entity_id(uint64_t entity_id)
 {
     net_interface_ref->set_dev_eui(entity_id);
+}
+    
+void STDCALL controller_imp::set_max_num_read_desc_cmd_inflight(int max_num_read_desc_cmd_inflight)
+{
+    m_max_num_read_desc_cmd_inflight = max_num_read_desc_cmd_inflight;
 }
 
 end_station * STDCALL controller_imp::get_end_station_by_index(size_t end_station_index)
@@ -451,6 +457,8 @@ void controller_imp::rx_packet_event(void *& notification_id,
                         adp_discovery_state_machine_ref->state_avail(frame, frame_len);
                     end_station_array->push_back(new end_station_imp(frame, frame_len));
                     end_station_array->at(end_station_array->size() - 1)->set_connected();
+                    if (m_max_num_read_desc_cmd_inflight != -1)
+                        end_station_array->at(end_station_array->size() - 1)->set_max_num_read_desc_cmd_inflight(m_max_num_read_desc_cmd_inflight);
                 }
                 else
                 {

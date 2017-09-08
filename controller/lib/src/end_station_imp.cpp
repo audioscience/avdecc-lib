@@ -51,6 +51,7 @@ end_station_imp::end_station_imp(const uint8_t * frame, size_t frame_len)
     entity_id = adp_ref->get_entity_entity_id();
     end_station_entity_id = jdksavdecc_uint64_get(&entity_id, 0);
     utility::convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
+    m_max_num_read_desc_cmd_inflight = -1;
     end_station_init();
 }
 
@@ -99,6 +100,11 @@ void end_station_imp::set_connected()
 void end_station_imp::set_disconnected()
 {
     end_station_connection_status = 'D';
+}
+    
+void STDCALL end_station_imp::set_max_num_read_desc_cmd_inflight(int max_num_read_desc_cmd_inflight)
+{
+    m_max_num_read_desc_cmd_inflight = max_num_read_desc_cmd_inflight;
 }
 
 uint64_t STDCALL end_station_imp::entity_id()
@@ -466,9 +472,13 @@ void end_station_imp::background_read_submit_pending(void)
 
         if (!m_background_read_pending.empty())
         {
+            int num_inflight_cmds_added = 1;
             background_read_request * b_next = m_background_read_pending.front();
             while (b_next->m_type == b_first->m_type)
             {
+                if (m_max_num_read_desc_cmd_inflight != -1 && num_inflight_cmds_added >= m_max_num_read_desc_cmd_inflight)
+                    break;
+
                 m_background_read_pending.pop_front();
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Background read of %s index %d config %d", utility::aem_desc_value_to_name(b_next->m_type), b_next->m_index, b_next->m_config);
                 read_desc_init(b_next->m_type, b_next->m_index, b_next->m_config);
@@ -482,6 +492,7 @@ void end_station_imp::background_read_submit_pending(void)
                 {
                     b_next = m_background_read_pending.front();
                 }
+                ++num_inflight_cmds_added;
             }
         }
     }

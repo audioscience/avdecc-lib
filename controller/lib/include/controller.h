@@ -74,6 +74,15 @@ public:
     /// \see process_start()
     ///
     AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_entity_id(uint64_t entity_id) = 0;
+    
+    ///
+    /// Set the maximum number of inflight READ_DESCRIPTOR commands allowed.
+    ///
+    /// This API should only be used if an application wishes to limit the number
+    /// of READ_DESCRIPTOR commands enqueued.  If unused, the controller will queue up
+    /// to the descriptor count.  If used, descriptor enumeration time may be slower.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual void STDCALL set_max_num_read_desc_cmd_inflight(int max_num_read_desc_cmd_inflight) = 0;
 
     ///
     /// \return The corresponding End Station by index.

@@ -42,6 +42,7 @@ private:
     uint32_t m_entity_capabilities_flags;
     uint32_t m_talker_capabilities_flags;
     uint32_t m_listener_capabilities_flags;
+    int m_max_num_read_desc_cmd_inflight;
 
     ///
     /// Find an end station that matches the entity and controller IDs
@@ -73,6 +74,7 @@ public:
     /// \see get_controller_entity_id()
     uint64_t STDCALL get_entity_id();
     void STDCALL set_entity_id(uint64_t entity_id);
+    void STDCALL set_max_num_read_desc_cmd_inflight(int max_num_read_desc_cmd_inflight);
     size_t STDCALL get_end_station_count();
     end_station * STDCALL get_end_station_by_index(size_t end_station_index);
 

@@ -60,6 +60,7 @@ private:
 
     std::list<background_read_request *> m_background_read_pending;  // Store a list of background reads
     std::list<background_read_request *> m_background_read_inflight; // Store a list of background reads that are inflight
+    int m_max_num_read_desc_cmd_inflight;                            // (Optional) The maximum number of read descriptor inflight cmds allowed
 
     adp * adp_ref;                                        // ADP associated with the End Station
     std::vector<entity_descriptor_imp *> entity_desc_vec; // Store a list of ENTITY descriptor objects
@@ -77,6 +78,8 @@ public:
     std::mutex locker;
     const char STDCALL get_connection_status() const;
 
+    void STDCALL set_max_num_read_desc_cmd_inflight(int max_num_read_desc_cmd_inflight);
+    
     ///
     /// Change the End Station connection status to connected.
     ///
