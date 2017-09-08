@@ -35,6 +35,10 @@
 
 namespace avdecc_lib
 {
+///
+/// @namespace avdecc_lib::utility
+/// @brief Helper functions/classes
+///
 namespace utility
 {
     ///
@@ -152,6 +156,21 @@ namespace utility
     ///
     AVDECC_CONTROLLER_LIB32_API unsigned int ieee1722_format_value_extract_channel_count(uint64_t format_value);
     
+    ///
+    /// Extract packetization type from IEEE1722 stream format value.
+    ///
+    /// \return 0 if the value is not recognized or if packetization is not an applicable field of the format.
+    ///
+    /// | AAF Packetization Types                                        | IEC61883-6 Packetization Types                                                 |
+    /// | :------------------------------------------------------------: | :----------------------------------------------------------------------------: |
+    /// | \link aaf_format::Aaf_packetization_types FLOAT_32BIT \endlink | \link iec_61883_iidc_format::Iec61883_packetization_types FIXED_32BIT \endlink |
+    /// | \link aaf_format::Aaf_packetization_types INT_32BIT \endlink   | \link iec_61883_iidc_format::Iec61883_packetization_types FLOAT_32BIT \endlink |
+    /// | \link aaf_format::Aaf_packetization_types INT_24BIT \endlink   | \link iec_61883_iidc_format::Iec61883_packetization_types AM824 \endlink       |
+    /// | \link aaf_format::Aaf_packetization_types INT_16BIT \endlink   |                                                                                |
+    /// | \link aaf_format::Aaf_packetization_types AES3_32BIT \endlink  |                                                                                |
+    ///
+    AVDECC_CONTROLLER_LIB32_API unsigned int ieee1722_format_value_extract_packetization(uint64_t format_value);
+
     class ieee1722_stream_format
     {
     public:
@@ -262,7 +281,7 @@ namespace utility
             NSR_24KHZ = 0x0a
         };
         
-        enum Aaf_packetization_types
+        enum Aaf_packetization_types /// AAF format packetization types
         {
             FLOAT_32BIT = 1,
             INT_32BIT = 2,
@@ -324,7 +343,7 @@ namespace utility
             IEC_61883_8 = 0x01
         };
         
-        enum Iec61883_packetization_types
+        enum Iec61883_packetization_types /// IEC61883 format packetization types
         {
             FIXED_32BIT = 6,
             FLOAT_32BIT = 4,

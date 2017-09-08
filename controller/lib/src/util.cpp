@@ -588,6 +588,23 @@ namespace utility
         return channel_count;
     }
 
+    unsigned int ieee1722_format_value_extract_packetization(uint64_t format_value)
+    {
+        unsigned int packetization = 0;
+        ieee1722_stream_format sf(format_value);
+        switch (sf.subtype())
+        {
+            case ieee1722_stream_format::IIDC_61883:
+                packetization = iec_61883_iidc_format(format_value).packetization_type_value();
+                break;
+            case ieee1722_stream_format::AAF:
+                packetization = aaf_format(format_value).packetization_type();
+                break;
+        }
+        
+        return packetization;
+    }
+
     const char * ieee1722_format_value_to_name(uint64_t format_value)
     {
         std::string format_name = "UNKNOWN";
