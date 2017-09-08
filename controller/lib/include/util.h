@@ -35,6 +35,10 @@
 
 namespace avdecc_lib
 {
+///
+/// @namespace avdecc_lib::utility
+/// @brief Helper functions/classes
+///
 namespace utility
 {
     ///
