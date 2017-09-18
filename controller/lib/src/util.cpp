@@ -587,6 +587,23 @@ namespace utility
         
         return channel_count;
     }
+    
+    unsigned int ieee1722_format_value_extract_ut(uint64_t format_value)
+    {
+        unsigned int ut = 0;
+        ieee1722_stream_format sf(format_value);
+        switch (sf.subtype())
+        {
+            case ieee1722_stream_format::IIDC_61883:
+                ut = iec_61883_iidc_format(format_value).upto();
+                break;
+            case ieee1722_stream_format::AAF:
+                ut = aaf_format(format_value).upto();
+                break;
+        }
+        
+        return ut;
+    }
 
     unsigned int ieee1722_format_value_extract_packetization(uint64_t format_value)
     {
