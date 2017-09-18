@@ -155,6 +155,20 @@ namespace utility
     /// \return 0 if the value is not recognized or if channel count is not an applicable field of the format.
     ///
     AVDECC_CONTROLLER_LIB32_API unsigned int ieee1722_format_value_extract_channel_count(uint64_t format_value);
+
+    ///
+    /// Extract "ut" field from IEEE1722 stream format value.
+    ///
+    /// \return 0 if the value is not recognized or if "ut" is not an applicable field of the format.
+    ///
+    /// For IEC61883-6 and AAF format types, the "ut" field is used to determine if the stream source or sink
+    /// is capable of sourcing or sinking a stream with less than the number of channels/data blocks indicated by the
+    /// channels_per_frame (AAF) or dbs (IEC61883-6) fields.
+    ///
+    /// When set to one (1), the stream source or sink is capable of using fewer channels/data blocks than specified
+    /// by the format.
+    ///
+    AVDECC_CONTROLLER_LIB32_API unsigned int ieee1722_format_value_extract_ut(uint64_t format_value);
     
     ///
     /// Extract packetization type from IEEE1722 stream format value.
