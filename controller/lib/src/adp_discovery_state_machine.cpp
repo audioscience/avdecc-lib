@@ -151,7 +151,6 @@ int adp_discovery_state_machine::state_discover(uint64_t discover_id)
     struct jdksavdecc_frame cmd_frame;
     ether_frame_init(&cmd_frame);
     common_hdr_init(&cmd_frame, discover_id);
-
     return tx_discover(&cmd_frame);
 }
 
@@ -202,9 +201,10 @@ bool adp_discovery_state_machine::tick(uint64_t & end_station_entity_id)
 
     for (uint32_t i = 0; i < entities_vec.size(); i++)
     {
-        if (entities_vec.at(i).inflight_timer.timeout())
+        end_station_entity_id = entities_vec.at(i).entity_id;
+        if ((net_interface_ref->is_pcap() && entities_vec.at(i).inflight_timer.timeout()) ||
+            (!net_interface_ref->is_pcap() && !(net_interface_ref->is_Mac_Native_end_station_connected(end_station_entity_id))))
         {
-            end_station_entity_id = entities_vec.at(i).entity_id;
             state_timeout(i);
             notification_imp_ref->post_notification_msg(END_STATION_DISCONNECTED, end_station_entity_id, 0, 0, 0, 0, 0);
             return true;

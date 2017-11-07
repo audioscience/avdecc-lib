@@ -156,6 +156,9 @@ public:
     int send_frame(uint8_t * frame, uint16_t mem_buf_len);
 
     int get_fd();
+
+    bool is_pcap() { return true; }
+    bool is_Mac_Native_end_station_connected(uint64_t entity_id) { return false; }
 };
 
 extern net_interface_imp * net_interface_ref;

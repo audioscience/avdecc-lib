@@ -59,6 +59,7 @@
 #include "controller_imp.h"
 #include "system_message_queue.h"
 #include "system_tx_queue.h"
+#include "system_rx_queue.h"
 #include "system_layer2_multithreaded_callback.h"
 
 namespace avdecc_lib
@@ -81,6 +82,18 @@ size_t system_queue_tx(void * notification_id, uint32_t notification_flag, uint8
         return 0;
     }
 }
+    
+size_t system_queue_rx(const uint8_t * frame, size_t mem_buf_len)
+{
+    if (local_system)
+    {
+        return local_system->queue_rx_frame(frame, mem_buf_len);
+    }
+    else
+    {
+        return 0;
+    }
+}
 
 system * STDCALL create_system(system::system_type type, net_interface * netif, controller * controller_obj)
 {
@@ -96,6 +109,7 @@ system_layer2_multithreaded_callback::system_layer2_multithreaded_callback(net_i
     netif_obj_in_system = dynamic_cast<net_interface_imp *>(netif);
     controller_ref_in_system = dynamic_cast<controller_imp *>(controller_obj);
     pipe(tx_pipe);
+    pipe(rx_pipe);
 
     wait_mgr = new cmd_wait_mgr();
 
@@ -170,6 +184,26 @@ int system_layer2_multithreaded_callback::queue_tx_frame(
         assert(status == 0);
     }
 
+    return 0;
+}
+    
+int system_layer2_multithreaded_callback::queue_rx_frame(
+     const uint8_t * frame,
+     size_t mem_buf_len)
+{
+    struct rx_data r;
+    
+    r.frame = new uint8_t[2048];
+    if (!r.frame)
+    {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    r.mem_buf_len = mem_buf_len;
+    memcpy(r.frame, frame, mem_buf_len);
+    
+    write(rx_pipe[PIPE_WR], &r, sizeof(r));
+    
     return 0;
 }
 
@@ -251,13 +285,22 @@ int system_layer2_multithreaded_callback::fn_netif(struct kevent * priv)
 {
     uint16_t length = 0;
     const uint8_t * rx_frame;
+    struct rx_data r;
     int status = 0;
 
-    status = netif_obj_in_system->capture_frame(&rx_frame, &length);
+    if (net_interface_ref->is_pcap())
+    {
+        status = netif_obj_in_system->capture_frame(&rx_frame, &length);
+    }
+    else
+    {
+        status = read(rx_pipe[PIPE_RD], &r, sizeof(r));
+        rx_frame = r.frame;
+        length = r.mem_buf_len;
+    }
 
     if (status > 0)
     {
-
         bool is_notification_id_valid = false;
         int rx_status = -1;
         void * notification_id = NULL;
@@ -283,6 +326,9 @@ int system_layer2_multithreaded_callback::fn_netif(struct kevent * priv)
             assert(status == 0);
             sem_post(waiting_sem);
         }
+        
+        if (!net_interface_ref->is_pcap())
+            delete[] r.frame;
     }
     return 0;
 }
@@ -293,6 +339,7 @@ int system_layer2_multithreaded_callback::proc_poll_loop()
     struct kevent chlist[POLL_COUNT]; // events we want to monitor
     struct kevent evlist[POLL_COUNT]; // events that were triggered
     int nev, i, kq;
+    int netif_cb_fd;
 
     kq = kqueue();
     if (kq == -1)
@@ -300,7 +347,12 @@ int system_layer2_multithreaded_callback::proc_poll_loop()
         perror("kqueue");
     }
 
-    EV_SET(&chlist[0], netif_obj_in_system->get_fd(), EVFILT_READ, EV_ADD | EV_ENABLE,
+    if (net_interface_ref->is_pcap())
+        netif_cb_fd = net_interface_ref->get_fd();
+    else
+        netif_cb_fd = rx_pipe[PIPE_RD];
+    
+    EV_SET(&chlist[0], netif_cb_fd, EVFILT_READ, EV_ADD | EV_ENABLE,
            0, 0, (void *)&system_layer2_multithreaded_callback::fn_netif_cb);
 
     EV_SET(&chlist[1], tx_pipe[PIPE_RD], EVFILT_READ, EV_ADD | EV_ENABLE,
@@ -366,6 +418,10 @@ int STDCALL system_layer2_multithreaded_callback::process_start()
         printf("ERROR; return code from pthread_create() is %d\n", rc);
         exit(-1);
     }
+    
+    if (!net_interface_ref->is_pcap())
+        net_interface_ref->open_selected_bridge_interface();
+    
     return 0;
 }
 

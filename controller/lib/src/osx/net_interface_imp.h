@@ -29,8 +29,6 @@
 
 #pragma once
 
-#define HAVE_REMOTE
-
 #include <stdint.h>
 #include <vector>
 #include <pcap.h>
@@ -52,6 +50,7 @@ private:
     pcap_t * pcap_interface;
     char err_buf[PCAP_ERRBUF_SIZE];
     const u_char * ether_frame;
+    bool is_netif_pcap = true;
 
 public:
     ///
@@ -147,6 +146,30 @@ public:
     int send_frame(uint8_t * frame, uint16_t mem_buf_len);
 
     int get_fd();
+
+    ///
+    /// Check whether the selected network interface is using
+    /// pcap or Mac Native to capture 1722.1 traffic.
+    ///
+    /// \return True if the selected interface does not support Mac Native,
+    /// therefore defaulting to pcap.
+    ///
+    bool is_pcap() { return is_netif_pcap; }
+
+    ///
+    /// Start capturing 1722.1 traffic on the selected
+    /// Mac Native Interface.
+    ///
+    void open_selected_bridge_interface();
+    
+    ///
+    /// Since the Mac Native Interface provides its own
+    /// End Station Discovery state machine, this function is used
+    /// to check the connection status of a device.
+    ///
+    /// \param entity_id the entity ID of the End Station.
+    ///
+    bool is_Mac_Native_end_station_connected(uint64_t entity_id);
 };
 
 extern net_interface_imp * net_interface_ref;
