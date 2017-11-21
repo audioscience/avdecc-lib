@@ -140,8 +140,8 @@ bool mac_native_interface_bridge::is_end_station_connected(uint64_t entity_id)
     if (!bridge)
         return false;
 
-    auto entity = Mac_discovered_end_stations.find(entity_id);
-    if (entity != Mac_discovered_end_stations.end() && entity->second) // found && connected
+    auto entity_iter = Mac_discovered_end_stations.find(entity_id);
+    if (entity_iter != Mac_discovered_end_stations.end() && entity_iter->second) // found && connected
         return true;
     
     return false;
