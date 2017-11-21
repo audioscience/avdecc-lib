@@ -60,6 +60,8 @@ public:
     /// Store the frame to be sent in a queue.
     ///
     int queue_tx_frame(void * notification_id, uint32_t notification_flag, uint8_t * frame, size_t mem_buf_len);
+    
+    int queue_rx_frame(const uint8_t * frame, size_t mem_buf_len);
 
     ///
     /// Set a waiting flag for the command sent.
@@ -93,6 +95,12 @@ private:
         void * notification_id;
         uint32_t notification_flag;
     };
+    
+    struct rx_data
+    {
+        uint8_t * frame;
+        size_t mem_buf_len;
+    };
 
     enum useful_enums
     {
@@ -105,6 +113,7 @@ private:
     pthread_t h_thread;
 
     // int network_fd;
+    int rx_pipe[2];
     int tx_pipe[2];
     // int tick_timer;
 

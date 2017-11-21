@@ -138,6 +138,9 @@ public:
     /// Send a network packet.
     ///
     int send_frame(uint8_t * frame, size_t frame_len);
+
+    bool is_pcap() { return true; }
+    bool is_Mac_Native_end_station_connected(uint64_t entity_id) { return false; }
 };
 
 extern net_interface_imp * net_interface_ref;

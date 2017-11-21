@@ -48,6 +48,7 @@
 #include "log_imp.h"
 #include "jdksavdecc_pdu.h"
 #include "net_interface_imp.h"
+#include "mac_native_interface_bridge.h"
 
 namespace avdecc_lib
 {
@@ -94,8 +95,11 @@ net_interface_imp::net_interface_imp()
 
 net_interface_imp::~net_interface_imp()
 {
-    pcap_freealldevs(all_devs); // Free the device list
-    pcap_close(pcap_interface);
+    if (is_netif_pcap)
+    {
+        pcap_freealldevs(all_devs); // Free the device list
+        pcap_close(pcap_interface);
+    }
 }
     
 void net_interface_imp::find_and_store_device_mac_addr(char * dev_name)
@@ -149,6 +153,9 @@ void net_interface_imp::find_and_store_device_mac_addr(char * dev_name)
 
 void STDCALL net_interface_imp::destroy()
 {
+    if (!is_netif_pcap)
+        mac_native_interface_bridge::close();
+
     delete this;
 }
 
@@ -237,7 +244,10 @@ char * STDCALL net_interface_imp::get_dev_name_by_index(size_t dev_index)
 
 int net_interface_imp::get_fd()
 {
-    return pcap_get_selectable_fd(pcap_interface);
+    if (pcap_interface)
+        return pcap_get_selectable_fd(pcap_interface);
+
+    return 0;
 }
 
 uint64_t net_interface_imp::get_dev_mac_addr_by_index(size_t dev_index)
@@ -262,56 +272,66 @@ int STDCALL net_interface_imp::select_interface_by_num(uint32_t interface_num)
 
     for (dev = all_devs, index = 0; index < interface_num - 1; dev = dev->next, index++)
         ; // Jump to the selected adapter
-
-    /************* Open the device **************/
-    if ((pcap_interface = pcap_open_live(dev->name, // Name of the device
-                                         65536,     // Portion of the packet to capture
-                                         // 65536 guarantees that the whole packet will be captured on all the link layers
-                                         1,          // In promiscuous mode, all packets including packets of other hosts are captured
-                                         timeout_ms, // Read timeout in ms
-                                         err_buf     // Error buffer
-                                         )) == NULL)
-    {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Unable to open the adapter. %s is not supported by pcap.", dev->name);
-        pcap_freealldevs(all_devs); // Free the device list
-        return -1;
-    }
-
-    if (pcap_setnonblock(pcap_interface, 1, err_buf) < 0)
-    {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "pcap_setnonblock");
-        return -1;
-    }
-
-    int fd = pcap_fileno(pcap_interface);
-    if (fd == -1)
-    {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Can't get file descriptor for pcap_t");
-        return -1;
-    }
-
-    int on = 1;
-    if (ioctl(fd, BIOCIMMEDIATE, &on) == -1)
-    {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "BIOCIMMEDIATE error");
-        return -1;
-    }
-
-    if (index >= all_mac_addresses.size())
-    {
-        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Cannot find selected interface MAC address");
-        return -1;
-    }
     
     selected_dev_mac = all_mac_addresses.at(index);
     selected_dev_eui = ((selected_dev_mac & UINT64_C(0xFFFFFF000000)) << 16) |
-                       UINT64_C(0x000000FFFF000000) |
-                       (selected_dev_mac & UINT64_C(0xFFFFFF));
-    
-    uint16_t ether_type[1];
-    ether_type[0] = JDKSAVDECC_AVTP_ETHERTYPE;
-    if (set_capture_ether_type(ether_type, 1) < 0) // Set the filter
-        return -1;
+                        UINT64_C(0x000000FFFF000000) |
+                        (selected_dev_mac & UINT64_C(0xFFFFFF));
+
+    // use the Mac Native interface on the selected device, if supported
+    if (mac_native_interface_bridge::is_avb_enabled((const char *)dev->name))
+    {
+        /**** Open the device with the Mac native interface ****/
+        mac_native_interface_bridge::select((const char *)dev->name, selected_dev_eui, selected_dev_mac);
+        is_netif_pcap = false;
+    }
+    else
+    {
+        /************* Open the device with pcap **************/
+        if ((pcap_interface = pcap_open_live(dev->name, // Name of the device
+                                             65536,     // Portion of the packet to capture
+                                             // 65536 guarantees that the whole packet will be captured on all the link layers
+                                             1,          // In promiscuous mode, all packets including packets of other hosts are captured
+                                             timeout_ms, // Read timeout in ms
+                                             err_buf     // Error buffer
+                                             )) == NULL)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Unable to open the adapter. %s is not supported by pcap.", dev->name);
+            pcap_freealldevs(all_devs); // Free the device list
+            return -1;
+        }
+
+        if (pcap_setnonblock(pcap_interface, 1, err_buf) < 0)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "pcap_setnonblock");
+            return -1;
+        }
+
+        int fd = pcap_fileno(pcap_interface);
+        if (fd == -1)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Can't get file descriptor for pcap_t");
+            return -1;
+        }
+
+        int on = 1;
+        if (ioctl(fd, BIOCIMMEDIATE, &on) == -1)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "BIOCIMMEDIATE error");
+            return -1;
+        }
+
+        if (index >= all_mac_addresses.size())
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Cannot find selected interface MAC address");
+            return -1;
+        }
+
+        uint16_t ether_type[1];
+        ether_type[0] = JDKSAVDECC_AVTP_ETHERTYPE;
+        if (set_capture_ether_type(ether_type, 1) < 0) // Set the filter
+            return -1;
+    }
 
     return 0;
 }
@@ -387,6 +407,12 @@ int STDCALL net_interface_imp::capture_frame(const uint8_t ** frame, uint16_t * 
 
 int net_interface_imp::send_frame(uint8_t * frame, uint16_t mem_buf_len)
 {
+    if (!is_netif_pcap)
+    {
+        mac_native_interface_bridge::send_frame(frame, mem_buf_len);
+        return 0;
+    }
+
     if (pcap_sendpacket(pcap_interface, frame, mem_buf_len) != 0)
     {
         log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "pcap_sendpacket error %s", pcap_geterr(pcap_interface));
@@ -394,5 +420,19 @@ int net_interface_imp::send_frame(uint8_t * frame, uint16_t mem_buf_len)
     }
 
     return 0;
+}
+    
+void net_interface_imp::open_selected_bridge_interface()
+{
+    if (!is_netif_pcap)
+        return mac_native_interface_bridge::open();
+}
+
+bool net_interface_imp::is_Mac_Native_end_station_connected(uint64_t entity_id)
+{
+    if (!is_netif_pcap)
+        return mac_native_interface_bridge::is_end_station_connected(entity_id);
+    
+    return false;
 }
 }
