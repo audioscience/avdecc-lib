@@ -520,7 +520,17 @@ void controller_imp::rx_packet_event(void *& notification_id,
 
                         case JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE:
                         {
-                            end_station_array->at(found_end_station_index)->proc_rcvd_aem_resp(notification_id, frame, frame_len, status, operation_id, is_operation_id_valid);
+                            if (jdksavdecc_common_control_header_get_status(frame, ETHER_HDR_SIZE) == AEM_STATUS_NOT_IMPLEMENTED)
+                            {
+                                struct jdksavdecc_frame cmd_frame;
+                                memcpy(cmd_frame.payload, frame, frame_len);
+                                status = AEM_STATUS_NOT_IMPLEMENTED;
+                                aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, isUnsolicited, &cmd_frame);
+                            }
+                            else
+                            {
+                                end_station_array->at(found_end_station_index)->proc_rcvd_aem_resp(notification_id, frame, frame_len, status, operation_id, is_operation_id_valid);
+                            }
 
                             is_notification_id_valid = true;
                             break;
