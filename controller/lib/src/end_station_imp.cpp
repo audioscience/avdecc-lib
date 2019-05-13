@@ -1381,6 +1381,10 @@ int end_station_imp::proc_rcvd_aem_resp(void *& notification_id,
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base stream_input_descriptor to derived stream_input_descriptor_imp error");
             }
         }
+        else if (desc_type == JDKSAVDECC_DESCRIPTOR_STREAM_OUTPUT)
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "Ignoring known Milan stream_output counter");
+        }
         else
         {
             log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Descriptor type %d is not implemented.", desc_type);
