@@ -153,7 +153,7 @@ uint64_t STDCALL stream_input_descriptor_response_imp::current_format_value()
 
 uint16_t stream_input_descriptor_response_imp::formats_offset()
 {
-    assert(jdksavdecc_descriptor_stream_get_formats_offset(buffer, position) == 132);
+    assert(jdksavdecc_descriptor_stream_get_formats_offset(buffer, position));
     return jdksavdecc_descriptor_stream_get_formats_offset(buffer, position);
 }
 
