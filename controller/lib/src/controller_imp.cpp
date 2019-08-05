@@ -420,6 +420,12 @@ void controller_imp::rx_packet_event(void *& notification_id,
             status = AVDECC_LIB_STATUS_INVALID;
             is_notification_id_valid = false;
 
+            if (adpdu.header.message_type != JDKSAVDECC_ADP_MESSAGE_TYPE_ENTITY_AVAILABLE)
+            {
+                // Other ADP message types are not pertinent to the controller
+                break;
+            }
+
             if ((adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_GENERAL_CONTROLLER_IGNORE) ||
                 (adpdu.entity_capabilities & JDKSAVDECC_ADP_ENTITY_CAPABILITY_ENTITY_NOT_READY))
             {
@@ -484,7 +490,7 @@ void controller_imp::rx_packet_event(void *& notification_id,
                     }
                 }
             }
-            else if (adpdu.header.message_type != JDKSAVDECC_ADP_MESSAGE_TYPE_ENTITY_DISCOVER)
+            else
             {
                 log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Invalid ADP packet with an entity ID of 0.");
             }
