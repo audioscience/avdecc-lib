@@ -88,7 +88,7 @@ cmd_line::cmd_line()
 {
 }
 
-cmd_line::cmd_line(void (*notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
+cmd_line::cmd_line(void (*notification_callback)(void *, int32_t, uint64_t, uint32_t, uint16_t, uint16_t, uint16_t, uint32_t, void *),
                    void (*acmp_notification_callback)(void *, int32_t, uint16_t, uint64_t, uint16_t, uint64_t, uint16_t,
                                                       uint32_t, void *),
                    void (*log_callback)(void *, int32_t, const char *, int32_t),

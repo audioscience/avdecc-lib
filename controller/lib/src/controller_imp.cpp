@@ -96,7 +96,7 @@ public:
 };
 
 controller * STDCALL create_controller(net_interface * netif,
-                                       void (*notification_callback)(void *, int32_t, uint64_t,
+                                       void (*notification_callback)(void *, int32_t, uint64_t, uint32_t,
                                                                      uint16_t, uint16_t, uint16_t,
                                                                      uint32_t, void *),
                                        void (*acmp_notification_callback)(void *, int32_t, uint16_t,
@@ -129,7 +129,7 @@ controller * STDCALL create_controller(net_interface * netif,
     return controller_imp_ref;
 }
 
-controller_imp::controller_imp(void (*notification_callback)(void *, int32_t, uint64_t, uint16_t,
+controller_imp::controller_imp(void (*notification_callback)(void *, int32_t, uint64_t, uint32_t, uint16_t,
                                                              uint16_t, uint16_t, uint32_t, void *),
                                void (*acmp_notification_callback)(void *, int32_t, uint16_t,
                                                                   uint64_t, uint16_t, uint64_t,

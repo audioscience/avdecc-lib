@@ -402,7 +402,7 @@ int end_station_imp::proc_read_desc_resp(void *& notification_id, const uint8_t 
     {
         if (m_background_read_inflight.empty() && m_background_read_pending.empty())
         {
-            notification_imp_ref->post_notification_msg(END_STATION_READ_COMPLETED, end_station_entity_id, 0, 0, 0, 0, NULL);
+            notification_imp_ref->post_notification_msg(END_STATION_READ_COMPLETED, end_station_entity_id, 0, 0, 0, 0, 0, NULL);
         }
     }
 
@@ -1645,7 +1645,7 @@ int end_station_imp::proc_rcvd_aem_resp(void *& notification_id,
         break;
 
     default:
-        notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, cmd_type, 0, 0, 0, 0);
+        notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE, cmd_type, 0, 0, 0, 0);
         break;
     }
 
@@ -1933,7 +1933,7 @@ int end_station_imp::proc_rcvd_aecp_aa_resp(void *& notification_id, const uint8
     if (tlv_count != 1)
     {
         // Do not currently support TLV counts > 1
-        notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, 0, 0, 0, 0, 0);
+        notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, 0, 0, 0, 0, 0, 0);
     }
 
     const int tlv_data_offset = ETHER_HDR_SIZE + JDKSAVDECC_AECPDU_AA_LEN;
@@ -2012,7 +2012,7 @@ int end_station_imp::proc_rcvd_acmp_resp(uint32_t msg_type, void *& notification
         }
 	break;
     default:
-	notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, (uint16_t)msg_type, 0, 0, 0, 0);
+	notification_imp_ref->post_notification_msg(NO_MATCH_FOUND, 0, (uint16_t)msg_type, 0, 0, 0, 0, 0);
 	break;
     }
 

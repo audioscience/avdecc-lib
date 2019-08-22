@@ -92,6 +92,7 @@ void * notification_imp::dispatch_callbacks(void)
             notification_callback(user_obj,
                                   notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_type,
                                   notification_buf[read_index % NOTIFICATION_BUF_COUNT].entity_id,
+                                  notification_buf[read_index % NOTIFICATION_BUF_COUNT].msg_type,
                                   notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
                                   notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
                                   notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,

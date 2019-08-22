@@ -82,6 +82,7 @@ int notification_imp::proc_notification_thread_callback()
                 notification_callback(user_obj,
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].notification_type,
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].entity_id,
+                                      notification_buf[read_index % NOTIFICATION_BUF_COUNT].msg_type,
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].cmd_type,
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_type,
                                       notification_buf[read_index % NOTIFICATION_BUF_COUNT].desc_index,

@@ -43,12 +43,12 @@ public:
     ///
     /// AVDECC LIB modules call this function to generate a notification message.
     ///
-    void post_notification_msg(int32_t notification_type, uint64_t entity_id, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void * notification_id);
+    void post_notification_msg(int32_t notification_type, uint64_t entity_id, uint32_t msg_type, uint16_t cmd_type, uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status, void * notification_id);
 
     ///
     /// Change the notification callback function to a new post_notification_msg callback function.
     ///
-    void set_notification_callback(void (*new_notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *), void *);
+    void set_notification_callback(void (*new_notification_callback)(void *, int32_t, uint64_t, uint32_t, uint16_t, uint16_t, uint16_t, uint32_t, void *), void *);
 
     ///
     /// Get the number of missed notifications that exceeds the notification buffer count.
@@ -59,7 +59,7 @@ protected:
     int32_t notifications;
     uint32_t read_index;
     uint32_t write_index;
-    void (*notification_callback)(void *, int32_t, uint64_t, uint16_t, uint16_t, uint16_t, uint32_t, void *);
+    void (*notification_callback)(void *, int32_t, uint64_t, uint32_t, uint16_t, uint16_t, uint16_t, uint32_t, void *);
     void (*acmp_notification_callback)(void *, int32_t, uint16_t, uint64_t, uint16_t, uint64_t, uint16_t, uint32_t, void *);
     void * user_obj;
     uint32_t missed_notification_event_cnt;
@@ -73,6 +73,7 @@ protected:
     {
         int32_t notification_type;
         uint64_t entity_id;
+        uint32_t msg_type;
         uint16_t cmd_type;
         uint16_t desc_type;
         uint16_t desc_index;

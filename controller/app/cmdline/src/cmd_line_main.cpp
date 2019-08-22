@@ -59,7 +59,7 @@
 
 using namespace std;
 
-extern "C" void notification_callback(void * user_obj, int32_t notification_type, uint64_t entity_id, uint16_t cmd_type,
+extern "C" void notification_callback(void * user_obj, int32_t notification_type, uint64_t entity_id, uint32_t msg_type, uint16_t cmd_type,
                                       uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status,
                                       void * notification_id)
 {
@@ -82,9 +82,10 @@ extern "C" void notification_callback(void * user_obj, int32_t notification_type
             cmd_status_name = avdecc_lib::utility::acmp_cmd_status_value_to_name(cmd_status);
         }
 
-        printf("\n[NOTIFICATION] (%s, 0x%" PRIx64 ", %s, %s, %d, %s, %p)\n",
+        printf("\n[NOTIFICATION] (%s, 0x%" PRIx64 ", %d, %s, %s, %d, %s, %p)\n",
                avdecc_lib::utility::notification_value_to_name(notification_type),
                entity_id,
+               msg_type,
                cmd_name,
                desc_name,
                desc_index,
@@ -93,9 +94,10 @@ extern "C" void notification_callback(void * user_obj, int32_t notification_type
     }
     else
     {
-        printf("\n[NOTIFICATION] (%s, 0x%" PRIx64 ", %d, %d, %d, %d, %p)\n",
+        printf("\n[NOTIFICATION] (%s, 0x%" PRIx64 ", %d, %d, %d, %d, %d, %p)\n",
                avdecc_lib::utility::notification_value_to_name(notification_type),
                entity_id,
+               msg_type,
                cmd_type,
                desc_type,
                desc_index,

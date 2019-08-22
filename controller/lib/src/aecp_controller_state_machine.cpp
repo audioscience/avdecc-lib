@@ -202,6 +202,7 @@ void aecp_controller_state_machine::state_timeout(uint32_t inflight_cmd_index)
     if (is_retried)
     {
         jdksavdecc_eui64 id = jdksavdecc_common_control_header_get_stream_id(frame.payload, ETHER_HDR_SIZE);
+        uint32_t msg_type = jdksavdecc_common_control_header_get_control_data(frame.payload, ETHER_HDR_SIZE);
         uint16_t cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame.payload, ETHER_HDR_SIZE);
         cmd_type &= 0x7FFF;
         uint16_t desc_type = jdksavdecc_aem_command_read_descriptor_get_descriptor_type(frame.payload, ETHER_HDR_SIZE);
@@ -209,6 +210,7 @@ void aecp_controller_state_machine::state_timeout(uint32_t inflight_cmd_index)
 
         notification_imp_ref->post_notification_msg(COMMAND_TIMEOUT,
                                                     jdksavdecc_uint64_get(&id, 0),
+                                                    msg_type,
                                                     cmd_type,
                                                     desc_type,
                                                     desc_index,
@@ -468,6 +470,7 @@ int aecp_controller_state_machine::callback(void * notification_id, uint32_t not
     {
         notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
                                                     jdksavdecc_uint64_get(&id, 0),
+                                                    msg_type,
                                                     cmd_type,
                                                     desc_type,
                                                     desc_index,
@@ -505,6 +508,7 @@ int aecp_controller_state_machine::callback(void * notification_id, uint32_t not
         {
             notification_imp_ref->post_notification_msg(UNSOLICITED_RESPONSE_RECEIVED,
                                                         jdksavdecc_uint64_get(&id, 0),
+                                                        msg_type,
                                                         cmd_type,
                                                         desc_type,
                                                         desc_index,
