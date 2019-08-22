@@ -257,6 +257,7 @@ int aecp_controller_state_machine::update_inflight_for_rcvd_resp(void *& notific
     {
     case JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE:
     case JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE: // Fallthrough intentional
+    case JDKSAVDECC_AECP_MESSAGE_TYPE_VENDOR_UNIQUE_RESPONSE:
         if (u_field)
         {
             return state_rcvd_unsolicited(cmd_frame);
@@ -466,6 +467,7 @@ int aecp_controller_state_machine::callback(void * notification_id, uint32_t not
     jdksavdecc_eui64 id = jdksavdecc_common_control_header_get_stream_id(frame, ETHER_HDR_SIZE);
     if ((notification_flag == CMD_WITH_NOTIFICATION) &&
         ((msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE) ||
+         (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_VENDOR_UNIQUE_RESPONSE) ||
          (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE)))
     {
         notification_imp_ref->post_notification_msg(RESPONSE_RECEIVED,
@@ -502,6 +504,7 @@ int aecp_controller_state_machine::callback(void * notification_id, uint32_t not
     }
     else if ((notification_flag == CMD_WITHOUT_NOTIFICATION) &&
              ((msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_RESPONSE) ||
+              (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_VENDOR_UNIQUE_RESPONSE) ||
               (msg_type == JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE)))
     {
         if (is_unsolicited)

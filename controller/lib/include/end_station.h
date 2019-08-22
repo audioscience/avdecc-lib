@@ -68,6 +68,11 @@ public:
     AVDECC_CONTROLLER_LIB32_API virtual size_t STDCALL entity_desc_count() = 0;
 
     ///
+    /// \return The Milan protocol version supported (0 if not supported).
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual uint32_t STDCALL get_milan_protocol_version() = 0;
+
+    ///
     /// \return The corresponding ENTITY descriptor by index.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual entity_descriptor * STDCALL get_entity_desc_by_index(size_t entity_desc_index) = 0;
@@ -139,5 +144,12 @@ public:
     /// \param notification_id A void pointer to the unique identifier associated with the command.
     ///
     AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_deregister_unsolicited_cmd(void * notification_id) = 0;
+
+    ///
+    /// Send a 1722.1 Milan Vendor Unique command to determine whether or not the device supports the Milan profile. 
+    ///
+    /// \param notification_id A void pointer to the unique identifier associated with the command.
+    ///
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_milan_vendor_unique_cmd(void * notification_id) = 0;
 };
 }

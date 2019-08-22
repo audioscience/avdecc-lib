@@ -54,6 +54,7 @@ class end_station_imp : public virtual end_station
 private:
     uint64_t end_station_entity_id;     // The unique identifier of the AVDECC Entity the command is targeted to
     uint64_t end_station_mac;           // The source MAC address of the End Station
+    uint32_t milan_protocol_version;      // The Milan protocol version supported (0 if not supported)
     char end_station_connection_status; // The connection status of an End Station
     uint16_t current_entity_desc;       // The ENTITY descriptor associated with the End Station
     uint16_t current_config_desc;       // The CONFIGURATION descriptor associated with the ENTITY descriptor in the same End Station
@@ -100,6 +101,7 @@ public:
     uint64_t STDCALL get_gptp_grandmaster_id();
     adp * get_adp();
     size_t STDCALL entity_desc_count();
+    uint32_t STDCALL get_milan_protocol_version();
     entity_descriptor * STDCALL get_entity_desc_by_index(size_t entity_desc_index);
     int STDCALL send_read_desc_cmd(void * notification_id, uint16_t desc_type, uint16_t desc_index);
     int proc_read_desc_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
@@ -107,6 +109,7 @@ public:
     int STDCALL send_entity_avail_cmd(void * notification_id);
     int proc_entity_avail_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
     int proc_rcvd_aem_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status, uint16_t & operation_id, bool & is_operation_id_valid);
+    int proc_rcvd_vendor_unique_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
     int STDCALL send_aecp_address_access_cmd(void * notification_id,
                                              unsigned mode,
                                              unsigned length,
@@ -135,6 +138,9 @@ public:
 
     int STDCALL send_deregister_unsolicited_cmd(void * notification_id);
     int proc_deregister_unsolicited_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
+
+    int STDCALL send_milan_vendor_unique_cmd(void * notification_id);
+    int proc_milan_vendor_unique_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
 
 private:
     ///

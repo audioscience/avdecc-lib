@@ -39,6 +39,7 @@
 #include "aecp_controller_state_machine.h"
 #include "system_tx_queue.h"
 #include "jdksavdecc.h"
+#include "jdksavdecc_aecp_milan_vendor_unique.h"
 #include "end_station_imp.h"
 
 namespace avdecc_lib
@@ -50,6 +51,7 @@ end_station_imp::end_station_imp(const uint8_t * frame, size_t frame_len)
     struct jdksavdecc_eui64 entity_id;
     entity_id = adp_ref->get_entity_entity_id();
     end_station_entity_id = jdksavdecc_uint64_get(&entity_id, 0);
+    milan_protocol_version = 0;
     utility::convert_eui48_to_uint64(adp_ref->get_src_addr().value, end_station_mac);
     m_max_num_read_desc_cmd_inflight = -1;
     end_station_init();
@@ -130,6 +132,11 @@ adp * end_station_imp::get_adp()
 size_t STDCALL end_station_imp::entity_desc_count()
 {
     return entity_desc_vec.size();
+}
+
+uint32_t STDCALL end_station_imp::get_milan_protocol_version()
+{
+    return milan_protocol_version;
 }
 
 entity_descriptor * STDCALL end_station_imp::get_entity_desc_by_index(size_t entity_desc_index)
@@ -805,6 +812,25 @@ int end_station_imp::proc_entity_avail_resp(void *& notification_id, const uint8
     u_field = aem_cmd_entity_avail_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
 
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
+    return 0;
+}
+
+int end_station_imp::proc_rcvd_vendor_unique_resp(void *& notification_id,
+                                                  const uint8_t * frame,
+                                                  size_t frame_len,
+                                                  int & status)
+{
+    struct jdksavdecc_eui48 resp_protocol_id = jdksavdecc_eui48_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AECP_MILAN_VENDOR_UNIQUE_OFFSET_PROTOCOL_ID);
+    struct jdksavdecc_eui48 milan_protocol_id = JDKSAVDECC_AECP_MILAN_VENDOR_UNIQUE_PROTOCOL_ID;
+    if (!jdksavdecc_eui48_compare(&resp_protocol_id, &milan_protocol_id))
+    {
+        proc_milan_vendor_unique_resp(notification_id, frame, frame_len, status);
+    }
+    else
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Unsupported vendor unique response received");
+    }
+
     return 0;
 }
 
@@ -1842,6 +1868,73 @@ int end_station_imp::proc_deregister_unsolicited_resp(void *& notification_id, c
     msg_type = aem_cmd_dereg_unsolicited_resp.aem_header.aecpdu_header.header.message_type;
     status = aem_cmd_dereg_unsolicited_resp.aem_header.aecpdu_header.header.status;
     u_field = aem_cmd_dereg_unsolicited_resp.aem_header.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+
+    aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
+
+    return 0;
+}
+
+int STDCALL end_station_imp::send_milan_vendor_unique_cmd(void * notification_id)
+{
+    struct jdksavdecc_frame cmd_frame;
+    struct jdksavdecc_aecp_milan_vendor_unique cmd;
+    ssize_t bytes = 0;
+
+    memset(&cmd, 0, sizeof(cmd));
+
+    /*************************************************** AECP Common Data **************************************************/
+    cmd.aecpdu_header.controller_entity_id = adp_ref->get_controller_entity_id();
+
+    /******************************** Fill frame payload with AECP data and send the frame ***************************/
+    aecp_controller_state_machine_ref->ether_frame_init(end_station_mac, &cmd_frame,
+                                                        ETHER_HDR_SIZE + JDKSAVDECC_COMMON_CONTROL_HEADER_LEN +
+                                                            JDKSAVDECC_AECP_MILAN_VENDOR_UNIQUE_LEN);
+    cmd.protocol_id = JDKSAVDECC_AECP_MILAN_VENDOR_UNIQUE_PROTOCOL_ID;
+    bytes = jdksavdecc_aecpdu_milan_vendor_unique_write(&cmd, cmd_frame.payload, ETHER_HDR_SIZE, sizeof(cmd_frame.payload));
+
+    if (bytes < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "send_milan_vendor_unique_cmd error");
+        assert(bytes >= 0);
+        return -1;
+    }
+
+    aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_VENDOR_UNIQUE_COMMAND,
+                                                       &cmd_frame,
+                                                       end_station_entity_id,
+                                                       JDKSAVDECC_AECP_MILAN_VENDOR_UNIQUE_LEN);
+
+    system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
+
+    return 0;
+}
+
+int end_station_imp::proc_milan_vendor_unique_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status)
+{
+    struct jdksavdecc_frame cmd_frame;
+    struct jdksavdecc_aecp_milan_vendor_unique resp;
+    ssize_t rc = 0;
+    uint32_t msg_type = 0;
+    bool u_field = false;
+
+    memset(&resp, 0, sizeof(resp));
+    memcpy(cmd_frame.payload, frame, frame_len);
+    rc = jdksavdecc_aecpdu_milan_vendor_unique_read(&resp, frame, ETHER_HDR_SIZE, frame_len);
+    if (rc < 0)
+    {
+        log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "proc_milan_vendor_unique_resp read error");
+        assert(rc >= 0);
+        return -1;
+    }
+
+    msg_type = resp.aecpdu_header.header.message_type;
+    status = resp.aecpdu_header.header.status;
+    u_field = resp.command_type >> 15 & 0x01; // u_field = the msb of the uint16_t command_type
+
+    if (status == JDKSAVDECC_AEM_STATUS_SUCCESS)
+    {
+        milan_protocol_version = jdksavdecc_uint32_get(frame, ETHER_HDR_SIZE + JDKSAVDECC_AECP_MILAN_VENDOR_UNIQUE_RESPONSE_OFFSET_PROTOCOL_VERSION);
+    }
 
     aecp_controller_state_machine_ref->update_inflight_for_rcvd_resp(notification_id, msg_type, u_field, &cmd_frame);
 

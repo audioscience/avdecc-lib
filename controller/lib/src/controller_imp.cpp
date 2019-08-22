@@ -541,6 +541,11 @@ void controller_imp::rx_packet_event(void *& notification_id,
                             is_notification_id_valid = true;
                             break;
                         }
+                        case JDKSAVDECC_AECP_MESSAGE_TYPE_VENDOR_UNIQUE_RESPONSE:
+                        {
+                            end_station_array->at(found_end_station_index)->proc_rcvd_vendor_unique_resp(notification_id, frame, frame_len, status);
+                            break;
+                        }
                         case JDKSAVDECC_AECP_MESSAGE_TYPE_ADDRESS_ACCESS_RESPONSE:
                         {
                             end_station_array->at(found_end_station_index)->proc_rcvd_aecp_aa_resp(notification_id, frame, frame_len, status);
