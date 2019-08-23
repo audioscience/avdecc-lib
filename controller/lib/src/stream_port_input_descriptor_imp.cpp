@@ -242,7 +242,7 @@ int STDCALL stream_port_input_descriptor_imp::send_add_audio_mappings_cmd(void *
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                        &cmd_frame,
                                                        base_end_station_imp_ref->entity_id(),
-                                                       JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_LEN -
+                                                       JDKSAVDECC_AEM_COMMAND_ADD_AUDIO_MAPPINGS_COMMAND_LEN + aem_cmd_add_audio_mappings.number_of_mappings * JDKSAVDECC_AUDIO_MAPPING_LEN -
                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
@@ -358,7 +358,7 @@ int STDCALL stream_port_input_descriptor_imp::send_remove_audio_mappings_cmd(voi
     aecp_controller_state_machine_ref->common_hdr_init(JDKSAVDECC_AECP_MESSAGE_TYPE_AEM_COMMAND,
                                                        &cmd_frame,
                                                        base_end_station_imp_ref->entity_id(),
-                                                       JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_LEN -
+                                                       JDKSAVDECC_AEM_COMMAND_REMOVE_AUDIO_MAPPINGS_COMMAND_LEN + aem_cmd_remove_audio_mappings.number_of_mappings * JDKSAVDECC_AUDIO_MAPPING_LEN -
                                                            JDKSAVDECC_COMMON_CONTROL_HEADER_LEN);
     system_queue_tx(notification_id, CMD_WITH_NOTIFICATION, cmd_frame.payload, cmd_frame.length);
 
