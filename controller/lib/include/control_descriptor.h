@@ -34,12 +34,17 @@
 #include "avdecc-lib_build.h"
 #include "descriptor_base.h"
 #include "control_descriptor_response.h"
-
+#include "control_descriptor_get_jdks_ipv4_control_response.h"
+ 
 namespace avdecc_lib
 {
 class control_descriptor : public virtual descriptor_base
 {
 public:
     AVDECC_CONTROLLER_LIB32_API virtual control_descriptor_response * STDCALL get_control_response() = 0;
+
+    AVDECC_CONTROLLER_LIB32_API virtual control_descriptor_get_jdks_ipv4_control_response * STDCALL get_control_get_jdks_ipv4_control_response() = 0;
+
+    AVDECC_CONTROLLER_LIB32_API virtual int STDCALL send_get_jdks_ipv4_control_cmd(void * notification_id) = 0;
 };
 }
