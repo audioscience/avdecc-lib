@@ -1474,6 +1474,24 @@ int end_station_imp::proc_rcvd_aem_resp(void *& notification_id,
         }
     }
     break;
+    
+    case JDKSAVDECC_AEM_COMMAND_GET_CONTROL:
+    {
+        desc_index = jdksavdecc_aem_command_get_control_response_get_descriptor_index(frame, ETHER_HDR_SIZE);
+
+        control_descriptor_imp * control_desc_imp_ref =
+            dynamic_cast<control_descriptor_imp *>(entity_desc_vec.at(current_entity_desc)->get_config_desc_by_index(current_config_desc)->get_control_desc_by_index(desc_index));
+
+        if (control_desc_imp_ref)
+        {
+            control_desc_imp_ref->proc_get_control_resp(notification_id, frame, frame_len, status);
+        }
+        else
+        {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_ERROR, "Dynamic cast from base control_descriptor to derived control_descriptor_imp error");
+        }
+    }
+    break;
 
     case JDKSAVDECC_AEM_COMMAND_START_STREAMING:
     {

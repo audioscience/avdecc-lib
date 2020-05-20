@@ -32,6 +32,7 @@
 #include "descriptor_base_imp.h"
 #include "control_descriptor.h"
 #include "control_descriptor_response_imp.h"
+#include "control_descriptor_get_jdks_ipv4_control_response_imp.h"
 
 namespace avdecc_lib
 {
@@ -41,7 +42,11 @@ public:
     control_descriptor_imp(end_station_imp * end_station_obj, const uint8_t * frame, ssize_t pos, size_t frame_len);
     virtual ~control_descriptor_imp();
     control_descriptor_response_imp * resp;
+    control_descriptor_get_jdks_ipv4_control_response_imp * get_jdks_ipv4_control_resp;
 
     control_descriptor_response * STDCALL get_control_response();
+    control_descriptor_get_jdks_ipv4_control_response * STDCALL get_control_get_jdks_ipv4_control_response();
+    int STDCALL send_get_jdks_ipv4_control_cmd(void * notification_id);
+    int proc_get_control_resp(void *& notification_id, const uint8_t * frame, size_t frame_len, int & status);
 };
 }
