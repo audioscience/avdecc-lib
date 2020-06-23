@@ -58,6 +58,7 @@ private:
     char end_station_connection_status; // The connection status of an End Station
     uint16_t current_entity_desc;       // The ENTITY descriptor associated with the End Station
     uint16_t current_config_desc;       // The CONFIGURATION descriptor associated with the ENTITY descriptor in the same End Station
+    bool is_enumerated;                 // True, if the End Station's descriptors have been fully enumerated
 
     std::list<background_read_request *> m_background_read_pending;  // Store a list of background reads
     std::list<background_read_request *> m_background_read_inflight; // Store a list of background reads that are inflight
