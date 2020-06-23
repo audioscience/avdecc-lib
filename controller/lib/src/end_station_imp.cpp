@@ -71,6 +71,7 @@ int end_station_imp::end_station_init()
 {
     current_entity_desc = 0;
     current_config_desc = 0;
+    m_is_enumerated = false;
 
     read_desc_init(JDKSAVDECC_DESCRIPTOR_ENTITY, 0);
 
@@ -409,6 +410,7 @@ int end_station_imp::proc_read_desc_resp(void *& notification_id, const uint8_t 
     {
         if (m_background_read_inflight.empty() && m_background_read_pending.empty())
         {
+            m_is_enumerated = true;
             notification_imp_ref->post_notification_msg(END_STATION_READ_COMPLETED, end_station_entity_id, 0, 0, 0, 0, 0, NULL);
         }
     }
@@ -844,8 +846,17 @@ int end_station_imp::proc_rcvd_aem_resp(void *& notification_id,
     uint16_t cmd_type;
     uint16_t desc_type;
     uint16_t desc_index;
+    bool is_unsolicited;
     cmd_type = jdksavdecc_aecpdu_aem_get_command_type(frame, ETHER_HDR_SIZE);
+    is_unsolicited = cmd_type >> 15 & 0x01; // u_field, the msb of the uint16_t command type - when set, indicates an unsolicited response
     cmd_type &= 0x7FFF;
+
+    if (is_unsolicited && !m_is_enumerated) {
+            log_imp_ref->post_log_msg(LOGGING_LEVEL_DEBUG, "proc_rcvd_aem_resp (0x%llx, %s) - end station not enumerated, skipping",
+                                      end_station_entity_id,
+                                      utility::aem_cmd_value_to_name(cmd_type));
+            return 0;
+    }
 
     if (cmd_type != JDKSAVDECC_AEM_COMMAND_READ_DESCRIPTOR)
     {
