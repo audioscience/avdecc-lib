@@ -59,6 +59,8 @@
 
 using namespace std;
 
+bool supress_unsolicited_response_notifications = false;
+
 extern "C" void notification_callback(void * user_obj, int32_t notification_type, uint64_t entity_id, uint32_t msg_type, uint16_t cmd_type,
                                       uint16_t desc_type, uint16_t desc_index, uint32_t cmd_status,
                                       void * notification_id)
@@ -92,7 +94,8 @@ extern "C" void notification_callback(void * user_obj, int32_t notification_type
                cmd_status_name,
                notification_id);
     }
-    else if (notification_type != avdecc_lib::UNSOLICITED_RESPONSE_RECEIVED)
+    else if (supress_unsolicited_response_notifications == false ||
+			notification_type != avdecc_lib::UNSOLICITED_RESPONSE_RECEIVED)
     {
         printf("\n[NOTIFICATION] (%s, 0x%" PRIx64 ", %d, %d, %d, %d, %d, %p)\n",
                avdecc_lib::utility::notification_value_to_name(notification_type),
@@ -283,8 +286,13 @@ static void print_interfaces()
 
 static void usage(char * argv[])
 {
-    std::cerr << "Usage: " << argv[0] << " [-d] [-i interface]" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " [<options>] [-i interface][-l log_level]" << std::endl;
+    std::cerr << "  -p           :  Print interfaces" << std::endl;
     std::cerr << "  -t           :  Sets test mode which disables checks" << std::endl;
+#if !(defined(__MACH__) || defined(__linux__))
+    std::cerr << "  -s           :  Show command separator" << std::endl;
+#endif
+    std::cerr << "  -q           :  Supress notification of unsolicited responses." << std::endl;
     std::cerr << "  -i interface :  Sets the network interface to use.\n \
                     Valid options are IP Address and MAC Address (must be in the form 'n:n:n:n:n:n', where 0<=n<=FF in hexidecimal" << std::endl;
     std::cerr << "  -l log_level :  Sets the log level to use." << std::endl;
@@ -303,7 +311,7 @@ int main(int argc, char * argv[])
     int c = 0;
     int32_t log_level = avdecc_lib::LOGGING_LEVEL_ERROR;
 
-    while ((c = getopt(argc, argv, "spti:l:")) != -1)
+    while ((c = getopt(argc, argv, "sptqi:l:")) != -1)
     {
         switch (c)
         {
@@ -319,6 +327,9 @@ int main(int argc, char * argv[])
         case 't':
             test_mode = true;
             break;
+		case 'q':
+			supress_unsolicited_response_notifications = true;
+			break;
         case 'i':
             interface = optarg;
             break;
