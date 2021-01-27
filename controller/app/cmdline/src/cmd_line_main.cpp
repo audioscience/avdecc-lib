@@ -92,7 +92,7 @@ extern "C" void notification_callback(void * user_obj, int32_t notification_type
                cmd_status_name,
                notification_id);
     }
-    else
+    else if (notification_type != avdecc_lib::UNSOLICITED_RESPONSE_RECEIVED)
     {
         printf("\n[NOTIFICATION] (%s, 0x%" PRIx64 ", %d, %d, %d, %d, %d, %p)\n",
                avdecc_lib::utility::notification_value_to_name(notification_type),
